@@ -1,0 +1,23 @@
+application: ua/lamp
+
+test: &test
+  - phing
+
+test_pr:
+  steps: *test
+
+test_head:
+  steps: *test
+
+deploy_setup: &deploy_setup
+  - bundle install --path vendor/bundle
+
+deploy_qa:
+  setup: *deploy_setup
+  steps:
+    - bundle exec cap dev deploy
+
+deploy_staging:
+  setup: *deploy_setup
+  steps:
+    - bundle exec cap staging deploy
