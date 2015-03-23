@@ -1,0 +1,4 @@
+.vagrant
+vendor
+bin
+app

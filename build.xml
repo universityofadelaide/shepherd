@@ -1,0 +1,103 @@
+<!--
+  name: build.xml
+  description: A build file for the University of Adelaide project.
+-->
+
+<project name="ua" default="build" phingVersion="2.4.11">
+
+    <!-- Properties. -->
+
+    <!-- Application -->
+    <property name="app.docroot" value="app" />
+    <property name="app.dir"     value="${project.basedir}/${app.docroot}" />
+    <property name="app.profile" value="standard" />
+
+    <!-- Composer -->
+    <property name="composer.bin" value="/usr/local/bin/composer" />
+
+    <!-- Drush -->
+    <property name="drush.bin"       value="${project.basedir}/bin/drush" />
+    <property name="drush.cmd"       value="${drush.bin} -r ${app.dir}" />
+    <property name="drush.make.file" value="ua.make" />
+
+    <!-- Drupal -->
+    <property name="drupal.siteName" value="University of Adelaide" />
+    <property name="drupal.email"    value="user@example.com" />
+    <property name="drupal.user"     value="admin" />
+    <property name="drupal.pass"     value="password" />
+    <property name="drupal.dir"      value="${project.basedir}/app" />
+    <property name="drupal.profile"  value="standard" />
+
+    <!-- Mysql -->
+    <property name="mysql.host"        value="localhost" />
+    <property name="mysql.port"        value="3306" />
+    <property name="mysql.database"    value="local" />
+    <property name="mysql.user"        value="drupal" />
+    <property name="mysql.pass"        value="drupal" />
+    <property name="mysql.queryString" value="mysql://${mysql.user}:${mysql.pass}@${mysql.host}/${mysql.database}" />
+
+    <!-- Meta targets. -->
+
+    <target name="build"
+            description="Build the project and test it."
+            depends="prepare, make, install" />
+
+    <!-- Steps targets. -->
+
+    <target name="prepare"
+            description="Prepare the directories." >
+        <exec command="sudo rm -fR ${app.dir}"
+              logoutput="true"
+              passthru="true" />
+    </target>
+
+    <target name="make"
+            description="Builds the application based on the drush make file.">
+        <exec command="${composer.bin} install --prefer-dist --dev --no-progress"
+              passthru="true"
+              logoutput="true" />
+
+        <exec command="${drush.bin} make ${drush.make.file} ${app.docroot}"
+              passthru="true"
+              logoutput="true" />
+
+        <!-- We also symlink in our modules, themes and profiles. -->
+        <exec command="rm -fR ${app.docroot}/modules/custom" passthru="true" logoutput="true" />
+        <exec command="rm -fR ${app.docroot}/themes/custom"  passthru="true" logoutput="true" />
+        <exec command="rm -fR ${app.docroot}/profiles"       passthru="true" logoutput="true" />
+        <symlink target="../../modules" link="${app.dir}/modules/custom" />
+        <symlink target="../../themes"  link="${app.dir}/themes/custom" />
+        <symlink target="../profiles"   link="${app.dir}/profiles" />
+    </target>
+
+    <target name="install"
+            description="Install the site with Drush.">
+        <!-- Ensure the files directory is clean -->
+        <exec command="sudo rm -fR ${app.dir}/sites/default/files"
+              logoutput="true"
+              passthru="true" />
+
+        <!-- Ensure we have a fresh settings.php with correct permissions -->
+        <exec command="sudo scp ${app.dir}/sites/default/default.settings.php ${app.dir}/sites/default/settings.php"
+              logoutput="true"
+              passthru="true" />
+        <exec command="sudo chmod 777 ${app.dir}/sites/default/settings.php"
+              logoutput="true"
+              passthru="true" />
+
+        <!-- Ensure we have a fresh services.yml with correct permissions -->
+        <exec command="sudo scp ${app.dir}/sites/default/default.services.yml ${app.dir}/sites/default/services.yml"
+              logoutput="true"
+              passthru="true" />
+        <exec command="sudo chmod 777 ${app.dir}/sites/default/services.yml"
+              logoutput="true"
+              passthru="true" />
+
+        <!-- Install the site. -->
+        <echo msg="${drush.bin} -vd -r ${app.dir} site-install ${drupal.profile} -y --db-url=${mysql.queryString} --account-mail=${drupal.email} --account-name=${drupal.user} --account-pass=${drupal.pass} --site-name=${drupal.siteName}" />
+        <exec command="${drush.bin} -vd -r ${app.dir} site-install ${drupal.profile} -y --db-url=${mysql.queryString} --account-mail=${drupal.email} --account-name=${drupal.user} --account-pass=${drupal.pass} --site-name=${drupal.siteName}"
+              logoutput="true"
+              passthru="true" />
+    </target>
+
+</project>

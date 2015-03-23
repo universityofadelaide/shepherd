@@ -1,0 +1,11 @@
+{
+    "require": {
+        "phing/phing":                   "2.10.1",
+        "drush/drush":                   "7.0.0-alpha9",
+        "previousnext/phing-phpqatools": "0.0.1"
+},
+    "minimum-stability": "dev",
+    "config": {
+        "bin-dir": "bin/"
+    }
+}
