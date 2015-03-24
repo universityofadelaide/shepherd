@@ -1,7 +1,7 @@
 application: uofa/lamp
 
 test: &test
-  - composer install --prefer-dist --dev
+  - composer install --prefer-dist --dev --no-progress
   - bin/phing
 
 test_pr:
