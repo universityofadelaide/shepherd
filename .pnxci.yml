@@ -1,4 +1,4 @@
-application: ua/lamp
+application: uofa/lamp
 
 test: &test
   - phing
