@@ -2,9 +2,9 @@ application: uofa/lamp
 
 test: &test
   - composer install --prefer-dist --dev --no-progress
+  - bin/phing ci:phpcs
   - bin/phing
-  # This is to fix issues we might have between the running user
-  # and the web user.
+  # Fix permissions issues for the Apache web user.
   - chown -R www-data:www-data app
 
 test_pr:
