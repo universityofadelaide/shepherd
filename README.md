@@ -42,7 +42,7 @@ NOTE: These credentials can only access the box images (cannot write or view oth
 
 ## Getting started
 
-1. Start the VM.
+**1) Start the VM.**
 
 ```
 $ vagrant up
@@ -56,13 +56,13 @@ $ vagrant ssh
 
 This will take you to the root of the project **inside** of the vm.
 
-2. Pull down the dependencies
+**2) Pull down the dependencies**
 
 ```
 $ composer install --prefer-dist --dev
 ```
 
-3. Build the project
+**3) Build the project**
 
 ```
 $ phing
@@ -74,7 +74,7 @@ The default build task is to build the project. For a list of tasks that can be 
 $ phing -l
 ```
 
-4. Go to the site
+**4) Go to the site**
 
 The site can be found on the domain:
 
