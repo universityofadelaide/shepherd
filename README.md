@@ -26,7 +26,7 @@ $ vagrant plugin install vagrant-hostsupdater
 $ vagrant plugin install vagrant-s3auth
 ```
 
-**4) Add S3 account details**
+**Add S3 account details**
 
 Vagrant images are stored privately on Amazon S3. To pull down the images for the first time
 you will need to add some credentials to your local profile.
@@ -42,7 +42,7 @@ NOTE: These credentials can only access the box images (cannot write or view oth
 
 ## Getting started
 
-1. Start the VM.
+**1) Start the VM.**
 
 ```
 $ vagrant up
@@ -56,13 +56,13 @@ $ vagrant ssh
 
 This will take you to the root of the project **inside** of the vm.
 
-2. Pull down the dependencies
+**2) Pull down the dependencies**
 
 ```
 $ composer install --prefer-dist --dev
 ```
 
-3. Build the project
+**3) Build the project**
 
 ```
 $ phing
@@ -74,7 +74,7 @@ The default build task is to build the project. For a list of tasks that can be 
 $ phing -l
 ```
 
-4. Go to the site
+**4) Go to the site**
 
 The site can be found on the domain:
 
