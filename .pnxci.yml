@@ -3,6 +3,7 @@ application: uofa/lamp
 test: &test
   - composer install --prefer-dist --dev --no-progress
   - bin/phing
+  - bin/phing ci:phpcs
 
 test_pr:
   steps: *test
