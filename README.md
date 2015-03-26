@@ -82,6 +82,31 @@ The site can be found on the domain:
 http://ua.dev
 ```
 
+## Deploy
+
+**Note: These commands are also covered in the .pnxci.yml file**
+
+### Setup
+
+* Bundler is used to install ruby gems.
+* Capistrano (Ruby Gem) is leveraged for deployments.
+
+```
+$ bundle install --path vendor/bundle
+```
+
+### Deploy QA
+
+```
+$ bundle exec cap dev deploy
+```
+
+### Deploy Staging
+
+```
+$ bundle exec cap staging deploy
+```
+
 ## Anatomy of the project
 
 ### Directories
