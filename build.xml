@@ -5,6 +5,10 @@
 
 <project name="ua" default="build" phingVersion="2.4.11">
 
+    <!-- Includes. -->
+
+    <import file="vendor/previousnext/phing-phpqatools/build.xml" optional="true" />
+
     <!-- Properties. -->
 
     <!-- Application -->
@@ -35,6 +39,9 @@
     <property name="mysql.user"        value="drupal" />
     <property name="mysql.pass"        value="drupal" />
     <property name="mysql.queryString" value="mysql://${mysql.user}:${mysql.pass}@${mysql.host}/${mysql.database}" />
+
+    <!-- PHPCS. -->
+    <property name="php.sniff.dirs" value="${project.basedir}/modules ${project.basedir}/themes" />
 
     <!-- Meta targets. -->
 

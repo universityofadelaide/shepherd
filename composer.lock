@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "5056372e52218aa5fa30ae195d014b10",
+    "hash": "baacb567e376b1e761e8fa430578a548",
     "packages": [
         {
             "name": "d11wtq/boris",
@@ -465,16 +465,16 @@
         },
         {
             "name": "previousnext/phing-phpqatools",
-            "version": "0.0.1",
+            "version": "0.0.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/previousnext/phing-phpqatools.git",
-                "reference": "53f8fbfbd16c8d1b59c817236b5655acd0537cd2"
+                "reference": "b9b9864a903d801f83ba4e9a7c43308db00efe0a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/previousnext/phing-phpqatools/zipball/53f8fbfbd16c8d1b59c817236b5655acd0537cd2",
-                "reference": "53f8fbfbd16c8d1b59c817236b5655acd0537cd2",
+                "url": "https://api.github.com/repos/previousnext/phing-phpqatools/zipball/b9b9864a903d801f83ba4e9a7c43308db00efe0a",
+                "reference": "b9b9864a903d801f83ba4e9a7c43308db00efe0a",
                 "shasum": ""
             },
             "require": {
@@ -490,11 +490,11 @@
                 "GPL-2.0+"
             ],
             "description": "A library of PHP(CS/MD/LOC) targets for Phing.",
-            "homepage": "https://github.com/previousnext/phing-php",
+            "homepage": "https://github.com/previousnext/phing-phpqatools",
             "keywords": [
                 "phing"
             ],
-            "time": "2014-11-06 20:53:57"
+            "time": "2014-11-16 02:11:42"
         },
         {
             "name": "sebastian/finder-facade",
