@@ -12,7 +12,7 @@ The University of Adelaide Drupal 8 project.
 
 Run the following via the command line:
 
-```
+```bash
 # Virtualbox support.
 $ vagrant plugin install vagrant-vbguest
 
@@ -34,8 +34,8 @@ you will need to add some credentials to your local profile.
 Add the following to your "~/.profile" file.
 
 ```
-export AWS_ACCESS_KEY_ID=TODO
-export AWS_SECRET_ACCESS_KEY=TODO
+export AWS_ACCESS_KEY_ID=AKIAIHQDNUJMSQIJXUDQ
+export AWS_SECRET_ACCESS_KEY=D5yj5exudn7F2ccWQcmJyVtCMGvJc1U4XAZClQkH
 ```
 
 NOTE: These credentials can only access the box images (cannot write or view other buckets).
