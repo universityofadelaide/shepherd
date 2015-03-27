@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "baacb567e376b1e761e8fa430578a548",
+    "hash": "19baf8469213f5c705f3ff1b90942553",
     "packages": [
         {
             "name": "d11wtq/boris",
@@ -73,16 +73,16 @@
         },
         {
             "name": "drush/drush",
-            "version": "7.0.0-alpha9",
+            "version": "7.0.0-rc1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/drush-ops/drush.git",
-                "reference": "f10919adc0aeaafdda7dda1a8534cb3fc72fec80"
+                "reference": "8e3276d400eebf4d2d0a4d7c623766d6b610ecf0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/drush-ops/drush/zipball/f10919adc0aeaafdda7dda1a8534cb3fc72fec80",
-                "reference": "f10919adc0aeaafdda7dda1a8534cb3fc72fec80",
+                "url": "https://api.github.com/repos/drush-ops/drush/zipball/8e3276d400eebf4d2d0a4d7c623766d6b610ecf0",
+                "reference": "8e3276d400eebf4d2d0a4d7c623766d6b610ecf0",
                 "shasum": ""
             },
             "require": {
@@ -153,7 +153,7 @@
             ],
             "description": "Drush is a command line shell and scripting interface for Drupal, a veritable Swiss Army knife designed to make life easier for those of us who spend some of our working hours hacking away at the command prompt.",
             "homepage": "http://www.drush.org",
-            "time": "2015-02-27 16:51:01"
+            "time": "2015-03-26 02:05:15"
         },
         {
             "name": "pdepend/pdepend",
@@ -587,12 +587,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpcpd.git",
-                "reference": "5cb758446d3f1cb6087404c8029c8e4c68f4a161"
+                "reference": "d3ad100fdf15805495f6ff19f473f4314c99390c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpcpd/zipball/5cb758446d3f1cb6087404c8029c8e4c68f4a161",
-                "reference": "5cb758446d3f1cb6087404c8029c8e4c68f4a161",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpcpd/zipball/d3ad100fdf15805495f6ff19f473f4314c99390c",
+                "reference": "d3ad100fdf15805495f6ff19f473f4314c99390c",
                 "shasum": ""
             },
             "require": {
@@ -630,7 +630,7 @@
             ],
             "description": "Copy/Paste Detector (CPD) for PHP code.",
             "homepage": "https://github.com/sebastianbergmann/phpcpd",
-            "time": "2015-03-11 11:41:56"
+            "time": "2015-03-26 14:47:38"
         },
         {
             "name": "sebastian/version",
@@ -796,12 +796,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/Console.git",
-                "reference": "de303b307151adadef2bbeff2858ac53d813e186"
+                "reference": "acc66bf5f1a851285b6fa0355d65a9a464adb59d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/Console/zipball/de303b307151adadef2bbeff2858ac53d813e186",
-                "reference": "de303b307151adadef2bbeff2858ac53d813e186",
+                "url": "https://api.github.com/repos/symfony/Console/zipball/acc66bf5f1a851285b6fa0355d65a9a464adb59d",
+                "reference": "acc66bf5f1a851285b6fa0355d65a9a464adb59d",
                 "shasum": ""
             },
             "require": {
@@ -845,7 +845,7 @@
             ],
             "description": "Symfony Console Component",
             "homepage": "http://symfony.com",
-            "time": "2015-03-22 16:57:18"
+            "time": "2015-03-26 16:59:57"
         },
         {
             "name": "symfony/dependency-injection",
