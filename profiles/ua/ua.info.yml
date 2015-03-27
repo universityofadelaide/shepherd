@@ -1,0 +1,41 @@
+name: University of Adelaide
+type: profile
+description: 'University of Adelaide Drupal 8 site.'
+version: VERSION
+core: 8.x
+dependencies:
+  - node
+  - history
+  - block
+  - breakpoint
+  - ckeditor
+  - color
+  - config
+  - comment
+  - contextual
+  - contact
+  - menu_link_content
+  - datetime
+  - block_content
+  - quickedit
+  - editor
+  - entity_reference
+  - help
+  - image
+  - menu_ui
+  - options
+  - path
+  - taxonomy
+  - dblog
+  - search
+  - shortcut
+  - toolbar
+  - field_ui
+  - file
+  - rdf
+  - views
+  - views_ui
+  - tour
+themes:
+  - bartik
+  - seven

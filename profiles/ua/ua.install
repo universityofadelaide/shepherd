@@ -1,0 +1,75 @@
+<?php
+/**
+ * @file
+ * Install, update and uninstall functions for the University of Adelaide installation profile.
+ */
+
+use Drupal\comment\Plugin\Field\FieldType\CommentItemInterface;
+use Drupal\user\Entity\User;
+
+/**
+ * Implements hook_install().
+ *
+ * Perform actions to set up the site for this profile.
+ *
+ * @see system_install()
+ */
+function ua_install() {
+  // Now that all modules are installed, make sure the entity storage and other
+  // handlers are up to date with the current entity and field definitions. For
+  // example, Path module adds a base field to nodes and taxonomy terms after
+  // those modules are already installed.
+  \Drupal::service('entity.definition_update_manager')->applyUpdates();
+
+  // Set front page to "node".
+  \Drupal::configFactory()->getEditable('system.site')->set('page.front', 'node')->save();
+
+  // Allow visitor account creation with administrative approval.
+  $user_settings = \Drupal::configFactory()->getEditable('user.settings');
+  $user_settings->set('register', USER_REGISTER_VISITORS_ADMINISTRATIVE_APPROVAL)->save();
+
+  // Enable default permissions for system roles.
+  user_role_grant_permissions(DRUPAL_ANONYMOUS_RID, array('access comments'));
+  user_role_grant_permissions(DRUPAL_AUTHENTICATED_RID, array('access comments', 'post comments', 'skip comment approval'));
+
+  // Enable all permissions for the administrator role.
+  user_role_grant_permissions('administrator', array_keys(\Drupal::service('user.permissions')->getPermissions()));
+  // Set this as the administrator role.
+  $user_settings->set('admin_role', 'administrator')->save();
+
+  // Assign user 1 the "administrator" role.
+  $user = User::load(1);
+  $user->roles[] = 'administrator';
+  $user->save();
+
+  // Enable the Contact link in the footer menu.
+  /** @var \Drupal\Core\Menu\MenuLinkManagerInterface $menu_link_manager */
+  $menu_link_manager = \Drupal::service('plugin.manager.menu.link');
+  $menu_link_manager->updateDefinition('contact.site_page', array('enabled' => 1));
+
+  user_role_grant_permissions(DRUPAL_ANONYMOUS_RID, array('access site-wide contact form'));
+  user_role_grant_permissions(DRUPAL_AUTHENTICATED_RID, array('access site-wide contact form'));
+
+  // Allow authenticated users to use shortcuts.
+  user_role_grant_permissions(DRUPAL_AUTHENTICATED_RID, array('access shortcuts'));
+
+  // Populate the default shortcut set.
+  $shortcut = entity_create('shortcut', array(
+    'shortcut_set' => 'default',
+    'title' => t('Add content'),
+    'weight' => -20,
+    'link' => array('uri' => 'node/add'),
+  ));
+  $shortcut->save();
+
+  $shortcut = entity_create('shortcut', array(
+    'shortcut_set' => 'default',
+    'title' => t('All content'),
+    'weight' => -19,
+    'link' => array('uri' => 'admin/content'),
+  ));
+  $shortcut->save();
+
+  // Enable the admin theme.
+  \Drupal::configFactory()->getEditable('node.settings')->set('use_admin_theme', '1')->save();
+}
