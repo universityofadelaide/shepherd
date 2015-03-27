@@ -2,7 +2,7 @@ Vagrant.configure("2") do |config|
   config.vm.define 'lamp', primary: true do |lamp|
     lamp.vm.box      = 'ua-lamp'
     lamp.vm.hostname = 'ua.dev'
-    lamp.vm.box_url  = '/Users/nick/projects/pnx/ua-dev/packer/boxes/lamp.box'
+    lamp.vm.box_url  = 's3://ua-boxes/lamp.box'
 
     # This script is a last chance for Developers to add more
     # configuration to the Vagrant host.
@@ -13,4 +13,3 @@ Vagrant.configure("2") do |config|
     lamp.vm.provision :shell, path: "provision.sh"
   end
 end
-
