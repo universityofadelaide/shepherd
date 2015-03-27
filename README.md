@@ -95,6 +95,35 @@ http://ua.dev
 $ bundle install --path vendor/bundle
 ```
 
+
+For front-end development and generating the styleguide, we use Gulp which
+requires Node.js.
+
+Download Node.js (e.g. via homebrew) or directly via https://nodejs.org/download/
+
+To install required node modules:
+
+```bash
+$ npm install
+```
+
+### Compiling CSS and Styleguide
+
+To compile CSS and build the styleguide run:
+
+```bash
+$ gulp
+```
+
+The styleguide is generated into the /styleguide directory. Open the index.html
+to see it.
+
+To see a list of gulp commands, type:
+
+```bash
+$ gulp -T
+```
+
 ### Deploy QA
 
 ```bash
