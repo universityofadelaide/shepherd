@@ -33,7 +33,7 @@ you will need to add some credentials to your local profile.
 
 Add the following to your "~/.profile" file.
 
-```
+```bash
 export AWS_ACCESS_KEY_ID=AKIAIHQDNUJMSQIJXUDQ
 export AWS_SECRET_ACCESS_KEY=D5yj5exudn7F2ccWQcmJyVtCMGvJc1U4XAZClQkH
 ```
@@ -44,13 +44,13 @@ NOTE: These credentials can only access the box images (cannot write or view oth
 
 **1) Start the VM.**
 
-```
+```bash
 $ vagrant up
 ```
 
 All commands from here are to be run within the VM. This can be done via the command:
 
-```
+```bash
 $ vagrant ssh
 ```
 
@@ -58,19 +58,19 @@ This will take you to the root of the project **inside** of the vm.
 
 **2) Pull down the dependencies**
 
-```
+```bash
 $ composer install --prefer-dist --dev
 ```
 
 **3) Build the project**
 
-```
+```bash
 $ phing
 ```
 
 The default build task is to build the project. For a list of tasks that can be run:
 
-```
+```bash
 $ phing -l
 ```
 
@@ -91,19 +91,19 @@ http://ua.dev
 * Bundler is used to install ruby gems.
 * Capistrano (Ruby Gem) is leveraged for deployments.
 
-```
+```bash
 $ bundle install --path vendor/bundle
 ```
 
 ### Deploy QA
 
-```
+```bash
 $ bundle exec cap dev deploy
 ```
 
 ### Deploy Staging
 
-```
+```bash
 $ bundle exec cap staging deploy
 ```
 
