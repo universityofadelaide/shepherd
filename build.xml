@@ -14,7 +14,6 @@
     <!-- Application -->
     <property name="app.docroot" value="app" />
     <property name="app.dir"     value="${project.basedir}/${app.docroot}" />
-    <property name="app.profile" value="standard" />
 
     <!-- Composer -->
     <property name="composer.bin" value="/usr/local/bin/composer" />
@@ -30,7 +29,7 @@
     <property name="drupal.user"     value="admin" />
     <property name="drupal.pass"     value="password" />
     <property name="drupal.dir"      value="${project.basedir}/app" />
-    <property name="drupal.profile"  value="standard" />
+    <property name="drupal.profile"  value="ua" />
 
     <!-- Mysql -->
     <property name="mysql.host"        value="localhost" />
