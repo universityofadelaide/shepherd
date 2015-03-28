@@ -1,7 +1,7 @@
 UA - D8
 =======
 
-The University of Adelaide Drupal 8 project.
+The University of Adelaide project.
 
 ## Requirements
 
