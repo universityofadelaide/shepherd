@@ -5,6 +5,7 @@ test: &test
   - npm install
   - bin/phing ci:phpcs
   - bin/phing
+  - bin/phing styleguide:link
   # Fix permissions issues for the Apache web user.
   - chown -R www-data:www-data app
 

@@ -120,4 +120,9 @@
               passthru="true" />
     </target>
 
+    <target name="styleguide:link"
+            description="Link the styleguide into the application root.">
+      <symlink link="${project.basedir}/app/styleguide" target="${project.basedir}/styleguide" />
+    </target>
+
 </project>
