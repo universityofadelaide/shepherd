@@ -82,6 +82,12 @@ The site can be found on the domain:
 http://ua.dev
 ```
 
+## Updating VM
+
+For details please see:
+
+https://github.com/previousnext/ua-dev#updating
+
 ## Deploy
 
 **Note: These commands are also covered in the .pnxci.yml file**
