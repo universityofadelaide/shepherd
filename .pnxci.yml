@@ -2,8 +2,10 @@ application: uofa/lamp
 
 test: &test
   - composer install --prefer-dist --no-progress
+  - npm install
   - bin/phing ci:phpcs
   - bin/phing
+  - bin/phing styleguide:link
   # Fix permissions issues for the Apache web user.
   - chown -R www-data:www-data app
 
@@ -15,6 +17,7 @@ test_head:
 
 deploy_setup: &deploy_setup
   - bundle install --path vendor/bundle
+  - npm install
 
 deploy_qa:
   setup: *deploy_setup

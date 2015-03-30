@@ -1,6 +1,10 @@
-.vagrant
-vendor
-bin
-app
-build
-.idea
+/.vagrant
+/vendor
+/bin
+/app
+/build
+/.idea
+/styleguide
+/node_modules
+.sass-cache
+/themes/ua_proto/css

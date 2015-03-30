@@ -28,6 +28,6 @@ set :mysql_db,   "#{app_name}"
 set :mysql_host, "localhost"
 namespace :phing do
   task :build, :on_error => :continue do
-    run "cd #{release_path} && #{phing_bin} build -Dmysql.queryString='mysql://#{mysql_user}:#{mysql_pass}@#{mysql_host}/#{mysql_db}'"
+    run "cd #{release_path} && #{phing_bin} build -Dmysql.queryString='mysql://#{mysql_user}:#{mysql_pass}@#{mysql_host}/#{mysql_db}' styleguide:link"
   end
 end
