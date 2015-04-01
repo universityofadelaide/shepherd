@@ -8,3 +8,8 @@
 /node_modules
 .sass-cache
 /themes/ua_proto/css
+/modules
+!/modules/README.md
+/profiles
+!/profiles/README.md
+/.bundle
