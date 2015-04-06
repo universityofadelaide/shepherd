@@ -122,7 +122,7 @@
 
     <target name="styleguide:link"
             description="Link the styleguide into the application root.">
-      <symlink link="${project.basedir}/app/styleguide" target="${project.basedir}/styleguide" />
+      <symlink link="${project.basedir}/app/styleguide" target="../styleguide" />
     </target>
 
 </project>
