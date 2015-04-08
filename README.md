@@ -31,11 +31,11 @@ $ vagrant plugin install vagrant-s3auth
 Vagrant images are stored privately on Amazon S3. To pull down the images for the first time
 you will need to add some credentials to your local profile.
 
-Add the following to your "~/.profile" file.
+Add the following to your "~/.aws/ua" file, create the file if you need to.
 
 ```bash
-export AWS_ACCESS_KEY_ID=AKIAIHQDNUJMSQIJXUDQ
-export AWS_SECRET_ACCESS_KEY=D5yj5exudn7F2ccWQcmJyVtCMGvJc1U4XAZClQkH
+AKIAJHJZX5WZTF2SIFOA
++bRiEz8I+jBnzE2PPTcfGvdfQ/kvzUQWUsUTfo9S
 ```
 
 NOTE: These credentials can only access the box images (cannot write or view other buckets).
