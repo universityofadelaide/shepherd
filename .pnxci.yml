@@ -16,8 +16,9 @@ test_head:
   steps: *test
 
 deploy_setup: &deploy_setup
-  - bundle install --path vendor/bundle
+  - composer install --prefer-dist --no-progress
   - npm install
+  - bundle install --path vendor/bundle
   - bin/phing generate
 
 deploy_qa:
