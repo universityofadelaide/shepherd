@@ -10,6 +10,11 @@ set :port,          22
 set :default_stage, "dev"
 set :use_sudo,      false
 
+# This allow us to compile the styleguide and have it as part of the deploy.
+# Instead of checking out the repo on the remote host, we build the deploy
+# locally and then copy it over.
+set :deploy_via, :copy
+
 ssh_options[:forward_agent] = true
 
 after "deploy:update_code", "composer:install", "phing:build"
