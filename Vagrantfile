@@ -1,4 +1,4 @@
-if File.exists(File.expand_path('~/.aws/ua'))
+if File.exists?(File.expand_path('~/.aws/ua'))
   creds = File.read(File.expand_path('~/.aws/ua')).lines
   ENV['AWS_ACCESS_KEY_ID']     = creds[0].chomp
   ENV['AWS_SECRET_ACCESS_KEY'] = creds[1].chomp
