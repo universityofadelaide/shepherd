@@ -1,0 +1,62 @@
+/*
+Error: File to import not found or unreadable: init.
+       Load paths:
+         /Users/kim/dev/ua/ua/themes/ua_proto/sass
+         /Users/kim/.rbenv/versions/1.9.3-p545/lib/ruby/gems/1.9.1/gems/compass-core-1.0.3/stylesheets
+         /Users/kim/.rbenv/versions/1.9.3-p545/lib/ruby/gems/1.9.1/gems/sassy-maps-0.4.0/sass
+         /Users/kim/.rbenv/versions/1.9.3-p545/lib/ruby/gems/1.9.1/gems/breakpoint-2.5.0/stylesheets
+         /Users/kim/.rbenv/versions/1.9.3-p545/lib/ruby/gems/1.9.1/gems/zen-grids-2.0.0.beta.3/stylesheets
+         Compass::SpriteImporter
+         Sass::Globbing::Importer
+        on line 3 of sass/style-guide/sass-colors.scss.txt
+
+1: // Build the markup needed for the color section of the KSS style guide.
+2: 
+3: @import 'init';
+4: 
+5: /*
+6: #{kss-color-markup()}
+7: *\/
+
+Backtrace:
+sass/style-guide/sass-colors.scss.txt:3
+/Users/kim/.rbenv/versions/1.9.3-p545/lib/ruby/gems/1.9.1/gems/sass-3.4.13/lib/sass/tree/import_node.rb:66:in `rescue in import'
+/Users/kim/.rbenv/versions/1.9.3-p545/lib/ruby/gems/1.9.1/gems/sass-3.4.13/lib/sass/tree/import_node.rb:45:in `import'
+/Users/kim/.rbenv/versions/1.9.3-p545/lib/ruby/gems/1.9.1/gems/sass-3.4.13/lib/sass/tree/import_node.rb:28:in `imported_file'
+/Users/kim/.rbenv/versions/1.9.3-p545/lib/ruby/gems/1.9.1/gems/sass-3.4.13/lib/sass/tree/import_node.rb:37:in `css_import?'
+/Users/kim/.rbenv/versions/1.9.3-p545/lib/ruby/gems/1.9.1/gems/sass-3.4.13/lib/sass/tree/visitors/perform.rb:311:in `visit_import'
+/Users/kim/.rbenv/versions/1.9.3-p545/lib/ruby/gems/1.9.1/gems/sass-3.4.13/lib/sass/tree/visitors/base.rb:36:in `visit'
+/Users/kim/.rbenv/versions/1.9.3-p545/lib/ruby/gems/1.9.1/gems/sass-3.4.13/lib/sass/tree/visitors/perform.rb:158:in `block in visit'
+/Users/kim/.rbenv/versions/1.9.3-p545/lib/ruby/gems/1.9.1/gems/sass-3.4.13/lib/sass/stack.rb:79:in `block in with_base'
+/Users/kim/.rbenv/versions/1.9.3-p545/lib/ruby/gems/1.9.1/gems/sass-3.4.13/lib/sass/stack.rb:115:in `with_frame'
+/Users/kim/.rbenv/versions/1.9.3-p545/lib/ruby/gems/1.9.1/gems/sass-3.4.13/lib/sass/stack.rb:79:in `with_base'
+/Users/kim/.rbenv/versions/1.9.3-p545/lib/ruby/gems/1.9.1/gems/sass-3.4.13/lib/sass/tree/visitors/perform.rb:158:in `visit'
+/Users/kim/.rbenv/versions/1.9.3-p545/lib/ruby/gems/1.9.1/gems/sass-3.4.13/lib/sass/tree/visitors/base.rb:52:in `block in visit_children'
+/Users/kim/.rbenv/versions/1.9.3-p545/lib/ruby/gems/1.9.1/gems/sass-3.4.13/lib/sass/tree/visitors/base.rb:52:in `map'
+/Users/kim/.rbenv/versions/1.9.3-p545/lib/ruby/gems/1.9.1/gems/sass-3.4.13/lib/sass/tree/visitors/base.rb:52:in `visit_children'
+/Users/kim/.rbenv/versions/1.9.3-p545/lib/ruby/gems/1.9.1/gems/sass-3.4.13/lib/sass/tree/visitors/perform.rb:167:in `block in visit_children'
+/Users/kim/.rbenv/versions/1.9.3-p545/lib/ruby/gems/1.9.1/gems/sass-3.4.13/lib/sass/tree/visitors/perform.rb:179:in `with_environment'
+/Users/kim/.rbenv/versions/1.9.3-p545/lib/ruby/gems/1.9.1/gems/sass-3.4.13/lib/sass/tree/visitors/perform.rb:166:in `visit_children'
+/Users/kim/.rbenv/versions/1.9.3-p545/lib/ruby/gems/1.9.1/gems/sass-3.4.13/lib/sass/tree/visitors/base.rb:36:in `block in visit'
+/Users/kim/.rbenv/versions/1.9.3-p545/lib/ruby/gems/1.9.1/gems/sass-3.4.13/lib/sass/tree/visitors/perform.rb:186:in `visit_root'
+/Users/kim/.rbenv/versions/1.9.3-p545/lib/ruby/gems/1.9.1/gems/sass-3.4.13/lib/sass/tree/visitors/base.rb:36:in `visit'
+/Users/kim/.rbenv/versions/1.9.3-p545/lib/ruby/gems/1.9.1/gems/sass-3.4.13/lib/sass/tree/visitors/perform.rb:157:in `visit'
+/Users/kim/.rbenv/versions/1.9.3-p545/lib/ruby/gems/1.9.1/gems/sass-3.4.13/lib/sass/tree/visitors/perform.rb:8:in `visit'
+/Users/kim/.rbenv/versions/1.9.3-p545/lib/ruby/gems/1.9.1/gems/sass-3.4.13/lib/sass/tree/root_node.rb:36:in `css_tree'
+/Users/kim/.rbenv/versions/1.9.3-p545/lib/ruby/gems/1.9.1/gems/sass-3.4.13/lib/sass/tree/root_node.rb:20:in `render'
+/Users/kim/.rbenv/versions/1.9.3-p545/lib/ruby/gems/1.9.1/gems/sass-3.4.13/lib/sass/engine.rb:268:in `render'
+/Users/kim/.rbenv/versions/1.9.3-p545/lib/ruby/gems/1.9.1/gems/compass-import-once-1.0.5/lib/compass/import-once/engine.rb:17:in `block in render'
+/Users/kim/.rbenv/versions/1.9.3-p545/lib/ruby/gems/1.9.1/gems/compass-import-once-1.0.5/lib/compass/import-once/engine.rb:29:in `with_import_scope'
+/Users/kim/.rbenv/versions/1.9.3-p545/lib/ruby/gems/1.9.1/gems/compass-import-once-1.0.5/lib/compass/import-once/engine.rb:16:in `render'
+/Users/kim/.rbenv/versions/1.9.3-p545/lib/ruby/gems/1.9.1/gems/sass-3.4.13/lib/sass/exec/sass_scss.rb:415:in `run'
+/Users/kim/.rbenv/versions/1.9.3-p545/lib/ruby/gems/1.9.1/gems/sass-3.4.13/lib/sass/exec/sass_scss.rb:63:in `process_result'
+/Users/kim/.rbenv/versions/1.9.3-p545/lib/ruby/gems/1.9.1/gems/sass-3.4.13/lib/sass/exec/base.rb:52:in `parse'
+/Users/kim/.rbenv/versions/1.9.3-p545/lib/ruby/gems/1.9.1/gems/sass-3.4.13/lib/sass/exec/base.rb:19:in `parse!'
+/Users/kim/.rbenv/versions/1.9.3-p545/lib/ruby/gems/1.9.1/gems/sass-3.4.13/bin/sass:13:in `<top (required)>'
+/Users/kim/.rbenv/versions/1.9.3-p545/bin/sass:23:in `load'
+/Users/kim/.rbenv/versions/1.9.3-p545/bin/sass:23:in `<main>'
+*/
+body:before {
+  white-space: pre;
+  font-family: monospace;
+  content: "Error: File to import not found or unreadable: init.\A        Load paths:\A          /Users/kim/dev/ua/ua/themes/ua_proto/sass\A          /Users/kim/.rbenv/versions/1.9.3-p545/lib/ruby/gems/1.9.1/gems/compass-core-1.0.3/stylesheets\A          /Users/kim/.rbenv/versions/1.9.3-p545/lib/ruby/gems/1.9.1/gems/sassy-maps-0.4.0/sass\A          /Users/kim/.rbenv/versions/1.9.3-p545/lib/ruby/gems/1.9.1/gems/breakpoint-2.5.0/stylesheets\A          /Users/kim/.rbenv/versions/1.9.3-p545/lib/ruby/gems/1.9.1/gems/zen-grids-2.0.0.beta.3/stylesheets\A          Compass::SpriteImporter\A          Sass::Globbing::Importer\A         on line 3 of sass/style-guide/sass-colors.scss.txt\A \A 1: // Build the markup needed for the color section of the KSS style guide.\A 2: \A 3: @import 'init';\A 4: \A 5: /*\A 6: #{kss-color-markup()}\A 7: */"; }
