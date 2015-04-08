@@ -18,6 +18,7 @@ test_head:
 deploy_setup: &deploy_setup
   - bundle install --path vendor/bundle
   - npm install
+  - bin/phing generate
 
 deploy_qa:
   setup: *deploy_setup
