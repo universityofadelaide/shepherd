@@ -1,0 +1,7 @@
+// Build the markup needed for the color section of the KSS style guide.
+
+@import 'init';
+
+/*
+#{kss-color-markup()}
+*/

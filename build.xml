@@ -23,6 +23,9 @@
     <property name="drush.cmd"       value="${drush.bin} -r ${app.dir}" />
     <property name="drush.make.file" value="ua.make" />
 
+    <!-- Gulp -->
+    <property name="gulp.cmd"        value="${project.basedir}/node_modules/.bin/gulp" />
+
     <!-- Drupal -->
     <property name="drupal.siteName" value="University of Adelaide" />
     <property name="drupal.email"    value="user@example.com" />
@@ -46,7 +49,7 @@
 
     <target name="build"
             description="Build the project and test it."
-            depends="prepare, make, install" />
+            depends="prepare, make, install, generate" />
 
     <!-- Steps targets. -->
 
@@ -108,6 +111,18 @@
         <exec command="${drush.bin} -r ${app.dir} site-install ${drupal.profile} -y --db-url=${mysql.queryString} --account-mail=${drupal.email} --account-name=${drupal.user} --account-pass=${drupal.pass} --site-name=${drupal.siteName}"
               logoutput="true"
               passthru="true" />
+    </target>
+
+    <target name="generate"
+            description="Generate the CSS and styleguide">
+        <exec command="${gulp.cmd}"
+              logoutput="true"
+              passthru="true" />
+    </target>
+
+    <target name="styleguide:link"
+            description="Link the styleguide into the application root.">
+      <symlink link="${project.basedir}/app/styleguide" target="${project.basedir}/styleguide" />
     </target>
 
 </project>
