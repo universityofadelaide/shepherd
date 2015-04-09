@@ -71,7 +71,7 @@
               passthru="true"
               logoutput="true" />
 
-        <exec command="${drush.bin} make ${drush.make.file} ${app.docroot}"
+        <exec command="${drush.bin} make --working-copy ${drush.make.file} ${app.docroot}"
               passthru="true"
               logoutput="true" />
 
