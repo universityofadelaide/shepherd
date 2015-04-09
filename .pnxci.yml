@@ -20,9 +20,6 @@ test_head:
   setup: *deps
   steps: *test
 
-deploy_setup: &deploy_setup
-  - bin/phing generate
-
 deploy_qa:
   setup: *deps
   steps:

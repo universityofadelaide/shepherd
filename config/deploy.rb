@@ -1,11 +1,8 @@
 set :app_name,      "ua"
 set :location,      "qa.ua.previousnext.com.au"
 set :application,   "qa.ua.previousnext.com.au"
-set :scm,           :git
-set :repository,    "git@github.com:previousnext/#{app_name}.git"
 set :user,          "deployer"
 set :runner,        "deployer"
-set :branch,        "master"
 set :port,          22
 set :default_stage, "dev"
 set :use_sudo,      false
