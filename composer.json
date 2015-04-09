@@ -3,9 +3,12 @@
         "phing/phing":                   "2.10.1",
         "drush/drush":                   "7.0.0-rc1",
         "previousnext/phing-phpqatools": "0.0.2"
-},
+    },
     "minimum-stability": "dev",
     "config": {
-        "bin-dir": "bin/"
+        "bin-dir": "bin/",
+        "github-oauth":{
+            "github.com":"681de8b61108d3c64168e26426860b50c97aa86d"
+        }
     }
 }
