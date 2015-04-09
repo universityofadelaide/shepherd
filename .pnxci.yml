@@ -1,8 +1,11 @@
 application: uofa/lamp
 
-test: &test
+deps: &deps
   - composer install --prefer-dist --no-progress
   - npm install
+  - bundle install --path vendor/bundle
+
+test: &test
   - bin/phing ci:phpcs
   - bin/phing
   - bin/phing styleguide:link
@@ -10,21 +13,21 @@ test: &test
   - chown -R www-data:www-data app
 
 test_pr:
+  setup: *deps
   steps: *test
 
 test_head:
+  setup: *deps
   steps: *test
 
-deploy_setup: &deploy_setup
-  - bundle install --path vendor/bundle
-  - npm install
-
 deploy_qa:
-  setup: *deploy_setup
+  setup: *deps
   steps:
+    - bin/phing generate
     - bundle exec cap dev deploy
 
 deploy_staging:
-  setup: *deploy_setup
+  setup: *deps
   steps:
+    - bin/phing generate
     - bundle exec cap staging deploy

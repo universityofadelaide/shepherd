@@ -1,14 +1,16 @@
 set :app_name,      "ua"
 set :location,      "qa.ua.previousnext.com.au"
 set :application,   "qa.ua.previousnext.com.au"
-set :scm,           :git
-set :repository,    "git@github.com:previousnext/#{app_name}.git"
 set :user,          "deployer"
 set :runner,        "deployer"
-set :branch,        "master"
 set :port,          22
 set :default_stage, "dev"
 set :use_sudo,      false
+
+# This allow us to compile the styleguide and have it as part of the deploy.
+# Instead of checking out the repo on the remote host, we build the deploy
+# locally and then copy it over.
+set :deploy_via, :copy
 
 ssh_options[:forward_agent] = true
 
