@@ -2,7 +2,7 @@ application: uofa/lamp
 
 deps: &deps
   - composer install --prefer-dist --no-progress
-  - npm install
+  - npm install --loglevel silent
   - bundle install --path vendor/bundle
 
 test: &test

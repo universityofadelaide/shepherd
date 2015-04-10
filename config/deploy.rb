@@ -13,6 +13,7 @@ set :use_sudo,      false
 set :scm, :none
 set :repository, "."
 set :deploy_via, :copy
+set :copy_exclude, ["vendor", ".bundle", ".git", "bin"]
 
 ssh_options[:forward_agent] = true
 
