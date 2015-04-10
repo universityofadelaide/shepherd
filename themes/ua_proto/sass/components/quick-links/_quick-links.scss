@@ -40,12 +40,12 @@
     list-style: none;
   }
 
-  &__menu__item {
+  &__menu-item {
     position: relative;
     padding: 5px 0;
   }
 
-  &__menu__item--arrow {
+  &__menu-item-arrow {
     display: block;
     position: absolute;
     top: 50%;
@@ -72,3 +72,5 @@
     }
   }
 }
+
+
