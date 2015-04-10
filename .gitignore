@@ -13,3 +13,5 @@
 /profiles
 !/profiles/README.md
 /.bundle
+/themes/ua_proto/sass/style-guide/sass-colors.hbs
+/themes/ua_proto/sass/style-guide/sass-colors.hbs.txt
