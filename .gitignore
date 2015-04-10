@@ -8,3 +8,5 @@
 /node_modules
 .sass-cache
 /themes/ua_proto/css
+/themes/ua_proto/sass/style-guide/sass-colors.hbs
+/themes/ua_proto/sass/style-guide/sass-colors.hbs.txt
