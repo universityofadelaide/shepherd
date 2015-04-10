@@ -9,6 +9,7 @@
 
 # Require any additional compass plugins installed on your system.
 require 'breakpoint'
+require 'chroma'
 require 'compass/import-once/activate'
 require 'sass-globbing'
 require 'zen-grids'
