@@ -1,0 +1,44 @@
+# Documentation for the scss-lint Linters is available at:
+# https://github.com/causes/scss-lint/blob/master/lib/scss_lint/linter/README.md
+linters:
+  ColorVariable:
+    enabled: false # Enable after this bug is fixed: https://github.com/causes/scss-lint/issues/376
+  Compass::*:
+    enabled: true # Disabled by default.
+  Compass::PropertyWithMixin:
+    ignore:
+      - 'inline-block'  # Only needed for IE7/FF2 and earlier.
+      - 'text-shadow'   # No vendor prefixes ever used. http://caniuse.com/#feat=css-textshadow
+  EmptyLineBetweenBlocks:
+    ignore_single_line_blocks: false
+  MergeableSelector:
+    force_nesting: true
+  NameFormat:
+    convention: BEM
+  PropertySortOrder:
+    enabled: false
+  PropertySpelling:
+    extra_properties:
+      # Experimental properties and old IE hacks can be listed here.
+      - '*background'
+      - '*background-image'
+      - '*display'
+      - '*font-family'
+      - '_font-family'
+      - '*height'
+      - '*list-style-image'
+      - '*margin-left'
+      - '*margin-right'
+      - '*overflow'
+      - '*position'
+      - '*vertical-align'
+      - '*width'
+      - '*zoom'
+  QualifyingElement:
+    enabled: false
+  SelectorFormat:
+    convention: ^[a-z](\-?[a-z0-9]+)*(\-\-[a-z0-9](\-?[a-z0-9]+)*)?(__[a-z0-9](\-?[a-z0-9]+)*)?$
+  SingleLinePerProperty:
+    allow_single_line_rule_sets: false # Allowed by default.
+  SpaceAfterPropertyColon:
+    style: at_least_one_space

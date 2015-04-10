@@ -15,12 +15,12 @@ var gulp      = require('gulp'),
 
 
 // Build styleguide.
-gulp.task('styleguide', ['clean:styleguide'], $.shell.task([
+gulp.task('styleguide', ['clean:styleguide', 'styleguide:markup'], $.shell.task([
     // kss-node [source folder of files to parse] [destination folder] --template [location of template files]
-    __dirname + '/node_modules/.bin/kss-node --config <%= config %>'
+    'kss-node --config <%= config %>'
   ], {
     templateData: {
-      config: theme + '/sass/config.json'
+      config: theme + '/sass/style-guide/config.json'
     }
   }
 ));
