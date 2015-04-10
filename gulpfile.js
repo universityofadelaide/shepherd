@@ -61,6 +61,11 @@ gulp.task('styles', ['clean:css'], $.shell.task([
   ], {cwd: theme}
 ));
 
+gulp.task('bundle', $.shell.task([
+    'bundle'
+  ]
+));
+
 gulp.task('styles:production', ['clean:css'], $.shell.task([
     'bundle exec compass compile --time --no-sourcemap --output-style expanded'
 //    'bundle exec compass compile --time --no-sourcemap --output-style compressed'
@@ -93,7 +98,7 @@ gulp.task('clean:css', del.bind(null, [theme + '**/.sass-cache', theme + compass
 gulp.task('clean', ['clean:css', 'clean:styleguide']);
 
 // Production build of front-end.
-gulp.task('build', ['styles:production', 'styleguide'], function (cb) {
+gulp.task('build', ['bundle', 'styles:production', 'styleguide'], function (cb) {
   // Run linting last, otherwise its output gets lost.
   runSequence(['lint'], cb);
 });
