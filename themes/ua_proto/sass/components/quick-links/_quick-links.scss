@@ -59,7 +59,7 @@
     text-indent: -99999px;
   }
 
-  a {
+  &__menu-item__link:link {
     border-bottom: 0;
     padding-left: 16px;
     position: relative;
@@ -72,5 +72,3 @@
     }
   }
 }
-
-
