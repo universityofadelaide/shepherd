@@ -13,7 +13,7 @@ GEM
     capistrano-drupal (0.1.10)
     capistrano-ext (1.2.1)
       capistrano (>= 1.0.0)
-    chroma-sass (1.0.0.alpha.3)
+    chroma-sass (1.0.0.alpha.4)
       sass (~> 3.3)
     chunky_png (1.3.4)
     compass (1.0.3)
@@ -65,7 +65,7 @@ DEPENDENCIES
   capistrano (~> 2.5.5)
   capistrano-drupal
   capistrano-ext
-  chroma-sass (= 1.0.0.alpha.3)
+  chroma-sass (= 1.0.0.alpha.4)
   compass (~> 1.0)
   compass-import-once (~> 1.0)
   oily_png (~> 1.1)
