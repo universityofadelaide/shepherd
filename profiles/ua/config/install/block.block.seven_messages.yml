@@ -1,13 +1,13 @@
-id: seven_breadcrumbs
+id: seven_messages
 theme: seven
 weight: 0
 status: true
 langcode: en
-region: breadcrumb
-plugin: system_breadcrumb_block
+region: messages
+plugin: system_messages_block
 settings:
-  id: system_breadcrumb_block
-  label: Breadcrumbs
+  id: system_messages_block
+  label: 'Status messages'
   provider: system
   label_display: '0'
 dependencies:
@@ -15,4 +15,3 @@ dependencies:
     - system
   theme:
     - seven
-visibility: {  }
