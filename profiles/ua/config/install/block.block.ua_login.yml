@@ -1,5 +1,5 @@
-id: bartik_login
-theme: bartik
+id: ua_login
+theme: ua
 weight: 0
 status: true
 langcode: en
@@ -14,5 +14,5 @@ dependencies:
   module:
     - user
   theme:
-    - bartik
+    - ua
 visibility: {  }

@@ -1,5 +1,5 @@
-id: bartik_content
-theme: bartik
+id: ua_content
+theme: ua
 weight: 0
 status: true
 langcode: en
@@ -14,5 +14,5 @@ dependencies:
   module:
     - system
   theme:
-    - bartik
+    - ua
 visibility: {  }

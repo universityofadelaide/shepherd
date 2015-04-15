@@ -1,15 +1,15 @@
-id: bartik_footer
-theme: bartik
+id: ua_footer
+theme: ua
 weight: 0
 status: true
 langcode: en
-region: footer_fifth
+region: footer
 plugin: 'system_menu_block:footer'
 settings:
   id: 'system_menu_block:footer'
   label: 'Footer menu'
   provider: system
-  label_display: '0'
+  label_display: visible
   cache:
     max_age: -1
     contexts: {  }
@@ -21,5 +21,5 @@ dependencies:
   module:
     - system
   theme:
-    - bartik
+    - ua
 visibility: {  }
