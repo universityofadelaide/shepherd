@@ -1,5 +1,5 @@
-id: ua_help
-theme: ua
+id: ua_theme_help
+theme: ua_theme
 weight: 0
 status: true
 langcode: en
@@ -14,5 +14,5 @@ dependencies:
   module:
     - help
   theme:
-    - ua
+    - ua_theme
 visibility: {  }

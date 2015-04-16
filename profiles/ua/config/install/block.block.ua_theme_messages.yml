@@ -1,5 +1,5 @@
-id: ua_messages
-theme: ua
+id: ua_theme_messages
+theme: ua_theme
 weight: 0
 status: true
 langcode: en
@@ -14,4 +14,4 @@ dependencies:
   module:
     - system
   theme:
-    - ua
+    - ua_theme

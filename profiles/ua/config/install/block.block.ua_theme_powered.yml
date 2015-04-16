@@ -1,5 +1,5 @@
-id: ua_powered
-theme: ua
+id: ua_theme_powered
+theme: ua_theme
 weight: 10
 status: true
 langcode: en
@@ -14,5 +14,5 @@ dependencies:
   module:
     - system
   theme:
-    - ua
+    - ua_theme
 visibility: {  }

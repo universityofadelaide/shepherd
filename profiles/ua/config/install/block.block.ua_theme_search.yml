@@ -1,5 +1,5 @@
-id: ua_search
-theme: ua
+id: ua_theme_search
+theme: ua_theme
 weight: -1
 status: true
 langcode: en
@@ -14,5 +14,5 @@ dependencies:
   module:
     - search
   theme:
-    - ua
+    - ua_theme
 visibility: {  }
