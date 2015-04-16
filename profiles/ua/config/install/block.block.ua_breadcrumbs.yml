@@ -3,7 +3,7 @@ theme: ua
 weight: -5
 status: false
 langcode: en
-region: '-1'
+region: 'breadcrumb'
 plugin: system_breadcrumb_block
 settings:
   id: system_breadcrumb_block
