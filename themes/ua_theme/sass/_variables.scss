@@ -1,0 +1,63 @@
+// scss-lint:disable ColorKeyword, ColorVariable, SpaceAfterComma
+
+//
+// Variables
+//
+
+//
+// Font faces, stacks and sizes.
+//
+
+$arial: Arial,Helvetica,sans-serif;
+$georgia: Georgia,Times,serif;
+
+// Now create some variables using the font stacks we want on this site.
+$font-body: $arial;
+$font-header: $georgia;
+
+//Font sizes
+$body-font-size: 13px;
+$body-line-height: 1.3;
+
+
+// The following Sass functions are required to generate some variables' values,
+// so we load them first.
+@import 'chroma/functions';
+
+// Colors
+//
+// Use the <code>color()</code> function to add colors to CSS properties.
+//
+// Markup: sass-colors.hbs
+//
+// Weight: -1
+//
+// Styleguide: sass.colors
+
+// Define useful names of color values.
+$chroma: add-default-color-scheme('The main colors of the site.', (
+white:              #ffffff,
+black:              #231f20,
+grey:               #bbb,
+grey-light:         #ddd,
+grey-dark:          #666,
+grey-darker:        #333,
+grey-blue-light:    #d5e3ef,
+grey-blue-lighter:  #cadceb,
+
+blue-light:         #eaf1f8,
+red-text:           #ec1c2e,
+blue-text:          #005a9c,
+orange-text:        #b38808,
+));
+$chroma-default-scheme:  'design';
+
+// Define color variable names for functional uses.
+$chroma: add-color-scheme('design', 'Colors used by different parts of the design.', (
+  // Text colors.
+heading-grey:       color(grey-darker),
+heading-orange:     color(orange-text),
+body:               color(grey-dark),
+link:               color(blue-text),
+link-focus:         color(red-text),
+));
