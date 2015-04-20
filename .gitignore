@@ -7,7 +7,7 @@
 /build
 /node_modules
 /styleguide
-/themes/ua_proto/css
-/themes/ua_proto/sass/style-guide/sass-colors.hbs
-/themes/ua_proto/sass/style-guide/sass-colors.hbs.txt
+/themes/ua_theme/css
+/themes/ua_theme/sass/style-guide/sass-colors.hbs
+/themes/ua_theme/sass/style-guide/sass-colors.hbs.txt
 /vendor
