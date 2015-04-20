@@ -1,9 +1,9 @@
-id: bartik_breadcrumbs
-theme: bartik
-weight: 0
+id: ua_theme_breadcrumbs
+theme: ua_theme
+weight: -5
 status: true
 langcode: en
-region: breadcrumb
+region: 'breadcrumb'
 plugin: system_breadcrumb_block
 settings:
   id: system_breadcrumb_block
@@ -14,5 +14,5 @@ dependencies:
   module:
     - system
   theme:
-    - bartik
+    - ua_theme
 visibility: {  }

@@ -7,7 +7,7 @@ var gulp      = require('gulp'),
   runSequence = require('run-sequence'),
 
 // Task configuration.
-  theme         = __dirname + '/themes/ua_proto/',
+  theme         = __dirname + '/themes/ua_theme/',
   styleguide    = __dirname + '/styleguide/',
 
 // Get theme sub-directories from Compass' config.rb.
