@@ -1,0 +1,35 @@
+<?php
+
+/**
+ * @file
+ * Module file for UA links block.
+ */
+
+/**
+ * Implements hook_entity_prepare_view().
+ *
+ * @param string $entity_type_id
+ *   The type of entities being viewed (i.e. node, user, comment).
+ * @param \Drupal\Core\Entity\EntityInterface[] $entities
+ *   The entities keyed by entity ID.
+ * @param \Drupal\Core\Entity\Display\EntityViewDisplayInterface[] $displays
+ *   The array of entity view displays holding the display options configured
+ *   for the entity components, keyed by bundle name.
+ * @param string $view_mode
+ *   The view mode.
+ */
+function ua_links_block_entity_prepare_view($entity_type_id, array $entities, array $displays, $view_mode) {
+  if ($entity_type_id == 'block_content') {
+    foreach ($entities as $entity) {
+      if ($entity->bundle() == 'links') {
+        foreach ($displays[$entity->bundle()]->getComponents() as $name => $options) {
+          if ($name == 'field_links') {
+            foreach ($entity->get($name) as $item) {
+              $item->_attributes += array('class' => array('quick-links__menu-item__link'));
+            }
+          }
+        }
+      }
+    }
+  }
+}

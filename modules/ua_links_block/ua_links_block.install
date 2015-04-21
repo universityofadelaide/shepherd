@@ -1,0 +1,97 @@
+<?php
+
+/**
+ * @file
+ * Install, update, and uninstall functions for the UA links block module.
+ */
+
+use Drupal\block\Entity\Block;
+use Drupal\block_content\Entity\BlockContent;
+use Drupal\block_content\Entity\BlockContentType;
+use Drupal\Core\Entity\Entity\EntityFormMode;
+use Drupal\Core\Entity\Entity\EntityViewMode;
+use Drupal\field\Entity\FieldStorageConfig;
+
+/**
+ * Implements hook_install().
+ */
+function ua_links_block_install() {
+
+  if (!\Drupal::service('config.installer')->isSyncing()) {
+    // Create a default block.
+    $block_content = BlockContent::create([
+      'type' => 'links',
+      'info' => 'Quick Links',
+    ]);
+    $link = [
+      'options' => [
+        'attributes' => [
+          'class' => [
+            'quick-links__menu-item__link',
+          ],
+        ],
+      ],
+    ];
+    $block_content->field_links[] = [
+      'uri' => 'https://www.drupal.org',
+      'title' => 'Drupal',
+    ] + $link;
+    $block_content->field_links[] = [
+      'uri' => 'https://www.google.com',
+      'title' => 'Google',
+    ] + $link;
+    $block_content->field_links[] = [
+      'uri' => 'https://github.com',
+      'title' => 'GitHub',
+    ] + $link;
+    $block_content->field_links[] = [
+      'uri' => 'https://www.previousnext.com.au',
+      'title' => 'PreviousNext',
+    ] + $link;
+    $block_content->save();
+    $block = Block::create([
+      'id' => 'ua_quicklinks',
+      'theme' => \Drupal::config('system.theme')->get('default'),
+      'weight' => 0,
+      'status' => TRUE,
+      'region' => 'content',
+      'plugin' => 'block_content:' . $block_content->uuid(),
+      'settings' => [
+        'id' => 'block_content:' . $block_content->uuid(),
+        'label' => 'Quick Links',
+        'provider' => 'block_content',
+        'label_display' => 'visible',
+      ],
+      'visibility' => [],
+    ]);
+    $block->save();
+  }
+}
+
+/**
+ * Implements hook_uninstall().
+ */
+function ua_links_block_uninstall() {
+  // Delete all the blocks provided by this module.
+  foreach (entity_load_multiple_by_properties('block_content', ['type' => 'links']) as $block_content) {
+    $block_content->delete();
+  }
+  // Delete the links field.
+  if ($field_storage = FieldStorageConfig::loadByName('block_content', 'field_links ')) {
+    $field_storage->delete();
+  }
+  // Delete the view mode.
+  if ($view_mode = EntityViewMode::load('block_content.links.default')) {
+    $view_mode->delete();
+  }
+  // Delete the form mode.
+  if ($form_mode = EntityFormMode::load('block_content.links.default')) {
+    $form_mode->delete();
+  }
+  // Delete the links block content type.
+  if ($links = BlockContentType::load('links')) {
+    $links->delete();
+  }
+  // Purge field data now.
+  field_purge_batch(10);
+}
