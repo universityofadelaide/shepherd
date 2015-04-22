@@ -37,5 +37,5 @@ dependencies:
   - views_ui
   - tour
 themes:
-  - bartik
+  - ua_theme
   - seven

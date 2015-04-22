@@ -40,8 +40,8 @@ white:              #ffffff,
 black:              #231f20,
 grey:               #bbb,
 grey-light:         #ddd,
-grey-dark:          #333,
-grey-darker:        #666,
+grey-dark:          #666,
+grey-darker:        #333,
 grey-blue-light:    #d5e3ef,
 grey-blue-lighter:  #cadceb,
 
@@ -55,9 +55,9 @@ $chroma-default-scheme:  'design';
 // Define color variable names for functional uses.
 $chroma: add-color-scheme('design', 'Colors used by different parts of the design.', (
   // Text colors.
-heading-grey:       color(grey-dark),
+heading-grey:       color(grey-darker),
 heading-orange:     color(orange-text),
-body:               color(grey-darker),
+body:               color(grey-dark),
 link:               color(blue-text),
 link-focus:         color(red-text),
 ));

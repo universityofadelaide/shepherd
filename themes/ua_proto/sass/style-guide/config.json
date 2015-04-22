@@ -1,5 +1,0 @@
-{
-  "source":       "../",
-  "destination":  "../../../../styleguide",
-  "css": ["/themes/custom/ua_proto/css/styles.css"]
-}
