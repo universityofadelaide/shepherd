@@ -8,7 +8,7 @@ Vagrant.configure("2") do |config|
   config.vm.define 'lamp', primary: true do |lamp|
     lamp.vm.box      = 'ua-lamp'
     lamp.vm.hostname = 'ua.dev'
-    lamp.vm.box_url  = 'https://s3-ap-southeast-2.amazonaws.com/ua-boxes/lamp.box'
+    lamp.vm.box_url  = 'http://dgaf.adelaide.edu.au/ua-lamp.box'
 
     # This script is a last chance for Developers to add more
     # configuration to the Vagrant host.
