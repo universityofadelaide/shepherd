@@ -21,7 +21,7 @@
     <!-- Drush -->
     <property name="drush.bin"       value="${project.basedir}/bin/drush" />
     <property name="drush.cmd"       value="${drush.bin} -r ${app.dir}" />
-    <property name="drush.make.file" value="ua.make" />
+    <property name="drush.make.file" value="ua.make.yml" />
 
     <!-- Gulp -->
     <property name="gulp.cmd"        value="${project.basedir}/node_modules/.bin/gulp" />
@@ -67,7 +67,7 @@
 
     <target name="make"
             description="Builds the application based on the drush make file.">
-        <exec command="${composer.bin} install --prefer-dist --dev --no-progress"
+        <exec command="${composer.bin} install --prefer-dist --no-progress"
               passthru="true"
               logoutput="true" />
 
@@ -109,6 +109,11 @@
 
         <!-- Install the site. -->
         <exec command="${drush.bin} -r ${app.dir} site-install ${drupal.profile} -y --db-url=${mysql.queryString} --account-mail=${drupal.email} --account-name=${drupal.user} --account-pass=${drupal.pass} --site-name=${drupal.siteName}"
+              logoutput="true"
+              passthru="true" />
+
+        <!-- Clear caches. -->
+        <exec command="${drush.bin} -r ${app.dir} cr"
               logoutput="true"
               passthru="true" />
     </target>

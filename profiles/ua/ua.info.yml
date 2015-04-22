@@ -8,6 +8,7 @@ dependencies:
   - history
   - block
   - breakpoint
+  - cas
   - ckeditor
   - color
   - config
