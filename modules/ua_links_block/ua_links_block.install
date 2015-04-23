@@ -32,22 +32,22 @@ function ua_links_block_install() {
         ],
       ],
     ];
-    $block_content->field_links[] = [
+    $block_content->field_links[] = array(
       'uri' => 'https://www.drupal.org',
       'title' => 'Drupal',
-    ] + $link;
-    $block_content->field_links[] = [
+    ) + $link;
+    $block_content->field_links[] = array(
       'uri' => 'https://www.google.com',
       'title' => 'Google',
-    ] + $link;
-    $block_content->field_links[] = [
+    ) + $link;
+    $block_content->field_links[] = array(
       'uri' => 'https://github.com',
       'title' => 'GitHub',
-    ] + $link;
-    $block_content->field_links[] = [
+    ) + $link;
+    $block_content->field_links[] = array(
       'uri' => 'https://www.previousnext.com.au',
       'title' => 'PreviousNext',
-    ] + $link;
+    ) + $link;
     $block_content->save();
     $block = Block::create([
       'id' => 'ua_quicklinks',
