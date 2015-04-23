@@ -15,12 +15,12 @@ var gulp      = require('gulp'),
 
 
 // Build styleguide.
-gulp.task('styleguide', ['clean:styleguide'], $.shell.task([
+gulp.task('styleguide', ['clean:styleguide', 'styleguide:markup'], $.shell.task([
     // kss-node [source folder of files to parse] [destination folder] --template [location of template files]
-    __dirname + '/node_modules/.bin/kss-node --config <%= config %>'
+    'kss-node --config <%= config %>'
   ], {
     templateData: {
-      config: theme + '/sass/config.json'
+      config: theme + '/sass/style-guide/config.json'
     }
   }
 ));
@@ -61,6 +61,11 @@ gulp.task('styles', ['clean:css'], $.shell.task([
   ], {cwd: theme}
 ));
 
+gulp.task('bundle', $.shell.task([
+    'bundle'
+  ]
+));
+
 gulp.task('styles:production', ['clean:css'], $.shell.task([
     'bundle exec compass compile --time --no-sourcemap --output-style expanded'
 //    'bundle exec compass compile --time --no-sourcemap --output-style compressed'
@@ -93,7 +98,7 @@ gulp.task('clean:css', del.bind(null, [theme + '**/.sass-cache', theme + compass
 gulp.task('clean', ['clean:css', 'clean:styleguide']);
 
 // Production build of front-end.
-gulp.task('build', ['styles:production', 'styleguide'], function (cb) {
+gulp.task('build', ['bundle', 'styles:production', 'styleguide'], function (cb) {
   // Run linting last, otherwise its output gets lost.
   runSequence(['lint'], cb);
 });

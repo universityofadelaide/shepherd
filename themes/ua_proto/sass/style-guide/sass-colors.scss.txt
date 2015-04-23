@@ -1,7 +1,10 @@
 // Build the markup needed for the color section of the KSS style guide.
 
 @import 'init';
+// Chroma's KSS support is only needed for this Sass file.
+@import 'chroma/kss';
+
 
 /*
-#{kss-color-markup()}
+#{chroma-kss-markup()}
 */

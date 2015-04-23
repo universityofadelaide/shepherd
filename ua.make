@@ -12,5 +12,5 @@ api = 2
 ; Drupal core.
 projects[drupal][download][type] = git
 projects[drupal][download][url] = http://git.drupal.org/project/drupal.git
-projects[drupal][download][tag] = 8.0.0-beta6
+projects[drupal][download][tag] = 8.0.0-beta9
 
