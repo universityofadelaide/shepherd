@@ -148,4 +148,26 @@
               append="true" />
     </target>
 
+    <!-- Remote debug enable -->
+    <target name="xdebug:enable"
+            description="Enable xdebug in ini file">
+        <exec command="sudo sed -i 's/\(remote_enable=\).*/\11/g' /etc/php5/mods-available/xdebug.ini"
+              logoutput="true"
+              passthru="true" />
+        <exec command="sudo service apache2 restart"
+              logoutput="true"
+              passthru="true" />
+    </target>
+
+    <!-- Remote debug disable -->
+    <target name="xdebug:disable"
+            description="Disable xdebug in ini file">
+        <exec command="sudo sed -i 's/\(remote_enable=\).*/\10/g' /etc/php5/mods-available/xdebug.ini"
+              logoutput="true"
+              passthru="true" />
+        <exec command="sudo service apache2 restart"
+              logoutput="true"
+              passthru="true" />
+    </target>
+
 </project>
