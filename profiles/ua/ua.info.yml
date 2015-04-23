@@ -8,6 +8,7 @@ dependencies:
   - history
   - block
   - breakpoint
+  - cas
   - ckeditor
   - color
   - config
@@ -37,5 +38,5 @@ dependencies:
   - views_ui
   - tour
 themes:
-  - bartik
+  - ua_theme
   - seven

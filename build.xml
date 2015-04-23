@@ -21,7 +21,7 @@
     <!-- Drush -->
     <property name="drush.bin"       value="${project.basedir}/bin/drush" />
     <property name="drush.cmd"       value="${drush.bin} -r ${app.dir}" />
-    <property name="drush.make.file" value="ua.make" />
+    <property name="drush.make.file" value="ua.make.yml" />
 
     <!-- Gulp -->
     <property name="gulp.cmd"        value="${project.basedir}/node_modules/.bin/gulp" />
@@ -67,7 +67,7 @@
 
     <target name="make"
             description="Builds the application based on the drush make file.">
-        <exec command="${composer.bin} install --prefer-dist --dev --no-progress"
+        <exec command="${composer.bin} install --prefer-dist --no-progress"
               passthru="true"
               logoutput="true" />
 
@@ -111,6 +111,11 @@
         <exec command="${drush.bin} -r ${app.dir} site-install ${drupal.profile} -y --db-url=${mysql.queryString} --account-mail=${drupal.email} --account-name=${drupal.user} --account-pass=${drupal.pass} --site-name=${drupal.siteName}"
               logoutput="true"
               passthru="true" />
+
+        <!-- Clear caches. -->
+        <exec command="${drush.bin} -r ${app.dir} cr"
+              logoutput="true"
+              passthru="true" />
     </target>
 
     <target name="generate"
@@ -120,9 +125,27 @@
               passthru="true" />
     </target>
 
+    <target name="generate:watch"
+            description="A watch task on the CSS and Styleguide that generates on file changes">
+        <exec command="${gulp.cmd} watch"
+              logoutput="true"
+              passthru="true" />
+    </target>
+
     <target name="styleguide:link"
             description="Link the styleguide into the application root.">
-      <symlink link="${project.basedir}/app/styleguide" target="../styleguide" />
+        <symlink link="${project.basedir}/app/styleguide" target="../styleguide" />
+    </target>
+
+    <target name="init"
+            description="Initial project setup. Adds user details to gitconfig, adds project specific aliases to bashrc.">
+        <input propertyName="githubName"
+               message="Enter your GitHub name (e.g. Bob Rocks):" />
+        <input propertyName="githubEmail"
+               message="Enter your GitHub email address (e.g. bob.rocks@adelaide.edu.au):" />
+        <echo msg="[user]${line.separator}    email = ${githubEmail}${line.separator}    name = ${githubName}"
+              file="/home/vagrant/.gitconfig"
+              append="true" />
     </target>
 
 </project>

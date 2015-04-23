@@ -113,6 +113,15 @@ To install required node modules:
 $ npm install
 ```
 
+### Setting up the Styleguide
+
+To setup the styleguide link and generate the styleguide locally run:
+
+```bash
+$ phing styleguide:link
+$ phing generate
+```
+
 ### Compiling CSS and Styleguide
 
 To compile CSS and build the styleguide run:

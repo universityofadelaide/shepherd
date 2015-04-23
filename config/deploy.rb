@@ -10,7 +10,10 @@ set :use_sudo,      false
 # This allow us to compile the styleguide and have it as part of the deploy.
 # Instead of checking out the repo on the remote host, we build the deploy
 # locally and then copy it over.
+set :scm, :none
+set :repository, "."
 set :deploy_via, :copy
+set :copy_exclude, ["vendor", ".bundle", ".git", "bin"]
 
 ssh_options[:forward_agent] = true
 

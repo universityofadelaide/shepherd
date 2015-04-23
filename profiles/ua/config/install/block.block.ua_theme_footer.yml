@@ -1,13 +1,13 @@
-id: bartik_tools
-theme: bartik
+id: ua_theme_footer
+theme: ua_theme
 weight: 0
 status: true
 langcode: en
-region: sidebar_first
-plugin: 'system_menu_block:tools'
+region: footer
+plugin: 'system_menu_block:footer'
 settings:
-  id: 'system_menu_block:tools'
-  label: Tools
+  id: 'system_menu_block:footer'
+  label: 'Footer menu'
   provider: system
   label_display: visible
   cache:
@@ -17,9 +17,9 @@ settings:
   depth: 0
 dependencies:
   config:
-    - system.menu.tools
+    - system.menu.footer
   module:
     - system
   theme:
-    - bartik
+    - ua_theme
 visibility: {  }

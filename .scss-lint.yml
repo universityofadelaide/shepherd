@@ -13,8 +13,6 @@ linters:
     ignore_single_line_blocks: false
   MergeableSelector:
     force_nesting: true
-  NameFormat:
-    convention: BEM
   PropertySortOrder:
     enabled: false
   PropertySpelling:
