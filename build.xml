@@ -134,7 +134,18 @@
 
     <target name="styleguide:link"
             description="Link the styleguide into the application root.">
-      <symlink link="${project.basedir}/app/styleguide" target="../styleguide" />
+        <symlink link="${project.basedir}/app/styleguide" target="../styleguide" />
+    </target>
+
+    <target name="init"
+            description="Initial project setup. Adds user details to gitconfig, adds project specific aliases to bashrc.">
+        <input propertyName="githubName"
+               message="Enter your GitHub name (e.g. Bob Rocks):" />
+        <input propertyName="githubEmail"
+               message="Enter your GitHub email address (e.g. bob.rocks@adelaide.edu.au):" />
+        <echo msg="[user]${line.separator}    email = ${githubEmail}${line.separator}    name = ${githubName}"
+              file="/home/vagrant/.gitconfig"
+              append="true" />
     </target>
 
 </project>
