@@ -120,6 +120,13 @@
               passthru="true" />
     </target>
 
+    <target name="generate:watch"
+            description="A watch task on the CSS and Styleguide that generates on file changes">
+        <exec command="${gulp.cmd} watch"
+              logoutput="true"
+              passthru="true" />
+    </target>
+
     <target name="styleguide:link"
             description="Link the styleguide into the application root.">
       <symlink link="${project.basedir}/app/styleguide" target="../styleguide" />
