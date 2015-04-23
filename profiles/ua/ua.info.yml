@@ -37,6 +37,7 @@ dependencies:
   - views
   - views_ui
   - tour
+  - ua_links_block
 themes:
   - ua_theme
   - seven
