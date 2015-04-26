@@ -151,9 +151,11 @@
     <!-- Remote debug enable -->
     <target name="xdebug:enable"
             description="Enable xdebug in ini file">
-        <exec command="sudo sed -i 's/\(remote_enable=\).*/\11/g' /etc/php5/mods-available/xdebug.ini"
+        <!-- Set xdebug.remote_enable & add ide key -->
+        <exec command="sudo sed -i 's/\(remote_enable=\).*/\11/g;$s/$/\nxdebug.idekey=PHPSTORM/g' /etc/php5/mods-available/xdebug.ini"
               logoutput="true"
               passthru="true" />
+        <!-- Add idekey -->
         <exec command="sudo service apache2 restart"
               logoutput="true"
               passthru="true" />
@@ -162,7 +164,8 @@
     <!-- Remote debug disable -->
     <target name="xdebug:disable"
             description="Disable xdebug in ini file">
-        <exec command="sudo sed -i 's/\(remote_enable=\).*/\10/g' /etc/php5/mods-available/xdebug.ini"
+        <!-- Set xdeub.remote_enable to false & rm ide key -->
+        <exec command="sudo sed -i 's/\(remote_enable=\).*/\10/g;/?>/d' /etc/php5/mods-available/xdebug.ini"
               logoutput="true"
               passthru="true" />
         <exec command="sudo service apache2 restart"
