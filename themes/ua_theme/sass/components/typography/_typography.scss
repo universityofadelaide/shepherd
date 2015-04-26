@@ -14,8 +14,10 @@
 //
 // Styleguide: components.typography.headings
 
+
+
 %heading {
-  margin-bottom: 15px;
+//  margin-bottom: 15px;
   font-family: $font-header;
   font-weight: 400;
 }
@@ -23,28 +25,35 @@
 h1,
 %h1 {
   @extend %heading;
-  font-size: 2em;
-  color: color(heading-grey);
+  @include adjust-font-size-to($h1-fz);
+//  font-size: 2em;
+  color: color(heading-orange);
+  .header-branding &{
+    @include breakpoint($mama-bear-max){font-size: 1.4em;}
+  } 
 }
 
 h2,
 %h2 {
   @extend %heading;
-  font-size: 1.769em;
+  @include adjust-font-size-to($h2-fz);
+//  font-size: 1.769em;
   color: color(heading-grey);
 }
 
 h3,
 %h3 {
   @extend %heading;
-  font-size: 1.615em;
+  @include adjust-font-size-to($h3-fz);
+//  font-size: 1.615em;
   color: color(heading-orange);
 }
 
 h4,
 %h4 {
   @extend %heading;
-  font-size: 1.462em;
+  @include adjust-font-size-to($h4-fz);
+//  font-size: 1.462em;
   color: color(heading-grey);
 
 }
@@ -52,14 +61,16 @@ h4,
 h5,
 %h5 {
   @extend %heading;
-  font-size: 1.308em;
+  @include adjust-font-size-to($h5-fz);
+//  font-size: 1.308em;
   color: color(heading-orange);
 }
 
 h6,
 %h6 {
   @extend %heading;
-  font-size: 1.154em;
+  @include adjust-font-size-to($h6-fz);
+//  font-size: 1.154em;
   color: color(heading-grey);
 }
 
@@ -68,9 +79,10 @@ h6,
 // Markup: typography.introduction-paragraph.html
 //
 // Styleguide: components.typography.introduction-paragraph
-.paragraph--into,
-%paragraph--into {
-  font-size: 1.308em;
+.paragraph--intro,
+%paragraph--intro {
+  @include adjust-font-size-to($h5-fz);
+//  font-size: 1.308em;
   font-weight: 400;
   font-family: $georgia;
 }
@@ -98,12 +110,17 @@ p {
   border-bottom: 1px dotted currentColor;
 }
 
+a,
+a:active,
+a:visited {
+  @extend %link;
+}
+
 a:hover,
-a:focus,
-a:active {
+a:focus {
   color: color(link-focus);
-  text-decoration: underline;
-  border-bottom: 0;
+  text-decoration: none;
+  border-bottom: 1px solid currentColor;
 }
 
 // Improve readability by removing focus styles when also mouse hovered in all browsers.

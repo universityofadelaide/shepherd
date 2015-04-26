@@ -27,7 +27,7 @@
     <property name="gulp.cmd"        value="${project.basedir}/node_modules/.bin/gulp" />
 
     <!-- Drupal -->
-    <property name="drupal.siteName" value="University of Adelaide" />
+    <property name="drupal.siteName" value="Site name" />
     <property name="drupal.email"    value="user@example.com" />
     <property name="drupal.user"     value="admin" />
     <property name="drupal.pass"     value="password" />
@@ -108,7 +108,7 @@
               passthru="true" />
 
         <!-- Install the site. -->
-        <exec command="${drush.bin} -r ${app.dir} site-install ${drupal.profile} -y --db-url=${mysql.queryString} --account-mail=${drupal.email} --account-name=${drupal.user} --account-pass=${drupal.pass} --site-name=${drupal.siteName}"
+        <exec command="${drush.bin} -r ${app.dir} site-install ${drupal.profile} -y --db-url=${mysql.queryString} --account-mail=${drupal.email} --account-name=${drupal.user} --account-pass=${drupal.pass} --site-name=&quot;${drupal.siteName}&quot;"
               logoutput="true"
               passthru="true" />
 

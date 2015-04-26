@@ -13,6 +13,7 @@
 //
 // Style guide: sass.init
 
+
 // Variables
 //
 // Set variables for this site before a library sets its !default value.
@@ -36,6 +37,8 @@
 //
 // Style guide: sass.modules
 
+// Add Compass Reset
+@import "compass/reset";
 // Add Breakpoint to manage media queries.
 @import 'breakpoint';
 // Add Chroma to manage colors.
@@ -46,9 +49,10 @@
 @import 'compass/utilities/sprites';
 // Use one CSS3 mixin instead of multiple vendor prefixes.
 @import 'compass/css3';
+
 // Helps set up a vertical rhythm.
 @import 'compass/typography/vertical_rhythm';
-
+@include establish-baseline;
 
 // Mixins
 //
@@ -57,6 +61,8 @@
 // Weight: 1
 //
 // Style guide: sass.mixins
+@import 'library/mixins';
+
 
 // Functions
 //

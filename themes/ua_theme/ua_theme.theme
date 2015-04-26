@@ -4,3 +4,40 @@
  * @file
  * Functions to support theming in the UA theme.
  */
+
+/**
+ * Implements hook_theme().
+ */
+function ua_theme_theme() {
+  return [
+    'header-branding' => [
+      'variables' => [
+        'site_name' => NULL,
+        'front_page' => NULL,
+      ]
+    ],
+    'header-toolbar' => [
+      'variables' => [
+        'site_name' => NULL,
+        'front_page' => NULL,
+      ]
+    ],
+  ];
+}
+
+/**
+ * Implements hook_preprocess().
+ */
+function ua_theme_preprocess_page(&$variables) {
+  $variables['header']['branding'] = [
+    '#theme' => 'header-branding',
+    '#site_name' => $variables['site_name'],
+    '#front_page' => $variables['front_page'],
+  ];
+
+  $variables['header']['toolbar'] = [
+    '#theme' => 'header-toolbar',
+    '#site_name' => $variables['site_name'],
+    '#front_page' => $variables['front_page'],
+  ];
+}

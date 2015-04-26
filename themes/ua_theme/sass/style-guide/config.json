@@ -1,8 +1,9 @@
 {
   "source":       "../",
   "destination":  "../../../../styleguide",
-  "css": ["/themes/custom/ua_proto/css/styles.css",
-      "/themes/custom/ua_proto/css/style-guide/chroma.css",
+  "css": ["/themes/custom/ua_theme/css/styles.css",
+      "/themes/custom/ua_theme/css/style-guide/chroma.css",
       "http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,300,400,600,700"
-     ]
+     ],
+  "template": ["../../../../smithystemplate/"]
 }

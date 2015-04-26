@@ -1,6 +1,6 @@
 .sass-cache
 /.bundle
-/.idea
+**/.idea/
 /.vagrant
 /app
 /bin
@@ -10,7 +10,6 @@
 !/modules/README.md
 /profiles
 !/profiles/README.md
-/.bundle
 /styleguide
 /themes/ua_theme/css
 /themes/ua_theme/sass/style-guide/sass-colors.hbs

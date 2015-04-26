@@ -1,0 +1,83 @@
+// Grid System
+//
+// Weight: -1
+//
+// Markup: grid-system.html
+//
+// Styleguide layouts.grid-system
+
+
+.layout-container {
+  @include zen-grid-container(); // Apply this mixin to the container.
+  margin: 0 auto;
+  width: 980px;
+  @include breakpoint($baby-bear){ width: 100%; }
+  @include breakpoint($mama-bear){ width: 767px; }
+  @include breakpoint($papa-bear){ width: 1200px; }
+}
+
+.layout-header {
+  @extend %layout-header-full;
+}
+
+.layout-header-content {
+  @include zen-grid-item(7, 1);
+}
+
+.layout-content {
+  @include zen-new-row();
+  @include zen-grid-item(5, 2, right); // Make this grid item span 4 columns… // …and position it in the 3rd column.
+  @include breakpoint($baby-bear) {
+    margin: 0;
+    width: 100%;
+    float: none;
+  }
+}
+
+.layout-aside1 {
+  @include zen-grid-item(1, 1); // Apply this mixin for each grid item in the container.
+  @include breakpoint($baby-bear) {
+    margin: 0;
+    width: 100%;
+    float: none;
+  }
+}
+
+.layout-aside2 {
+  @include zen-grid-item(2, 6);
+  @include breakpoint($baby-bear) {
+    margin: 0;
+    width: 100%;
+    float: none;
+  }
+}
+
+.layout-footer {
+  @include zen-new-row(); // Apply this mixin to start a new row.
+  @include zen-grid-item(7, 1);
+}
+
+
+
+// KSS demo class
+.demo {
+  .layout-container & {
+    height: 100px;
+    text-align: center;
+    line-height: 100px;
+    &.layout-header { background: color(blue-light); }
+    &.layout-content { background: color(blue-light); }
+    &.layout-aside1 { background: color(grey-light); }
+    &.layout-aside2 { background: color(grey-blue-light); }
+    &.layout-footer { background: color(grey-blue-light); }
+  }
+
+  &.header-toolbar {
+    background: color(blue-text);
+  }
+
+  &.header-branding {
+    @extend %layout-header-branding-demo;
+  }
+
+}

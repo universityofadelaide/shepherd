@@ -1,0 +1,31 @@
+
+// Old grid system attempt - smithy
+
+//@mixin col {
+//  border: 0px solid rgba(0,0,0,0);
+//  float:left;
+//  box-sizing:border-box;
+//  background-clip: padding-box !important;
+//}
+//
+//@mixin span($num, $gutter_pc, $gutter_px, $padding, $max_columns) {
+//  $one_col: (100% - ($gutter_pc * ($max_columns - 1))) / $max_columns;
+//  width:($one_col * $num) + ($gutter_pc * ($num - 1));
+//  border-left-width: $gutter_px;
+//  padding: $padding;
+//  margin-left: $gutter_pc;
+//  @include breakpoint($baby-bear){
+//    @include span_first;
+//    width:100%;
+//    margin-left:0;
+//  }
+//}
+//
+//@mixin span_first {
+//  margin-left: 0;
+//}
+
+
+//.element{
+//  @inclue span(1,10px);
+//}
