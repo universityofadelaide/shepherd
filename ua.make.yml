@@ -23,4 +23,4 @@ projects:
   extlink:
     type: module
     subdir: contrib
-    version: 8.x-1.x
+    version: 1.x
