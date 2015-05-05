@@ -20,3 +20,7 @@ projects:
     type: module
     subdir: contrib
     version: 1.x-dev
+  extlink:
+    type: module
+    subdir: contrib
+    version: 1.x

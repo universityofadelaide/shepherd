@@ -8,8 +8,6 @@
 /node_modules
 /modules
 !/modules/README.md
-/profiles
-!/profiles/README.md
 /styleguide
 /themes/ua_theme/css
 /themes/ua_theme/sass/style-guide/sass-colors.hbs

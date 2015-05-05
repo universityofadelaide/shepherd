@@ -38,6 +38,7 @@ dependencies:
   - views
   - views_ui
   - tour
+  - extlink
   - ua_links_block
 themes:
   - ua_theme
