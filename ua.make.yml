@@ -15,7 +15,7 @@ projects:
     type: core
     download:
       url: http://git.drupal.org/project/drupal.git
-      tag: 8.0.0-beta9
+      tag: 8.0.0-beta10
   cas:
     type: module
     subdir: contrib
