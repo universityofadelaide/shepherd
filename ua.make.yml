@@ -24,3 +24,10 @@ projects:
     type: module
     subdir: contrib
     version: 1.x
+  diff:
+    type: module
+    subdir: contrib
+    version: 1.x-dev
+    patch:
+      - https://www.drupal.org/files/issues/fix_route_to_show-2480029-1.patch
+
