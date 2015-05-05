@@ -14,70 +14,80 @@
 // Styleguide components.header.header-toolbar
 
 %header-link {
-  &:link {
-    color: color(white);
-    border-bottom: 0;
-    &:hover {
-      text-decoration: none;
-    }
-  }
-  @include breakpoint($mama-bear-max){
 
+  &:link,
+  &:hover,
+  &:active,
+  &:visited {
+    color: color(ua-white);
+    border-bottom: 0;
+    text-decoration: none;
   }
+
 }
 
 .header-toolbar {
   @include zen-grid-container();
   height: 38px;
-  color: color(white);
+  color: color(ua-white);
   font-family: $font-header;
-  &__aside1{
+
+  &__aside1 {
     @include zen-grid-item(2, 1);
-    @include breakpoint($mama-bear-max){
+
+    @include breakpoint($mama-bear-max) {
       @include zen-grid-item(5, 1);
     }
   }
+
   &__aside2 {
     @include zen-grid-item(5, 3);
-    @include breakpoint($mama-bear-max){
+
+    @include breakpoint($mama-bear-max) {
       @include zen-grid-item(2, 6);
     }
   }
+
 }
 
 .header-toolbar__home-link {
   @extend %header-link;
   padding-left: 22px;
   position: relative;
+
   .sprite {
     position: absolute;
     width: 17px; height: 17px;
     top: 8px;left: 0;
   }
+
   &:link {
     display: block;
     height: 38px;
     line-height: 38px;
   }
+
   &:hover {
+
     .sprite {
       background-position: 0 -97px;
     }
+
   }
 }
 
 .header-toolbar__textsize {
+  @include clearfix();
   list-style-type: none;
   margin-right: $zen-gutters;
-  @include clearfix();
-  @include breakpoint($mama-bear-max){display: none;}
 
   &-list {
+    @include clearfix();
     position: relative;
-    margin: 8px 0 0 0;
+    margin: 8px 0 0;
     padding: 0;
     list-style-type: none;
-    @include clearfix();
+
   }
 
   &-item {
@@ -87,15 +97,18 @@
   }
 
   &-link {
+    @extend %header-link;
     position: relative;
     display: block;
-    width: 20px; height: 20px;
+    width: 20px;
+    height: 20px;
     text-indent: -9999px;
-    @extend %header-link;
+
     .sprite {
       position: absolute;
       top: 0; left: 0;
     }
+
   }
 
 }
@@ -117,20 +130,33 @@
   padding-right: 10px;
 
   &__site-title {
-    @include zen-grid-item(5, 1);
-    @extend %h1;
+    @extend %heading;
     @extend %header-link;
-    line-height: 119px !important;
+
+    @include zen-grid-item(5, 1);
+    font-size: 2.15em;
+    line-height: 119px;
+
+    @include breakpoint($baby-bear) {
+      font-size: 15px;
     }
+  }
 
   &__branding-logo {
-    @include zen-grid-item(2, 6);
     @extend %header-link;
-    height:119px; //IE7fix
+
+    @include zen-grid-item(2, 6);
+    height: 119px;
     line-height: 119px;
     text-align: right;
+
+    @include breakpoint($tiny-bear) {
+      display: none;
+    }
+
     img {
       vertical-align: middle;
     }
+
   }
 }

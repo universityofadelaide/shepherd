@@ -1,0 +1,164 @@
+// Menus
+//
+// Weight: 1
+//
+// Styleguide components.menus
+
+
+// Sitenav
+//
+// Weight: -1
+//
+// Markup: menus.sitenav.html
+//
+// Styleguide components.menus.sitenav
+
+$sitenav-default-nib-border: 6px;
+$sitenav-default-nib-color: color(orange-darker);
+$sitenav-default-nib-rotate: 45deg;
+
+@mixin sitenav-item-link ($bg-color, $border-color, $font-color, $font-hover-color, $hover-bg) {
+  position: relative;
+  background: $bg-color;
+
+  .sitenav__item-link {
+    display: block;
+    padding: 10px 0 10px 20px;
+    border-top: 1px dotted $border-color;
+    border-left: 1px solid $border-color;
+    border-right: 1px solid $border-color;
+    border-bottom: 0;
+    color: $font-color;
+
+    &:hover {
+      color: $font-hover-color;
+    }
+  }
+
+  &:hover {
+    background-color: $hover-bg;
+  }
+
+  :link {
+    border-bottom: 0;
+  }
+}
+
+@mixin nib ($brd-width, $brd-left, $transform) {
+  &:before {
+    @include transform(rotate($transform));
+
+    content: '';
+    display: block;
+    position: absolute;
+    z-index: -1;
+    left: $brd-width / 2;
+    top: -$brd-width;
+    width: 0;
+    height: 0;
+    border-top: $brd-width solid transparent;
+    border-right: $brd-width solid transparent;
+    border-bottom: $brd-width solid transparent;
+    border-left: $brd-width solid $brd-left;
+  }
+}
+
+.sitenav {
+
+  &__first-level {
+    position: relative;
+    display: block;
+    margin-left: -20px;
+
+    @include breakpoint($mama-bear-max) {
+      margin-left: 0;
+    }
+
+    .sitenav__item {
+      @include sitenav-item-link(none, transparent, color(link), color(link-focus), color(orange-dark));
+    }
+
+    > .sitenav__current {
+      @include sitenav-item-link(color(orange-dark), color(orange-mid), color(grey-darker), color(link-focus), color(orange-dark));
+
+      @include nib ($sitenav-default-nib-border, $sitenav-default-nib-color, $sitenav-default-nib-rotate);
+
+      @include breakpoint($mama-bear-max) {
+        @include nib (0, transparent, 0deg);
+      }
+
+    }
+  }
+
+  &__second-level {
+    .sitenav__item {
+      @include sitenav-item-link(color(orange-light), color(orange-mid), color(grey-darker), color(link-focus), color(orange-dark));
+    }
+
+    .sitenav__item-link {
+      @include breakpoint($mama-bear-max) { border-left: 0; border-right: 0; }
+    }
+  }
+
+  &__third-level {
+    .sitenav__item {
+      @include sitenav-item-link(color(orange-lighter), color(orange-mid), color(grey-darker), color(link-focus), color(orange-dark));
+    }
+
+    .sitenav__item-link {
+      @include breakpoint($mama-bear-max) { border-left: 0; border-right: 0; }
+    }
+  }
+
+  &__fourth-level {
+    .sitenav__item {
+      @include sitenav-item-link(color(ua-white), color(orange-mid), color(grey-darker), color(link-focus), color(orange-dark));
+    }
+
+    .sitenav__item-link {
+      @include breakpoint($mama-bear-max) { border-left: 0; border-right: 0; }
+    }
+  }
+
+  &__current {
+    > .sitenav__item-link {
+      background: color(orange-dark);
+      color: color(grey-darker);
+    }
+  }
+
+  &__active {
+    &.sitenav__item {
+      @include sitenav-item-link(color(orange-text), color(orange-mid), color(ua-white), color(ua-white), color(orange-text));
+      font-weight: bold;
+    }
+  }
+
+  &__toggle {
+    display: none;
+
+    @include breakpoint($mama-bear-max) {
+      display: block;
+    }
+
+    &.sitenav__item {
+      @include sitenav-item-link(color(orange-text), transparent, color(ua-white), color(ua-white), color(orange-text));
+
+      @include adjust-font-size-to(16px);
+      font-weight: bold;
+    }
+  }
+}
+
+// First level item hover nib -
+.sitenav__first-level {
+  > .sitenav__item {
+    &:hover {
+      @include nib($sitenav-default-nib-border, $sitenav-default-nib-color, $sitenav-default-nib-rotate);
+
+      @include breakpoint($mama-bear-max) {
+        @include nib(0, transparent, 0deg);
+      }
+    }
+  }
+}

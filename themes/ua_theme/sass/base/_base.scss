@@ -1,13 +1,3 @@
-%layout-header-full {
-  @include background-image(linear-gradient(#005a9c, #005a9c 22%, #4491ca 22%, #013f73));
-  color: color(white);
-}
-
-%layout-header-branding-demo {
-  @include background-image(linear-gradient(#4491ca, #013f73));
-  color: color(white);
-}
-
 * {
   @include box-sizing(border-box);
 }

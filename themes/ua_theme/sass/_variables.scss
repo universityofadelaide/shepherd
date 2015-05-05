@@ -17,14 +17,9 @@ $font-body: $arial;
 $font-header: $georgia;
 
 
-//Font sizes
-//$body-font-size: 13px;
-//$body-line-height: 1.3;
-
 // Vertical Rhythm
 $base-font-size: 13px;
-$base-line-height: 1.3;
-$rhythm-unit: "rem";
+$base-line-height: 21px;
 $rem-with-px-fallback: true;
 
 // Headings
@@ -39,12 +34,14 @@ $h6-fz: 18px; // 1.154em
 // Zen Grid system
 //
 
-@import "zen-grids"; // Import Zen Grids with this statement.
+@import 'zen-grids'; // Import Zen Grids with this statement.
+$box-sizing-polyfill-path: 'http://ua.dev/themes/custom/ua_theme/boxsizing.htc';
 $zen-columns: 7; // Set the number of columns in the grid.
 $zen-gutters: 10px; // Set the gutter size. A half-gutter is used on each side of each column.
 
 
 // Media Queries
+$tiny-bear: max-width 450px;
 $baby-bear: max-width 767px;
 $mama-bear: 768px 979px;
 $mama-bear-max: max-width 979px;
@@ -57,8 +54,8 @@ $papa-bear: 1200px;
 
 // Sprites
 $sprite-icons-layout: smart;
-@import "../images/icons/*.png";
-@include all-icons-sprites(true);
+@import '../images/sprite/*.png';
+@include all-sprite-sprites(true);
 
 
 
@@ -79,19 +76,26 @@ $sprite-icons-layout: smart;
 // Define useful names of color values.
 $chroma: add-default-color-scheme('The main colors of the site.', (
 
-  white:              #ffffff,
-  black:              #231f20,
-  grey:               #bbb,
-  grey-light:         #ddd,
-  grey-dark:          #666,
-  grey-darker:        #333,
-  grey-blue-light:    #d5e3ef,
-  grey-blue-lighter:  #cadceb,
+  ua-white:             #fff,
+  ua-black:             #231f20,
+  grey:                 #bbb,
+  grey-light:           #ddd,
+  grey-dark:            #666,
+  grey-darker:          #333,
+  grey-blue-light:      #d5e3ef,
+  grey-blue-lighter:    #cadceb,
 
-  blue-light:         #eaf1f8,
-  red-text:           #ec1c2e,
-  blue-text:          #005a9c,
-  orange-text:        #b38808,
+  blue-light:           #eaf1f8,
+  blue-mid:             #4391ca,
+  red-text:             #ec1c2e,
+  blue-text:            #005a9c,
+  orange-text:          #b38808,
+  orange-light:         #f4edda,
+  orange-lighter:       #fbf8ee,
+  orange-mid:           #e1cfa0,
+  orange-dark:          #d4cbb3,
+  orange-darker:        #7e5f05
+
 ));
 $chroma-default-scheme:  'design';
 

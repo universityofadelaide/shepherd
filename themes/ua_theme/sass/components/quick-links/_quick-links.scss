@@ -9,12 +9,13 @@
   position: relative;
 
   &__title {
+    @include background-with-css2-fallback(linear-gradient(#66aeeb, color(blue-mid)), color(blue-mid));
     display: block;
     margin: 0;
     padding-left: 30px;
-    background: image-url('quicklinks-title-bg.png') top left repeat-x;
+   // background: image-url('quicklinks-title-bg.png') top left repeat-x;
     line-height: 40px;
-    color: color(white);
+    color: color(ua-white);
 
   }
 
@@ -22,7 +23,8 @@
     position: absolute;
     height: 8px;
     width: 11px;
-    top: 40px;
+    //top: 40px;
+    top: auto;
     left: 110px;
     background: image-url('ui-icons.png') top left no-repeat;
     background-position: 0 -64px;
@@ -66,7 +68,7 @@
     display: block;
 
     &:hover {
-      color: color(link);
+      color: color(link-focus);
       border-bottom: 0;
       text-decoration: none;
     }

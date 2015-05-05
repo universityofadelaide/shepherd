@@ -1,0 +1,100 @@
+// Tables
+//
+// Weight: -1
+//
+// Styleguide components.table
+
+
+// Standard Table
+//
+// Weight: -1
+//
+// Markup: table.standard-table.html
+//
+// Styleguide components.table.standard-table
+
+.table {
+  width: 100%;
+
+  caption {
+    @include background-with-css2-fallback(linear-gradient(color(blue-mid), #044277), #044277);
+    position: relative;
+    top: 0;
+    height: auto;
+    padding: 6px 6px 6px 10px;
+    border-top: 1px solid color(grey-blue-lighter);
+    // background: color(blue-mid);
+    color: color(ua-white);
+    font-weight: 700;
+    text-align: left;
+    vertical-align: middle;
+    caption-side: top;
+    
+  }
+
+  th {
+    border-top: 1px solid color(blue-light);
+    background: color(grey-blue-lighter);
+    color: color(blue-text);
+    font-weight: 700;
+    vertical-align: middle;
+
+    &.alt {
+      background-color: color(orange-light);
+      border-bottom: 1px solid color(grey-blue-lighter);
+    }
+
+  }
+
+  td {
+    border-bottom: 1px solid color(grey-blue-lighter);
+
+    @include breakpoint($baby-bear) {
+      display: block;
+
+      &:before {
+        content: attr(data-th);
+        display: block;
+        font-weight: 700;
+      }
+    }
+
+  }
+
+  th,
+  td {
+    padding: 10px;
+    text-align: left;
+
+    &.cell-blue {
+      background-color: color(blue-mid);
+      color: color(ua-white);
+    }
+
+    &.cell-gold {
+      background-color: color(orange-text);
+      color: color(ua-white);
+    }
+
+    &.cell-light-gold {
+      background-color: color(orange-light);
+    }
+
+
+  }
+
+  tbody th,
+  thead {
+    @include breakpoint($baby-bear) { display: none; }
+  }
+
+}
+
+.striped {
+  tbody {
+    > tr:nth-child(odd) {
+      background-color: color(blue-light);
+    }
+  }
+
+}
