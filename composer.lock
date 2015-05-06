@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "11f2e2bfe94ded39cd0f4b9ce1ce6fc5",
+    "hash": "b59aa4f666888eb10bca27da11f77905",
     "packages": [
         {
             "name": "d11wtq/boris",
@@ -48,7 +48,7 @@
             "source": {
                 "type": "git",
                 "url": "http://git.drupal.org/project/coder.git",
-                "reference": "d7c93467e724139c97ee69561cfa35288c57162d"
+                "reference": "f1d99c99744e4703e8c2c654bddd313173d74b82"
             },
             "require": {
                 "php": ">=5.2.0",
@@ -57,7 +57,7 @@
             "require-dev": {
                 "phpunit/phpunit": "~3.7"
             },
-            "type": "library",
+            "type": "drupal-module",
             "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "GPL-2.0+"
@@ -69,20 +69,20 @@
                 "phpcs",
                 "standards"
             ],
-            "time": "2015-03-08 09:52:25"
+            "time": "2015-04-25 10:56:38"
         },
         {
             "name": "drush/drush",
-            "version": "7.0.0-rc1",
+            "version": "7.0.0-rc2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/drush-ops/drush.git",
-                "reference": "8e3276d400eebf4d2d0a4d7c623766d6b610ecf0"
+                "reference": "45e222657236358550139ffe5af349ad7bbd03ca"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/drush-ops/drush/zipball/8e3276d400eebf4d2d0a4d7c623766d6b610ecf0",
-                "reference": "8e3276d400eebf4d2d0a4d7c623766d6b610ecf0",
+                "url": "https://api.github.com/repos/drush-ops/drush/zipball/45e222657236358550139ffe5af349ad7bbd03ca",
+                "reference": "45e222657236358550139ffe5af349ad7bbd03ca",
                 "shasum": ""
             },
             "require": {
@@ -153,7 +153,7 @@
             ],
             "description": "Drush is a command line shell and scripting interface for Drupal, a veritable Swiss Army knife designed to make life easier for those of us who spend some of our working hours hacking away at the command prompt.",
             "homepage": "http://www.drush.org",
-            "time": "2015-03-26 02:05:15"
+            "time": "2015-05-05 14:44:04"
         },
         {
             "name": "pdepend/pdepend",
@@ -161,12 +161,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/pdepend/pdepend.git",
-                "reference": "30b3423fee51da81c77a72f96ab061469d0c4890"
+                "reference": "41d75dae88c53d1fa909ef6ce6047d9dbe8c0164"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/pdepend/pdepend/zipball/30b3423fee51da81c77a72f96ab061469d0c4890",
-                "reference": "30b3423fee51da81c77a72f96ab061469d0c4890",
+                "url": "https://api.github.com/repos/pdepend/pdepend/zipball/41d75dae88c53d1fa909ef6ce6047d9dbe8c0164",
+                "reference": "41d75dae88c53d1fa909ef6ce6047d9dbe8c0164",
                 "shasum": ""
             },
             "require": {
@@ -192,7 +192,7 @@
                 "BSD-3-Clause"
             ],
             "description": "Official version of pdepend to be handled with Composer",
-            "time": "2015-03-02 08:24:17"
+            "time": "2015-04-28 05:50:58"
         },
         {
             "name": "pear/console_table",
@@ -740,16 +740,15 @@
         {
             "name": "symfony/config",
             "version": "dev-master",
-            "target-dir": "Symfony/Component/Config",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/Config.git",
-                "reference": "8aa8bdf99ba3ce9da1de70569a3578bbd657ea0d"
+                "reference": "e6248b5b517846524c94912307321b9e87967938"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/Config/zipball/8aa8bdf99ba3ce9da1de70569a3578bbd657ea0d",
-                "reference": "8aa8bdf99ba3ce9da1de70569a3578bbd657ea0d",
+                "url": "https://api.github.com/repos/symfony/Config/zipball/e6248b5b517846524c94912307321b9e87967938",
+                "reference": "e6248b5b517846524c94912307321b9e87967938",
                 "shasum": ""
             },
             "require": {
@@ -766,7 +765,7 @@
                 }
             },
             "autoload": {
-                "psr-0": {
+                "psr-4": {
                     "Symfony\\Component\\Config\\": ""
                 }
             },
@@ -786,21 +785,20 @@
             ],
             "description": "Symfony Config Component",
             "homepage": "http://symfony.com",
-            "time": "2015-04-10 07:31:54"
+            "time": "2015-04-24 07:12:41"
         },
         {
             "name": "symfony/console",
             "version": "2.8.x-dev",
-            "target-dir": "Symfony/Component/Console",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/Console.git",
-                "reference": "32f19477d488649a77227d57a7f5775b17cb336b"
+                "reference": "36194c12ded9b0dc2b5d719ad626257b5bbc2d96"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/Console/zipball/32f19477d488649a77227d57a7f5775b17cb336b",
-                "reference": "32f19477d488649a77227d57a7f5775b17cb336b",
+                "url": "https://api.github.com/repos/symfony/Console/zipball/36194c12ded9b0dc2b5d719ad626257b5bbc2d96",
+                "reference": "36194c12ded9b0dc2b5d719ad626257b5bbc2d96",
                 "shasum": ""
             },
             "require": {
@@ -824,7 +822,7 @@
                 }
             },
             "autoload": {
-                "psr-0": {
+                "psr-4": {
                     "Symfony\\Component\\Console\\": ""
                 }
             },
@@ -844,21 +842,20 @@
             ],
             "description": "Symfony Console Component",
             "homepage": "http://symfony.com",
-            "time": "2015-04-11 08:55:16"
+            "time": "2015-04-24 07:03:44"
         },
         {
             "name": "symfony/dependency-injection",
             "version": "dev-master",
-            "target-dir": "Symfony/Component/DependencyInjection",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/DependencyInjection.git",
-                "reference": "b70e8c6f32b6349fdb8e5e91ca9db55d7222c012"
+                "reference": "5a50e4ac1b91241737de8126bb844f7bc250755b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/DependencyInjection/zipball/b70e8c6f32b6349fdb8e5e91ca9db55d7222c012",
-                "reference": "b70e8c6f32b6349fdb8e5e91ca9db55d7222c012",
+                "url": "https://api.github.com/repos/symfony/DependencyInjection/zipball/5a50e4ac1b91241737de8126bb844f7bc250755b",
+                "reference": "5a50e4ac1b91241737de8126bb844f7bc250755b",
                 "shasum": ""
             },
             "require": {
@@ -882,7 +879,7 @@
                 }
             },
             "autoload": {
-                "psr-0": {
+                "psr-4": {
                     "Symfony\\Component\\DependencyInjection\\": ""
                 }
             },
@@ -902,21 +899,20 @@
             ],
             "description": "Symfony DependencyInjection Component",
             "homepage": "http://symfony.com",
-            "time": "2015-04-10 07:31:54"
+            "time": "2015-04-24 07:12:41"
         },
         {
             "name": "symfony/filesystem",
             "version": "dev-master",
-            "target-dir": "Symfony/Component/Filesystem",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/Filesystem.git",
-                "reference": "0b5a0137b6d27cdb85a0c20469b5afafab338ea9"
+                "reference": "318dedf57c535496c1d0f1a7cd25dd38d377628a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/Filesystem/zipball/0b5a0137b6d27cdb85a0c20469b5afafab338ea9",
-                "reference": "0b5a0137b6d27cdb85a0c20469b5afafab338ea9",
+                "url": "https://api.github.com/repos/symfony/Filesystem/zipball/318dedf57c535496c1d0f1a7cd25dd38d377628a",
+                "reference": "318dedf57c535496c1d0f1a7cd25dd38d377628a",
                 "shasum": ""
             },
             "require": {
@@ -932,7 +928,7 @@
                 }
             },
             "autoload": {
-                "psr-0": {
+                "psr-4": {
                     "Symfony\\Component\\Filesystem\\": ""
                 }
             },
@@ -952,21 +948,20 @@
             ],
             "description": "Symfony Filesystem Component",
             "homepage": "http://symfony.com",
-            "time": "2015-04-10 07:31:54"
+            "time": "2015-04-24 07:12:41"
         },
         {
             "name": "symfony/finder",
             "version": "dev-master",
-            "target-dir": "Symfony/Component/Finder",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/Finder.git",
-                "reference": "64c8bafb8652c3a6ef092371269cdcd560072871"
+                "reference": "d6e0f8d10812daffd330c2e0946e2ea39e7af802"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/Finder/zipball/64c8bafb8652c3a6ef092371269cdcd560072871",
-                "reference": "64c8bafb8652c3a6ef092371269cdcd560072871",
+                "url": "https://api.github.com/repos/symfony/Finder/zipball/d6e0f8d10812daffd330c2e0946e2ea39e7af802",
+                "reference": "d6e0f8d10812daffd330c2e0946e2ea39e7af802",
                 "shasum": ""
             },
             "require": {
@@ -982,7 +977,7 @@
                 }
             },
             "autoload": {
-                "psr-0": {
+                "psr-4": {
                     "Symfony\\Component\\Finder\\": ""
                 }
             },
@@ -1002,7 +997,7 @@
             ],
             "description": "Symfony Finder Component",
             "homepage": "http://symfony.com",
-            "time": "2015-04-10 07:31:54"
+            "time": "2015-04-24 07:12:41"
         },
         {
             "name": "symfony/var-dumper",
@@ -1060,16 +1055,15 @@
         {
             "name": "symfony/yaml",
             "version": "2.8.x-dev",
-            "target-dir": "Symfony/Component/Yaml",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/Yaml.git",
-                "reference": "fdded56dde4ca9efce6322887bf5eaa7bb0aae3e"
+                "reference": "4ededb1d00dc2c65fcd16ae3dafc785f92b3f95f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/Yaml/zipball/fdded56dde4ca9efce6322887bf5eaa7bb0aae3e",
-                "reference": "fdded56dde4ca9efce6322887bf5eaa7bb0aae3e",
+                "url": "https://api.github.com/repos/symfony/Yaml/zipball/4ededb1d00dc2c65fcd16ae3dafc785f92b3f95f",
+                "reference": "4ededb1d00dc2c65fcd16ae3dafc785f92b3f95f",
                 "shasum": ""
             },
             "require": {
@@ -1085,7 +1079,7 @@
                 }
             },
             "autoload": {
-                "psr-0": {
+                "psr-4": {
                     "Symfony\\Component\\Yaml\\": ""
                 }
             },
@@ -1105,7 +1099,7 @@
             ],
             "description": "Symfony Yaml Component",
             "homepage": "http://symfony.com",
-            "time": "2015-04-10 08:56:33"
+            "time": "2015-04-24 07:03:44"
         },
         {
             "name": "theseer/fdomdocument",
