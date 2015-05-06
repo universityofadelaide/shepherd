@@ -38,6 +38,8 @@ dependencies:
   - views
   - views_ui
   - tour
+  - extlink
+  - diff
   - ua_links_block
   - ua_ckeditor
 themes:
