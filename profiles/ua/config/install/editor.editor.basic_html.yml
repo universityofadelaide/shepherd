@@ -24,12 +24,12 @@ settings:
           items:
             - Blockquote
             - DrupalImage
+            - Table
+            - ua_table
         -
           name: Tools
           items:
             - Source
-            - Table
-            - ua_table
   plugins:
     stylescombo:
       styles: ''
@@ -48,3 +48,4 @@ dependencies:
     - filter.format.basic_html
   module:
     - ckeditor
+    - ua_ckeditor
