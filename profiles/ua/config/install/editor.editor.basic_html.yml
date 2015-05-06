@@ -24,6 +24,8 @@ settings:
           items:
             - Blockquote
             - DrupalImage
+            - Table
+            - ua_table
         -
           name: Tools
           items:
@@ -46,3 +48,4 @@ dependencies:
     - filter.format.basic_html
   module:
     - ckeditor
+    - ua_ckeditor

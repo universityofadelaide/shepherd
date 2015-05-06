@@ -41,6 +41,7 @@ dependencies:
   - extlink
   - diff
   - ua_links_block
+  - ua_ckeditor
 themes:
   - ua_theme
   - seven
