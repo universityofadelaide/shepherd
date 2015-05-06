@@ -1,7 +1,7 @@
 {
     "require": {
         "phing/phing":                   "2.10.1",
-        "drush/drush":                   "7.0.0-rc1",
+        "drush/drush":                   "7.0.0-rc2",
         "previousnext/phing-phpqatools": "0.0.3"
     },
     "minimum-stability": "dev",
