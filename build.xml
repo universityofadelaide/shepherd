@@ -82,6 +82,9 @@
         <symlink target="../../modules" link="${app.dir}/modules/custom" />
         <symlink target="../../themes"  link="${app.dir}/themes/custom" />
         <symlink target="../profiles"   link="${app.dir}/profiles" />
+
+        <!-- Change the ua_modules private git repository remote, so developers can commit. -->
+        <exec command="git -C ${app.dir}/modules/ua/ua_modules remote set-url origin git@github.com:UniversityofAdelaide/ua_modules.git" passthru="true" logoutput="true" />
     </target>
 
     <target name="install"

@@ -32,7 +32,7 @@ projects:
       - https://www.drupal.org/files/issues/fix_route_to_show-2480029-1.patch
   ua_modules:
     type: module
-    subdir: custom
+    subdir: ua
     download:
       url: https://f86fad3002fe237b68841075bfff8a29e97f29d1@github.com/UniversityofAdelaide/ua_modules.git
       branch: develop
