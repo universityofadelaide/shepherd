@@ -42,7 +42,6 @@ h2,
   @extend %heading;
   @include adjust-font-size-to($h2-fz);
   color: color(heading-grey);
-
 }
 
 h3,
@@ -50,7 +49,6 @@ h3,
   @extend %heading;
   @include adjust-font-size-to($h3-fz);
   color: color(heading-orange);
-
 }
 
 h4,
@@ -66,7 +64,6 @@ h5,
   @extend %heading;
   @include adjust-font-size-to($h5-fz);
   color: color(heading-orange);
-
 }
 
 h6,
@@ -74,7 +71,6 @@ h6,
   @extend %heading;
   @include adjust-font-size-to($h6-fz);
   color: color(heading-grey);
-
 }
 
 // Introduction paragraph
@@ -143,7 +139,6 @@ a:active {
 //
 // Styleguide: components.typography.blockquote
 
-
 @mixin blockquote-generated-content ($quote-size, $left-before) {
 
   .blockquote__content {
@@ -172,7 +167,6 @@ a:active {
   }
 }
 
-
 .blockquote {
   @include adjust-font-size-to($h5-fz);
 
@@ -195,8 +189,6 @@ a:active {
     font-style: normal;
   }
 
-
-
   &--small {
     @include adjust-font-size-to($h6-fz - 2);
 
@@ -205,10 +197,8 @@ a:active {
 
 }
 
-
 // Small Blockquote
 //
 // Markup: typography.blockquote-small.html
 //
 // Styleguide: components.typography.blockquote-small
-

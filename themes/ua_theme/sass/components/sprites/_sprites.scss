@@ -24,4 +24,32 @@ img {
   // Part 2: Scale the height according to the width, otherwise you get stretching
   vertical-align: middle;
   border: 0;
-  -ms-interpolation-mode: bicubic; }
+  -ms-interpolation-mode: bicubic;
+}
+
+a[href$='.pdf'] {
+  padding-left: 20px;
+  background: url('/core/modules/file/icons/application-pdf.png') 0 0 no-repeat;
+}
+
+a[href$='.pdf']:after {
+  content: ' (PDF)';
+}
+
+a[href$='.doc'] {
+  padding-left: 20px;
+  background: url('/core/modules/file/icons/x-office-document.png') 0 0 no-repeat;
+}
+
+a[href$='.doc']:after {
+  content: ' (Word Document)';
+}
+
+a[href$='.xls'] {
+  padding-left: 20px;
+  background: url('/core/modules/file/icons/x-office-spreadsheet.png') 0 0 no-repeat;
+}
+
+a[href$='.xls']:after {
+  content: ' (Excel Document)';
+}
