@@ -42,6 +42,7 @@ dependencies:
   - diff
   - ua_links_block
   - ua_ckeditor
+  - ua_video_filter
 themes:
   - ua_theme
   - seven
