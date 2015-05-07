@@ -26,6 +26,7 @@ settings:
             - DrupalImage
             - Table
             - ua_table
+            - block_quote
         -
           name: Tools
           items:
