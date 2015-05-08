@@ -8,6 +8,8 @@
 //
 // Style guide: sass.mixins.clearfix
 @mixin clearfix() {
+  zoom: 1;
+
   &:before {
     content: '';
     display: table;

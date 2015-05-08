@@ -6,9 +6,6 @@
 //
 // Styleguide components.sprites
 
-a {
-  @include all-sprite-sprites(true);
-}
 
 .sprite {
   display: inline-block;
@@ -32,24 +29,14 @@ a[href$='.pdf'] {
   background: url('/core/modules/file/icons/application-pdf.png') 0 0 no-repeat;
 }
 
-a[href$='.pdf']:after {
-  content: ' (PDF)';
-}
-
-a[href$='.doc'] {
+a[href$='.doc'],
+a[href$='.docx'] {
   padding-left: 20px;
   background: url('/core/modules/file/icons/x-office-document.png') 0 0 no-repeat;
 }
 
-a[href$='.doc']:after {
-  content: ' (Word Document)';
-}
-
-a[href$='.xls'] {
+a[href$='.xls'],
+a[href$='.xlsx'] {
   padding-left: 20px;
   background: url('/core/modules/file/icons/x-office-spreadsheet.png') 0 0 no-repeat;
-}
-
-a[href$='.xls']:after {
-  content: ' (Excel Document)';
 }
