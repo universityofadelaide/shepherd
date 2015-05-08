@@ -1,9 +1,0 @@
-name: 'UA links block'
-description: 'Add links block content.'
-type: module
-package: UA
-version: VERSION
-core: 8.x
-dependencies:
-  - block_content
-  - link

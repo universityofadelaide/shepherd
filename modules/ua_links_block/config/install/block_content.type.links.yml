@@ -1,7 +1,0 @@
-langcode: en
-status: true
-dependencies: {  }
-id: links
-label: Links
-revision: 0
-description: 'Show links'
