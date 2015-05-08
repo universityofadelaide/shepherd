@@ -3,7 +3,7 @@
   description: A build file for the University of Adelaide project.
 -->
 
-<project name="ua" default="build" phingVersion="2.4.11">
+<project name="ua" default="list" phingVersion="2.4.11">
 
     <!-- Includes. -->
 
@@ -46,6 +46,11 @@
     <property name="php.sniff.dirs" value="${project.basedir}/modules ${project.basedir}/themes" />
 
     <!-- Meta targets. -->
+
+    <target name="list"
+            description="List of all available phing targets/commands.">
+            <exec command="${project.basedir}/bin/phing -l" passthru="true" logoutput="false" />
+    </target>
 
     <target name="build"
             description="Build the project and test it."
