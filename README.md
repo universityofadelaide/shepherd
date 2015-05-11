@@ -84,7 +84,13 @@ http://ua.dev
 
 ## Updating VM
 
-For details please see:
+If a new version of the Vagrant box is available you can run the following:
+
+  $ vagrant box remove ua-lamp
+  $ vagrant destroy -f && vagrant up
+
+
+For more information details please see:
 
 https://github.com/previousnext/ua-dev#updating
 
