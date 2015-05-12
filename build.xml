@@ -3,7 +3,7 @@
   description: A build file for the University of Adelaide project.
 -->
 
-<project name="ua" default="list" phingVersion="2.4.11">
+<project name="ua_site_manager" default="list" phingVersion="2.4.11">
 
     <!-- Includes. -->
 
@@ -21,7 +21,7 @@
     <!-- Drush -->
     <property name="drush.bin"       value="${project.basedir}/bin/drush" />
     <property name="drush.cmd"       value="${drush.bin} -r ${app.dir}" />
-    <property name="drush.make.file" value="ua.make.yml" />
+    <property name="drush.make.file" value="ua_site_manager.make.yml" />
 
     <!-- Gulp -->
     <property name="gulp.cmd"        value="${project.basedir}/node_modules/.bin/gulp" />
@@ -32,7 +32,7 @@
     <property name="drupal.user"     value="admin" />
     <property name="drupal.pass"     value="password" />
     <property name="drupal.dir"      value="${project.basedir}/app" />
-    <property name="drupal.profile"  value="ua" />
+    <property name="drupal.profile"  value="ua_site_manager" />
 
     <!-- Mysql -->
     <property name="mysql.host"        value="localhost" />

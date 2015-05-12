@@ -14,7 +14,7 @@ use Drupal\user\RoleInterface;
  *
  * @see system_install()
  */
-function ua_install() {
+function ua_site_manager_install() {
   // Now that all modules are installed, make sure the entity storage and other
   // handlers are up to date with the current entity and field definitions. For
   // example, Path module adds a base field to nodes and taxonomy terms after
@@ -73,3 +73,4 @@ function ua_install() {
   // Enable the admin theme.
   \Drupal::configFactory()->getEditable('node.settings')->set('use_admin_theme', '1')->save();
 }
+

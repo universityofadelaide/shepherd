@@ -1,6 +1,6 @@
-name: University of Adelaide
+name: University of Adelaide Site Manager
 type: profile
-description: 'University of Adelaide Drupal 8 site.'
+description: 'University of Adelaide Drupal 8 site manager.'
 version: VERSION
 core: 8.x
 dependencies:
@@ -40,9 +40,7 @@ dependencies:
   - tour
   - extlink
   - diff
-  - ua_links_block
-  - ua_ckeditor
-  - ua_video_filter
 themes:
-  - ua_theme
+  - bartik
   - seven
+
