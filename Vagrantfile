@@ -6,8 +6,8 @@ end
 
 Vagrant.configure("2") do |config|
   config.vm.define 'lamp', primary: true do |lamp|
-    lamp.vm.box      = 'ua-lamp'
-    lamp.vm.hostname = 'ua.dev'
+    lamp.vm.box      = 'ua-sm-lamp'
+    lamp.vm.hostname = 'ua-sm.dev'
     lamp.vm.box_url  = 'http://wcms-files.adelaide.edu.au/ua-lamp.box'
 
     # This script is a last chance for Developers to add more
