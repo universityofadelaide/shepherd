@@ -1,10 +1,10 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "b59aa4f666888eb10bca27da11f77905",
+    "hash": "4e82dff2ed42bacc60c79176dc8b036d",
     "packages": [
         {
             "name": "d11wtq/boris",
@@ -541,12 +541,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/git.git",
-                "reference": "2d5c139d0eedcb9e67e0e9ca08023be6e9b7b47b"
+                "reference": "d31f71b2aad49b9fff5d5e24e188bc92f7a41333"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/git/zipball/2d5c139d0eedcb9e67e0e9ca08023be6e9b7b47b",
-                "reference": "2d5c139d0eedcb9e67e0e9ca08023be6e9b7b47b",
+                "url": "https://api.github.com/repos/sebastianbergmann/git/zipball/d31f71b2aad49b9fff5d5e24e188bc92f7a41333",
+                "reference": "d31f71b2aad49b9fff5d5e24e188bc92f7a41333",
                 "shasum": ""
             },
             "require": {
@@ -578,7 +578,7 @@
             "keywords": [
                 "git"
             ],
-            "time": "2015-04-06 16:23:43"
+            "time": "2015-05-12 04:57:28"
         },
         {
             "name": "sebastian/phpcpd",
@@ -1140,12 +1140,52 @@
             "description": "The classes contained within this repository extend the standard DOM to use exceptions at all occasions of errors instead of PHP warnings or notices. They also add various custom methods and shortcuts for convenience and to simplify the usage of DOM.",
             "homepage": "https://github.com/theseer/fDOMDocument",
             "time": "2014-09-13 10:57:19"
+        },
+        {
+            "name": "vrana/adminer",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/vrana/adminer.git",
+                "reference": "ea0c9d9b5e942a17f43c7681ff834d002d1a8890"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/vrana/adminer/zipball/ea0c9d9b5e942a17f43c7681ff834d002d1a8890",
+                "reference": "ea0c9d9b5e942a17f43c7681ff834d002d1a8890",
+                "shasum": ""
+            },
+            "type": "library",
+            "autoload": {
+                "classmap": [
+                    "plugins/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "Apache-2.0",
+                "GPL-2.0"
+            ],
+            "authors": [
+                {
+                    "name": "Jakub Vrána",
+                    "homepage": "http://www.vrana.cz/"
+                }
+            ],
+            "description": "Database management in a single PHP file.",
+            "homepage": "http://www.adminer.org/",
+            "keywords": [
+                "database"
+            ],
+            "time": "2015-03-10 16:33:44"
         }
     ],
     "packages-dev": [],
     "aliases": [],
     "minimum-stability": "dev",
-    "stability-flags": [],
+    "stability-flags": {
+        "vrana/adminer": 20
+    },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": [],
