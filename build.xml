@@ -27,7 +27,7 @@
     <property name="gulp.cmd"        value="${project.basedir}/node_modules/.bin/gulp" />
 
     <!-- Drupal -->
-    <property name="drupal.siteName" value="Site name" />
+    <property name="drupal.siteName" value="Site manager" />
     <property name="drupal.email"    value="user@example.com" />
     <property name="drupal.user"     value="admin" />
     <property name="drupal.pass"     value="password" />
