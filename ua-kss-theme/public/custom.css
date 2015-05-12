@@ -1,9 +1,0 @@
-#kss-node .kss-section{
-	max-width: 80%;
-}
-
-@media (max-width: 767px){
-	#kss-node .kss-section{
-		max-width: 100%;
-	}
-}
