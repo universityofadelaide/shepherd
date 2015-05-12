@@ -45,6 +45,10 @@
     <!-- PHPCS. -->
     <property name="php.sniff.dirs" value="${project.basedir}/modules ${project.basedir}/themes" />
 
+    <!-- Adminer -->
+    <property name="adminer.app"     value="vendor/vrana/adminer" />
+    <property name="adminer.symlink" value="app/adminer.php" />
+
     <!-- Meta targets. -->
 
     <target name="list"
@@ -122,6 +126,26 @@
 
         <!-- Clear caches. -->
         <exec command="${drush.bin} -r ${app.dir} cr"
+              logoutput="true"
+              passthru="true" />
+    </target>
+
+    <target name="adminer"
+            description="Compile and symlink the latest version into the webroot.">
+        <!-- Clean. -->
+        <exec command="find app -name adminer.php -exec rm {} \;"
+              logoutput="true"
+              passthru="true" />
+
+        <!-- Compile. -->
+        <exec command="php ../${adminer.app}/compile.php"
+              dir="app"
+              logoutput="true"
+              passthru="true" />
+
+        <!-- Rename. -->
+        <exec command="find -name adminer-*.php -exec mv {} adminer.php \;"
+              dir="app"
               logoutput="true"
               passthru="true" />
     </target>
