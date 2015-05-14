@@ -1,0 +1,21 @@
+uuid: 486dc1da-6151-4eea-8100-f019fb8e7930
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_ua_sm_primary_domain_name
+    - node.type.ua_sm_site
+id: node.ua_sm_site.field_ua_sm_primary_domain_name
+field_name: field_ua_sm_primary_domain_name
+entity_type: node
+bundle: ua_sm_site
+label: 'Primary domain name'
+description: 'E.g. adelaide.edu.au'
+required: true
+translatable: false
+default_value:
+  -
+    value: ''
+default_value_callback: ''
+settings: {  }
+field_type: string

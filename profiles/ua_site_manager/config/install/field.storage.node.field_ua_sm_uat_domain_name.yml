@@ -1,0 +1,19 @@
+uuid: f6d0b4cd-7aec-4c5e-9750-80f3dac7b3da
+langcode: en
+status: true
+dependencies:
+  module:
+    - node
+id: node.field_ua_sm_uat_domain_name
+field_name: field_ua_sm_uat_domain_name
+entity_type: node
+type: string
+settings:
+  max_length: 255
+  case_sensitive: false
+module: core
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false

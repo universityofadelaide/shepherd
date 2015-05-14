@@ -1,0 +1,22 @@
+uuid: aa904541-bd3c-4641-9440-648e191bb07c
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.body
+    - node.type.ua_sm_site
+  module:
+    - text
+id: node.ua_sm_site.body
+field_name: body
+entity_type: node
+bundle: ua_sm_site
+label: Description
+description: ''
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  display_summary: true
+field_type: text_with_summary

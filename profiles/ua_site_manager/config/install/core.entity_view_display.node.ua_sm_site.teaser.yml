@@ -1,0 +1,43 @@
+uuid: 0839f0d1-78a6-4c39-b834-52199d5396c7
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.teaser
+    - field.field.node.ua_sm_site.body
+    - field.field.node.ua_sm_site.field_tags
+    - field.field.node.ua_sm_site.field_ua_sm_aliases
+    - field.field.node.ua_sm_site.field_ua_sm_authorizer_email
+    - field.field.node.ua_sm_site.field_ua_sm_authorizer_id
+    - field.field.node.ua_sm_site.field_ua_sm_path
+    - field.field.node.ua_sm_site.field_ua_sm_primary_domain_name
+    - field.field.node.ua_sm_site.field_ua_sm_site_title
+    - field.field.node.ua_sm_site.field_ua_sm_uat_domain_name
+    - node.type.ua_sm_site
+  module:
+    - text
+    - user
+id: node.ua_sm_site.teaser
+targetEntityType: node
+bundle: ua_sm_site
+mode: teaser
+content:
+  body:
+    label: hidden
+    type: text_summary_or_trimmed
+    weight: 101
+    settings:
+      trim_length: 600
+    third_party_settings: {  }
+  links:
+    weight: 100
+hidden:
+  field_tags: true
+  field_ua_sm_aliases: true
+  field_ua_sm_authorizer_email: true
+  field_ua_sm_authorizer_id: true
+  field_ua_sm_domain_name: true
+  field_ua_sm_path: true
+  field_ua_sm_primary_domain_name: true
+  field_ua_sm_site_title: true
+  field_ua_sm_uat_domain_name: true
