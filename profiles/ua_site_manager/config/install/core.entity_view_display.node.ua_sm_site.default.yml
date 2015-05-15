@@ -75,7 +75,7 @@ content:
     settings:
       link_to_entity: false
     third_party_settings: {  }
-    label: above
+    label: inline
   field_ua_sm_uat_domain_name:
     type: string
     weight: 3
