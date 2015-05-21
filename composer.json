@@ -7,7 +7,7 @@
     ],
     "require": {
         "phing/phing":                           "2.10.1",
-        "drush/drush":                           "7.0.0-rc2",
+        "drush/drush":                           "8.*",
         "drupal/console":                        "dev-master",
         "vrana/adminer":                         "dev-master",
         "universityofadelaide/phing-phpqatools": "dev-drupal8"
