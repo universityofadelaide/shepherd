@@ -31,3 +31,9 @@ deploy_staging:
   steps:
     - bin/phing generate
     - bundle exec cap staging deploy
+
+deploy_uasm:
+  setup: *deps
+  steps:
+    - bin/robo generate
+    - bundle exec cap uasm deploy

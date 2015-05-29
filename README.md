@@ -1,5 +1,5 @@
-UA - D8
-=======
+UA Site Manager - D8
+====================
 
 The University of Adelaide project.
 
@@ -21,24 +21,7 @@ $ vagrant plugin install vagrant-auto_network
 
 # Adds "/etc/hosts" (local DNS) records.
 $ vagrant plugin install vagrant-hostsupdater
-
-# S3 bucket support.
-$ vagrant plugin install vagrant-s3auth
 ```
-
-**Add S3 account details**
-
-Vagrant images are stored privately on Amazon S3. To pull down the images for the first time
-you will need to add some credentials to your local profile.
-
-Add the following to your "~/.aws/ua" file, create the file if you need to.
-
-```bash
-AKIAJHJZX5WZTF2SIFOA
-+bRiEz8I+jBnzE2PPTcfGvdfQ/kvzUQWUsUTfo9S
-```
-
-NOTE: These credentials can only access the box images (cannot write or view other buckets).
 
 ## Getting started
 
