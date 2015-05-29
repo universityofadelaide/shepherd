@@ -8,7 +8,7 @@ deps: &deps
 test: &test
   - bin/phing ci:phpcs
   - bin/phing
-  - bin/phing styleguide:link
+  # - bin/phing styleguide:link
   # Fix permissions issues for the Apache web user.
   - chown -R www-data:www-data app
 

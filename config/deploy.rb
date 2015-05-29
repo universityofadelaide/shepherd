@@ -1,6 +1,6 @@
-set :app_name,      "ua"
-set :location,      "qa.ua.previousnext.com.au"
-set :application,   "qa.ua.previousnext.com.au"
+set :app_name,      "uasm"
+set :location,      "uasm.drupalcode.com"
+set :application,   "uasm.drupalcode.com"
 set :user,          "deployer"
 set :runner,        "deployer"
 set :port,          22
@@ -33,6 +33,6 @@ set :mysql_db,   "#{app_name}"
 set :mysql_host, "localhost"
 namespace :phing do
   task :build, :on_error => :continue do
-    run "cd #{release_path} && #{phing_bin} build -Dmysql.queryString='mysql://#{mysql_user}:#{mysql_pass}@#{mysql_host}/#{mysql_db}' styleguide:link"
+    run "cd #{release_path} && #{phing_bin} build -Dmysql.queryString='mysql://#{mysql_user}:#{mysql_pass}@#{mysql_host}/#{mysql_db}'"
   end
 end
