@@ -35,5 +35,4 @@ deploy_staging:
 deploy_uasm:
   setup: *deps
   steps:
-    - bin/robo generate
     - bundle exec cap uasm deploy
