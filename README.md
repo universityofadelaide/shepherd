@@ -62,14 +62,14 @@ $ phing -l
 The site can be found on the domain:
 
 ```
-http://ua.dev
+http://ua-sm.dev
 ```
 
 ## Updating VM
 
 If a new version of the Vagrant box is available you can run the following:
 ```
-  $ vagrant box remove ua-lamp
+  $ vagrant box remove ua-sm-lamp
   $ vagrant destroy -f && vagrant up
 ```
 
