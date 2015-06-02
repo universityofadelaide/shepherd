@@ -45,16 +45,22 @@ This will take you to the root of the project **inside** of the vm.
 $ composer install --prefer-dist --dev
 ```
 
+**2.5) Fix config**
+
+```bash
+$ sudo sed -i 's/64/64M/' /etc/php5/cli/conf.d/20-apcu.ini 
+```
+
 **3) Build the project**
 
 ```bash
-$ phing
+$ robo build
 ```
 
-The default build task is to build the project. For a list of tasks that can be run:
+For a list of tasks that can be run:
 
 ```bash
-$ phing -l
+$ robo -l
 ```
 
 **4) Go to the site**
@@ -107,8 +113,8 @@ $ npm install
 To setup the styleguide link and generate the styleguide locally run:
 
 ```bash
-$ phing styleguide:link
-$ phing generate
+$ robo styleguide:link
+$ robo generate
 ```
 
 ### Compiling CSS and Styleguide
