@@ -1,17 +1,17 @@
-uuid: 83c50a1e-bbfc-4c2e-b409-9fc47083f5d8
+uuid: a7932528-dfef-4b63-8700-c634086599be
 langcode: en
 status: true
 dependencies:
   module:
     - node
-id: node.field_ua_sm_authorizer_id
-field_name: field_ua_sm_authorizer_id
+id: node.field_ua_sm_site_id
+field_name: field_ua_sm_site_id
 entity_type: node
 type: string
 settings:
-  max_length: 16
-  case_sensitive: false
+  max_length: 255
   is_ascii: false
+  case_sensitive: false
 module: core
 locked: false
 cardinality: 1

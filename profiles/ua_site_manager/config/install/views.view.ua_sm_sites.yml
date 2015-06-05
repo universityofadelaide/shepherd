@@ -662,6 +662,9 @@ display:
         - 'languages:language_content'
         - 'languages:language_interface'
         - url
+        - 'url.query_args.pagers:0'
+        - 'url.query_args:order'
+        - 'url.query_args:sort'
         - user
         - 'user.node_grants:view'
       cacheable: false
@@ -686,6 +689,9 @@ display:
         - 'languages:language_content'
         - 'languages:language_interface'
         - url
+        - 'url.query_args.pagers:0'
+        - 'url.query_args:order'
+        - 'url.query_args:sort'
         - user
         - 'user.node_grants:view'
       cacheable: false

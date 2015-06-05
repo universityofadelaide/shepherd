@@ -11,6 +11,7 @@ type: string
 settings:
   max_length: 255
   case_sensitive: false
+  is_ascii: false
 module: core
 locked: false
 cardinality: 1
