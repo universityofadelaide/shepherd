@@ -40,6 +40,9 @@ dependencies:
   - tour
   - extlink
   - diff
+  - composer_manager
+  - ua_ldap_authorisation
+  - ua_site_manager_ldap
 themes:
   - bartik
   - seven

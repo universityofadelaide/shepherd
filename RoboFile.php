@@ -1,10 +1,6 @@
 <?php
 /**
- * Implementation of class for Robo - http://robo.li/
- * 
- * To Install robo:
- * wget -O bin/robo http://robo.li/robo.phar
- * chmod +x bin/robo
+ * Implementation of configuration/class for Robo - http://robo.li/
  *
  */
 
@@ -38,23 +34,23 @@ class RoboFile extends \Robo\Tasks {
     $this->admin_password     = "password";
 
     $this->site_name          = "Site name";
+
+    $this->private_key_path   = "/home/vagrant/.ssh/id_rsa";
   }
 
   /**
    * Perform a full build on the project
    */
-  function build() {
-    $this->prepareMake();
-    $this->make();
-    $this->prepareInstall();
-    $this->siteInstall();
-    //$this->generate();
+  function build($opts = ['working-copy' => FALSE]) {
+    $this->buildPrepare();
+    $this->buildMake($opts);
+    $this->buildInstall();
   }
 
   /**
    * Prepare the application root for the make
    */
-  function prepareMake() {
+  function buildPrepare() {
     if (is_dir($this->application_root)) {
       $this->_exec("sudo chmod -R 775 $this->application_root/sites");
       $this->_exec("sudo rm -fR $this->application_root");
@@ -64,27 +60,30 @@ class RoboFile extends \Robo\Tasks {
   /**
    * Install drupal ready to run site-install on
    */
-  function make() {
-    $this->_exec("$this->drush_binary make --working-copy $this->drush_make_file $this->application_root");
+  function buildMake($opts = ['working-copy' => FALSE]) {
+    $clone_type = "--shallow-clone";
+    if ($opts['working-copy']) {
+      $clone_type = "--working-copy";
+    }
+
+    $this->_exec("$this->drush_binary make $clone_type $this->drush_make_file $this->application_root");
     $this->taskFilesystemStack()
       ->remove("$this->application_root/modules/custom")
       ->remove("$this->application_root/themes/custom")
       ->remove("$this->application_root/profiles")
       ->run();
-
     $this->taskFilesystemStack()
       ->symlink("/vagrant/modules",   "/vagrant/$this->application_root/modules/custom")
       ->symlink("/vagrant/themes",    "/vagrant/$this->application_root/themes/custom")
       ->symlink("/vagrant/profiles",  "/vagrant/$this->application_root/profiles")
       ->run();
-
-    $this->_exec("git -C $this->application_root/modules/ua/ua_modules remote set-url origin git@github.com:universityofadelaide/ua_modules.git");
   }
 
   /**
-   * Prepare directories and config files for site installation
+   * Prepare directories and config files, then run drush site
+   * install to build the site from the install profile
    */
-  function prepareInstall() {
+  function buildInstall() {
     if (is_dir("$this->application_root/sites/default")) {
       $this->_exec("sudo chmod -R 775 $this->application_root/sites/default");
       $this->_exec("sudo rm -fR $this->application_root/default/files");
@@ -95,58 +94,21 @@ class RoboFile extends \Robo\Tasks {
       ->chmod("$this->application_root/sites/default/settings.php", 777)
       ->chmod("$this->application_root/sites/default/services.yml", 777)
       ->run();
-  }
-
-  /**
-   * Run drush site install to build the site from the install profile
-   */
-  function siteInstall() {
     $this->_exec("$this->drush_cmd site-install \
     $this->drupal_profile -y --db-url=$this->mysql_query_string \
       --account-mail=$this->admin_email --account-name=$this->admin_account \
       --account-pass=$this->admin_password --site-name='$this->site_name'");
-    $this->cacheClear();
-  }
-
-  /**
-   * Run gulp to generate the css etc
-   */
-  function generate() {
-    $this->_exec("$this->gulp_bin");
-  }
-
-  /**
-   * Run gulp to watch and auto generate css etc
-   */
-  function generateWatch() {
-    $this->_exec("$this->gulp_bin watch &");
-  }
-
-  /**
-   * Add the styleguide softlink
-   */
-  function styleguideLink() {
-    if (!is_link("/vagrant/". $this->application_root ."/styleguide")) {
-      $this->taskFilesystemStack()
-        ->symlink("/vagrant/styleguide", "/vagrant/". $this->application_root ."/styleguide")
-        ->run();
-    }
-    else {
-      $this->say("Styleguide link not created - already exists");
-    }
-  }
-
-  /**
-   * Perform cache clear in the app directory
-   */
-  function cacheClear() {
     $this->_exec("$this->drush_cmd cr");
+    $this->_exec("$this->drush_cmd composer-manager-init");
+    $this->taskExec("$this->composer_bin drupal-update")
+      ->dir("$this->application_root/core")
+      ->run();
   }
 
   /**
    * Install adminer
    */
-  function adminer() {
+  function devInstallAdminer() {
     $this->taskFilesystemStack()
       ->remove("$this->application_root/adminer.php")
       ->run();
@@ -159,20 +121,23 @@ class RoboFile extends \Robo\Tasks {
   /**
    * Ask a couple of questions and then setup the initial config
    */
-  function gitflowInit() {
-    $this->say("Initial project setup. Adds user details to gitconfig, adds project specific aliases to bashrc.");
-    $github_name  = $this->ask("Enter your GitHub name (e.g. Bob Rocks):");
-    $github_email = $this->ask("Enter your GitHub email (e.g. bob@rocks.adelaide.edu.au):");
-    $git_config   = "[user]\n    email = $github_email}\n    name = $github_name\n";
-    $this->taskWriteToFile("~/.gitconfig")
-      ->append($git_config)
-      ->run();
+  function devInit() {
+    $this->say("Initial project setup. Adds user details to gitconfig, generate keys.");
+    $git_name  = $this->ask("Enter your Git name (e.g. Bob Rocks):");
+    $git_email = $this->ask("Enter your Git email (e.g. bob@rocks.adelaide.edu.au):");
+    $this->_exec("git config --global user.name \"$git_name\"");
+    $this->_exec("git config --global user.email \"$git_email\"");
+    if ($this->confirm('Would you like to generate a new key pair?')) {
+      $this->_exec("ssh-keygen -b 2048 -t rsa -q -N '' -f '$this->private_key_path'");
+      $this->say("Add this new public key to your Git account.");
+      echo file_get_contents($this->private_key_path . '.pub');
+    }
   }
 
   /**
    * Remote debug enable
    */
-  function xdebugEnable() {
+  function devXdebugEnable() {
     $this->_exec("sudo php5enmod xdebug");
     $this->_exec("sudo service apache2 restart");
   }
@@ -180,7 +145,7 @@ class RoboFile extends \Robo\Tasks {
   /**
    * Remote debug disable
    */
-  function xdebugDisable() {
+  function devXdebugDisable() {
     $this->_exec("sudo php5dismod xdebug");
     $this->_exec("sudo service apache2 restart");
   }

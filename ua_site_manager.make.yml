@@ -15,7 +15,7 @@ projects:
     type: core
     download:
       url: http://git.drupal.org/project/drupal.git
-      tag: 8.0.0-beta10
+      tag: 8.0.0-beta11
   cas:
     type: module
     subdir: contrib
@@ -28,6 +28,12 @@ projects:
     type: module
     subdir: contrib
     version: 1.x-dev
+  composer_manager:
+    type: module
+    subdir: contrib
+    version: 1.x
+    patch:
+      - https://www.drupal.org/files/issues/composer_manager_2490480_12.patch
   ua_modules:
     type: module
     subdir: ua
