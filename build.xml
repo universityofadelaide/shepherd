@@ -1,0 +1,189 @@
+<!--
+  name: build.xml
+  description: A build file for the University of Adelaide project.
+-->
+
+<project name="ua_site_manager" default="list" phingVersion="2.4.11">
+
+    <!-- Includes. -->
+
+    <import file="vendor/previousnext/phing-phpqatools/build.xml" optional="true" />
+
+    <!-- Properties. -->
+
+    <!-- Application -->
+    <property name="app.docroot" value="app" />
+    <property name="app.dir"     value="${project.basedir}/${app.docroot}" />
+
+    <!-- Composer -->
+    <property name="composer.bin" value="/usr/local/bin/composer" />
+
+    <!-- Drush -->
+    <property name="drush.bin"       value="${project.basedir}/bin/drush" />
+    <property name="drush.cmd"       value="${drush.bin} -r ${app.dir}" />
+    <property name="drush.make.file" value="ua_site_manager.make.yml" />
+
+    <!-- Gulp -->
+    <property name="gulp.cmd"        value="${project.basedir}/node_modules/.bin/gulp" />
+
+    <!-- Drupal -->
+    <property name="drupal.siteName" value="Site manager" />
+    <property name="drupal.email"    value="user@example.com" />
+    <property name="drupal.user"     value="admin" />
+    <property name="drupal.pass"     value="password" />
+    <property name="drupal.dir"      value="${project.basedir}/app" />
+    <property name="drupal.profile"  value="ua_site_manager" />
+
+    <!-- Mysql -->
+    <property name="mysql.host"        value="localhost" />
+    <property name="mysql.port"        value="3306" />
+    <property name="mysql.database"    value="local" />
+    <property name="mysql.user"        value="drupal" />
+    <property name="mysql.pass"        value="drupal" />
+    <property name="mysql.queryString" value="mysql://${mysql.user}:${mysql.pass}@${mysql.host}/${mysql.database}" />
+
+    <!-- PHPCS. -->
+    <property name="php.sniff.dirs" value="${project.basedir}/modules ${project.basedir}/themes" />
+
+    <!-- Adminer -->
+    <property name="adminer.app"     value="vendor/vrana/adminer" />
+    <property name="adminer.symlink" value="app/adminer.php" />
+
+    <!-- Meta targets. -->
+
+    <target name="list"
+            description="List of all available phing targets/commands.">
+            <exec command="${project.basedir}/bin/phing -l" passthru="true" logoutput="false" />
+    </target>
+
+    <target name="build"
+            description="Build the project and test it."
+            depends="prepare, make, install" />
+
+    <!-- Steps targets. -->
+
+    <target name="prepare"
+            description="Prepare the directories." >
+        <!-- This avoids issues where site installs make strong permissions on
+             the "default" site. -->
+        <exec command="sudo chmod -R 775 ${app.dir}/sites/default"
+              logoutput="true"
+              passthru="true" />
+        <exec command="sudo rm -fR ${app.dir}"
+              logoutput="true"
+              passthru="true" />
+    </target>
+
+    <target name="make"
+            description="Builds the application based on the drush make file.">
+        <exec command="${composer.bin} install --prefer-dist --no-progress"
+              passthru="true"
+              logoutput="true" />
+
+        <exec command="${drush.bin} make --working-copy ${drush.make.file} ${app.docroot}"
+              passthru="true"
+              logoutput="true" />
+
+        <!-- We also symlink in our modules, themes and profiles. -->
+        <exec command="rm -fR ${app.docroot}/modules/custom" passthru="true" logoutput="true" />
+        <exec command="rm -fR ${app.docroot}/themes/custom"  passthru="true" logoutput="true" />
+        <exec command="rm -fR ${app.docroot}/profiles"       passthru="true" logoutput="true" />
+        <symlink target="../../modules" link="${app.dir}/modules/custom" />
+        <symlink target="../../themes"  link="${app.dir}/themes/custom" />
+        <symlink target="../profiles"   link="${app.dir}/profiles" />
+
+        <!-- Change the ua_modules private git repository remote, so developers can commit. -->
+        <exec command="git -C ${app.dir}/modules/ua/ua_modules remote set-url origin git@github.com:UniversityofAdelaide/ua_modules.git" passthru="true" logoutput="true" />
+    </target>
+
+    <target name="install"
+            description="Install the site with Drush.">
+        <!-- Ensure the files directory is clean -->
+        <exec command="sudo rm -fR ${app.dir}/sites/default/files"
+              logoutput="true"
+              passthru="true" />
+
+        <!-- Ensure we have a fresh settings.php with correct permissions -->
+        <exec command="sudo scp ${app.dir}/sites/default/default.settings.php ${app.dir}/sites/default/settings.php"
+              logoutput="true"
+              passthru="true" />
+        <exec command="sudo chmod 777 ${app.dir}/sites/default/settings.php"
+              logoutput="true"
+              passthru="true" />
+
+        <!-- Ensure we have a fresh services.yml with correct permissions -->
+        <exec command="sudo scp ${app.dir}/sites/default/default.services.yml ${app.dir}/sites/default/services.yml"
+              logoutput="true"
+              passthru="true" />
+        <exec command="sudo chmod 777 ${app.dir}/sites/default/services.yml"
+              logoutput="true"
+              passthru="true" />
+
+        <!-- Install the site. -->
+        <exec command="${drush.bin} -r ${app.dir} site-install ${drupal.profile} -y --db-url=${mysql.queryString} --account-mail=${drupal.email} --account-name=${drupal.user} --account-pass=${drupal.pass} --site-name=&quot;${drupal.siteName}&quot;"
+              logoutput="true"
+              passthru="true" />
+
+        <!-- Clear caches. -->
+        <exec command="${drush.bin} -r ${app.dir} cr"
+              logoutput="true"
+              passthru="true" />
+    </target>
+
+    <target name="adminer"
+            description="Compile and symlink the latest version into the webroot.">
+        <!-- Clean. -->
+        <exec command="find app -name adminer.php -exec rm {} \;"
+              logoutput="true"
+              passthru="true" />
+
+        <!-- Compile. -->
+        <exec command="php ../${adminer.app}/compile.php"
+              dir="app"
+              logoutput="true"
+              passthru="true" />
+
+        <!-- Rename. -->
+        <exec command="find -name adminer-*.php -exec mv {} adminer.php \;"
+              dir="app"
+              logoutput="true"
+              passthru="true" />
+    </target>
+
+    <target name="init"
+            description="Initial project setup. Adds user details to gitconfig, adds project specific aliases to bashrc.">
+        <input propertyName="githubName"
+               message="Enter your GitHub name (e.g. Bob Rocks):" />
+        <input propertyName="githubEmail"
+               message="Enter your GitHub email address (e.g. bob.rocks@adelaide.edu.au):" />
+        <echo msg="[user]${line.separator}    email = ${githubEmail}${line.separator}    name = ${githubName}"
+              file="/home/vagrant/.gitconfig"
+              append="true" />
+    </target>
+
+    <!-- Remote debug enable -->
+    <target name="xdebug:enable"
+            description="Enable xdebug in ini file">
+        <!-- Set xdebug.remote_enable & add ide key -->
+        <exec command="sudo sed -i 's/\(remote_enable=\).*/\11/g;$s/$/\nxdebug.idekey=PHPSTORM/g' /etc/php5/mods-available/xdebug.ini"
+              logoutput="true"
+              passthru="true" />
+        <!-- Add idekey -->
+        <exec command="sudo service apache2 restart"
+              logoutput="true"
+              passthru="true" />
+    </target>
+
+    <!-- Remote debug disable -->
+    <target name="xdebug:disable"
+            description="Disable xdebug in ini file">
+        <!-- Set xdeub.remote_enable to false & rm ide key -->
+        <exec command="sudo sed -i 's/\(remote_enable=\).*/\10/g;/?>/d' /etc/php5/mods-available/xdebug.ini"
+              logoutput="true"
+              passthru="true" />
+        <exec command="sudo service apache2 restart"
+              logoutput="true"
+              passthru="true" />
+    </target>
+
+</project>
