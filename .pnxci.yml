@@ -1,4 +1,4 @@
-application: uofa/lamp
+application: uofa/ua-lamp
 
 deps: &deps
   - composer install --prefer-dist --no-progress
