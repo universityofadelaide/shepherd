@@ -39,13 +39,7 @@ $ vagrant ssh
 
 This will take you to the root of the project **inside** of the vm.
 
-**2) Pull down the dependencies**
-
-```bash
-$ composer install --prefer-dist
-```
-
-**3) Run the dev init script**
+**2) Run the dev init script**
 
 ```bash
 $ robo dev:init
@@ -53,7 +47,7 @@ $ robo dev:init
 
 This will ask you your name and email address, which is needed for Git. It will also give you an opportunity to generate an SSH key that you can add to your Github or Gitlab account to enable interaction with git without manual authentication. If you already have a keypair you want to use, you can ignore this.
 
-**4) Build the project**
+**3) Build the project**
 
 ```bash
 $ robo build
@@ -65,7 +59,7 @@ For a list of tasks that can be run:
 $ robo -l
 ```
 
-**5) Go to the site**
+**4) Go to the site**
 
 The site can be found on the domain: `http://uasm.dev`
 
