@@ -17,6 +17,8 @@ class RoboFile extends \Robo\Tasks {
     $this->application_root   = "app";
 
     $this->composer_bin       = "/usr/local/bin/composer";
+    $this->bundle_bin         = "/usr/local/bin/bundle";
+    $this->npm_bin            = "/usr/bin/npm";
 
     $this->drupal_profile     = "ua_site_manager";
 
@@ -42,9 +44,21 @@ class RoboFile extends \Robo\Tasks {
    * Perform a full build on the project
    */
   function build($opts = ['working-copy' => FALSE]) {
+    $this->buildInit();
     $this->buildPrepare();
     $this->buildMake($opts);
     $this->buildInstall();
+  }
+
+  /**
+   * Initialize the project by installing php, node and ruby dependencies
+   */
+  function buildInit() {
+    $this->taskParallelExec()
+      ->process("$this->composer_bin install --prefer-dist")
+      ->process("$this->bundle_bin install")
+      ->process("$this->npm_bin install")
+      ->run();
   }
 
   /**
