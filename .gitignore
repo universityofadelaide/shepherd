@@ -1,4 +1,5 @@
 .sass-cache
+.DS_Store
 /.bundle
 **/.idea/
 /.vagrant
@@ -6,8 +7,6 @@
 /bin
 /build
 /node_modules
-/modules
-!/modules/README.md
 /styleguide
 /themes/ua_theme/css
 /themes/ua_theme/sass/style-guide/sass-colors.hbs

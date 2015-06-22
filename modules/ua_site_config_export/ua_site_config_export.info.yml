@@ -1,0 +1,5 @@
+name: Site Configuration Exporter
+type: module
+description: 'A tool to export site configuration'
+core: 8.x
+package: UA
