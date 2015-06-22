@@ -87,9 +87,9 @@ class RoboFile extends \Robo\Tasks {
       ->remove("$this->application_root/profiles")
       ->run();
     $this->taskFilesystemStack()
-      ->symlink("/vagrant/modules",   "/vagrant/$this->application_root/modules/custom")
-      ->symlink("/vagrant/themes",    "/vagrant/$this->application_root/themes/custom")
-      ->symlink("/vagrant/profiles",  "/vagrant/$this->application_root/profiles")
+      ->symlink("../../modules", "/vagrant/$this->application_root/modules/custom")
+      ->symlink("../../themes", "/vagrant/$this->application_root/themes/custom")
+      ->symlink("/vagrant/profiles", "/vagrant/$this->application_root/profiles")
       ->run();
   }
 
