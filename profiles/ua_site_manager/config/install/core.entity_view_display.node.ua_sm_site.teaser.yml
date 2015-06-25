@@ -31,6 +31,8 @@ content:
     third_party_settings: {  }
   links:
     weight: 100
+  users:
+    weight: 10
 hidden:
   field_tags: true
   field_ua_sm_aliases: true

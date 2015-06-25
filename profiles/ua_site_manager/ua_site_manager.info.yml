@@ -18,7 +18,6 @@ dependencies:
   - menu_link_content
   - datetime
   - block_content
-  - quickedit
   - editor
   - entity_reference
   - help
@@ -41,6 +40,7 @@ dependencies:
   - extlink
   - diff
   - composer_manager
+  - paragraphs
   - ua_ldap_authorisation
   - ua_site_manager_ldap
   - ua_site_config_export

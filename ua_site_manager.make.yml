@@ -34,10 +34,18 @@ projects:
     version: 1.x
     patch:
       - https://www.drupal.org/files/issues/composer_manager_2490480_12.patch
+  entity_reference_revisions:
+    type: module
+    subdir: contrib
+    version: 1.x-dev
+  paragraphs:
+    type: module
+    subdir: contrib
+    version: 1.x-dev
   ua_modules:
     type: module
     subdir: ua
     download:
-      url: https://f86fad3002fe237b68841075bfff8a29e97f29d1@github.com/UniversityofAdelaide/ua_modules.git
+      url: git@github.com:universityofadelaide/ua_modules.git
       branch: develop
 

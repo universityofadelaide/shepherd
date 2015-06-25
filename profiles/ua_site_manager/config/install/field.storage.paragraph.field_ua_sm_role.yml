@@ -1,0 +1,28 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - options
+    - paragraphs
+id: paragraph.field_ua_sm_role
+field_name: field_ua_sm_role
+entity_type: paragraph
+type: list_string
+settings:
+  allowed_values:
+    -
+      value: ua_author
+      label: Author
+    -
+      value: ua_editor
+      label: Editor
+    -
+      value: administrator
+      label: Administrator
+  allowed_values_function: ''
+module: options
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false

@@ -1,0 +1,27 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.ua_sm_user_role.field_ua_sm_role
+    - field.field.paragraph.ua_sm_user_role.field_ua_sm_user_id
+    - paragraphs.paragraphs_type.ua_sm_user_role
+id: paragraph.ua_sm_user_role.default
+targetEntityType: paragraph
+bundle: ua_sm_user_role
+mode: default
+content:
+  field_ua_sm_role:
+    weight: 1
+    settings: {  }
+    third_party_settings: {  }
+    type: options_select
+  field_ua_sm_user_id:
+    weight: 0
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: string_textfield
+hidden:
+  created: true
+  uid: true
