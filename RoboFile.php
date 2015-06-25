@@ -43,7 +43,7 @@ class RoboFile extends \Robo\Tasks {
   /**
    * Perform a full build on the project
    */
-  function build($opts = ['working-copy' => FALSE]) {
+  function build() {
     $this->buildInit();
     $this->buildPrepare();
     $this->buildMake($opts);
@@ -74,23 +74,21 @@ class RoboFile extends \Robo\Tasks {
   /**
    * Install drupal ready to run site-install on
    */
-  function buildMake($opts = ['working-copy' => FALSE]) {
-    $clone_type = "--shallow-clone";
-    if ($opts['working-copy']) {
-      $clone_type = "--working-copy";
-    }
-
-    $this->_exec("$this->drush_binary make $clone_type $this->drush_make_file $this->application_root");
+  function buildMake() {
+    $this->_exec("$this->drush_binary make --working-copy $this->drush_make_file $this->application_root");
     $this->taskFilesystemStack()
       ->remove("$this->application_root/modules/custom")
       ->remove("$this->application_root/themes/custom")
       ->remove("$this->application_root/profiles")
       ->run();
+
     $this->taskFilesystemStack()
       ->symlink("../../modules", "/vagrant/$this->application_root/modules/custom")
       ->symlink("../../themes", "/vagrant/$this->application_root/themes/custom")
       ->symlink("/vagrant/profiles", "/vagrant/$this->application_root/profiles")
       ->run();
+
+//    $this->_exec("git -C $this->application_root/modules/ua/ua_modules remote set-url origin git@github.com:universityofadelaide/ua_modules.git");
   }
 
   /**
@@ -109,7 +107,7 @@ class RoboFile extends \Robo\Tasks {
       ->chmod("$this->application_root/sites/default/services.yml", 777)
       ->run();
     $this->_exec("$this->drush_cmd site-install \
-    $this->drupal_profile -y --db-url=$this->mysql_query_string \
+      $this->drupal_profile -y --db-url=$this->mysql_query_string \
       --account-mail=$this->admin_email --account-name=$this->admin_account \
       --account-pass=$this->admin_password --site-name='$this->site_name'");
     $this->_exec("$this->drush_cmd cr");
