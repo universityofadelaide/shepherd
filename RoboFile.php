@@ -144,7 +144,7 @@ class RoboFile extends \Robo\Tasks {
       "$this->drupal_profile -y --db-url=$this->mysql_query_string " .
       "--account-mail=$this->admin_email --account-name=$this->admin_account " .
       "--account-pass=$this->admin_password --site-name='$this->site_name'");
-    $this->cacheClear();
+    $this->devCacheClear();
 
     $this->_exec("$this->drush_cmd composer-manager-init");
     $this->taskExec("$this->composer_bin drupal-update")
@@ -155,7 +155,7 @@ class RoboFile extends \Robo\Tasks {
   /**
    * Perform cache clear in the app directory.
    */
-  public function devCacheClear() {
+  public function devdevCacheClear() {
     $this->_exec("$this->drush_cmd cr");
   }
 
@@ -216,7 +216,7 @@ class RoboFile extends \Robo\Tasks {
       ->to('cache: false')
       ->run();
     $this->say('Running drush cr as well ..');
-    $this->cacheClear();
+    $this->devCacheClear();
     $this->say('Done. Twig debugging has been enabled');
   }
 
@@ -237,7 +237,7 @@ class RoboFile extends \Robo\Tasks {
       ->to('cache: true')
       ->run();
     $this->say('Running drush cr as well ..');
-    $this->cacheClear();
+    $this->devCacheClear();
     $this->say('Done. Twig debugging has been disabled');
   }
 
