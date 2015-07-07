@@ -155,7 +155,7 @@ class RoboFile extends \Robo\Tasks {
   /**
    * Perform cache clear in the app directory.
    */
-  public function devdevCacheClear() {
+  public function devCacheClear() {
     $this->_exec("$this->drush_cmd cr");
   }
 
