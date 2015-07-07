@@ -36,6 +36,8 @@ class RoboFile extends \Robo\Tasks {
     $this->admin_account = "admin";
     $this->admin_password = "password";
 
+    $this->working_copy_clone = TRUE;
+
     $this->drush_make_file = "ua_site_manager.make.yml";
     $this->settings_php = "$this->application_root/sites/default/settings.php";
     $this->services_yml = "$this->application_root/sites/default/services.yml";
