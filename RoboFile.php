@@ -28,7 +28,7 @@ class RoboFile extends \Robo\Tasks {
     $this->phpcs_bin = "bin/phpcs";
 
     $this->drupal_profile = "ua_site_manager";
-    $this->site_name = "Site name";
+    $this->site_name = "Site manager";
 
     $this->mysql_query_string = "mysql://drupal:drupal@localhost/local";
 
