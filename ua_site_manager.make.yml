@@ -32,8 +32,6 @@ projects:
     type: module
     subdir: contrib
     version: 1.x
-    patch:
-      - https://www.drupal.org/files/issues/composer_manager_2490480_12.patch
   entity_reference_revisions:
     type: module
     subdir: contrib
