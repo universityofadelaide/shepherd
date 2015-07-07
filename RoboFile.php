@@ -61,7 +61,7 @@ class RoboFile extends \Robo\Tasks {
     $this->buildInit();
     $this->buildPrepare();
     $this->buildMake();
-    $this->buildInstall();
+    $this->buildInstall($opts);
   }
 
   /**
