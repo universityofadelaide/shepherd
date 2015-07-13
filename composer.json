@@ -1,17 +1,10 @@
 {
-    "repositories": [
-        {
-            "type": "vcs",
-            "url": "https://github.com/universityofadelaide/phing-phpqatools"
-        }
-    ],
     "require": {
-        "phing/phing":                           "2.10.1",
-        "codegyre/robo":                         "dev-master",
         "drush/drush":                           "8.*",
         "drupal/console":                        "dev-master",
         "vrana/adminer":                         "dev-master",
-        "universityofadelaide/phing-phpqatools": "dev-drupal8"
+        "phpmd/phpmd":                           "dev-master",
+        "drupal/coder":                          "8.2.*"
     },
     "minimum-stability": "dev",
     "config": {

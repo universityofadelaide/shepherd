@@ -1,14 +1,9 @@
 application: uofa/ua-lamp
 
 deps: &deps
-  - composer install --prefer-dist --no-progress
-  - npm install --loglevel silent
-  - bundle install --path vendor/bundle
 
 test: &test
-  - bin/phing ci:phpcs
-  - bin/phing
-  # - bin/phing styleguide:link
+  - robo build
   # Fix permissions issues for the Apache web user.
   - chown -R www-data:www-data app
 
@@ -23,13 +18,11 @@ test_head:
 deploy_qa:
   setup: *deps
   steps:
-    - bin/phing generate
     - bundle exec cap dev deploy
 
 deploy_staging:
   setup: *deps
   steps:
-    - bin/phing generate
     - bundle exec cap staging deploy
 
 deploy_uasm:

@@ -13,26 +13,19 @@ set :use_sudo,      false
 set :scm, :none
 set :repository, "."
 set :deploy_via, :copy
-set :copy_exclude, ["vendor", ".bundle", ".git", "bin"]
+set :copy_exclude, [ ".git" ]
 
 ssh_options[:forward_agent] = true
 
-after "deploy:update_code", "composer:install", "phing:build"
+after "deploy:update_code", "robo:build"
 
-set :composer_bin, "composer"
-namespace :composer do
-  task :install do
-    run "cd #{release_path} && #{composer_bin} install --prefer-dist --no-progress"
-  end
-end
-
-set :phing_bin,  "bin/phing"
+set :robo_bin,  "robo"
 set :mysql_user, "#{app_name}"
 set :mysql_pass, "#{app_name}"
 set :mysql_db,   "#{app_name}"
 set :mysql_host, "localhost"
-namespace :phing do
+namespace :robo do
   task :build, :on_error => :continue do
-    run "cd #{release_path} && #{phing_bin} build -Dmysql.queryString='mysql://#{mysql_user}:#{mysql_pass}@#{mysql_host}/#{mysql_db}'"
+    run "cd #{release_path} && #{robo_bin} build -Dmysql.queryString='mysql://#{mysql_user}:#{mysql_pass}@#{mysql_host}/#{mysql_db}'"
   end
 end

@@ -1,16 +1,16 @@
 GEM
   remote: https://rubygems.org/
   specs:
-    capistrano (2.5.21)
+    capistrano (2.12.0)
       highline
       net-scp (>= 1.0.0)
       net-sftp (>= 2.0.0)
       net-ssh (>= 2.0.14)
-      net-ssh-gateway (>= 1.0.0)
+      net-ssh-gateway (>= 1.1.0)
     capistrano-drupal (0.1.10)
     capistrano-ext (1.2.1)
       capistrano (>= 1.0.0)
-    highline (1.7.1)
+    highline (1.7.2)
     net-scp (1.2.1)
       net-ssh (>= 2.6.5)
     net-sftp (2.1.2)
@@ -25,7 +25,7 @@ PLATFORMS
 
 DEPENDENCIES
   bundler (~> 1.8)
-  capistrano (~> 2.5.5)
+  capistrano (~> 2.12.0)
   capistrano-drupal
   capistrano-ext
   railsless-deploy
