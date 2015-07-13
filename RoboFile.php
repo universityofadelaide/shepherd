@@ -91,7 +91,6 @@ class RoboFile extends \Robo\Tasks {
     $this->taskParallelExec()
       ->process("$this->composer_bin install --prefer-dist")
       ->process("$this->bundle_bin install")
-      ->process("$this->npm_bin install")
       ->run();
   }
 
