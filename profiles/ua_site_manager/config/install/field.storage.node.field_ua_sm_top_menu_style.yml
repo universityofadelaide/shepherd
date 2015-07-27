@@ -1,0 +1,28 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - node
+    - options
+id: node.field_ua_sm_top_menu_style
+field_name: field_ua_sm_top_menu_style
+entity_type: node
+type: list_string
+settings:
+  allowed_values:
+    -
+      value: no_menu
+      label: 'No Menu'
+    -
+      value: mega_menu
+      label: 'Mega Menu'
+    -
+      value: tab_nav_menu
+      label: 'Tabbed Navigation Menu'
+  allowed_values_function: ''
+module: options
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false

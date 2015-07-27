@@ -11,11 +11,13 @@ dependencies:
     - field.field.node.ua_sm_site.field_ua_sm_primary_domain_name
     - field.field.node.ua_sm_site.field_ua_sm_site_id
     - field.field.node.ua_sm_site.field_ua_sm_site_title
+    - field.field.node.ua_sm_site.field_ua_sm_top_menu_style
     - field.field.node.ua_sm_site.field_ua_sm_uat_domain_name
     - field.field.node.ua_sm_site.field_ua_sm_users
     - node.type.ua_sm_site
   module:
     - entity_reference_revisions
+    - options
     - text
     - user
 id: node.ua_sm_site.default
@@ -85,6 +87,12 @@ content:
       link_to_entity: false
     third_party_settings: {  }
     label: inline
+  field_ua_sm_top_menu_style:
+    weight: 12
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    type: list_default
   field_ua_sm_uat_domain_name:
     type: string
     weight: 3

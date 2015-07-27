@@ -62,6 +62,7 @@ class SiteConfigExportController {
         'site_title' => $node->field_ua_sm_site_title->value,
         'authorizer_id' => $node->field_ua_sm_authorizer_id->value,
         'authorizer_email' => $node->field_ua_sm_authorizer_email->value,
+        'top_menu_style' => $node->field_ua_sm_top_menu_style->value,
       ];
       $yaml = Yaml::encode($fields);
       return $yaml;
