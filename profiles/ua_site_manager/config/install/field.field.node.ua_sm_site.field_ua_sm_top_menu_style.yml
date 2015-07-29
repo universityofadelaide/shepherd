@@ -1,0 +1,22 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_ua_sm_top_menu_style
+    - node.type.ua_sm_site
+  module:
+    - options
+id: node.ua_sm_site.field_ua_sm_top_menu_style
+field_name: field_ua_sm_top_menu_style
+entity_type: node
+bundle: ua_sm_site
+label: 'Top Menu Style'
+description: 'Select a top menu style'
+required: true
+translatable: false
+default_value:
+  -
+    value: no_menu
+default_value_callback: ''
+settings: {  }
+field_type: list_string
