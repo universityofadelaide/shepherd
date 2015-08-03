@@ -1,0 +1,31 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.ua_sm_site_instance.field_ua_sm_box_type
+    - field.field.paragraph.ua_sm_site_instance.field_ua_sm_environment
+    - field.field.paragraph.ua_sm_site_instance.field_ua_sm_git_branch
+    - paragraphs.paragraphs_type.ua_sm_site_instance
+id: paragraph.ua_sm_site_instance.default
+targetEntityType: paragraph
+bundle: ua_sm_site_instance
+mode: default
+content:
+  field_ua_sm_box_type:
+    type: options_buttons
+    weight: 1
+    settings: {  }
+    third_party_settings: {  }
+  field_ua_sm_environment:
+    type: options_buttons
+    weight: 2
+    settings: {  }
+    third_party_settings: {  }
+  field_ua_sm_git_branch:
+    weight: 3
+    settings: {  }
+    third_party_settings: {  }
+    type: options_select
+hidden:
+  created: true
+  uid: true

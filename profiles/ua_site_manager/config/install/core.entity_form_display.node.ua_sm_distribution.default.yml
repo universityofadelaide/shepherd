@@ -1,0 +1,73 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.ua_sm_distribution.field_ua_sm_box_type
+    - field.field.node.ua_sm_distribution.field_ua_sm_dist_summary
+    - field.field.node.ua_sm_distribution.field_ua_sm_git_repository
+    - node.type.ua_sm_distribution
+  module:
+    - path
+    - text
+id: node.ua_sm_distribution.default
+targetEntityType: node
+bundle: ua_sm_distribution
+mode: default
+content:
+  created:
+    type: datetime_timestamp
+    weight: 2
+    settings: {  }
+    third_party_settings: {  }
+  field_ua_sm_box_type:
+    type: options_select
+    weight: 7
+    settings: {  }
+    third_party_settings: {  }
+  field_ua_sm_dist_summary:
+    type: text_textarea
+    weight: 8
+    settings:
+      rows: 5
+      placeholder: ''
+    third_party_settings: {  }
+  field_ua_sm_git_repository:
+    type: string_textfield
+    weight: 6
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  path:
+    type: path
+    weight: 5
+    settings: {  }
+    third_party_settings: {  }
+  promote:
+    type: boolean_checkbox
+    weight: 3
+    settings:
+      display_label: true
+    third_party_settings: {  }
+  sticky:
+    type: boolean_checkbox
+    weight: 4
+    settings:
+      display_label: true
+    third_party_settings: {  }
+  title:
+    type: string_textfield
+    weight: 0
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  uid:
+    type: entity_reference_autocomplete
+    weight: 1
+    settings:
+      match_operator: CONTAINS
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+hidden: {  }

@@ -1,0 +1,20 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_ua_sm_box_type
+    - node.type.ua_sm_distribution
+  module:
+    - options
+id: node.ua_sm_distribution.field_ua_sm_box_type
+field_name: field_ua_sm_box_type
+entity_type: node
+bundle: ua_sm_distribution
+label: 'Box Type'
+description: ''
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: list_string

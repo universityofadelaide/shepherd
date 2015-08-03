@@ -1,0 +1,19 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.teaser
+    - node.type.ua_sm_distribution
+  module:
+    - user
+id: node.ua_sm_distribution.teaser
+targetEntityType: node
+bundle: ua_sm_distribution
+mode: teaser
+content:
+  links:
+    weight: 100
+hidden:
+  field_ua_sm_box_type: true
+  field_ua_sm_dist_summary: true
+  field_ua_sm_git_repository: true

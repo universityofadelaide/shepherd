@@ -1,0 +1,38 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.ua_sm_site_instance.field_ua_sm_environment
+    - field.field.node.ua_sm_site_instance.field_ua_sm_git_branch
+    - field.field.node.ua_sm_site_instance.field_ua_sm_site_reference
+    - node.type.ua_sm_site_instance
+  module:
+    - options
+    - user
+id: node.ua_sm_site_instance.default
+targetEntityType: node
+bundle: ua_sm_site_instance
+mode: default
+content:
+  field_ua_sm_environment:
+    weight: 103
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    type: list_default
+  field_ua_sm_git_branch:
+    weight: 104
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    type: list_default
+  field_ua_sm_site_reference:
+    weight: 105
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    type: entity_reference_label
+  links:
+    weight: 100
+hidden: {  }

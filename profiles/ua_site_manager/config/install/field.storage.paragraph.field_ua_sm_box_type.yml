@@ -1,0 +1,22 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - options
+    - paragraphs
+id: paragraph.field_ua_sm_box_type
+field_name: field_ua_sm_box_type
+entity_type: paragraph
+type: list_string
+settings:
+  allowed_values:
+    -
+      value: ua_lamp
+      label: 'UA Lamp'
+  allowed_values_function: ''
+module: options
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false

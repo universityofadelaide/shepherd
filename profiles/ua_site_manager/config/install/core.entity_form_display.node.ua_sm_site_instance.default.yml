@@ -1,0 +1,71 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.ua_sm_site_instance.field_ua_sm_environment
+    - field.field.node.ua_sm_site_instance.field_ua_sm_git_branch
+    - field.field.node.ua_sm_site_instance.field_ua_sm_site_reference
+    - node.type.ua_sm_site_instance
+  module:
+    - path
+id: node.ua_sm_site_instance.default
+targetEntityType: node
+bundle: ua_sm_site_instance
+mode: default
+content:
+  created:
+    type: datetime_timestamp
+    weight: 3
+    settings: {  }
+    third_party_settings: {  }
+  field_ua_sm_environment:
+    type: options_select
+    weight: 8
+    settings: {  }
+    third_party_settings: {  }
+  field_ua_sm_git_branch:
+    type: options_select
+    weight: 9
+    settings: {  }
+    third_party_settings: {  }
+  field_ua_sm_site_reference:
+    type: entity_reference_autocomplete
+    weight: 1
+    settings:
+      match_operator: CONTAINS
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  path:
+    type: path
+    weight: 6
+    settings: {  }
+    third_party_settings: {  }
+  promote:
+    type: boolean_checkbox
+    weight: 4
+    settings:
+      display_label: true
+    third_party_settings: {  }
+  sticky:
+    type: boolean_checkbox
+    weight: 5
+    settings:
+      display_label: true
+    third_party_settings: {  }
+  title:
+    type: string_textfield
+    weight: 0
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  uid:
+    type: entity_reference_autocomplete
+    weight: 2
+    settings:
+      match_operator: CONTAINS
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+hidden: {  }

@@ -9,8 +9,10 @@ dependencies:
     - field.field.node.ua_sm_site.field_ua_sm_authorizer_id
     - field.field.node.ua_sm_site.field_ua_sm_path
     - field.field.node.ua_sm_site.field_ua_sm_primary_domain_name
+    - field.field.node.ua_sm_site.field_ua_sm_site_dist
     - field.field.node.ua_sm_site.field_ua_sm_site_id
     - field.field.node.ua_sm_site.field_ua_sm_site_title
+    - field.field.node.ua_sm_site.field_ua_sm_top_menu_style
     - field.field.node.ua_sm_site.field_ua_sm_uat_domain_name
     - field.field.node.ua_sm_site.field_ua_sm_users
     - node.type.ua_sm_site
@@ -78,6 +80,11 @@ content:
     settings:
       size: 60
       placeholder: ''
+    third_party_settings: {  }
+  field_ua_sm_site_dist:
+    type: options_select
+    weight: 17
+    settings: {  }
     third_party_settings: {  }
   field_ua_sm_site_title:
     type: string_textfield

@@ -1,0 +1,22 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_ua_sm_environment
+    - node.type.ua_sm_site_instance
+  module:
+    - options
+id: node.ua_sm_site_instance.field_ua_sm_environment
+field_name: field_ua_sm_environment
+entity_type: node
+bundle: ua_sm_site_instance
+label: Environment
+description: 'Select an environment to deploy to'
+required: true
+translatable: false
+default_value:
+  -
+    value: uat
+default_value_callback: ''
+settings: {  }
+field_type: list_string

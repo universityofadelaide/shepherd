@@ -1,0 +1,22 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.teaser
+    - field.field.node.ua_sm_site_instance.field_ua_sm_environment
+    - field.field.node.ua_sm_site_instance.field_ua_sm_git_branch
+    - field.field.node.ua_sm_site_instance.field_ua_sm_site_reference
+    - node.type.ua_sm_site_instance
+  module:
+    - user
+id: node.ua_sm_site_instance.teaser
+targetEntityType: node
+bundle: ua_sm_site_instance
+mode: teaser
+content:
+  links:
+    weight: 100
+hidden:
+  field_ua_sm_environment: true
+  field_ua_sm_git_branch: true
+  field_ua_sm_site_reference: true
