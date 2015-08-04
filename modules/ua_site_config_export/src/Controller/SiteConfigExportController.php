@@ -57,14 +57,22 @@ class SiteConfigExportController {
     $result = $query->execute();
     if ($result) {
       $node = \Drupal::entityManager()->getStorage('node')->load($nid);
-      $fields = [
-        'site_id' => $node->field_ua_sm_site_id->value,
-        'site_title' => $node->field_ua_sm_site_title->value,
-        'authorizer_id' => $node->field_ua_sm_authorizer_id->value,
-        'authorizer_email' => $node->field_ua_sm_authorizer_email->value,
-        'top_menu_style' => $node->field_ua_sm_top_menu_style->value,
+      $config = [
+        'drupal_config' => [
+          'system.site' => [
+            'site_id' => $node->field_ua_sm_site_id->value,
+            'name' => $node->field_ua_sm_site_title->value,
+          ],
+          'ua_footer.authorized' => [
+            'name' => $node->field_ua_sm_authorizer_id->value,
+            'email' => $node->field_ua_sm_authorizer_email->value,
+          ],
+          'system.ua_menu' => [
+            'top_menu_style' => $node->field_ua_sm_top_menu_style->value,
+          ],
+        ],
       ];
-      $yaml = Yaml::encode($fields);
+      $yaml = Yaml::encode($config);
       return $yaml;
     }
     else {
