@@ -38,11 +38,6 @@ projects:
     download:
       url: git@gitlab.adelaide.edu.au:drupal-modules/ua_ldap_authorisation.git
       branch: develop
-  ua_site_manager_ldap:
-    subdir: ua
-    download:
-      url: git@gitlab.adelaide.edu.au:drupal-modules/ua_site_manager_ldap.git
-      branch: develop
 defaults:
   projects:
     subdir: contrib

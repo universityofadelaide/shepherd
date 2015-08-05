@@ -39,11 +39,12 @@ dependencies:
   - tour
   - extlink
   - diff
+  - rest
+  - hal
   - composer_manager
   - paragraphs
   - ua_ldap_authorisation
-  - ua_site_config_export
-  - ua_site_manager_ldap
+  - ua_sm_custom
   - ua_site_jenkins
 themes:
   - bartik
