@@ -1,0 +1,69 @@
+<?php
+
+/**
+ * @file
+ * Contains ua_site_jenkins.module.
+ */
+
+use Drupal\Core\Entity\EntityInterface;
+use GuzzleHttp\Client;
+use Drupal\comment\CommentInterface;
+
+/**
+ * Implements hook_ENTITY_TYPE_insert().
+ */
+function ua_site_jenkins_node_insert(EntityInterface $entity) {
+  if ($entity->bundle() != "ua_sm_site_instance") {
+    return;
+  }
+
+  // Retrieve the configuration.
+  $jenkins_configuration = \Drupal::config('ua_site_jenkins.settings');
+  $jenkins_url = $jenkins_configuration->get('server.path');
+  $jenkins_token = $jenkins_configuration->get('server.token');
+  $jenkins_job = $jenkins_configuration->get('server.job');
+  $id = $entity->id();
+  $site_id = $entity->field_ua_sm_site_reference->getString();
+
+
+  $comment = entity_create('comment', [
+    'subject' => 'Deploying ' . $entity->title->value . '.',
+    'comment_body' => 'Test',
+    'entity_id' => $site_id,
+    'entity_type' => 'node',
+    'field_name' => 'field_ua_sm_instance_log',
+    'status' => CommentInterface::PUBLISHED,
+  ]);
+
+  $client = new Client([
+    'base_url' => $jenkins_url
+  ]);
+
+  $request_query = [];
+
+  if (isset($jenkins_job) && !empty($jenkins_job)) {
+    // must be first part of query.
+    $request_query['job'] = $jenkins_job;
+  }
+
+  if (isset($jenkins_token) && !empty($jenkins_token)) {
+    $request_query['token'] = $jenkins_token;
+  }
+
+  $request_query['site_instance_id'] = $id;
+
+  // Looks there are some auth issues with anon read access.
+  // buildByToken solves this issue.
+  $response = $client->get('buildWithParameters', ['query' => [$request_query]]);
+
+  $code = $response->getStatusCode();
+
+  if ($code == ( 200 || 201 ) ) {
+    $comment->set('comment_body', 'Jenkins is building ..');
+  }
+  else {
+    $comment->set('comment_body', 'Jenkins failed to build ' . $entity->title->value . ' with the response ' . $response->getBody() .'');
+  }
+
+  $comment->save();
+}

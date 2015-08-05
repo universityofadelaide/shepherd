@@ -7,6 +7,7 @@ dependencies:
     - field.field.node.ua_sm_site.field_ua_sm_aliases
     - field.field.node.ua_sm_site.field_ua_sm_authorizer_email
     - field.field.node.ua_sm_site.field_ua_sm_authorizer_id
+    - field.field.node.ua_sm_site.field_ua_sm_instance_log
     - field.field.node.ua_sm_site.field_ua_sm_path
     - field.field.node.ua_sm_site.field_ua_sm_primary_domain_name
     - field.field.node.ua_sm_site.field_ua_sm_site_dist
@@ -148,4 +149,5 @@ content:
       placeholder: ''
     third_party_settings: {  }
 hidden:
+  field_ua_sm_instance_log: true
   field_ua_sm_site_id: true

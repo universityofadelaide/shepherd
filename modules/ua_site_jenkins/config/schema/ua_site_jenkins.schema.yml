@@ -1,0 +1,19 @@
+# Configuration schema for ua_site_jenkins module
+
+jenkins.settings:
+  type: mapping
+  label: 'UA Site Jenkins settings'
+  mapping:
+    server:
+      type: mapping
+      label: 'Jenkins Build Server'
+      mapping:
+       path:
+        type: string
+        label: 'Path'
+       token:
+        type: string
+        label: 'Token'
+       job:
+        type: string
+        label: 'Job'

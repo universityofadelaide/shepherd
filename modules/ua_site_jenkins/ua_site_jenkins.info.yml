@@ -1,0 +1,5 @@
+name: Jenkins Build Module
+type: module
+description: 'A tool that calls jenkins to build a site'
+core: 8.x
+package: UA

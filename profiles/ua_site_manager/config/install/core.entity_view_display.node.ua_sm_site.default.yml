@@ -7,6 +7,7 @@ dependencies:
     - field.field.node.ua_sm_site.field_ua_sm_aliases
     - field.field.node.ua_sm_site.field_ua_sm_authorizer_email
     - field.field.node.ua_sm_site.field_ua_sm_authorizer_id
+    - field.field.node.ua_sm_site.field_ua_sm_instance_log
     - field.field.node.ua_sm_site.field_ua_sm_path
     - field.field.node.ua_sm_site.field_ua_sm_primary_domain_name
     - field.field.node.ua_sm_site.field_ua_sm_site_dist
@@ -17,6 +18,7 @@ dependencies:
     - field.field.node.ua_sm_site.field_ua_sm_users
     - node.type.ua_sm_site
   module:
+    - comment
     - entity_reference_revisions
     - options
     - text
@@ -60,6 +62,13 @@ content:
       link_to_entity: false
     third_party_settings: {  }
     label: inline
+  field_ua_sm_instance_log:
+    type: comment_default
+    weight: 15
+    settings:
+      pager_id: 0
+    third_party_settings: {  }
+    label: above
   field_ua_sm_path:
     type: string
     weight: 2
@@ -75,12 +84,12 @@ content:
     third_party_settings: {  }
     label: inline
   field_ua_sm_site_dist:
+    type: entity_reference_label
     weight: 14
-    label: above
     settings:
       link: true
     third_party_settings: {  }
-    type: entity_reference_label
+    label: above
   field_ua_sm_site_id:
     type: string
     weight: 5
@@ -96,11 +105,11 @@ content:
     third_party_settings: {  }
     label: inline
   field_ua_sm_top_menu_style:
+    type: list_default
     weight: 12
-    label: above
     settings: {  }
     third_party_settings: {  }
-    type: list_default
+    label: above
   field_ua_sm_uat_domain_name:
     type: string
     weight: 3
@@ -111,11 +120,11 @@ content:
   field_ua_sm_users:
     type: entity_reference_revisions_entity_view
     weight: 11
-    label: above
     settings:
       view_mode: default
       link: ''
     third_party_settings: {  }
+    label: above
   links:
     weight: 10
     settings: {  }

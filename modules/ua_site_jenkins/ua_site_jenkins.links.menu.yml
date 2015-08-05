@@ -1,0 +1,5 @@
+jenkins.settings:
+  title: 'Jenkins'
+  parent: user.admin_index
+  description: 'Configure Jenkins Build service'
+  route_name: jenkins.settings

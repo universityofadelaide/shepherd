@@ -1,0 +1,7 @@
+jenkins.settings:
+  path: '/admin/config/jenkins'
+  defaults:
+    _form: '\Drupal\ua_site_jenkins\Form\JenkinsSettings'
+    _title: 'Jenkins Build settings'
+  requirements:
+    _permission: 'administer account settings'

@@ -15,24 +15,26 @@ bundle: ua_sm_site_instance
 mode: default
 content:
   field_ua_sm_environment:
-    weight: 103
-    label: above
+    type: list_default
+    weight: 1
     settings: {  }
     third_party_settings: {  }
-    type: list_default
+    label: above
   field_ua_sm_git_branch:
-    weight: 104
-    label: above
+    type: list_default
+    weight: 2
     settings: {  }
     third_party_settings: {  }
-    type: list_default
-  field_ua_sm_site_reference:
-    weight: 105
     label: above
+  field_ua_sm_site_reference:
+    type: entity_reference_label
+    weight: 4
     settings:
       link: true
     third_party_settings: {  }
-    type: entity_reference_label
+    label: above
   links:
-    weight: 100
+    weight: 0
+    settings: {  }
+    third_party_settings: {  }
 hidden: {  }
