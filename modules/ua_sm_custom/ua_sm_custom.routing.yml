@@ -1,0 +1,20 @@
+ua_sm_custom.permissions:
+  path: '/user/{account_id}/permissions'
+  defaults:
+    _title: 'Permissions'
+    _title_callback: '\Drupal\ua_sm_custom\Controller\UserSitesRolesController::getPageTitle'
+    _controller: '\Drupal\ua_sm_custom\Controller\UserSitesRolesController::index'
+  requirements:
+    _permission: 'access content'
+ua_sm_custom.site-config:
+  path: '/api/site-config/{nid}'
+  defaults:
+    _controller: '\Drupal\ua_sm_custom\Controller\SiteConfigController::siteConfig'
+  requirements:
+    _permission: 'access content'
+ua_sm_custom.site-instance:
+  path: '/api/site-instance/{nid}'
+  defaults:
+    _controller: '\Drupal\ua_sm_custom\Controller\SiteConfigController::siteInstance'
+  requirements:
+    _permission: 'access content'

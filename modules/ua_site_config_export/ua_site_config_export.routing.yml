@@ -1,6 +1,0 @@
-ua_site_config_export.download:
-  path: '/api/site-config/{nid}'
-  defaults:
-    _controller: '\Drupal\ua_site_config_export\Controller\SiteConfigExportController::download'
-  requirements:
-    _permission: 'access content'

@@ -1,0 +1,6 @@
+{
+  "name": "ua-drupal-modules/ua_sm_custom",
+  "description": "Provides functionality specific to the Site Manager",
+  "type": "drupal-module",
+  "license": "GPL-2.0+"
+}

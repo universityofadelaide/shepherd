@@ -1,0 +1,102 @@
+<?php
+
+/**
+ * @file
+ * Contains ua_sm_custom.module.
+ */
+
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\ua_ldap_authorisation\SiteRoleSlug;
+
+/**
+ * Implements hook_help().
+ */
+function ua_sm_custom_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    // Main module help for the ua_sm_custom module.
+    case 'help.page.ua_sm_custom':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('This module provides functionality specific to the UA Site Manager.') . '</p>';
+      return $output;
+
+    default:
+  }
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_presave().
+ *
+ * Populates the site id with a guaranteed unique ID.
+ */
+function ua_sm_custom_node_presave(Drupal\node\Entity\Node $entity) {
+  if ($entity->bundle() != 'ua_sm_site' || $entity->field_ua_sm_site_id->value != '') {
+    return;
+  }
+
+  // Generate site slug based on domain and path.
+  $site_slug = SiteRoleSlug::getSite(
+    $entity->field_ua_sm_primary_domain_name->value,
+    $entity->field_ua_sm_path->value
+  );
+
+  // Initialise site id to base site slug.
+  $site_id = $site_slug;
+
+  // Prepare a query to check if site id already exists.
+  $query = \Drupal::entityQuery('node')
+    ->condition('type', 'ua_sm_site')
+    ->condition('field_ua_sm_site_id', $site_id);
+  $entity_ids = $query->execute();
+
+  $count = 0;
+  while (count($entity_ids) > 0) {
+    $count++;
+    $site_id = $site_slug . $count;
+    // Check for updated site id.
+    $query = \Drupal::entityQuery('node')
+      ->condition('type', 'ua_sm_site')
+      ->condition('field_ua_sm_site_id', $site_id);
+    $entity_ids = $query->execute();
+  }
+
+  $entity->field_ua_sm_site_id->value = $site_id;
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_insert().
+ */
+function ua_sm_custom_node_insert(EntityInterface $entity) {
+  if ($entity->bundle() != 'ua_sm_site') {
+    return;
+  }
+
+  \Drupal::service('ua_ldap_authorisation.ldap_site')->addSite($entity->field_ua_sm_site_id->value);
+  // todo: deal with failure - consider a queue.
+
+  \Drupal::service('ua_ldap_authorisation.ldap_site')->syncUsers($entity->field_ua_sm_site_id->value);
+  // todo: deal with failure - consider a queue.
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_update().
+ */
+function ua_sm_custom_node_update(EntityInterface $entity) {
+  if ($entity->bundle() != 'ua_sm_site') {
+    return;
+  }
+  \Drupal::service('ua_ldap_authorisation.ldap_site')->syncUsers($entity->field_ua_sm_site_id->value);
+  // todo: deal with failure - consider a queue.
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_delete().
+ */
+function ua_sm_custom_node_delete(EntityInterface $entity) {
+  if ($entity->bundle() != 'ua_sm_site') {
+    return;
+  }
+  \Drupal::service('ua_ldap_authorisation.ldap_site')->removeSite($entity->field_ua_sm_site_id->value);
+  // todo: deal with failure - consider a queue.
+}
