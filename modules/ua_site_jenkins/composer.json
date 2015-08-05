@@ -1,5 +1,5 @@
 {
-  "name" : "ua-drupal-modules/ua_site_jenkins"
+  "name" : "ua-drupal-modules/ua_site_jenkins",
   "description": "A tool that calls jenkins to build a site",
   "type": "drupal-module",
   "license": "GPL-2.0+"
