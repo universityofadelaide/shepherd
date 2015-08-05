@@ -42,8 +42,8 @@ dependencies:
   - composer_manager
   - paragraphs
   - ua_ldap_authorisation
-  - ua_site_manager_ldap
   - ua_site_config_export
+  - ua_site_manager_ldap
 themes:
   - bartik
   - seven

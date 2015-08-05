@@ -15,35 +15,35 @@ projects:
     type: core
     download:
       url: http://git.drupal.org/project/drupal.git
-      tag: 8.0.0-beta11
+      tag: 8.0.0-beta12
+# Contributed modules.
   cas:
-    type: module
-    subdir: contrib
     version: 1.x-dev
-  extlink:
-    type: module
-    subdir: contrib
+    patch:
+      - https://www.drupal.org/files/issues/cas_2517690_1.patch
+      - https://www.drupal.org/files/issues/cas_2536128_2.patch
+  composer_manager:
     version: 1.x
   diff:
-    type: module
-    subdir: contrib
     version: 1.x-dev
-  composer_manager:
-    type: module
-    subdir: contrib
-    version: 1.x
   entity_reference_revisions:
-    type: module
-    subdir: contrib
     version: 1.x-dev
+  extlink:
+    version: 1.x
   paragraphs:
-    type: module
-    subdir: contrib
     version: 1.x-dev
-  ua_modules:
-    type: module
+# UA modules.
+  ua_ldap_authorisation:
     subdir: ua
     download:
-      url: git@github.com:universityofadelaide/ua_modules.git
+      url: git@gitlab.adelaide.edu.au:drupal-modules/ua_ldap_authorisation.git
       branch: develop
-
+  ua_site_manager_ldap:
+    subdir: ua
+    download:
+      url: git@gitlab.adelaide.edu.au:drupal-modules/ua_site_manager_ldap.git
+      branch: develop
+defaults:
+  projects:
+    subdir: contrib
+    type: module
