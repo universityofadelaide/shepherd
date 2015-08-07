@@ -28,3 +28,10 @@ When a role is added, entities must be created for ALL SITES for the role. Obvio
 ## Adding a User to a Site/Role
 
 A user can be added to a site/role entity by declaring them a unique member of it. This relationship is reflexively represented on the user by their being a
+
+## Jenkins Build Server
+
+Grab the oAuth token from the build triggers field:
+https://jenkins.services.adelaide.edu.au/view/Drupal/job/deploy-drupal-site/configure
+
+Set the path, token and job in the configuration.

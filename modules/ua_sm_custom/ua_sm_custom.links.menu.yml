@@ -1,5 +1,6 @@
-jenkins.settings:
+ua_sm_custom.jenkins-settings:
   title: 'Jenkins'
   parent: user.admin_index
   description: 'Configure Jenkins Build service'
-  route_name: jenkins.settings
+  route_name: ua_sm_custom.jenkins-settings
+

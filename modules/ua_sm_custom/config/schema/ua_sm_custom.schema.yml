@@ -1,4 +1,4 @@
-# Configuration schema for ua_site_jenkins module
+# Configuration schema for ua_sm_custom module
 
 jenkins.settings:
   type: mapping
