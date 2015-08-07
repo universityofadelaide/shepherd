@@ -20,8 +20,7 @@ projects:
   cas:
     version: 1.x-dev
     patch:
-      - https://www.drupal.org/files/issues/cas_2517690_1.patch
-      - https://www.drupal.org/files/issues/cas_2536128_2.patch
+      - https://www.drupal.org/files/issues/cas_2536128_3.patch
   composer_manager:
     version: 1.x
   diff:

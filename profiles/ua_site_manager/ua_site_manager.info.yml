@@ -45,7 +45,6 @@ dependencies:
   - paragraphs
   - ua_ldap_authorisation
   - ua_sm_custom
-  - ua_site_jenkins
 themes:
   - bartik
   - seven
