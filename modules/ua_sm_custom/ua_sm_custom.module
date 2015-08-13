@@ -7,7 +7,7 @@
 
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
-use Drupal\ua_ldap_authorisation\SiteRoleSlug;
+use Drupal\ua_ldap\SiteRoleSlug;
 use Drupal\comment\CommentInterface;
 use GuzzleHttp\Client;
 
@@ -77,11 +77,11 @@ function ua_sm_custom_node_insert(EntityInterface $entity) {
   }
 
   if ($entity->bundle() == 'ua_sm_site') {
-    \Drupal::service('ua_ldap_authorisation.ldap_site')
+    \Drupal::service('ua_ldap.ldap_site')
       ->addSite($entity->field_ua_sm_site_id->value);
     // todo: deal with failure - consider a queue.
 
-    \Drupal::service('ua_ldap_authorisation.ldap_site')
+    \Drupal::service('ua_ldap.ldap_site')
       ->syncUsers($entity->field_ua_sm_site_id->value);
     // todo: deal with failure - consider a queue.
   }
@@ -148,7 +148,7 @@ function ua_sm_custom_node_update(EntityInterface $entity) {
   if ($entity->bundle() != 'ua_sm_site') {
     return;
   }
-  \Drupal::service('ua_ldap_authorisation.ldap_site')->syncUsers($entity->field_ua_sm_site_id->value);
+  \Drupal::service('ua_ldap.ldap_site')->syncUsers($entity->field_ua_sm_site_id->value);
   // todo: deal with failure - consider a queue.
 }
 
@@ -159,6 +159,6 @@ function ua_sm_custom_node_delete(EntityInterface $entity) {
   if ($entity->bundle() != 'ua_sm_site') {
     return;
   }
-  \Drupal::service('ua_ldap_authorisation.ldap_site')->removeSite($entity->field_ua_sm_site_id->value);
+  \Drupal::service('ua_ldap.ldap_site')->removeSite($entity->field_ua_sm_site_id->value);
   // todo: deal with failure - consider a queue.
 }
