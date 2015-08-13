@@ -1,4 +1,7 @@
-server:
+jenkins:
+  enabled: true
   path: ''
   token: ''
   job: ''
+ldap:
+  enabled: true

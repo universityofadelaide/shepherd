@@ -1,4 +1,7 @@
-server:
-  path: ''
-  token: ''
-  job: ''
+jenkins:
+  enabled: true
+  path: 'https://jenkins.services.adelaide.edu.au/buildByToken/'
+  token: EZGl7429qBX707p65K97S282IxeBl3n9
+  job: deploy-drupal-site
+ldap:
+  enabled: true

@@ -7,7 +7,7 @@
 
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
-use Drupal\ua_ldap_authorisation\SiteRoleSlug;
+use Drupal\ua_ldap\SiteRoleSlug;
 use Drupal\comment\CommentInterface;
 use GuzzleHttp\Client;
 
@@ -72,27 +72,26 @@ function ua_sm_custom_node_presave(Drupal\node\Entity\Node $entity) {
 function ua_sm_custom_node_insert(EntityInterface $entity) {
   $bundles = ['ua_sm_site', 'ua_sm_site_instance'];
 
-  if (!in_array($entity->bundle(), $bundles)){
-   return;
+  if (!in_array($entity->bundle(), $bundles)) {
+    return;
   }
 
-  if ($entity->bundle() == 'ua_sm_site') {
-    \Drupal::service('ua_ldap_authorisation.ldap_site')
+  if ($entity->bundle() == 'ua_sm_site' && \Drupal::config('ua_sm_custom.ldap')->get('enabled')) {
+    \Drupal::service('ua_ldap.ldap_site')
       ->addSite($entity->field_ua_sm_site_id->value);
     // todo: deal with failure - consider a queue.
-
-    \Drupal::service('ua_ldap_authorisation.ldap_site')
+    \Drupal::service('ua_ldap.ldap_site')
       ->syncUsers($entity->field_ua_sm_site_id->value);
     // todo: deal with failure - consider a queue.
   }
-
-  if ($entity->bundle() == 'ua_sm_site_instance') {
+  elseif ($entity->bundle() == 'ua_sm_site_instance' && \Drupal::config('ua_sm_custom.jenkins')->get('enabled')) {
     // Retrieve the configuration.
     $jenkins_configuration = \Drupal::config('ua_site_jenkins.settings');
     $jenkins_url = $jenkins_configuration->get('server.path');
     $jenkins_token = $jenkins_configuration->get('server.token');
     $jenkins_job = $jenkins_configuration->get('server.job');
     $id = $entity->id();
+    $uuid = $entity->uuid();
     $site_id = $entity->field_ua_sm_site_reference->getString();
 
     $comment = \Drupal::entityManager()
@@ -113,7 +112,7 @@ function ua_sm_custom_node_insert(EntityInterface $entity) {
     $request_query = [];
 
     if (isset($jenkins_job) && !empty($jenkins_job)) {
-      // must be first part of query.
+      // Must be first part of query.
       $request_query['job'] = $jenkins_job;
     }
 
@@ -123,18 +122,22 @@ function ua_sm_custom_node_insert(EntityInterface $entity) {
 
     $request_query['site_instance_id'] = $id;
 
+    // We need this uuid to make POSTs on comments.
+    $request_query['site_instance_uuid'] = $uuid;
+
     // Looks there are some auth issues with anon read access.
     // buildByToken solves this issue.
-    // @todo - Ensure that the base url has a trailing slash
+    // todo: Ensure that the base url has a trailing slash.
     $response = $client->get('buildWithParameters', ['query' => [$request_query]]);
 
     $code = $response->getStatusCode();
 
-    if ($code == ( 200 || 201 ) ) {
+    if ($code == (200 || 201)) {
       $comment->set('comment_body', 'Jenkins is building ..');
     }
     else {
-      $comment->set('comment_body', 'Jenkins failed to build ' . $entity->title->value . ' with the response ' . $response->getBody() .'');
+      $comment->set('comment_body', 'Jenkins failed to build ' .
+        $entity->title->value . ' with the response ' . $response->getBody());
     }
 
     $comment->save();
@@ -148,7 +151,7 @@ function ua_sm_custom_node_update(EntityInterface $entity) {
   if ($entity->bundle() != 'ua_sm_site') {
     return;
   }
-  \Drupal::service('ua_ldap_authorisation.ldap_site')->syncUsers($entity->field_ua_sm_site_id->value);
+  \Drupal::service('ua_ldap.ldap_site')->syncUsers($entity->field_ua_sm_site_id->value);
   // todo: deal with failure - consider a queue.
 }
 
@@ -159,6 +162,6 @@ function ua_sm_custom_node_delete(EntityInterface $entity) {
   if ($entity->bundle() != 'ua_sm_site') {
     return;
   }
-  \Drupal::service('ua_ldap_authorisation.ldap_site')->removeSite($entity->field_ua_sm_site_id->value);
+  \Drupal::service('ua_ldap.ldap_site')->removeSite($entity->field_ua_sm_site_id->value);
   // todo: deal with failure - consider a queue.
 }

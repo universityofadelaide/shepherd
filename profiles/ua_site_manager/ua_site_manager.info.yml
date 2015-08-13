@@ -44,7 +44,7 @@ dependencies:
   - hal
   - composer_manager
   - paragraphs
-  - ua_ldap_authorisation
+  - ua_ldap
   - ua_sm_custom
 themes:
   - bartik

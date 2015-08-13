@@ -18,10 +18,10 @@ ua_sm_custom.site-instance:
     _controller: '\Drupal\ua_sm_custom\Controller\SiteConfigController::siteInstance'
   requirements:
     _permission: 'access content'
-ua_sm_custom.jenkins-settings:
-  path: '/admin/config/jenkins'
+ua_sm_custom.site_manager_settings:
+  path: '/admin/config/system/site-manager'
   defaults:
-    _form: '\Drupal\ua_sm_custom\Form\JenkinsSettings'
-    _title: 'Jenkins Build settings'
+    _form: '\Drupal\ua_sm_custom\Form\SiteManagerSettings'
+    _title: 'Site Manager settings'
   requirements:
     _permission: 'administer account settings'
