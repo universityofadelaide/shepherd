@@ -2,9 +2,15 @@ langcode: en
 status: true
 dependencies:
   config:
+    - field.field.node.ua_sm_site_instance.field_ua_sm_container
     - field.field.node.ua_sm_site_instance.field_ua_sm_environment
     - field.field.node.ua_sm_site_instance.field_ua_sm_git_branch
+    - field.field.node.ua_sm_site_instance.field_ua_sm_hostname
+    - field.field.node.ua_sm_site_instance.field_ua_sm_http_port_num
+    - field.field.node.ua_sm_site_instance.field_ua_sm_instance_log
+    - field.field.node.ua_sm_site_instance.field_ua_sm_ip_addr
     - field.field.node.ua_sm_site_instance.field_ua_sm_site_reference
+    - field.field.node.ua_sm_site_instance.field_ua_sm_ssh_port_num
     - node.type.ua_sm_site_instance
   module:
     - path
@@ -68,4 +74,10 @@ content:
       size: 60
       placeholder: ''
     third_party_settings: {  }
-hidden: {  }
+hidden:
+  field_ua_sm_container: true
+  field_ua_sm_hostname: true
+  field_ua_sm_http_port_num: true
+  field_ua_sm_instance_log: true
+  field_ua_sm_ip_addr: true
+  field_ua_sm_ssh_port_num: true
