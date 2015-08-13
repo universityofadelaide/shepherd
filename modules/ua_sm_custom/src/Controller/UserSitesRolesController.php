@@ -89,7 +89,7 @@ class UserSitesRolesController extends ControllerBase {
   /**
    * Callback to get the page title for the user permissions page.
    *
-   * @param string account_id
+   * @param string $account_id
    *   An A number E.g. a12345678.
    *
    * @return string

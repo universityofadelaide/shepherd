@@ -1,13 +1,16 @@
 # Configuration schema for ua_sm_custom module
 
-jenkins.settings:
+ua_sm_custom.settings:
   type: mapping
-  label: 'UA Site Jenkins settings'
+  label: 'Site Manager settings'
   mapping:
-    server:
+    jenkins:
       type: mapping
       label: 'Jenkins Build Server'
       mapping:
+       enabled:
+        type: boolean
+        label: 'Enabled'
        path:
         type: string
         label: 'Path'
@@ -17,3 +20,10 @@ jenkins.settings:
        job:
         type: string
         label: 'Job'
+    ldap:
+      type: mapping
+      label: 'LDAP Integration'
+      mapping:
+       enabled:
+        type: boolean
+        label: 'Enabled'
