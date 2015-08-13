@@ -40,6 +40,7 @@ dependencies:
   - extlink
   - diff
   - rest
+  - basic_auth
   - hal
   - composer_manager
   - paragraphs

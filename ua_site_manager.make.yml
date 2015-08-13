@@ -16,6 +16,8 @@ projects:
     download:
       url: http://git.drupal.org/project/drupal.git
       tag: 8.0.0-beta12
+    patch:
+      - https://www.drupal.org/files/issues/2430669-4.patch
 # Contributed modules.
   cas:
     version: 1.x-dev
