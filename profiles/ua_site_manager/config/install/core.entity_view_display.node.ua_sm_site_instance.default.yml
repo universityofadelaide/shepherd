@@ -6,11 +6,11 @@ dependencies:
     - field.field.node.ua_sm_site_instance.field_ua_sm_environment
     - field.field.node.ua_sm_site_instance.field_ua_sm_git_branch
     - field.field.node.ua_sm_site_instance.field_ua_sm_hostname
-    - field.field.node.ua_sm_site_instance.field_ua_sm_http_port_num
+    - field.field.node.ua_sm_site_instance.field_ua_sm_http_port
     - field.field.node.ua_sm_site_instance.field_ua_sm_instance_log
     - field.field.node.ua_sm_site_instance.field_ua_sm_ip_addr
     - field.field.node.ua_sm_site_instance.field_ua_sm_site_reference
-    - field.field.node.ua_sm_site_instance.field_ua_sm_ssh_port_num
+    - field.field.node.ua_sm_site_instance.field_ua_sm_ssh_port
     - node.type.ua_sm_site_instance
   module:
     - options
@@ -46,7 +46,7 @@ content:
       link_to_entity: false
     third_party_settings: {  }
     type: string
-  field_ua_sm_http_port_num:
+  field_ua_sm_http_port:
     weight: 6
     label: above
     settings:
@@ -68,7 +68,7 @@ content:
       link: true
     third_party_settings: {  }
     label: above
-  field_ua_sm_ssh_port_num:
+  field_ua_sm_ssh_port:
     weight: 5
     label: above
     settings:
