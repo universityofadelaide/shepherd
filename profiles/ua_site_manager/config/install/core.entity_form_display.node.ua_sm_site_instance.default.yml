@@ -13,6 +13,7 @@ dependencies:
     - field.field.node.ua_sm_site_instance.field_ua_sm_ssh_port
     - node.type.ua_sm_site_instance
   module:
+    - comment
     - path
 id: node.ua_sm_site_instance.default
 targetEntityType: node
@@ -21,18 +22,52 @@ mode: default
 content:
   created:
     type: datetime_timestamp
-    weight: 3
+    weight: 10
     settings: {  }
+    third_party_settings: {  }
+  field_ua_sm_container:
+    type: string_textfield
+    weight: 8
+    settings:
+      size: 60
+      placeholder: ''
     third_party_settings: {  }
   field_ua_sm_environment:
     type: options_select
-    weight: 8
+    weight: 2
     settings: {  }
     third_party_settings: {  }
   field_ua_sm_git_branch:
-    type: options_select
+    weight: 7
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: string_textfield
+  field_ua_sm_hostname:
+    type: string_textfield
+    weight: 4
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_ua_sm_http_port:
+    type: number
+    weight: 6
+    settings:
+      placeholder: ''
+    third_party_settings: {  }
+  field_ua_sm_instance_log:
+    type: comment_default
     weight: 9
     settings: {  }
+    third_party_settings: {  }
+  field_ua_sm_ip_addr:
+    type: string_textfield
+    weight: 3
+    settings:
+      size: 60
+      placeholder: ''
     third_party_settings: {  }
   field_ua_sm_site_reference:
     type: entity_reference_autocomplete
@@ -42,20 +77,26 @@ content:
       size: 60
       placeholder: ''
     third_party_settings: {  }
+  field_ua_sm_ssh_port:
+    type: number
+    weight: 5
+    settings:
+      placeholder: ''
+    third_party_settings: {  }
   path:
     type: path
-    weight: 6
+    weight: 14
     settings: {  }
     third_party_settings: {  }
   promote:
     type: boolean_checkbox
-    weight: 4
+    weight: 12
     settings:
       display_label: true
     third_party_settings: {  }
   sticky:
     type: boolean_checkbox
-    weight: 5
+    weight: 13
     settings:
       display_label: true
     third_party_settings: {  }
@@ -68,16 +109,10 @@ content:
     third_party_settings: {  }
   uid:
     type: entity_reference_autocomplete
-    weight: 2
+    weight: 11
     settings:
       match_operator: CONTAINS
       size: 60
       placeholder: ''
     third_party_settings: {  }
-hidden:
-  field_ua_sm_container: true
-  field_ua_sm_hostname: true
-  field_ua_sm_http_port: true
-  field_ua_sm_instance_log: true
-  field_ua_sm_ip_addr: true
-  field_ua_sm_ssh_port: true
+hidden: {  }
