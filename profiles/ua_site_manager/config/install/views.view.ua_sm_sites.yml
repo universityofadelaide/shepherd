@@ -666,6 +666,7 @@ display:
         - 'url.query_args:sort'
         - user
         - 'user.node_grants:view'
+        - user.permissions
       cacheable: false
   page_1:
     display_plugin: page
@@ -693,4 +694,5 @@ display:
         - 'url.query_args:sort'
         - user
         - 'user.node_grants:view'
+        - user.permissions
       cacheable: false

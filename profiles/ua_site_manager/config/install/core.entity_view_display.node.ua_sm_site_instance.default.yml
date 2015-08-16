@@ -2,11 +2,18 @@ langcode: en
 status: true
 dependencies:
   config:
+    - field.field.node.ua_sm_site_instance.field_ua_sm_container
     - field.field.node.ua_sm_site_instance.field_ua_sm_environment
     - field.field.node.ua_sm_site_instance.field_ua_sm_git_branch
+    - field.field.node.ua_sm_site_instance.field_ua_sm_hostname
+    - field.field.node.ua_sm_site_instance.field_ua_sm_http_port
+    - field.field.node.ua_sm_site_instance.field_ua_sm_instance_log
+    - field.field.node.ua_sm_site_instance.field_ua_sm_ip_addr
     - field.field.node.ua_sm_site_instance.field_ua_sm_site_reference
+    - field.field.node.ua_sm_site_instance.field_ua_sm_ssh_port
     - node.type.ua_sm_site_instance
   module:
+    - comment
     - options
     - user
 id: node.ua_sm_site_instance.default
@@ -14,6 +21,13 @@ targetEntityType: node
 bundle: ua_sm_site_instance
 mode: default
 content:
+  field_ua_sm_container:
+    weight: 6
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    type: string
   field_ua_sm_environment:
     type: list_default
     weight: 1
@@ -21,18 +35,56 @@ content:
     third_party_settings: {  }
     label: above
   field_ua_sm_git_branch:
-    type: list_default
-    weight: 2
-    settings: {  }
-    third_party_settings: {  }
+    weight: 5
     label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    type: string
+  field_ua_sm_hostname:
+    weight: 8
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    type: string
+  field_ua_sm_http_port:
+    weight: 4
+    label: above
+    settings:
+      thousand_separator: ''
+      prefix_suffix: true
+    third_party_settings: {  }
+    type: number_integer
+  field_ua_sm_instance_log:
+    type: comment_default
+    weight: 9
+    label: above
+    settings:
+      pager_id: 0
+    third_party_settings: {  }
+  field_ua_sm_ip_addr:
+    weight: 7
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    type: string
   field_ua_sm_site_reference:
     type: entity_reference_label
-    weight: 4
+    weight: 2
     settings:
       link: true
     third_party_settings: {  }
     label: above
+  field_ua_sm_ssh_port:
+    weight: 3
+    label: above
+    settings:
+      thousand_separator: ''
+      prefix_suffix: true
+    third_party_settings: {  }
+    type: number_integer
   links:
     weight: 0
     settings: {  }

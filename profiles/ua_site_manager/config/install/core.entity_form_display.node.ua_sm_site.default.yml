@@ -18,6 +18,7 @@ dependencies:
     - field.field.node.ua_sm_site.field_ua_sm_users
     - node.type.ua_sm_site
   module:
+    - comment
     - paragraphs
     - path
     - text
@@ -68,6 +69,11 @@ content:
       size: 60
       placeholder: ''
     third_party_settings: {  }
+  field_ua_sm_instance_log:
+    type: comment_default
+    weight: 19
+    settings: {  }
+    third_party_settings: {  }
   field_ua_sm_path:
     type: string_textfield
     weight: 2
@@ -86,6 +92,13 @@ content:
     type: options_select
     weight: 17
     settings: {  }
+    third_party_settings: {  }
+  field_ua_sm_site_id:
+    type: string_textfield
+    weight: 18
+    settings:
+      size: 60
+      placeholder: ''
     third_party_settings: {  }
   field_ua_sm_site_title:
     type: string_textfield
@@ -148,6 +161,4 @@ content:
       size: 60
       placeholder: ''
     third_party_settings: {  }
-hidden:
-  field_ua_sm_instance_log: true
-  field_ua_sm_site_id: true
+hidden: {  }

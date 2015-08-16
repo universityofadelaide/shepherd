@@ -76,7 +76,10 @@ function ua_sm_custom_node_insert(EntityInterface $entity) {
     return;
   }
 
-  if ($entity->bundle() == 'ua_sm_site' && \Drupal::config('ua_sm_custom.ldap')->get('enabled')) {
+  $jenkins_config = \Drupal::config('ua_sm_custom.settings')->get('jenkins');
+  $ldap_config = \Drupal::config('ua_sm_custom.settings')->get('ldap');
+
+  if ($entity->bundle() == 'ua_sm_site' && $ldap_config['enabled']) {
     \Drupal::service('ua_ldap.ldap_site')
       ->addSite($entity->field_ua_sm_site_id->value);
     // todo: deal with failure - consider a queue.
@@ -84,13 +87,12 @@ function ua_sm_custom_node_insert(EntityInterface $entity) {
       ->syncUsers($entity->field_ua_sm_site_id->value);
     // todo: deal with failure - consider a queue.
   }
-  elseif ($entity->bundle() == 'ua_sm_site_instance' && \Drupal::config('ua_sm_custom.jenkins')->get('enabled')) {
-    // Retrieve the configuration.
-    $jenkins_configuration = \Drupal::config('ua_site_jenkins.settings');
-    $jenkins_url = $jenkins_configuration->get('server.path');
-    $jenkins_token = $jenkins_configuration->get('server.token');
-    $jenkins_job = $jenkins_configuration->get('server.job');
+  elseif ($entity->bundle() == 'ua_sm_site_instance' && $jenkins_config['enabled']) {
+    $jenkins_url = $jenkins_config['path'];
+    $jenkins_token = $jenkins_config['token'];
+    $jenkins_job = $jenkins_config['job'];
     $id = $entity->id();
+    $uuid = $entity->uuid();
     $site_id = $entity->field_ua_sm_site_reference->getString();
 
     $comment = \Drupal::entityManager()
@@ -120,6 +122,9 @@ function ua_sm_custom_node_insert(EntityInterface $entity) {
     }
 
     $request_query['site_instance_id'] = $id;
+
+    // We need this uuid to make POSTs on comments.
+    $request_query['site_instance_uuid'] = $uuid;
 
     // Looks there are some auth issues with anon read access.
     // buildByToken solves this issue.
