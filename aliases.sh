@@ -90,3 +90,8 @@ function gf-pull-request {
   echo "https://github.com/$repo/compare/$base...$branch"
 }
 alias gfpr=gf-pull-request
+
+alias drush='drush -r /vagrant/app'
+alias console='console -d=/vagrant/app'
+alias log='tail -f /var/log/syslog'
+

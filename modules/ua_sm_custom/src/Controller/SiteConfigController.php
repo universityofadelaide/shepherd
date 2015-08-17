@@ -122,8 +122,8 @@ class SiteConfigController extends ControllerBase {
 
       return [
         'site_instance' => $site_instance->toArray(),
-        'site' => $site->toArray(),
-        'distribution' => $distribution->toArray(),
+        'site' => $site ? $site->toArray() : NULL,
+        'distribution' => $distribution ? $distribution->toArray() : NULL,
       ];
     }
     else {

@@ -149,7 +149,8 @@ function ua_sm_custom_node_insert(EntityInterface $entity) {
  * Implements hook_ENTITY_TYPE_update().
  */
 function ua_sm_custom_node_update(EntityInterface $entity) {
-  if ($entity->bundle() != 'ua_sm_site') {
+  if ($entity->bundle() != 'ua_sm_site' ||
+    !\Drupal::config('ua_sm_custom.settings')->get('ldap')['enabled']) {
     return;
   }
   \Drupal::service('ua_ldap.ldap_site')->syncUsers($entity->field_ua_sm_site_id->value);
@@ -160,7 +161,8 @@ function ua_sm_custom_node_update(EntityInterface $entity) {
  * Implements hook_ENTITY_TYPE_delete().
  */
 function ua_sm_custom_node_delete(EntityInterface $entity) {
-  if ($entity->bundle() != 'ua_sm_site') {
+  if ($entity->bundle() != 'ua_sm_site' ||
+    !\Drupal::config('ua_sm_custom.settings')->get('ldap')['enabled']) {
     return;
   }
   \Drupal::service('ua_ldap.ldap_site')->removeSite($entity->field_ua_sm_site_id->value);
