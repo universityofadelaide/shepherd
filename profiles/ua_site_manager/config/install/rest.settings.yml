@@ -6,18 +6,19 @@ resources:
         - json
       supported_auth:
         - cookie
+        - oauth
     POST:
       supported_formats:
         - hal_json
         - json
       supported_auth:
-        - basic_auth
+        - oauth
     PATCH:
       supported_formats:
         - hal_json
         - json
       supported_auth:
-        - basic_auth
+        - oauth
   'entity:comment':
     GET:
       supported_formats:
@@ -30,4 +31,4 @@ resources:
         - hal_json
         - json
       supported_auth:
-        - basic_auth
+        - oauth
