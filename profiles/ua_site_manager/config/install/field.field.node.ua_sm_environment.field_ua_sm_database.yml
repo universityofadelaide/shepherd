@@ -1,0 +1,20 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_ua_sm_database
+    - node.type.ua_sm_environment
+id: node.ua_sm_environment.field_ua_sm_database
+field_name: field_ua_sm_database
+entity_type: node
+bundle: ua_sm_environment
+label: 'Database name'
+description: ''
+required: false
+translatable: false
+default_value:
+  -
+    value: ''
+default_value_callback: ''
+settings: {  }
+field_type: string

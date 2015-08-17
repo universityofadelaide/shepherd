@@ -8,8 +8,8 @@ id: node.ua_sm_site_instance.field_ua_sm_http_port
 field_name: field_ua_sm_http_port
 entity_type: node
 bundle: ua_sm_site_instance
-label: 'HTTP Port Number'
-description: 'HTTP Port Number'
+label: 'HTTP port'
+description: 'HTTP port number.'
 required: false
 translatable: false
 default_value: {  }

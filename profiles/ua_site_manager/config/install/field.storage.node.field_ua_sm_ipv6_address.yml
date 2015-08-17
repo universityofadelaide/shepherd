@@ -3,13 +3,15 @@ status: true
 dependencies:
   module:
     - node
-    - text
-id: node.field_ua_sm_dist_summary
-field_name: field_ua_sm_dist_summary
+id: node.field_ua_sm_ipv6_address
+field_name: field_ua_sm_ipv6_address
 entity_type: node
-type: text_long
-settings: {  }
-module: text
+type: string
+settings:
+  max_length: 255
+  is_ascii: false
+  case_sensitive: false
+module: core
 locked: false
 cardinality: 1
 translatable: true

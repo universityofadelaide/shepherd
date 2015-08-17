@@ -2,15 +2,16 @@ langcode: en
 status: true
 dependencies:
   module:
-    - entity_reference
     - node
-id: node.field_ua_sm_site_dist
-field_name: field_ua_sm_site_dist
+id: node.field_ua_sm_database
+field_name: field_ua_sm_database
 entity_type: node
-type: entity_reference
+type: string
 settings:
-  target_type: node
-module: entity_reference
+  max_length: 255
+  is_ascii: false
+  case_sensitive: false
+module: core
 locked: false
 cardinality: 1
 translatable: true

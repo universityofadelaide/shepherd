@@ -4,8 +4,8 @@ dependencies:
   module:
     - entity_reference
     - node
-id: node.field_ua_sm_environment
-field_name: field_ua_sm_environment
+id: node.field_ua_sm_site
+field_name: field_ua_sm_site
 entity_type: node
 type: entity_reference
 settings:

@@ -1,0 +1,139 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.ua_sm_environment.field_ua_sm_database
+    - field.field.node.ua_sm_environment.field_ua_sm_database_driver
+    - field.field.node.ua_sm_environment.field_ua_sm_database_host
+    - field.field.node.ua_sm_environment.field_ua_sm_database_password
+    - field.field.node.ua_sm_environment.field_ua_sm_database_port
+    - field.field.node.ua_sm_environment.field_ua_sm_database_username
+    - field.field.node.ua_sm_environment.field_ua_sm_deployment_type
+    - field.field.node.ua_sm_environment.field_ua_sm_domain_name
+    - field.field.node.ua_sm_environment.field_ua_sm_git_reference
+    - field.field.node.ua_sm_environment.field_ua_sm_platform
+    - field.field.node.ua_sm_environment.field_ua_sm_site
+    - node.type.ua_sm_environment
+  module:
+    - path
+id: node.ua_sm_environment.default
+targetEntityType: node
+bundle: ua_sm_environment
+mode: default
+content:
+  created:
+    type: datetime_timestamp
+    weight: 13
+    settings: {  }
+    third_party_settings: {  }
+  field_ua_sm_database:
+    weight: 4
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: string_textfield
+  field_ua_sm_database_driver:
+    weight: 9
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: string_textfield
+  field_ua_sm_database_host:
+    weight: 7
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: string_textfield
+  field_ua_sm_database_password:
+    weight: 6
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: string_textfield
+  field_ua_sm_database_port:
+    weight: 8
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: string_textfield
+  field_ua_sm_database_username:
+    weight: 5
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: string_textfield
+  field_ua_sm_deployment_type:
+    weight: 2
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: string_textfield
+  field_ua_sm_domain_name:
+    weight: 1
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: string_textfield
+  field_ua_sm_git_reference:
+    weight: 3
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: string_textfield
+  field_ua_sm_platform:
+    weight: 10
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: string_textfield
+  field_ua_sm_site:
+    weight: 11
+    settings:
+      match_operator: CONTAINS
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: entity_reference_autocomplete
+  path:
+    type: path
+    weight: 16
+    settings: {  }
+    third_party_settings: {  }
+  promote:
+    type: boolean_checkbox
+    settings:
+      display_label: true
+    weight: 14
+    third_party_settings: {  }
+  sticky:
+    type: boolean_checkbox
+    settings:
+      display_label: true
+    weight: 15
+    third_party_settings: {  }
+  title:
+    type: string_textfield
+    weight: 0
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  uid:
+    type: entity_reference_autocomplete
+    weight: 12
+    settings:
+      match_operator: CONTAINS
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+hidden: {  }

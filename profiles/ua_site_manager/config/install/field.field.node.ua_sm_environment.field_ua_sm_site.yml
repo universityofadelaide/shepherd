@@ -2,17 +2,17 @@ langcode: en
 status: true
 dependencies:
   config:
-    - field.storage.node.field_ua_sm_site_reference
-    - node.type.ua_sm_site_instance
+    - field.storage.node.field_ua_sm_site
+    - node.type.ua_sm_environment
   module:
     - entity_reference
-id: node.ua_sm_site_instance.field_ua_sm_site_reference
-field_name: field_ua_sm_site_reference
+id: node.ua_sm_environment.field_ua_sm_site
+field_name: field_ua_sm_site
 entity_type: node
-bundle: ua_sm_site_instance
-label: 'Site reference'
-description: ''
-required: true
+bundle: ua_sm_environment
+label: Site
+description: 'The site this environment belongs to.'
+required: false
 translatable: false
 default_value: {  }
 default_value_callback: ''

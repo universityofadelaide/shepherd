@@ -7,14 +7,13 @@ dependencies:
     - field.field.node.ua_sm_site.field_ua_sm_aliases
     - field.field.node.ua_sm_site.field_ua_sm_authorizer_email
     - field.field.node.ua_sm_site.field_ua_sm_authorizer_id
+    - field.field.node.ua_sm_site.field_ua_sm_distribution
+    - field.field.node.ua_sm_site.field_ua_sm_domain_name
     - field.field.node.ua_sm_site.field_ua_sm_instance_log
     - field.field.node.ua_sm_site.field_ua_sm_path
-    - field.field.node.ua_sm_site.field_ua_sm_primary_domain_name
-    - field.field.node.ua_sm_site.field_ua_sm_site_dist
     - field.field.node.ua_sm_site.field_ua_sm_site_id
     - field.field.node.ua_sm_site.field_ua_sm_site_title
     - field.field.node.ua_sm_site.field_ua_sm_top_menu_style
-    - field.field.node.ua_sm_site.field_ua_sm_uat_domain_name
     - field.field.node.ua_sm_site.field_ua_sm_users
     - node.type.ua_sm_site
   module:
@@ -69,6 +68,21 @@ content:
       size: 60
       placeholder: ''
     third_party_settings: {  }
+  field_ua_sm_distribution:
+    weight: 27
+    settings:
+      match_operator: CONTAINS
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: entity_reference_autocomplete
+  field_ua_sm_domain_name:
+    weight: 26
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: string_textfield
   field_ua_sm_instance_log:
     type: comment_default
     weight: 19
@@ -80,18 +94,6 @@ content:
     settings:
       size: 60
       placeholder: ''
-    third_party_settings: {  }
-  field_ua_sm_primary_domain_name:
-    type: string_textfield
-    weight: 4
-    settings:
-      size: 60
-      placeholder: ''
-    third_party_settings: {  }
-  field_ua_sm_site_dist:
-    type: options_select
-    weight: 17
-    settings: {  }
     third_party_settings: {  }
   field_ua_sm_site_id:
     type: string_textfield
@@ -111,13 +113,6 @@ content:
     type: options_buttons
     weight: 3
     settings: {  }
-    third_party_settings: {  }
-  field_ua_sm_uat_domain_name:
-    type: string_textfield
-    weight: 5
-    settings:
-      size: 60
-      placeholder: ''
     third_party_settings: {  }
   field_ua_sm_users:
     type: entity_reference_paragraphs

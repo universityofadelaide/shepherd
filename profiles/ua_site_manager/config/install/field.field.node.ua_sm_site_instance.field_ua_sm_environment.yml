@@ -5,18 +5,22 @@ dependencies:
     - field.storage.node.field_ua_sm_environment
     - node.type.ua_sm_site_instance
   module:
-    - options
+    - entity_reference
 id: node.ua_sm_site_instance.field_ua_sm_environment
 field_name: field_ua_sm_environment
 entity_type: node
 bundle: ua_sm_site_instance
 label: Environment
-description: 'Select an environment to deploy to'
-required: true
+description: ''
+required: false
 translatable: false
-default_value:
-  -
-    value: uat
+default_value: {  }
 default_value_callback: ''
-settings: {  }
-field_type: list_string
+settings:
+  handler: 'default:node'
+  handler_settings:
+    target_bundles:
+      ua_sm_environment: ua_sm_environment
+    sort:
+      field: _none
+field_type: entity_reference

@@ -2,16 +2,15 @@ langcode: en
 status: true
 dependencies:
   module:
+    - entity_reference
     - node
-id: node.field_ua_sm_ip_addr
-field_name: field_ua_sm_ip_addr
+id: node.field_ua_sm_distribution
+field_name: field_ua_sm_distribution
 entity_type: node
-type: string
+type: entity_reference
 settings:
-  max_length: 255
-  is_ascii: false
-  case_sensitive: false
-module: core
+  target_type: node
+module: entity_reference
 locked: false
 cardinality: 1
 translatable: true

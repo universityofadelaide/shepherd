@@ -3,14 +3,14 @@ status: true
 dependencies:
   module:
     - node
-id: node.field_ua_sm_uat_domain_name
-field_name: field_ua_sm_uat_domain_name
+id: node.field_ua_sm_ip_address
+field_name: field_ua_sm_ip_address
 entity_type: node
 type: string
 settings:
   max_length: 255
-  case_sensitive: false
   is_ascii: false
+  case_sensitive: false
 module: core
 locked: false
 cardinality: 1

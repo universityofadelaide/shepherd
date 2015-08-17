@@ -118,7 +118,7 @@ class SiteConfigController extends ControllerBase {
     if ($result) {
       $site_instance = \Drupal::entityManager()->getStorage('node')->load($nid);
       $site = reset($site_instance->field_ua_sm_site_reference->referencedEntities());
-      $distribution = reset($site->field_ua_sm_site_dist->referencedEntities());
+      $distribution = reset($site->field_ua_sm_distribution->referencedEntities());
 
       return [
         'site_instance' => $site_instance->toArray(),

@@ -11,7 +11,7 @@ field_name: field_ua_sm_instance_log
 entity_type: node
 bundle: ua_sm_site_instance
 label: Log
-description: ''
+description: 'Site instance log.'
 required: false
 translatable: false
 default_value:

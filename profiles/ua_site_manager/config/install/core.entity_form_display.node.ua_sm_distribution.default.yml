@@ -2,8 +2,8 @@ langcode: en
 status: true
 dependencies:
   config:
+    - field.field.node.ua_sm_distribution.field_body
     - field.field.node.ua_sm_distribution.field_ua_sm_box_type
-    - field.field.node.ua_sm_distribution.field_ua_sm_dist_summary
     - field.field.node.ua_sm_distribution.field_ua_sm_git_repository
     - node.type.ua_sm_distribution
   module:
@@ -19,18 +19,21 @@ content:
     weight: 2
     settings: {  }
     third_party_settings: {  }
-  field_ua_sm_box_type:
-    type: options_select
-    weight: 7
-    settings: {  }
-    third_party_settings: {  }
-  field_ua_sm_dist_summary:
-    type: text_textarea
-    weight: 8
+  field_body:
+    weight: 27
     settings:
-      rows: 5
+      rows: 9
+      summary_rows: 3
       placeholder: ''
     third_party_settings: {  }
+    type: text_textarea_with_summary
+  field_ua_sm_box_type:
+    weight: 26
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: string_textfield
   field_ua_sm_git_repository:
     type: string_textfield
     weight: 6

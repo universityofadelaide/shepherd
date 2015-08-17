@@ -2,16 +2,16 @@ langcode: en
 status: true
 dependencies:
   config:
-    - field.storage.node.field_ua_sm_site_dist
+    - field.storage.node.field_ua_sm_distribution
     - node.type.ua_sm_site
   module:
     - entity_reference
-id: node.ua_sm_site.field_ua_sm_site_dist
-field_name: field_ua_sm_site_dist
+id: node.ua_sm_site.field_ua_sm_distribution
+field_name: field_ua_sm_distribution
 entity_type: node
 bundle: ua_sm_site
 label: Distribution
-description: 'Select a distribution of Drupal to deploy'
+description: ''
 required: false
 translatable: false
 default_value: {  }

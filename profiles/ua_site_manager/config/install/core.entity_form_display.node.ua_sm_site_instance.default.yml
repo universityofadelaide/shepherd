@@ -4,12 +4,12 @@ dependencies:
   config:
     - field.field.node.ua_sm_site_instance.field_ua_sm_container
     - field.field.node.ua_sm_site_instance.field_ua_sm_environment
-    - field.field.node.ua_sm_site_instance.field_ua_sm_git_branch
+    - field.field.node.ua_sm_site_instance.field_ua_sm_git_reference
     - field.field.node.ua_sm_site_instance.field_ua_sm_hostname
     - field.field.node.ua_sm_site_instance.field_ua_sm_http_port
     - field.field.node.ua_sm_site_instance.field_ua_sm_instance_log
-    - field.field.node.ua_sm_site_instance.field_ua_sm_ip_addr
-    - field.field.node.ua_sm_site_instance.field_ua_sm_site_reference
+    - field.field.node.ua_sm_site_instance.field_ua_sm_ip_address
+    - field.field.node.ua_sm_site_instance.field_ua_sm_ipv6_address
     - field.field.node.ua_sm_site_instance.field_ua_sm_ssh_port
     - node.type.ua_sm_site_instance
   module:
@@ -22,23 +22,26 @@ mode: default
 content:
   created:
     type: datetime_timestamp
-    weight: 10
+    weight: 11
     settings: {  }
     third_party_settings: {  }
   field_ua_sm_container:
     type: string_textfield
-    weight: 8
+    weight: 4
     settings:
       size: 60
       placeholder: ''
     third_party_settings: {  }
   field_ua_sm_environment:
-    type: options_select
-    weight: 2
-    settings: {  }
+    weight: 1
+    settings:
+      match_operator: CONTAINS
+      size: 60
+      placeholder: ''
     third_party_settings: {  }
-  field_ua_sm_git_branch:
-    weight: 7
+    type: entity_reference_autocomplete
+  field_ua_sm_git_reference:
+    weight: 5
     settings:
       size: 60
       placeholder: ''
@@ -46,57 +49,56 @@ content:
     type: string_textfield
   field_ua_sm_hostname:
     type: string_textfield
-    weight: 4
+    weight: 3
     settings:
       size: 60
       placeholder: ''
     third_party_settings: {  }
   field_ua_sm_http_port:
     type: number
-    weight: 6
+    weight: 8
     settings:
       placeholder: ''
     third_party_settings: {  }
   field_ua_sm_instance_log:
     type: comment_default
-    weight: 9
+    weight: 10
     settings: {  }
     third_party_settings: {  }
-  field_ua_sm_ip_addr:
+  field_ua_sm_ip_address:
+    weight: 6
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
     type: string_textfield
-    weight: 3
+  field_ua_sm_ipv6_address:
+    weight: 7
     settings:
       size: 60
       placeholder: ''
     third_party_settings: {  }
-  field_ua_sm_site_reference:
-    type: entity_reference_autocomplete
-    weight: 1
-    settings:
-      match_operator: CONTAINS
-      size: 60
-      placeholder: ''
-    third_party_settings: {  }
+    type: string_textfield
   field_ua_sm_ssh_port:
     type: number
-    weight: 5
+    weight: 9
     settings:
       placeholder: ''
     third_party_settings: {  }
   path:
     type: path
-    weight: 14
+    weight: 15
     settings: {  }
     third_party_settings: {  }
   promote:
     type: boolean_checkbox
-    weight: 12
+    weight: 13
     settings:
       display_label: true
     third_party_settings: {  }
   sticky:
     type: boolean_checkbox
-    weight: 13
+    weight: 14
     settings:
       display_label: true
     third_party_settings: {  }
@@ -109,7 +111,7 @@ content:
     third_party_settings: {  }
   uid:
     type: entity_reference_autocomplete
-    weight: 11
+    weight: 12
     settings:
       match_operator: CONTAINS
       size: 60

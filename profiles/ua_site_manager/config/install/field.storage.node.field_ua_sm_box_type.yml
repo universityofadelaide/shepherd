@@ -3,18 +3,15 @@ status: true
 dependencies:
   module:
     - node
-    - options
 id: node.field_ua_sm_box_type
 field_name: field_ua_sm_box_type
 entity_type: node
-type: list_string
+type: string
 settings:
-  allowed_values:
-    -
-      value: ua_lamp
-      label: 'UA Lamp'
-  allowed_values_function: ''
-module: options
+  max_length: 255
+  is_ascii: false
+  case_sensitive: false
+module: core
 locked: false
 cardinality: 1
 translatable: true

@@ -9,7 +9,7 @@ field_name: field_ua_sm_site_title
 entity_type: node
 bundle: ua_sm_site
 label: 'Site title'
-description: 'The site title appears in the header. E.g. Faculty of Arts.'
+description: 'The site title appears in the header of an actual site. E.g. Faculty of Arts.'
 required: true
 translatable: false
 default_value:

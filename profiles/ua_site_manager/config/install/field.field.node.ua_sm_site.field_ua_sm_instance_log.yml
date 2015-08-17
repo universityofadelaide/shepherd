@@ -11,12 +11,12 @@ field_name: field_ua_sm_instance_log
 entity_type: node
 bundle: ua_sm_site
 label: Log
-description: ''
+description: 'Site log.'
 required: false
 translatable: true
 default_value:
   -
-    status: 1
+    status: 2
     cid: 0
     last_comment_timestamp: 0
     last_comment_name: null

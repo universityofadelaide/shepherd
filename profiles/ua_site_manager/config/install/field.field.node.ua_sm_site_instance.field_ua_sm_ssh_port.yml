@@ -8,8 +8,8 @@ id: node.ua_sm_site_instance.field_ua_sm_ssh_port
 field_name: field_ua_sm_ssh_port
 entity_type: node
 bundle: ua_sm_site_instance
-label: 'SSH Port Number'
-description: 'SSH Port Number'
+label: 'SSH port'
+description: 'SSH port number.'
 required: false
 translatable: false
 default_value: {  }

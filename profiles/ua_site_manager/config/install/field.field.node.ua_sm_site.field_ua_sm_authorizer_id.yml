@@ -9,7 +9,7 @@ field_name: field_ua_sm_authorizer_id
 entity_type: node
 bundle: ua_sm_site
 label: 'Authorizer ID'
-description: 'E.g. a1234567'
+description: 'E.g. a1234567.'
 required: false
 translatable: false
 default_value:

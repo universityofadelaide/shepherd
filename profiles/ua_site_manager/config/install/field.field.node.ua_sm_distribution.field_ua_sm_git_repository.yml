@@ -8,13 +8,13 @@ id: node.ua_sm_distribution.field_ua_sm_git_repository
 field_name: field_ua_sm_git_repository
 entity_type: node
 bundle: ua_sm_distribution
-label: 'Git Repository'
+label: 'Git repository'
 description: ''
 required: true
 translatable: false
 default_value:
   -
-    value: ''
+    value: 'git@gitlab.adelaide.edu.au:web-team/ua-d8-base-site.git'
 default_value_callback: ''
 settings: {  }
 field_type: string
