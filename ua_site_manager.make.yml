@@ -39,6 +39,7 @@ projects:
       - https://www.drupal.org/files/issues/oauth-providerid-2534302.patch-2.patch
       - https://www.drupal.org/files/issues/oauth-form-class-update-2331155-3.patch
       - https://www.drupal.org/files/issues/oauth-refactor-d7-links-2471661-1.patch
+      - https://www.drupal.org/files/issues/oauth-rewrite-menu-defenitions-2472213-1.patch
 # UA modules.
   ua_ldap:
     subdir: ua
