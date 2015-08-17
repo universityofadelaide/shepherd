@@ -14,7 +14,7 @@ projects:
   drupal:
     type: core
     download:
-      url: https://gitlab.adelaide.edu.au/web-team/drupal-core.git
+      url: http://git.drupal.org/project/drupal.git
       tag: 8.0.0-beta12
     patch:
       - https://www.drupal.org/files/issues/2430669-4.patch
