@@ -44,6 +44,26 @@ class SiteConfigController extends ControllerBase {
   }
 
   /**
+   * Handles a site instance config json request.
+   *
+   * @param int $nid
+   *   Site instance node ID.
+   *
+   * @return \Symfony\Component\HttpFoundation\JsonResponse
+   *   Site instance config as JSON.
+   */
+  public function siteInstanceConfig($nid) {
+    $config = \Drupal::service('ua_sm_custom.site_instance_config')
+      ->generate($nid);
+    if ($config) {
+      return new JsonResponse($config);
+    }
+    else {
+      throw new NotFoundHttpException();
+    }
+  }
+
+  /**
    * Download json representation of a site instance.
    *
    * @param int $nid
@@ -117,7 +137,7 @@ class SiteConfigController extends ControllerBase {
     $result = $query->execute();
     if ($result) {
       $site_instance = \Drupal::entityManager()->getStorage('node')->load($nid);
-      $site = reset($site_instance->field_ua_sm_site_reference->referencedEntities());
+      $site = reset($site_instance->field_ua_sm_site->referencedEntities());
       $distribution = reset($site->field_ua_sm_distribution->referencedEntities());
 
       return [

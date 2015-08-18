@@ -39,7 +39,7 @@ function ua_sm_custom_node_presave(Drupal\node\Entity\Node $entity) {
 
   // Generate site slug based on domain and path.
   $site_slug = SiteRoleSlug::getSite(
-    $entity->field_ua_sm_primary_domain_name->value,
+    $entity->field_ua_sm_domain_name->value,
     $entity->field_ua_sm_path->value
   );
 
@@ -93,14 +93,15 @@ function ua_sm_custom_node_insert(EntityInterface $entity) {
     $jenkins_job = $jenkins_config['job'];
     $id = $entity->id();
     $uuid = $entity->uuid();
-    $site_id = $entity->field_ua_sm_site_reference->getString();
+    $environment = reset($entity->field_ua_sm_environment->referencedEntities());
+    $site_nid = $environment->field_ua_sm_site->getString();
 
     $comment = \Drupal::entityManager()
       ->getStorage('comment')
       ->create([
         'subject' => 'Deploying ' . $entity->title->value . '.',
         'comment_body' => 'Test',
-        'entity_id' => $site_id,
+        'entity_id' => $site_nid,
         'entity_type' => 'node',
         'field_name' => 'field_ua_sm_instance_log',
         'status' => CommentInterface::PUBLISHED,

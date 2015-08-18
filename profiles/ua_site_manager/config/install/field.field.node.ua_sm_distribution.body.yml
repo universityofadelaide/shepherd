@@ -2,18 +2,18 @@ langcode: en
 status: true
 dependencies:
   config:
-    - field.storage.node.field_body
+    - field.storage.node.body
     - node.type.ua_sm_distribution
   module:
     - text
-id: node.ua_sm_distribution.field_body
-field_name: field_body
+id: node.ua_sm_distribution.body
+field_name: body
 entity_type: node
 bundle: ua_sm_distribution
 label: Description
 description: 'A short description about the distribution and its'' responsibilities.'
 required: false
-translatable: false
+translatable: true
 default_value: {  }
 default_value_callback: ''
 settings:

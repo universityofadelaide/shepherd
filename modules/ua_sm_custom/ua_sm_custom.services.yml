@@ -1,0 +1,3 @@
+services:
+  ua_sm_custom.site_instance_config:
+    class: Drupal\ua_sm_custom\Service\SiteInstanceConfig

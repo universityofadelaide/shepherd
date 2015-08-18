@@ -1,5 +1,0 @@
-langcode: en
-status: true
-dependencies: {  }
-id: ua_sm_site_instance
-label: 'Site Instance'

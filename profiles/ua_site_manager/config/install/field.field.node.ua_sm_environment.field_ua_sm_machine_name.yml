@@ -1,0 +1,20 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_ua_sm_machine_name
+    - node.type.ua_sm_environment
+id: node.ua_sm_environment.field_ua_sm_machine_name
+field_name: field_ua_sm_machine_name
+entity_type: node
+bundle: ua_sm_environment
+label: 'Machine name'
+description: 'A short, lowercase and underscore delimited name for the environment. E.g. dev, stg, prd.'
+required: false
+translatable: false
+default_value:
+  -
+    value: dev
+default_value_callback: ''
+settings: {  }
+field_type: string

@@ -12,6 +12,7 @@ dependencies:
     - field.field.node.ua_sm_environment.field_ua_sm_deployment_type
     - field.field.node.ua_sm_environment.field_ua_sm_domain_name
     - field.field.node.ua_sm_environment.field_ua_sm_git_reference
+    - field.field.node.ua_sm_environment.field_ua_sm_machine_name
     - field.field.node.ua_sm_environment.field_ua_sm_platform
     - field.field.node.ua_sm_environment.field_ua_sm_site
     - node.type.ua_sm_environment
@@ -34,5 +35,6 @@ hidden:
   field_ua_sm_deployment_type: true
   field_ua_sm_domain_name: true
   field_ua_sm_git_reference: true
+  field_ua_sm_machine_name: true
   field_ua_sm_platform: true
   field_ua_sm_site: true

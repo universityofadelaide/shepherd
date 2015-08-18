@@ -4,7 +4,7 @@ dependencies:
   config:
     - field.storage.node.field_tags
     - field.storage.node.field_ua_sm_path
-    - field.storage.node.field_ua_sm_primary_domain_name
+    - field.storage.node.field_ua_sm_domain_name
     - node.type.ua_sm_site
     - taxonomy.vocabulary.tags
   module:
@@ -85,7 +85,7 @@ display:
           description: ''
           columns:
             title: title
-            field_ua_sm_primary_domain_name: field_ua_sm_primary_domain_name
+            field_ua_sm_domain_name: field_ua_sm_domain_name
             field_ua_sm_path: field_ua_sm_path
             created: created
             field_tags: field_tags
@@ -97,7 +97,7 @@ display:
               separator: ''
               empty_column: false
               responsive: ''
-            field_ua_sm_primary_domain_name:
+            field_ua_sm_domain_name:
               sortable: true
               default_sort_order: asc
               align: ''
@@ -175,10 +175,10 @@ display:
           multi_type: separator
           separator: ', '
           field_api_classes: false
-        field_ua_sm_primary_domain_name:
-          id: field_ua_sm_primary_domain_name
-          table: node__field_ua_sm_primary_domain_name
-          field: field_ua_sm_primary_domain_name
+        field_ua_sm_domain_name:
+          id: field_ua_sm_domain_name
+          table: node__field_ua_sm_domain_name
+          field: field_ua_sm_domain_name
           relationship: none
           group_type: group
           admin_label: ''
@@ -509,10 +509,10 @@ display:
           entity_type: node
           entity_field: title
           plugin_id: string
-        field_ua_sm_primary_domain_name_value:
-          id: field_ua_sm_primary_domain_name_value
-          table: node__field_ua_sm_primary_domain_name
-          field: field_ua_sm_primary_domain_name_value
+        field_ua_sm_domain_name_value:
+          id: field_ua_sm_domain_name_value
+          table: node__field_ua_sm_domain_name
+          field: field_ua_sm_domain_name_value
           relationship: none
           group_type: group
           admin_label: ''
@@ -521,12 +521,12 @@ display:
           group: 1
           exposed: true
           expose:
-            operator_id: field_ua_sm_primary_domain_name_value_op
+            operator_id: field_ua_sm_domain_name_value_op
             label: 'Primary domain name'
             description: ''
             use_operator: false
-            operator: field_ua_sm_primary_domain_name_value_op
-            identifier: field_ua_sm_primary_domain_name_value
+            operator: field_ua_sm_domain_name_value_op
+            identifier: field_ua_sm_domain_name_value
             required: false
             remember: false
             multiple: false

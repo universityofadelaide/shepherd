@@ -14,6 +14,7 @@ content:
   links:
     weight: 100
 hidden:
+  body: true
   field_ua_sm_box_type: true
   field_ua_sm_dist_summary: true
   field_ua_sm_git_repository: true

@@ -3,7 +3,7 @@ status: true
 dependencies:
   config:
     - field.storage.node.field_ua_sm_environment
-    - field.storage.node.field_ua_sm_git_branch
+    - field.storage.node.field_ua_sm_git_reference
     - node.type.ua_sm_site_instance
   module:
     - node
@@ -122,10 +122,10 @@ display:
           multi_type: separator
           separator: ', '
           field_api_classes: false
-        field_ua_sm_git_branch:
-          id: field_ua_sm_git_branch
-          table: node__field_ua_sm_git_branch
-          field: field_ua_sm_git_branch
+        field_ua_sm_git_reference:
+          id: field_ua_sm_git_reference
+          table: node__field_ua_sm_git_reference
+          field: field_ua_sm_git_reference
           relationship: none
           group_type: group
           admin_label: ''
@@ -289,10 +289,10 @@ display:
       empty: {  }
       relationships: {  }
       arguments:
-        field_ua_sm_site_reference_target_id:
-          id: field_ua_sm_site_reference_target_id
-          table: node__field_ua_sm_site_reference
-          field: field_ua_sm_site_reference_target_id
+        field_ua_sm_site_target_id:
+          id: field_ua_sm_site_target_id
+          table: node__field_ua_sm_site
+          field: field_ua_sm_site_target_id
           relationship: none
           group_type: group
           admin_label: ''

@@ -2,7 +2,7 @@ langcode: en
 status: true
 dependencies:
   config:
-    - field.field.node.ua_sm_distribution.field_body
+    - field.field.node.ua_sm_distribution.body
     - field.field.node.ua_sm_distribution.field_ua_sm_box_type
     - field.field.node.ua_sm_distribution.field_ua_sm_git_repository
     - node.type.ua_sm_distribution
@@ -14,12 +14,7 @@ targetEntityType: node
 bundle: ua_sm_distribution
 mode: default
 content:
-  created:
-    type: datetime_timestamp
-    weight: 2
-    settings: {  }
-    third_party_settings: {  }
-  field_body:
+  body:
     weight: 27
     settings:
       rows: 9
@@ -27,6 +22,11 @@ content:
       placeholder: ''
     third_party_settings: {  }
     type: text_textarea_with_summary
+  created:
+    type: datetime_timestamp
+    weight: 2
+    settings: {  }
+    third_party_settings: {  }
   field_ua_sm_box_type:
     weight: 26
     settings:
