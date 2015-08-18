@@ -11,14 +11,12 @@ resources:
         - hal_json
         - json
       supported_auth:
-        - oauth
         - basic_auth
     PATCH:
       supported_formats:
         - hal_json
         - json
       supported_auth:
-        - oauth
         - basic_auth
   'entity:comment':
     GET:
@@ -32,5 +30,4 @@ resources:
         - hal_json
         - json
       supported_auth:
-        - oauth
         - basic_auth

@@ -46,7 +46,6 @@ dependencies:
   - paragraphs
   - ua_ldap
   - ua_sm_custom
-  - oauth
 themes:
   - bartik
   - seven
