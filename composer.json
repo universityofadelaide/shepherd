@@ -1,16 +1,74 @@
 {
+    "name": "ua-web-team/ua-site-manager",
+    "description": "University of Adelaide Drupal 8 base project.",
+    "type": "project",
+    "license": "MIT",
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "git@gitlab.adelaide.edu.au:web-team/drupal-core.git"
+        },
+        {
+            "type": "vcs",
+            "url": "git@gitlab.adelaide.edu.au:drupal-modules/ua_ldap.git"
+        },
+        {
+            "type": "composer",
+            "url": "https://packagist.drupal-composer.org"
+        }
+    ],
     "require": {
-        "drush/drush":                           "8.*",
-        "drupal/console":                        "dev-master",
-        "vrana/adminer":                         "dev-master",
-        "phpmd/phpmd":                           "dev-master",
-        "drupal/coder":                          "8.2.*"
+        "drush/drush": "8.*",
+        "composer/installers": "^1.0.20",
+        "cweagans/composer-patches": "~1.0",
+        "drupal/core": "8.0.0-beta14",
+        "drupal/cas": "8.1.*@dev",
+        "drupal/diff": "8.1.*@dev",
+        "drupal/entity_reference_revisions": "8.1.*@dev",
+        "drupal/paragraphs": "dev-8.x-1.x",
+        "drupal/r4032login": "8.1.*@dev",
+        "ua-drupal-modules/ua_ldap": "dev-develop"
+    },
+    "require-dev": {
+        "drupal/devel": "8.1.*@dev"
     },
     "minimum-stability": "dev",
+    "prefer-stable": true,
     "config": {
         "bin-dir": "bin/",
-        "github-oauth":{
-            "github.com":"681de8b61108d3c64168e26426860b50c97aa86d"
+        "github-oauth": {
+            "github.com": "681de8b61108d3c64168e26426860b50c97aa86d"
+        }
+    },
+    "extra": {
+        "installer-paths": {
+            "app/core": [
+                "type:drupal-core"
+            ],
+            "app/modules/contrib/{$name}": [
+                "type:drupal-module"
+            ],
+            "app/profiles/contrib/{$name}": [
+                "type:drupal-profile"
+            ],
+            "app/themes/contrib/{$name}": [
+                "type:drupal-theme"
+            ],
+            "app/libraries/{$name}": [
+                "type:drupal-library"
+            ],
+            "app/drush/commands/{$name}": [
+                "type:drupal-drush"
+            ]
+        },
+        "patches": {
+            "drupal/cas": {
+                "Setting to trigger CAS logout on Drupal logout": "https://www.drupal.org/files/issues/cas_2536128_3.patch"
+            },
+            "drupal/r4032login": {
+                "Override return destination parameter": "https://www.drupal.org/files/issues/r4032login_2534308_2.patch",
+                "Redirection triggers for all kernel exceptions, not just 403": "https://www.drupal.org/files/issues/r4032login_cleaned_2534878_4.patch"
+            }
         }
     }
 }

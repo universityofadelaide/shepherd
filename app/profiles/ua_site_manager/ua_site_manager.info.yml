@@ -10,7 +10,6 @@ dependencies:
   - breakpoint
   - cas
   - ckeditor
-  - color
   - config
   - comment
   - contextual
@@ -37,12 +36,11 @@ dependencies:
   - views
   - views_ui
   - tour
-  - extlink
   - diff
   - rest
   - basic_auth
+  - entity_reference_revisions
   - hal
-  - composer_manager
   - paragraphs
   - ua_ldap
   - ua_sm_custom
