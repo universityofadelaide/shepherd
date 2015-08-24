@@ -1,0 +1,20 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_ua_sm_task_runner
+    - node.type.ua_sm_platform
+id: node.ua_sm_platform.field_ua_sm_task_runner
+field_name: field_ua_sm_task_runner
+entity_type: node
+bundle: ua_sm_platform
+label: 'Task runner'
+description: ''
+required: false
+translatable: true
+default_value:
+  -
+    value: jenkins
+default_value_callback: ''
+settings: {  }
+field_type: string

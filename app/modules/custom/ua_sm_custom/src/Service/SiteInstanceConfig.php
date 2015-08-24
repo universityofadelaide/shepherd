@@ -30,9 +30,12 @@ class SiteInstanceConfig {
     $result = $query->execute();
     if ($result) {
       $site_instance = \Drupal::entityManager()->getStorage('node')->load($nid);
+      $server = reset($site_instance->field_ua_sm_server->referencedEntities());
       $environment = reset($site_instance->field_ua_sm_environment->referencedEntities());
+      $platform = reset($environment->field_ua_sm_platform->referencedEntities());
       $site = reset($environment->field_ua_sm_site->referencedEntities());
       $distribution = reset($site->field_ua_sm_distribution->referencedEntities());
+
       $config = [
         'database' => [
           'database' => $environment->field_ua_sm_database->value,
@@ -52,7 +55,7 @@ class SiteInstanceConfig {
             'name' => $site->field_ua_sm_site_title->value,
           ],
           'ua_footer.authorized' => [
-            'name'  => $site->field_ua_sm_authorizer_id->value,
+            'name' => $site->field_ua_sm_authorizer_id->value,
             'email' => $site->field_ua_sm_authorizer_email->value,
           ],
           'system.ua_menu' => [
@@ -65,30 +68,44 @@ class SiteInstanceConfig {
           'domain_name' => $environment->field_ua_sm_domain_name->value,
           'id' => $environment->id(),
           'git_reference' => $environment->field_ua_sm_git_reference->value,
-          'platform' => $environment->field_ua_sm_platform->value,
+          'machine_name' => $environment->field_ua_sm_machine_name->value,
+        ],
+        'platform' => [
+          'build_server' => $platform->field_ua_sm_build_server->value,
+          'docker_registry' => $platform->field_ua_sm_docker_registry->value,
+          'id' => $platform->id(),
+          'reverse_proxy_addresses' => $platform->field_ua_sm_rev_proxy_addresses->value,
+          'reverse_proxy_header' => $platform->field_ua_sm_reverse_proxy_header->value,
+          'task_runner' => $platform->field_ua_sm_task_runner->value,
+        ],
+        'server' => [
+          'hostname' => $server->field_ua_sm_hostname->value,
+          'id' => $server->id(),
+          'ip_address' => $server->field_ua_sm_ip_address->value,
+          'ipv6_address' => $server->field_ua_sm_ipv6_address->value,
+          'port_range_start' => $server->field_ua_sm_port_range_start->value,
+          'port_range_end' => $server->field_ua_sm_port_range_end->value,
         ],
         'site' => [
           'aliases' => $site->field_ua_sm_aliases->value,
           'authorizer_email' => $site->field_ua_sm_authorizer_email->value,
           'authorizer_id' => $site->field_ua_sm_authorizer_id->value,
           'domain_name' => $site->field_ua_sm_domain_name->value,
-          'distribution_id' => $site->field_ua_sm_distribution->value,
           'id' => $site->id(),
           'path' => $site->field_ua_sm_path->value,
           'site_id' => $site->field_ua_sm_site_id->value,
           'site_title' => $site->field_ua_sm_site_title->value,
           'top_menu_style' => $site->field_ua_sm_top_menu_style->value,
-          'users' => $site->field_ua_sm_users->value,
         ],
         'site_instance' => [
-          'container' => $site_instance->field_ua_sm_container->value,
           'git_reference' => $site_instance->field_ua_sm_git_reference->value,
           'hostname' => $site_instance->field_ua_sm_hostname->value,
           'http_port' => $site_instance->field_ua_sm_http_port->value,
           'id' => $site_instance->id(),
-          'ip_addr' => $site_instance->field_ua_sm_ip_address->value,
-          'ipv6_addr' => $site_instance->field_ua_sm_ipv6_address->value,
+          'ip_address' => $site_instance->field_ua_sm_ip_address->value,
+          'ipv6_address' => $site_instance->field_ua_sm_ipv6_address->value,
           'ssh_port' => $site_instance->field_ua_sm_ssh_port->value,
+          'state' => $site_instance->field_ua_sm_state->value,
         ],
       ];
       return $config;

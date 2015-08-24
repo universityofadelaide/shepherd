@@ -7,9 +7,9 @@ third_party_settings:
   menu_ui:
     available_menus: {  }
     parent: ''
-name: Distribution
-type: ua_sm_distribution
-description: 'A distribution specifies a specific repository for a web application. E.g. "UA D8 base site", "Admissions at Adelaide" etc.'
+name: Server
+type: ua_sm_server
+description: 'A server. It could be a web server, a build server etc.'
 help: ''
 new_revision: false
 preview_mode: 1

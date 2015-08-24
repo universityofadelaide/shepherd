@@ -1,0 +1,22 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_ua_sm_state
+    - node.type.ua_sm_site_instance
+  module:
+    - options
+id: node.ua_sm_site_instance.field_ua_sm_state
+field_name: field_ua_sm_state
+entity_type: node
+bundle: ua_sm_site_instance
+label: State
+description: 'The current state of the instance.'
+required: false
+translatable: false
+default_value:
+  -
+    value: stopped
+default_value_callback: ''
+settings: {  }
+field_type: list_string

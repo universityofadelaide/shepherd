@@ -3,14 +3,13 @@ status: true
 dependencies:
   module:
     - node
-id: node.field_ua_sm_container
-field_name: field_ua_sm_container
+id: node.field_ua_sm_port_range_start
+field_name: field_ua_sm_port_range_start
 entity_type: node
-type: string
+type: integer
 settings:
-  max_length: 255
-  is_ascii: false
-  case_sensitive: false
+  unsigned: false
+  size: normal
 module: core
 locked: false
 cardinality: 1

@@ -1,0 +1,81 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.ua_sm_platform.body
+    - field.field.node.ua_sm_platform.field_tags
+    - field.field.node.ua_sm_platform.field_ua_sm_build_server
+    - field.field.node.ua_sm_platform.field_ua_sm_docker_registry
+    - field.field.node.ua_sm_platform.field_ua_sm_rev_proxy_addresses
+    - field.field.node.ua_sm_platform.field_ua_sm_reverse_proxy_header
+    - field.field.node.ua_sm_platform.field_ua_sm_task_runner
+    - field.field.node.ua_sm_platform.field_ua_sm_web_servers
+    - node.type.ua_sm_platform
+  module:
+    - text
+    - user
+id: node.ua_sm_platform.default
+targetEntityType: node
+bundle: ua_sm_platform
+mode: default
+content:
+  body:
+    label: hidden
+    type: text_default
+    weight: 6
+    settings: {  }
+    third_party_settings: {  }
+  field_tags:
+    weight: 7
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    type: entity_reference_label
+  field_ua_sm_build_server:
+    weight: 2
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    type: entity_reference_label
+  field_ua_sm_docker_registry:
+    weight: 1
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    type: string
+  field_ua_sm_rev_proxy_addresses:
+    weight: 4
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    type: string
+  field_ua_sm_reverse_proxy_header:
+    weight: 5
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    type: string
+  field_ua_sm_task_runner:
+    weight: 0
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    type: string
+  field_ua_sm_web_servers:
+    weight: 3
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    type: entity_reference_label
+  links:
+    weight: 8
+    settings: {  }
+    third_party_settings: {  }
+hidden: {  }

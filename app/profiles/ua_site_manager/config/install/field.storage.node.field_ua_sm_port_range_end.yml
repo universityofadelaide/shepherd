@@ -2,15 +2,15 @@ langcode: en
 status: true
 dependencies:
   module:
-    - entity_reference
     - node
-id: node.field_ua_sm_platform
-field_name: field_ua_sm_platform
+id: node.field_ua_sm_port_range_end
+field_name: field_ua_sm_port_range_end
 entity_type: node
-type: entity_reference
+type: integer
 settings:
-  target_type: node
-module: entity_reference
+  unsigned: false
+  size: normal
+module: core
 locked: false
 cardinality: 1
 translatable: true

@@ -5,12 +5,11 @@ dependencies:
     - menu_ui
 third_party_settings:
   menu_ui:
-    available_menus:
-      - main
-    parent: 'main:'
+    available_menus: {  }
+    parent: ''
 name: 'Site Instance'
 type: ua_sm_site_instance
-description: 'A deployable instance of a site'
+description: 'A deployable instance of a site.'
 help: ''
 new_revision: false
 preview_mode: 1

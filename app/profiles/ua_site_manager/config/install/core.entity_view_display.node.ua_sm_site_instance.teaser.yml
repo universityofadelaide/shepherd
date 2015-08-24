@@ -3,7 +3,6 @@ status: true
 dependencies:
   config:
     - core.entity_view_mode.node.teaser
-    - field.field.node.ua_sm_site_instance.field_ua_sm_container
     - field.field.node.ua_sm_site_instance.field_ua_sm_environment
     - field.field.node.ua_sm_site_instance.field_ua_sm_git_reference
     - field.field.node.ua_sm_site_instance.field_ua_sm_hostname
@@ -11,7 +10,9 @@ dependencies:
     - field.field.node.ua_sm_site_instance.field_ua_sm_instance_log
     - field.field.node.ua_sm_site_instance.field_ua_sm_ip_address
     - field.field.node.ua_sm_site_instance.field_ua_sm_ipv6_address
+    - field.field.node.ua_sm_site_instance.field_ua_sm_server
     - field.field.node.ua_sm_site_instance.field_ua_sm_ssh_port
+    - field.field.node.ua_sm_site_instance.field_ua_sm_state
     - node.type.ua_sm_site_instance
   module:
     - user
@@ -23,7 +24,6 @@ content:
   links:
     weight: 100
 hidden:
-  field_ua_sm_container: true
   field_ua_sm_environment: true
   field_ua_sm_git_reference: true
   field_ua_sm_hostname: true
@@ -31,4 +31,6 @@ hidden:
   field_ua_sm_instance_log: true
   field_ua_sm_ip_address: true
   field_ua_sm_ipv6_address: true
+  field_ua_sm_server: true
   field_ua_sm_ssh_port: true
+  field_ua_sm_state: true

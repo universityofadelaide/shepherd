@@ -2,7 +2,6 @@ langcode: en
 status: true
 dependencies:
   config:
-    - field.field.node.ua_sm_site_instance.field_ua_sm_container
     - field.field.node.ua_sm_site_instance.field_ua_sm_environment
     - field.field.node.ua_sm_site_instance.field_ua_sm_git_reference
     - field.field.node.ua_sm_site_instance.field_ua_sm_hostname
@@ -10,7 +9,9 @@ dependencies:
     - field.field.node.ua_sm_site_instance.field_ua_sm_instance_log
     - field.field.node.ua_sm_site_instance.field_ua_sm_ip_address
     - field.field.node.ua_sm_site_instance.field_ua_sm_ipv6_address
+    - field.field.node.ua_sm_site_instance.field_ua_sm_server
     - field.field.node.ua_sm_site_instance.field_ua_sm_ssh_port
+    - field.field.node.ua_sm_site_instance.field_ua_sm_state
     - node.type.ua_sm_site_instance
   module:
     - comment
@@ -25,13 +26,6 @@ content:
     weight: 11
     settings: {  }
     third_party_settings: {  }
-  field_ua_sm_container:
-    type: string_textfield
-    weight: 4
-    settings:
-      size: 60
-      placeholder: ''
-    third_party_settings: {  }
   field_ua_sm_environment:
     weight: 1
     settings:
@@ -41,7 +35,7 @@ content:
     third_party_settings: {  }
     type: entity_reference_autocomplete
   field_ua_sm_git_reference:
-    weight: 5
+    weight: 4
     settings:
       size: 60
       placeholder: ''
@@ -56,7 +50,7 @@ content:
     third_party_settings: {  }
   field_ua_sm_http_port:
     type: number
-    weight: 8
+    weight: 7
     settings:
       placeholder: ''
     third_party_settings: {  }
@@ -66,25 +60,38 @@ content:
     settings: {  }
     third_party_settings: {  }
   field_ua_sm_ip_address:
-    weight: 6
+    weight: 5
     settings:
       size: 60
       placeholder: ''
     third_party_settings: {  }
     type: string_textfield
   field_ua_sm_ipv6_address:
-    weight: 7
+    weight: 6
     settings:
       size: 60
       placeholder: ''
     third_party_settings: {  }
     type: string_textfield
+  field_ua_sm_server:
+    weight: 2
+    settings:
+      match_operator: CONTAINS
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: entity_reference_autocomplete
   field_ua_sm_ssh_port:
     type: number
-    weight: 9
+    weight: 8
     settings:
       placeholder: ''
     third_party_settings: {  }
+  field_ua_sm_state:
+    weight: 9
+    settings: {  }
+    third_party_settings: {  }
+    type: options_select
   path:
     type: path
     weight: 15

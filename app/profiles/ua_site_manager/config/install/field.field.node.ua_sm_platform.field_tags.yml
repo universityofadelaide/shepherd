@@ -2,25 +2,26 @@ langcode: en
 status: true
 dependencies:
   config:
-    - field.storage.node.field_ua_sm_platform
-    - node.type.ua_sm_environment
+    - field.storage.node.field_tags
+    - node.type.ua_sm_platform
   module:
     - entity_reference
-id: node.ua_sm_environment.field_ua_sm_platform
-field_name: field_ua_sm_platform
+id: node.ua_sm_platform.field_tags
+field_name: field_tags
 entity_type: node
-bundle: ua_sm_environment
-label: Platform
+bundle: ua_sm_platform
+label: Tags
 description: ''
 required: false
-translatable: false
+translatable: true
 default_value: {  }
 default_value_callback: ''
 settings:
-  handler: 'default:node'
+  handler: 'default:taxonomy_term'
   handler_settings:
     target_bundles:
-      ua_sm_platform: ua_sm_platform
+      tags: tags
     sort:
       field: _none
+    auto_create: true
 field_type: entity_reference

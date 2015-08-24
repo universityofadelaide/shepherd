@@ -1,0 +1,20 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_ua_sm_hostname
+    - node.type.ua_sm_server
+id: node.ua_sm_server.field_ua_sm_hostname
+field_name: field_ua_sm_hostname
+entity_type: node
+bundle: ua_sm_server
+label: 'Hostname '
+description: ''
+required: false
+translatable: true
+default_value:
+  -
+    value: ''
+default_value_callback: ''
+settings: {  }
+field_type: string

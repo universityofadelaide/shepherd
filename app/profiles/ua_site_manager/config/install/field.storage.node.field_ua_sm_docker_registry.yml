@@ -2,15 +2,16 @@ langcode: en
 status: true
 dependencies:
   module:
-    - entity_reference
     - node
-id: node.field_ua_sm_platform
-field_name: field_ua_sm_platform
+id: node.field_ua_sm_docker_registry
+field_name: field_ua_sm_docker_registry
 entity_type: node
-type: entity_reference
+type: string
 settings:
-  target_type: node
-module: entity_reference
+  max_length: 255
+  is_ascii: false
+  case_sensitive: false
+module: core
 locked: false
 cardinality: 1
 translatable: true
