@@ -108,7 +108,7 @@ function ua_sm_custom_node_insert(EntityInterface $entity) {
       ]);
 
     $client = new Client([
-      'base_url' => $jenkins_url
+      'base_uri' => $jenkins_url
     ]);
 
     $request_query = [];
@@ -129,8 +129,7 @@ function ua_sm_custom_node_insert(EntityInterface $entity) {
 
     // Looks there are some auth issues with anon read access.
     // buildByToken solves this issue.
-    // todo: Ensure that the base url has a trailing slash.
-    $response = $client->get('buildWithParameters', ['query' => [$request_query]]);
+    $response = $client->get('buildWithParameters', ['query' => http_build_query($request_query) ]);
 
     $code = $response->getStatusCode();
 
