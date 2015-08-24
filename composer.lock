@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "ecfaa8491f1d4549abe619298d134d82",
+    "hash": "995043c4279f15e007d165e6ed16d800",
     "packages": [
         {
             "name": "behat/mink",
@@ -833,11 +833,11 @@
         },
         {
             "name": "drupal/core",
-            "version": "8.0.0-beta14",
+            "version": "8.0.x-dev",
             "source": {
                 "type": "git",
                 "url": "git@gitlab.adelaide.edu.au:web-team/drupal-core.git",
-                "reference": "5ffe3973fccddb676fd983e58f54c6dfd871cda3"
+                "reference": "8439b71978c4a0dce0a040dbc569b09502ea153e"
             },
             "require": {
                 "behat/mink": "~1.6",
@@ -868,7 +868,7 @@
                 "symfony/translation": "2.7.*",
                 "symfony/validator": "2.7.*",
                 "symfony/yaml": "2.7.*",
-                "twig/twig": "1.18.*",
+                "twig/twig": "1.20.*",
                 "zendframework/zend-diactoros": "1.1.0",
                 "zendframework/zend-feed": "2.4.*"
             },
@@ -988,7 +988,7 @@
                 "GPL-2.0+"
             ],
             "description": "Drupal is an open source content management platform powering millions of websites and applications.",
-            "time": "2015-08-03 09:10:38"
+            "time": "2015-08-22 16:45:12"
         },
         {
             "name": "drupal/diff",
@@ -3807,16 +3807,16 @@
         },
         {
             "name": "twig/twig",
-            "version": "v1.18.2",
+            "version": "v1.20.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/twigphp/Twig.git",
-                "reference": "e8e6575abf6102af53ec283f7f14b89e304fa602"
+                "reference": "1ea4e5f81c6d005fe84d0b38e1c4f1955eb86844"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/twigphp/Twig/zipball/e8e6575abf6102af53ec283f7f14b89e304fa602",
-                "reference": "e8e6575abf6102af53ec283f7f14b89e304fa602",
+                "url": "https://api.github.com/repos/twigphp/Twig/zipball/1ea4e5f81c6d005fe84d0b38e1c4f1955eb86844",
+                "reference": "1ea4e5f81c6d005fe84d0b38e1c4f1955eb86844",
                 "shasum": ""
             },
             "require": {
@@ -3825,7 +3825,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.18-dev"
+                    "dev-master": "1.20-dev"
                 }
             },
             "autoload": {
@@ -3860,7 +3860,7 @@
             "keywords": [
                 "templating"
             ],
-            "time": "2015-06-06 23:31:24"
+            "time": "2015-08-12 15:56:39"
         },
         {
             "name": "ua-drupal-modules/ua_ldap",
@@ -4196,6 +4196,7 @@
     "aliases": [],
     "minimum-stability": "dev",
     "stability-flags": {
+        "drupal/core": 20,
         "drupal/cas": 20,
         "drupal/diff": 20,
         "drupal/entity_reference_revisions": 20,
