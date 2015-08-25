@@ -5,6 +5,7 @@
  * Contains ua_sm_custom.module.
  */
 
+use Drupal\Component\Utility\Crypt;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\ua_ldap\SiteRoleSlug;
@@ -167,4 +168,18 @@ function ua_sm_custom_node_delete(EntityInterface $entity) {
   }
   \Drupal::service('ua_ldap.ldap_site')->removeSite($entity->field_ua_sm_site_id->value);
   // todo: deal with failure - consider a queue.
+}
+
+/**
+ * Implements hook_entity_prepare_form().
+ */
+function ua_sm_custom_entity_prepare_form(EntityInterface $entity) {
+  if ($entity->bundle() == 'ua_sm_site') {
+    $password_field = $entity->get('field_ua_sm_admin_password');
+    $password = $password_field->getValue();
+    if (!$password) {
+      $password = base64_encode(Crypt::randomBytes(12));
+      $password_field->setValue($password);
+    }
+  }
 }

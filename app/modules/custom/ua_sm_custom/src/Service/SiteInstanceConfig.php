@@ -87,6 +87,9 @@ class SiteInstanceConfig {
           'port_range_end' => $server->field_ua_sm_port_range_end->value,
         ],
         'site' => [
+          'admin_email' => $site->field_ua_sm_admin_email->value,
+          'admin_password' => $site->field_ua_sm_admin_password->value,
+          'admin_user' => $site->field_ua_sm_admin_user->value,
           'aliases' => $site->field_ua_sm_aliases->value,
           'authorizer_email' => $site->field_ua_sm_authorizer_email->value,
           'authorizer_id' => $site->field_ua_sm_authorizer_id->value,

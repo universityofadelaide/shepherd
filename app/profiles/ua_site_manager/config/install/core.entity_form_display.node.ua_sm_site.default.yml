@@ -4,6 +4,9 @@ dependencies:
   config:
     - field.field.node.ua_sm_site.body
     - field.field.node.ua_sm_site.field_tags
+    - field.field.node.ua_sm_site.field_ua_sm_admin_email
+    - field.field.node.ua_sm_site.field_ua_sm_admin_password
+    - field.field.node.ua_sm_site.field_ua_sm_admin_user
     - field.field.node.ua_sm_site.field_ua_sm_aliases
     - field.field.node.ua_sm_site.field_ua_sm_authorizer_email
     - field.field.node.ua_sm_site.field_ua_sm_authorizer_id
@@ -47,6 +50,27 @@ content:
       size: 60
       placeholder: ''
     third_party_settings: {  }
+  field_ua_sm_admin_email:
+    weight: 28
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: string_textfield
+  field_ua_sm_admin_password:
+    weight: 29
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: string_textfield
+  field_ua_sm_admin_user:
+    weight: 30
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: string_textfield
   field_ua_sm_aliases:
     type: string_textfield
     weight: 6

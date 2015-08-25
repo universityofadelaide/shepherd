@@ -1,0 +1,20 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_ua_sm_admin_user
+    - node.type.ua_sm_site
+id: node.ua_sm_site.field_ua_sm_admin_user
+field_name: field_ua_sm_admin_user
+entity_type: node
+bundle: ua_sm_site
+label: 'Admin user'
+description: ''
+required: true
+translatable: false
+default_value:
+  -
+    value: admin
+default_value_callback: ''
+settings: {  }
+field_type: string
