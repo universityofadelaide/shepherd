@@ -6,12 +6,6 @@ ua_sm_custom.permissions:
     _controller: '\Drupal\ua_sm_custom\Controller\UserSitesRolesController::index'
   requirements:
     _permission: 'access content'
-ua_sm_custom.site-config:
-  path: '/api/site-config/{nid}'
-  defaults:
-    _controller: '\Drupal\ua_sm_custom\Controller\SiteConfigController::siteConfig'
-  requirements:
-    _permission: 'access content'
 ua_sm_custom.site-instance-config:
   path: '/api/site-instance-config/{nid}'
   defaults:
