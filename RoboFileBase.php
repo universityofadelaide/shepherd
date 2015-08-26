@@ -31,8 +31,6 @@ class RoboFileBase extends \Robo\Tasks {
 
     // Drupal specific config.
     $this->drupal_profile       = "ua";
-    $this->site_name            = "Site name";
-    $this->site_token           = "default#";
 
     $this->database             = [
                                     'database'=> 'local',
@@ -44,9 +42,14 @@ class RoboFileBase extends \Robo\Tasks {
                                     'prefix'=> ''
                                   ];
 
-    $this->admin_email          = "user@example.com";
-    $this->admin_account        = "admin";
-    $this->admin_password       = "password";
+    $this->site                  = [
+                                    'admin_email' => 'admin@localhost',
+                                    'admin_password' => 'password',
+                                    'admin_user' => 'admin',
+                                    'site_token' => 'default#',
+                                    'site_title' => 'Site Name',
+                                    'top_menu_style' => 'mega_menu',
+                                  ]; // Indenting hurts me.
 
     $this->prefer_dist          = FALSE;
 
@@ -110,7 +113,7 @@ class RoboFileBase extends \Robo\Tasks {
     // Disable xdebug while running "composer install".
     $this->devXdebugDisable(['no-restart' => TRUE]);
     $this->_exec("$this->composer_bin install " .
-      ($this->prefer_dist ? '--prefer-dist' : '--prefer-source'));
+      ($this->prefer_dist ? '--prefer-dist --no-progress' : '--prefer-source'));
     $this->devXdebugEnable(['no-restart' => TRUE]);
   }
 
@@ -138,10 +141,10 @@ class RoboFileBase extends \Robo\Tasks {
 
     $this->_exec("$this->drush_cmd site-install $this->drupal_profile -y" .
       " --db-url=" . $this->getDatabaseUrl() .
-      " --account-mail=$this->admin_email" .
-      " --account-name=$this->admin_account" .
-      " --account-pass=$this->admin_password " .
-      " --site-name='$this->site_name'");
+      " --account-mail=" . $this->site['admin_email'] .
+      " --account-name=" . $this->site['admin_user'] .
+      " --account-pass=" . $this->site['admin_password'] .
+      " --site-name='" . $this->site['site_title'] . "'");
 
     // Undo some of site-install's good work.
     $this->say("Creating settings.local.php");
@@ -432,7 +435,7 @@ class RoboFileBase extends \Robo\Tasks {
    * @return string
    *   Settings.php text, intended to be output to file.
    */
-  private function generateDrupalSettings() {
+  protected function generateDrupalSettings() {
     $drupal_settings = [];
     $top_level_settings = [
       'base_url',
@@ -450,6 +453,15 @@ class RoboFileBase extends \Robo\Tasks {
     // Fetch Docker host IP address from the environment variable.
     if ($this->database['host'] == '{docker_host_ip}') {
       $drupal_settings['databases']['default']['default']['host'] = $this->getDockerHostIP();
+    }
+
+    // Reverse proxy configuration.
+    if (isset($this->platform['reverse_proxy_addresses']) && count($this->platform['reverse_proxy_addresses'])) {
+      $drupal_settings['settings']['reverse_proxy'] = TRUE;
+      $drupal_settings['settings']['reverse_proxy_addresses'] = $this->platform['reverse_proxy_addresses'];
+      if (isset($this->platform['reverse_proxy_header'])) {
+        $drupal_settings['settings']['reverse_proxy_header'] = $this->platform['reverse_proxy_header'];
+      }
     }
 
     // Add each local config parameter that appears in the keys list, making
@@ -470,6 +482,21 @@ class RoboFileBase extends \Robo\Tasks {
       $drupal_settings = array_merge_recursive($drupal_settings, $this->drupal_settings);
     }
 
+    return $this->exportDrupalSettings($drupal_settings, $top_level_settings);
+  }
+
+  /**
+   * Export Drupal configuration from array format to generated PHP code.
+   *
+   * @param $drupal_settings
+   *   The configuration to be exported.
+   * @param array $top_level_settings
+   *   Process these keys as stand-alone variables instead of $settings.
+   *
+   * @return string
+   *   Settings as PHP code.
+   */
+  protected function exportDrupalSettings($drupal_settings, $top_level_settings = []) {
     // From the array, generate the PHP code.
     $text = "<?php\n";
     foreach ($drupal_settings as $key => $value) {
