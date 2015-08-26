@@ -12,7 +12,7 @@ dependencies:
     - field.field.node.ua_sm_site.field_ua_sm_domain_name
     - field.field.node.ua_sm_site.field_ua_sm_instance_log
     - field.field.node.ua_sm_site.field_ua_sm_path
-    - field.field.node.ua_sm_site.field_ua_sm_site_id
+    - field.field.node.ua_sm_site.field_ua_sm_site_token
     - field.field.node.ua_sm_site.field_ua_sm_site_title
     - field.field.node.ua_sm_site.field_ua_sm_top_menu_style
     - field.field.node.ua_sm_site.field_ua_sm_users
@@ -45,7 +45,7 @@ hidden:
   field_ua_sm_domain_name: true
   field_ua_sm_instance_log: true
   field_ua_sm_path: true
-  field_ua_sm_site_id: true
+  field_ua_sm_site_token: true
   field_ua_sm_site_title: true
   field_ua_sm_top_menu_style: true
   field_ua_sm_users: true

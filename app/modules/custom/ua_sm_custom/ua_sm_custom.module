@@ -33,7 +33,7 @@ function ua_sm_custom_help($route_name, RouteMatchInterface $route_match) {
  */
 function ua_sm_custom_node_presave(Node $entity) {
   if ($entity->bundle() == 'ua_sm_site') {
-    $entity->field_ua_sm_site_id->value = ua_sm_custom_generate_unique_site_token($entity);
+    $entity->field_ua_sm_site_token->value = ua_sm_custom_generate_unique_site_token($entity);
   }
   elseif ($entity->bundle() == 'ua_sm_site_instance') {
     ua_sm_custom_ports($entity);
@@ -65,7 +65,7 @@ function ua_sm_custom_generate_unique_site_token(EntityInterface $entity) {
   // Prepare a query to check if site id already exists.
   $query = \Drupal::entityQuery('node')
     ->condition('type', 'ua_sm_site')
-    ->condition('field_ua_sm_site_id', $site_token);
+    ->condition('field_ua_sm_site_token', $site_token);
   $entity_ids = $query->execute();
 
   $count = 0;
@@ -75,7 +75,7 @@ function ua_sm_custom_generate_unique_site_token(EntityInterface $entity) {
     // Check for updated site id.
     $query = \Drupal::entityQuery('node')
       ->condition('type', 'ua_sm_site')
-      ->condition('field_ua_sm_site_id', $site_token);
+      ->condition('field_ua_sm_site_token', $site_token);
     $entity_ids = $query->execute();
   }
 
@@ -184,10 +184,10 @@ function ua_sm_custom_node_insert(EntityInterface $entity) {
   if ($entity->bundle() == 'ua_sm_site' &&
     \Drupal::config('ua_sm_custom.settings')->get('ldap')['enabled']) {
     \Drupal::service('ua_ldap.ldap_site')
-      ->addSite($entity->field_ua_sm_site_id->value);
+      ->addSite($entity->field_ua_sm_site_token->value);
     // todo: deal with failure - consider a queue.
     \Drupal::service('ua_ldap.ldap_site')
-      ->syncUsers($entity->field_ua_sm_site_id->value);
+      ->syncUsers($entity->field_ua_sm_site_token->value);
     // todo: deal with failure - consider a queue.
   }
 }
@@ -198,7 +198,7 @@ function ua_sm_custom_node_insert(EntityInterface $entity) {
 function ua_sm_custom_node_update(EntityInterface $entity) {
   if ($entity->bundle() == 'ua_sm_site' &&
     \Drupal::config('ua_sm_custom.settings')->get('ldap')['enabled']) {
-    \Drupal::service('ua_ldap.ldap_site')->syncUsers($entity->field_ua_sm_site_id->value);
+    \Drupal::service('ua_ldap.ldap_site')->syncUsers($entity->field_ua_sm_site_token->value);
     // todo: deal with failure - consider a queue.
   }
 }
@@ -209,7 +209,7 @@ function ua_sm_custom_node_update(EntityInterface $entity) {
 function ua_sm_custom_node_delete(EntityInterface $entity) {
   if ($entity->bundle() == 'ua_sm_site' &&
     \Drupal::config('ua_sm_custom.settings')->get('ldap')['enabled']) {
-    \Drupal::service('ua_ldap.ldap_site')->removeSite($entity->field_ua_sm_site_id->value);
+    \Drupal::service('ua_ldap.ldap_site')->removeSite($entity->field_ua_sm_site_token->value);
     // todo: deal with failure - consider a queue.
   }
   elseif ($entity->bundle() == 'ua_sm_site_instance' &&
