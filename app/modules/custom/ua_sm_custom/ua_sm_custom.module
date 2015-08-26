@@ -118,7 +118,7 @@ function ua_sm_custom_run_jobs(Node $entity) {
  *   The site_instance entity to post the comment to, or it's parent anyway.
  */
 function ua_sm_custom_run_job_and_post_comment($job_name, EntityInterface $entity) {
-  $response = \Drupal::service('ua_sm_custom.jenkins')->job(
+  $response = \Drupal::service('ua_sm_custom.jenkins_client')->job(
     $job_name,
     $entity->id(),
     $entity->uuid()
