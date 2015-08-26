@@ -837,7 +837,7 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.adelaide.edu.au:web-team/drupal-core.git",
-                "reference": "8439b71978c4a0dce0a040dbc569b09502ea153e"
+                "reference": "fcf520874e04912bc66bbaf4a02c40f66364b559"
             },
             "require": {
                 "behat/mink": "~1.6",
@@ -988,7 +988,7 @@
                 "GPL-2.0+"
             ],
             "description": "Drupal is an open source content management platform powering millions of websites and applications.",
-            "time": "2015-08-22 16:45:12"
+            "time": "2015-08-26 03:15:26"
         },
         {
             "name": "drupal/diff",
@@ -1380,12 +1380,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/guzzle/guzzle.git",
-                "reference": "d687700d601f8b5f19b99ffc1c0f6af835a3c7b7"
+                "reference": "36e021d6f26185f0a39ed8de509bb6b8f0283d45"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/guzzle/guzzle/zipball/d687700d601f8b5f19b99ffc1c0f6af835a3c7b7",
-                "reference": "d687700d601f8b5f19b99ffc1c0f6af835a3c7b7",
+                "url": "https://api.github.com/repos/guzzle/guzzle/zipball/36e021d6f26185f0a39ed8de509bb6b8f0283d45",
+                "reference": "36e021d6f26185f0a39ed8de509bb6b8f0283d45",
                 "shasum": ""
             },
             "require": {
@@ -1434,7 +1434,7 @@
                 "rest",
                 "web service"
             ],
-            "time": "2015-08-15 20:48:15"
+            "time": "2015-08-24 17:09:43"
         },
         {
             "name": "guzzlehttp/promises",
@@ -3868,7 +3868,7 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.adelaide.edu.au:drupal-modules/ua_ldap.git",
-                "reference": "d14ac022e92207989d8c95e3b1b85694102169d2"
+                "reference": "b2123a878835e58e4d1a93a3a26c5ed1a54dea91"
             },
             "require": {
                 "zendframework/zend-ldap": "^2.4@dev"
@@ -3878,7 +3878,7 @@
                 "GPL-2.0+"
             ],
             "description": "Provides configuration and services to interact with LDAP.",
-            "time": "2015-08-14 04:19:33"
+            "time": "2015-08-19 02:02:20"
         },
         {
             "name": "zendframework/zend-diactoros",
