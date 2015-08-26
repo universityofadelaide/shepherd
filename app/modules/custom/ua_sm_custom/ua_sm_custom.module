@@ -8,6 +8,7 @@
 use Drupal\Component\Utility\Crypt;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\node\Entity\Node;
 use Drupal\ua_ldap\SiteRoleSlug;
 use Drupal\comment\CommentInterface;
 use GuzzleHttp\Client;
@@ -29,15 +30,9 @@ function ua_sm_custom_help($route_name, RouteMatchInterface $route_match) {
 }
 
 /**
- * Implements hook_ENTITY_TYPE_presave().
- *
  * Populates the site id with a guaranteed unique ID.
  */
-function ua_sm_custom_node_presave(Drupal\node\Entity\Node $entity) {
-  if ($entity->bundle() != 'ua_sm_site') {
-    return;
-  }
-
+function ua_sm_custom_site_id(Node $entity) {
   // Generate site slug based on domain and path.
   $site_slug = SiteRoleSlug::getSite(
     $entity->field_ua_sm_domain_name->value,
@@ -65,6 +60,47 @@ function ua_sm_custom_node_presave(Drupal\node\Entity\Node $entity) {
   }
 
   $entity->field_ua_sm_site_id->value = $site_id;
+}
+
+/**
+ * Populates the site instance with unique ports.
+ */
+function ua_sm_custom_ports(Node $entity) {
+  $server_id = $entity->field_ua_sm_server->target_id;
+  $port_manager = \Drupal::service('ua_sm_custom.port_manager');
+  $used_ports = $port_manager->getUsedPorts($server_id);
+
+  // Find which ports have not already been allocated to the instance.
+  $required_ports = [];
+  foreach ($port_manager->port_fields as $port_field) {
+    $port_number = $entity->{$port_field}->value;
+    if (!$port_number) {
+      $required_ports[] = $port_field;
+    }
+    else if (in_array($port_number, $used_ports)) {
+      // @TODO: Handle case where assigned port already in use.
+      return;
+    }
+  }
+
+  $available_port_numbers = $port_manager->getAvailablePorts($server_id, count($required_ports));
+  if ($available_port_numbers) {
+    foreach ($required_ports as $required_port) {
+      $entity->get($required_port)->setValue(array_pop($available_port_numbers));
+    }
+  }
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_presave().
+ */
+function ua_sm_custom_node_presave(Node $entity) {
+  if ($entity->bundle() == 'ua_sm_site') {
+    ua_sm_custom_site_id($entity);
+  }
+  if ($entity->bundle() == 'ua_sm_site_instance') {
+    ua_sm_custom_ports($entity);
+  }
 }
 
 /**
