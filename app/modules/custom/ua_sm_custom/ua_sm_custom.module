@@ -8,6 +8,7 @@
 use Drupal\Component\Utility\Crypt;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\node\Entity\Node;
 use Drupal\ua_ldap\SiteRoleSlug;
 use Drupal\comment\CommentInterface;
 
@@ -30,106 +31,80 @@ function ua_sm_custom_help($route_name, RouteMatchInterface $route_match) {
 /**
  * Implements hook_ENTITY_TYPE_presave().
  */
-function ua_sm_custom_node_presave(Drupal\node\Entity\Node $entity) {
-  $bundles = ['ua_sm_site', 'ua_sm_site_instance'];
-  if (!in_array($entity->bundle(), $bundles)) {
-    return;
-  }
+function ua_sm_custom_node_presave(Node $entity) {
   if ($entity->bundle() == 'ua_sm_site') {
     $entity->field_ua_sm_site_id->value = ua_sm_custom_generate_unique_site_token($entity);
   }
-  elseif ($entity->bundle() == 'ua_sm_site_instance' &&
-    \Drupal::config('ua_sm_custom.settings')->get('jenkins')['enabled']) {
-    if ($entity->isNew()) {
-      // Run provision on new site instances.
-      ua_sm_custom_run_job_and_post_comment('provision', $entity);
-    }
-    else {
-      // Check if the published state of the site instance has changed.
-      if ($entity->status->value !== $entity->original->status->value) {
-        // If status has transitioned to published, run deploy,
-        // otherwise run decommission.
-        ua_sm_custom_run_job_and_post_comment(
-          $entity->status->value ? 'deploy' : 'decommission',
-          $entity
-        );
-
-        // Make this changed entity a revision.
-        $entity->setNewRevision();
-
-        // Finally, set the state field to indicate this transition.
-        $entity->field_ua_sm_state->value = $entity->status->value ? 'starting' : 'stopping';
-      }
+  elseif ($entity->bundle() == 'ua_sm_site_instance') {
+    ua_sm_custom_ports($entity);
+    if (\Drupal::config('ua_sm_custom.settings')->get('jenkins')['enabled']) {
+      ua_sm_custom_run_jobs($entity);
     }
   }
 }
 
 /**
- * Implements hook_ENTITY_TYPE_insert().
+ * Generates a unique token slug by querying existing ones.
+ *
+ * @param \Drupal\Core\Entity\EntityInterface $entity
+ *   The site_instance entity to post the comment to, or it's parent anyway.
+ *
+ * @return string
+ *   A guaranteed unique site token.
  */
-function ua_sm_custom_node_insert(EntityInterface $entity) {
-  $bundles = ['ua_sm_site'];
-  if (!in_array($entity->bundle(), $bundles)) {
-    return;
+function ua_sm_custom_generate_unique_site_token(EntityInterface $entity) {
+  // Generate site slug based on domain and path.
+  $site_slug = SiteRoleSlug::getSite(
+    $entity->field_ua_sm_domain_name->value,
+    $entity->field_ua_sm_path->value
+  );
+
+  // Initialise site id to base site slug.
+  $site_token = $site_slug;
+
+  // Prepare a query to check if site id already exists.
+  $query = \Drupal::entityQuery('node')
+    ->condition('type', 'ua_sm_site')
+    ->condition('field_ua_sm_site_id', $site_token);
+  $entity_ids = $query->execute();
+
+  $count = 0;
+  while (count($entity_ids) > 0) {
+    $count++;
+    $site_token = $site_slug . $count;
+    // Check for updated site id.
+    $query = \Drupal::entityQuery('node')
+      ->condition('type', 'ua_sm_site')
+      ->condition('field_ua_sm_site_id', $site_token);
+    $entity_ids = $query->execute();
   }
 
-  if ($entity->bundle() == 'ua_sm_site' &&
-    \Drupal::config('ua_sm_custom.settings')->get('ldap')['enabled']) {
-    \Drupal::service('ua_ldap.ldap_site')
-      ->addSite($entity->field_ua_sm_site_id->value);
-    // todo: deal with failure - consider a queue.
-    \Drupal::service('ua_ldap.ldap_site')
-      ->syncUsers($entity->field_ua_sm_site_id->value);
-    // todo: deal with failure - consider a queue.
-  }
+  return $site_token;
 }
 
 /**
- * Implements hook_ENTITY_TYPE_update().
+ * Runs required job on site instance published state transition.
  */
-function ua_sm_custom_node_update(EntityInterface $entity) {
-  $bundles = ['ua_sm_site'];
-  if (!in_array($entity->bundle(), $bundles)) {
-    return;
+function ua_sm_custom_run_jobs(Node $entity) {
+  if ($entity->isNew()) {
+    // Run provision on new site instances.
+    ua_sm_custom_run_job_and_post_comment('provision', $entity);
   }
+  else {
+    // Check if the published state of the site instance has changed.
+    if ($entity->status->value !== $entity->original->status->value) {
+      // If status has transitioned to published, run deploy,
+      // otherwise run decommission.
+      ua_sm_custom_run_job_and_post_comment(
+        $entity->status->value ? 'deploy' : 'decommission',
+        $entity
+      );
 
-  if ($entity->bundle() != 'ua_sm_site' &&
-    \Drupal::config('ua_sm_custom.settings')->get('ldap')['enabled']) {
-    \Drupal::service('ua_ldap.ldap_site')->syncUsers($entity->field_ua_sm_site_id->value);
-    // todo: deal with failure - consider a queue.
-  }
-}
+      // Make this changed entity a revision.
+      $entity->setNewRevision();
 
-/**
- * Implements hook_ENTITY_TYPE_delete().
- */
-function ua_sm_custom_node_delete(EntityInterface $entity) {
-  $bundles = ['ua_sm_site', 'ua_sm_site_instance'];
-  if (!in_array($entity->bundle(), $bundles)) {
-    return;
-  }
-
-  if ($entity->bundle() == 'ua_sm_site' &&
-    \Drupal::config('ua_sm_custom.settings')->get('ldap')['enabled']) {
-    \Drupal::service('ua_ldap.ldap_site')->removeSite($entity->field_ua_sm_site_id->value);
-    // todo: deal with failure - consider a queue.
-  }
-  elseif ($entity->bundle() != 'ua_sm_site_instance' &&
-    \Drupal::config('ua_sm_custom.settings')->get('jenkins')['enabled']) {
-    ua_sm_custom_run_job_and_post_comment('destroy', $entity);
-  }
-}
-
-/**
- * Implements hook_entity_prepare_form().
- */
-function ua_sm_custom_entity_prepare_form(EntityInterface $entity) {
-  if ($entity->bundle() == 'ua_sm_site') {
-    $password_field = $entity->get('field_ua_sm_admin_password');
-    $password = $password_field->getValue();
-    if (!$password) {
-      $password = base64_encode(Crypt::randomBytes(12));
-      $password_field->setValue($password);
+      // Finally, set the state field to indicate this transition.
+      $entity->field_ua_sm_state->value = $entity->status->value ? 'starting' : 'stopping';
     }
   }
 }
@@ -174,40 +149,85 @@ function ua_sm_custom_run_job_and_post_comment($job_name, EntityInterface $entit
 }
 
 /**
- * Generates a unique token slug by querying existing ones.
- *
- * @param \Drupal\Core\Entity\EntityInterface $entity
- *   The site_instance entity to post the comment to, or it's parent anyway.
- *
- * @return string
- *   A guaranteed unique site token.
+ * Populates the site instance with unique ports.
  */
-function ua_sm_custom_generate_unique_site_token(EntityInterface $entity) {
-  // Generate site slug based on domain and path.
-  $site_slug = SiteRoleSlug::getSite(
-    $entity->field_ua_sm_domain_name->value,
-    $entity->field_ua_sm_path->value
-  );
+function ua_sm_custom_ports(Node $entity) {
+  $server_id = $entity->field_ua_sm_server->target_id;
+  $port_manager = \Drupal::service('ua_sm_custom.port_manager');
+  $used_ports = $port_manager->getUsedPorts($server_id);
 
-  // Initialise site id to base site slug.
-  $site_token = $site_slug;
-
-  // Prepare a query to check if site id already exists.
-  $query = \Drupal::entityQuery('node')
-    ->condition('type', 'ua_sm_site')
-    ->condition('field_ua_sm_site_id', $site_token);
-  $entity_ids = $query->execute();
-
-  $count = 0;
-  while (count($entity_ids) > 0) {
-    $count++;
-    $site_token = $site_slug . $count;
-    // Check for updated site id.
-    $query = \Drupal::entityQuery('node')
-      ->condition('type', 'ua_sm_site')
-      ->condition('field_ua_sm_site_id', $site_token);
-    $entity_ids = $query->execute();
+  // Find which ports have not already been allocated to the instance.
+  $required_ports = [];
+  foreach ($port_manager->port_fields as $port_field) {
+    $port_number = $entity->{$port_field}->value;
+    if (!$port_number) {
+      $required_ports[] = $port_field;
+    }
+    elseif (in_array($port_number, $used_ports)) {
+      // @TODO: Handle case where assigned port already in use.
+      return;
+    }
   }
 
-  return $site_token;
+  $available_port_numbers = $port_manager->getAvailablePorts($server_id, count($required_ports));
+  if ($available_port_numbers) {
+    foreach ($required_ports as $required_port) {
+      $entity->get($required_port)->setValue(array_pop($available_port_numbers));
+    }
+  }
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_insert().
+ */
+function ua_sm_custom_node_insert(EntityInterface $entity) {
+  if ($entity->bundle() == 'ua_sm_site' &&
+    \Drupal::config('ua_sm_custom.settings')->get('ldap')['enabled']) {
+    \Drupal::service('ua_ldap.ldap_site')
+      ->addSite($entity->field_ua_sm_site_id->value);
+    // todo: deal with failure - consider a queue.
+    \Drupal::service('ua_ldap.ldap_site')
+      ->syncUsers($entity->field_ua_sm_site_id->value);
+    // todo: deal with failure - consider a queue.
+  }
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_update().
+ */
+function ua_sm_custom_node_update(EntityInterface $entity) {
+  if ($entity->bundle() == 'ua_sm_site' &&
+    \Drupal::config('ua_sm_custom.settings')->get('ldap')['enabled']) {
+    \Drupal::service('ua_ldap.ldap_site')->syncUsers($entity->field_ua_sm_site_id->value);
+    // todo: deal with failure - consider a queue.
+  }
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_delete().
+ */
+function ua_sm_custom_node_delete(EntityInterface $entity) {
+  if ($entity->bundle() == 'ua_sm_site' &&
+    \Drupal::config('ua_sm_custom.settings')->get('ldap')['enabled']) {
+    \Drupal::service('ua_ldap.ldap_site')->removeSite($entity->field_ua_sm_site_id->value);
+    // todo: deal with failure - consider a queue.
+  }
+  elseif ($entity->bundle() == 'ua_sm_site_instance' &&
+    \Drupal::config('ua_sm_custom.settings')->get('jenkins')['enabled']) {
+    ua_sm_custom_run_job_and_post_comment('destroy', $entity);
+  }
+}
+
+/**
+ * Implements hook_entity_prepare_form().
+ */
+function ua_sm_custom_entity_prepare_form(EntityInterface $entity) {
+  if ($entity->bundle() == 'ua_sm_site') {
+    $password_field = $entity->get('field_ua_sm_admin_password');
+    $password = $password_field->getValue();
+    if (!$password) {
+      $password = base64_encode(Crypt::randomBytes(12));
+      $password_field->setValue($password);
+    }
+  }
 }
