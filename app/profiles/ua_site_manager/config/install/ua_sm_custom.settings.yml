@@ -1,7 +1,10 @@
 jenkins:
   enabled: true
-  path: 'https://jenkins.services.adelaide.edu.au/buildByToken/'
+  base_uri: 'https://jenkins.services.adelaide.edu.au/buildByToken/'
   token: EZGl7429qBX707p65K97S282IxeBl3n9
-  job: deploy-drupal-site
+  provision_job: deploy-drupal-site
+  deploy_job:
+  decommission_job:
+  destroy_job:
 ldap:
   enabled: true

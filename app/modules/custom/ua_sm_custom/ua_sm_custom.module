@@ -10,7 +10,6 @@ use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\ua_ldap\SiteRoleSlug;
 use Drupal\comment\CommentInterface;
-use GuzzleHttp\Client;
 
 /**
  * Implements hook_help().
@@ -30,57 +29,52 @@ function ua_sm_custom_help($route_name, RouteMatchInterface $route_match) {
 
 /**
  * Implements hook_ENTITY_TYPE_presave().
- *
- * Populates the site id with a guaranteed unique ID.
  */
 function ua_sm_custom_node_presave(Drupal\node\Entity\Node $entity) {
-  if ($entity->bundle() != 'ua_sm_site') {
+  $bundles = ['ua_sm_site', 'ua_sm_site_instance'];
+  if (!in_array($entity->bundle(), $bundles)) {
     return;
   }
-
-  // Generate site slug based on domain and path.
-  $site_slug = SiteRoleSlug::getSite(
-    $entity->field_ua_sm_domain_name->value,
-    $entity->field_ua_sm_path->value
-  );
-
-  // Initialise site id to base site slug.
-  $site_id = $site_slug;
-
-  // Prepare a query to check if site id already exists.
-  $query = \Drupal::entityQuery('node')
-    ->condition('type', 'ua_sm_site')
-    ->condition('field_ua_sm_site_id', $site_id);
-  $entity_ids = $query->execute();
-
-  $count = 0;
-  while (count($entity_ids) > 0) {
-    $count++;
-    $site_id = $site_slug . $count;
-    // Check for updated site id.
-    $query = \Drupal::entityQuery('node')
-      ->condition('type', 'ua_sm_site')
-      ->condition('field_ua_sm_site_id', $site_id);
-    $entity_ids = $query->execute();
+  if ($entity->bundle() == 'ua_sm_site') {
+    $entity->field_ua_sm_site_id->value = ua_sm_custom_generate_unique_site_token($entity);
   }
+  elseif ($entity->bundle() == 'ua_sm_site_instance' &&
+    \Drupal::config('ua_sm_custom.settings')->get('jenkins')['enabled']) {
+    if ($entity->isNew()) {
+      // Run provision on new site instances.
+      ua_sm_custom_run_job_and_post_comment('provision', $entity);
+    }
+    else {
+      // Check if the published state of the site instance has changed.
+      if ($entity->status->value !== $entity->original->status->value) {
+        // If status has transitioned to published, run deploy,
+        // otherwise run decommission.
+        ua_sm_custom_run_job_and_post_comment(
+          $entity->status->value ? 'deploy' : 'decommission',
+          $entity
+        );
 
-  $entity->field_ua_sm_site_id->value = $site_id;
+        // Make this changed entity a revision.
+        $entity->setNewRevision();
+
+        // Finally, set the state field to indicate this transition.
+        $entity->field_ua_sm_state->value = $entity->status->value ? 'starting' : 'stopping';
+      }
+    }
+  }
 }
 
 /**
  * Implements hook_ENTITY_TYPE_insert().
  */
 function ua_sm_custom_node_insert(EntityInterface $entity) {
-  $bundles = ['ua_sm_site', 'ua_sm_site_instance'];
-
+  $bundles = ['ua_sm_site'];
   if (!in_array($entity->bundle(), $bundles)) {
     return;
   }
 
-  $jenkins_config = \Drupal::config('ua_sm_custom.settings')->get('jenkins');
-  $ldap_config = \Drupal::config('ua_sm_custom.settings')->get('ldap');
-
-  if ($entity->bundle() == 'ua_sm_site' && $ldap_config['enabled']) {
+  if ($entity->bundle() == 'ua_sm_site' &&
+    \Drupal::config('ua_sm_custom.settings')->get('ldap')['enabled']) {
     \Drupal::service('ua_ldap.ldap_site')
       ->addSite($entity->field_ua_sm_site_id->value);
     // todo: deal with failure - consider a queue.
@@ -88,86 +82,42 @@ function ua_sm_custom_node_insert(EntityInterface $entity) {
       ->syncUsers($entity->field_ua_sm_site_id->value);
     // todo: deal with failure - consider a queue.
   }
-  elseif ($entity->bundle() == 'ua_sm_site_instance' && $jenkins_config['enabled']) {
-    $jenkins_url = $jenkins_config['path'];
-    $jenkins_token = $jenkins_config['token'];
-    $jenkins_job = $jenkins_config['job'];
-    $id = $entity->id();
-    $uuid = $entity->uuid();
-    $environment = reset($entity->field_ua_sm_environment->referencedEntities());
-    $site_nid = $environment->field_ua_sm_site->getString();
-
-    $comment = \Drupal::entityManager()
-      ->getStorage('comment')
-      ->create([
-        'subject' => 'Deploying ' . $entity->title->value . '.',
-        'comment_body' => 'Test',
-        'entity_id' => $site_nid,
-        'entity_type' => 'node',
-        'field_name' => 'field_ua_sm_instance_log',
-        'status' => CommentInterface::PUBLISHED,
-      ]);
-
-    $client = new Client([
-      'base_uri' => $jenkins_url
-    ]);
-
-    $request_query = [];
-
-    if (isset($jenkins_job) && !empty($jenkins_job)) {
-      // Must be first part of query.
-      $request_query['job'] = $jenkins_job;
-    }
-
-    if (isset($jenkins_token) && !empty($jenkins_token)) {
-      $request_query['token'] = $jenkins_token;
-    }
-
-    $request_query['site_instance_id'] = $id;
-
-    // We need this uuid to make POSTs on comments.
-    $request_query['site_instance_uuid'] = $uuid;
-
-    // Looks there are some auth issues with anon read access.
-    // buildByToken solves this issue.
-    $response = $client->get('buildWithParameters', ['query' => http_build_query($request_query) ]);
-
-    $code = $response->getStatusCode();
-
-    if ($code == (200 || 201)) {
-      $comment->set('comment_body', 'Jenkins is building ..');
-    }
-    else {
-      $comment->set('comment_body', 'Jenkins failed to build ' .
-        $entity->title->value . ' with the response ' . $response->getBody());
-    }
-
-    $comment->save();
-  }
 }
 
 /**
  * Implements hook_ENTITY_TYPE_update().
  */
 function ua_sm_custom_node_update(EntityInterface $entity) {
-  if ($entity->bundle() != 'ua_sm_site' ||
-    !\Drupal::config('ua_sm_custom.settings')->get('ldap')['enabled']) {
+  $bundles = ['ua_sm_site'];
+  if (!in_array($entity->bundle(), $bundles)) {
     return;
   }
-  \Drupal::service('ua_ldap.ldap_site')->syncUsers($entity->field_ua_sm_site_id->value);
-  // todo: deal with failure - consider a queue.
+
+  if ($entity->bundle() != 'ua_sm_site' &&
+    \Drupal::config('ua_sm_custom.settings')->get('ldap')['enabled']) {
+    \Drupal::service('ua_ldap.ldap_site')->syncUsers($entity->field_ua_sm_site_id->value);
+    // todo: deal with failure - consider a queue.
+  }
 }
 
 /**
  * Implements hook_ENTITY_TYPE_delete().
  */
 function ua_sm_custom_node_delete(EntityInterface $entity) {
-  if ($entity->bundle() != 'ua_sm_site' ||
-    !\Drupal::config('ua_sm_custom.settings')->get('ldap')['enabled']) {
+  $bundles = ['ua_sm_site', 'ua_sm_site_instance'];
+  if (!in_array($entity->bundle(), $bundles)) {
     return;
   }
-  \Drupal::service('ua_ldap.ldap_site')->removeSite($entity->field_ua_sm_site_id->value);
-  // todo: deal with failure - consider a queue.
+
+  if ($entity->bundle() == 'ua_sm_site' &&
+    \Drupal::config('ua_sm_custom.settings')->get('ldap')['enabled']) {
+    \Drupal::service('ua_ldap.ldap_site')->removeSite($entity->field_ua_sm_site_id->value);
+    // todo: deal with failure - consider a queue.
+  }
+  elseif ($entity->bundle() != 'ua_sm_site_instance' &&
+    \Drupal::config('ua_sm_custom.settings')->get('jenkins')['enabled']) {
+    ua_sm_custom_run_job_and_post_comment('destroy', $entity);
+  }
 }
 
 /**
@@ -182,4 +132,82 @@ function ua_sm_custom_entity_prepare_form(EntityInterface $entity) {
       $password_field->setValue($password);
     }
   }
+}
+
+/**
+ * Triggers the requested Jenkins job, then posts about it on the site entity.
+ *
+ * @param string $job_name
+ *   The name of the Jenkins job to run.
+ * @param \Drupal\Core\Entity\EntityInterface $entity
+ *   The site_instance entity to post the comment to, or it's parent anyway.
+ */
+function ua_sm_custom_run_job_and_post_comment($job_name, EntityInterface $entity) {
+  $response = \Drupal::service('ua_sm_custom.jenkins')->job(
+    $job_name,
+    $entity->id(),
+    $entity->uuid()
+  );
+
+  $site_nid = reset($entity->field_ua_sm_environment->referencedEntities())
+    ->field_ua_sm_site->getString();
+  $comment = \Drupal::entityManager()
+    ->getStorage('comment')
+    ->create([
+      'subject' => 'Running ' . $job_name . ' on ' . $entity->title->value . '.',
+      'comment_body' => 'Test',
+      'entity_id' => $site_nid,
+      'entity_type' => 'node',
+      'field_name' => 'field_ua_sm_instance_log',
+      'status' => CommentInterface::PUBLISHED,
+    ]);
+
+  if ($response->getStatusCode() == (200 || 201)) {
+    $comment->set('comment_body', 'Jenkins has started ' . $job_name . '...');
+  }
+  else {
+    $comment->set('comment_body', 'Jenkins failed to start ' . $job_name . ' ' .
+      $entity->title->value . ' with the response ' . $response->getBody());
+  }
+
+  $comment->save();
+}
+
+/**
+ * Generates a unique token slug by querying existing ones.
+ *
+ * @param \Drupal\Core\Entity\EntityInterface $entity
+ *   The site_instance entity to post the comment to, or it's parent anyway.
+ *
+ * @return string
+ *   A guaranteed unique site token.
+ */
+function ua_sm_custom_generate_unique_site_token(EntityInterface $entity) {
+  // Generate site slug based on domain and path.
+  $site_slug = SiteRoleSlug::getSite(
+    $entity->field_ua_sm_domain_name->value,
+    $entity->field_ua_sm_path->value
+  );
+
+  // Initialise site id to base site slug.
+  $site_token = $site_slug;
+
+  // Prepare a query to check if site id already exists.
+  $query = \Drupal::entityQuery('node')
+    ->condition('type', 'ua_sm_site')
+    ->condition('field_ua_sm_site_id', $site_token);
+  $entity_ids = $query->execute();
+
+  $count = 0;
+  while (count($entity_ids) > 0) {
+    $count++;
+    $site_token = $site_slug . $count;
+    // Check for updated site id.
+    $query = \Drupal::entityQuery('node')
+      ->condition('type', 'ua_sm_site')
+      ->condition('field_ua_sm_site_id', $site_token);
+    $entity_ids = $query->execute();
+  }
+
+  return $site_token;
 }

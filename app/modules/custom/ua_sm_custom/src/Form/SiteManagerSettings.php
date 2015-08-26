@@ -40,11 +40,11 @@ class SiteManagerSettings extends ConfigFormBase {
       '#description' => t('Trigger a build on Jenkins when a site instance is created.'),
       '#default_value' => $config->get('jenkins.enabled'),
     );
-    $form['jenkins']['path'] = [
+    $form['jenkins']['base_uri'] = [
       '#type' => 'textfield',
-      '#title' => $this->t('Path'),
-      '#description' => $this->t('The complete path to Jenkins, excluding the job name.'),
-      '#default_value' => $config->get('jenkins.path'),
+      '#title' => $this->t('Base URI'),
+      '#description' => $this->t('The base URI of Jenkins, excluding the job name.'),
+      '#default_value' => $config->get('jenkins.base_uri'),
     ];
     $form['jenkins']['token'] = [
       '#type' => 'textfield',
@@ -52,11 +52,29 @@ class SiteManagerSettings extends ConfigFormBase {
       '#description' => $this->t('Token to use for authentication with Jenkins.'),
       '#default_value' => $config->get('jenkins.token'),
     ];
-    $form['jenkins']['job'] = [
+    $form['jenkins']['provision_job'] = [
       '#type' => 'textfield',
-      '#title' => $this->t('Job'),
-      '#description' => $this->t('The name of the job to trigger when a site instance is created.'),
-      '#default_value' => $config->get('jenkins.job'),
+      '#title' => $this->t('Provision Job'),
+      '#description' => $this->t('The job to trigger when a site instance is created.'),
+      '#default_value' => $config->get('jenkins.provision_job'),
+    ];
+    $form['jenkins']['deploy_job'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('Deploy Job'),
+      '#description' => $this->t('The job to trigger when a site instance is deployed.'),
+      '#default_value' => $config->get('jenkins.deploy_job'),
+    ];
+    $form['jenkins']['decommission_job'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('Decommission Job'),
+      '#description' => $this->t('The job to trigger when a site instance is decommissioned.'),
+      '#default_value' => $config->get('jenkins.decommission_job'),
+    ];
+    $form['jenkins']['destroy_job'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('Destroy Job'),
+      '#description' => $this->t('The job to trigger when a site instance is destroyed.'),
+      '#default_value' => $config->get('jenkins.destroy_job'),
     ];
     $form['ldap'] = [
       '#type' => 'details',
@@ -85,9 +103,12 @@ class SiteManagerSettings extends ConfigFormBase {
     $jenkins_data = $form_state->getValue('jenkins');
     $config
       ->set('jenkins.enabled', $jenkins_data['enabled'])
-      ->set('jenkins.path', $jenkins_data['path'])
+      ->set('jenkins.base_uri', $jenkins_data['base_uri'])
       ->set('jenkins.token', $jenkins_data['token'])
-      ->set('jenkins.job', $jenkins_data['job']);
+      ->set('jenkins.provision_job', $jenkins_data['provision_job'])
+      ->set('jenkins.deploy_job', $jenkins_data['deploy_job'])
+      ->set('jenkins.decommission_job', $jenkins_data['decommission_job'])
+      ->set('jenkins.destroy_job', $jenkins_data['destroy_job']);
     $config
       ->set('ldap.enabled', $form_state->getValue('ldap')['enabled']);
     $config->save();

@@ -1,3 +1,5 @@
 services:
   ua_sm_custom.site_instance_config:
     class: Drupal\ua_sm_custom\Service\SiteInstanceConfig
+  ua_sm_custom.jenkins_client:
+    class: Drupal\ua_sm_custom\Service\JenkinsClient

@@ -1,7 +1,10 @@
 jenkins:
   enabled: true
-  path: ''
+  base_uri: ''
   token: ''
-  job: ''
+  provision_job: ''
+  deploy_job: ''
+  decommission_job: ''
+  destroy_job: ''
 ldap:
   enabled: true

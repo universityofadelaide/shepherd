@@ -8,18 +8,28 @@ ua_sm_custom.settings:
       type: mapping
       label: 'Jenkins Build Server'
       mapping:
-       enabled:
-        type: boolean
-        label: 'Enabled'
-       path:
-        type: string
-        label: 'Path'
-       token:
-        type: string
-        label: 'Token'
-       job:
-        type: string
-        label: 'Job'
+        enabled:
+          type: boolean
+          label: 'Enabled'
+        base_uri:
+          type: string
+          label: 'Base URI'
+        token:
+          type: string
+          label: 'Token'
+        provision_job:
+          type: string
+          label: 'Provision Job'
+        deploy_job:
+          type: string
+          label: 'Deploy Job'
+        decommission_job:
+          type: string
+          label: 'Decommission Job'
+        destroy_job:
+          type: string
+          label: 'Destroy Job'
+
     ldap:
       type: mapping
       label: 'LDAP Integration'
