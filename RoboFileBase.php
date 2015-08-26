@@ -32,7 +32,7 @@ class RoboFileBase extends \Robo\Tasks {
     // Drupal specific config.
     $this->drupal_profile       = "ua";
     $this->site_name            = "Site name";
-    $this->site_id              = "default#";
+    $this->site_token           = "default#";
 
     $this->database             = [
                                     'database'=> 'local',
@@ -50,7 +50,7 @@ class RoboFileBase extends \Robo\Tasks {
 
     $this->prefer_dist          = FALSE;
 
-    $this->drupal_settings_keys = ['databases', 'site_id'];
+    $this->drupal_settings_keys = ['databases', 'site_token'];
 
     // Import config.json and override local config parameters.
     $this->importConfig();
