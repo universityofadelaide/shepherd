@@ -37,9 +37,6 @@ function ua_sm_custom_node_presave(Node $entity) {
   }
   elseif ($entity->bundle() == 'ua_sm_site_instance') {
     ua_sm_custom_ports($entity);
-    if (\Drupal::config('ua_sm_custom.settings')->get('jenkins')['enabled']) {
-      ua_sm_custom_run_jobs($entity);
-    }
   }
 }
 
@@ -80,33 +77,6 @@ function ua_sm_custom_generate_unique_site_token(EntityInterface $entity) {
   }
 
   return $site_token;
-}
-
-/**
- * Runs required job on site instance published state transition.
- */
-function ua_sm_custom_run_jobs(Node $entity) {
-  if ($entity->isNew()) {
-    // Run provision on new site instances.
-    ua_sm_custom_run_job_and_post_comment('provision', $entity);
-  }
-  else {
-    // Check if the published state of the site instance has changed.
-    if ($entity->status->value !== $entity->original->status->value) {
-      // If status has transitioned to published, run deploy,
-      // otherwise run decommission.
-      ua_sm_custom_run_job_and_post_comment(
-        $entity->status->value ? 'deploy' : 'decommission',
-        $entity
-      );
-
-      // Make this changed entity a revision.
-      $entity->setNewRevision();
-
-      // Finally, set the state field to indicate this transition.
-      $entity->field_ua_sm_state->value = $entity->status->value ? 'starting' : 'stopping';
-    }
-  }
 }
 
 /**
@@ -190,6 +160,11 @@ function ua_sm_custom_node_insert(EntityInterface $entity) {
       ->syncUsers($entity->field_ua_sm_site_token->value);
     // todo: deal with failure - consider a queue.
   }
+  elseif ($entity->bundle() == 'ua_sm_site_instance') {
+    if (\Drupal::config('ua_sm_custom.settings')->get('jenkins')['enabled']) {
+      ua_sm_custom_run_job_and_post_comment('provision', $entity);
+    }
+  }
 }
 
 /**
@@ -200,6 +175,23 @@ function ua_sm_custom_node_update(EntityInterface $entity) {
     \Drupal::config('ua_sm_custom.settings')->get('ldap')['enabled']) {
     \Drupal::service('ua_ldap.ldap_site')->syncUsers($entity->field_ua_sm_site_token->value);
     // todo: deal with failure - consider a queue.
+  }
+  elseif ($entity->bundle() == 'ua_sm_site_instance') {
+    if (\Drupal::config('ua_sm_custom.settings')->get('jenkins')['enabled']) {
+      // Check if the published state of the site instance has changed.
+      if ($entity->status->value !== $entity->original->status->value) {
+        // If status has transitioned to published, run deploy,
+        // otherwise run decommission.
+        ua_sm_custom_run_job_and_post_comment(
+          $entity->status->value ? 'deploy' : 'decommission',
+          $entity
+        );
+
+        // Finally, set the state field to indicate this transition.
+        $entity->field_ua_sm_state->value = $entity->status->value ? 'starting' : 'stopping';
+        $entity->save();
+      }
+    }
   }
 }
 
