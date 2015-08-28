@@ -39,18 +39,21 @@ class JenkinsClient extends Client {
    *   The type of jenkins job to run.
    * @param int $site_instance_id
    *   The node ID of the site instance to use when running the job.
-   * @param int $site_instance_uuid
-   *   The UUID of the site instance to use when running the job.
+   * @param int $site_nid
+   *   The node ID of the site to use when updating the build status of the job.
+   * @param int $site_uuid
+   *   The UUID of the site to use when updating the build status of the job.
    *
    * @return ResponseInterface
    *   The response from Jenkins.
    */
-  public function job($job_type, $site_instance_id, $site_instance_uuid) {
+  public function job($job_type, $site_instance_id, $site_nid, $site_uuid) {
     $query = [
       'job' => $this->config[$job_type . '_job'],
       'token' => $this->config['token'],
       'site_instance_id' => $site_instance_id,
-      'site_instance_uuid' => $site_instance_uuid,
+      'site_id' => $site_nid,
+      'site_uuid' => $site_uuid,
     ];
 
     // Looks like there are some auth issues with anon read access.

@@ -88,20 +88,22 @@ function ua_sm_custom_generate_unique_site_token(EntityInterface $entity) {
  *   The site_instance entity to post the comment to, or it's parent anyway.
  */
 function ua_sm_custom_run_job_and_post_comment($job_name, EntityInterface $entity) {
+  $environment = reset($entity->field_ua_sm_environment->referencedEntities());
+  $site = reset($environment->field_ua_sm_site->referencedEntities());
+
   $response = \Drupal::service('ua_sm_custom.jenkins_client')->job(
     $job_name,
     $entity->id(),
-    $entity->uuid()
+    $site->id(),
+    $site->uuid()
   );
 
-  $site_nid = reset($entity->field_ua_sm_environment->referencedEntities())
-    ->field_ua_sm_site->getString();
   $comment = \Drupal::entityManager()
     ->getStorage('comment')
     ->create([
       'subject' => 'Running ' . $job_name . ' on ' . $entity->title->value . '.',
       'comment_body' => 'Test',
-      'entity_id' => $site_nid,
+      'entity_id' => $site->id(),
       'entity_type' => 'node',
       'field_name' => 'field_ua_sm_instance_log',
       'status' => CommentInterface::PUBLISHED,
