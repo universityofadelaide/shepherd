@@ -290,6 +290,7 @@ class RoboFileBase extends \Robo\Tasks {
    * Turns on twig debug mode, autoreload on and caching off.
    */
   public function devTwigDebugEnable() {
+    $this->devConfigWriteable();
     $this->taskReplaceInFile($this->services_yml)
       ->from('debug: false')
       ->to('debug: true')
@@ -302,6 +303,7 @@ class RoboFileBase extends \Robo\Tasks {
       ->from('cache: true')
       ->to('cache: false')
       ->run();
+    $this->devConfigReadOnly();
     $this->say('Clearing Drupal cache...');
     $this->devCacheRebuild();
     $this->say('Done. Twig debugging has been enabled');
@@ -311,6 +313,7 @@ class RoboFileBase extends \Robo\Tasks {
    * Turn off twig debug mode, autoreload off and caching on.
    */
   public function devTwigDebugDisable() {
+    $this->devConfigWriteable();
     $this->taskReplaceInFile($this->services_yml)
       ->from('debug: true')
       ->to('debug: false')
@@ -323,6 +326,7 @@ class RoboFileBase extends \Robo\Tasks {
       ->from('c: false')
       ->to('cache: true')
       ->run();
+    $this->devConfigReadOnly();
     $this->say('Clearing Drupal cache...');
     $this->devCacheRebuild();
     $this->say('Done. Twig debugging has been disabled');
