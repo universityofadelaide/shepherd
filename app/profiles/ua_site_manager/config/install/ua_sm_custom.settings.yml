@@ -5,6 +5,6 @@ jenkins:
   provision_job: deploy-drupal-site
   deploy_job:
   decommission_job:
-  destroy_job:
+  destroy_job: remove-drupal-site-instance
 ldap:
   enabled: true
