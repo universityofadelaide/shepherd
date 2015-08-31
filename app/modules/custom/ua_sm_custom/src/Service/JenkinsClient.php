@@ -7,6 +7,7 @@
 
 namespace Drupal\ua_sm_custom\Service;
 
+use Drupal\node\Entity\Node;
 use GuzzleHttp\Client;
 use Psr\Http\Message\ResponseInterface;
 
@@ -48,9 +49,14 @@ class JenkinsClient extends Client {
    *   The response from Jenkins.
    */
   public function job($job_type, $site_instance_id, $site_nid, $site_uuid) {
+    $site_instance = Node::load($site_instance_id);
+    $server_id = $site_instance->field_ua_sm_server->target_id;
+    $server = Node::load($server_id);
+
     $query = [
       'job' => $this->config[$job_type . '_job'],
       'token' => $this->config['token'],
+      'server_hostname' => $server->field_ua_sm_hostname->value,
       'site_instance_id' => $site_instance_id,
       'site_id' => $site_nid,
       'site_uuid' => $site_uuid,
