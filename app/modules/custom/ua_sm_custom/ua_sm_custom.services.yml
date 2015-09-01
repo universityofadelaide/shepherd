@@ -5,3 +5,5 @@ services:
     class: Drupal\ua_sm_custom\Service\JenkinsClient
   ua_sm_custom.port_manager:
     class: Drupal\ua_sm_custom\Service\PortManager
+  ua_sm_custom.site:
+    class: Drupal\ua_sm_custom\Service\Site
