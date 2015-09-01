@@ -17,13 +17,14 @@ use Drupal\node\Entity\NodeType;
 function ua_sm_drush_aliases_entity_extra_field_info() {
   $extra = [];
 
-  $node_type = NodeType::load('ua_sm_site');
-  $extra['node'][$node_type->Id()]['display']['field_drush_aliases'] = [
-    'label' => t('Drush aliases'),
-    'description' => t('Download the Drush aliases for this site.'),
-    'weight' => 100,
-    'visible' => TRUE,
-  ];
+  if ($node_type = NodeType::load('ua_sm_site')) {
+    $extra['node'][$node_type->Id()]['display']['field_drush_aliases'] = [
+      'label' => t('Drush aliases'),
+      'description' => t('Download the Drush aliases for this site.'),
+      'weight' => 100,
+      'visible' => TRUE,
+    ];
+  }
 
   return $extra;
 }
