@@ -7,7 +7,6 @@
 
 namespace Drupal\ua_sm_custom\Service;
 
-use Drupal\node\Entity\Node;
 use GuzzleHttp\Client;
 use Psr\Http\Message\ResponseInterface;
 
@@ -38,28 +37,24 @@ class JenkinsClient extends Client {
    *
    * @param string $job_type
    *   The type of jenkins job to run.
-   * @param int $site_instance_id
-   *   The node ID of the site instance to use when running the job.
-   * @param int $site_nid
-   *   The node ID of the site to use when updating the build status of the job.
-   * @param int $site_uuid
-   *   The UUID of the site to use when updating the build status of the job.
+   * @param \Drupal\Core\Entity\EntityInterface $site_instance
+   *   The site_instance entity to apply job to.
    *
    * @return ResponseInterface
    *   The response from Jenkins.
    */
-  public function job($job_type, $site_instance_id, $site_nid, $site_uuid) {
-    $site_instance = Node::load($site_instance_id);
-    $server_id = $site_instance->field_ua_sm_server->target_id;
-    $server = Node::load($server_id);
+  public function job($job_type, $site_instance) {
+    $server = reset($site_instance->field_ua_sm_server->referencedEntities());
+    $environment = reset($site_instance->field_ua_sm_environment->referencedEntities());
+    $site = reset($environment->field_ua_sm_site->referencedEntities());
 
     $query = [
       'job' => $this->config[$job_type . '_job'],
       'token' => $this->config['token'],
       'server_hostname' => $server->field_ua_sm_hostname->value,
-      'site_instance_id' => $site_instance_id,
-      'site_id' => $site_nid,
-      'site_uuid' => $site_uuid,
+      'site_instance_id' => $site_instance->id(),
+      'site_id' => $site->id(),
+      'site_uuid' => $site->uuid(),
     ];
 
     // Looks like there are some auth issues with anon read access.

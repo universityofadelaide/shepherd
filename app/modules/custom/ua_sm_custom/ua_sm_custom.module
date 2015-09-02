@@ -91,12 +91,7 @@ function ua_sm_custom_run_job_and_post_comment($job_name, EntityInterface $entit
   $environment = reset($entity->field_ua_sm_environment->referencedEntities());
   $site = reset($environment->field_ua_sm_site->referencedEntities());
 
-  $response = \Drupal::service('ua_sm_custom.jenkins_client')->job(
-    $job_name,
-    $entity->id(),
-    $site->id(),
-    $site->uuid()
-  );
+  $response = \Drupal::service('ua_sm_custom.jenkins_client')->job($job_name, $entity);
 
   $comment = \Drupal::entityManager()
     ->getStorage('comment')
