@@ -8,6 +8,7 @@ namespace Drupal\ua_sm_custom\Service;
 
 use Drupal\Core\Entity\Entity;
 use Drupal\node\Entity\Node;
+use Drupal\user\Entity\User;
 
 /**
  * Class Site
@@ -79,6 +80,32 @@ class Site {
       ->condition('status', NODE_PUBLISHED)
       ->execute();
     return Node::loadMultiple($results);
+  }
+
+  /**
+   * Loads all public keys for a site from users who have admin access.
+   *
+   * @param \Drupal\node\Entity\Node $site
+   *   The site node.
+   * @param string|bool $role
+   *   Optional parameter to filter returned users by a role.
+   *
+   * @return array $users
+   *   An array of users.
+   */
+  public function loadUsers(Node $site, $role = FALSE) {
+    $user_paragraphs = $site->field_ua_sm_users->referencedEntities();
+    $user_names = [];
+    foreach ($user_paragraphs as $user_paragraph) {
+      if (!$role || $user_paragraph->field_ua_sm_role->value == $role) {
+        $user_names[] = $user_paragraph->field_ua_sm_user_id->value;
+      }
+    }
+    $user_ids = \Drupal::entityQuery('user')
+      ->condition('name', $user_names, 'in')
+      ->execute();
+    $users = User::loadMultiple($user_ids);
+    return $users;
   }
 
 }

@@ -7,6 +7,8 @@
 
 namespace Drupal\ua_sm_custom\Service;
 
+use Drupal\user\Entity\User;
+
 /**
  * Provides site configuration for export.
  *
@@ -35,6 +37,16 @@ class SiteInstanceConfig {
       $platform = reset($environment->field_ua_sm_platform->referencedEntities());
       $site = reset($environment->field_ua_sm_site->referencedEntities());
       $distribution = reset($site->field_ua_sm_distribution->referencedEntities());
+
+      // @TODO: add users keys with 'develop' field_ua_sm_role.
+      // $users = \Drupal::service('ua_sm_custom.site')->loadUsers($site, 'developer');
+
+      $user_ids = \Drupal::entityQuery('user')
+        ->condition('roles', 'administrator')
+        ->execute();
+      $users = User::loadMultiple($user_ids);
+
+      $keys = \Drupal::service('ua_sm_custom.user')->loadKeys($users);
 
       $config = [
         'database' => [
@@ -95,6 +107,7 @@ class SiteInstanceConfig {
           'authorizer_id' => $site->field_ua_sm_authorizer_id->value,
           'domain_name' => $site->field_ua_sm_domain_name->value,
           'id' => $site->id(),
+          'keys' => $keys,
           'path' => $site->field_ua_sm_path->value,
           'site_token' => $site->field_ua_sm_site_token->value,
           'site_title' => $site->field_ua_sm_site_title->value,
