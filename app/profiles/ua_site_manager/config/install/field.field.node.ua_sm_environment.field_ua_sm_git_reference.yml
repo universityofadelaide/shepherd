@@ -8,7 +8,7 @@ id: node.ua_sm_environment.field_ua_sm_git_reference
 field_name: field_ua_sm_git_reference
 entity_type: node
 bundle: ua_sm_environment
-label: 'Git Tag/Branch'
+label: 'Git tag/branch'
 description: 'Site instances for this environment will be generated from the selected git tag or branch.'
 required: false
 translatable: true
