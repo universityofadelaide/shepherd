@@ -1,0 +1,8 @@
+# UASM Gitlab CI script
+'uasm':
+  script:
+  - robo build
+  tags: 
+  except:
+  - tags
+
