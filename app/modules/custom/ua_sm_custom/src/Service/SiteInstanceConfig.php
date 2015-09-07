@@ -126,6 +126,9 @@ class SiteInstanceConfig {
           'state' => $site_instance->field_ua_sm_state->value,
           'uuid' => $site_instance->uuid(),
         ],
+        'site_manager' => [
+          'hostname' => $_SERVER['HTTP_HOST'],
+        ],
       ];
       return $config;
     }
