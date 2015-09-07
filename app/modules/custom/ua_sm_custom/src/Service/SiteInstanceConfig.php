@@ -37,6 +37,9 @@ class SiteInstanceConfig {
       $platform = reset($environment->field_ua_sm_platform->referencedEntities());
       $site = reset($environment->field_ua_sm_site->referencedEntities());
       $distribution = reset($site->field_ua_sm_distribution->referencedEntities());
+      $build_server = reset($platform->field_ua_sm_build_server->referencedEntities());
+      $database_servers = $platform->field_ua_sm_database_servers->referencedEntities();
+      $web_servers = $platform->field_ua_sm_web_servers->referencedEntities();
 
       // @TODO: add users keys with 'develop' field_ua_sm_role.
       // $users = \Drupal::service('ua_sm_custom.site')->loadUsers($site, 'developer');
@@ -61,6 +64,7 @@ class SiteInstanceConfig {
           'box_type' => $distribution->field_ua_sm_box_type->value,
           'git_repository' => $distribution->field_ua_sm_git_repository->value,
           'id' => $distribution->id(),
+          'uuid' => $distribution->uuid(),
         ],
         'drupal_config' => [
           'system.site' => [
@@ -81,23 +85,20 @@ class SiteInstanceConfig {
           'id' => $environment->id(),
           'git_reference' => $environment->field_ua_sm_git_reference->value,
           'machine_name' => $environment->field_ua_sm_machine_name->value,
+          'uuid' => $environment->uuid(),
         ],
         'platform' => [
-          'build_server' => $platform->field_ua_sm_build_server->value,
+          'build_server' => $this->formatServer($build_server),
           'docker_registry' => $platform->field_ua_sm_docker_registry->value,
           'id' => $platform->id(),
           'reverse_proxy_addresses' => $platform->field_ua_sm_rev_proxy_addresses->value,
           'reverse_proxy_header' => $platform->field_ua_sm_reverse_proxy_header->value,
           'task_runner' => $platform->field_ua_sm_task_runner->value,
+          'database_servers' => $this->formatServers($database_servers),
+          'uuid' => $platform->uuid(),
+          'web_servers' => $this->formatServers($web_servers),
         ],
-        'server' => [
-          'hostname' => $server->field_ua_sm_hostname->value,
-          'id' => $server->id(),
-          'ip_address' => $server->field_ua_sm_ip_address->value,
-          'ipv6_address' => $server->field_ua_sm_ipv6_address->value,
-          'port_range_start' => $server->field_ua_sm_port_range_start->value,
-          'port_range_end' => $server->field_ua_sm_port_range_end->value,
-        ],
+        'server' => $this->formatServer($server),
         'site' => [
           'admin_email' => $site->field_ua_sm_admin_email->value,
           'admin_password' => $site->field_ua_sm_admin_password->value,
@@ -112,6 +113,7 @@ class SiteInstanceConfig {
           'site_token' => $site->field_ua_sm_site_token->value,
           'site_title' => $site->field_ua_sm_site_title->value,
           'top_menu_style' => $site->field_ua_sm_top_menu_style->value,
+          'uuid' => $site->uuid(),
         ],
         'site_instance' => [
           'git_reference' => $site_instance->field_ua_sm_git_reference->value,
@@ -122,11 +124,50 @@ class SiteInstanceConfig {
           'ipv6_address' => $site_instance->field_ua_sm_ipv6_address->value,
           'ssh_port' => $site_instance->field_ua_sm_ssh_port->value,
           'state' => $site_instance->field_ua_sm_state->value,
+          'uuid' => $site_instance->uuid(),
         ],
       ];
       return $config;
     }
     return [];
+  }
+
+  /**
+   * Format server nodes into a sensible structure.
+   *
+   * @param array $servers
+   *   An array of loaded server nodes.
+   *
+   * @return array
+   *   Formatted servers.
+   */
+  public function formatServers($servers) {
+    $formatted_servers = [];
+    foreach ($servers as $server) {
+      $formatted_servers[] = $this->formatServer($server);
+    }
+    return $formatted_servers;
+  }
+
+  /**
+   * Format a server node into a sensible structure.
+   *
+   * @param \Drupal\node\Entity\Node $server
+   *   A loaded server node.
+   *
+   * @return array
+   *   Formatted properties of a server.
+   */
+  public function formatServer($server) {
+    return [
+      'hostname' => $server->field_ua_sm_hostname->value,
+      'id' => $server->id(),
+      'ip_address' => $server->field_ua_sm_ip_address->value,
+      'ipv6_address' => $server->field_ua_sm_ipv6_address->value,
+      'port_range_start' => $server->field_ua_sm_port_range_start->value,
+      'port_range_end' => $server->field_ua_sm_port_range_end->value,
+      'uuid' => $server->uuid(),
+    ];
   }
 
 }
