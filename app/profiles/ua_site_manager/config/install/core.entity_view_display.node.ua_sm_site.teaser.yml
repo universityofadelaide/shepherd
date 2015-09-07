@@ -32,12 +32,17 @@ content:
     settings:
       trim_length: 600
     third_party_settings: {  }
+  field_drush_aliases:
+    weight: 100
   links:
     weight: 100
   users:
     weight: 10
 hidden:
   field_tags: true
+  field_ua_sm_admin_email: true
+  field_ua_sm_admin_password: true
+  field_ua_sm_admin_user: true
   field_ua_sm_aliases: true
   field_ua_sm_authorizer_email: true
   field_ua_sm_authorizer_id: true
@@ -45,7 +50,7 @@ hidden:
   field_ua_sm_domain_name: true
   field_ua_sm_instance_log: true
   field_ua_sm_path: true
-  field_ua_sm_site_token: true
   field_ua_sm_site_title: true
+  field_ua_sm_site_token: true
   field_ua_sm_top_menu_style: true
   field_ua_sm_users: true

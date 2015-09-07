@@ -5,6 +5,7 @@ dependencies:
     - field.field.node.ua_sm_platform.body
     - field.field.node.ua_sm_platform.field_tags
     - field.field.node.ua_sm_platform.field_ua_sm_build_server
+    - field.field.node.ua_sm_platform.field_ua_sm_database_servers
     - field.field.node.ua_sm_platform.field_ua_sm_docker_registry
     - field.field.node.ua_sm_platform.field_ua_sm_rev_proxy_addresses
     - field.field.node.ua_sm_platform.field_ua_sm_reverse_proxy_header
@@ -42,6 +43,14 @@ content:
     type: entity_reference_autocomplete
   field_ua_sm_build_server:
     weight: 2
+    settings:
+      match_operator: CONTAINS
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: entity_reference_autocomplete
+  field_ua_sm_database_servers:
+    weight: 26
     settings:
       match_operator: CONTAINS
       size: 60

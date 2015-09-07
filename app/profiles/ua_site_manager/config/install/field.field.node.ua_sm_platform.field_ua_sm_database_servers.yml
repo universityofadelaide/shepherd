@@ -1,0 +1,26 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_ua_sm_database_servers
+    - node.type.ua_sm_platform
+  module:
+    - entity_reference
+id: node.ua_sm_platform.field_ua_sm_database_servers
+field_name: field_ua_sm_database_servers
+entity_type: node
+bundle: ua_sm_platform
+label: 'Database servers'
+description: 'The pool of database servers.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:node'
+  handler_settings:
+    target_bundles:
+      ua_sm_server: ua_sm_server
+    sort:
+      field: _none
+field_type: entity_reference
