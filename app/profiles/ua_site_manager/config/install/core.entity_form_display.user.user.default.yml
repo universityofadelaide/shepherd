@@ -1,8 +1,40 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.user.user.field_ua_sm_keys
+    - field.field.user.user.user_picture
+  module:
+    - image
+    - user
 id: user.user.default
 targetEntityType: user
 bundle: user
 mode: default
 content:
+  account:
+    weight: -10
+    settings: {  }
+    third_party_settings: {  }
+  contact:
+    weight: 5
+    settings: {  }
+    third_party_settings: {  }
+  field_ua_sm_keys:
+    type: string_textarea
+    weight: 0
+    settings:
+      rows: 5
+      placeholder: ''
+    third_party_settings: {  }
+  language:
+    weight: 0
+    settings: {  }
+    third_party_settings: {  }
+  timezone:
+    weight: 6
+    settings: {  }
+    third_party_settings: {  }
   user_picture:
     type: image_image
     settings:
@@ -10,8 +42,4 @@ content:
       preview_image_style: thumbnail
     third_party_settings: {  }
     weight: -1
-status: true
-dependencies:
-  module:
-    - image
-    - user
+hidden: {  }
