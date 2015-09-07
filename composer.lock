@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "995043c4279f15e007d165e6ed16d800",
+    "hash": "612fcba8939c605c005a65e6a3c9e85b",
     "packages": [
         {
             "name": "behat/mink",
@@ -122,12 +122,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/minkphp/MinkGoutteDriver.git",
-                "reference": "cc5ce119b5a8e06662f634b35967aff0b0c7dfdd"
+                "reference": "7e9a7319cc0e8cf9d4d4c9e06e2020d3a31bd792"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/minkphp/MinkGoutteDriver/zipball/cc5ce119b5a8e06662f634b35967aff0b0c7dfdd",
-                "reference": "cc5ce119b5a8e06662f634b35967aff0b0c7dfdd",
+                "url": "https://api.github.com/repos/minkphp/MinkGoutteDriver/zipball/7e9a7319cc0e8cf9d4d4c9e06e2020d3a31bd792",
+                "reference": "7e9a7319cc0e8cf9d4d4c9e06e2020d3a31bd792",
                 "shasum": ""
             },
             "require": {
@@ -166,7 +166,7 @@
                 "headless",
                 "testing"
             ],
-            "time": "2015-06-27 00:15:11"
+            "time": "2015-08-31 10:14:55"
         },
         {
             "name": "composer/installers",
@@ -345,16 +345,16 @@
         },
         {
             "name": "doctrine/annotations",
-            "version": "v1.2.6",
+            "version": "v1.2.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/doctrine/annotations.git",
-                "reference": "f4a91702ca3cd2e568c3736aa031ed00c3752af4"
+                "reference": "f25c8aab83e0c3e976fd7d19875f198ccf2f7535"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/doctrine/annotations/zipball/f4a91702ca3cd2e568c3736aa031ed00c3752af4",
-                "reference": "f4a91702ca3cd2e568c3736aa031ed00c3752af4",
+                "url": "https://api.github.com/repos/doctrine/annotations/zipball/f25c8aab83e0c3e976fd7d19875f198ccf2f7535",
+                "reference": "f25c8aab83e0c3e976fd7d19875f198ccf2f7535",
                 "shasum": ""
             },
             "require": {
@@ -409,20 +409,20 @@
                 "docblock",
                 "parser"
             ],
-            "time": "2015-06-17 12:21:22"
+            "time": "2015-08-31 12:32:49"
         },
         {
             "name": "doctrine/cache",
-            "version": "v1.4.1",
+            "version": "v1.4.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/doctrine/cache.git",
-                "reference": "c9eadeb743ac6199f7eec423cb9426bc518b7b03"
+                "reference": "8c434000f420ade76a07c64cbe08ca47e5c101ca"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/doctrine/cache/zipball/c9eadeb743ac6199f7eec423cb9426bc518b7b03",
-                "reference": "c9eadeb743ac6199f7eec423cb9426bc518b7b03",
+                "url": "https://api.github.com/repos/doctrine/cache/zipball/8c434000f420ade76a07c64cbe08ca47e5c101ca",
+                "reference": "8c434000f420ade76a07c64cbe08ca47e5c101ca",
                 "shasum": ""
             },
             "require": {
@@ -479,7 +479,7 @@
                 "cache",
                 "caching"
             ],
-            "time": "2015-04-15 00:11:59"
+            "time": "2015-08-31 12:36:41"
         },
         {
             "name": "doctrine/collections",
@@ -549,16 +549,16 @@
         },
         {
             "name": "doctrine/common",
-            "version": "v2.4.2",
+            "version": "v2.4.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/doctrine/common.git",
-                "reference": "5db6ab40e4c531f14dad4ca96a394dfce5d4255b"
+                "reference": "4824569127daa9784bf35219a1cd49306c795389"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/doctrine/common/zipball/5db6ab40e4c531f14dad4ca96a394dfce5d4255b",
-                "reference": "5db6ab40e4c531f14dad4ca96a394dfce5d4255b",
+                "url": "https://api.github.com/repos/doctrine/common/zipball/4824569127daa9784bf35219a1cd49306c795389",
+                "reference": "4824569127daa9784bf35219a1cd49306c795389",
                 "shasum": ""
             },
             "require": {
@@ -589,17 +589,6 @@
             ],
             "authors": [
                 {
-                    "name": "Jonathan Wage",
-                    "email": "jonwage@gmail.com",
-                    "homepage": "http://www.jwage.com/",
-                    "role": "Creator"
-                },
-                {
-                    "name": "Guilherme Blanco",
-                    "email": "guilhermeblanco@gmail.com",
-                    "homepage": "http://www.instaclick.com"
-                },
-                {
                     "name": "Roman Borschel",
                     "email": "roman@code-factory.org"
                 },
@@ -608,10 +597,16 @@
                     "email": "kontakt@beberlei.de"
                 },
                 {
+                    "name": "Guilherme Blanco",
+                    "email": "guilhermeblanco@gmail.com"
+                },
+                {
+                    "name": "Jonathan Wage",
+                    "email": "jonwage@gmail.com"
+                },
+                {
                     "name": "Johannes Schmitt",
-                    "email": "schmittjoh@gmail.com",
-                    "homepage": "https://github.com/schmittjoh",
-                    "role": "Developer of wrapped JMSSerializerBundle"
+                    "email": "schmittjoh@gmail.com"
                 }
             ],
             "description": "Common Library for Doctrine projects",
@@ -623,7 +618,7 @@
                 "persistence",
                 "spl"
             ],
-            "time": "2014-05-21 19:28:51"
+            "time": "2015-08-31 14:38:45"
         },
         {
             "name": "doctrine/inflector",
@@ -833,11 +828,11 @@
         },
         {
             "name": "drupal/core",
-            "version": "8.0.x-dev",
+            "version": "8.0.0-beta15",
             "source": {
                 "type": "git",
                 "url": "git@gitlab.adelaide.edu.au:web-team/drupal-core.git",
-                "reference": "fcf520874e04912bc66bbaf4a02c40f66364b559"
+                "reference": "9b85ca6e556ce2a52748c1e9cdca05fe40662b7b"
             },
             "require": {
                 "behat/mink": "~1.6",
@@ -988,7 +983,7 @@
                 "GPL-2.0+"
             ],
             "description": "Drupal is an open source content management platform powering millions of websites and applications.",
-            "time": "2015-08-26 03:15:26"
+            "time": "2015-09-04 08:56:05"
         },
         {
             "name": "drupal/diff",
@@ -1327,16 +1322,16 @@
         },
         {
             "name": "fabpot/goutte",
-            "version": "v3.1.0",
+            "version": "v3.1.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/FriendsOfPHP/Goutte.git",
-                "reference": "d9a5a28782d30e9f4e20176caea58a1d459f2c71"
+                "reference": "751a3dc5c4d86ec3e97c9f27133ef9694d9243cc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/FriendsOfPHP/Goutte/zipball/d9a5a28782d30e9f4e20176caea58a1d459f2c71",
-                "reference": "d9a5a28782d30e9f4e20176caea58a1d459f2c71",
+                "url": "https://api.github.com/repos/FriendsOfPHP/Goutte/zipball/751a3dc5c4d86ec3e97c9f27133ef9694d9243cc",
+                "reference": "751a3dc5c4d86ec3e97c9f27133ef9694d9243cc",
                 "shasum": ""
             },
             "require": {
@@ -1372,7 +1367,7 @@
             "keywords": [
                 "scraper"
             ],
-            "time": "2015-06-24 16:11:31"
+            "time": "2015-08-29 16:16:56"
         },
         {
             "name": "guzzlehttp/guzzle",
@@ -1380,12 +1375,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/guzzle/guzzle.git",
-                "reference": "36e021d6f26185f0a39ed8de509bb6b8f0283d45"
+                "reference": "4771e34b9e9dbadb393da39f61ec29dadb8979b2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/guzzle/guzzle/zipball/36e021d6f26185f0a39ed8de509bb6b8f0283d45",
-                "reference": "36e021d6f26185f0a39ed8de509bb6b8f0283d45",
+                "url": "https://api.github.com/repos/guzzle/guzzle/zipball/4771e34b9e9dbadb393da39f61ec29dadb8979b2",
+                "reference": "4771e34b9e9dbadb393da39f61ec29dadb8979b2",
                 "shasum": ""
             },
             "require": {
@@ -1401,7 +1396,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "6.0-dev"
+                    "dev-master": "6.1-dev"
                 }
             },
             "autoload": {
@@ -1434,7 +1429,7 @@
                 "rest",
                 "web service"
             ],
-            "time": "2015-08-24 17:09:43"
+            "time": "2015-09-06 21:10:21"
         },
         {
             "name": "guzzlehttp/promises",
@@ -4150,7 +4145,7 @@
             "source": {
                 "type": "git",
                 "url": "http://git.drupal.org/project/devel",
-                "reference": "8e745a9b9e027dd18429e747abe3e4c27b3c6442"
+                "reference": "f82091774d7ddd92ed5f8cc70618cbd87f6d0262"
             },
             "dist": {
                 "type": "zip",
@@ -4190,13 +4185,12 @@
             ],
             "description": "Various blocks, pages, and functions for developers.",
             "homepage": "http://drupal.org/project/devel",
-            "time": "2015-08-09 17:05:54"
+            "time": "2015-09-06 19:19:05"
         }
     ],
     "aliases": [],
     "minimum-stability": "dev",
     "stability-flags": {
-        "drupal/core": 20,
         "drupal/cas": 20,
         "drupal/diff": 20,
         "drupal/entity_reference_revisions": 20,
