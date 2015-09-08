@@ -7,7 +7,6 @@
 
 namespace Drupal\ua_sm_custom\Controller;
 
-use Drupal\Component\Serialization\Yaml;
 use Drupal\Core\Controller\ControllerBase;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -38,55 +37,6 @@ class SiteConfigController extends ControllerBase {
     }
     else {
       throw new NotFoundHttpException();
-    }
-  }
-
-  /**
-   * Download json representation of a site instance.
-   *
-   * @param int $nid
-   *   Site NID.
-   *
-   * @return \Symfony\Component\HttpFoundation\Response
-   *   Json response.
-   */
-  public function siteInstance($nid) {
-    $site_instance = $this->getSiteInstanceArray($nid);
-    if ($site_instance) {
-      return new JsonResponse($site_instance);
-    }
-    else {
-      throw new NotFoundHttpException();
-    }
-  }
-
-  /**
-   * Json representation of a site instance, including site and dist details.
-   *
-   * @param int $nid
-   *   Site ID.
-   *
-   * @return array
-   *   Site instance array.
-   */
-  private function getSiteInstanceArray($nid) {
-    $query = \Drupal::entityQuery('node')
-      ->condition('type', 'ua_sm_site_instance')
-      ->condition('nid', $nid);
-    $result = $query->execute();
-    if ($result) {
-      $site_instance = \Drupal::entityManager()->getStorage('node')->load($nid);
-      $site = reset($site_instance->field_ua_sm_site->referencedEntities());
-      $distribution = reset($site->field_ua_sm_distribution->referencedEntities());
-
-      return [
-        'site_instance' => $site_instance->toArray(),
-        'site' => $site ? $site->toArray() : NULL,
-        'distribution' => $distribution ? $distribution->toArray() : NULL,
-      ];
-    }
-    else {
-      return [];
     }
   }
 

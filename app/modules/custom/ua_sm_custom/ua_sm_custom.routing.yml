@@ -10,12 +10,9 @@ ua_sm_custom.site-instance-config:
   path: '/api/site-instance-config/{nid}'
   defaults:
     _controller: '\Drupal\ua_sm_custom\Controller\SiteConfigController::siteInstanceConfig'
-  requirements:
-    _permission: 'access content'
-ua_sm_custom.site-instance:
-  path: '/api/site-instance/{nid}'
-  defaults:
-    _controller: '\Drupal\ua_sm_custom\Controller\SiteConfigController::siteInstance'
+  options:
+    no_cache: TRUE
+    _auth: ['basic_auth']
   requirements:
     _permission: 'access content'
 ua_sm_custom.site_manager_settings:
