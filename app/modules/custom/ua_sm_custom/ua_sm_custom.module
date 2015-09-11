@@ -32,11 +32,17 @@ function ua_sm_custom_help($route_name, RouteMatchInterface $route_match) {
  * Implements hook_ENTITY_TYPE_presave().
  */
 function ua_sm_custom_node_presave(Node $entity) {
-  if ($entity->bundle() == 'ua_sm_site') {
-    $entity->field_ua_sm_site_token->value = ua_sm_custom_generate_unique_site_token($entity);
-  }
-  elseif ($entity->bundle() == 'ua_sm_site_instance') {
-    ua_sm_custom_ports($entity);
+  switch ($entity->bundle()) {
+
+    case 'ua_sm_site':
+      $entity->field_ua_sm_site_token->value = ua_sm_custom_generate_unique_site_token($entity);
+      break;
+
+    case 'ua_sm_site_instance':
+      ua_sm_custom_ports($entity);
+      break;
+
+    default:
   }
 }
 
@@ -148,19 +154,27 @@ function ua_sm_custom_ports(Node $entity) {
  * Implements hook_ENTITY_TYPE_insert().
  */
 function ua_sm_custom_node_insert(EntityInterface $entity) {
-  if ($entity->bundle() == 'ua_sm_site' &&
-    \Drupal::config('ua_sm_custom.settings')->get('ldap')['enabled']) {
-    \Drupal::service('ua_ldap.ldap_site')
-      ->addSite($entity->field_ua_sm_site_token->value);
-    // todo: deal with failure - consider a queue.
-    \Drupal::service('ua_ldap.ldap_site')
-      ->syncUsers($entity->field_ua_sm_site_token->value);
-    // todo: deal with failure - consider a queue.
-  }
-  elseif ($entity->bundle() == 'ua_sm_site_instance') {
-    if (\Drupal::config('ua_sm_custom.settings')->get('jenkins')['enabled']) {
-      ua_sm_custom_run_job_and_post_comment('provision', $entity);
-    }
+  switch ($entity->bundle()) {
+
+    case 'ua_sm_site':
+
+      if (\Drupal::config('ua_sm_custom.settings')->get('ldap')['enabled']) {
+        \Drupal::service('ua_ldap.ldap_site')
+          ->addSite($entity->field_ua_sm_site_token->value);
+        // todo: deal with failure - consider a queue.
+        \Drupal::service('ua_ldap.ldap_site')
+          ->syncUsers($entity->field_ua_sm_site_token->value);
+        // todo: deal with failure - consider a queue.
+      }
+      break;
+
+    case 'ua_sm_site_instance':
+      if (\Drupal::config('ua_sm_custom.settings')->get('jenkins')['enabled']) {
+        ua_sm_custom_run_job_and_post_comment('provision', $entity);
+      }
+      break;
+
+    default:
   }
 }
 
@@ -168,27 +182,34 @@ function ua_sm_custom_node_insert(EntityInterface $entity) {
  * Implements hook_ENTITY_TYPE_update().
  */
 function ua_sm_custom_node_update(EntityInterface $entity) {
-  if ($entity->bundle() == 'ua_sm_site' &&
-    \Drupal::config('ua_sm_custom.settings')->get('ldap')['enabled']) {
-    \Drupal::service('ua_ldap.ldap_site')->syncUsers($entity->field_ua_sm_site_token->value);
-    // todo: deal with failure - consider a queue.
-  }
-  elseif ($entity->bundle() == 'ua_sm_site_instance') {
-    if (\Drupal::config('ua_sm_custom.settings')->get('jenkins')['enabled']) {
-      // Check if the published state of the site instance has changed.
-      if ($entity->status->value !== $entity->original->status->value) {
-        // If status has transitioned to published, run deploy,
-        // otherwise run decommission.
-        ua_sm_custom_run_job_and_post_comment(
-          $entity->status->value ? 'deploy' : 'decommission',
-          $entity
-        );
+  switch ($entity->bundle()) {
 
-        // Finally, set the state field to indicate this transition.
-        $entity->field_ua_sm_state->value = $entity->status->value ? 'starting' : 'stopping';
-        $entity->save();
+    case 'ua_sm_site':
+      if (\Drupal::config('ua_sm_custom.settings')->get('ldap')['enabled']) {
+        \Drupal::service('ua_ldap.ldap_site')->syncUsers($entity->field_ua_sm_site_token->value);
+        // todo: deal with failure - consider a queue.
       }
-    }
+      break;
+
+    case 'ua_sm_site_instance':
+      if (\Drupal::config('ua_sm_custom.settings')->get('jenkins')['enabled']) {
+        // Check if the published state of the site instance has changed.
+        if ($entity->status->value !== $entity->original->status->value) {
+          // If status has transitioned to published, run deploy,
+          // otherwise run decommission.
+          ua_sm_custom_run_job_and_post_comment(
+            $entity->status->value ? 'deploy' : 'decommission',
+            $entity
+          );
+
+          // Finally, set the state field to indicate this transition.
+          $entity->field_ua_sm_state->value = $entity->status->value ? 'starting' : 'stopping';
+          $entity->save();
+        }
+      }
+      break;
+
+    default:
   }
 }
 
@@ -196,14 +217,22 @@ function ua_sm_custom_node_update(EntityInterface $entity) {
  * Implements hook_ENTITY_TYPE_delete().
  */
 function ua_sm_custom_node_delete(EntityInterface $entity) {
-  if ($entity->bundle() == 'ua_sm_site' &&
-    \Drupal::config('ua_sm_custom.settings')->get('ldap')['enabled']) {
-    \Drupal::service('ua_ldap.ldap_site')->removeSite($entity->field_ua_sm_site_token->value);
-    // todo: deal with failure - consider a queue.
-  }
-  elseif ($entity->bundle() == 'ua_sm_site_instance' &&
-    \Drupal::config('ua_sm_custom.settings')->get('jenkins')['enabled']) {
-    ua_sm_custom_run_job_and_post_comment('destroy', $entity);
+  switch ($entity->bundle()) {
+
+    case 'ua_sm_site':
+      if (\Drupal::config('ua_sm_custom.settings')->get('ldap')['enabled']) {
+        \Drupal::service('ua_ldap.ldap_site')->removeSite($entity->field_ua_sm_site_token->value);
+        // todo: deal with failure - consider a queue.
+      }
+      break;
+
+    case 'ua_sm_site_instance':
+      if (\Drupal::config('ua_sm_custom.settings')->get('jenkins')['enabled']) {
+        ua_sm_custom_run_job_and_post_comment('destroy', $entity);
+      }
+      break;
+
+    default:
   }
 }
 
@@ -211,12 +240,26 @@ function ua_sm_custom_node_delete(EntityInterface $entity) {
  * Implements hook_entity_prepare_form().
  */
 function ua_sm_custom_entity_prepare_form(EntityInterface $entity) {
-  if ($entity->bundle() == 'ua_sm_site') {
-    $password_field = $entity->get('field_ua_sm_admin_password');
-    $password = $password_field->getValue();
-    if (!$password) {
-      $password = base64_encode(Crypt::randomBytes(12));
-      $password_field->setValue($password);
-    }
+  switch ($entity->bundle()) {
+
+    case 'ua_sm_site':
+      $password_field = $entity->get('field_ua_sm_admin_password');
+      $password = $password_field->getValue();
+      if (!$password) {
+        $password = base64_encode(Crypt::randomBytes(12));
+        $password_field->setValue($password);
+      }
+      break;
+
+    case 'ua_sm_environment':
+      $password_field = $entity->get('field_ua_sm_database_password');
+      $password = $password_field->getValue();
+      if (!$password) {
+        $password = base64_encode(Crypt::randomBytes(12));
+        $password_field->setValue($password);
+      }
+      break;
+
+    default:
   }
 }

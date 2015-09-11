@@ -130,6 +130,15 @@ class SiteInstanceConfig {
           'hostname' => $_SERVER['HTTP_HOST'],
         ],
       ];
+
+      // Set default database config if none specified.
+      if (!$config['database']['database']) {
+        $config['database']['database'] = $environment->id();
+      }
+      if (!$config['database']['username']) {
+        $config['database']['username'] = $environment->id();
+      }
+
       return $config;
     }
     return [];
