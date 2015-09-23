@@ -51,6 +51,11 @@ class SiteInstanceConfig {
 
       $keys = \Drupal::service('ua_sm_custom.user')->loadKeys($users);
 
+      $reverse_proxy_addresses = [];
+      foreach ($platform->get('field_ua_sm_rev_proxy_addresses') as $address) {
+        $reverse_proxy_addresses[] = reset($address->getValue());
+      }
+
       $config = [
         'database' => [
           'database' => $environment->field_ua_sm_database->value,
@@ -91,7 +96,7 @@ class SiteInstanceConfig {
           'build_server' => $this->formatServer($build_server),
           'docker_registry' => $platform->field_ua_sm_docker_registry->value,
           'id' => $platform->id(),
-          'reverse_proxy_addresses' => $platform->field_ua_sm_rev_proxy_addresses->value,
+          'reverse_proxy_addresses' => $reverse_proxy_addresses,
           'reverse_proxy_header' => $platform->field_ua_sm_reverse_proxy_header->value,
           'task_runner' => $platform->field_ua_sm_task_runner->value,
           'database_servers' => $this->formatServers($database_servers),
