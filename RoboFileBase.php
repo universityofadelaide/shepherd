@@ -26,37 +26,29 @@ class RoboFileBase extends \Robo\Tasks {
     $this->webserver_restart    = "sudo service apache2 restart";
 
     $this->config_file          = "config.json";
+    $this->config_default_file  = "config.default.json";
     $this->settings_php         = "$this->application_root/sites/default/settings.php";
     $this->services_yml         = "$this->application_root/sites/default/services.yml";
 
     // Drupal specific config.
     $this->drupal_profile       = "ua";
 
-    $this->database             = [
-                                    'database'=> 'local',
-                                    'username'=> 'drupal',
-                                    'password'=> 'drupal',
-                                    'host'=> 'localhost',
-                                    'port'=> '3306',
-                                    'driver'=> 'mysql',
-                                    'prefix'=> ''
-                                  ];
-
-    $this->site                  = [
-                                    'admin_email' => 'admin@localhost',
-                                    'admin_password' => 'password',
-                                    'admin_user' => 'admin',
-                                    'site_token' => 'default#',
-                                    'site_title' => 'Site Name',
-                                    'top_menu_style' => 'mega_menu',
-                                  ]; // Indenting hurts me.
-
     $this->prefer_dist          = FALSE;
 
-    $this->drupal_settings_keys = ['databases', 'site_token'];
-
-    // Import config.json and override local config parameters.
+    $this->config = [];
     $this->importConfig();
+  }
+
+  /**
+   * Parse and import config.
+   */
+  private function importConfig() {
+    if (file_exists($this->config_file)) {
+      $this->config = json_decode(file_get_contents($this->config_file), TRUE);
+    }
+    else {
+      $this->config = json_decode(file_get_contents($this->config_default_file), TRUE);
+    }
   }
 
   /**
@@ -78,7 +70,22 @@ class RoboFileBase extends \Robo\Tasks {
    */
   public function buildAuto($opts = ['prefer-dist' => TRUE]) {
     $this->handleOptions($opts);
+    $this->buildKeys();
     $this->buildMake($opts);
+  }
+
+  /**
+   * Populates authorized keys with keys inside config file.
+   */
+  public function buildKeys() {
+    $keys = $this->config['site']['keys'];
+    if ($keys) {
+      $add_keys_task = $this->taskWriteToFile($_SERVER['HOME'] . '/.ssh/authorized_keys');
+      foreach ($keys as $key) {
+        $add_keys_task->line($key);
+      }
+      $add_keys_task->run();
+    }
   }
 
   /**
@@ -141,10 +148,10 @@ class RoboFileBase extends \Robo\Tasks {
 
     $this->_exec("$this->drush_cmd site-install $this->drupal_profile -y" .
       " --db-url=" . $this->getDatabaseUrl() .
-      " --account-mail=" . $this->site['admin_email'] .
-      " --account-name=" . $this->site['admin_user'] .
-      " --account-pass=" . $this->site['admin_password'] .
-      " --site-name='" . $this->site['site_title'] . "'");
+      " --account-mail=" . $this->config['site']['admin_email'] .
+      " --account-name=" . $this->config['site']['admin_user'] .
+      " --account-pass=" . $this->config['site']['admin_password'] .
+      " --site-name='" . $this->config['site']['site_title'] . "'");
 
     // Undo some of site-install's good work.
     $this->say("Creating settings.local.php");
@@ -176,18 +183,15 @@ class RoboFileBase extends \Robo\Tasks {
    * Apply site configuration.
    */
   public function buildApplyConfig() {
-    if (property_exists($this, 'drupal_config')) {
-      $task_stack = $this->taskExecStack();
-      foreach ($this->drupal_config as $drupal_config_name => $drupal_config_items) {
-        foreach ($drupal_config_items as $key => $value) {
-          $task_stack->exec($this->drush_cmd . ' cset ' . $drupal_config_name .
-            ' ' . $key . ' "' . $value . '" -y');
-        }
+    $task_stack = $this->taskExecStack();
+    foreach ($this->config['drupal_config'] as $drupal_config_name => $drupal_config_items) {
+      foreach ($drupal_config_items as $key => $value) {
+        $task_stack->exec($this->drush_cmd . ' cset ' . $drupal_config_name . ' ' . $key . ' "' . $value . '" -y');
       }
-      $task_stack->printed(FALSE)->stopOnFail(TRUE)->run();
-      $this->devCacheRebuild();
-      $this->say('Site configuration applied.');
     }
+    $task_stack->run();
+    $this->devCacheRebuild();
+    $this->say('Site configuration applied.');
   }
 
   /**
@@ -370,7 +374,7 @@ class RoboFileBase extends \Robo\Tasks {
   public function devComposerUpdate() {
     $this->devXdebugDisable(['no-restart' => TRUE]);
     $this->_exec("$this->composer_bin update");
-    $this->devXdebugDisable(['no-restart' => TRUE]);
+    $this->devXdebugEnable(['no-restart' => TRUE]);
   }
 
   /**
@@ -386,7 +390,7 @@ class RoboFileBase extends \Robo\Tasks {
   }
 
   /**
-   * Make config files write-able.
+   * Make config files read only.
    */
   public function devConfigReadOnly() {
     $file_tasks = $this->taskFilesystemStack();
@@ -420,20 +424,6 @@ class RoboFileBase extends \Robo\Tasks {
   }
 
   /**
-   * Parse and import config file if it exists.
-   */
-  private function importConfig() {
-    if (file_exists($this->config_file)) {
-      $config = json_decode(file_get_contents($this->config_file), TRUE);
-
-      // Override local config items with those in the config file.
-      foreach ($config as $config_key => $config_item) {
-        $this->{$config_key} = $config_item;
-      }
-    }
-  }
-
-  /**
    * Generates text in the format of Drupal settings.php from local config.
    *
    * @return string
@@ -441,80 +431,55 @@ class RoboFileBase extends \Robo\Tasks {
    */
   protected function generateDrupalSettings() {
     $drupal_settings = [];
-    $top_level_settings = [
-      'base_url',
-      'config',
-      'config_directories',
-      'databases',
-      'settings',
-    ];
 
     // Format Drupal specific database settings.
-    $drupal_settings['databases']['default']['default'] = $this->database;
+    $drupal_settings['databases']['default']['default'] = $this->config['database'];
     $drupal_settings['databases']['default']['default']['namespace'] = 'Drupal\\Core\\Database\\Driver\\mysql';
     $drupal_settings['databases']['default']['default']['prefix'] = '';
 
     // Fetch Docker host IP address from the environment variable.
-    if ($this->database['host'] == '{docker_host_ip}') {
+    if ($this->config['database']['host'] == '{docker_host_ip}') {
       $drupal_settings['databases']['default']['default']['host'] = $this->getDockerHostIP();
     }
 
     // Reverse proxy configuration.
-    if (isset($this->platform['reverse_proxy_addresses']) && count($this->platform['reverse_proxy_addresses'])) {
+    if ($this->config['platform']['reverse_proxy_addresses']) {
       $drupal_settings['settings']['reverse_proxy'] = TRUE;
-      $drupal_settings['settings']['reverse_proxy_addresses'] = $this->platform['reverse_proxy_addresses'];
-      if (isset($this->platform['reverse_proxy_header'])) {
-        $drupal_settings['settings']['reverse_proxy_header'] = $this->platform['reverse_proxy_header'];
+      $drupal_settings['settings']['reverse_proxy_addresses'] = $this->config['platform']['reverse_proxy_addresses'];
+      if ($this->config['platform']['reverse_proxy_header']) {
+        $drupal_settings['settings']['reverse_proxy_header'] = $this->config['platform']['reverse_proxy_header'];
       }
     }
 
-    // Add each local config parameter that appears in the keys list, making
-    // sure to wrap non top-level items in the settings array.
-    foreach ($this->drupal_settings_keys as $key) {
-      if (property_exists($this, $key)) {
-        if (in_array($key, $top_level_settings)) {
-          $drupal_settings[$key] = $this->{$key};
-        }
-        else {
-          $drupal_settings['settings'][$key] = $this->{$key};
-        }
-      }
-    }
-
-    // If there are any, merge in settings from config.json
-    if (property_exists($this, 'drupal_settings')) {
-      $drupal_settings = array_merge_recursive($drupal_settings, $this->drupal_settings);
-    }
-
-    return $this->exportDrupalSettings($drupal_settings, $top_level_settings);
+    $code = "<?php\n";
+    $code .= $this->generatePhpCodeFromArray($drupal_settings, 'settings');
+    return $code;
   }
 
   /**
-   * Export Drupal configuration from array format to generated PHP code.
+   * Generates php code from an array in a non clobbering recursive fashion.
    *
-   * @param $drupal_settings
-   *   The configuration to be exported.
-   * @param array $top_level_settings
-   *   Process these keys as stand-alone variables instead of $settings.
-   *
-   * @return string
-   *   Settings as PHP code.
+   * @param $array the array to convert to php code.
+   * @param $array_name the name to assign to the array variable.
+   * @param string $code code being generated.
+   * @param array $parents parent array keys.
+   * @return string $code the generated php code.
    */
-  protected function exportDrupalSettings($drupal_settings, $top_level_settings = []) {
-    // From the array, generate the PHP code.
-    $text = "<?php\n";
-    foreach ($drupal_settings as $key => $value) {
-      // The 'settings' key is treated differently to ensure it doesn't clobber.
-      if (in_array($key, $top_level_settings)) {
-        foreach ($value as $sub_key => $sub_value) {
-          $text .= '$' . $key . '[\'' . $sub_key . '\'] = ' . var_export($sub_value, TRUE) . ";\n";
-        }
+  protected function generatePhpCodeFromArray($array, $array_name, $code = '', $parents = []) {
+    foreach ($array as $key => $val) {
+      $new_parents = array_merge($parents,[$key]);
+      if (is_array($array[$key])) {
+        $code = $this->generatePhpCodeFromArray($val, $array_name, $code, $new_parents);
       }
       else {
-        $text .= '$' . $key . ' = ' . var_export($value, TRUE) . ";\n";
+        $code .= '$' . $array_name;
+        foreach($new_parents as $parent) {
+          $code .= '["' . $parent . '"]';
+        }
+        $code .= ' = "' . $val . '";' . "\n" ; // @TODO: escape quotes and slashes in both key and value.
       }
     }
-    return $text;
+    return $code;
   }
 
   /**
@@ -534,13 +499,13 @@ class RoboFileBase extends \Robo\Tasks {
    *   A database url of the format mysql://user:pass@host:port/db_name
    */
   private function getDatabaseUrl() {
-    $host = $this->database['host'];
-    if ($this->database['host'] == '{docker_host_ip}') {
+    $host = $this->config['database']['host'];
+    if ($host == '{docker_host_ip}') {
       $host = $this->getDockerHostIP();
     }
 
-    return $this->database['driver'] . '://' . $this->database['username'] . ':' .
-      $this->database['password'] . '@' . $host . ':' .
-      $this->database['port'] . '/' . $this->database['database'];
+    return $this->config['database']['driver'] . '://' . $this->config['database']['username'] . ':' .
+    $this->config['database']['password'] . '@' . $host . ':' .
+    $this->config['database']['port'] . '/' . $this->config['database']['database'];
   }
 }

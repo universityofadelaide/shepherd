@@ -1,0 +1,133 @@
+{
+  "database": {
+    "database": "local",
+    "driver": "mysql",
+    "host": "localhost",
+    "password": "drupal",
+    "port": "3306",
+    "username": "drupal"
+  },
+  "distribution": {
+    "box_type": "ua/lamp",
+    "git_repository": "git@gitlab.adelaide.edu.au:web-team/ua-d8-base-site.git",
+    "id": "0",
+    "uuid": ""
+  },
+  "drupal_config": {
+    "system.site": {
+      "name": "UA Drupal 8"
+    },
+    "ua_footer.authorized": {
+      "name": "authorizer_id",
+      "email": "authorizer@email.com"
+    },
+    "system.ua_menu": {
+      "top_menu_style": "mega_menu"
+    }
+  },
+  "drupal_settings": [],
+  "environment": {
+    "deployment_type": null,
+    "domain_name": null,
+    "id": "0",
+    "git_reference": "develop",
+    "machine_name": "dev",
+    "uuid": ""
+  },
+  "platform": {
+    "build_server": {
+      "hostname": "build.webapp.adelaide.edu.au",
+      "id": "0",
+      "ip_address": null,
+      "ipv6_address": null,
+      "port_range_start": "9000",
+      "port_range_end": "20000",
+      "uuid": ""
+    },
+    "docker_registry": "build.webapp.adelaide.edu.au:5000",
+    "id": "0",
+    "reverse_proxy_addresses": [],
+    "reverse_proxy_header": "X-Forwarded-For",
+    "task_runner": "jenkins",
+    "database_servers": [
+      {
+        "hostname": "prd-db1-dc1.services.adelaide.edu.au",
+        "id": "0",
+        "ip_address": null,
+        "ipv6_address": null,
+        "port_range_start": "9000",
+        "port_range_end": "20000",
+        "uuid": ""
+      },
+      {
+        "hostname": "prd-db1-dc2.services.adelaide.edu.au",
+        "id": "0",
+        "ip_address": null,
+        "ipv6_address": null,
+        "port_range_start": "9000",
+        "port_range_end": "20000",
+        "uuid": ""
+      }
+    ],
+    "uuid": "",
+    "web_servers": [
+      {
+        "hostname": "prd-dkr1-dc1.services.adelaide.edu.au",
+        "id": "0",
+        "ip_address": null,
+        "ipv6_address": null,
+        "port_range_start": "10000",
+        "port_range_end": "20000",
+        "uuid": ""
+      },
+      {
+        "hostname": "prd-dkr1-dc2.services.adelaide.edu.au",
+        "id": "0",
+        "ip_address": null,
+        "ipv6_address": null,
+        "port_range_start": "10000",
+        "port_range_end": "20000",
+        "uuid": ""
+      }
+    ]
+  },
+  "server": {
+    "hostname": "prd-dkr1-dc1.services.adelaide.edu.au",
+    "id": "0",
+    "ip_address": null,
+    "ipv6_address": null,
+    "port_range_start": "10000",
+    "port_range_end": "20000",
+    "uuid": ""
+  },
+  "site": {
+    "admin_email": "admin@localhost",
+    "admin_password": "password",
+    "admin_user": "admin",
+    "aliases": null,
+    "authorizer_email": "authorizer@email.com",
+    "authorizer_id": "authorizer_id",
+    "domain_name": "adelaide.edu.au",
+    "id": "0",
+    "keys": [],
+    "path": "sprint/11",
+    "site_token": "adelaide.edu.au#sprint111",
+    "site_title": "UA Drupal 8",
+    "top_menu_style": "mega_menu",
+    "uuid": ""
+  },
+  "site_instance": {
+    "git_reference": null,
+    "hostname": null,
+    "http_port": "10004",
+    "id": "0",
+    "ip_address": null,
+    "ipv6_address": null,
+    "ssh_port": "10005",
+    "state": "starting",
+    "uuid": ""
+  },
+  "site_manager": {
+    "hostname": "site-manager.webapp.adelaide.edu.au"
+  }
+}
