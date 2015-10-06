@@ -3,12 +3,14 @@ status: true
 dependencies:
   config:
     - core.entity_view_mode.node.teaser
+    - field.field.node.ua_sm_environment.field_ua_sm_custom_config
     - field.field.node.ua_sm_environment.field_ua_sm_database
     - field.field.node.ua_sm_environment.field_ua_sm_database_driver
     - field.field.node.ua_sm_environment.field_ua_sm_database_host
     - field.field.node.ua_sm_environment.field_ua_sm_database_password
     - field.field.node.ua_sm_environment.field_ua_sm_database_port
     - field.field.node.ua_sm_environment.field_ua_sm_database_username
+    - field.field.node.ua_sm_environment.field_ua_sm_deployment_type
     - field.field.node.ua_sm_environment.field_ua_sm_domain_name
     - field.field.node.ua_sm_environment.field_ua_sm_git_reference
     - field.field.node.ua_sm_environment.field_ua_sm_machine_name
@@ -25,12 +27,14 @@ content:
   links:
     weight: 100
 hidden:
+  field_ua_sm_custom_config: true
   field_ua_sm_database: true
   field_ua_sm_database_driver: true
   field_ua_sm_database_host: true
   field_ua_sm_database_password: true
   field_ua_sm_database_port: true
   field_ua_sm_database_username: true
+  field_ua_sm_deployment_type: true
   field_ua_sm_domain_name: true
   field_ua_sm_git_reference: true
   field_ua_sm_machine_name: true

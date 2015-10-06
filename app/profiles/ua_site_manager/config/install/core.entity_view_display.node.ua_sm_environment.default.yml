@@ -2,12 +2,14 @@ langcode: en
 status: true
 dependencies:
   config:
+    - field.field.node.ua_sm_environment.field_ua_sm_custom_config
     - field.field.node.ua_sm_environment.field_ua_sm_database
     - field.field.node.ua_sm_environment.field_ua_sm_database_driver
     - field.field.node.ua_sm_environment.field_ua_sm_database_host
     - field.field.node.ua_sm_environment.field_ua_sm_database_password
     - field.field.node.ua_sm_environment.field_ua_sm_database_port
     - field.field.node.ua_sm_environment.field_ua_sm_database_username
+    - field.field.node.ua_sm_environment.field_ua_sm_deployment_type
     - field.field.node.ua_sm_environment.field_ua_sm_domain_name
     - field.field.node.ua_sm_environment.field_ua_sm_git_reference
     - field.field.node.ua_sm_environment.field_ua_sm_machine_name
@@ -21,6 +23,12 @@ targetEntityType: node
 bundle: ua_sm_environment
 mode: default
 content:
+  field_ua_sm_custom_config:
+    weight: 13
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    type: basic_string
   field_ua_sm_database:
     weight: 6
     label: above
@@ -102,4 +110,5 @@ content:
     weight: 12
     settings: {  }
     third_party_settings: {  }
-hidden: {  }
+hidden:
+  field_ua_sm_deployment_type: true

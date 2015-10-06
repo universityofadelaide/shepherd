@@ -1,4 +1,5 @@
 {
+  "custom": null,
   "database": {
     "database": "local",
     "driver": "mysql",
@@ -13,19 +14,6 @@
     "id": "0",
     "uuid": ""
   },
-  "drupal_config": {
-    "system.site": {
-      "name": "UA Drupal 8"
-    },
-    "ua_footer.authorized": {
-      "name": "authorizer_id",
-      "email": "authorizer@email.com"
-    },
-    "system.ua_menu": {
-      "top_menu_style": "mega_menu"
-    }
-  },
-  "drupal_settings": [],
   "environment": {
     "deployment_type": null,
     "domain_name": null,
@@ -112,7 +100,7 @@
     "keys": [],
     "path": "sprint/11",
     "site_token": "adelaide.edu.au#sprint111",
-    "site_title": "UA Drupal 8",
+    "site_title": "Site Manager",
     "top_menu_style": "mega_menu",
     "uuid": ""
   },

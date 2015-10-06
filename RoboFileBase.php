@@ -183,13 +183,31 @@ class RoboFileBase extends \Robo\Tasks {
    * Apply site configuration.
    */
   public function buildApplyConfig() {
+    $custom_config = [
+      'system.site' => [
+        'name' => $this->config['site']['site_title'],
+      ],
+      'ua_footer.authorized' => [
+        'name' => $this->config['site']['authorizer_id'],
+        'email' => $this->config['site']['authorizer_email'],
+      ],
+      'system.ua_menu' => [
+        'top_menu_style' => $this->config['site']['top_menu_style'],
+      ],
+    ];
+
+    if ($this->config['custom']) {
+      $custom_config = array_merge($custom_config, $this->config['custom']);
+    }
+
     $task_stack = $this->taskExecStack();
-    foreach ($this->config['drupal_config'] as $drupal_config_name => $drupal_config_items) {
+    foreach ($custom_config as $drupal_config_name => $drupal_config_items) {
       foreach ($drupal_config_items as $key => $value) {
         $task_stack->exec($this->drush_cmd . ' cset ' . $drupal_config_name . ' ' . $key . ' "' . $value . '" -y');
       }
     }
     $task_stack->run();
+
     $this->devCacheRebuild();
     $this->say('Site configuration applied.');
   }

@@ -1,0 +1,18 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_ua_sm_custom_config
+    - node.type.ua_sm_environment
+id: node.ua_sm_environment.field_ua_sm_custom_config
+field_name: field_ua_sm_custom_config
+entity_type: node
+bundle: ua_sm_environment
+label: 'Custom configuration'
+description: 'Add custom configuration by entering JSON data.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string_long

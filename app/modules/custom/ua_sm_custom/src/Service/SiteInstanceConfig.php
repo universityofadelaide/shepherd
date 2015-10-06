@@ -57,6 +57,7 @@ class SiteInstanceConfig {
       }
 
       $config = [
+        'custom' => json_decode($environment->field_ua_sm_custom_config->value),
         'database' => [
           'database' => $environment->field_ua_sm_database->value,
           'driver' => $environment->field_ua_sm_database_driver->value,
@@ -71,19 +72,6 @@ class SiteInstanceConfig {
           'id' => $distribution->id(),
           'uuid' => $distribution->uuid(),
         ],
-        'drupal_config' => [
-          'system.site' => [
-            'name' => $site->field_ua_sm_site_title->value,
-          ],
-          'ua_footer.authorized' => [
-            'name' => $site->field_ua_sm_authorizer_id->value,
-            'email' => $site->field_ua_sm_authorizer_email->value,
-          ],
-          'system.ua_menu' => [
-            'top_menu_style' => $site->field_ua_sm_top_menu_style->value,
-          ],
-        ],
-        'drupal_settings' => [],
         'environment' => [
           'deployment_type' => $environment->field_ua_sm_deployment_type->value,
           'domain_name' => $environment->field_ua_sm_domain_name->value,

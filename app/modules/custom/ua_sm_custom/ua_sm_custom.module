@@ -236,6 +236,23 @@ function ua_sm_custom_node_delete(EntityInterface $entity) {
   }
 }
 
+
+/**
+ * Generates a password of 20 random alphanumeric characters.
+ *
+ * @return string $password the generated password.
+ */
+function ua_sm_custom_password_generator() {
+  $characters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+  $password = '';
+  $number_of_characters = strlen($characters);
+  for ($i = 0; $i < 20; $i++) {
+    $index = rand(0, $number_of_characters - 1);
+    $password .= $characters[$index];
+  }
+  return $password;
+}
+
 /**
  * Implements hook_entity_prepare_form().
  */
@@ -244,18 +261,18 @@ function ua_sm_custom_entity_prepare_form(EntityInterface $entity) {
 
     case 'ua_sm_site':
       $password_field = $entity->get('field_ua_sm_admin_password');
-      $password = $password_field->getValue();
+      $password = $password_field->value;
       if (!$password) {
-        $password = base64_encode(Crypt::randomBytes(12));
+        $password = ua_sm_custom_password_generator();
         $password_field->setValue($password);
       }
       break;
 
     case 'ua_sm_environment':
       $password_field = $entity->get('field_ua_sm_database_password');
-      $password = $password_field->getValue();
+      $password = $password_field->value;
       if (!$password) {
-        $password = base64_encode(Crypt::randomBytes(12));
+        $password = ua_sm_custom_password_generator();
         $password_field->setValue($password);
       }
       break;

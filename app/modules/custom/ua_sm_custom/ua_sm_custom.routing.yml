@@ -12,7 +12,6 @@ ua_sm_custom.site-instance-config:
     _controller: '\Drupal\ua_sm_custom\Controller\SiteConfigController::siteInstanceConfig'
   options:
     no_cache: TRUE
-    _auth: ['basic_auth']
   requirements:
     _permission: 'access content'
 ua_sm_custom.site_manager_settings:

@@ -22,7 +22,6 @@ class RoboFile extends RoboFileBase {
   public function __construct() {
     parent::__construct();
     // Put project specific overrides here, below the parent constructor.
-    $this->site['site_title'] = "Site Manager";
     $this->drupal_profile = "ua_site_manager";
   }
 
