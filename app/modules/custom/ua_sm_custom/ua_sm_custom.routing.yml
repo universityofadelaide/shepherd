@@ -11,9 +11,11 @@ ua_sm_custom.site-instance-config:
   defaults:
     _controller: '\Drupal\ua_sm_custom\Controller\SiteConfigController::siteInstanceConfig'
   options:
+    _auth: [ 'basic_auth', 'cookie' ]
     no_cache: TRUE
   requirements:
-    _permission: 'access content'
+    _user_is_logged_in: 'TRUE'
+    _access: 'TRUE'
 ua_sm_custom.site_manager_settings:
   path: '/admin/config/system/site-manager'
   defaults:
