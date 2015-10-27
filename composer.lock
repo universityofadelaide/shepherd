@@ -1120,7 +1120,7 @@
         },
         {
             "name": "drush/drush",
-            "version": "8.0.0-beta14",
+            "version": "8.0.0-beta15",
             "source": {
                 "type": "git",
                 "url": "https://github.com/drush-ops/drush.git",
