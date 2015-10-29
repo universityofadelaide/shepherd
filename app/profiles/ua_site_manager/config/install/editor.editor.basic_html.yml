@@ -1,3 +1,10 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - filter.format.basic_html
+  module:
+    - ckeditor
 format: basic_html
 editor: ckeditor
 settings:
@@ -24,7 +31,10 @@ settings:
           items:
             - Blockquote
             - DrupalImage
-            - Table
+        -
+          name: 'Block Formatting'
+          items:
+            - Format
         -
           name: Tools
           items:
@@ -40,10 +50,3 @@ image_upload:
   max_dimensions:
     width: 0
     height: 0
-status: true
-langcode: en
-dependencies:
-  config:
-    - filter.format.basic_html
-  module:
-    - ckeditor

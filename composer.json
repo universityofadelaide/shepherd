@@ -21,7 +21,7 @@
         "drush/drush": "8.*",
         "composer/installers": "^1.0.20",
         "cweagans/composer-patches": "~1.0",
-        "drupal/core": "8.0.0-beta15",
+        "drupal/core": "8.0.0-rc2",
         "drupal/cas": "8.1.*@dev",
         "drupal/diff": "8.1.*@dev",
         "drupal/entity_reference_revisions": "8.1.*@dev",
