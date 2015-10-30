@@ -15,6 +15,10 @@
         {
             "type": "composer",
             "url": "https://packagist.drupal-composer.org"
+        },
+        {
+            "type": "vcs",
+            "url": "git@gitlab.adelaide.edu.au:drupal-modules/ua_ldap_authorisation.git"
         }
     ],
     "require": {
@@ -27,7 +31,8 @@
         "drupal/entity_reference_revisions": "8.1.*@dev",
         "drupal/paragraphs": "dev-8.x-1.x",
         "drupal/r4032login": "8.1.*@dev",
-        "ua-drupal-modules/ua_ldap": "dev-develop"
+        "ua-drupal-modules/ua_ldap": "dev-develop",
+        "ua-drupal-modules/ua_ldap_authorisation": "dev-develop"
     },
     "require-dev": {
         "drupal/devel": "8.1.*@dev"
@@ -63,10 +68,12 @@
         },
         "patches": {
             "drupal/cas": {
-                "Setting to trigger CAS logout on Drupal logout": "https://www.drupal.org/files/issues/cas_2536128_3.patch"
+                "Redirect to CAS login failing on D8 RC2": "https://www.drupal.org/files/issues/2599416-1-cas-redirect-urlgenerator.patch",
+                "Setting to trigger CAS logout on Drupal logout": "https://www.drupal.org/files/issues/cas_2536128_8.patch"
             },
             "drupal/r4032login": {
-                "Override return destination parameter": "https://www.drupal.org/files/issues/r4032login_2534308_2.patch",
+                "Use generateFromRoute instead of generateFromPath, fixes D8 RC1 issue": "https://www.drupal.org/files/issues/generate_from_route.patch",
+                "Override return destination parameter": "https://www.drupal.org/files/issues/r4032login_2534308_3.patch",
                 "Redirection triggers for all kernel exceptions, not just 403": "https://www.drupal.org/files/issues/r4032login_cleaned_2534878_4.patch"
             }
         }

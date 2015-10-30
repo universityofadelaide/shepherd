@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "2588e3bdc0475dcc0da0914495291783",
+    "hash": "8e92718cc7fb28a025850e7e601153a7",
     "packages": [
         {
             "name": "composer/installers",
@@ -660,7 +660,8 @@
                     "dev-8.x-1.x": "8.1.x-dev"
                 },
                 "patches_applied": {
-                    "Setting to trigger CAS logout on Drupal logout": "https://www.drupal.org/files/issues/cas_2536128_3.patch"
+                    "Redirect to CAS login failing on D8 RC2": "https://www.drupal.org/files/issues/2599416-1-cas-redirect-urlgenerator.patch",
+                    "Setting to trigger CAS logout on Drupal logout": "https://www.drupal.org/files/issues/cas_2536128_8.patch"
                 }
             },
             "notification-url": "https://packagist.drupal-composer.org/downloads/",
@@ -952,7 +953,8 @@
                     "dev-8.x-1.x": "8.1.x-dev"
                 },
                 "patches_applied": {
-                    "Override return destination parameter": "https://www.drupal.org/files/issues/r4032login_2534308_2.patch",
+                    "Use generateFromRoute instead of generateFromPath, fixes D8 RC1 issue": "https://www.drupal.org/files/issues/generate_from_route.patch",
+                    "Override return destination parameter": "https://www.drupal.org/files/issues/r4032login_2534308_3.patch",
                     "Redirection triggers for all kernel exceptions, not just 403": "https://www.drupal.org/files/issues/r4032login_cleaned_2534878_4.patch"
                 }
             },
@@ -2723,16 +2725,16 @@
         },
         {
             "name": "twig/twig",
-            "version": "v1.22.3",
+            "version": "v1.23.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/twigphp/Twig.git",
-                "reference": "ebfc36b7e77b0c1175afe30459cf943010245540"
+                "reference": "5868cd822fd6cf626d5f805439575f9c323cee2a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/twigphp/Twig/zipball/ebfc36b7e77b0c1175afe30459cf943010245540",
-                "reference": "ebfc36b7e77b0c1175afe30459cf943010245540",
+                "url": "https://api.github.com/repos/twigphp/Twig/zipball/5868cd822fd6cf626d5f805439575f9c323cee2a",
+                "reference": "5868cd822fd6cf626d5f805439575f9c323cee2a",
                 "shasum": ""
             },
             "require": {
@@ -2745,7 +2747,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.22-dev"
+                    "dev-master": "1.23-dev"
                 }
             },
             "autoload": {
@@ -2780,7 +2782,7 @@
             "keywords": [
                 "templating"
             ],
-            "time": "2015-10-13 07:07:02"
+            "time": "2015-10-29 23:29:01"
         },
         {
             "name": "ua-drupal-modules/ua_ldap",
@@ -2799,6 +2801,24 @@
             ],
             "description": "Provides configuration and services to interact with LDAP.",
             "time": "2015-08-19 02:02:20"
+        },
+        {
+            "name": "ua-drupal-modules/ua_ldap_authorisation",
+            "version": "dev-develop",
+            "source": {
+                "type": "git",
+                "url": "git@gitlab.adelaide.edu.au:drupal-modules/ua_ldap_authorisation.git",
+                "reference": "04dd522b3d289941681ff32378da50f7c3e8095b"
+            },
+            "type": "drupal-module",
+            "license": [
+                "GPL-2.0+"
+            ],
+            "description": "Synchronises controlled roles for a user with LDAP, which is administered through UA Site Manager.",
+            "keywords": [
+                "Drupal"
+            ],
+            "time": "2015-08-19 02:05:32"
         },
         {
             "name": "zendframework/zend-diactoros",
@@ -3179,6 +3199,7 @@
         "drupal/paragraphs": 20,
         "drupal/r4032login": 20,
         "ua-drupal-modules/ua_ldap": 20,
+        "ua-drupal-modules/ua_ldap_authorisation": 20,
         "drupal/devel": 20
     },
     "prefer-stable": true,

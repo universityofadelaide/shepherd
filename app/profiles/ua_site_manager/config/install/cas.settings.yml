@@ -1,6 +1,6 @@
 server:
   version: '2.0'
-  hostname: login-uat.adelaide.edu.au
+  hostname: login-prodnpc.adelaide.edu.au
   port: 443
   path: /cas
   cert: ''
@@ -11,20 +11,20 @@ gateway:
     pages: ''
     negate: false
 forced_login:
-  enabled: false
+  enabled: true
   paths:
     id: request_path
-    pages: ''
+    pages: 'user/login'
     negate: false
 redirection:
   logout_destination: ''
 proxy:
   initialize: false
   can_be_proxied: false
-  chains: {  }
   proxy_chains: ''
 user_accounts:
   auto_register: true
 debugging:
   log: 0
-
+logout:
+  cas_logout: true

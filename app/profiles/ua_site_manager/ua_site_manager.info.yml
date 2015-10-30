@@ -42,7 +42,9 @@ dependencies:
   - entity_reference_revisions
   - hal
   - paragraphs
+  - r4032login
   - ua_ldap
+  - ua_ldap_authorisation
   - ua_sm_custom
   - ua_sm_drush_aliases
 themes:
