@@ -56,6 +56,10 @@ class SiteAliases {
             'uri' => $environment->field_ua_sm_domain_name->value,
             'remote_host' => $site_instance->field_ua_sm_hostname->value,
             'ssh_port' => $site_instance->field_ua_sm_ssh_port->value,
+            'path-aliases' => [
+              '%drush' => '/web/vendor/drush/drush',
+              '%drush-script' => '/web/bin/drush',
+            ],
           ];
         }
       }
