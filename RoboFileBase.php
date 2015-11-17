@@ -120,7 +120,7 @@ class RoboFileBase extends \Robo\Tasks {
     // Disable xdebug while running "composer install".
     $this->devXdebugDisable(['no-restart' => TRUE]);
     $this->_exec("$this->composer_bin install " .
-      ($this->prefer_dist ? '--prefer-dist --no-progress' : '--prefer-source'));
+      ($this->prefer_dist ? '--prefer-dist --no-progress' : ''));
     $this->devXdebugEnable(['no-restart' => TRUE]);
   }
 
@@ -451,7 +451,7 @@ class RoboFileBase extends \Robo\Tasks {
     $drupal_settings = [];
 
     // Set site_id in php file so that it is immutable.
-    $drupal_settings['site_id'] = $this->config['site']['id'];
+    $drupal_settings['settings']['site_id'] = $this->config['site']['id'];
 
     // Format Drupal specific database settings.
     $drupal_settings['databases']['default']['default'] = $this->config['database'];
@@ -473,7 +473,7 @@ class RoboFileBase extends \Robo\Tasks {
     }
 
     $code = "<?php\n";
-    $code .= $this->generatePhpCodeFromArray($drupal_settings, 'settings');
+    $code .= $this->generatePhpCodeFromArray($drupal_settings);
     return $code;
   }
 
@@ -481,23 +481,35 @@ class RoboFileBase extends \Robo\Tasks {
    * Generates php code from an array in a non clobbering recursive fashion.
    *
    * @param $array the array to convert to php code.
-   * @param $array_name the name to assign to the array variable.
    * @param string $code code being generated.
    * @param array $parents parent array keys.
    * @return string $code the generated php code.
    */
-  protected function generatePhpCodeFromArray($array, $array_name, $code = '', $parents = []) {
+  protected function generatePhpCodeFromArray($array, $code = '', $parents = []) {
     foreach ($array as $key => $val) {
-      $new_parents = array_merge($parents,[$key]);
+      $new_parents = array_merge($parents, [$key]);
       if (is_array($array[$key])) {
-        $code = $this->generatePhpCodeFromArray($val, $array_name, $code, $new_parents);
+        $code = $this->generatePhpCodeFromArray($val, $code, $new_parents);
       }
       else {
-        $code .= '$' . $array_name;
-        foreach($new_parents as $parent) {
-          $code .= '["' . $parent . '"]';
+        // @TODO: escape quotes and slashes in key and value.
+        foreach($new_parents as $index => $parent) {
+          if ($index == 0) {
+            $code .= '$' . $parent;
+          }
+          else if (is_int($parent)) {
+            $code .= '[' . $parent . ']';
+          }
+          else {
+            $code .= '["' . $parent . '"]';
+          }
         }
-        $code .= ' = "' . $val . '";' . "\n" ; // @TODO: escape quotes and slashes in both key and value.
+        if (is_bool($val)) {
+          $code .= ' = ' . ($val ? 'TRUE' : 'FALSE') . ';' . "\n";
+        }
+        else {
+          $code .= ' = "' . $val . '";' . "\n";
+        }
       }
     }
     return $code;
