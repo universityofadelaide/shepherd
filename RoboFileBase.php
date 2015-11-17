@@ -450,8 +450,8 @@ class RoboFileBase extends \Robo\Tasks {
   protected function generateDrupalSettings() {
     $drupal_settings = [];
 
-    // Set site_token in php file so that it is immutable.
-    $drupal_settings['site_token'] = $this->config['site']['site_token'];
+    // Set site_id in php file so that it is immutable.
+    $drupal_settings['site_id'] = $this->config['site']['id'];
 
     // Format Drupal specific database settings.
     $drupal_settings['databases']['default']['default'] = $this->config['database'];

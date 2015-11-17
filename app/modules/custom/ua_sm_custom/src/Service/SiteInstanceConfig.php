@@ -103,7 +103,6 @@ class SiteInstanceConfig {
           'id' => $site->id(),
           'keys' => $keys,
           'path' => $site->field_ua_sm_path->value,
-          'site_token' => $site->field_ua_sm_site_token->value,
           'site_title' => $site->field_ua_sm_site_title->value,
           'top_menu_style' => $site->field_ua_sm_top_menu_style->value,
           'uuid' => $site->uuid(),

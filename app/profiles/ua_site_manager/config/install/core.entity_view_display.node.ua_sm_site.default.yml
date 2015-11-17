@@ -15,7 +15,6 @@ dependencies:
     - field.field.node.ua_sm_site.field_ua_sm_instance_log
     - field.field.node.ua_sm_site.field_ua_sm_path
     - field.field.node.ua_sm_site.field_ua_sm_site_title
-    - field.field.node.ua_sm_site.field_ua_sm_site_token
     - field.field.node.ua_sm_site.field_ua_sm_top_menu_style
     - field.field.node.ua_sm_site.field_ua_sm_users
     - node.type.ua_sm_site
@@ -120,13 +119,6 @@ content:
   field_ua_sm_site_title:
     type: string
     weight: 0
-    settings:
-      link_to_entity: false
-    third_party_settings: {  }
-    label: inline
-  field_ua_sm_site_token:
-    type: string
-    weight: 3
     settings:
       link_to_entity: false
     third_party_settings: {  }

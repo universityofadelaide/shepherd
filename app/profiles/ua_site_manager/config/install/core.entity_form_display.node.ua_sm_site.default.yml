@@ -14,7 +14,6 @@ dependencies:
     - field.field.node.ua_sm_site.field_ua_sm_domain_name
     - field.field.node.ua_sm_site.field_ua_sm_instance_log
     - field.field.node.ua_sm_site.field_ua_sm_path
-    - field.field.node.ua_sm_site.field_ua_sm_site_token
     - field.field.node.ua_sm_site.field_ua_sm_site_title
     - field.field.node.ua_sm_site.field_ua_sm_top_menu_style
     - field.field.node.ua_sm_site.field_ua_sm_users
@@ -122,13 +121,6 @@ content:
   field_ua_sm_site_title:
     type: string_textfield
     weight: 1
-    settings:
-      size: 60
-      placeholder: ''
-    third_party_settings: {  }
-  field_ua_sm_site_token:
-    type: string_textfield
-    weight: 18
     settings:
       size: 60
       placeholder: ''
