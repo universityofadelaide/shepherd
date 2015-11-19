@@ -4,21 +4,24 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "8e92718cc7fb28a025850e7e601153a7",
+    "hash": "5c8f93765a97cc990de02b02689b8e6e",
     "packages": [
         {
             "name": "composer/installers",
-            "version": "v1.0.21",
+            "version": "v1.0.22",
             "source": {
                 "type": "git",
                 "url": "https://github.com/composer/installers.git",
-                "reference": "d64e23fce42a4063d63262b19b8e7c0f3b5e4c45"
+                "reference": "bd9b14f094c89c8b5804a4e41edeb7853bb85046"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/composer/installers/zipball/d64e23fce42a4063d63262b19b8e7c0f3b5e4c45",
-                "reference": "d64e23fce42a4063d63262b19b8e7c0f3b5e4c45",
+                "url": "https://api.github.com/repos/composer/installers/zipball/bd9b14f094c89c8b5804a4e41edeb7853bb85046",
+                "reference": "bd9b14f094c89c8b5804a4e41edeb7853bb85046",
                 "shasum": ""
+            },
+            "require": {
+                "composer-plugin-api": "1.0.0"
             },
             "replace": {
                 "roundcube/plugin-installer": "*",
@@ -28,9 +31,9 @@
                 "composer/composer": "1.0.*@dev",
                 "phpunit/phpunit": "4.1.*"
             },
-            "type": "composer-installer",
+            "type": "composer-plugin",
             "extra": {
-                "class": "Composer\\Installers\\Installer",
+                "class": "Composer\\Installers\\Plugin",
                 "branch-alias": {
                     "dev-master": "1.0-dev"
                 }
@@ -99,33 +102,33 @@
                 "zend",
                 "zikula"
             ],
-            "time": "2015-02-18 17:17:01"
+            "time": "2015-10-29 23:28:48"
         },
         {
             "name": "composer/semver",
-            "version": "1.0.0",
+            "version": "1.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/composer/semver.git",
-                "reference": "d0e1ccc6d44ab318b758d709e19176037da6b1ba"
+                "reference": "0faeb6e433f6b352f0dc55ec1faf5c6b605a35d3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/composer/semver/zipball/d0e1ccc6d44ab318b758d709e19176037da6b1ba",
-                "reference": "d0e1ccc6d44ab318b758d709e19176037da6b1ba",
+                "url": "https://api.github.com/repos/composer/semver/zipball/0faeb6e433f6b352f0dc55ec1faf5c6b605a35d3",
+                "reference": "0faeb6e433f6b352f0dc55ec1faf5c6b605a35d3",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.3.2"
+                "php": "^5.3.2 || ^7.0"
             },
             "require-dev": {
-                "phpunit/phpunit": "~4.5",
-                "phpunit/phpunit-mock-objects": "~2.3"
+                "phpunit/phpunit": "^4.5 || ^5.0.5",
+                "phpunit/phpunit-mock-objects": "2.3.0 || ^3.0"
             },
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "0.1-dev"
+                    "dev-master": "1.x-dev"
                 }
             },
             "autoload": {
@@ -139,10 +142,6 @@
             ],
             "authors": [
                 {
-                    "name": "Rob Bast",
-                    "email": "rob.bast@gmail.com"
-                },
-                {
                     "name": "Nils Adermann",
                     "email": "naderman@naderman.de",
                     "homepage": "http://www.naderman.de"
@@ -151,6 +150,11 @@
                     "name": "Jordi Boggiano",
                     "email": "j.boggiano@seld.be",
                     "homepage": "http://seld.be"
+                },
+                {
+                    "name": "Rob Bast",
+                    "email": "rob.bast@gmail.com",
+                    "homepage": "http://robbast.nl"
                 }
             ],
             "description": "Semver library that offers utilities, version constraint parsing and validation.",
@@ -160,7 +164,7 @@
                 "validation",
                 "versioning"
             ],
-            "time": "2015-09-21 09:42:36"
+            "time": "2015-11-10 11:17:42"
         },
         {
             "name": "cweagans/composer-patches",
@@ -309,16 +313,16 @@
         },
         {
             "name": "doctrine/cache",
-            "version": "v1.5.0",
+            "version": "v1.5.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/doctrine/cache.git",
-                "reference": "eb8a73619af4f1c8711e2ce482f5de3643258a1f"
+                "reference": "2b9cec5a5e722010cbebc91713d4c11eaa064d5e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/doctrine/cache/zipball/eb8a73619af4f1c8711e2ce482f5de3643258a1f",
-                "reference": "eb8a73619af4f1c8711e2ce482f5de3643258a1f",
+                "url": "https://api.github.com/repos/doctrine/cache/zipball/2b9cec5a5e722010cbebc91713d4c11eaa064d5e",
+                "reference": "2b9cec5a5e722010cbebc91713d4c11eaa064d5e",
                 "shasum": ""
             },
             "require": {
@@ -375,7 +379,7 @@
                 "cache",
                 "caching"
             ],
-            "time": "2015-10-28 11:27:45"
+            "time": "2015-11-02 18:35:48"
         },
         {
             "name": "doctrine/collections",
@@ -518,16 +522,16 @@
         },
         {
             "name": "doctrine/inflector",
-            "version": "v1.0.1",
+            "version": "v1.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/doctrine/inflector.git",
-                "reference": "0bcb2e79d8571787f18b7eb036ed3d004908e604"
+                "reference": "90b2128806bfde671b6952ab8bea493942c1fdae"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/doctrine/inflector/zipball/0bcb2e79d8571787f18b7eb036ed3d004908e604",
-                "reference": "0bcb2e79d8571787f18b7eb036ed3d004908e604",
+                "url": "https://api.github.com/repos/doctrine/inflector/zipball/90b2128806bfde671b6952ab8bea493942c1fdae",
+                "reference": "90b2128806bfde671b6952ab8bea493942c1fdae",
                 "shasum": ""
             },
             "require": {
@@ -539,7 +543,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.0.x-dev"
+                    "dev-master": "1.1.x-dev"
                 }
             },
             "autoload": {
@@ -581,7 +585,7 @@
                 "singularize",
                 "string"
             ],
-            "time": "2014-12-20 21:24:13"
+            "time": "2015-11-06 14:35:42"
         },
         {
             "name": "doctrine/lexer",
@@ -643,13 +647,7 @@
             "source": {
                 "type": "git",
                 "url": "http://git.drupal.org/project/cas",
-                "reference": "94a68c2433a0e3162266f0be86ff32351fcaedfe"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "http://ftp.drupal.org/files/projects/cas-8.x-1.x-dev.zip",
-                "reference": null,
-                "shasum": null
+                "reference": "f667c12c08e3767402093ae38e61cf334540bf93"
             },
             "require": {
                 "drupal/core": "8.*"
@@ -659,23 +657,20 @@
                 "branch-alias": {
                     "dev-8.x-1.x": "8.1.x-dev"
                 },
-                "patches_applied": {
-                    "Redirect to CAS login failing on D8 RC2": "https://www.drupal.org/files/issues/2599416-1-cas-redirect-urlgenerator.patch",
-                    "Setting to trigger CAS logout on Drupal logout": "https://www.drupal.org/files/issues/cas_2536128_8.patch"
-                }
+                "patches_applied": []
             },
             "notification-url": "https://packagist.drupal-composer.org/downloads/",
             "description": "Provides CAS authentication for Drupal.",
             "homepage": "https://www.drupal.org/project/cas",
-            "time": "2015-08-07 13:10:33"
+            "time": "2015-11-11 15:27:51"
         },
         {
             "name": "drupal/core",
-            "version": "8.0.0-rc2",
+            "version": "8.0.0-rc4",
             "source": {
                 "type": "git",
                 "url": "git@gitlab.adelaide.edu.au:web-team/drupal-core.git",
-                "reference": "e62f2ffac550c315388548e08e9e7f75daff1b27"
+                "reference": "579ea858831d4ab1224715656cb37731f239a26e"
             },
             "require": {
                 "composer/semver": "~1.0",
@@ -701,7 +696,7 @@
                 "symfony/translation": "2.7.*",
                 "symfony/validator": "2.7.*",
                 "symfony/yaml": "2.7.*",
-                "twig/twig": "^1.22.2",
+                "twig/twig": "^1.23.1",
                 "zendframework/zend-diactoros": "~1.1",
                 "zendframework/zend-feed": "~2.4"
             },
@@ -755,6 +750,7 @@
                 "drupal/help": "self.version",
                 "drupal/history": "self.version",
                 "drupal/image": "self.version",
+                "drupal/inline_form_errors": "self.version",
                 "drupal/language": "self.version",
                 "drupal/link": "self.version",
                 "drupal/locale": "self.version",
@@ -795,6 +791,8 @@
             "require-dev": {
                 "behat/mink": "~1.6",
                 "behat/mink-goutte-driver": "~1.2",
+                "jcalderonzumba/gastonjs": "^1.1@dev",
+                "jcalderonzumba/mink-phantomjs-driver": "dev-master#10d7c48c9a4129463052321b52450d98983c4332",
                 "mikey179/vfsstream": "~1.2",
                 "phpunit/phpunit": "~4.8",
                 "symfony/css-selector": "2.7.*"
@@ -830,7 +828,7 @@
                 "GPL-2.0+"
             ],
             "description": "Drupal is an open source content management platform powering millions of websites and applications.",
-            "time": "2015-10-21 22:51:01"
+            "time": "2015-11-13 11:21:34"
         },
         {
             "name": "drupal/diff",
@@ -838,13 +836,7 @@
             "source": {
                 "type": "git",
                 "url": "http://git.drupal.org/project/diff",
-                "reference": "18f37384b789fbb8c75f882025946ff3c8bbc3d1"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "http://ftp.drupal.org/files/projects/diff-8.x-1.x-dev.zip",
-                "reference": null,
-                "shasum": null
+                "reference": "1bc7470507673193f02c2798f5dc2eb87a7fa896"
             },
             "require": {
                 "drupal/core": "8.*"
@@ -858,19 +850,19 @@
             "notification-url": "https://packagist.drupal-composer.org/downloads/",
             "description": "Shows differences between content revisions.",
             "homepage": "https://www.drupal.org/project/diff",
-            "time": "2015-10-21 22:15:46"
+            "time": "2015-11-15 23:17:10"
         },
         {
             "name": "drupal/entity_reference_revisions",
-            "version": "8.1.0-rc1",
+            "version": "8.1.0-rc4",
             "source": {
                 "type": "git",
                 "url": "http://git.drupal.org/project/entity_reference_revisions.git",
-                "reference": "da25d87e5df5fab2f6a164f2849a4e2139a28b02"
+                "reference": "6a811cd957fa3cd0f22ac9a9f788fae1fd79d520"
             },
             "dist": {
                 "type": "zip",
-                "url": "http://ftp.drupal.org/files/projects/entity_reference_revisions-8.x-1.0-rc1.zip",
+                "url": "http://ftp.drupal.org/files/projects/entity_reference_revisions-8.x-1.0-rc4.zip",
                 "reference": null,
                 "shasum": null
             },
@@ -893,13 +885,7 @@
             "source": {
                 "type": "git",
                 "url": "http://git.drupal.org/project/paragraphs",
-                "reference": "d1bf863241f3b7e64332c2cdd262f6bcb299f403"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "http://ftp.drupal.org/files/projects/paragraphs-8.x-1.x-dev.zip",
-                "reference": null,
-                "shasum": null
+                "reference": "740874bacb56a6a90683e7818c06ba77a638125c"
             },
             "require": {
                 "drupal/core": "8.*",
@@ -928,7 +914,7 @@
             "notification-url": "https://packagist.drupal-composer.org/downloads/",
             "description": "Implements the Paragraphs entity types, Entity Reference selection type and Entity Reference field widget.",
             "homepage": "https://www.drupal.org/project/paragraphs",
-            "time": "2015-10-11 12:10:08"
+            "time": "2015-11-17 13:21:21"
         },
         {
             "name": "drupal/r4032login",
@@ -965,28 +951,28 @@
         },
         {
             "name": "drush/drush",
-            "version": "8.0.0-rc2",
+            "version": "8.0.0-rc4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/drush-ops/drush.git",
-                "reference": "5cb73ea2f51cbfb60ddb2e37b94e4260e8c7d1e7"
+                "reference": "c4d2dc35b0df3a5f4c3f71f72fc0135da9d92035"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/drush-ops/drush/zipball/5cb73ea2f51cbfb60ddb2e37b94e4260e8c7d1e7",
-                "reference": "5cb73ea2f51cbfb60ddb2e37b94e4260e8c7d1e7",
+                "url": "https://api.github.com/repos/drush-ops/drush/zipball/c4d2dc35b0df3a5f4c3f71f72fc0135da9d92035",
+                "reference": "c4d2dc35b0df3a5f4c3f71f72fc0135da9d92035",
                 "shasum": ""
             },
             "require": {
                 "pear/console_table": "~1.2.0",
                 "php": ">=5.4.5",
-                "psy/psysh": "~0.5",
+                "psy/psysh": "~0.6",
                 "symfony/var-dumper": "^2.6.3",
-                "symfony/yaml": "~2.2"
+                "symfony/yaml": "2.7.*"
             },
             "require-dev": {
                 "phpunit/phpunit": ">=3.5",
-                "symfony/process": "2.4.5"
+                "symfony/process": "2.7.*"
             },
             "suggest": {
                 "drush/config-extra": "Provides configuration workflow commands, such as config-merge.",
@@ -1050,7 +1036,7 @@
             ],
             "description": "Drush is a command line shell and scripting interface for Drupal, a veritable Swiss Army knife designed to make life easier for those of us who spend some of our working hours hacking away at the command prompt.",
             "homepage": "http://www.drush.org",
-            "time": "2015-10-22 19:25:14"
+            "time": "2015-11-16 03:14:11"
         },
         {
             "name": "easyrdf/easyrdf",
@@ -1116,16 +1102,16 @@
         },
         {
             "name": "egulias/email-validator",
-            "version": "1.2.10",
+            "version": "1.2.11",
             "source": {
                 "type": "git",
                 "url": "https://github.com/egulias/EmailValidator.git",
-                "reference": "de448a30fa78f2dc93889be529e875a13c6034ac"
+                "reference": "04c6cdf9871140b80947c87db7770c0dd9c75c7c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/egulias/EmailValidator/zipball/de448a30fa78f2dc93889be529e875a13c6034ac",
-                "reference": "de448a30fa78f2dc93889be529e875a13c6034ac",
+                "url": "https://api.github.com/repos/egulias/EmailValidator/zipball/04c6cdf9871140b80947c87db7770c0dd9c75c7c",
+                "reference": "04c6cdf9871140b80947c87db7770c0dd9c75c7c",
                 "shasum": ""
             },
             "require": {
@@ -1165,7 +1151,7 @@
                 "validation",
                 "validator"
             ],
-            "time": "2015-10-11 22:34:23"
+            "time": "2015-11-11 03:28:32"
         },
         {
             "name": "guzzlehttp/guzzle",
@@ -1282,16 +1268,16 @@
         },
         {
             "name": "guzzlehttp/psr7",
-            "version": "1.2.0",
+            "version": "1.2.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/guzzle/psr7.git",
-                "reference": "4ef919b0cf3b1989523138b60163bbcb7ba1ff7e"
+                "reference": "4d0bdbe1206df7440219ce14c972aa57cc5e4982"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/guzzle/psr7/zipball/4ef919b0cf3b1989523138b60163bbcb7ba1ff7e",
-                "reference": "4ef919b0cf3b1989523138b60163bbcb7ba1ff7e",
+                "url": "https://api.github.com/repos/guzzle/psr7/zipball/4d0bdbe1206df7440219ce14c972aa57cc5e4982",
+                "reference": "4d0bdbe1206df7440219ce14c972aa57cc5e4982",
                 "shasum": ""
             },
             "require": {
@@ -1336,7 +1322,7 @@
                 "stream",
                 "uri"
             ],
-            "time": "2015-08-15 19:32:36"
+            "time": "2015-11-03 01:34:55"
         },
         {
             "name": "jakub-onderka/php-console-color",
@@ -1679,29 +1665,29 @@
         },
         {
             "name": "psy/psysh",
-            "version": "v0.5.2",
+            "version": "v0.6.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/bobthecow/psysh.git",
-                "reference": "aaf8772ade08b5f0f6830774a5d5c2f800415975"
+                "reference": "0f04df0b23663799a8941fae13cd8e6299bde3ed"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/bobthecow/psysh/zipball/aaf8772ade08b5f0f6830774a5d5c2f800415975",
-                "reference": "aaf8772ade08b5f0f6830774a5d5c2f800415975",
+                "url": "https://api.github.com/repos/bobthecow/psysh/zipball/0f04df0b23663799a8941fae13cd8e6299bde3ed",
+                "reference": "0f04df0b23663799a8941fae13cd8e6299bde3ed",
                 "shasum": ""
             },
             "require": {
                 "dnoegel/php-xdg-base-dir": "0.1",
                 "jakub-onderka/php-console-highlighter": "0.3.*",
-                "nikic/php-parser": "^1.2.1",
+                "nikic/php-parser": "^1.2.1|~2.0",
                 "php": ">=5.3.9",
                 "symfony/console": "~2.3.10|^2.4.2|~3.0",
                 "symfony/var-dumper": "~2.7|~3.0"
             },
             "require-dev": {
                 "fabpot/php-cs-fixer": "~1.5",
-                "phpunit/phpunit": "~3.7|~4.0",
+                "phpunit/phpunit": "~3.7|~4.0|~5.0",
                 "squizlabs/php_codesniffer": "~2.0",
                 "symfony/finder": "~2.1|~3.0"
             },
@@ -1717,15 +1703,15 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-develop": "0.6.x-dev"
+                    "dev-develop": "0.7.x-dev"
                 }
             },
             "autoload": {
                 "files": [
                     "src/Psy/functions.php"
                 ],
-                "psr-0": {
-                    "Psy\\": "src/"
+                "psr-4": {
+                    "Psy\\": "src/Psy/"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -1747,7 +1733,7 @@
                 "interactive",
                 "shell"
             ],
-            "time": "2015-07-16 15:26:57"
+            "time": "2015-11-12 16:18:56"
         },
         {
             "name": "stack/builder",
@@ -2725,16 +2711,16 @@
         },
         {
             "name": "twig/twig",
-            "version": "v1.23.0",
+            "version": "v1.23.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/twigphp/Twig.git",
-                "reference": "5868cd822fd6cf626d5f805439575f9c323cee2a"
+                "reference": "d9b6333ae8dd2c8e3fd256e127548def0bc614c6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/twigphp/Twig/zipball/5868cd822fd6cf626d5f805439575f9c323cee2a",
-                "reference": "5868cd822fd6cf626d5f805439575f9c323cee2a",
+                "url": "https://api.github.com/repos/twigphp/Twig/zipball/d9b6333ae8dd2c8e3fd256e127548def0bc614c6",
+                "reference": "d9b6333ae8dd2c8e3fd256e127548def0bc614c6",
                 "shasum": ""
             },
             "require": {
@@ -2782,7 +2768,7 @@
             "keywords": [
                 "templating"
             ],
-            "time": "2015-10-29 23:29:01"
+            "time": "2015-11-05 12:49:06"
         },
         {
             "name": "ua-drupal-modules/ua_ldap",
@@ -3147,13 +3133,7 @@
             "source": {
                 "type": "git",
                 "url": "http://git.drupal.org/project/devel",
-                "reference": "21a48a0da183fe1407989c5ced6ef04d071c02f8"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "http://ftp.drupal.org/files/projects/devel-8.x-1.x-dev.zip",
-                "reference": null,
-                "shasum": null
+                "reference": "fe3e6de67a953866a1b0e5b2227d1daee5586fd9"
             },
             "require": {
                 "drupal/core": "8.*"
@@ -3161,10 +3141,11 @@
             "replace": {
                 "drupal/devel_generate": "self.version",
                 "drupal/devel_node_access": "self.version",
-                "drupal/kint": "self.version"
+                "drupal/kint": "self.version",
+                "drupal/webprofiler": "self.version"
             },
             "suggest": {
-                "drupal/core": "Required by drupal/devel_generate, drupal/devel_node_access, drupal/kint",
+                "drupal/core": "Required by drupal/devel_generate, drupal/devel_node_access, drupal/kint, drupal/webprofiler",
                 "drupal/menu_ui": "Required by drupal/devel_node_access"
             },
             "type": "drupal-module",
@@ -3187,7 +3168,7 @@
             ],
             "description": "Various blocks, pages, and functions for developers.",
             "homepage": "http://drupal.org/project/devel",
-            "time": "2015-10-21 11:19:33"
+            "time": "2015-11-16 23:48:13"
         }
     ],
     "aliases": [],
