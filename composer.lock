@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "5c8f93765a97cc990de02b02689b8e6e",
+    "hash": "d958596ae645829f1dc83ef0fa0c2347",
     "packages": [
         {
             "name": "composer/installers",
@@ -656,8 +656,7 @@
             "extra": {
                 "branch-alias": {
                     "dev-8.x-1.x": "8.1.x-dev"
-                },
-                "patches_applied": []
+                }
             },
             "notification-url": "https://packagist.drupal-composer.org/downloads/",
             "description": "Provides CAS authentication for Drupal.",
@@ -666,11 +665,11 @@
         },
         {
             "name": "drupal/core",
-            "version": "8.0.0-rc4",
+            "version": "8.0.0",
             "source": {
                 "type": "git",
                 "url": "git@gitlab.adelaide.edu.au:web-team/drupal-core.git",
-                "reference": "579ea858831d4ab1224715656cb37731f239a26e"
+                "reference": "a595eef13ba4625ff842a5986e838c41f6ff98ef"
             },
             "require": {
                 "composer/semver": "~1.0",
@@ -828,7 +827,7 @@
                 "GPL-2.0+"
             ],
             "description": "Drupal is an open source content management platform powering millions of websites and applications.",
-            "time": "2015-11-13 11:21:34"
+            "time": "2015-11-19 14:02:15"
         },
         {
             "name": "drupal/diff",
@@ -951,16 +950,16 @@
         },
         {
             "name": "drush/drush",
-            "version": "8.0.0-rc4",
+            "version": "8.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/drush-ops/drush.git",
-                "reference": "c4d2dc35b0df3a5f4c3f71f72fc0135da9d92035"
+                "reference": "1b4e8861ddd4a55775a26214225bee97f09b9d2b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/drush-ops/drush/zipball/c4d2dc35b0df3a5f4c3f71f72fc0135da9d92035",
-                "reference": "c4d2dc35b0df3a5f4c3f71f72fc0135da9d92035",
+                "url": "https://api.github.com/repos/drush-ops/drush/zipball/1b4e8861ddd4a55775a26214225bee97f09b9d2b",
+                "reference": "1b4e8861ddd4a55775a26214225bee97f09b9d2b",
                 "shasum": ""
             },
             "require": {
@@ -1032,11 +1031,19 @@
                 {
                     "name": "Christopher Gervais",
                     "email": "chris@ergonlogic.com"
+                },
+                {
+                    "name": "Dave Reid",
+                    "email": "dave@davereid.net"
+                },
+                {
+                    "name": "Damian Lee",
+                    "email": "damiankloip@googlemail.com"
                 }
             ],
             "description": "Drush is a command line shell and scripting interface for Drupal, a veritable Swiss Army knife designed to make life easier for those of us who spend some of our working hours hacking away at the command prompt.",
             "homepage": "http://www.drush.org",
-            "time": "2015-11-16 03:14:11"
+            "time": "2015-11-19 19:37:36"
         },
         {
             "name": "easyrdf/easyrdf",
