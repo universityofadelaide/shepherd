@@ -1,0 +1,9 @@
+{
+  "name": "ua-drupal-modules/ua_sm_default_content",
+  "description": "Provides default Site Manager content for dev and testing.",
+  "type": "drupal-module",
+  "license": "GPL-2.0+",
+  "require": {
+    "drupal/default_content": "8.1.*@dev"
+  }
+}
