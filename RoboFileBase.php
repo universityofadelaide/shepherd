@@ -450,6 +450,11 @@ class RoboFileBase extends \Robo\Tasks {
   protected function generateDrupalSettings() {
     $drupal_settings = [];
 
+    // Enable fast 404.
+    $drupal_settings['config']['system.performance']['fast_404']['exclude_paths'] = '/\/(?:styles)|(?:system\/files)\//';
+    $drupal_settings['config']['system.performance']['fast_404']['paths'] = '/\.(?:txt|png|gif|jpe?g|css|js|ico|swf|flv|cgi|bat|pl|dll|exe|asp)$/i';
+    $drupal_settings['config']['system.performance']['fast_404']['html'] = '<!DOCTYPE html><html><head><title>404 Not Found</title></head><body><h1>Not Found</h1><p>The requested URL "@path" was not found on this server.</p></body></html>';
+
     // Set site_id in php file so that it is immutable.
     $drupal_settings['settings']['site_id'] = $this->config['site']['id'];
 
@@ -498,17 +503,17 @@ class RoboFileBase extends \Robo\Tasks {
             $code .= '$' . $parent;
           }
           else if (is_int($parent)) {
-            $code .= '[' . $parent . ']';
+            $code .= "[" . $parent . "]";
           }
           else {
-            $code .= '["' . $parent . '"]';
+            $code .= "['" . $parent . "']";
           }
         }
         if (is_bool($val)) {
           $code .= ' = ' . ($val ? 'TRUE' : 'FALSE') . ';' . "\n";
         }
         else {
-          $code .= ' = "' . $val . '";' . "\n";
+          $code .= " = '" . $val . "';" . "\n";
         }
       }
     }
