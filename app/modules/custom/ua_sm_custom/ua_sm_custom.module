@@ -125,6 +125,11 @@ function ua_sm_custom_node_insert(EntityInterface $entity) {
       }
       break;
 
+    case 'ua_sm_environment':
+      // Generate a hash salt and store it for each environment.
+      $entity->ua_sm_hash_salt->value = Crypt::randomBytesBase64(55);
+      break;
+
     case 'ua_sm_site_instance':
       if (\Drupal::config('ua_sm_custom.settings')->get('jenkins')['enabled']) {
         ua_sm_custom_run_job_and_post_comment('provision', $entity);

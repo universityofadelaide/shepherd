@@ -12,6 +12,7 @@ dependencies:
     - field.field.node.ua_sm_environment.field_ua_sm_deployment_type
     - field.field.node.ua_sm_environment.field_ua_sm_domain_name
     - field.field.node.ua_sm_environment.field_ua_sm_git_reference
+    - field.field.node.ua_sm_environment.field_ua_sm_hash_salt
     - field.field.node.ua_sm_environment.field_ua_sm_machine_name
     - field.field.node.ua_sm_environment.field_ua_sm_platform
     - field.field.node.ua_sm_environment.field_ua_sm_site
@@ -24,48 +25,48 @@ bundle: ua_sm_environment
 mode: default
 content:
   field_ua_sm_custom_config:
-    weight: 13
+    weight: 12
     label: above
     settings: {  }
     third_party_settings: {  }
     type: basic_string
   field_ua_sm_database:
-    weight: 6
+    weight: 5
     label: above
     settings:
       link_to_entity: false
     third_party_settings: {  }
     type: string
   field_ua_sm_database_driver:
-    weight: 11
-    label: above
-    settings:
-      link_to_entity: false
-    third_party_settings: {  }
-    type: string
-  field_ua_sm_database_host:
-    weight: 9
-    label: above
-    settings:
-      link_to_entity: false
-    third_party_settings: {  }
-    type: string
-  field_ua_sm_database_password:
-    weight: 8
-    label: above
-    settings:
-      link_to_entity: false
-    third_party_settings: {  }
-    type: string
-  field_ua_sm_database_port:
     weight: 10
     label: above
     settings:
       link_to_entity: false
     third_party_settings: {  }
     type: string
-  field_ua_sm_database_username:
+  field_ua_sm_database_host:
+    weight: 8
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    type: string
+  field_ua_sm_database_password:
     weight: 7
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    type: string
+  field_ua_sm_database_port:
+    weight: 9
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    type: string
+  field_ua_sm_database_username:
+    weight: 6
     label: above
     settings:
       link_to_entity: false
@@ -79,7 +80,7 @@ content:
     third_party_settings: {  }
     type: string
   field_ua_sm_git_reference:
-    weight: 5
+    weight: 4
     label: above
     settings:
       link_to_entity: false
@@ -107,8 +108,9 @@ content:
     third_party_settings: {  }
     type: entity_reference_label
   links:
-    weight: 12
+    weight: 11
     settings: {  }
     third_party_settings: {  }
 hidden:
   field_ua_sm_deployment_type: true
+  field_ua_sm_hash_salt: true

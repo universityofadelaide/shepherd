@@ -6,6 +6,8 @@
 
 use Drupal\user\Entity\User;
 use Drupal\user\RoleInterface;
+use Drupal\field\Entity\FieldStorageConfig;
+use Drupal\field\Entity\FieldConfig;
 
 /**
  * Implements hook_install().
@@ -61,4 +63,39 @@ function ua_site_manager_install() {
 
   // Enable the admin theme.
   \Drupal::configFactory()->getEditable('node.settings')->set('use_admin_theme', TRUE)->save(TRUE);
+}
+
+/**
+ * Implements hook_update_N().
+ *
+ * Add the hash salt field to the environment entity.
+ */
+function ua_site_manager_update_8001(&$sandbox) {
+  $field_storage = FieldStorageConfig::create([
+    'entity_type' => 'node',
+    'type' => 'string',
+    'field_name' => 'field_ua_sm_hash_salt',
+    'cardinality' => 1,
+  ]);
+  $field_storage->save();
+
+  $field = FieldConfig::create([
+    'entity_type' => 'node',
+    'bundle' => 'ua_sm_environment',
+    'field_name' => 'field_ua_sm_hash_salt',
+    'label' => t('Hash salt'),
+  ]);
+  $field->save();
+
+  $entity_form_display = \Drupal::entityTypeManager()
+    ->getStorage('entity_form_display')
+    ->load('node.ua_sm_environment.default');
+  $entity_form_display->removeComponent('field_ua_sm_hash_salt')
+    ->save();
+
+  $entity_view_display = \Drupal::entityTypeManager()
+    ->getStorage('entity_view_display')
+    ->load('node.ua_sm_environment.default');
+  $entity_view_display->removeComponent('field_ua_sm_hash_salt')
+    ->save();
 }

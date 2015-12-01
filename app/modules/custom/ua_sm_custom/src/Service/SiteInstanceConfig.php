@@ -75,8 +75,9 @@ class SiteInstanceConfig {
         'environment' => [
           'deployment_type' => $environment->field_ua_sm_deployment_type->value,
           'domain_name' => $environment->field_ua_sm_domain_name->value,
-          'id' => $environment->id(),
           'git_reference' => $environment->field_ua_sm_git_reference->value,
+          'hash_salt' => $environment->ua_sm_hash_salt->value,
+          'id' => $environment->id(),
           'machine_name' => $environment->field_ua_sm_machine_name->value,
           'uuid' => $environment->uuid(),
         ],
