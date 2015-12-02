@@ -19,6 +19,7 @@
     "domain_name": null,
     "id": "0",
     "git_reference": "develop",
+    "hash_salt": "bu2OyFrEZ-12eOYU4gdt-0LpX9rRY4slqu6HQcRVVaYME1zwT6ZEgCYE6b9OOHJdihTmYCyrXw",
     "machine_name": "dev",
     "uuid": ""
   },
@@ -99,7 +100,7 @@
     "id": "0",
     "keys": [],
     "path": "sprint/11",
-    "site_title": "Site Manager",
+    "site_title": "Site name",
     "top_menu_style": "mega_menu",
     "uuid": ""
   },

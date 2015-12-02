@@ -59,16 +59,27 @@ class RoboFileBase extends \Robo\Tasks {
     $this->handleOptions($opts);
     $this->buildMake($opts);
     $this->buildInstall();
+    $this->writeLocalSettings();
+    $this->includeLocalSettings();
+    $this->setAdminPassword();
     $this->buildApplyConfig();
     $this->say('Total build duration: ' . date_diff(new DateTime(), $start)->format('%im %Ss'));
   }
 
   /**
-   * Perform a build for automated deployments.
-   *
-   * Don't install anything, just build everything.
+   * @deprecated Will be removed once all projects move to current RoboFileBase.
    */
   public function buildAuto($opts = ['prefer-dist' => TRUE]) {
+    $this->handleOptions($opts);
+    $this->distributionBuild($opts);
+  }
+
+  /**
+   * Perform a build for automated deployments.
+   *
+   * Don't install anything, just build the code base.
+   */
+  public function distributionBuild($opts = ['prefer-dist' => TRUE]) {
     $this->handleOptions($opts);
     $this->buildKeys();
     $this->buildMake($opts);
@@ -89,12 +100,31 @@ class RoboFileBase extends \Robo\Tasks {
   }
 
   /**
-   * Install the site on the target host.
+   * @deprecated Will be removed once all projects move to current RoboFileBase.
    */
-  public function buildTarget($opts = ['prefer-dist' => TRUE]) {
-    $this->handleOptions($opts);
+  public function buildTarget() {
+    $this->environmentBuild();
+  }
+
+  /**
+   * Install a brand new site for a given environment.
+   */
+  public function environmentBuild() {
     $this->buildInstall();
+    $this->writeLocalSettings();
+    $this->includeLocalSettings();
+    $this->setAdminPassword();
     $this->buildApplyConfig();
+  }
+
+  /**
+   * Rebuild the environment image.
+   *
+   * I.e. Deploy a new release.
+   */
+  public function environmentRebuild() {
+    $this->writeLocalSettings();
+    $this->includeLocalSettings();
   }
 
   /**
@@ -125,40 +155,26 @@ class RoboFileBase extends \Robo\Tasks {
   }
 
   /**
-   * Clean config and files, then install Drupal and module dependencies.
+   * Create a file for all local configuration.
    */
-  public function buildInstall() {
-    if (is_dir("$this->application_root/sites/default")) {
-      $this->devConfigWriteable();
-      $this->_exec("sudo rm -fR $this->application_root/default/files");
-    }
-    $this->taskFilesystemStack()
-      ->copy("$this->application_root/sites/default/default.settings.php",
-        "$this->settings_php",
-        TRUE)
-      ->copy("$this->application_root/sites/default/default.services.yml",
-        "$this->services_yml",
-        TRUE)
-      ->run();
+  public function writeLocalSettings() {
+    $this->devConfigWriteable();
 
     $this->say("Creating settings.local.php");
     $this->taskWriteToFile("$this->application_root/sites/default/settings.local.php")
       ->text($this->generateDrupalSettings())
       ->run();
 
-    $this->_exec("$this->drush_cmd site-install $this->drupal_profile -y" .
-      " --db-url=" . $this->getDatabaseUrl() .
-      " --account-mail=" . $this->config['site']['admin_email'] .
-      " --account-name=" . $this->config['site']['admin_user'] .
-      " --account-pass=" . $this->config['site']['admin_password'] .
-      " --site-name='" . $this->config['site']['site_title'] . "'");
+    $this->devConfigReadOnly();
+  }
 
-    // Undo some of site-install's good work.
-    $this->say("Creating settings.local.php");
-
-    // Allow us to write to settings.php.
+  /**
+   * Clean up settings.php and include the local settings file.
+   */
+  public function includeLocalSettings() {
     $this->devConfigWriteable();
 
+    $this->say("Creating default settings.php file");
     $this->taskReplaceInFile("$this->application_root/sites/default/settings.php")
       ->regex('/\$databases = array.*?\(.*?\);/s')
       ->to('$databases = [];')
@@ -172,6 +188,30 @@ class RoboFileBase extends \Robo\Tasks {
         "}\n" .
         "## END LOCAL CONFIG ##\n\n")
       ->run();
+
+    // Re-set settings.php permissions.
+    $this->devConfigReadOnly();
+  }
+
+  /**
+   * Set the administrative user password.
+   */
+  public function setAdminPassword() {
+    $this->_exec("$this->drush_cmd user-password admin --password=" . $this->config['site']['admin_password']);
+  }
+
+  /**
+   * Clean config and files, then install Drupal and module dependencies.
+   */
+  public function buildInstall() {
+    $this->devConfigWriteable();
+
+    $this->_exec("$this->drush_cmd site-install $this->drupal_profile -y" .
+      " --db-url=" . $this->getDatabaseUrl() .
+      " --account-mail=" . $this->config['site']['admin_email'] .
+      " --account-name=" . $this->config['site']['admin_user'] .
+      " --account-pass=" . $this->config['site']['admin_password'] .
+      " --site-name='" . $this->config['site']['site_title'] . "'");
 
     // Re-set settings.php permissions.
     $this->devConfigReadOnly();
@@ -457,6 +497,9 @@ class RoboFileBase extends \Robo\Tasks {
 
     // Set site_id in php file so that it is immutable.
     $drupal_settings['settings']['site_id'] = $this->config['site']['id'];
+
+    // Set the hash_salt from config.
+    $drupal_settings['settings']['hash_salt'] = $this->config['environment']['hash_salt'];
 
     // Format Drupal specific database settings.
     $drupal_settings['databases']['default']['default'] = $this->config['database'];
