@@ -38,6 +38,13 @@ function ua_sm_custom_node_presave(Node $entity) {
       ua_sm_custom_ports($entity);
       break;
 
+    case 'ua_sm_environment':
+      if ($entity->isNew()) {
+        // Generate a hash salt and store it for each new environment.
+        $entity->field_ua_sm_hash_salt->value = Crypt::randomBytesBase64(55);
+      }
+      break;
+
     default:
   }
 }
@@ -123,11 +130,6 @@ function ua_sm_custom_node_insert(EntityInterface $entity) {
           ->syncUsers($entity->id());
         // todo: deal with failure - consider a queue.
       }
-      break;
-
-    case 'ua_sm_environment':
-      // Generate a hash salt and store it for each environment.
-      $entity->ua_sm_hash_salt->value = Crypt::randomBytesBase64(55);
       break;
 
     case 'ua_sm_site_instance':
