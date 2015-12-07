@@ -39,7 +39,7 @@ function ua_sm_custom_node_presave(Node $entity) {
       break;
 
     case 'ua_sm_environment':
-      if ($entity->isNew()) {
+      if ($entity->field_ua_sm_hash_salt->isEmpty()) {
         // Generate a hash salt and store it for each new environment.
         $entity->field_ua_sm_hash_salt->value = Crypt::randomBytesBase64(55);
       }
