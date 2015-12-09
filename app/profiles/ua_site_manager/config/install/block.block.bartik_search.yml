@@ -16,4 +16,9 @@ settings:
   label: Search
   provider: search
   label_display: visible
-visibility: {  }
+visibility:
+  request_path:
+    id: request_path
+    pages: /site-instances
+    negate: true
+    context_mapping: {  }
