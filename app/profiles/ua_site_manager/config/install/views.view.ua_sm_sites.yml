@@ -3,11 +3,14 @@ status: true
 dependencies:
   config:
     - field.storage.node.field_tags
-    - field.storage.node.field_ua_sm_path
     - field.storage.node.field_ua_sm_domain_name
+    - field.storage.node.field_ua_sm_environment
+    - field.storage.node.field_ua_sm_path
+    - field.storage.node.field_ua_sm_users
     - node.type.ua_sm_site
     - taxonomy.vocabulary.tags
   module:
+    - entity_reference_revisions
     - node
     - taxonomy
     - user
@@ -301,68 +304,14 @@ display:
           separator: ', '
           field_api_classes: false
           plugin_id: field
-        created:
-          id: created
-          table: node_field_data
-          field: created
+        field_ua_sm_environment:
+          id: field_ua_sm_environment
+          table: node__field_ua_sm_environment
+          field: field_ua_sm_environment
           relationship: none
           group_type: group
           admin_label: ''
-          label: 'Created on'
-          exclude: false
-          alter:
-            alter_text: false
-            text: ''
-            make_link: false
-            path: ''
-            absolute: false
-            external: false
-            replace_spaces: false
-            path_case: none
-            trim_whitespace: false
-            alt: ''
-            rel: ''
-            link_class: ''
-            prefix: ''
-            suffix: ''
-            target: ''
-            nl2br: false
-            max_length: 0
-            word_boundary: true
-            ellipsis: true
-            more_link: false
-            more_link_text: ''
-            more_link_path: ''
-            strip_tags: false
-            trim: false
-            preserve_tags: ''
-            html: false
-          element_type: ''
-          element_class: ''
-          element_label_type: ''
-          element_label_class: ''
-          element_label_colon: true
-          element_wrapper_type: ''
-          element_wrapper_class: ''
-          element_default_classes: true
-          empty: ''
-          hide_empty: false
-          empty_zero: false
-          hide_alter_empty: true
-          date_format: html_date
-          custom_date_format: ''
-          timezone: ''
-          entity_type: node
-          entity_field: created
-          plugin_id: date
-        field_tags:
-          id: field_tags
-          table: node__field_tags
-          field: field_tags
-          relationship: none
-          group_type: group
-          admin_label: ''
-          label: Tags
+          label: Environments
           exclude: false
           alter:
             alter_text: false
@@ -415,6 +364,132 @@ display:
           delta_reversed: false
           delta_first_last: false
           multi_type: separator
+          separator: ', '
+          field_api_classes: false
+          plugin_id: field
+        field_tags:
+          id: field_tags
+          table: node__field_tags
+          field: field_tags
+          relationship: none
+          group_type: group
+          admin_label: ''
+          label: Tags
+          exclude: true
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: true
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: target_id
+          type: entity_reference_label
+          settings:
+            link: true
+          group_column: target_id
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 0
+          delta_offset: 0
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
+          plugin_id: field
+        field_ua_sm_users:
+          id: field_ua_sm_users
+          table: node__field_ua_sm_users
+          field: field_ua_sm_users
+          relationship: none
+          group_type: group
+          admin_label: ''
+          label: Users
+          exclude: false
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: true
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: true
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: target_id
+          type: entity_reference_revisions_entity_view
+          settings:
+            view_mode: ua_sm_minified
+          group_column: ''
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 5
+          delta_offset: 0
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: ul
           separator: ', '
           field_api_classes: false
           plugin_id: field
@@ -476,7 +551,7 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
-          operator: allwords
+          operator: contains
           value: ''
           group: 1
           exposed: true
@@ -509,24 +584,24 @@ display:
           entity_type: node
           entity_field: title
           plugin_id: string
-        field_ua_sm_domain_name_value:
-          id: field_ua_sm_domain_name_value
-          table: node__field_ua_sm_domain_name
-          field: field_ua_sm_domain_name_value
+        field_ua_sm_site_title_value:
+          id: field_ua_sm_site_title_value
+          table: node__field_ua_sm_site_title
+          field: field_ua_sm_site_title_value
           relationship: none
           group_type: group
           admin_label: ''
-          operator: allwords
+          operator: contains
           value: ''
           group: 1
           exposed: true
           expose:
-            operator_id: field_ua_sm_domain_name_value_op
-            label: 'Primary domain name'
+            operator_id: field_ua_sm_site_title_value_op
+            label: 'Site title (field_ua_sm_site_title)'
             description: ''
             use_operator: false
-            operator: field_ua_sm_domain_name_value_op
-            identifier: field_ua_sm_domain_name_value
+            operator: field_ua_sm_site_title_value_op
+            identifier: field_ua_sm_site_title_value
             required: false
             remember: false
             multiple: false
@@ -547,24 +622,27 @@ display:
             default_group_multiple: {  }
             group_items: {  }
           plugin_id: string
-        field_ua_sm_path_value:
-          id: field_ua_sm_path_value
-          table: node__field_ua_sm_path
-          field: field_ua_sm_path_value
+        field_ua_sm_users_target_id:
+          id: field_ua_sm_users_target_id
+          table: node__field_ua_sm_users
+          field: field_ua_sm_users_target_id
           relationship: none
           group_type: group
           admin_label: ''
-          operator: allwords
-          value: ''
+          operator: '='
+          value:
+            min: ''
+            max: ''
+            value: ''
           group: 1
           exposed: true
           expose:
-            operator_id: field_ua_sm_path_value_op
-            label: Path
+            operator_id: field_ua_sm_users_target_id_op
+            label: Users
             description: ''
             use_operator: false
-            operator: field_ua_sm_path_value_op
-            identifier: field_ua_sm_path_value
+            operator: field_ua_sm_users_target_id_op
+            identifier: field_ua_sm_users_target_id
             required: false
             remember: false
             multiple: false
@@ -584,7 +662,7 @@ display:
             default_group: All
             default_group_multiple: {  }
             group_items: {  }
-          plugin_id: string
+          plugin_id: numeric
         field_tags_target_id:
           id: field_tags_target_id
           table: node__field_tags
@@ -605,7 +683,7 @@ display:
             identifier: field_tags_target_id
             required: false
             remember: false
-            multiple: false
+            multiple: true
             remember_roles:
               authenticated: authenticated
               anonymous: '0'
@@ -650,12 +728,18 @@ display:
       footer: {  }
       empty: {  }
       relationships: {  }
-      arguments: {  }
+      arguments:
+        field_tags_target_id:
+          id: field_tags_target_id
+          table: node__field_tags
+          field: field_tags_target_id
+          plugin_id: numeric
       display_extenders: {  }
       filter_groups:
         operator: AND
         groups:
           1: AND
+      use_ajax: true
     cache_metadata:
       contexts:
         - 'languages:language_content'
@@ -666,6 +750,13 @@ display:
         - 'user.node_grants:view'
         - user.permissions
       cacheable: false
+      max-age: 0
+      tags:
+        - 'config:field.storage.node.field_tags'
+        - 'config:field.storage.node.field_ua_sm_domain_name'
+        - 'config:field.storage.node.field_ua_sm_environment'
+        - 'config:field.storage.node.field_ua_sm_path'
+        - 'config:field.storage.node.field_ua_sm_users'
   page_1:
     display_plugin: page
     id: page_1
@@ -673,7 +764,7 @@ display:
     position: 1
     display_options:
       display_extenders: {  }
-      path: admin/content/sites
+      path: sites/list
       menu:
         type: tab
         title: Sites
@@ -692,3 +783,10 @@ display:
         - 'user.node_grants:view'
         - user.permissions
       cacheable: false
+      max-age: 0
+      tags:
+        - 'config:field.storage.node.field_tags'
+        - 'config:field.storage.node.field_ua_sm_domain_name'
+        - 'config:field.storage.node.field_ua_sm_environment'
+        - 'config:field.storage.node.field_ua_sm_path'
+        - 'config:field.storage.node.field_ua_sm_users'
