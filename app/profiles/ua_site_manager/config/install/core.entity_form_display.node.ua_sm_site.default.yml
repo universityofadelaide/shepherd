@@ -8,11 +8,13 @@ dependencies:
     - field.field.node.ua_sm_site.field_ua_sm_admin_password
     - field.field.node.ua_sm_site.field_ua_sm_admin_user
     - field.field.node.ua_sm_site.field_ua_sm_aliases
-    - field.field.node.ua_sm_site.field_ua_sm_authorizer_email
-    - field.field.node.ua_sm_site.field_ua_sm_authorizer_id
+    - field.field.node.ua_sm_site.field_ua_sm_authoriser_email
+    - field.field.node.ua_sm_site.field_ua_sm_authoriser_name
     - field.field.node.ua_sm_site.field_ua_sm_distribution
     - field.field.node.ua_sm_site.field_ua_sm_domain_name
     - field.field.node.ua_sm_site.field_ua_sm_instance_log
+    - field.field.node.ua_sm_site.field_ua_sm_maintainer_email
+    - field.field.node.ua_sm_site.field_ua_sm_maintainer_name
     - field.field.node.ua_sm_site.field_ua_sm_path
     - field.field.node.ua_sm_site.field_ua_sm_site_title
     - field.field.node.ua_sm_site.field_ua_sm_top_menu_style
@@ -50,21 +52,21 @@ content:
       placeholder: ''
     third_party_settings: {  }
   field_ua_sm_admin_email:
-    weight: 28
+    weight: 20
     settings:
       size: 60
       placeholder: ''
     third_party_settings: {  }
     type: string_textfield
   field_ua_sm_admin_password:
-    weight: 29
+    weight: 21
     settings:
       size: 60
       placeholder: ''
     third_party_settings: {  }
     type: string_textfield
   field_ua_sm_admin_user:
-    weight: 30
+    weight: 22
     settings:
       size: 60
       placeholder: ''
@@ -72,27 +74,27 @@ content:
     type: string_textfield
   field_ua_sm_aliases:
     type: string_textfield
+    weight: 4
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_ua_sm_authoriser_email:
+    type: string_textfield
     weight: 6
     settings:
       size: 60
       placeholder: ''
     third_party_settings: {  }
-  field_ua_sm_authorizer_email:
+  field_ua_sm_authoriser_name:
     type: string_textfield
-    weight: 8
-    settings:
-      size: 60
-      placeholder: ''
-    third_party_settings: {  }
-  field_ua_sm_authorizer_id:
-    type: string_textfield
-    weight: 7
+    weight: 5
     settings:
       size: 60
       placeholder: ''
     third_party_settings: {  }
   field_ua_sm_distribution:
-    weight: 27
+    weight: 19
     settings:
       match_operator: CONTAINS
       size: 60
@@ -100,7 +102,7 @@ content:
     third_party_settings: {  }
     type: entity_reference_autocomplete
   field_ua_sm_domain_name:
-    weight: 26
+    weight: 18
     settings:
       size: 60
       placeholder: ''
@@ -108,9 +110,23 @@ content:
     type: string_textfield
   field_ua_sm_instance_log:
     type: comment_default
-    weight: 19
+    weight: 17
     settings: {  }
     third_party_settings: {  }
+  field_ua_sm_maintainer_email:
+    weight: 8
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: string_textfield
+  field_ua_sm_maintainer_name:
+    weight: 7
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: string_textfield
   field_ua_sm_path:
     type: string_textfield
     weight: 2

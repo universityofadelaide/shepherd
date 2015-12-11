@@ -99,3 +99,101 @@ function ua_site_manager_update_8001(&$sandbox) {
   $entity_view_display->removeComponent('field_ua_sm_hash_salt')
     ->save();
 }
+
+/**
+ * Implements hook_update_N().
+ *
+ * Add the new authoriser and maintainer fields, remove old authorizer fields.
+ * Set the form and view weights.
+ */
+function ua_site_manager_update_8002(&$sandbox) {
+  // Remove authorizer email and ID.
+  $field = FieldConfig::load('node.ua_sm_site.field_ua_sm_authorizer_email');
+  $field->delete();
+  $field = FieldConfig::load('node.ua_sm_site.field_ua_sm_authorizer_id');
+  $field->delete();
+
+  // Authoriser email.
+  $field_storage = FieldStorageConfig::create([
+    'entity_type' => 'node',
+    'type' => 'string',
+    'field_name' => 'field_ua_sm_authoriser_email',
+    'cardinality' => 1,
+  ]);
+  $field_storage->save();
+
+  $field = FieldConfig::create([
+    'entity_type' => 'node',
+    'bundle' => 'ua_sm_site',
+    'description' => 'E.g. feedback@adelaide.edu.au.',
+    'field_name' => 'field_ua_sm_authoriser_email',
+    'label' => t('Authoriser email'),
+  ]);
+  $field->save();
+
+  // Authoriser name.
+  $field_storage = FieldStorageConfig::create([
+    'entity_type' => 'node',
+    'type' => 'string',
+    'field_name' => 'field_ua_sm_authoriser_name',
+    'cardinality' => 1,
+  ]);
+  $field_storage->save();
+
+  $field = FieldConfig::create([
+    'entity_type' => 'node',
+    'bundle' => 'ua_sm_site',
+    'description' => 'E.g. Director, Marketing and Communications.',
+    'field_name' => 'field_ua_sm_authoriser_name',
+    'label' => t('Authoriser name'),
+  ]);
+  $field->save();
+
+  // Maintainer email.
+  $field_storage = FieldStorageConfig::create([
+    'entity_type' => 'node',
+    'type' => 'string',
+    'field_name' => 'field_ua_sm_maintainer_email',
+    'cardinality' => 1,
+  ]);
+  $field_storage->save();
+
+  $field = FieldConfig::create([
+    'entity_type' => 'node',
+    'bundle' => 'ua_sm_site',
+    'description' => 'E.g. feedback@adelaide.edu.au.',
+    'field_name' => 'field_ua_sm_maintainer_email',
+    'label' => t('Maintainer email'),
+  ]);
+  $field->save();
+
+  // Maintainer name.
+  $field_storage = FieldStorageConfig::create([
+    'entity_type' => 'node',
+    'type' => 'string',
+    'field_name' => 'field_ua_sm_maintainer_name',
+    'cardinality' => 1,
+  ]);
+  $field_storage->save();
+
+  $field = FieldConfig::create([
+    'entity_type' => 'node',
+    'bundle' => 'ua_sm_site',
+    'description' => 'E.g. Director, Marketing and Communications.',
+    'field_name' => 'field_ua_sm_maintainer_name',
+    'label' => t('Maintainer name'),
+  ]);
+  $field->save();
+
+  $entity_form_display = \Drupal::entityTypeManager()
+    ->getStorage('entity_form_display')
+    ->load('node.ua_sm_site.default');
+  $entity_form_display->setComponent('field_ua_sm_authoriser_name', ['weight' => 7])
+    ->save();
+  $entity_form_display->setComponent('field_ua_sm_authoriser_email', ['weight' => 8])
+    ->save();
+  $entity_form_display->setComponent('field_ua_sm_maintainer_name', ['weight' => 8])
+    ->save();
+  $entity_form_display->setComponent('field_ua_sm_maintainer_email', ['weight' => 8])
+    ->save();
+}

@@ -53,12 +53,22 @@
 </tr>
 <tr>
 	<td>type</td>
-	<td>id=edit-field-ua-sm-authorizer-id-0-value</td>
+	<td>id=edit-field-ua-sm-authoriser-name-0-value</td>
 	<td>${siteauthid}</td>
 </tr>
 <tr>
 	<td>type</td>
-	<td>id=edit-field-ua-sm-authorizer-email-0-value</td>
+	<td>id=edit-field-ua-sm-authoriser-email-0-value</td>
+	<td>${siteid}@adelaide.edu.au</td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>id=edit-field-ua-sm-maintainer-name-0-value</td>
+	<td>${siteauthid}</td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>id=edit-field-ua-sm-maintainer-email-0-value</td>
 	<td>${siteid}@adelaide.edu.au</td>
 </tr>
 <tr>

@@ -201,14 +201,14 @@
             "value": "admin"
         }
     ],
-    "field_ua_sm_authorizer_email": [
+    "field_ua_sm_authoriser_email": [
         {
             "value": "facultyofhealth@adelaide.edu.au"
         }
     ],
-    "field_ua_sm_authorizer_id": [
+    "field_ua_sm_authoriser_name": [
         {
-            "value": "a124578"
+            "value": "Faculty of Health"
         }
     ],
     "field_ua_sm_domain_name": [
@@ -225,6 +225,16 @@
             "last_comment_uid": "1",
             "comment_count": "0",
             "lang": "en"
+        }
+    ],
+    "field_ua_sm_maintainer_email": [
+        {
+            "value": "facultyofhealth@adelaide.edu.au"
+        }
+    ],
+    "field_ua_sm_maintainer_name": [
+        {
+            "value": "Faculty of Health"
         }
     ],
     "field_ua_sm_path": [

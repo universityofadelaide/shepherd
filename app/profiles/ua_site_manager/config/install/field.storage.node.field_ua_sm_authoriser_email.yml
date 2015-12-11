@@ -3,8 +3,8 @@ status: true
 dependencies:
   module:
     - node
-id: node.field_ua_sm_authorizer_email
-field_name: field_ua_sm_authorizer_email
+id: node.field_ua_sm_authoriser_email
+field_name: field_ua_sm_authoriser_email
 entity_type: node
 type: string
 settings:

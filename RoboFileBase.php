@@ -227,9 +227,13 @@ class RoboFileBase extends \Robo\Tasks {
       'system.site' => [
         'name' => $this->config['site']['site_title'],
       ],
-      'ua_footer.authorized' => [
-        'name' => $this->config['site']['authorizer_id'],
-        'email' => $this->config['site']['authorizer_email'],
+      'ua_footer.authoriser' => [
+        'name' => $this->config['site']['authoriser_name'],
+        'email' => $this->config['site']['authoriser_email'],
+      ],
+      'ua_footer.maintainer' => [
+        'name' => $this->config['site']['maintainer_name'],
+        'email' => $this->config['site']['maintainer_email'],
       ],
       'system.ua_menu' => [
         'top_menu_style' => $this->config['site']['top_menu_style'],

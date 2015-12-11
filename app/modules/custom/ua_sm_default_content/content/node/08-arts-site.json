@@ -183,14 +183,14 @@
             "value": "admin"
         }
     ],
-    "field_ua_sm_authorizer_email": [
+    "field_ua_sm_authoriser_email": [
         {
             "value": "facultyofarts@adelaide.edu.au"
         }
     ],
-    "field_ua_sm_authorizer_id": [
+    "field_ua_sm_authoriser_name": [
         {
-            "value": "a1649767"
+            "value": "Faculty of Arts"
         }
     ],
     "field_ua_sm_domain_name": [
@@ -207,6 +207,16 @@
             "last_comment_uid": "1",
             "comment_count": "0",
             "lang": "en"
+        }
+    ],
+    "field_ua_sm_maintainer_email": [
+        {
+            "value": "facultyofarts@adelaide.edu.au"
+        }
+    ],
+    "field_ua_sm_maintainer_name": [
+        {
+            "value": "Faculty of Arts"
         }
     ],
     "field_ua_sm_path": [

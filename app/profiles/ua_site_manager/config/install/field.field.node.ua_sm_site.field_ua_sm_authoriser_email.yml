@@ -2,14 +2,14 @@ langcode: en
 status: true
 dependencies:
   config:
-    - field.storage.node.field_ua_sm_authorizer_id
+    - field.storage.node.field_ua_sm_authoriser_email
     - node.type.ua_sm_site
-id: node.ua_sm_site.field_ua_sm_authorizer_id
-field_name: field_ua_sm_authorizer_id
+id: node.ua_sm_site.field_ua_sm_authoriser_email
+field_name: field_ua_sm_authoriser_email
 entity_type: node
 bundle: ua_sm_site
-label: 'Authorizer ID'
-description: 'E.g. a1234567.'
+label: 'Authoriser email'
+description: 'E.g. feedback@adelaide.edu.au.'
 required: false
 translatable: false
 default_value:
