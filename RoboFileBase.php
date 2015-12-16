@@ -6,12 +6,10 @@
  * Implementation of class for Robo - http://robo.li/
  */
 
-use \Symfony\Component\Yaml\Yaml;
-
 /**
  * Class RoboFile.
  */
-class RoboFileBase extends \Robo\Tasks {
+abstract class RoboFileBase extends \Robo\Tasks {
 
   /**
    * Initialize config variables and apply overrides.
@@ -22,7 +20,7 @@ class RoboFileBase extends \Robo\Tasks {
     $this->composer_bin         = "/usr/local/bin/composer";
     $this->drush_bin            = "bin/drush";
     $this->drush_cmd            = "$this->drush_bin -r $this->application_root";
-    $this->phpcs_bin            = "bin/phpcs";
+    $this->phpcs_bin            = "phpcs";
     $this->webserver_restart    = "sudo service apache2 restart";
 
     $this->config_file          = "config.json";
@@ -30,14 +28,22 @@ class RoboFileBase extends \Robo\Tasks {
     $this->settings_php         = "$this->application_root/sites/default/settings.php";
     $this->services_yml         = "$this->application_root/sites/default/services.yml";
 
-    // Drupal specific config.
-    $this->drupal_profile       = "ua";
-
-    $this->prefer_dist          = FALSE;
+    $this->config_old_directory = 'config_old';
+    $this->config_new_directory = 'config_new';
 
     $this->config = [];
     $this->importConfig();
+
+    $this->drupal_profile       = '';
+    $this->setDrupalProfile();
   }
+
+  /**
+   * Force projects to declare which install profile to use.
+   *
+   * I.e. $this->drupal_profile = 'some_profile'.
+   */
+  protected abstract function setDrupalProfile();
 
   /**
    * Parse and import config.
@@ -46,18 +52,29 @@ class RoboFileBase extends \Robo\Tasks {
     if (file_exists($this->config_file)) {
       $this->config = json_decode(file_get_contents($this->config_file), TRUE);
     }
-    else {
+    elseif (file_exists($this->config_default_file)) {
       $this->config = json_decode(file_get_contents($this->config_default_file), TRUE);
     }
+    else {
+      $this->say('Unable to find config file');
+      exit(1);
+    }
+
+    if (!is_array($this->config)) {
+      $this->say('Unable to decode config file');
+      exit(1);
+    }
+
   }
 
   /**
    * Perform a full build on the project.
+   *
    */
-  public function build($opts = ['prefer-dist' => FALSE]) {
+  public function build() {
     $start = new DateTime();
-    $this->handleOptions($opts);
-    $this->buildMake($opts);
+    $this->buildMake();
+    $this->initLocalSettings();
     $this->buildInstall();
     $this->writeLocalSettings();
     $this->includeLocalSettings();
@@ -67,22 +84,25 @@ class RoboFileBase extends \Robo\Tasks {
   }
 
   /**
+   * Perform a build for automated deployments.
+   *
    * @deprecated Will be removed once all projects move to current RoboFileBase.
+   *
+   * @see distributionBuild()
    */
-  public function buildAuto($opts = ['prefer-dist' => TRUE]) {
-    $this->handleOptions($opts);
-    $this->distributionBuild($opts);
+  public function buildAuto() {
+    $this->distributionBuild();
   }
 
   /**
    * Perform a build for automated deployments.
    *
    * Don't install anything, just build the code base.
+   *
    */
-  public function distributionBuild($opts = ['prefer-dist' => TRUE]) {
-    $this->handleOptions($opts);
+  public function distributionBuild() {
     $this->buildKeys();
-    $this->buildMake($opts);
+    $this->buildMake();
   }
 
   /**
@@ -100,7 +120,11 @@ class RoboFileBase extends \Robo\Tasks {
   }
 
   /**
+   * Install a brand new site for a given environment.
+   *
    * @deprecated Will be removed once all projects move to current RoboFileBase.
+   *
+   * @see environmentBuild()
    */
   public function buildTarget() {
     $this->environmentBuild();
@@ -111,6 +135,7 @@ class RoboFileBase extends \Robo\Tasks {
    */
   public function environmentBuild() {
     $this->buildInstall();
+    $this->initLocalSettings();
     $this->writeLocalSettings();
     $this->includeLocalSettings();
     $this->setAdminPassword();
@@ -123,6 +148,7 @@ class RoboFileBase extends \Robo\Tasks {
    * I.e. Deploy a new release.
    */
   public function environmentRebuild() {
+    $this->initLocalSettings();
     $this->writeLocalSettings();
     $this->includeLocalSettings();
   }
@@ -143,15 +169,32 @@ class RoboFileBase extends \Robo\Tasks {
 
   /**
    * Run composer install to fetch the application code from dependencies.
+   *
    */
-  public function buildMake($opts = ['prefer-dist' => FALSE]) {
-    $this->handleOptions($opts);
+  public function buildMake() {
 
     // Disable xdebug while running "composer install".
     $this->devXdebugDisable(['no-restart' => TRUE]);
-    $this->_exec("$this->composer_bin install " .
-      ($this->prefer_dist ? '--prefer-dist --no-progress' : ''));
+    $this->_exec("$this->composer_bin install");
     $this->devXdebugEnable(['no-restart' => TRUE]);
+  }
+
+  /**
+   * Copy the default settings.
+   */
+  public function initLocalSettings() {
+    $this->devConfigWriteable();
+
+    $this->taskFilesystemStack()
+      ->copy("$this->application_root/sites/default/default.settings.php",
+        "$this->settings_php",
+        TRUE)
+      ->copy("$this->application_root/sites/default/default.services.yml",
+        "$this->services_yml",
+        TRUE)
+      ->run();
+
+    $this->devConfigReadOnly();
   }
 
   /**
@@ -327,6 +370,9 @@ class RoboFileBase extends \Robo\Tasks {
 
   /**
    * Remote debug enable.
+   *
+   * @param array $opts
+   *   Handle setting global variables with command line options.
    */
   public function devXdebugEnable($opts = ['no-restart' => FALSE]) {
     $this->_exec("sudo php5enmod xdebug");
@@ -337,6 +383,9 @@ class RoboFileBase extends \Robo\Tasks {
 
   /**
    * Remote debug disable.
+   *
+   * @param array $opts
+   *   Handle setting global variables with command line options.
    */
   public function devXdebugDisable($opts = ['no-restart' => FALSE]) {
     $this->_exec("sudo php5dismod xdebug");
@@ -346,7 +395,101 @@ class RoboFileBase extends \Robo\Tasks {
   }
 
   /**
-   * Restart Webserver.
+   * Export the current configuration to an 'old' directory.
+   */
+  public function configExportOld() {
+    $this->_exec("$this->drush_cmd -y cex --destination=" . $this->config_old_directory);
+  }
+
+  /**
+   * Export the current configuration to a 'new' directory.
+   */
+  public function configExportNew() {
+    $this->_exec("$this->drush_cmd -y cex --destination=" . $this->config_new_directory);
+  }
+
+  /**
+   * Synchronise the differences from the configured 'config_new' and 'config_old' directories
+   * into the install profile or a specific path.
+   *
+   * @param array $path
+   *   if the sync is to update an entity instead of a profile, the path can be passed in.
+   */
+  public function configSync($path) {
+    $config_sync_already_run = FALSE;
+    $output_path = $this->application_root . '/profiles/' . $this->drupal_profile . '/install';
+    $config_new_path = $this->application_root . '/' . $this->config_new_directory;
+
+    // If a path is passed in, use it to override the destination
+    if (!empty($path) && is_dir($path)) {
+      $output_path = $path;
+    }
+
+    $results_array = $this->configChanges();
+
+    $tasks = $this->taskFilesystemStack();
+
+    foreach ($results_array as $line) {
+      // Handle/remove blank lines.
+      $line = trim($line);
+      if (empty($line)) { continue; }
+
+      // Break up the line into fields and put the parts in their place.
+      $parts = explode(' ', $line);
+      $config_new_file = $parts[3];
+      $output_file_path = $output_path .
+        preg_replace("/^" . str_replace('/', '\/', $config_new_path) ."/", '', $config_new_file);
+
+      // If the source doesn't exist, we're removing it from the
+      // destination in the profile.
+      if (!file_exists($config_new_file)) {
+        if (file_exists($output_file_path)) {
+          $tasks->remove($output_file_path);
+        }
+        else {
+          $config_sync_already_run = TRUE;
+        }
+      }
+      else {
+        $tasks->copy($config_new_file, $output_file_path);
+      }
+    }
+
+    if ($config_sync_already_run) {
+      $this->say("Config sync already run?");
+    }
+
+    $tasks->run();
+  }
+
+  /**
+   * Display files changed between 'config_old' and 'config_new' directories.
+   *
+   * @param array $opts
+   *   specify whether to show the diff output or just list them.
+   * @return array
+   *   command output results.
+   *
+   */
+  public function configChanges($opts = ['show|s' => FALSE]) {
+    $output_style = '-qbr';
+    $config_old_path = $this->application_root . '/' . $this->config_old_directory;
+
+    if (isset($opts['show']) && $opts['show']) {
+      $output_style = '-ubr';
+    }
+
+    $results = $this->taskExec("diff -N -I 'uuid:.*' -I \"   - 'file:.*\" $output_style $config_old_path $config_old_path")
+      ->run()
+      ->getMessage();
+
+    $results_array = explode("\n", $results);
+
+    return $results_array;
+  }
+
+  /**
+   * Restart Web server.
    */
   public function devRestartWebserver() {
     $this->_exec($this->webserver_restart);
@@ -467,21 +610,14 @@ class RoboFileBase extends \Robo\Tasks {
    * Check if file exists and set permissions.
    *
    * @param FilesystemStack
-   * @param string File to modify.
-   * @param int Permissions. E.g. 0644.
+   * @param string $file
+   *   File to modify.
+   * @param int $permission
+   *   Permissions. E.g. 0644.
    */
   private function setPermissions($file_tasks, $file, $permission) {
     if (file_exists($file)) {
       $file_tasks->chmod($file, $permission);
-    }
-  }
-
-  /**
-   * Handle command line options.
-   */
-  private function handleOptions($opts) {
-    if (isset($opts['prefer-dist'])) {
-      $this->prefer_dist = (bool) $opts['prefer-dist'];
     }
   }
 
@@ -532,10 +668,14 @@ class RoboFileBase extends \Robo\Tasks {
   /**
    * Generates php code from an array in a non clobbering recursive fashion.
    *
-   * @param $array the array to convert to php code.
-   * @param string $code code being generated.
-   * @param array $parents parent array keys.
-   * @return string $code the generated php code.
+   * @param array $array
+   *   the array to convert to php code.
+   * @param string $code
+   *   code being generated.
+   * @param array $parents
+   *   parent array keys.
+   * @return string $code
+   *   the generated php code.
    */
   protected function generatePhpCodeFromArray($array, $code = '', $parents = []) {
     foreach ($array as $key => $val) {
@@ -557,10 +697,10 @@ class RoboFileBase extends \Robo\Tasks {
           }
         }
         if (is_bool($val)) {
-          $code .= ' = ' . ($val ? 'TRUE' : 'FALSE') . ';' . "\n";
+          $code .= ' = ' . ($val ? 'TRUE' : 'FALSE') . ";\n";
         }
         else {
-          $code .= " = '" . $val . "';" . "\n";
+          $code .= " = '" . $val . "';\n";
         }
       }
     }
@@ -589,8 +729,11 @@ class RoboFileBase extends \Robo\Tasks {
       $host = $this->getDockerHostIP();
     }
 
-    return $this->config['database']['driver'] . '://' . $this->config['database']['username'] . ':' .
-    $this->config['database']['password'] . '@' . $host . ':' .
-    $this->config['database']['port'] . '/' . $this->config['database']['database'];
+    return
+      $this->config['database']['driver'] . '://' .
+      $this->config['database']['username'] . ':' .
+      $this->config['database']['password'] . '@' . $host . ':' .
+      $this->config['database']['port'] . '/' .
+      $this->config['database']['database'];
   }
 }
