@@ -134,8 +134,8 @@ abstract class RoboFileBase extends \Robo\Tasks {
    * Install a brand new site for a given environment.
    */
   public function environmentBuild() {
-    $this->buildInstall();
     $this->initLocalSettings();
+    $this->buildInstall();
     $this->writeLocalSettings();
     $this->includeLocalSettings();
     $this->setAdminPassword();
