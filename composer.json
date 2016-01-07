@@ -6,10 +6,6 @@
     "repositories": [
         {
             "type": "vcs",
-            "url": "git@gitlab.adelaide.edu.au:web-team/drupal-core.git"
-        },
-        {
-            "type": "vcs",
             "url": "git@gitlab.adelaide.edu.au:drupal-modules/ua_ldap.git"
         },
         {
