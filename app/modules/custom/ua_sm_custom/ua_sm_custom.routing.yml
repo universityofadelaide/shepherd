@@ -23,3 +23,13 @@ ua_sm_custom.site_manager_settings:
     _title: 'Site Manager settings'
   requirements:
     _permission: 'administer account settings'
+ua_sm_custom.varnish-config:
+  path: '/api/varnish-config'
+  defaults:
+    _controller: '\Drupal\ua_sm_custom\Controller\SiteConfigController::varnishConfig'
+  options:
+    _auth: [ 'basic_auth', 'cookie' ]
+    no_cache: TRUE
+  requirements:
+    _user_is_logged_in: 'TRUE'
+    _access: 'TRUE'
