@@ -6,10 +6,27 @@
  * Implementation of class for Robo - http://robo.li/
  */
 
+include_once 'RoboFileDrupalDeployInterface.php';
+
 /**
  * Class RoboFile.
  */
-abstract class RoboFileBase extends \Robo\Tasks {
+abstract class RoboFileBase extends \Robo\Tasks implements RoboFileDrupalDeployInterface {
+
+  protected $application_root;
+  protected $composer_bin;
+  protected $drush_bin;
+  protected $drush_cmd;
+  protected $phpcs_bin;
+  protected $webserver_restart;
+  protected $config_file;
+  protected $config_default_file;
+  protected $settings_php;
+  protected $services_yml;
+  protected $config_old_directory;
+  protected $config_new_directory;
+  protected $config;
+  protected $drupal_profile;
 
   /**
    * Initialize config variables and apply overrides.
@@ -22,6 +39,11 @@ abstract class RoboFileBase extends \Robo\Tasks {
     $this->drush_cmd            = "$this->drush_bin -r $this->application_root";
     $this->phpcs_bin            = "phpcs";
     $this->webserver_restart    = "sudo service apache2 restart";
+
+    // Support PHP 5 and 7.
+    $php5 = strpos(PHP_VERSION, 5) === 0;
+    $this->phpenmod = $php5 ? 'php5enmod' : 'phpenmod';
+    $this->phpdismod = $php5 ? 'php5dismod' : 'phpdismod';
 
     $this->config_file          = "config.json";
     $this->config_default_file  = "config.default.json";
@@ -56,20 +78,16 @@ abstract class RoboFileBase extends \Robo\Tasks {
       $this->config = json_decode(file_get_contents($this->config_default_file), TRUE);
     }
     else {
-      $this->say('Unable to find config file');
-      exit(1);
+      $this->checkFail(FALSE, "Couldn't find any config files.");
     }
 
     if (!is_array($this->config)) {
-      $this->say('Unable to decode config file');
-      exit(1);
+      $this->checkFail(FALSE, "Couldn't decode config file.");
     }
-
   }
 
   /**
    * Perform a full build on the project.
-   *
    */
   public function build() {
     $start = new DateTime();
@@ -98,25 +116,10 @@ abstract class RoboFileBase extends \Robo\Tasks {
    * Perform a build for automated deployments.
    *
    * Don't install anything, just build the code base.
-   *
    */
   public function distributionBuild() {
     $this->buildKeys();
     $this->buildMake();
-  }
-
-  /**
-   * Populates authorized keys with keys inside config file.
-   */
-  public function buildKeys() {
-    $keys = $this->config['site']['keys'];
-    if ($keys) {
-      $add_keys_task = $this->taskWriteToFile($_SERVER['HOME'] . '/.ssh/authorized_keys');
-      foreach ($keys as $key) {
-        $add_keys_task->line($key);
-      }
-      $add_keys_task->run();
-    }
   }
 
   /**
@@ -154,6 +157,22 @@ abstract class RoboFileBase extends \Robo\Tasks {
   }
 
   /**
+   * Populates authorized keys with keys inside config file.
+   */
+  public function buildKeys() {
+    $keys = $this->config['site']['keys'];
+    if ($keys) {
+      $add_keys_task = $this->taskWriteToFile($_SERVER['HOME'] . '/.ssh/authorized_keys');
+      foreach ($keys as $key) {
+        $add_keys_task->line($key);
+      }
+      $successful = $add_keys_task->run()->wasSuccessful();
+
+      $this->checkFail($successful, 'copying authorized_keys for ssh access failed.');
+    }
+  }
+
+  /**
    * Clean the application root in preparation for a new build.
    */
   public function buildClean() {
@@ -169,14 +188,15 @@ abstract class RoboFileBase extends \Robo\Tasks {
 
   /**
    * Run composer install to fetch the application code from dependencies.
-   *
    */
   public function buildMake() {
 
     // Disable xdebug while running "composer install".
     $this->devXdebugDisable(['no-restart' => TRUE]);
-    $this->_exec("$this->composer_bin install");
+    $successful = $this->_exec("$this->composer_bin install")->wasSuccessful();
     $this->devXdebugEnable(['no-restart' => TRUE]);
+
+    $this->checkFail($successful, "Composer install failed.");
   }
 
   /**
@@ -185,16 +205,19 @@ abstract class RoboFileBase extends \Robo\Tasks {
   public function initLocalSettings() {
     $this->devConfigWriteable();
 
-    $this->taskFilesystemStack()
+    $successful = $this->taskFilesystemStack()
       ->copy("$this->application_root/sites/default/default.settings.php",
         "$this->settings_php",
         TRUE)
       ->copy("$this->application_root/sites/default/default.services.yml",
         "$this->services_yml",
         TRUE)
-      ->run();
+      ->run()
+      ->wasSuccessful();
 
     $this->devConfigReadOnly();
+
+    $this->checkFail($successful, "Couldn't copy default configuration files.");
   }
 
   /**
@@ -204,11 +227,14 @@ abstract class RoboFileBase extends \Robo\Tasks {
     $this->devConfigWriteable();
 
     $this->say("Creating settings.local.php");
-    $this->taskWriteToFile("$this->application_root/sites/default/settings.local.php")
+    $successful = $this->taskWriteToFile("$this->application_root/sites/default/settings.local.php")
       ->text($this->generateDrupalSettings())
-      ->run();
+      ->run()
+      ->wasSuccessful();
 
     $this->devConfigReadOnly();
+
+    $this->checkFail($successful, "Couldn't write settings.local.php");
   }
 
   /**
@@ -220,27 +246,23 @@ abstract class RoboFileBase extends \Robo\Tasks {
     $this->say("Creating default settings.php file");
     $this->taskReplaceInFile("$this->application_root/sites/default/settings.php")
       ->regex('/\$databases = array.*?\(.*?\);/s')
-      ->to('$databases = [];')
+      ->to('$databases = array();')
       ->run();
 
-    $this->taskWriteToFile("$this->application_root/sites/default/settings.php")
+    $successful = $this->taskWriteToFile("$this->application_root/sites/default/settings.php")
       ->append()
-      ->text("## START LOCAL CONFIG ##\n" .
+      ->text("/**\n * START LOCAL CONFIG \n */\n" .
         "if (file_exists(__DIR__ . '/settings.local.php')) {\n" .
         "  include __DIR__ . '/settings.local.php';\n" .
         "}\n" .
-        "## END LOCAL CONFIG ##\n\n")
-      ->run();
+        "/**\n * END LOCAL CONFIG \n */\n\n")
+      ->run()
+      ->wasSuccessful();
 
     // Re-set settings.php permissions.
     $this->devConfigReadOnly();
-  }
 
-  /**
-   * Set the administrative user password.
-   */
-  public function setAdminPassword() {
-    $this->_exec("$this->drush_cmd user-password admin --password=" . $this->config['site']['admin_password']);
+    $this->checkFail($successful, "couldn't append to settings.php.");
   }
 
   /**
@@ -249,15 +271,18 @@ abstract class RoboFileBase extends \Robo\Tasks {
   public function buildInstall() {
     $this->devConfigWriteable();
 
-    $this->_exec("$this->drush_cmd site-install $this->drupal_profile -y" .
+    $successful = $this->_exec("$this->drush_cmd site-install $this->drupal_profile -y" .
       " --db-url=" . $this->getDatabaseUrl() .
       " --account-mail=" . $this->config['site']['admin_email'] .
       " --account-name=" . $this->config['site']['admin_user'] .
       " --account-pass=" . $this->config['site']['admin_password'] .
-      " --site-name='" . $this->config['site']['site_title'] . "'");
+      " --site-name='" . $this->config['site']['site_title'] . "'")
+      ->wasSuccessful();
 
     // Re-set settings.php permissions.
     $this->devConfigReadOnly();
+
+    $this->checkFail($successful, 'drush site-install failed.');
 
     $this->devCacheRebuild();
   }
@@ -293,17 +318,31 @@ abstract class RoboFileBase extends \Robo\Tasks {
         $task_stack->exec($this->drush_cmd . ' cset ' . $drupal_config_name . ' ' . $key . ' "' . $value . '" -y');
       }
     }
-    $task_stack->run();
+
+    $successful = $task_stack->run()->wasSuccessful();
+
+    $this->checkFail($successful, "applying config from $this->config_file or $this->config_default_file failed.");
 
     $this->devCacheRebuild();
     $this->say('Site configuration applied.');
   }
 
   /**
+   * Set the administrative user password.
+   */
+  public function setAdminPassword() {
+    $successful = $this->_exec("$this->drush_cmd user-password admin --password=" . $this->config['site']['admin_password'])->wasSuccessful();
+
+    $this->checkFail($successful, 'setting user password failed.');
+  }
+
+  /**
    * Perform cache clear in the app directory.
    */
   public function devCacheRebuild() {
-    $this->_exec("$this->drush_cmd cr");
+    $successful = $this->_exec("$this->drush_cmd cr")->wasSuccessful();
+
+    $this->checkFail($successful, 'drush cache-rebuild failed.');
   }
 
   /**
@@ -375,7 +414,7 @@ abstract class RoboFileBase extends \Robo\Tasks {
    *   Handle setting global variables with command line options.
    */
   public function devXdebugEnable($opts = ['no-restart' => FALSE]) {
-    $this->_exec("sudo php5enmod xdebug");
+    $this->_exec("sudo $this->phpenmod xdebug");
     if (!$opts['no-restart']) {
       $this->devRestartWebserver();
     }
@@ -388,7 +427,7 @@ abstract class RoboFileBase extends \Robo\Tasks {
    *   Handle setting global variables with command line options.
    */
   public function devXdebugDisable($opts = ['no-restart' => FALSE]) {
-    $this->_exec("sudo php5dismod xdebug");
+    $this->_exec("sudo $this->phpdismod xdebug");
     if (!$opts['no-restart']) {
       $this->devRestartWebserver();
     }
@@ -409,18 +448,20 @@ abstract class RoboFileBase extends \Robo\Tasks {
   }
 
   /**
-   * Synchronise the differences from the configured 'config_new' and 'config_old' directories
-   * into the install profile or a specific path.
+   * Synchronise active config to the install profile or specified path.
+   *
+   * Synchronise the differences from the configured 'config_new' and
+   * 'config_old' directories into the install profile or a specific path.
    *
    * @param array $path
-   *   if the sync is to update an entity instead of a profile, the path can be passed in.
+   *   If the sync is to update an entity instead of a profile, supple a path.
    */
-  public function configSync($path) {
+  public function configSync($path = NULL) {
     $config_sync_already_run = FALSE;
     $output_path = $this->application_root . '/profiles/' . $this->drupal_profile . '/install';
     $config_new_path = $this->application_root . '/' . $this->config_new_directory;
 
-    // If a path is passed in, use it to override the destination
+    // If a path is passed in, use it to override the destination.
     if (!empty($path) && is_dir($path)) {
       $output_path = $path;
     }
@@ -466,10 +507,10 @@ abstract class RoboFileBase extends \Robo\Tasks {
    * Display files changed between 'config_old' and 'config_new' directories.
    *
    * @param array $opts
-   *   specify whether to show the diff output or just list them.
-   * @return array
-   *   command output results.
+   *   Specify whether to show the diff output or just list them.
    *
+   * @return array
+   *   Diff output as an array of strings.
    */
   public function configChanges($opts = ['show|s' => FALSE]) {
     $output_style = '-qbr';
@@ -546,8 +587,8 @@ abstract class RoboFileBase extends \Robo\Tasks {
    */
   public function devAggregateAssetsDisable() {
     $this->taskExecStack()
-      ->exec($this->drush_cmd . ' cset system.performance js gzip "false" -y')
-      ->exec($this->drush_cmd . ' cset system.performance css gzip "false" -y')
+      ->exec($this->drush_cmd . ' cset system.performance js preprocess "false" -y')
+      ->exec($this->drush_cmd . ' cset system.performance css preprocess "false" -y')
       ->run();
     $this->devCacheRebuild();
     $this->say('Asset Aggregation is now disabled.');
@@ -558,8 +599,8 @@ abstract class RoboFileBase extends \Robo\Tasks {
    */
   public function devAggregateAssetsEnable() {
     $this->taskExecStack()
-      ->exec($this->drush_cmd . ' cset system.performance js gzip "true" -y')
-      ->exec($this->drush_cmd . ' cset system.performance css gzip "true" -y')
+      ->exec($this->drush_cmd . ' cset system.performance js preprocess "true" -y')
+      ->exec($this->drush_cmd . ' cset system.performance css preprocess "true" -y')
       ->run();
     $this->devCacheRebuild();
     $this->say('Asset Aggregation is now enabled.');
@@ -609,13 +650,14 @@ abstract class RoboFileBase extends \Robo\Tasks {
   /**
    * Check if file exists and set permissions.
    *
-   * @param FilesystemStack
+   * @param Robo\Task\FileSystem\FilesystemStack $file_tasks
+   *   Tasks to perform.
    * @param string $file
    *   File to modify.
    * @param int $permission
    *   Permissions. E.g. 0644.
    */
-  private function setPermissions($file_tasks, $file, $permission) {
+  private function setPermissions(Robo\Task\FileSystem\FilesystemStack $file_tasks, $file, $permission) {
     if (file_exists($file)) {
       $file_tasks->chmod($file, $permission);
     }
@@ -627,7 +669,7 @@ abstract class RoboFileBase extends \Robo\Tasks {
    * @return string
    *   Settings.php text, intended to be output to file.
    */
-  protected function generateDrupalSettings() {
+  protected function generateDrupalSettings($return_code = TRUE) {
     $drupal_settings = [];
 
     // Enable fast 404.
@@ -660,9 +702,14 @@ abstract class RoboFileBase extends \Robo\Tasks {
       }
     }
 
-    $code = "<?php\n";
-    $code .= $this->generatePhpCodeFromArray($drupal_settings);
-    return $code;
+    if ($return_code) {
+      $code = "<?php\n";
+      $code .= $this->generatePhpCodeFromArray($drupal_settings);
+      return $code;
+    }
+    else {
+      return $drupal_settings;
+    }
   }
 
   /**
@@ -685,11 +732,11 @@ abstract class RoboFileBase extends \Robo\Tasks {
       }
       else {
         // @TODO: escape quotes and slashes in key and value.
-        foreach($new_parents as $index => $parent) {
+        foreach ($new_parents as $index => $parent) {
           if ($index == 0) {
             $code .= '$' . $parent;
           }
-          else if (is_int($parent)) {
+          elseif (is_int($parent)) {
             $code .= "[" . $parent . "]";
           }
           else {
@@ -736,4 +783,21 @@ abstract class RoboFileBase extends \Robo\Tasks {
       $this->config['database']['port'] . '/' .
       $this->config['database']['database'];
   }
+
+  /**
+   * Helper function to check whether a task has completed successfully.
+   *
+   * @param bool $successful
+   *   Task ran successfully or not.
+   * @param string $message
+   *   Optional: A helpful message to print.
+   */
+  protected function checkFail($successful, $message = '') {
+    if (!$successful) {
+      $this->say('APP_ERROR: ' . $message);
+      // Prevent any other tasks from executing.
+      exit(1);
+    }
+  }
+
 }
