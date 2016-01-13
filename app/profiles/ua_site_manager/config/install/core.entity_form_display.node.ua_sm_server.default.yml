@@ -9,6 +9,7 @@ dependencies:
     - field.field.node.ua_sm_server.field_ua_sm_ipv6_address
     - field.field.node.ua_sm_server.field_ua_sm_port_range_end
     - field.field.node.ua_sm_server.field_ua_sm_port_range_start
+    - field.field.node.ua_sm_server.field_ua_sm_ssh_user
     - node.type.ua_sm_server
   module:
     - path
@@ -72,6 +73,13 @@ content:
       placeholder: ''
     third_party_settings: {  }
     type: number
+  field_ua_sm_ssh_user:
+    weight: 1
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: string_textfield
   path:
     type: path
     weight: 12

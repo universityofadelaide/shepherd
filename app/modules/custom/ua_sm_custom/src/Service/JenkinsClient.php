@@ -9,6 +9,7 @@ namespace Drupal\ua_sm_custom\Service;
 
 use GuzzleHttp\Client;
 use Psr\Http\Message\ResponseInterface;
+use Drupal\Core\Url;
 
 /**
  * Provides a client for triggering jobs in Jenkins.
@@ -44,17 +45,24 @@ class JenkinsClient extends Client {
    *   The response from Jenkins.
    */
   public function job($job_type, $site_instance) {
-    $server = reset($site_instance->field_ua_sm_server->referencedEntities());
     $environment = reset($site_instance->field_ua_sm_environment->referencedEntities());
-    $site = reset($environment->field_ua_sm_site->referencedEntities());
+    $platform = reset($environment->field_ua_sm_platform->referencedEntities());
+    $build_server = reset($platform->field_ua_sm_build_server->referencedEntities());
+    $deploy_server = reset($site_instance->field_ua_sm_server->referencedEntities());
+
+    $build_host_ssh = $build_server->field_ua_sm_ssh_user->value . '@' . $build_server->field_ua_sm_hostname->value;
+    $deploy_host_ssh = $deploy_server->field_ua_sm_ssh_user->value . '@' . $deploy_server->field_ua_sm_hostname->value;
+
+    // @TODO: Don't insert the site manager url from global state so that we can run job from drush.
+    $uasm_site_url = trim(Url::fromUri('base:', ['absolute' => TRUE])->toString(), '/');
 
     $query = [
       'job' => $this->config[$job_type . '_job'],
       'token' => $this->config['token'],
-      'server_hostname' => $server->field_ua_sm_hostname->value,
+      'build_host_ssh' => $build_host_ssh,
+      'deploy_host_ssh' => $deploy_host_ssh,
       'site_instance_id' => $site_instance->id(),
-      'site_id' => $site->id(),
-      'site_uuid' => $site->uuid(),
+      'uasm_site_url' => $uasm_site_url,
     ];
 
     // Looks like there are some auth issues with anon read access.

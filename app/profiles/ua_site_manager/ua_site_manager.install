@@ -197,3 +197,40 @@ function ua_site_manager_update_8002(&$sandbox) {
   $entity_form_display->setComponent('field_ua_sm_maintainer_email', ['weight' => 8])
     ->save();
 }
+
+/**
+ * Implements hook_update_N().
+ *
+ * Add the ssh user field to the server entity.
+ */
+function ua_site_manager_update_8003(&$sandbox) {
+  $field_storage = FieldStorageConfig::create([
+    'entity_type' => 'node',
+    'type' => 'string',
+    'field_name' => 'field_ua_sm_ssh_user',
+    'cardinality' => 1,
+  ]);
+  $field_storage->save();
+
+  $field = FieldConfig::create([
+    'entity_type' => 'node',
+    'bundle' => 'ua_sm_server',
+    'field_name' => 'field_ua_sm_ssh_user',
+    'label' => t('SSH user'),
+  ]);
+  $field->save();
+
+  $entity_form_display = \Drupal::entityTypeManager()
+    ->getStorage('entity_form_display')
+    ->load('node.ua_sm_server.default');
+
+  $entity_form_display->setComponent('field_ua_sm_ssh_user', ['weight' => 1])
+    ->save();
+
+  $entity_view_display = \Drupal::entityTypeManager()
+    ->getStorage('entity_view_display')
+    ->load('node.ua_sm_server.default');
+
+  $entity_view_display->setComponent('field_ua_sm_ssh_user', ['weight' => 2])
+    ->save();
+}
