@@ -4,7 +4,7 @@
       "jenkins.enabled": true,
       "jenkins.base_uri": "http://jenkins.adelaide.dev/",
       "jenkins.token": "EZGl7429qBX707p65K97S282IxeBl3n9",
-      "jenkins.provision_job": "drupal",
+      "jenkins.provision_job": "deploy",
       "jenkins.deploy_job": null,
       "jenkins.decommission_job": null,
       "jenkins.destroy_job": "remove-drupal-site-instance",
