@@ -1,12 +1,23 @@
 {
-  "custom": null,
+  "custom": {
+    "ua_sm_custom.settings": {
+      "jenkins.enabled": true,
+      "jenkins.base_uri": "http://jenkins.adelaide.dev/",
+      "jenkins.token": "EZGl7429qBX707p65K97S282IxeBl3n9",
+      "jenkins.provision_job": "drupal",
+      "jenkins.deploy_job": null,
+      "jenkins.decommission_job": null,
+      "jenkins.destroy_job": "remove-drupal-site-instance",
+      "ldap.enabled": false
+    }
+  },
   "database": {
-    "database": "local",
+    "database": "site_manager",
     "driver": "mysql",
-    "host": "localhost",
-    "password": "drupal",
+    "host": "mysql",
+    "password": "password",
     "port": "3306",
-    "username": "drupal"
+    "username": "root"
   },
   "distribution": {
     "box_type": "ua/lamp",
