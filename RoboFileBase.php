@@ -41,7 +41,7 @@ abstract class RoboFileBase extends \Robo\Tasks implements RoboFileDrupalDeployI
     $this->webserver_restart    = "sudo service apache2 restart";
 
     // Support PHP 5 and 7.
-    $php5 = strpos(PHP_VERSION, 5) === 0;
+    $php5 = strpos(PHP_VERSION, '5') === 0;
     $this->phpenmod = $php5 ? 'php5enmod' : 'phpenmod';
     $this->phpdismod = $php5 ? 'php5dismod' : 'phpdismod';
 
