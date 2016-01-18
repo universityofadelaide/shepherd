@@ -417,14 +417,14 @@ abstract class RoboFileBase extends \Robo\Tasks implements RoboFileDrupalDeployI
    * CLI debug enable.
    */
   public function devXdebugEnable() {
-    $this->_exec("sudo $this->phpenmod -s cli xdebug");
+    $this->_exec("sudo $this->phpenmod_cmd -s cli xdebug");
   }
 
   /**
    * CLI debug disable.
    */
   public function devXdebugDisable() {
-    $this->_exec("sudo $this->phpdismod -s cli xdebug");
+    $this->_exec("sudo $this->phpdismod_cmd -s cli xdebug");
   }
 
   /**
