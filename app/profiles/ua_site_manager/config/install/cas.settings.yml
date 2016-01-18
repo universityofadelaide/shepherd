@@ -1,6 +1,6 @@
 server:
   version: '2.0'
-  hostname: login-prodnpc.adelaide.edu.au
+  hostname: login-project1.adelaide.edu.au
   port: 443
   path: /cas
   cert: ''
