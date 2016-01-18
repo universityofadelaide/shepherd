@@ -27,6 +27,9 @@ abstract class RoboFileBase extends \Robo\Tasks implements RoboFileDrupalDeployI
   protected $config_new_directory;
   protected $config;
   protected $drupal_profile;
+  protected $sudo_cmd;
+  protected $phpenmod_cmd;
+  protected $phpdismod_cmd;
 
   /**
    * Initialize config variables and apply overrides.
@@ -38,12 +41,14 @@ abstract class RoboFileBase extends \Robo\Tasks implements RoboFileDrupalDeployI
     $this->drush_bin            = "bin/drush";
     $this->drush_cmd            = "$this->drush_bin -r $this->application_root";
     $this->phpcs_bin            = "phpcs";
-    $this->webserver_restart    = "sudo service apache2 restart";
 
     // Support PHP 5 and 7.
     $php5 = strpos(PHP_VERSION, '5') === 0;
-    $this->phpenmod = $php5 ? 'php5enmod' : 'phpenmod';
-    $this->phpdismod = $php5 ? 'php5dismod' : 'phpdismod';
+    $this->phpenmod_cmd = $php5 ? 'php5enmod' : 'phpenmod -v ALL';
+    $this->phpdismod_cmd = $php5 ? 'php5dismod' : 'phpdismod -v ALL';
+
+    $this->sudo_cmd = posix_getuid() == 0 ? '' : 'sudo';
+    $this->webserver_restart    = "$this->sudo_cmd service apache2 restart";
 
     $this->config_file          = "config.json";
     $this->config_default_file  = "config.default.json";
@@ -176,21 +181,20 @@ abstract class RoboFileBase extends \Robo\Tasks implements RoboFileDrupalDeployI
    * Clean the application root in preparation for a new build.
    */
   public function buildClean() {
-    $this->_exec("sudo chmod -R 775 $this->application_root/sites/default");
-    $this->_exec("sudo rm -fR $this->application_root/core");
-    $this->_exec("sudo rm -fR $this->application_root/modules/contrib");
-    $this->_exec("sudo rm -fR $this->application_root/profiles/contrib");
-    $this->_exec("sudo rm -fR $this->application_root/themes/contrib");
-    $this->_exec("sudo rm -fR $this->application_root/sites/all");
-    $this->_exec("sudo rm -fR bin");
-    $this->_exec("sudo rm -fR vendor");
+    $this->_exec("$this->sudo_cmd chmod -R 775 $this->application_root/sites/default");
+    $this->_exec("$this->sudo_cmd rm -fR $this->application_root/core");
+    $this->_exec("$this->sudo_cmd rm -fR $this->application_root/modules/contrib");
+    $this->_exec("$this->sudo_cmd rm -fR $this->application_root/profiles/contrib");
+    $this->_exec("$this->sudo_cmd rm -fR $this->application_root/themes/contrib");
+    $this->_exec("$this->sudo_cmd rm -fR $this->application_root/sites/all");
+    $this->_exec("$this->sudo_cmd rm -fR bin");
+    $this->_exec("$this->sudo_cmd rm -fR vendor");
   }
 
   /**
    * Run composer install to fetch the application code from dependencies.
    */
   public function buildMake() {
-
     // Disable xdebug while running "composer install".
     $this->devXdebugDisable();
     $successful = $this->_exec("$this->composer_bin install")->wasSuccessful();
@@ -269,6 +273,7 @@ abstract class RoboFileBase extends \Robo\Tasks implements RoboFileDrupalDeployI
    * Clean config and files, then install Drupal and module dependencies.
    */
   public function buildInstall() {
+    $this->devXdebugDisable();
     $this->devConfigWriteable();
 
     $successful = $this->_exec("$this->drush_cmd site-install $this->drupal_profile -y" .
@@ -285,6 +290,7 @@ abstract class RoboFileBase extends \Robo\Tasks implements RoboFileDrupalDeployI
     $this->checkFail($successful, 'drush site-install failed.');
 
     $this->devCacheRebuild();
+    $this->devXdebugEnable();
   }
 
   /**
@@ -404,21 +410,21 @@ abstract class RoboFileBase extends \Robo\Tasks implements RoboFileDrupalDeployI
       --exclude=LICENSE.txt \\
       --exclude=README.txt \\
       --exclude=vendor");
-    $this->_exec("sudo rm -rf /tmp/drupal-8");
+    $this->_exec("$this->sudo_cmd rm -rf /tmp/drupal-8");
   }
 
   /**
    * CLI debug enable.
    */
   public function devXdebugEnable() {
-    $this->_exec("sudo $this->phpenmod -v ALL -s cli xdebug");
+    $this->_exec("sudo $this->phpenmod -s cli xdebug");
   }
 
   /**
    * CLI debug disable.
    */
   public function devXdebugDisable() {
-    $this->_exec("sudo $this->phpdismod -v ALL -s cli xdebug");
+    $this->_exec("sudo $this->phpdismod -s cli xdebug");
   }
 
   /**
@@ -446,7 +452,7 @@ abstract class RoboFileBase extends \Robo\Tasks implements RoboFileDrupalDeployI
    */
   public function configSync($path = NULL) {
     $config_sync_already_run = FALSE;
-    $output_path = $this->application_root . '/profiles/' . $this->drupal_profile . '/install';
+    $output_path = $this->application_root . '/profiles/' . $this->drupal_profile . '/config/install';
     $config_new_path = $this->application_root . '/' . $this->config_new_directory;
 
     // If a path is passed in, use it to override the destination.
@@ -503,12 +509,13 @@ abstract class RoboFileBase extends \Robo\Tasks implements RoboFileDrupalDeployI
   public function configChanges($opts = ['show|s' => FALSE]) {
     $output_style = '-qbr';
     $config_old_path = $this->application_root . '/' . $this->config_old_directory;
+    $config_new_path = $this->application_root . '/' . $this->config_new_directory;
 
     if (isset($opts['show']) && $opts['show']) {
       $output_style = '-ubr';
     }
 
-    $results = $this->taskExec("diff -N -I 'uuid:.*' -I \"   - 'file:.*\" $output_style $config_old_path $config_old_path")
+    $results = $this->taskExec("diff -N -I 'uuid:.*' -I \"   - 'file:.*\" $output_style $config_old_path $config_new_path")
       ->run()
       ->getMessage();
 
