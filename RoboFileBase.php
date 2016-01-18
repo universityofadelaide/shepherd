@@ -192,9 +192,9 @@ abstract class RoboFileBase extends \Robo\Tasks implements RoboFileDrupalDeployI
   public function buildMake() {
 
     // Disable xdebug while running "composer install".
-    $this->devXdebugDisable(['no-restart' => TRUE]);
+    $this->devXdebugDisable();
     $successful = $this->_exec("$this->composer_bin install")->wasSuccessful();
-    $this->devXdebugEnable(['no-restart' => TRUE]);
+    $this->devXdebugEnable();
 
     $this->checkFail($successful, "Composer install failed.");
   }
@@ -408,29 +408,17 @@ abstract class RoboFileBase extends \Robo\Tasks implements RoboFileDrupalDeployI
   }
 
   /**
-   * Remote debug enable.
-   *
-   * @param array $opts
-   *   Handle setting global variables with command line options.
+   * CLI debug enable.
    */
-  public function devXdebugEnable($opts = ['no-restart' => FALSE]) {
-    $this->_exec("sudo $this->phpenmod xdebug");
-    if (!$opts['no-restart']) {
-      $this->devRestartWebserver();
-    }
+  public function devXdebugEnable() {
+    $this->_exec("sudo $this->phpenmod -v ALL -s cli xdebug");
   }
 
   /**
-   * Remote debug disable.
-   *
-   * @param array $opts
-   *   Handle setting global variables with command line options.
+   * CLI debug disable.
    */
-  public function devXdebugDisable($opts = ['no-restart' => FALSE]) {
-    $this->_exec("sudo $this->phpdismod xdebug");
-    if (!$opts['no-restart']) {
-      $this->devRestartWebserver();
-    }
+  public function devXdebugDisable() {
+    $this->_exec("sudo $this->phpdismod -v ALL -s cli xdebug");
   }
 
   /**
@@ -618,9 +606,9 @@ abstract class RoboFileBase extends \Robo\Tasks implements RoboFileDrupalDeployI
    * Composer update wrapper.
    */
   public function devComposerUpdate() {
-    $this->devXdebugDisable(['no-restart' => TRUE]);
+    $this->devXdebugDisable();
     $this->_exec("$this->composer_bin update");
-    $this->devXdebugEnable(['no-restart' => TRUE]);
+    $this->devXdebugEnable();
   }
 
   /**
