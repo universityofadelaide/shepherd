@@ -597,7 +597,7 @@ display:
           exposed: true
           expose:
             operator_id: field_ua_sm_site_title_value_op
-            label: 'Site title (field_ua_sm_site_title)'
+            label: 'Site title'
             description: ''
             use_operator: false
             operator: field_ua_sm_site_title_value_op
