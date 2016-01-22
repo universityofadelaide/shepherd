@@ -181,7 +181,7 @@ abstract class RoboFileBase extends \Robo\Tasks implements RoboFileDrupalDeployI
    * Clean the application root in preparation for a new build.
    */
   public function buildClean() {
-    $this->_exec("$this->sudo_cmd chmod -R 775 $this->application_root/sites/default");
+    $this->_exec("$this->sudo_cmd chmod 775 $this->application_root/sites/default");
     $this->_exec("$this->sudo_cmd rm -fR $this->application_root/core");
     $this->_exec("$this->sudo_cmd rm -fR $this->application_root/modules/contrib");
     $this->_exec("$this->sudo_cmd rm -fR $this->application_root/profiles/contrib");
