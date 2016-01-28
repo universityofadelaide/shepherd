@@ -6,6 +6,8 @@
 
 namespace Drupal\ua_sm_custom\Service;
 
+use Drupal\user\Entity\User as DrupalUser;
+
 /**
  * Class User
  * @package Drupal\ua_sm_custom\Service
@@ -37,7 +39,7 @@ class User {
    *
    * @param \Drupal\user\Entity\User $account
    */
-  public function provision(\Drupal\user\Entity\User $account) {
+  public function provision(DrupalUser $account) {
     $uid = $account->name->value;
     $attributes = \Drupal::service('ua_ldap.ldap_user')->getAttributes($uid);
     $this->provisionFields($account, $attributes);
