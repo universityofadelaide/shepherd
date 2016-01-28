@@ -40,7 +40,17 @@ class User {
   public function provision(\Drupal\user\Entity\User $account) {
     $uid = $account->name->value;
     $attributes = \Drupal::service('ua_ldap.ldap_user')->getAttributes($uid);
+    $this->provisionFields($account, $attributes);
+    $account->save();
+  }
 
+  /**
+   * Sets fields of account with attributes from LDAP.
+   *
+   * @param $account the Drupal user account.
+   * @param $attributes the LDAP attributes associated with the account.
+   */
+  private function provisionFields($account, $attributes) {
     // FYI: UAT LDAP shows a different mail attribute to PRD LDAP.
     $field_map = [
       'field_ua_user_preferred_name' => 'preferredname',
@@ -52,7 +62,6 @@ class User {
         $account->set($user_field, reset($attributes[$ldap_field]));
       }
     }
-    $account->save();
   }
 
 }
