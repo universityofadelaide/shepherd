@@ -3,10 +3,13 @@ status: true
 dependencies:
   config:
     - core.entity_view_mode.user.compact
+    - field.field.user.user.field_ua_sm_keys
     - field.field.user.user.user_picture
   module:
     - image
     - user
+_core:
+  default_config_hash: T2PsplcZ3qhzqgwW_aYCKQshCg_UQkSsKV45b03pEl4
 id: user.user.compact
 targetEntityType: user
 bundle: user
@@ -21,4 +24,5 @@ content:
     third_party_settings: {  }
     label: hidden
 hidden:
+  field_ua_sm_keys: true
   member_for: true

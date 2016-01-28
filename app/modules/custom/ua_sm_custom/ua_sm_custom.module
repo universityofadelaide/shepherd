@@ -142,9 +142,9 @@ function ua_sm_custom_node_insert(EntityInterface $entity) {
 }
 
 /**
- * Implements hook_ENTITY_TYPE_presave().
+ * Implements hook_ENTITY_TYPE_insert().
  */
-function ua_sm_custom_user_presave(EntityInterface $entity) {
+function ua_sm_custom_user_insert(EntityInterface $entity) {
   if (\Drupal::config('ua_sm_custom.settings')->get('ldap')['enabled']) {
     \Drupal::service('ua_ldap.ldap_user')->provision($entity);
     // todo: deal with failure - consider a queue.

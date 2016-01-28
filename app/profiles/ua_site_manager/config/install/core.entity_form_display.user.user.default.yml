@@ -3,10 +3,13 @@ status: true
 dependencies:
   config:
     - field.field.user.user.field_ua_sm_keys
+    - field.field.user.user.field_ua_user_preferred_name
     - field.field.user.user.user_picture
   module:
     - image
     - user
+_core:
+  default_config_hash: YBJOiJiPB1_FILcQ8WjqcCUw6GgjDzLFmMTLS28Y3Rk
 id: user.user.default
 targetEntityType: user
 bundle: user
@@ -16,10 +19,6 @@ content:
     weight: -10
   contact:
     weight: 5
-  language:
-    weight: 0
-  timezone:
-    weight: 6
   field_ua_sm_keys:
     type: string_textarea
     weight: 0
@@ -27,6 +26,17 @@ content:
       rows: 5
       placeholder: ''
     third_party_settings: {  }
+  field_ua_user_preferred_name:
+    weight: 7
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: string_textfield
+  language:
+    weight: 0
+  timezone:
+    weight: 6
   user_picture:
     type: image_image
     settings:
