@@ -9,7 +9,6 @@ use Drupal\Component\Utility\Crypt;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\node\Entity\Node;
-use Drupal\ua_ldap\SiteRoleSlug;
 use Drupal\comment\CommentInterface;
 
 /**
@@ -139,6 +138,16 @@ function ua_sm_custom_node_insert(EntityInterface $entity) {
       break;
 
     default:
+  }
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_insert().
+ */
+function ua_sm_custom_user_insert(EntityInterface $entity) {
+  if (\Drupal::config('ua_sm_custom.settings')->get('ldap')['enabled']) {
+    \Drupal::service('ua_sm_custom.user')->provision($entity);
+    // todo: deal with failure - consider a queue.
   }
 }
 
