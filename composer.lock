@@ -1843,7 +1843,7 @@
             ],
             "authors": [
                 {
-                    "name": "Symfony CMF community",
+                    "name": "Symfony CMF Community",
                     "homepage": "https://github.com/symfony-cmf/Routing/contributors"
                 }
             ],
@@ -2895,7 +2895,7 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.adelaide.edu.au:drupal-modules/ua_ldap.git",
-                "reference": "f5a60dd3e51ec722529c3231e06d5e08c9f9cdf7"
+                "reference": "102231666d2a97c556333fd00a95ead337a7766f"
             },
             "require": {
                 "zendframework/zend-ldap": "~2.5.1"
@@ -2905,7 +2905,7 @@
                 "GPL-2.0+"
             ],
             "description": "Provides configuration and services to interact with LDAP.",
-            "time": "2016-01-19 23:03:25"
+            "time": "2016-01-28 05:46:28"
         },
         {
             "name": "ua-drupal-modules/ua_ldap_authorisation",
@@ -3476,7 +3476,7 @@
             "source": {
                 "type": "git",
                 "url": "https://git.drupal.org/project/devel",
-                "reference": "c0b5c5f9a8ec688459e7cd03eb6b1008a9d5a194"
+                "reference": "bb45a4e5e1c0f8f83ec05b52b3d7329a1ca77dec"
             },
             "require": {
                 "drupal/core": "8.*"
