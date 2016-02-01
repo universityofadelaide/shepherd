@@ -4,6 +4,8 @@ dependencies:
   module:
     - options
     - paragraphs
+_core:
+  default_config_hash: 5roDZz_bjjuP-c-uVm9WaRVSxWgEeWAfptHGCeWQQqM
 id: paragraph.field_ua_sm_role
 field_name: field_ua_sm_role
 entity_type: paragraph
@@ -26,3 +28,4 @@ cardinality: 1
 translatable: true
 indexes: {  }
 persist_with_no_fields: false
+custom_storage: false

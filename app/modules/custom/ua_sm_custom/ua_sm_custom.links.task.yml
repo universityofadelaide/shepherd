@@ -1,0 +1,15 @@
+ua_sm_custom.details:
+  title: Details
+  parent_id: entity.node.canonical
+  route_name: entity.node.canonical
+  base_route: entity.node.canonical
+ua_sm_custom.site_users:
+  title: Users
+  parent_id: entity.node.canonical
+  route_name: view.ua_sm_site_users.page_1
+  base_route: entity.node.canonical
+ua_sm_custom.workflow:
+  title: Workflow
+  parent_id: entity.node.canonical
+  route_name: entity.node.canonical
+  base_route: entity.node.canonical

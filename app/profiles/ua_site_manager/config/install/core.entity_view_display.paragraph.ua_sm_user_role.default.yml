@@ -3,10 +3,12 @@ status: true
 dependencies:
   config:
     - field.field.paragraph.ua_sm_user_role.field_ua_sm_role
-    - field.field.paragraph.ua_sm_user_role.field_ua_sm_user_id
+    - field.field.paragraph.ua_sm_user_role.field_ua_sm_user
     - paragraphs.paragraphs_type.ua_sm_user_role
   module:
     - options
+_core:
+  default_config_hash: DStMtTZ2Legey977GlWcsa-dQyc5Q4-2HuRvq4o4tTU
 id: paragraph.ua_sm_user_role.default
 targetEntityType: paragraph
 bundle: ua_sm_user_role
@@ -18,13 +20,14 @@ content:
     settings: {  }
     third_party_settings: {  }
     type: list_default
-  field_ua_sm_user_id:
+  field_ua_sm_user:
     weight: 0
     label: above
     settings:
-      link_to_entity: false
+      view_mode: default
+      link: false
     third_party_settings: {  }
-    type: string
+    type: entity_reference_entity_view
 hidden:
   created: true
   uid: true

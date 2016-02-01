@@ -4,21 +4,17 @@ dependencies:
   config:
     - core.entity_view_mode.paragraph.ua_sm_minified
     - field.field.paragraph.ua_sm_user_role.field_ua_sm_role
-    - field.field.paragraph.ua_sm_user_role.field_ua_sm_user_id
+    - field.field.paragraph.ua_sm_user_role.field_ua_sm_user
     - paragraphs.paragraphs_type.ua_sm_user_role
+_core:
+  default_config_hash: m8W1XOLCrjJgXipQ77-flDlY9rjscinJG3rIaWwfxzs
 id: paragraph.ua_sm_user_role.ua_sm_minified
 targetEntityType: paragraph
 bundle: ua_sm_user_role
 mode: ua_sm_minified
-content:
-  field_ua_sm_user_id:
-    weight: 0
-    label: hidden
-    settings:
-      link_to_entity: false
-    third_party_settings: {  }
-    type: string
+content: {  }
 hidden:
   created: true
   field_ua_sm_role: true
+  field_ua_sm_user: true
   uid: true

@@ -3,17 +3,17 @@ status: true
 dependencies:
   module:
     - paragraphs
-id: paragraph.field_ua_sm_user_id
-field_name: field_ua_sm_user_id
+    - user
+id: paragraph.field_ua_sm_user
+field_name: field_ua_sm_user
 entity_type: paragraph
-type: string
+type: entity_reference
 settings:
-  max_length: 255
-  is_ascii: false
-  case_sensitive: false
+  target_type: user
 module: core
 locked: false
 cardinality: 1
 translatable: true
 indexes: {  }
 persist_with_no_fields: false
+custom_storage: false
