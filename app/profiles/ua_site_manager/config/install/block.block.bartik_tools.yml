@@ -1,5 +1,5 @@
 langcode: en
-status: true
+status: false
 dependencies:
   config:
     - system.menu.tools
@@ -7,9 +7,11 @@ dependencies:
     - system
   theme:
     - bartik
+_core:
+  default_config_hash: X1O-fXAwTioMDWGAU9KOnzwZDQFbbkjmdtf9-SpZR4s
 id: bartik_tools
 theme: bartik
-region: sidebar_first
+region: '-1'
 weight: 0
 provider: null
 plugin: 'system_menu_block:tools'
