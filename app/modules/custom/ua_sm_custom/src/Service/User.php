@@ -35,24 +35,24 @@ class User {
   }
 
   /**
-   * Provisions a user with attributes from LDAP.
+   * Populate users fields with attributes from LDAP.
    *
    * @param \Drupal\user\Entity\User $account
    */
-  public function provision(DrupalUser $account) {
+  public function populateFieldsFromLdap(DrupalUser $account) {
     $uid = $account->name->value;
     $attributes = \Drupal::service('ua_ldap.ldap_user')->getAttributes($uid);
-    $this->provisionFields($account, $attributes);
+    $this->populateFields($account, $attributes);
     $account->save();
   }
 
   /**
-   * Sets fields of account with attributes from LDAP.
+   * Sets fields of account with attributes.
    *
    * @param $account the Drupal user account.
-   * @param $attributes the LDAP attributes associated with the account.
+   * @param $attributes the attributes associated with the account.
    */
-  private function provisionFields($account, $attributes) {
+  protected function populateFields($account, $attributes) {
     // FYI: UAT LDAP shows a different mail attribute to PRD LDAP.
     $field_map = [
       'field_ua_user_preferred_name' => 'preferredname',
@@ -64,6 +64,24 @@ class User {
         $account->set($user_field, reset($attributes[$ldap_field]));
       }
     }
+  }
+
+  /**
+   * Provision a drupal user from an ldap user id.
+   *
+   * @param $uid The user id string.
+   * @return \Drupal\Core\Entity\EntityInterface The drupal user account.
+   */
+  public function provision($uid) {
+    $user_storage = \Drupal::entityTypeManager()->getStorage('user');
+    $account = $user_storage->create([
+      'name' => $uid,
+      'status' => 1,
+      'pass' => user_password(30),
+    ]);
+    $account->enforceIsNew();
+    $account->save();
+    return $account;
   }
 
 }

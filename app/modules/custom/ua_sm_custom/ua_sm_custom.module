@@ -146,7 +146,7 @@ function ua_sm_custom_node_insert(EntityInterface $entity) {
  */
 function ua_sm_custom_user_insert(EntityInterface $entity) {
   if (\Drupal::config('ua_sm_custom.settings')->get('ldap')['enabled']) {
-    \Drupal::service('ua_sm_custom.user')->provision($entity);
+    \Drupal::service('ua_sm_custom.user')->populateFieldsFromLdap($entity);
     // todo: deal with failure - consider a queue.
   }
 }

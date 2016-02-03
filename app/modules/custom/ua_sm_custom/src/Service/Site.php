@@ -8,6 +8,7 @@ namespace Drupal\ua_sm_custom\Service;
 
 use Drupal\Core\Entity\Entity;
 use Drupal\node\Entity\Node;
+use Drupal\paragraphs\Entity\Paragraph;
 use Drupal\user\Entity\User;
 
 /**
@@ -106,6 +107,27 @@ class Site {
       ->execute();
     $users = User::loadMultiple($user_ids);
     return $users;
+  }
+
+  /**
+   * Check if user role combo exists on site.
+   *
+   * @param $site the site to check for the combo.
+   * @param $account the user to check for.
+   * @param $role the role to check for.
+   * @return bool $user_role_exists whether the user role combo exists.
+   */
+  public function userRoleExists($site, $account, $role) {
+    $user_roles = $site->get('field_ua_sm_users');
+    $user_role_exists = FALSE;
+    foreach ($user_roles as $user_role_field) {
+      $id = $user_role_field->getValue()['target_id'];
+      $user_role = Paragraph::load($id);
+      if ($user_role->field_ua_sm_user->target_id == $account->id() && $user_role->field_ua_sm_role->value == $role) {
+        $user_role_exists = TRUE;
+      }
+    }
+    return $user_role_exists;
   }
 
 }
