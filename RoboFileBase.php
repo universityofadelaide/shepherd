@@ -197,7 +197,7 @@ abstract class RoboFileBase extends \Robo\Tasks implements RoboFileDrupalDeployI
   public function buildMake() {
     // Disable xdebug while running "composer install".
     $this->devXdebugDisable();
-    $successful = $this->_exec("$this->composer_bin install")->wasSuccessful();
+    $successful = $this->_exec("$this->composer_bin --no-progress install")->wasSuccessful();
     $this->devXdebugEnable();
 
     $this->checkFail($successful, "Composer install failed.");
@@ -276,8 +276,8 @@ abstract class RoboFileBase extends \Robo\Tasks implements RoboFileDrupalDeployI
     $this->devXdebugDisable();
     $this->devConfigWriteable();
 
-    $successful = $this->_exec("/usr/bin/env PHP_OPTIONS=\"-d sendmail_path=`which true`\" $this->drush_cmd" .
-      " site-install $this->drupal_profile -y" .
+    $successful = $this->_exec("$this->drush_cmd site-install" .
+      " $this->drupal_profile install_configure_form.update_status_module='array(FALSE,FALSE)' -y" .
       " --db-url=" . $this->getDatabaseUrl() .
       " --account-mail=" . $this->config['site']['admin_email'] .
       " --account-name=" . $this->config['site']['admin_user'] .
