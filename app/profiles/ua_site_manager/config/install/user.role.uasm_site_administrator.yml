@@ -1,0 +1,16 @@
+langcode: en
+status: true
+dependencies: {  }
+id: uasm_site_administrator
+label: 'Site Administrator'
+weight: 3
+is_admin: null
+permissions:
+  - 'edit own comments'
+  - 'post comments'
+  - 'skip comment approval'
+  - 'access comments'
+  - 'use text format basic_html'
+  - 'view own unpublished content'
+  - 'access content'
+  - 'access shortcuts'
