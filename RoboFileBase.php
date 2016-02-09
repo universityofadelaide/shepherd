@@ -276,7 +276,8 @@ abstract class RoboFileBase extends \Robo\Tasks implements RoboFileDrupalDeployI
     $this->devXdebugDisable();
     $this->devConfigWriteable();
 
-    $successful = $this->_exec("$this->drush_cmd site-install $this->drupal_profile -y" .
+    $successful = $this->_exec("/usr/bin/env PHP_OPTIONS=\"-d sendmail_path=`which true`\" $this->drush_cmd" .
+      " site-install $this->drupal_profile -y" .
       " --db-url=" . $this->getDatabaseUrl() .
       " --account-mail=" . $this->config['site']['admin_email'] .
       " --account-name=" . $this->config['site']['admin_user'] .
