@@ -32,6 +32,15 @@ ua_sm_custom.user-add-form:
     no_cache: TRUE
   requirements:
     _permission: 'administer users'
+ua_sm_custom.user-edit-form:
+  path: '/site/{node}/user/{user}/edit'
+  defaults:
+    _form: '\Drupal\ua_sm_custom\Form\UserEditForm'
+  options:
+    _auth: [ 'basic_auth', 'cookie' ]
+    no_cache: TRUE
+  requirements:
+    _permission: 'administer users'
 ua_sm_custom.varnish-config:
   path: '/api/varnish-config'
   defaults:
