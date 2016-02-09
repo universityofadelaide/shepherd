@@ -115,9 +115,11 @@ class UserEditForm extends FormBase {
 
     $user = $form_state->get('user');
     $paragraph_user = $form_state->get('paragraph');
+    $site = $form_state->get('site');
 
     $paragraph_user->field_ua_sm_role->setValue($role);
     $paragraph_user->save();
+    $site->save();
 
     drupal_set_message($this->t('Successfully updated user %uid to site.', [
       '%uid' => $user->field_ua_user_preferred_name->getString(),
