@@ -35,9 +35,9 @@ class SiteManagerSettings extends ConfigFormBase {
     ];
     $form['jenkins']['enabled'] = [
       '#type' => 'checkbox',
-      '#title' => t('Enabled'),
+      '#title' => $this->t('Enabled'),
       '#size' => 30,
-      '#description' => t('Trigger a build on Jenkins when a site instance is created.'),
+      '#description' => $this->t('Trigger a build on Jenkins when a site instance is created.'),
       '#default_value' => $config->get('jenkins.enabled'),
     ];
     $form['jenkins']['base_uri'] = [
@@ -84,30 +84,30 @@ class SiteManagerSettings extends ConfigFormBase {
     ];
     $form['ldap']['enabled'] = [
       '#type' => 'checkbox',
-      '#title' => t('Enabled'),
+      '#title' => $this->t('Enabled'),
       '#size' => 30,
-      '#description' => t('When checked, Site Manager will attempt to synchronize users and sites with LDAP.'),
+      '#description' => $this->t('When checked, Site Manager will attempt to synchronise users and sites with LDAP.'),
       '#default_value' => $config->get('ldap.enabled'),
     ];
 
     $form['controlled_roles'] = [
       '#type' => 'details',
       '#title' => $this->t('Controlled Roles'),
-      '#open' => true,
-      '#tree' => true,
+      '#open' => TRUE,
+      '#tree' => TRUE,
     ];
 
     $controlled_roles = "";
     foreach ($config->get('controlled_roles') as $key => $val) {
-        if ($val != "" | $key != "") {
-            $controlled_roles .= $key . "|" . $val . "\n";
-        }
+      if ($val != "" | $key != "") {
+        $controlled_roles .= $key . "|" . $val . "\n";
+      }
     }
 
     $form['controlled_roles']['textarea'] = [
       '#type' => 'textarea',
       '#rows' => 10,
-      '#description' => t('Setup your controlled roles using the format <i>role|description</i>'),
+      '#description' => $this->t('Setup your controlled roles using the format <i>role|description</i>'),
       '#default_value' => $controlled_roles
     ];
 
@@ -122,13 +122,13 @@ class SiteManagerSettings extends ConfigFormBase {
 
 
     $controlled_roles_data = $form_state->getValue('controlled_roles')['textarea'];
-    $controlled_roles_data = explode ("\r\n",$controlled_roles_data);
+    $controlled_roles_data = explode("\r\n", $controlled_roles_data);
     $config->delete('controlled_roles');
 
-    foreach($controlled_roles_data as $role){
+    foreach ($controlled_roles_data as $role) {
       $controlled_role = explode("|", $role);
-      if ($controlled_role[0] !="" && $controlled_role[1] !="") {
-        $config->set('controlled_roles.' . str_replace(' ', '_',trim($controlled_role[0])), str_replace(' ', '_',trim($controlled_role[1])));
+      if ($controlled_role[0] != "" && $controlled_role[1] != "") {
+        $config->set('controlled_roles.' . str_replace(' ', '_', trim($controlled_role[0])), str_replace(' ', '_', trim($controlled_role[1])));
       }
     }
 
