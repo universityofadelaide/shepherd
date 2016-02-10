@@ -33,13 +33,13 @@ class SiteManagerSettings extends ConfigFormBase {
       '#open' => TRUE,
       '#tree' => TRUE,
     ];
-    $form['jenkins']['enabled'] = array(
+    $form['jenkins']['enabled'] = [
       '#type' => 'checkbox',
       '#title' => t('Enabled'),
       '#size' => 30,
       '#description' => t('Trigger a build on Jenkins when a site instance is created.'),
       '#default_value' => $config->get('jenkins.enabled'),
-    );
+    ];
     $form['jenkins']['base_uri'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Base URI'),
@@ -82,13 +82,33 @@ class SiteManagerSettings extends ConfigFormBase {
       '#open' => TRUE,
       '#tree' => TRUE,
     ];
-    $form['ldap']['enabled'] = array(
+    $form['ldap']['enabled'] = [
       '#type' => 'checkbox',
       '#title' => t('Enabled'),
       '#size' => 30,
       '#description' => t('When checked, Site Manager will attempt to synchronize users and sites with LDAP.'),
       '#default_value' => $config->get('ldap.enabled'),
-    );
+    ];
+
+    $form['controlled_roles'] = [
+      '#type' => 'details',
+      '#title' => $this->t('Controlled Roles'),
+      '#open' => TRUE,
+      '#tree' => TRUE,
+    ];
+
+    $controlled_roles = "";
+    foreach ($config->get('controlled_roles') as $key => $val) {
+      if ($val != "" | $key != "") {
+        $controlled_roles .= $key . "|" . $val . "\n";
+      }
+    }
+
+    $form['controlled_roles']['textarea'] = [
+      '#type' => 'textarea',
+      '#description' => t('Description goes here'),
+      '#default_value' => $controlled_roles
+    ];
 
     return parent::buildForm($form, $form_state);
   }
@@ -98,6 +118,18 @@ class SiteManagerSettings extends ConfigFormBase {
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $config = $this->config('ua_sm_custom.settings');
+
+    // @todo get controlled roles from textarea
+    $controlled_roles_data = $form_state->getValue('controlled_roles')['textarea'];
+    $controlled_roles_data = explode ("\r\n",$controlled_roles_data);
+
+    foreach($controlled_roles_data as $role){
+
+      $controlled_role = explode("|",$role);
+      $config->set('controlled_roles.' . $controlled_role[0], $controlled_role[1]);
+
+    }
+
 
     // @todo Validate this data !
     $jenkins_data = $form_state->getValue('jenkins');
