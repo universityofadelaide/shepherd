@@ -861,7 +861,7 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "https://ftp.drupal.org/files/projects/entity_reference_revisions-8.x-1.0-rc4.zip",
+                "url": "http://ftp.drupal.org/files/projects/entity_reference_revisions-8.x-1.0-rc4.zip",
                 "reference": null,
                 "shasum": null
             },
@@ -925,6 +925,12 @@
                 "type": "git",
                 "url": "https://git.drupal.org/project/r4032login",
                 "reference": "0ca4bf52d5232793225b82802207e18f917c5824"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "http://ftp.drupal.org/files/projects/r4032login-8.x-1.x-dev.zip",
+                "reference": null,
+                "shasum": null
             },
             "require": {
                 "drupal/core": "8.*"
@@ -2892,7 +2898,7 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.adelaide.edu.au:drupal-modules/ua_ldap.git",
-                "reference": "102231666d2a97c556333fd00a95ead337a7766f"
+                "reference": "e3057344e95450ec394008ac2ab75bbfe935f9bd"
             },
             "require": {
                 "zendframework/zend-ldap": "~2.5.1"
@@ -2902,7 +2908,7 @@
                 "GPL-2.0+"
             ],
             "description": "Provides configuration and services to interact with LDAP.",
-            "time": "2016-01-28 05:46:28"
+            "time": "2016-02-09 21:51:44"
         },
         {
             "name": "ua-drupal-modules/ua_ldap_authorisation",
@@ -2910,7 +2916,7 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.adelaide.edu.au:drupal-modules/ua_ldap_authorisation.git",
-                "reference": "47e0840a6a8c94152472fc97666aff5922567ace"
+                "reference": "d81d96206ff3d8444c93ae54f558417ac1f85561"
             },
             "type": "drupal-module",
             "license": [
@@ -2920,7 +2926,7 @@
             "keywords": [
                 "Drupal"
             ],
-            "time": "2015-11-17 02:58:48"
+            "time": "2016-02-10 01:17:25"
         },
         {
             "name": "zendframework/zend-diactoros",
@@ -3473,7 +3479,7 @@
             "source": {
                 "type": "git",
                 "url": "https://git.drupal.org/project/devel",
-                "reference": "bb45a4e5e1c0f8f83ec05b52b3d7329a1ca77dec"
+                "reference": "6063e24c24288cbcba8ac969d2de4c6f3f52b91c"
             },
             "require": {
                 "drupal/core": "8.*"
@@ -3508,7 +3514,7 @@
             ],
             "description": "Various blocks, pages, and functions for developers.",
             "homepage": "http://drupal.org/project/devel",
-            "time": "2016-01-30 21:39:03"
+            "time": "2016-02-08 18:00:33"
         },
         {
             "name": "fabpot/goutte",
