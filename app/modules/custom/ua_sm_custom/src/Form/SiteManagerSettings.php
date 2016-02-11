@@ -97,18 +97,16 @@ class SiteManagerSettings extends ConfigFormBase {
       '#tree' => TRUE,
     ];
 
-    $controlled_roles = "";
+    $controlled_roles = '';
     foreach ($config->get('controlled_roles') as $key => $val) {
-      if ($val != "" | $key != "") {
-        $controlled_roles .= $key . "|" . $val . "\n";
-      }
+      $controlled_roles .= $key . '|' . $val . "\n";
     }
 
     $form['controlled_roles']['textarea'] = [
       '#type' => 'textarea',
       '#rows' => 10,
       '#description' => $this->t('Setup your controlled roles using the format <i>role|description</i>'),
-      '#default_value' => $controlled_roles
+      '#default_value' => $controlled_roles,
     ];
 
     return parent::buildForm($form, $form_state);
@@ -121,14 +119,13 @@ class SiteManagerSettings extends ConfigFormBase {
     $config = $this->config('ua_sm_custom.settings');
 
 
-    $controlled_roles_data = $form_state->getValue('controlled_roles')['textarea'];
-    $controlled_roles_data = explode("\r\n", $controlled_roles_data);
+    $controlled_roles_data = explode("\r\n", trim($form_state->getValue('controlled_roles')['textarea']));
     $config->delete('controlled_roles');
 
     foreach ($controlled_roles_data as $role) {
-      $controlled_role = explode("|", $role);
-      if ($controlled_role[0] != "" && $controlled_role[1] != "") {
-        $config->set('controlled_roles.' . str_replace(' ', '_', trim($controlled_role[0])), str_replace(' ', '_', trim($controlled_role[1])));
+      $controlled_role = explode('|', $role);
+      if (trim($controlled_role[0]) != '' && trim($controlled_role[1]) != '') {
+        $config->set('controlled_roles.' . str_replace(' ', '_', trim($controlled_role[0])), trim($controlled_role[1]));
       }
     }
 
