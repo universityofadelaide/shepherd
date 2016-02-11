@@ -8,3 +8,11 @@ jenkins:
   destroy_job: ''
 ldap:
   enabled: true
+controlled_roles:
+  administrator: 'Administrator'
+  uasm_developer: 'Developer'
+  uasm_online_consultant: 'Online Consultant'
+  uasm_site_administrator: 'Site Administrator'
+  uasm_web_author: 'Web Author'
+  uasm_content_editor: 'Content Editor'
+  uasm_wizard: 'YOURE A WIZARD HARRY'
