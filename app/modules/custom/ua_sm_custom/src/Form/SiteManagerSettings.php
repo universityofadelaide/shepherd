@@ -117,8 +117,6 @@ class SiteManagerSettings extends ConfigFormBase {
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $config = $this->config('ua_sm_custom.settings');
-
-
     $controlled_roles_data = explode("\r\n", trim($form_state->getValue('controlled_roles')['textarea']));
     $config->delete('controlled_roles');
 
@@ -128,7 +126,6 @@ class SiteManagerSettings extends ConfigFormBase {
         $config->set('controlled_roles.' . str_replace(' ', '_', trim($controlled_role[0])), trim($controlled_role[1]));
       }
     }
-
 
     // @todo Validate this data !
     $jenkins_data = $form_state->getValue('jenkins');
