@@ -22,17 +22,17 @@ function ua_sm_custom_help($route_name, RouteMatchInterface $route_match) {
       $output .= '<h3>' . t('About') . '</h3>';
       $output .= '<p>' . t('This module provides functionality specific to the UA Site Manager.') . '</p>';
       return $output;
-
-    default:
   }
 }
 
 /**
  * Implements hook_ENTITY_TYPE_presave().
+ *
+ * Determines available port numbers for new instances, and generates random
+ * hash salt for new environments.
  */
 function ua_sm_custom_node_presave(Node $entity) {
   switch ($entity->bundle()) {
-
     case 'ua_sm_site_instance':
       ua_sm_custom_ports($entity);
       break;
@@ -43,45 +43,19 @@ function ua_sm_custom_node_presave(Node $entity) {
         $entity->field_ua_sm_hash_salt->value = Crypt::randomBytesBase64(55);
       }
       break;
-
-    default:
   }
 }
 
 /**
- * Triggers the requested Jenkins job, then posts about it on the site entity.
+ * Triggers the requested Jenkins job.
  *
  * @param string $job_name
  *   The name of the Jenkins job to run.
  * @param \Drupal\Core\Entity\EntityInterface $entity
  *   The site_instance entity to post the comment to, or it's parent anyway.
  */
-function ua_sm_custom_run_job_and_post_comment($job_name, EntityInterface $entity) {
-  $environment = reset($entity->field_ua_sm_environment->referencedEntities());
-  $site = reset($environment->field_ua_sm_site->referencedEntities());
-
-  $response = \Drupal::service('ua_sm_custom.jenkins_client')->job($job_name, $entity);
-
-  $comment = \Drupal::entityManager()
-    ->getStorage('comment')
-    ->create([
-      'subject' => 'Running ' . $job_name . ' on ' . $entity->title->value . '.',
-      'comment_body' => 'Test',
-      'entity_id' => $site->id(),
-      'entity_type' => 'node',
-      'field_name' => 'field_ua_sm_instance_log',
-      'status' => CommentInterface::PUBLISHED,
-    ]);
-
-  if ($response->getStatusCode() == (200 || 201)) {
-    $comment->set('comment_body', 'Jenkins has started ' . $job_name . '...');
-  }
-  else {
-    $comment->set('comment_body', 'Jenkins failed to start ' . $job_name . ' ' .
-      $entity->title->value . ' with the response ' . $response->getBody());
-  }
-
-  $comment->save();
+function ua_sm_custom_run_job($job_name, EntityInterface $entity) {
+  \Drupal::service('ua_sm_custom.jenkins_client')->job($job_name, $entity);
 }
 
 /**
@@ -100,7 +74,7 @@ function ua_sm_custom_ports(Node $entity) {
       $required_ports[] = $port_field;
     }
     elseif (in_array($port_number, $used_ports)) {
-      // @TODO: Handle case where assigned port already in use.
+      // @todo Handle case where assigned port already in use.
       return;
     }
   }
@@ -115,52 +89,102 @@ function ua_sm_custom_ports(Node $entity) {
 
 /**
  * Implements hook_ENTITY_TYPE_insert().
+ *
+ * Triggers numerous actions when certain entities are created.
+ *
+ * Site:
+ *  * Adds LDAP entries for each 'site_id#role' combination.
+ *  * Synchronises any users for the site with LDAP.
+ *  * Adds a default 'UAT' environment for the new site.
+ *
+ * Environment:
+ *  * Creates new site instances on each of the selected platform's web servers.
+ *
+ * Site Instance:
+ *  * Triggers the Jenkins provision job for the new site instance.
  */
 function ua_sm_custom_node_insert(EntityInterface $entity) {
   switch ($entity->bundle()) {
-
     case 'ua_sm_site':
-
       if (\Drupal::config('ua_sm_custom.settings')->get('ldap')['enabled']) {
+        // Add LDAP entries for each 'site_id#role' combination.
+        $controlled_roles = array_keys(\Drupal::config('ua_sm_custom.settings')
+          ->get('controlled_roles'));
         \Drupal::service('ua_ldap.ldap_site')
-          ->addSite($entity->id());
-        // todo: deal with failure - consider a queue.
+          ->addSite($entity->id(), $controlled_roles);
+        // @todo Deal with failure - consider a queue.
+
+        // Synchronise any users that were added to LDAP.
         \Drupal::service('ua_ldap.ldap_site')
           ->syncUsers($entity->id());
-        // todo: deal with failure - consider a queue.
+        // @todo Deal with failure - consider a queue.
+      }
+
+      // @todo Figure out which platform to default to. Maybe in config?
+      // Fetch the ID of the first platform, we'll default to that for now.
+      $platforms = \Drupal::entityQuery('node')
+        ->condition('type', 'ua_sm_platform')
+        ->execute();
+
+      // Create default environment.
+      $environment = Node::create([
+        'type' => 'ua_sm_environment',
+        'title' => 'UAT',
+        'field_ua_sm_site' => $entity->id(),
+        'field_ua_sm_platform' => array_pop($platforms),
+        'field_ua_sm_database_host' => '{docker_host_ip}',
+      ]);
+      $environment->save();
+      break;
+
+    case 'ua_sm_environment':
+      // Load the selected environment.
+      $platform = $entity->field_ua_sm_platform->first()->entity;
+
+      // Create a new site instance for each of the platform's webservers.
+      foreach ($platform->field_ua_sm_web_servers as $key => $web_server) {
+        $site_instance = Node::create([
+          'type' => 'ua_sm_site_instance',
+          'title' => $entity->title->value . ' ' . ($key + 1),
+          'field_ua_sm_environment' => $entity->id(),
+          'field_ua_sm_server' => $web_server->entity->id(),
+        ]);
+        $site_instance->save();
       }
       break;
 
     case 'ua_sm_site_instance':
       if (\Drupal::config('ua_sm_custom.settings')->get('jenkins')['enabled']) {
-        ua_sm_custom_run_job_and_post_comment('provision', $entity);
+        ua_sm_custom_run_job('provision', $entity);
       }
       break;
-
-    default:
   }
 }
 
 /**
  * Implements hook_ENTITY_TYPE_insert().
+ *
+ * Fetches a user's details from LDAP to fill out a provisioned account.
  */
 function ua_sm_custom_user_insert(EntityInterface $entity) {
   if (\Drupal::config('ua_sm_custom.settings')->get('ldap')['enabled']) {
     \Drupal::service('ua_sm_custom.user')->populateFieldsFromLdap($entity);
-    // todo: deal with failure - consider a queue.
+    // @todo Deal with failure - consider a queue.
   }
 }
 
 /**
  * Implements hook_ENTITY_TYPE_update().
+ *
+ * Synchronises a site's users to LDAP when it is updated, and triggers jenkins
+ * jobs when an instance's status is changed.
  */
 function ua_sm_custom_node_update(EntityInterface $entity) {
   switch ($entity->bundle()) {
-
     case 'ua_sm_site':
       if (\Drupal::config('ua_sm_custom.settings')->get('ldap')['enabled']) {
         \Drupal::service('ua_ldap.ldap_site')->syncUsers($entity->id());
-        // todo: deal with failure - consider a queue.
+        // @todo Deal with failure - consider a queue.
       }
       break;
 
@@ -168,9 +192,9 @@ function ua_sm_custom_node_update(EntityInterface $entity) {
       if (\Drupal::config('ua_sm_custom.settings')->get('jenkins')['enabled']) {
         // Check if the published state of the site instance has changed.
         if ($entity->status->value !== $entity->original->status->value) {
-          // If status has transitioned to published, run deploy,
-          // otherwise run decommission.
-          ua_sm_custom_run_job_and_post_comment(
+          // If status has transitioned to published, run deploy, otherwise run
+          // decommission.
+          ua_sm_custom_run_job(
             $entity->status->value ? 'deploy' : 'decommission',
             $entity
           );
@@ -181,39 +205,38 @@ function ua_sm_custom_node_update(EntityInterface $entity) {
         }
       }
       break;
-
-    default:
   }
 }
 
 /**
  * Implements hook_ENTITY_TYPE_delete().
+ *
+ * Cleans up LDAP when sites are removed, and triggers jenkins when site
+ * instances are deleted.
  */
 function ua_sm_custom_node_delete(EntityInterface $entity) {
   switch ($entity->bundle()) {
-
     case 'ua_sm_site':
       if (\Drupal::config('ua_sm_custom.settings')->get('ldap')['enabled']) {
-        \Drupal::service('ua_ldap.ldap_site')->removeSite($entity->id());
-        // todo: deal with failure - consider a queue.
+        // @todo Implement some sensible LDAP cleanup.
+        // \Drupal::service('ua_ldap.ldap_site')->removeSite($entity->id());
+        // @todo Deal with failure - consider a queue.
       }
       break;
 
     case 'ua_sm_site_instance':
       if (\Drupal::config('ua_sm_custom.settings')->get('jenkins')['enabled']) {
-        ua_sm_custom_run_job_and_post_comment('destroy', $entity);
+        ua_sm_custom_run_job('destroy', $entity);
       }
       break;
-
-    default:
   }
 }
-
 
 /**
  * Generates a password of 20 random alphanumeric characters.
  *
- * @return string $password the generated password.
+ * @return string $password
+ *   The generated password.
  */
 function ua_sm_custom_password_generator() {
   $characters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
@@ -228,10 +251,12 @@ function ua_sm_custom_password_generator() {
 
 /**
  * Implements hook_entity_prepare_form().
+ *
+ * Automatically generates site admin and environment database passwords if they
+ * are unset.
  */
 function ua_sm_custom_entity_prepare_form(EntityInterface $entity) {
   switch ($entity->bundle()) {
-
     case 'ua_sm_site':
       $password_field = $entity->get('field_ua_sm_admin_password');
       $password = $password_field->value;
@@ -249,8 +274,6 @@ function ua_sm_custom_entity_prepare_form(EntityInterface $entity) {
         $password_field->setValue($password);
       }
       break;
-
-    default:
   }
 }
 

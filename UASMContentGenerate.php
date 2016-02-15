@@ -7,51 +7,62 @@
 use Drupal\node\Entity\Node;
 
 /**
- * Create a "dev" server.
- *
- * NID: 1
+ * Create a build/db "dev" server.
  */
-$build_server = Node::create([
+$dev_server = Node::create([
   'type' => 'ua_sm_server',
   'langcode' => 'en',
   'uid' => '1',
   'status' => 1,
-  'title' => 'dev',
+  'title' => 'Dev server',
   'field_ua_sm_hostname' => [['value' => 'dev']],
   'field_ua_sm_ssh_user' => [['value' => 'root']],
 ]);
-$build_server->save();
+$dev_server->save();
 
 /**
- * Create a "docker-host" server.
- *
- * NID: 2
+ * Create first docker host server.
  */
-$docker_host_server = Node::create([
+$docker_host_server_1 = Node::create([
   'type' => 'ua_sm_server',
   'langcode' => 'en',
   'uid' => '1',
   'status' => 1,
-  'title' => 'docker-host',
-  'field_ua_sm_hostname' => [['value' => 'docker-host']],
+  'title' => 'Docker Host 1',
+  'field_ua_sm_hostname' => [['value' => 'docker-host-1']],
   'field_ua_sm_ssh_user' => [['value' => 'docker']],
 ]);
-$docker_host_server->save();
+$docker_host_server_1->save();
 
 /**
- * Create a "dev" platform.
- *
- * NID: 3
+ * Create second docker host server.
+ */
+$docker_host_server_2 = Node::create([
+  'type' => 'ua_sm_server',
+  'langcode' => 'en',
+  'uid' => '1',
+  'status' => 1,
+  'title' => 'Docker Host 2',
+  'field_ua_sm_hostname' => [['value' => 'docker-host-2']],
+  'field_ua_sm_ssh_user' => [['value' => 'docker']],
+]);
+$docker_host_server_2->save();
+
+/**
+ * Create a platform.
  */
 $platform = Node::create([
   'type' => 'ua_sm_platform',
   'langcode' => 'en',
   'uid' => '1',
   'status' => 1,
-  'title' => 'dev platform',
-  'field_ua_sm_build_server' =>     [['target_id' => $build_server->id()]],
-  'field_ua_sm_web_servers' =>      [['target_id' => $build_server->id()]],
-  'field_ua_sm_database_servers' => [['target_id' => $build_server->id()]],
+  'title' => 'Dev Platform',
+  'field_ua_sm_build_server' =>     [['target_id' => $dev_server->id()]],
+  'field_ua_sm_web_servers' => [
+    ['target_id' => $docker_host_server_1->id()],
+    ['target_id' => $docker_host_server_2->id()],
+  ],
+  'field_ua_sm_database_servers' => [['target_id' => $dev_server->id()]],
   'field_ua_sm_task_runner' =>      [['value' => 'jenkins']],
   'field_ua_sm_docker_registry' =>  [['value' => 'registry-backend:5000']],
 ]);
@@ -59,15 +70,13 @@ $platform->save();
 
 /**
  * Create a WCMS "dev" distribution.
- *
- * NID: 4
  */
 $distribution = Node::create([
   'type' => 'ua_sm_distribution',
   'langcode' => 'en',
   'uid' => '1',
   'status' => 1,
-  'title' => 'wcms d8 dev distribution',
+  'title' => 'WCMS D8 Dev Distribution',
   'field_ua_sm_git_repository' => [['value' => 'git@gitlab.adelaide.edu.au:web-team/ua-wcms-d8.git']],
   'field_ua_sm_box_type' =>       [['value' => 'web']],
 ]);
@@ -76,7 +85,7 @@ $distribution->save();
 /**
  * Create a WCMS "dev" site.
  *
- * NID: 5
+ * This spawns a "UAT" environment and a corresponding site instance.
  */
 $site = Node::create([
   'type' => 'ua_sm_site',
@@ -84,36 +93,15 @@ $site = Node::create([
   'uid' => '1',
   'status' => 1,
   'title' => 'wcms site',
-  'field_ua_sm_site_title' =>       [['value' => 'wcms site']],
+  'field_ua_sm_site_title' =>       [['value' => 'WCMS Site']],
   'field_ua_sm_top_menu_style' =>   [['value' => 'mega_menu']],
-  'field_ua_sm_authoriser_name' =>  [['value' => 'Ben']],
-  'field_ua_sm_authoriser_email' => [['value' => 'ben@ben.com']],
-  'field_ua_sm_maintainer_name' =>  [['value' => 'Ben']],
-  'field_ua_sm_maintainer_email' => [['value' => 'ben@ben.com']],
+  'field_ua_sm_authoriser_name' =>  [['value' => 'Prancy']],
+  'field_ua_sm_authoriser_email' => [['value' => 'prancy@adelaide.edu.au']],
+  'field_ua_sm_maintainer_name' =>  [['value' => 'Banana']],
+  'field_ua_sm_maintainer_email' => [['value' => 'banana@adelaide.edu.au']],
   'field_ua_sm_distribution' =>     [['target_id' => $distribution->id()]],
   'field_ua_sm_admin_email' =>      [['value' => 'admin@localhost']],
   'field_ua_sm_admin_password' =>   [['value' => 'password']],
   'field_ua_sm_admin_user' =>       [['value' => 'admin']],
 ]);
 $site->save();
-
-/**
- * Create a WCMS "dev" environment.
- *
- * NID: 6
- */
-$environment = Node::create([
-  'type' => 'ua_sm_environment',
-  'langcode' => 'en',
-  'uid' => '1',
-  'status' => 1,
-  'title' => 'wcms environment',
-  'field_ua_sm_site_title' =>    [['value' => 'wcms environment']],
-  'field_ua_sm_machine_name' =>  [['value' => 'dev']],
-  'field_ua_sm_domain_name' =>   [['value' => 'adelaide.dev']],
-  'field_ua_sm_git_reference' => [['value' => 'develop']],
-  'field_ua_sm_database_host' => [['value' => 'mysql']],
-  'field_ua_sm_platform' =>      [['target_id' => $platform->id()]],
-  'field_ua_sm_site' =>          [['target_id' => $site->id()]],
-]);
-$environment->save();
