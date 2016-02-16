@@ -7,7 +7,7 @@ dependencies:
     - bartik
 id: bartik_powered
 theme: bartik
-region: footer_fifth
+region: '-1'
 weight: 10
 provider: null
 plugin: system_powered_by_block

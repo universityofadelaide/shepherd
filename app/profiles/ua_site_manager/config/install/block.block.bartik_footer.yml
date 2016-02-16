@@ -9,7 +9,7 @@ dependencies:
     - bartik
 id: bartik_footer
 theme: bartik
-region: footer_fifth
+region: '-1'
 weight: 0
 provider: null
 plugin: 'system_menu_block:footer'
