@@ -766,13 +766,14 @@ display:
       display_extenders: {  }
       path: sites/list
       menu:
-        type: tab
+        type: none
         title: Sites
         description: 'Administrative list of sites'
-        parent: system.admin_content
+        expanded: false
+        parent: ''
         weight: 0
         context: '0'
-        menu_name: admin
+        menu_name: main
     cache_metadata:
       contexts:
         - 'languages:language_content'

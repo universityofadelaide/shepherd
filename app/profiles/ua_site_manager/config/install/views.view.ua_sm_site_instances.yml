@@ -9,6 +9,7 @@ dependencies:
     - field.storage.node.field_ua_sm_ssh_port
     - field.storage.node.field_ua_sm_state
     - node.type.ua_sm_site_instance
+    - system.menu.main
   module:
     - node
     - options
@@ -667,7 +668,16 @@ display:
     position: 1
     display_options:
       display_extenders: {  }
-      path: site-instances
+      path: instances/list
+      menu:
+        type: normal
+        title: Instances
+        description: 'List site instances'
+        expanded: false
+        parent: ''
+        weight: 0
+        context: '0'
+        menu_name: main
     cache_metadata:
       max-age: 0
       contexts:
