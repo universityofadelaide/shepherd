@@ -253,3 +253,53 @@ function ua_sm_custom_entity_prepare_form(EntityInterface $entity) {
     default:
   }
 }
+
+/**
+ * Implements hook_entity_type_insert().
+ */
+function ua_sm_custom_comment_insert(EntityInterface $entity) {
+
+  // Send an email notification to the user who created a site instance.
+  $commented_entity = $entity->getCommentedEntity();
+
+  if ($commented_entity->getType() === "ua_sm_site") {
+    $author = $commented_entity->getRevisionAuthor();
+    $author_email = $author->getEmail();
+
+    $mail_message = [
+      'author_name' => $author->field_ua_user_preferred_name->value ?: $author->getAccountName(),
+      'message' => $entity->comment_body->value,
+      'subject' => $entity->getSubject(),
+    ];
+    $langcode = $author->getPreferredLangCode();
+
+    $result = \Drupal::service('plugin.manager.mail')->mail('ua_sm_custom', 'ua_sm_site', $author_email, $langcode, $mail_message);
+
+    if ($result['result'] !== TRUE) {
+      drupal_set_message(t('There was an issue sending an email notification to %email with message %msg', [
+        '%email' => $author_email,
+        '%msg' => $entity->comment_body->value
+      ]), 'error');
+      return;
+    }
+
+    drupal_set_message(t('An email notification has been sent to %user', [ '%user' => $author->field_ua_user_preferred_name->value ]));
+
+  }
+
+}
+
+/**
+ * Implements hook_mail().
+ */
+function ua_sm_custom_mail($key, &$message, $params) {
+  // Set the content of the email message, escape any html prior to send.
+  switch ($key) {
+    case 'ua_sm_site':
+      $message['from'] = \Drupal::config('system.site')->get('mail');
+      $message['subject'] = t('Site Instance : @subject', ['subject' => $params['subject']]);
+      $message['body'][] = t('Hello @name,', ['name' => $params['author_name']]);
+      $message['body'][] = \Drupal\Component\Utility\Html::escape($params['message']);
+  }
+
+}
