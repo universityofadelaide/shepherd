@@ -1,4 +1,3 @@
-uuid: 8ea43e1b-6e96-40d2-8d00-00e018867991
 langcode: en
 status: true
 dependencies:
@@ -7,8 +6,6 @@ dependencies:
     - system.menu.main
   module:
     - user
-_core:
-  default_config_hash: oF5E9uS3eUegB8aldWrV0P7H2J8LZEbz0q5ZX01qpXk
 id: users
 label: Users
 module: views
