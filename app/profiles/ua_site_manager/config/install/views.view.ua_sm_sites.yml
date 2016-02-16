@@ -1,4 +1,3 @@
-uuid: 43e77f23-6393-4b7c-8d00-0a4fec909349
 langcode: en
 status: true
 dependencies:
@@ -15,8 +14,6 @@ dependencies:
     - node
     - taxonomy
     - user
-_core:
-  default_config_hash: CPgTS16bKfdVfO8VWaaH_c-51_c4nk83imch-aedO5c
 id: ua_sm_sites
 label: Sites
 module: views
