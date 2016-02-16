@@ -724,7 +724,20 @@ display:
           expose:
             label: ''
       title: Sites
-      header: {  }
+      header:
+        area:
+          id: area
+          table: views
+          field: area
+          relationship: none
+          group_type: group
+          admin_label: ''
+          empty: true
+          tokenize: false
+          content:
+            value: '<a class="c-btn" href="[site:url]node/add/ua_sm_site">Add Site</a>'
+            format: basic_html
+          plugin_id: text
       footer: {  }
       empty: {  }
       relationships: {  }
@@ -764,7 +777,7 @@ display:
     position: 1
     display_options:
       display_extenders: {  }
-      path: sites/list
+      path: websites
       menu:
         type: none
         title: Sites
