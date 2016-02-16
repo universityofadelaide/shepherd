@@ -1,21 +1,23 @@
-uuid: 8ea43e1b-6e96-40d2-8d00-00e018867991
+uuid: 094d0ca3-a883-4bc3-b700-c1208a00ad8e
 langcode: en
 status: true
 dependencies:
   config:
-    - field.storage.user.field_ua_user_preferred_name
+    - core.entity_view_mode.node.teaser
+    - field.storage.node.field_ua_sm_box_type
+    - field.storage.node.field_ua_sm_git_repository
+    - node.type.ua_sm_distribution
     - system.menu.main
   module:
+    - node
     - user
-_core:
-  default_config_hash: oF5E9uS3eUegB8aldWrV0P7H2J8LZEbz0q5ZX01qpXk
-id: users
-label: Users
+id: ua_sm_distributions
+label: Distributions
 module: views
 description: ''
 tag: 'Site manager'
-base_table: users_field_data
-base_field: uid
+base_table: node_field_data
+base_field: nid
 core: 8.x
 display:
   default:
@@ -27,7 +29,7 @@ display:
       access:
         type: perm
         options:
-          perm: 'access user profiles'
+          perm: 'access content'
       cache:
         type: tag
         options: {  }
@@ -52,7 +54,7 @@ display:
       pager:
         type: full
         options:
-          items_per_page: 50
+          items_per_page: 20
           offset: 0
           id: 0
           total_pages: null
@@ -72,32 +74,68 @@ display:
           quantity: 9
       style:
         type: table
+        options:
+          grouping: {  }
+          row_class: ''
+          default_row_class: true
+          override: true
+          sticky: false
+          caption: ''
+          summary: ''
+          description: ''
+          columns:
+            title: title
+          info:
+            title:
+              sortable: false
+              default_sort_order: asc
+              align: ''
+              separator: ''
+              empty_column: false
+              responsive: ''
+          default: '-1'
+          empty_table: false
       row:
-        type: fields
+        type: 'entity:node'
+        options:
+          view_mode: teaser
       fields:
-        name:
-          id: name
-          table: users_field_data
-          field: name
-          entity_type: user
-          entity_field: name
-          alter:
-            alter_text: false
-            make_link: false
-            absolute: false
-            trim: false
-            word_boundary: false
-            ellipsis: false
-            strip_tags: false
-            html: false
-          hide_empty: false
-          empty_zero: false
-          plugin_id: field
+        title:
+          id: title
+          table: node_field_data
+          field: title
           relationship: none
           group_type: group
           admin_label: ''
           label: Name
           exclude: false
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: false
+            ellipsis: false
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
           element_type: ''
           element_class: ''
           element_label_type: ''
@@ -107,10 +145,13 @@ display:
           element_wrapper_class: ''
           element_default_classes: true
           empty: ''
+          hide_empty: false
+          empty_zero: false
           hide_alter_empty: true
           click_sort_column: value
-          type: user_name
-          settings: {  }
+          type: string
+          settings:
+            link_to_entity: true
           group_column: value
           group_columns: {  }
           group_rows: true
@@ -121,14 +162,17 @@ display:
           multi_type: separator
           separator: ', '
           field_api_classes: false
-        field_ua_user_preferred_name:
-          id: field_ua_user_preferred_name
-          table: user__field_ua_user_preferred_name
-          field: field_ua_user_preferred_name
+          entity_type: node
+          entity_field: title
+          plugin_id: field
+        field_ua_sm_git_repository:
+          id: field_ua_sm_git_repository
+          table: node__field_ua_sm_git_repository
+          field: field_ua_sm_git_repository
           relationship: none
           group_type: group
           admin_label: ''
-          label: 'Preferred name'
+          label: 'Git repository'
           exclude: false
           alter:
             alter_text: false
@@ -172,7 +216,7 @@ display:
           click_sort_column: value
           type: string
           settings:
-            link_to_entity: true
+            link_to_entity: false
           group_column: value
           group_columns: {  }
           group_rows: true
@@ -184,14 +228,14 @@ display:
           separator: ', '
           field_api_classes: false
           plugin_id: field
-        mail:
-          id: mail
-          table: users_field_data
-          field: mail
+        field_ua_sm_box_type:
+          id: field_ua_sm_box_type
+          table: node__field_ua_sm_box_type
+          field: field_ua_sm_box_type
           relationship: none
           group_type: group
           admin_label: ''
-          label: Email
+          label: 'Box type'
           exclude: false
           alter:
             alter_text: false
@@ -233,8 +277,9 @@ display:
           empty_zero: false
           hide_alter_empty: true
           click_sort_column: value
-          type: basic_string
-          settings: {  }
+          type: string
+          settings:
+            link_to_entity: false
           group_column: value
           group_columns: {  }
           group_rows: true
@@ -245,107 +290,35 @@ display:
           multi_type: separator
           separator: ', '
           field_api_classes: false
-          entity_type: user
-          entity_field: mail
           plugin_id: field
       filters:
         status:
           value: true
-          table: users_field_data
+          table: node_field_data
           field: status
           plugin_id: boolean
-          entity_type: user
+          entity_type: node
           entity_field: status
           id: status
           expose:
             operator: ''
           group: 1
-        uid:
-          id: uid
-          table: users_field_data
-          field: uid
-          relationship: none
-          group_type: group
-          admin_label: ''
-          operator: in
-          value: {  }
-          group: 1
-          exposed: true
-          expose:
-            operator_id: uid_op
-            label: 'A number'
-            description: ''
-            use_operator: false
-            operator: uid_op
-            identifier: uid
-            required: false
-            remember: false
-            multiple: false
-            remember_roles:
-              authenticated: authenticated
-              anonymous: '0'
-              administrator: '0'
-            reduce: false
-          is_grouped: false
-          group_info:
-            label: ''
-            description: ''
-            identifier: ''
-            optional: true
-            widget: select
-            multiple: false
-            remember: false
-            default_group: All
-            default_group_multiple: {  }
-            group_items: {  }
-          entity_type: user
-          entity_field: uid
-          plugin_id: user_name
-        field_ua_user_preferred_name_value:
-          id: field_ua_user_preferred_name_value
-          table: user__field_ua_user_preferred_name
-          field: field_ua_user_preferred_name_value
-          relationship: uid
-          group_type: group
-          admin_label: ''
-          operator: contains
-          value: ''
-          group: 1
-          exposed: true
-          expose:
-            operator_id: field_ua_user_preferred_name_value_op
-            label: 'Preferred name'
-            description: ''
-            use_operator: false
-            operator: field_ua_user_preferred_name_value_op
-            identifier: field_ua_user_preferred_name_value
-            required: false
-            remember: false
-            multiple: false
-            remember_roles:
-              authenticated: authenticated
-              anonymous: '0'
-              administrator: '0'
-          is_grouped: false
-          group_info:
-            label: ''
-            description: ''
-            identifier: ''
-            optional: true
-            widget: select
-            multiple: false
-            remember: false
-            default_group: All
-            default_group_multiple: {  }
-            group_items: {  }
-          plugin_id: string
+        type:
+          id: type
+          table: node_field_data
+          field: type
+          value:
+            ua_sm_distribution: ua_sm_distribution
+          entity_type: node
+          entity_field: type
+          plugin_id: bundle
       sorts:
         created:
           id: created
-          table: users_field_data
+          table: node_field_data
           field: created
           order: DESC
-          entity_type: user
+          entity_type: node
           entity_field: created
           plugin_id: date
           relationship: none
@@ -355,7 +328,7 @@ display:
           expose:
             label: ''
           granularity: second
-      title: Users
+      title: Distributions
       header:
         area:
           id: area
@@ -367,7 +340,7 @@ display:
           empty: true
           tokenize: false
           content:
-            value: '<a class="c-btn" href="[site:url]admin/people/create">Add user</a>'
+            value: '<a class="c-btn" href="[site:url]node/add/ua_sm_distribution">Add distribution</a>'
             format: basic_html
           plugin_id: text
       footer: {  }
@@ -380,11 +353,12 @@ display:
       contexts:
         - 'languages:language_content'
         - 'languages:language_interface'
-        - url
         - url.query_args
+        - 'user.node_grants:view'
         - user.permissions
       tags:
-        - 'config:field.storage.user.field_ua_user_preferred_name'
+        - 'config:field.storage.node.field_ua_sm_box_type'
+        - 'config:field.storage.node.field_ua_sm_git_repository'
   page_1:
     display_plugin: page
     id: page_1
@@ -392,18 +366,19 @@ display:
     position: 1
     display_options:
       display_extenders: {  }
-      path: users
+      path: distributions
       menu:
         type: normal
-        title: Users
+        title: Distributions
         menu_name: main
     cache_metadata:
       max-age: 0
       contexts:
         - 'languages:language_content'
         - 'languages:language_interface'
-        - url
         - url.query_args
+        - 'user.node_grants:view'
         - user.permissions
       tags:
-        - 'config:field.storage.user.field_ua_user_preferred_name'
+        - 'config:field.storage.node.field_ua_sm_box_type'
+        - 'config:field.storage.node.field_ua_sm_git_repository'

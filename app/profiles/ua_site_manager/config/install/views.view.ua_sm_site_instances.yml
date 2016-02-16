@@ -1,3 +1,4 @@
+uuid: 29ba57de-e5e1-4f7d-a012-1895ea367f88
 langcode: en
 status: true
 dependencies:
@@ -14,11 +15,13 @@ dependencies:
     - node
     - options
     - user
+_core:
+  default_config_hash: 0SwVzfHtxhNp95tFlFAo2F-8Z6agUjBpgTtleQNHzZc
 id: ua_sm_site_instances
 label: 'Site Instances'
 module: views
 description: ''
-tag: ''
+tag: 'Site manager'
 base_table: node_field_data
 base_field: nid
 core: 8.x
@@ -688,7 +691,7 @@ display:
         description: 'List site instances'
         expanded: false
         parent: ''
-        weight: 0
+        weight: -45
         context: '0'
         menu_name: main
     cache_metadata:

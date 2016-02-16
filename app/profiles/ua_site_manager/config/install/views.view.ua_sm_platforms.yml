@@ -1,26 +1,24 @@
-uuid: 43e77f23-6393-4b7c-8d00-0a4fec909349
+uuid: 3eac2a48-efbf-48aa-8500-0ad8fb14215d
 langcode: en
 status: true
 dependencies:
   config:
-    - field.storage.node.field_tags
-    - field.storage.node.field_ua_sm_domain_name
-    - field.storage.node.field_ua_sm_environment
-    - field.storage.node.field_ua_sm_path
-    - field.storage.node.field_ua_sm_users
-    - node.type.ua_sm_site
-    - taxonomy.vocabulary.tags
+    - field.storage.node.field_ua_sm_build_server
+    - field.storage.node.field_ua_sm_database_servers
+    - field.storage.node.field_ua_sm_docker_registry
+    - field.storage.node.field_ua_sm_rev_proxy_addresses
+    - field.storage.node.field_ua_sm_reverse_proxy_header
+    - field.storage.node.field_ua_sm_task_runner
+    - field.storage.node.field_ua_sm_web_servers
+    - node.type.ua_sm_platform
+    - system.menu.main
   module:
-    - entity_reference_revisions
     - node
-    - taxonomy
     - user
-_core:
-  default_config_hash: CPgTS16bKfdVfO8VWaaH_c-51_c4nk83imch-aedO5c
-id: ua_sm_sites
-label: Sites
+id: ua_sm_platforms
+label: Platforms
 module: views
-description: 'Administrative list of sites'
+description: ''
 tag: 'Site manager'
 base_table: node_field_data
 base_field: nid
@@ -37,7 +35,7 @@ display:
         options:
           perm: 'access content'
       cache:
-        type: none
+        type: tag
         options: {  }
       query:
         type: views_query
@@ -60,7 +58,7 @@ display:
       pager:
         type: full
         options:
-          items_per_page: 25
+          items_per_page: 20
           offset: 0
           id: 0
           total_pages: null
@@ -73,64 +71,13 @@ display:
             offset: false
             offset_label: Offset
           tags:
-            previous: '‹ previous'
-            next: 'next ›'
-            first: '« first'
-            last: 'last »'
+            previous: '‹ Previous'
+            next: 'Next ›'
+            first: '« First'
+            last: 'Last »'
           quantity: 9
       style:
         type: table
-        options:
-          grouping: {  }
-          row_class: ''
-          default_row_class: true
-          override: true
-          sticky: false
-          caption: ''
-          summary: ''
-          description: ''
-          columns:
-            title: title
-            field_ua_sm_domain_name: field_ua_sm_domain_name
-            field_ua_sm_path: field_ua_sm_path
-            created: created
-            field_tags: field_tags
-          info:
-            title:
-              sortable: true
-              default_sort_order: asc
-              align: ''
-              separator: ''
-              empty_column: false
-              responsive: ''
-            field_ua_sm_domain_name:
-              sortable: true
-              default_sort_order: asc
-              align: ''
-              separator: ''
-              empty_column: false
-              responsive: ''
-            field_ua_sm_path:
-              sortable: true
-              default_sort_order: asc
-              align: ''
-              separator: ''
-              empty_column: false
-              responsive: ''
-            created:
-              sortable: true
-              default_sort_order: asc
-              align: ''
-              separator: ''
-              empty_column: false
-              responsive: ''
-            field_tags:
-              align: ''
-              separator: ''
-              empty_column: false
-              responsive: ''
-          default: '-1'
-          empty_table: false
       row:
         type: fields
       fields:
@@ -138,39 +85,54 @@ display:
           id: title
           table: node_field_data
           field: title
-          entity_type: node
-          entity_field: title
+          relationship: none
+          group_type: group
+          admin_label: ''
+          label: Name
+          exclude: false
           alter:
             alter_text: false
+            text: ''
             make_link: false
+            path: ''
             absolute: false
-            trim: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
             word_boundary: false
             ellipsis: false
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
             strip_tags: false
+            trim: false
+            preserve_tags: ''
             html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: true
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
           hide_empty: false
           empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: value
+          type: string
           settings:
             link_to_entity: true
-          plugin_id: field
-          relationship: none
-          group_type: group
-          admin_label: ''
-          label: Title
-          exclude: false
-          element_type: ''
-          element_class: ''
-          element_label_type: ''
-          element_label_class: ''
-          element_label_colon: true
-          element_wrapper_type: ''
-          element_wrapper_class: ''
-          element_default_classes: true
-          empty: ''
-          hide_alter_empty: true
-          click_sort_column: value
-          type: string
           group_column: value
           group_columns: {  }
           group_rows: true
@@ -181,140 +143,17 @@ display:
           multi_type: separator
           separator: ', '
           field_api_classes: false
-        field_ua_sm_domain_name:
-          id: field_ua_sm_domain_name
-          table: node__field_ua_sm_domain_name
-          field: field_ua_sm_domain_name
-          relationship: none
-          group_type: group
-          admin_label: ''
-          label: 'Primary domain name'
-          exclude: false
-          alter:
-            alter_text: false
-            text: ''
-            make_link: false
-            path: ''
-            absolute: false
-            external: false
-            replace_spaces: false
-            path_case: none
-            trim_whitespace: false
-            alt: ''
-            rel: ''
-            link_class: ''
-            prefix: ''
-            suffix: ''
-            target: ''
-            nl2br: false
-            max_length: 0
-            word_boundary: true
-            ellipsis: true
-            more_link: false
-            more_link_text: ''
-            more_link_path: ''
-            strip_tags: false
-            trim: false
-            preserve_tags: ''
-            html: false
-          element_type: ''
-          element_class: ''
-          element_label_type: ''
-          element_label_class: ''
-          element_label_colon: true
-          element_wrapper_type: ''
-          element_wrapper_class: ''
-          element_default_classes: true
-          empty: ''
-          hide_empty: false
-          empty_zero: false
-          hide_alter_empty: true
-          click_sort_column: value
-          type: string
-          settings:
-            link_to_entity: false
-          group_column: value
-          group_columns: {  }
-          group_rows: true
-          delta_limit: 0
-          delta_offset: 0
-          delta_reversed: false
-          delta_first_last: false
-          multi_type: separator
-          separator: ', '
-          field_api_classes: false
+          entity_type: node
+          entity_field: title
           plugin_id: field
-        field_ua_sm_path:
-          id: field_ua_sm_path
-          table: node__field_ua_sm_path
-          field: field_ua_sm_path
+        field_ua_sm_build_server:
+          id: field_ua_sm_build_server
+          table: node__field_ua_sm_build_server
+          field: field_ua_sm_build_server
           relationship: none
           group_type: group
           admin_label: ''
-          label: Path
-          exclude: false
-          alter:
-            alter_text: false
-            text: ''
-            make_link: false
-            path: ''
-            absolute: false
-            external: false
-            replace_spaces: false
-            path_case: none
-            trim_whitespace: false
-            alt: ''
-            rel: ''
-            link_class: ''
-            prefix: ''
-            suffix: ''
-            target: ''
-            nl2br: false
-            max_length: 0
-            word_boundary: true
-            ellipsis: true
-            more_link: false
-            more_link_text: ''
-            more_link_path: ''
-            strip_tags: false
-            trim: false
-            preserve_tags: ''
-            html: false
-          element_type: ''
-          element_class: ''
-          element_label_type: ''
-          element_label_class: ''
-          element_label_colon: true
-          element_wrapper_type: ''
-          element_wrapper_class: ''
-          element_default_classes: true
-          empty: ''
-          hide_empty: false
-          empty_zero: false
-          hide_alter_empty: true
-          click_sort_column: value
-          type: string
-          settings:
-            link_to_entity: false
-          group_column: value
-          group_columns: {  }
-          group_rows: true
-          delta_limit: 0
-          delta_offset: 0
-          delta_reversed: false
-          delta_first_last: false
-          multi_type: separator
-          separator: ', '
-          field_api_classes: false
-          plugin_id: field
-        field_ua_sm_environment:
-          id: field_ua_sm_environment
-          table: node__field_ua_sm_environment
-          field: field_ua_sm_environment
-          relationship: none
-          group_type: group
-          admin_label: ''
-          label: Environments
+          label: 'Build server'
           exclude: false
           alter:
             alter_text: false
@@ -370,15 +209,15 @@ display:
           separator: ', '
           field_api_classes: false
           plugin_id: field
-        field_tags:
-          id: field_tags
-          table: node__field_tags
-          field: field_tags
+        field_ua_sm_database_servers:
+          id: field_ua_sm_database_servers
+          table: node__field_ua_sm_database_servers
+          field: field_ua_sm_database_servers
           relationship: none
           group_type: group
           admin_label: ''
-          label: Tags
-          exclude: true
+          label: 'Database servers'
+          exclude: false
           alter:
             alter_text: false
             text: ''
@@ -433,14 +272,14 @@ display:
           separator: ', '
           field_api_classes: false
           plugin_id: field
-        field_ua_sm_users:
-          id: field_ua_sm_users
-          table: node__field_ua_sm_users
-          field: field_ua_sm_users
+        field_ua_sm_docker_registry:
+          id: field_ua_sm_docker_registry
+          table: node__field_ua_sm_docker_registry
+          field: field_ua_sm_docker_registry
           relationship: none
           group_type: group
           admin_label: ''
-          label: Users
+          label: 'Docker registry'
           exclude: false
           alter:
             alter_text: false
@@ -451,7 +290,259 @@ display:
             external: false
             replace_spaces: false
             path_case: none
-            trim_whitespace: true
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: true
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: value
+          type: string
+          settings:
+            link_to_entity: false
+          group_column: value
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 0
+          delta_offset: 0
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
+          plugin_id: field
+        field_ua_sm_rev_proxy_addresses:
+          id: field_ua_sm_rev_proxy_addresses
+          table: node__field_ua_sm_rev_proxy_addresses
+          field: field_ua_sm_rev_proxy_addresses
+          relationship: none
+          group_type: group
+          admin_label: ''
+          label: 'Reverse proxy addresses'
+          exclude: false
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: true
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: value
+          type: string
+          settings:
+            link_to_entity: false
+          group_column: value
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 0
+          delta_offset: 0
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
+          plugin_id: field
+        field_ua_sm_reverse_proxy_header:
+          id: field_ua_sm_reverse_proxy_header
+          table: node__field_ua_sm_reverse_proxy_header
+          field: field_ua_sm_reverse_proxy_header
+          relationship: none
+          group_type: group
+          admin_label: ''
+          label: 'Reverse proxy header'
+          exclude: false
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: true
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: value
+          type: string
+          settings:
+            link_to_entity: false
+          group_column: value
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 0
+          delta_offset: 0
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
+          plugin_id: field
+        field_ua_sm_task_runner:
+          id: field_ua_sm_task_runner
+          table: node__field_ua_sm_task_runner
+          field: field_ua_sm_task_runner
+          relationship: none
+          group_type: group
+          admin_label: ''
+          label: 'Task runner'
+          exclude: false
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: true
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: value
+          type: string
+          settings:
+            link_to_entity: false
+          group_column: value
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 0
+          delta_offset: 0
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
+          plugin_id: field
+        field_ua_sm_web_servers:
+          id: field_ua_sm_web_servers
+          table: node__field_ua_sm_web_servers
+          field: field_ua_sm_web_servers
+          relationship: none
+          group_type: group
+          admin_label: ''
+          label: 'Web servers'
+          exclude: false
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
             alt: ''
             rel: ''
             link_class: ''
@@ -482,251 +573,58 @@ display:
           empty_zero: false
           hide_alter_empty: true
           click_sort_column: target_id
-          type: entity_reference_revisions_entity_view
+          type: entity_reference_label
           settings:
-            view_mode: ua_sm_minified
-          group_column: ''
+            link: true
+          group_column: target_id
           group_columns: {  }
           group_rows: true
-          delta_limit: 5
+          delta_limit: 0
           delta_offset: 0
           delta_reversed: false
           delta_first_last: false
-          multi_type: ul
+          multi_type: separator
           separator: ', '
           field_api_classes: false
           plugin_id: field
       filters:
+        status:
+          value: true
+          table: node_field_data
+          field: status
+          plugin_id: boolean
+          entity_type: node
+          entity_field: status
+          id: status
+          expose:
+            operator: ''
+          group: 1
         type:
           id: type
           table: node_field_data
           field: type
           value:
-            ua_sm_site: ua_sm_site
+            ua_sm_platform: ua_sm_platform
           entity_type: node
           entity_field: type
           plugin_id: bundle
-          group: 1
-        status:
-          id: status
-          table: node_field_data
-          field: status
-          relationship: none
-          group_type: group
-          admin_label: ''
-          operator: '='
-          value: true
-          group: 1
-          exposed: true
-          expose:
-            operator_id: ''
-            label: Active
-            description: ''
-            use_operator: false
-            operator: status_op
-            identifier: status
-            required: true
-            remember: false
-            multiple: false
-            remember_roles:
-              authenticated: authenticated
-              anonymous: '0'
-              administrator: '0'
-          is_grouped: false
-          group_info:
-            label: ''
-            description: ''
-            identifier: ''
-            optional: true
-            widget: select
-            multiple: false
-            remember: false
-            default_group: All
-            default_group_multiple: {  }
-            group_items: {  }
-          plugin_id: boolean
-          entity_type: node
-          entity_field: status
-        title:
-          id: title
-          table: node_field_data
-          field: title
-          relationship: none
-          group_type: group
-          admin_label: ''
-          operator: contains
-          value: ''
-          group: 1
-          exposed: true
-          expose:
-            operator_id: title_op
-            label: Title
-            description: ''
-            use_operator: false
-            operator: title_op
-            identifier: title
-            required: false
-            remember: false
-            multiple: false
-            remember_roles:
-              authenticated: authenticated
-              anonymous: '0'
-              administrator: '0'
-          is_grouped: false
-          group_info:
-            label: ''
-            description: ''
-            identifier: ''
-            optional: true
-            widget: select
-            multiple: false
-            remember: false
-            default_group: All
-            default_group_multiple: {  }
-            group_items: {  }
-          entity_type: node
-          entity_field: title
-          plugin_id: string
-        field_ua_sm_site_title_value:
-          id: field_ua_sm_site_title_value
-          table: node__field_ua_sm_site_title
-          field: field_ua_sm_site_title_value
-          relationship: none
-          group_type: group
-          admin_label: ''
-          operator: contains
-          value: ''
-          group: 1
-          exposed: true
-          expose:
-            operator_id: field_ua_sm_site_title_value_op
-            label: 'Site title'
-            description: ''
-            use_operator: false
-            operator: field_ua_sm_site_title_value_op
-            identifier: field_ua_sm_site_title_value
-            required: false
-            remember: false
-            multiple: false
-            remember_roles:
-              authenticated: authenticated
-              anonymous: '0'
-              administrator: '0'
-          is_grouped: false
-          group_info:
-            label: ''
-            description: ''
-            identifier: ''
-            optional: true
-            widget: select
-            multiple: false
-            remember: false
-            default_group: All
-            default_group_multiple: {  }
-            group_items: {  }
-          plugin_id: string
-        field_ua_sm_users_target_id:
-          id: field_ua_sm_users_target_id
-          table: node__field_ua_sm_users
-          field: field_ua_sm_users_target_id
-          relationship: none
-          group_type: group
-          admin_label: ''
-          operator: '='
-          value:
-            min: ''
-            max: ''
-            value: ''
-          group: 1
-          exposed: true
-          expose:
-            operator_id: field_ua_sm_users_target_id_op
-            label: Users
-            description: ''
-            use_operator: false
-            operator: field_ua_sm_users_target_id_op
-            identifier: field_ua_sm_users_target_id
-            required: false
-            remember: false
-            multiple: false
-            remember_roles:
-              authenticated: authenticated
-              anonymous: '0'
-              administrator: '0'
-          is_grouped: false
-          group_info:
-            label: ''
-            description: ''
-            identifier: ''
-            optional: true
-            widget: select
-            multiple: false
-            remember: false
-            default_group: All
-            default_group_multiple: {  }
-            group_items: {  }
-          plugin_id: numeric
-        field_tags_target_id:
-          id: field_tags_target_id
-          table: node__field_tags
-          field: field_tags_target_id
-          relationship: none
-          group_type: group
-          admin_label: ''
-          operator: or
-          value: {  }
-          group: 1
-          exposed: true
-          expose:
-            operator_id: field_tags_target_id_op
-            label: Tags
-            description: ''
-            use_operator: false
-            operator: field_tags_target_id_op
-            identifier: field_tags_target_id
-            required: false
-            remember: false
-            multiple: true
-            remember_roles:
-              authenticated: authenticated
-              anonymous: '0'
-              administrator: '0'
-            reduce: false
-          is_grouped: false
-          group_info:
-            label: ''
-            description: ''
-            identifier: ''
-            optional: true
-            widget: select
-            multiple: false
-            remember: false
-            default_group: All
-            default_group_multiple: {  }
-            group_items: {  }
-          reduce_duplicates: false
-          type: textfield
-          limit: true
-          vid: tags
-          hierarchy: false
-          error_message: true
-          plugin_id: taxonomy_index_tid
       sorts:
-        title:
-          id: title
+        created:
+          id: created
           table: node_field_data
-          field: title
+          field: created
           order: DESC
           entity_type: node
-          entity_field: title
-          plugin_id: standard
+          entity_field: created
+          plugin_id: date
           relationship: none
           group_type: group
           admin_label: ''
           exposed: false
           expose:
             label: ''
-      title: Sites
+          granularity: second
+      title: Platforms
       header:
         area:
           id: area
@@ -738,41 +636,30 @@ display:
           empty: true
           tokenize: false
           content:
-            value: '<a class="c-btn" href="[site:url]node/add/ua_sm_site">Add Site</a>'
+            value: '<a class="c-btn" href="[site:url]node/add/ua_sm_platform">Add platform</a>'
             format: basic_html
           plugin_id: text
       footer: {  }
       empty: {  }
       relationships: {  }
-      arguments:
-        field_tags_target_id:
-          id: field_tags_target_id
-          table: node__field_tags
-          field: field_tags_target_id
-          plugin_id: numeric
+      arguments: {  }
       display_extenders: {  }
-      filter_groups:
-        operator: AND
-        groups:
-          1: AND
-      use_ajax: true
     cache_metadata:
+      max-age: 0
       contexts:
         - 'languages:language_content'
         - 'languages:language_interface'
-        - url
         - url.query_args
-        - user
         - 'user.node_grants:view'
         - user.permissions
-      cacheable: false
-      max-age: 0
       tags:
-        - 'config:field.storage.node.field_tags'
-        - 'config:field.storage.node.field_ua_sm_domain_name'
-        - 'config:field.storage.node.field_ua_sm_environment'
-        - 'config:field.storage.node.field_ua_sm_path'
-        - 'config:field.storage.node.field_ua_sm_users'
+        - 'config:field.storage.node.field_ua_sm_build_server'
+        - 'config:field.storage.node.field_ua_sm_database_servers'
+        - 'config:field.storage.node.field_ua_sm_docker_registry'
+        - 'config:field.storage.node.field_ua_sm_rev_proxy_addresses'
+        - 'config:field.storage.node.field_ua_sm_reverse_proxy_header'
+        - 'config:field.storage.node.field_ua_sm_task_runner'
+        - 'config:field.storage.node.field_ua_sm_web_servers'
   page_1:
     display_plugin: page
     id: page_1
@@ -780,30 +667,24 @@ display:
     position: 1
     display_options:
       display_extenders: {  }
-      path: websites
+      path: platforms
       menu:
-        type: none
-        title: Sites
-        description: 'Administrative list of sites'
-        expanded: false
-        parent: ''
-        weight: 0
-        context: '0'
+        type: normal
+        title: Platforms
         menu_name: main
     cache_metadata:
+      max-age: 0
       contexts:
         - 'languages:language_content'
         - 'languages:language_interface'
-        - url
         - url.query_args
-        - user
         - 'user.node_grants:view'
         - user.permissions
-      cacheable: false
-      max-age: 0
       tags:
-        - 'config:field.storage.node.field_tags'
-        - 'config:field.storage.node.field_ua_sm_domain_name'
-        - 'config:field.storage.node.field_ua_sm_environment'
-        - 'config:field.storage.node.field_ua_sm_path'
-        - 'config:field.storage.node.field_ua_sm_users'
+        - 'config:field.storage.node.field_ua_sm_build_server'
+        - 'config:field.storage.node.field_ua_sm_database_servers'
+        - 'config:field.storage.node.field_ua_sm_docker_registry'
+        - 'config:field.storage.node.field_ua_sm_rev_proxy_addresses'
+        - 'config:field.storage.node.field_ua_sm_reverse_proxy_header'
+        - 'config:field.storage.node.field_ua_sm_task_runner'
+        - 'config:field.storage.node.field_ua_sm_web_servers'
