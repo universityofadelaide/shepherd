@@ -489,8 +489,8 @@ display:
           empty: true
           tokenize: false
           content:
-            value: '<a class="c-btn" href="[site:url]node/add/ua_sm_environment">Add environment</a>'
-            format: basic_html
+            value: '<a class="c-btn button" href="[site:url]node/add/ua_sm_environment">Add environment</a>'
+            format: full_html
           plugin_id: text
       footer: {  }
       empty: {  }
@@ -522,11 +522,7 @@ display:
       menu:
         type: normal
         title: Environments
-        description: ''
-        expanded: false
-        parent: ''
-        weight: -46
-        context: '0'
+        weight: 1
         menu_name: main
     cache_metadata:
       max-age: 0

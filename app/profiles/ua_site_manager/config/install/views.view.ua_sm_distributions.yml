@@ -339,8 +339,8 @@ display:
           empty: true
           tokenize: false
           content:
-            value: '<a class="c-btn" href="[site:url]node/add/ua_sm_distribution">Add distribution</a>'
-            format: basic_html
+            value: '<a class="c-btn button" href="[site:url]node/add/ua_sm_distribution">Add distribution</a>'
+            format: full_html
           plugin_id: text
       footer: {  }
       empty: {  }
@@ -369,6 +369,7 @@ display:
       menu:
         type: normal
         title: Distributions
+        weight: 6
         menu_name: main
     cache_metadata:
       max-age: 0

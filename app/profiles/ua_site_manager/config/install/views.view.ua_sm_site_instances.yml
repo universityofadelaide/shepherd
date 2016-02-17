@@ -642,8 +642,8 @@ display:
           empty: true
           tokenize: false
           content:
-            value: '<a class="c-btn" href="[site:url]node/add/ua_sm_site_instance">Add site instance</a>'
-            format: basic_html
+            value: '<a class="c-btn button" href="[site:url]node/add/ua_sm_site_instance">Add site instance</a>'
+            format: full_html
           plugin_id: text
       footer: {  }
       empty: {  }
@@ -685,11 +685,7 @@ display:
       menu:
         type: normal
         title: Instances
-        description: 'List site instances'
-        expanded: false
-        parent: ''
-        weight: -45
-        context: '0'
+        weight: 2
         menu_name: main
     cache_metadata:
       max-age: 0
