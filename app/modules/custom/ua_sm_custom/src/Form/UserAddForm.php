@@ -31,12 +31,8 @@ class UserAddForm extends FormBase {
   public function buildForm(array $form, FormStateInterface $form_state, NodeInterface $node = NULL) {
     $form_state->set('site', $node);
 
-    // @TODO: pull roles from config.
-    $roles = [
-      'administrator' => 'Administrator',
-      'ua_editor' => 'Editor',
-      'ua_author' => 'Author',
-    ];
+    $roles = \Drupal::config('ua_sm_custom.settings')
+      ->get('controlled_roles');
 
     $build['uid'] = [
       '#type' => 'textfield',

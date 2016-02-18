@@ -33,13 +33,13 @@ class SiteManagerSettings extends ConfigFormBase {
       '#open' => TRUE,
       '#tree' => TRUE,
     ];
-    $form['jenkins']['enabled'] = array(
+    $form['jenkins']['enabled'] = [
       '#type' => 'checkbox',
-      '#title' => t('Enabled'),
+      '#title' => $this->t('Enabled'),
       '#size' => 30,
-      '#description' => t('Trigger a build on Jenkins when a site instance is created.'),
+      '#description' => $this->t('Trigger a build on Jenkins when a site instance is created.'),
       '#default_value' => $config->get('jenkins.enabled'),
-    );
+    ];
     $form['jenkins']['base_uri'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Base URI'),
@@ -82,13 +82,32 @@ class SiteManagerSettings extends ConfigFormBase {
       '#open' => TRUE,
       '#tree' => TRUE,
     ];
-    $form['ldap']['enabled'] = array(
+    $form['ldap']['enabled'] = [
       '#type' => 'checkbox',
-      '#title' => t('Enabled'),
+      '#title' => $this->t('Enabled'),
       '#size' => 30,
-      '#description' => t('When checked, Site Manager will attempt to synchronize users and sites with LDAP.'),
+      '#description' => $this->t('When checked, Site Manager will attempt to synchronise users and sites with LDAP.'),
       '#default_value' => $config->get('ldap.enabled'),
-    );
+    ];
+
+    $form['controlled_roles'] = [
+      '#type' => 'details',
+      '#title' => $this->t('Controlled Roles'),
+      '#open' => TRUE,
+      '#tree' => TRUE,
+    ];
+
+    $controlled_roles = '';
+    foreach ($config->get('controlled_roles') as $key => $val) {
+      $controlled_roles .= $key . '|' . $val . "\n";
+    }
+
+    $form['controlled_roles']['textarea'] = [
+      '#type' => 'textarea',
+      '#rows' => 10,
+      '#description' => $this->t('Setup your controlled roles using the format <i>role|description</i>'),
+      '#default_value' => $controlled_roles,
+    ];
 
     return parent::buildForm($form, $form_state);
   }
@@ -98,6 +117,15 @@ class SiteManagerSettings extends ConfigFormBase {
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $config = $this->config('ua_sm_custom.settings');
+    $controlled_roles_data = explode("\r\n", trim($form_state->getValue('controlled_roles')['textarea']));
+    $config->delete('controlled_roles');
+
+    foreach ($controlled_roles_data as $role) {
+      $controlled_role = explode('|', $role);
+      if (trim($controlled_role[0]) != '' && trim($controlled_role[1]) != '') {
+        $config->set('controlled_roles.' . str_replace(' ', '_', trim($controlled_role[0])), trim($controlled_role[1]));
+      }
+    }
 
     // @todo Validate this data !
     $jenkins_data = $form_state->getValue('jenkins');

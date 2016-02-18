@@ -1,2 +1,2 @@
 enabled: true
-controlled_roles: 'administrator'
+controlled_roles: 'administrator,uasm_developer,uasm_online_consultant,uasm_site_administrator'

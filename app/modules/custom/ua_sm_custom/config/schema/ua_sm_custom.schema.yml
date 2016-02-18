@@ -37,3 +37,29 @@ ua_sm_custom.settings:
        enabled:
         type: boolean
         label: 'Enabled'
+
+    controlled_roles:
+      type: mapping
+      label: 'Controlled Roles'
+      mapping:
+        administrator:
+          type: string
+          label: 'Administrator'
+        uasm_developer:
+          type: string
+          label: 'Developer'
+        uasm_online_consultant:
+          type: string
+          label: 'Online Consultant'
+        uasm_site_administrator:
+          type: string
+          label: 'Site Administrator'
+        uasm_web_author:
+          type: string
+          label: 'Web Author'
+        uasm_content_editor:
+          type: string
+          label: 'Content Editor'
+        uasm_wizard:
+          type: string
+          label: 'YOURE A WIZARD HARRY'
