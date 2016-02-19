@@ -1,8 +1,21 @@
 # UASM Gitlab CI script
-'uasm':
+variables:
+  SIMPLETEST_DB: "mysql://drupal:drupal@localhost/local"
+  SIMPLETEST_BASE_URL: "http://localhost"
+
+uasm:
   script:
+  - /bin/ln -s ${CI_PROJECT_DIR}/app /var/www/app
+  - nohup /root/scripts/start.sh &
+  - eval `ssh-agent `
+  - echo "${JENKINS_DEPLOYMENT_KEY}" > /tmp/jenkins_deployment_key
+  - chmod 0600 /tmp/jenkins_deployment_key
+  - ssh-add /tmp/jenkins_deployment_key
+  - ssh-add -l
   - robo build
-  tags: 
+  - cd app/core/ && ../../vendor/phpunit/phpunit/phpunit --exclude-group Composer
+  only:
+  - develop
+  tags:
   except:
   - tags
-
