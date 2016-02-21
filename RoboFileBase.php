@@ -757,7 +757,7 @@ abstract class RoboFileBase extends \Robo\Tasks implements RoboFileDrupalDeployI
    *   The IPv4 address of the Docker host.
    */
   private function getDockerHostIP() {
-    return trim($this->taskExec('netstat -nr | grep \'^0\.0\.0\.0\' | awk \'{print $2}\'')->run()->getMessage());
+    return trim($this->taskExec('/sbin/ip route|awk \'/default/ { print $3 }\'')->run()->getMessage());
   }
 
   /**
