@@ -666,16 +666,16 @@
         },
         {
             "name": "drupal/core",
-            "version": "8.0.3",
+            "version": "8.0.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/drupal-composer/drupal-core.git",
-                "reference": "f5b2a07081b963e0931adaf816f62b79541ac1e6"
+                "reference": "2e5b41ece5a7b79d93279cbeee709272e9fed682"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/drupal-composer/drupal-core/zipball/f5b2a07081b963e0931adaf816f62b79541ac1e6",
-                "reference": "f5b2a07081b963e0931adaf816f62b79541ac1e6",
+                "url": "https://api.github.com/repos/drupal-composer/drupal-core/zipball/2e5b41ece5a7b79d93279cbeee709272e9fed682",
+                "reference": "2e5b41ece5a7b79d93279cbeee709272e9fed682",
                 "shasum": ""
             },
             "require": {
@@ -827,7 +827,7 @@
                 "GPL-2.0+"
             ],
             "description": "Drupal is an open source content management platform powering millions of websites and applications.",
-            "time": "2016-02-03 08:47:36"
+            "time": "2016-02-24 18:59:52"
         },
         {
             "name": "drupal/diff",
@@ -861,7 +861,7 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "http://ftp.drupal.org/files/projects/entity_reference_revisions-8.x-1.0-rc4.zip",
+                "url": "https://ftp.drupal.org/files/projects/entity_reference_revisions-8.x-1.0-rc4.zip",
                 "reference": null,
                 "shasum": null
             },
@@ -884,7 +884,7 @@
             "source": {
                 "type": "git",
                 "url": "https://git.drupal.org/project/paragraphs",
-                "reference": "d6b266ba94f95b2ae317b4db5391fd1b4b36fd1d"
+                "reference": "916b9bb33dfa7d7c32f55272752324da2affe6f0"
             },
             "require": {
                 "drupal/core": "8.*",
@@ -909,14 +909,12 @@
                 "branch-alias": {
                     "dev-8.x-1.x": "8.1.x-dev"
                 },
-                "patches_applied": {
-                    "Views data support": "https://www.drupal.org/files/issues/2527620-12-paragraphs-views.patch"
-                }
+                "patches_applied": []
             },
             "notification-url": "https://packagist.drupal-composer.org/downloads/",
             "description": "Implements the Paragraphs entity types, Entity Reference selection type and Entity Reference field widget.",
             "homepage": "https://www.drupal.org/project/paragraphs",
-            "time": "2016-02-12 23:20:39"
+            "time": "2016-02-22 23:40:16"
         },
         {
             "name": "drupal/r4032login",
@@ -925,12 +923,6 @@
                 "type": "git",
                 "url": "https://git.drupal.org/project/r4032login",
                 "reference": "0ca4bf52d5232793225b82802207e18f917c5824"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "http://ftp.drupal.org/files/projects/r4032login-8.x-1.x-dev.zip",
-                "reference": null,
-                "shasum": null
             },
             "require": {
                 "drupal/core": "8.*"
@@ -1279,16 +1271,16 @@
         },
         {
             "name": "guzzlehttp/psr7",
-            "version": "1.2.2",
+            "version": "1.2.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/guzzle/psr7.git",
-                "reference": "f5d04bdd2881ac89abde1fb78cc234bce24327bb"
+                "reference": "2e89629ff057ebb49492ba08e6995d3a6a80021b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/guzzle/psr7/zipball/f5d04bdd2881ac89abde1fb78cc234bce24327bb",
-                "reference": "f5d04bdd2881ac89abde1fb78cc234bce24327bb",
+                "url": "https://api.github.com/repos/guzzle/psr7/zipball/2e89629ff057ebb49492ba08e6995d3a6a80021b",
+                "reference": "2e89629ff057ebb49492ba08e6995d3a6a80021b",
                 "shasum": ""
             },
             "require": {
@@ -1333,7 +1325,7 @@
                 "stream",
                 "uri"
             ],
-            "time": "2016-01-23 01:23:02"
+            "time": "2016-02-18 21:54:00"
         },
         {
             "name": "jakub-onderka/php-console-color",
@@ -1682,16 +1674,16 @@
         },
         {
             "name": "psy/psysh",
-            "version": "v0.6.1",
+            "version": "v0.7.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/bobthecow/psysh.git",
-                "reference": "0f04df0b23663799a8941fae13cd8e6299bde3ed"
+                "reference": "1573b36948a32bdaf43db525edf5e95d5a08ed06"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/bobthecow/psysh/zipball/0f04df0b23663799a8941fae13cd8e6299bde3ed",
-                "reference": "0f04df0b23663799a8941fae13cd8e6299bde3ed",
+                "url": "https://api.github.com/repos/bobthecow/psysh/zipball/1573b36948a32bdaf43db525edf5e95d5a08ed06",
+                "reference": "1573b36948a32bdaf43db525edf5e95d5a08ed06",
                 "shasum": ""
             },
             "require": {
@@ -1750,7 +1742,7 @@
                 "interactive",
                 "shell"
             ],
-            "time": "2015-11-12 16:18:56"
+            "time": "2016-02-20 16:27:05"
         },
         {
             "name": "stack/builder",
@@ -1846,7 +1838,7 @@
             ],
             "authors": [
                 {
-                    "name": "Symfony CMF Community",
+                    "name": "Symfony CMF community",
                     "homepage": "https://github.com/symfony-cmf/Routing/contributors"
                 }
             ],
@@ -3085,42 +3077,44 @@
         },
         {
             "name": "zendframework/zend-hydrator",
-            "version": "1.0.0",
+            "version": "1.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zendframework/zend-hydrator.git",
-                "reference": "f3ed8b833355140350bbed98d8a7b8b66875903f"
+                "reference": "22652e1661a5a10b3f564cf7824a2206cf5a4a65"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zendframework/zend-hydrator/zipball/f3ed8b833355140350bbed98d8a7b8b66875903f",
-                "reference": "f3ed8b833355140350bbed98d8a7b8b66875903f",
+                "url": "https://api.github.com/repos/zendframework/zend-hydrator/zipball/22652e1661a5a10b3f564cf7824a2206cf5a4a65",
+                "reference": "22652e1661a5a10b3f564cf7824a2206cf5a4a65",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.5",
-                "zendframework/zend-stdlib": "^2.5.1"
+                "php": "^5.5 || ^7.0",
+                "zendframework/zend-stdlib": "^2.7 || ^3.0"
             },
             "require-dev": {
                 "phpunit/phpunit": "~4.0",
                 "squizlabs/php_codesniffer": "^2.0@dev",
-                "zendframework/zend-eventmanager": "^2.5.1",
-                "zendframework/zend-filter": "^2.5.1",
-                "zendframework/zend-inputfilter": "^2.5.1",
-                "zendframework/zend-serializer": "^2.5.1",
-                "zendframework/zend-servicemanager": "^2.5.1"
+                "zendframework/zend-eventmanager": "^2.6.2 || ^3.0",
+                "zendframework/zend-filter": "^2.6",
+                "zendframework/zend-inputfilter": "^2.6",
+                "zendframework/zend-serializer": "^2.6.1",
+                "zendframework/zend-servicemanager": "^2.7.5 || ^3.0.3"
             },
             "suggest": {
-                "zendframework/zend-eventmanager": "^2.5.1, to support aggregate hydrator usage",
-                "zendframework/zend-filter": "^2.5.1, to support naming strategy hydrator usage",
-                "zendframework/zend-serializer": "^2.5.1, to use the SerializableStrategy",
-                "zendframework/zend-servicemanager": "^2.5.1, to support hydrator plugin manager usage"
+                "zendframework/zend-eventmanager": "^2.6.2 || ^3.0, to support aggregate hydrator usage",
+                "zendframework/zend-filter": "^2.6, to support naming strategy hydrator usage",
+                "zendframework/zend-serializer": "^2.6.1, to use the SerializableStrategy",
+                "zendframework/zend-servicemanager": "^2.7.5 || ^3.0.3, to support hydrator plugin manager usage"
             },
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.0-dev",
-                    "dev-develop": "1.1-dev"
+                    "dev-release-1.0": "1.0-dev",
+                    "dev-release-1.1": "1.1-dev",
+                    "dev-master": "2.0-dev",
+                    "dev-develop": "2.1-dev"
                 }
             },
             "autoload": {
@@ -3137,7 +3131,7 @@
                 "hydrator",
                 "zf2"
             ],
-            "time": "2015-09-17 14:06:43"
+            "time": "2016-02-18 22:38:26"
         },
         {
             "name": "zendframework/zend-ldap",
@@ -3193,21 +3187,21 @@
         },
         {
             "name": "zendframework/zend-stdlib",
-            "version": "2.7.5",
+            "version": "2.7.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zendframework/zend-stdlib.git",
-                "reference": "b894a85f3ef8a52e7aa62c3c5aa245e383c70cca"
+                "reference": "4499760badfada27ee600f5c2cfd47d5263ccf1b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zendframework/zend-stdlib/zipball/b894a85f3ef8a52e7aa62c3c5aa245e383c70cca",
-                "reference": "b894a85f3ef8a52e7aa62c3c5aa245e383c70cca",
+                "url": "https://api.github.com/repos/zendframework/zend-stdlib/zipball/4499760badfada27ee600f5c2cfd47d5263ccf1b",
+                "reference": "4499760badfada27ee600f5c2cfd47d5263ccf1b",
                 "shasum": ""
             },
             "require": {
                 "php": "^5.5 || ^7.0",
-                "zendframework/zend-hydrator": "~1.0"
+                "zendframework/zend-hydrator": "~1.1"
             },
             "require-dev": {
                 "athletic/athletic": "~0.1",
@@ -3248,7 +3242,7 @@
                 "stdlib",
                 "zf2"
             ],
-            "time": "2016-02-16 18:25:48"
+            "time": "2016-02-19 16:02:11"
         }
     ],
     "packages-dev": [
@@ -3481,7 +3475,7 @@
             "source": {
                 "type": "git",
                 "url": "https://git.drupal.org/project/devel",
-                "reference": "6063e24c24288cbcba8ac969d2de4c6f3f52b91c"
+                "reference": "38818a6a9320d52b573ac1fa8d66ae6489de31a9"
             },
             "require": {
                 "drupal/core": "8.*"
@@ -3516,7 +3510,7 @@
             ],
             "description": "Various blocks, pages, and functions for developers.",
             "homepage": "http://drupal.org/project/devel",
-            "time": "2016-02-08 18:00:33"
+            "time": "2016-02-20 12:26:05"
         },
         {
             "name": "fabpot/goutte",
