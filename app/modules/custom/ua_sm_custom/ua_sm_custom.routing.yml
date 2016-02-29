@@ -6,6 +6,15 @@ ua_sm_custom.permissions:
     _controller: '\Drupal\ua_sm_custom\Controller\UserSitesRolesController::index'
   requirements:
     _permission: 'access content'
+ua_sm_custom.site-add-form:
+  path: '/site/add'
+  defaults:
+    _form: '\Drupal\ua_sm_custom\Form\SiteAddForm'
+  options:
+    _auth: [ 'basic_auth', 'cookie' ]
+    no_cache: TRUE
+  requirements:
+    _permission: 'administer content'
 ua_sm_custom.site-instance-config:
   path: '/api/site-instance-config/{nid}'
   defaults:

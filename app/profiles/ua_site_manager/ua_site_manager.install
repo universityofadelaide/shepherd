@@ -236,8 +236,6 @@ function ua_site_manager_update_8003(&$sandbox) {
 }
 
 /**
- * Implements hook_update_N().
- *
  * Replace user ID field from user paragraph with user entity reference.
  *
  * Add Preferred Name field to User entity.
@@ -366,7 +364,6 @@ function ua_site_manager_update_8004(&$sandbox) {
 
 }
 
-
 /**
  * Implements hook_update_N().
  *
@@ -399,4 +396,18 @@ function ua_site_manager_update_8005(&$sandbox) {
     }
     $config_storage->write($config, $source->read($config));
   }
+}
+
+/**
+ * Implements hook_update_N().
+ *
+ * Update route to site add.
+ */
+function ua_site_manager_update_8006(&$sandbox) {
+  $config_path = drupal_get_path('profile', 'ua_site_manager') . '/config/install';
+  $source = new Drupal\Core\Config\FileStorage($config_path);
+  $config_storage = \Drupal::service('config.storage');
+  $config = 'views.view.ua_sm_sites';
+  $config_storage->delete($config);
+  $config_storage->write($config, $source->read($config));
 }

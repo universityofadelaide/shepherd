@@ -8,6 +8,7 @@ dependencies:
     - field.storage.node.field_ua_sm_path
     - field.storage.node.field_ua_sm_users
     - node.type.ua_sm_site
+    - system.menu.main
     - taxonomy.vocabulary.tags
   module:
     - entity_reference_revisions
@@ -735,7 +736,7 @@ display:
           empty: true
           tokenize: false
           content:
-            value: '<a class="c-btn button" href="[site:url]node/add/ua_sm_site">Add Site</a>'
+            value: '<a class="c-btn button" href="[site:url]site/add">Add Site</a>'
             format: full_html
           plugin_id: text
       footer: {  }
