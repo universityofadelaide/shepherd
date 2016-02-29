@@ -111,6 +111,11 @@ class UserAddForm extends FormBase {
     drupal_set_message($this->t('Successfully added user %uid to site.', [
       '%uid' => $uid,
     ]));
+
+    $form_state->setRedirect(
+      'view.ua_sm_site_users.page_1',
+      ['node' => $site->id()]
+    );
   }
 
 }

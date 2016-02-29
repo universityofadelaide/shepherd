@@ -121,6 +121,10 @@ class UserEditForm extends FormBase {
       '%uid' => $user->field_ua_user_preferred_name->getString(),
     ]));
 
+    $form_state->setRedirect(
+      'view.ua_sm_site_users.page_1',
+      ['node' => $site->id()]
+    );
   }
 
   /**
