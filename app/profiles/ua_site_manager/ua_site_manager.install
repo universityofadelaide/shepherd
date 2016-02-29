@@ -66,6 +66,14 @@ function ua_site_manager_install() {
 }
 
 /**
+ * Implements hook_update_dependencies().
+ */
+function ua_site_manager_update_dependencies() {
+  $dependencies['ua_site_manager']['8004'] = ['paragraphs' => '8001'];
+  return $dependencies;
+}
+
+/**
  * Implements hook_update_N().
  *
  * Add the hash salt field to the environment entity.
