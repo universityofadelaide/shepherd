@@ -1,0 +1,14 @@
+view distributions:
+  title: 'View distributions'
+view environments:
+  title: 'View environments'
+view instances:
+  title: 'View instances'
+view platforms:
+  title: 'View platforms'
+view servers:
+  title: 'View servers'
+view sites:
+  title: 'View sites'
+view users:
+  title: 'View users'

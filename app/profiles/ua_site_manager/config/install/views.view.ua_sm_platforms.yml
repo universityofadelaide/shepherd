@@ -32,7 +32,7 @@ display:
       access:
         type: perm
         options:
-          perm: 'access content'
+          perm: 'view platforms'
       cache:
         type: tag
         options: {  }

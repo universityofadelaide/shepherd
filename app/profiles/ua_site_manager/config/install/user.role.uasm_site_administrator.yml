@@ -14,3 +14,5 @@ permissions:
   - 'view own unpublished content'
   - 'access content'
   - 'access shortcuts'
+  - 'view sites'
+  - 'view users'

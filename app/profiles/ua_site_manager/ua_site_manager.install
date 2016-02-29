@@ -365,3 +365,38 @@ function ua_site_manager_update_8004(&$sandbox) {
   $field->delete();
 
 }
+
+
+/**
+ * Implements hook_update_N().
+ *
+ * Add permissions to views.
+ */
+function ua_site_manager_update_8005(&$sandbox) {
+  $config_path = drupal_get_path('profile', 'ua_site_manager') . '/config/install';
+  $source = new Drupal\Core\Config\FileStorage($config_path);
+  $config_storage = \Drupal::service('config.storage');
+
+  $configs = [
+    'user.role.uasm_developer',
+    'user.role.uasm_online_consultant',
+    'user.role.uasm_site_administrator',
+    'views.view.users',
+    'views.view.ua_sm_sites',
+    'views.view.ua_sm_site_users',
+    'views.view.ua_sm_site_instances',
+    'views.view.ua_sm_site_details',
+    'views.view.ua_sm_servers',
+    'views.view.ua_sm_platforms',
+    'views.view.ua_sm_environments',
+    'views.view.ua_sm_distributions',
+  ];
+
+  foreach ($configs as $config) {
+    // Delete config if it already exists.
+    if ($config_storage->exists($config)) {
+      $config_storage->delete($config);
+    }
+    $config_storage->write($config, $source->read($config));
+  }
+}

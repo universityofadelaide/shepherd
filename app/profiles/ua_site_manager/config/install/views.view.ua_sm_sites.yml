@@ -32,7 +32,7 @@ display:
       access:
         type: perm
         options:
-          perm: 'access content'
+          perm: 'view sites'
       cache:
         type: none
         options: {  }
