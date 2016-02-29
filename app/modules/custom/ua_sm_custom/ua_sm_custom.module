@@ -162,14 +162,14 @@ function ua_sm_custom_node_insert(EntityInterface $entity) {
 }
 
 /**
- * Implements hook_ENTITY_TYPE_insert().
+ * Implements hook_ENTITY_TYPE_presave().
  *
  * Fetches a user's details from LDAP to fill out a provisioned account.
  */
-function ua_sm_custom_user_insert(EntityInterface $entity) {
-  if (\Drupal::config('ua_sm_custom.settings')->get('ldap')['enabled']) {
+function ua_sm_custom_user_presave(EntityInterface $entity) {
+  if ($entity->isNew()) {
     \Drupal::service('ua_sm_custom.user')->populateFieldsFromLdap($entity);
-    // @todo Deal with failure - consider a queue.
+    // @todo Consider breaking this functionality into its own module for reuse.
   }
 }
 
@@ -182,7 +182,7 @@ function ua_sm_custom_user_insert(EntityInterface $entity) {
 function ua_sm_custom_node_update(EntityInterface $entity) {
   switch ($entity->bundle()) {
     case 'ua_sm_site':
-      if (\Drupal::config('ua_sm_custom.settings')->get('ldap')['enabled']) {
+      if (\Drupal::config('ua_sm_custom.settings')->get('ldap.enabled')) {
         \Drupal::service('ua_ldap.ldap_site')->syncUsers($entity->id());
         // @todo Deal with failure - consider a queue.
       }

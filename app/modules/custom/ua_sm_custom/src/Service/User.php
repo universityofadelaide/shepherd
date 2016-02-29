@@ -9,7 +9,8 @@ namespace Drupal\ua_sm_custom\Service;
 use Drupal\user\Entity\User as DrupalUser;
 
 /**
- * Class User
+ * Class User.
+ *
  * @package Drupal\ua_sm_custom\Service
  */
 class User {
@@ -37,29 +38,31 @@ class User {
   /**
    * Populate users fields with attributes from LDAP.
    *
-   * @param \Drupal\user\Entity\User $account
+   * @param DrupalUser $account
+   *   The user account to populate.
    */
   public function populateFieldsFromLdap(DrupalUser $account) {
     $uid = $account->name->value;
     $attributes = \Drupal::service('ua_ldap.ldap_user')->getAttributes($uid);
     $this->populateFields($account, $attributes);
-    $account->save();
   }
 
   /**
    * Sets fields of account with attributes.
    *
-   * @param $account the Drupal user account.
-   * @param $attributes the attributes associated with the account.
+   * @param DrupalUser $account
+   *   The Drupal user account.
+   * @param array $attributes
+   *   The attributes associated with the account.
    */
-  protected function populateFields($account, $attributes) {
+  protected function populateFields(DrupalUser $account, $attributes) {
     // FYI: UAT LDAP shows a different mail attribute to PRD LDAP.
     $field_map = [
       'field_ua_user_preferred_name' => 'preferredname',
       'mail' => 'mail',
     ];
 
-    foreach($field_map as $user_field => $ldap_field) {
+    foreach ($field_map as $user_field => $ldap_field) {
       if (isset($attributes[$ldap_field])) {
         $account->set($user_field, reset($attributes[$ldap_field]));
       }
@@ -69,8 +72,11 @@ class User {
   /**
    * Provision a drupal user from an ldap user id.
    *
-   * @param $uid The user id string.
-   * @return \Drupal\Core\Entity\EntityInterface The drupal user account.
+   * @param int $uid
+   *   The user id string.
+   *
+   * @return \Drupal\Core\Entity\EntityInterface
+   *   The drupal user account.
    */
   public function provision($uid) {
     $user_storage = \Drupal::entityTypeManager()->getStorage('user');

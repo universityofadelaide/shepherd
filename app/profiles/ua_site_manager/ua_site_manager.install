@@ -20,8 +20,6 @@ function ua_site_manager_install() {
   // Set front page to "node".
   \Drupal::configFactory()->getEditable('system.site')->set('page.front', '/websites')->save(TRUE);
 
-
-
   // Allow visitor account creation with administrative approval.
   $user_settings = \Drupal::configFactory()->getEditable('user.settings');
   $user_settings->set('register', USER_REGISTER_VISITORS_ADMINISTRATIVE_APPROVAL)->save(TRUE);
@@ -235,4 +233,135 @@ function ua_site_manager_update_8003(&$sandbox) {
 
   $entity_view_display->setComponent('field_ua_sm_ssh_user', ['weight' => 2])
     ->save();
+}
+
+/**
+ * Implements hook_update_N().
+ *
+ * Replace user ID field from user paragraph with user entity reference.
+ *
+ * Add Preferred Name field to User entity.
+ *
+ * Add new view configuration.
+ */
+function ua_site_manager_update_8004(&$sandbox) {
+  // Add 'user' entity reference field to user role paragraph.
+  // @see app/profiles/ua_site_manager/config/install/field.storage.paragraph.field_ua_sm_user.yml
+  $field_storage = FieldStorageConfig::create([
+    'entity_type' => 'paragraph',
+    'type' => 'entity_reference',
+    'field_name' => 'field_ua_sm_user',
+    'cardinality' => 1,
+    'settings' => [
+      'target_type' => 'user',
+    ],
+  ]);
+  $field_storage->save();
+
+  // @see app/profiles/ua_site_manager/config/install/field.field.paragraph.ua_sm_user_role.field_ua_sm_user.yml
+  $field = FieldConfig::create([
+    'entity_type' => 'paragraph',
+    'bundle' => 'ua_sm_user_role',
+    'field_name' => 'field_ua_sm_user',
+    'label' => t('User'),
+  ]);
+  $field->save();
+
+  // Create 'string' field_ua_user_preferred_name.
+  // @see app/profiles/ua_site_manager/config/install/field.field.user.field_ua_user_preferred_name.yml
+  $field_storage = FieldStorageConfig::create([
+    'entity_type' => 'user',
+    'type' => 'string',
+    'field_name' => 'field_ua_user_preferred_name',
+    'cardinality' => 1,
+  ]);
+  $field_storage->save();
+
+  // Add preferred name field to User entity.
+  // @see app/profiles/ua_site_manager/config/install/field.field.user.field_ua_user_preferred_name.yml
+  $field = FieldConfig::create([
+    'entity_type' => 'user',
+    'bundle' => 'user',
+    'field_name' => 'field_ua_user_preferred_name',
+    'label' => t('Preferred name'),
+  ]);
+  $field->save();
+
+  // @see app/profiles/ua_site_manager/config/install/core.entity_form_display.paragraph.ua_sm_user_role.default.yml
+  $entity_form_display = \Drupal::entityTypeManager()
+    ->getStorage('entity_form_display')
+    ->load('paragraph.ua_sm_user_role.default');
+  $entity_form_display->setComponent('field_ua_sm_user', ['weight' => 0])
+    ->save();
+
+  // @see app/profiles/ua_site_manager/config/install/core.entity_view_display.paragraph.ua_sm_user_role.default.yml
+  $entity_view_display = \Drupal::entityTypeManager()
+    ->getStorage('entity_view_display')
+    ->load('paragraph.ua_sm_user_role.default');
+  $entity_view_display->setComponent('field_ua_sm_user', ['weight' => 0])
+    ->save();
+
+  // Disable LDAP integration if it's enabled.
+  $config = \Drupal::service('config.factory')->getEditable('ua_sm_custom.settings');
+  $ldap_integration = $config->get('ldap.enabled');
+  $config->set('ldap.enabled', FALSE);
+  $config->save();
+
+  $query = \Drupal::entityQuery('node')
+    ->condition('type', 'ua_sm_site')
+    ->execute();
+
+  $sites = \Drupal::entityTypeManager()->getStorage('node')
+    ->loadMultiple($query);
+
+  foreach ($sites as $site) {
+    // @todo get the paragraph referenced entities.
+    $user_roles = $site->field_ua_sm_users->referencedEntities();
+    foreach ($user_roles as $user_role) {
+      $account = user_load_by_name($user_role->field_ua_sm_user_id->value);
+      if (!$account) {
+        $account = \Drupal::service('ua_sm_custom.user')
+          ->provision($user_role->field_ua_sm_user_id->value);
+      }
+
+      $user_role->field_ua_sm_user->target_id = $account->id();
+      $user_role->save();
+    }
+
+    $site->save();
+  }
+
+  // Set LDAP integration back to whatever it was before.
+  $config->set('ldap.enabled', $ldap_integration);
+  $config->save();
+
+  // Load in the views needed.
+  $config_path = drupal_get_path('profile', 'ua_site_manager') . '/config/install';
+  $active_storage = \Drupal::service('config.storage');
+  $source = new Drupal\Core\Config\FileStorage($config_path);
+
+  // This configuration may or may not exist on prd.
+  if ($active_storage->exists('views.view_ua_sm_site_instances')) {
+    // Delete the old configuration.
+    $active_storage->delete('views.view_ua_sm_site_instances');
+  }
+
+  // Set front page to new path /websites.
+  \Drupal::configFactory()->getEditable('system.site')->set('page.front', '/websites')->save(TRUE);
+
+  /** @var \Drupal\Core\Config\StorageInterface $active_storage */
+  $active_storage->write('views.view.users', $source->read('views.view.users'));
+  $active_storage->write('views.view.ua_sm_sites', $source->read('views.view.ua_sm_sites'));
+  $active_storage->write('views.view.ua_sm_site_users', $source->read('views.view.ua_sm_site_users'));
+  $active_storage->write('views.view.ua_sm_site_instances', $source->read('views.view.ua_sm_site_instances'));
+  $active_storage->write('views.view.ua_sm_site_details', $source->read('views.view.ua_sm_site_details'));
+  $active_storage->write('views.view.ua_sm_servers', $source->read('views.view.ua_sm_servers'));
+  $active_storage->write('views.view.ua_sm_platforms', $source->read('views.view.ua_sm_platforms'));
+  $active_storage->write('views.view.ua_sm_environments', $source->read('views.view.ua_sm_environments'));
+  $active_storage->write('views.view.ua_sm_distributions', $source->read('views.view.ua_sm_distributions'));
+
+  // Delete user_id field from user role paragraph.
+  $field = FieldConfig::load('paragraph.ua_sm_user_role.field_ua_sm_user_id');
+  $field->delete();
+
 }
