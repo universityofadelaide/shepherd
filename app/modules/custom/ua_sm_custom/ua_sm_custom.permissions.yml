@@ -1,14 +1,18 @@
-view distributions:
+sm access site wizard:
+  title: 'Access site wizard'
+sm administer users:
+  title: 'Administer users'
+sm view distributions:
   title: 'View distributions'
-view environments:
+sm view environments:
   title: 'View environments'
-view instances:
+sm view instances:
   title: 'View instances'
-view platforms:
+sm view platforms:
   title: 'View platforms'
-view servers:
+sm view servers:
   title: 'View servers'
-view sites:
+sm view sites:
   title: 'View sites'
-view users:
+sm view users:
   title: 'View users'

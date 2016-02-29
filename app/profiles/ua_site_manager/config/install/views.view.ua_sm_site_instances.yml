@@ -32,7 +32,7 @@ display:
       access:
         type: perm
         options:
-          perm: 'view instances'
+          perm: 'sm view instances'
       cache:
         type: tag
         options: {  }

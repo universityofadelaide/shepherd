@@ -31,7 +31,7 @@ display:
       access:
         type: perm
         options:
-          perm: 'view sites'
+          perm: 'sm view sites'
       cache:
         type: tag
         options: {  }

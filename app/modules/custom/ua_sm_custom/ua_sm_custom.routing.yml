@@ -1,3 +1,4 @@
+# @todo Find out if this is still required (ua_sm_custom.permissions).
 ua_sm_custom.permissions:
   path: '/user/{account_id}/permissions'
   defaults:
@@ -14,7 +15,7 @@ ua_sm_custom.site-add-form:
     _auth: [ 'basic_auth', 'cookie' ]
     no_cache: TRUE
   requirements:
-    _permission: 'administer content'
+    _permission: 'sm access site wizard'
 ua_sm_custom.site-instance-config:
   path: '/api/site-instance-config/{nid}'
   defaults:
@@ -40,7 +41,7 @@ ua_sm_custom.user-add-form:
     _auth: [ 'basic_auth', 'cookie' ]
     no_cache: TRUE
   requirements:
-    _permission: 'administer users'
+    _permission: 'sm administer users'
 ua_sm_custom.user-edit-form:
   path: '/site/{node}/user/{user}/edit'
   defaults:
@@ -49,7 +50,7 @@ ua_sm_custom.user-edit-form:
     _auth: [ 'basic_auth', 'cookie' ]
     no_cache: TRUE
   requirements:
-    _permission: 'administer users'
+    _permission: 'sm administer users'
 ua_sm_custom.varnish-config:
   path: '/api/varnish-config'
   defaults:

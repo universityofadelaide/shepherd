@@ -28,7 +28,7 @@ display:
       access:
         type: perm
         options:
-          perm: 'view users'
+          perm: 'sm view users'
       cache:
         type: tag
         options: {  }

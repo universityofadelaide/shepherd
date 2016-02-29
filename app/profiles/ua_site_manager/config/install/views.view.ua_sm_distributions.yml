@@ -28,7 +28,7 @@ display:
       access:
         type: perm
         options:
-          perm: 'view distributions'
+          perm: 'sm view distributions'
       cache:
         type: tag
         options: {  }
