@@ -419,3 +419,38 @@ function ua_site_manager_update_8006(&$sandbox) {
   $config_storage->delete($config);
   $config_storage->write($config, $source->read($config));
 }
+
+/**
+ * Implements hook_update_N().
+ *
+ * Add the config sync field to the environment entity.
+ */
+function ua_site_manager_update_8007(&$sandbox) {
+  $field_storage = FieldStorageConfig::create([
+    'entity_type' => 'node',
+    'type' => 'string',
+    'field_name' => 'field_ua_sm_config_sync',
+    'cardinality' => 1,
+  ]);
+  $field_storage->save();
+
+  $field = FieldConfig::create([
+    'entity_type' => 'node',
+    'bundle' => 'ua_sm_environment',
+    'field_name' => 'field_ua_sm_config_sync',
+    'label' => t('Config sync dir'),
+  ]);
+  $field->save();
+
+  $entity_form_display = \Drupal::entityTypeManager()
+    ->getStorage('entity_form_display')
+    ->load('node.ua_sm_environment.default');
+  $entity_form_display->removeComponent('field_ua_sm_config_sync')
+    ->save();
+
+  $entity_view_display = \Drupal::entityTypeManager()
+    ->getStorage('entity_view_display')
+    ->load('node.ua_sm_environment.default');
+  $entity_view_display->removeComponent('field_ua_sm_config_sync')
+    ->save();
+}
