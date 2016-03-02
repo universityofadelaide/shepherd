@@ -32,21 +32,12 @@ class RoboFile extends RoboFileBase {
    * @{inheritdoc}
    */
   public function build() {
-    $start = new DateTime();
-
-    // Default build process from parent::build().
-    $this->buildMake();
-    $this->initLocalSettings();
-    $this->buildInstall();
-    $this->writeLocalSettings();
-    $this->includeLocalSettings();
-    $this->setAdminPassword();
-    $this->buildApplyConfig();
+    // Use the default build steps.
+    parent::build();
 
     // Add default content.
+    $this->say("Adding default content.");
     $this->devContentGenerate();
-
-    $this->say('Total build duration: ' . date_diff(new DateTime(), $start)->format('%im %Ss'));
   }
 
   /**

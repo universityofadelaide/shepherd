@@ -3,6 +3,7 @@ status: true
 dependencies:
   config:
     - core.entity_view_mode.node.teaser
+    - field.field.node.ua_sm_environment.field_ua_sm_config_sync
     - field.field.node.ua_sm_environment.field_ua_sm_custom_config
     - field.field.node.ua_sm_environment.field_ua_sm_database
     - field.field.node.ua_sm_environment.field_ua_sm_database_driver
@@ -28,6 +29,7 @@ content:
   links:
     weight: 100
 hidden:
+  field_ua_sm_config_sync: true
   field_ua_sm_custom_config: true
   field_ua_sm_database: true
   field_ua_sm_database_driver: true

@@ -19,6 +19,7 @@ abstract class RoboFileBase extends \Robo\Tasks implements RoboFileDrupalDeployI
   protected $drush_cmd;
   protected $phpcs_bin;
   protected $webserver_restart;
+  protected $webserver_user;
   protected $config_file;
   protected $config_default_file;
   protected $settings_php;
@@ -49,6 +50,7 @@ abstract class RoboFileBase extends \Robo\Tasks implements RoboFileDrupalDeployI
 
     $this->sudo_cmd = posix_getuid() == 0 ? '' : 'sudo';
     $this->webserver_restart    = "$this->sudo_cmd service apache2 restart";
+    $this->webserver_user       = "www-data";
 
     $this->config_file          = "config.json";
     $this->config_default_file  = "config.default.json";
@@ -101,6 +103,8 @@ abstract class RoboFileBase extends \Robo\Tasks implements RoboFileDrupalDeployI
     $this->buildInstall();
     $this->writeLocalSettings();
     $this->includeLocalSettings();
+    $this->devCreateConfigSyncDir();
+    $this->devSetFilesOwner();
     $this->setAdminPassword();
     $this->buildApplyConfig();
     $this->say('Total build duration: ' . date_diff(new DateTime(), $start)->format('%im %Ss'));
@@ -146,6 +150,8 @@ abstract class RoboFileBase extends \Robo\Tasks implements RoboFileDrupalDeployI
     $this->buildInstall();
     $this->writeLocalSettings();
     $this->includeLocalSettings();
+    $this->devCreateConfigSyncDir();
+    $this->devSetFilesOwner();
     $this->setAdminPassword();
     $this->buildApplyConfig();
   }
@@ -159,6 +165,8 @@ abstract class RoboFileBase extends \Robo\Tasks implements RoboFileDrupalDeployI
     $this->initLocalSettings();
     $this->writeLocalSettings();
     $this->includeLocalSettings();
+    $this->devCreateConfigSyncDir();
+    $this->devSetFilesOwner();
   }
 
   /**
@@ -338,6 +346,7 @@ abstract class RoboFileBase extends \Robo\Tasks implements RoboFileDrupalDeployI
    * Set the administrative user password.
    */
   public function setAdminPassword() {
+    $this->say("Set the admin password.");
     $successful = $this->_exec("$this->drush_cmd user-password admin --password=" . $this->config['site']['admin_password'])->wasSuccessful();
 
     $this->checkFail($successful, 'setting user password failed.');
@@ -496,6 +505,27 @@ abstract class RoboFileBase extends \Robo\Tasks implements RoboFileDrupalDeployI
     }
 
     $tasks->run();
+  }
+
+  /**
+   * Create the config sync directory from config.
+   *
+   * Drupal will write a .htaccess afterwards in there.
+   */
+  public function devCreateConfigSyncDir() {
+    if (isset($this->config['environment']['config_sync_dir'])) {
+      // Only do this if we have a config sync dir setting available.
+      $this->say("Creating config sync directory.");
+      $this->_exec("mkdir -p " . $this->application_root . "/" . $this->config['environment']['config_sync_dir']);
+    }
+  }
+
+  /**
+   * Set the owner and group of all files in the files dir to the web user.
+   */
+  public function devSetFilesOwner() {
+    $this->say("Setting files directory owner.");
+    $this->_exec("chown $this->webserver_user:$this->webserver_user -R $this->application_root/sites/default/files");
   }
 
   /**
@@ -675,6 +705,9 @@ abstract class RoboFileBase extends \Robo\Tasks implements RoboFileDrupalDeployI
 
     // Set site_id in php file so that it is immutable.
     $drupal_settings['settings']['site_id'] = $this->config['site']['id'];
+
+    // Set the config_sync_dir from config.
+    $drupal_settings['config_directories']['sync'] = $this->config['environment']['config_sync_dir'];
 
     // Set the hash_salt from config.
     $drupal_settings['settings']['hash_salt'] = $this->config['environment']['hash_salt'];

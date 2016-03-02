@@ -38,10 +38,7 @@ function ua_sm_custom_node_presave(Node $entity) {
       break;
 
     case 'ua_sm_environment':
-      if ($entity->field_ua_sm_hash_salt->isEmpty()) {
-        // Generate a hash salt and store it for each new environment.
-        $entity->field_ua_sm_hash_salt->value = Crypt::randomBytesBase64(55);
-      }
+      ua_sm_custom_environment_defaults($entity);
       break;
   }
 }
@@ -59,17 +56,38 @@ function ua_sm_custom_run_job($job_name, EntityInterface $entity) {
 }
 
 /**
- * Populates the site instance with unique ports.
+ * Populates an environment with a new hash_salt and config sync dir.
+ *
+ * @param Node $environment
+ *   Node to generate config default values for.
  */
-function ua_sm_custom_ports(Node $entity) {
-  $server_id = $entity->field_ua_sm_server->target_id;
+function ua_sm_custom_environment_defaults(Node $environment) {
+  if ($environment->field_ua_sm_config_sync->isEmpty()) {
+    // Generate a config sync dir and store it for each new environment.
+    $config_directories_hash = Crypt::randomBytesBase64(55);
+    $environment->field_ua_sm_config_sync->value = 'sites/default/files/config_' . $config_directories_hash . '/sync';
+  }
+  if ($environment->field_ua_sm_hash_salt->isEmpty()) {
+    // Generate a hash salt and store it for each new environment.
+    $environment->field_ua_sm_hash_salt->value = Crypt::randomBytesBase64(55);
+  }
+}
+
+/**
+ * Populates the site instance with unique ports per host.
+ *
+ * @param Node $site_instance
+ *   Site instance to assign free ports to.
+ */
+function ua_sm_custom_ports(Node $site_instance) {
+  $server_id = $site_instance->field_ua_sm_server->target_id;
   $port_manager = \Drupal::service('ua_sm_custom.port_manager');
   $used_ports = $port_manager->getUsedPorts($server_id);
 
   // Find which ports have not already been allocated to the instance.
   $required_ports = [];
   foreach ($port_manager->port_fields as $port_field) {
-    $port_number = $entity->{$port_field}->value;
+    $port_number = $site_instance->{$port_field}->value;
     if (!$port_number) {
       $required_ports[] = $port_field;
     }
@@ -82,7 +100,7 @@ function ua_sm_custom_ports(Node $entity) {
   $available_port_numbers = $port_manager->getAvailablePorts($server_id, count($required_ports));
   if ($available_port_numbers) {
     foreach ($required_ports as $required_port) {
-      $entity->get($required_port)->setValue(array_pop($available_port_numbers));
+      $site_instance->get($required_port)->setValue(array_pop($available_port_numbers));
     }
   }
 }

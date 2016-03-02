@@ -2,6 +2,7 @@ langcode: en
 status: true
 dependencies:
   config:
+    - field.field.node.ua_sm_environment.field_ua_sm_config_sync
     - field.field.node.ua_sm_environment.field_ua_sm_custom_config
     - field.field.node.ua_sm_environment.field_ua_sm_database
     - field.field.node.ua_sm_environment.field_ua_sm_database_driver
@@ -112,5 +113,6 @@ content:
     settings: {  }
     third_party_settings: {  }
 hidden:
+  field_ua_sm_config_sync: true
   field_ua_sm_deployment_type: true
   field_ua_sm_hash_salt: true

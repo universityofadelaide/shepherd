@@ -26,6 +26,7 @@
     "uuid": ""
   },
   "environment": {
+    "config_sync_dir": "sites/default/files/config_1T4oKXbQniOk5BUAHMyWSI5Kjdf8gqLdJnsagJ6vyornfWyyxyoMZBjRQBJxvvjNn7oTer-17g/sync",
     "deployment_type": null,
     "domain_name": null,
     "id": "0",

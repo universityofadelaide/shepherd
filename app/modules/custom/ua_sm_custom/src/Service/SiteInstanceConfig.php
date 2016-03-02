@@ -73,6 +73,7 @@ class SiteInstanceConfig {
           'uuid' => $distribution->uuid(),
         ],
         'environment' => [
+          'config_sync_dir' => $environment->field_ua_sm_config_sync->value,
           'deployment_type' => $environment->field_ua_sm_deployment_type->value,
           'domain_name' => $environment->field_ua_sm_domain_name->value,
           'git_reference' => $environment->field_ua_sm_git_reference->value,
