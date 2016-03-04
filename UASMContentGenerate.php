@@ -35,20 +35,6 @@ $docker_host_server_1 = Node::create([
 $docker_host_server_1->save();
 
 /**
- * Create second docker host server.
- */
-$docker_host_server_2 = Node::create([
-  'type' => 'ua_sm_server',
-  'langcode' => 'en',
-  'uid' => '1',
-  'status' => 1,
-  'title' => 'Docker Host 2',
-  'field_ua_sm_hostname' => [['value' => 'docker-host']],
-  'field_ua_sm_ssh_user' => [['value' => 'docker']],
-]);
-$docker_host_server_2->save();
-
-/**
  * Create a platform.
  */
 $platform = Node::create([
@@ -58,10 +44,7 @@ $platform = Node::create([
   'status' => 1,
   'title' => 'Dev Platform',
   'field_ua_sm_build_server' =>     [['target_id' => $dev_server->id()]],
-  'field_ua_sm_web_servers' => [
-    ['target_id' => $docker_host_server_1->id()],
-    ['target_id' => $docker_host_server_2->id()],
-  ],
+  'field_ua_sm_web_servers' => [['target_id' => $docker_host_server_1->id()]],
   'field_ua_sm_database_servers' => [['target_id' => $dev_server->id()]],
   'field_ua_sm_task_runner' =>      [['value' => 'jenkins']],
   'field_ua_sm_docker_registry' =>  [['value' => 'registry-backend:5000']],
