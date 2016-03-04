@@ -15,7 +15,7 @@ $dev_server = Node::create([
   'uid' => '1',
   'status' => 1,
   'title' => 'Dev server',
-  'field_ua_sm_hostname' => [['value' => 'dev']],
+  'field_ua_sm_hostname' => [['value' => 'adelaide.dev']],
   'field_ua_sm_ssh_user' => [['value' => 'root']],
 ]);
 $dev_server->save();
@@ -29,7 +29,7 @@ $docker_host_server_1 = Node::create([
   'uid' => '1',
   'status' => 1,
   'title' => 'Docker Host 1',
-  'field_ua_sm_hostname' => [['value' => 'docker-host-1']],
+  'field_ua_sm_hostname' => [['value' => 'docker-host']],
   'field_ua_sm_ssh_user' => [['value' => 'docker']],
 ]);
 $docker_host_server_1->save();
@@ -43,7 +43,7 @@ $docker_host_server_2 = Node::create([
   'uid' => '1',
   'status' => 1,
   'title' => 'Docker Host 2',
-  'field_ua_sm_hostname' => [['value' => 'docker-host-2']],
+  'field_ua_sm_hostname' => [['value' => 'docker-host']],
   'field_ua_sm_ssh_user' => [['value' => 'docker']],
 ]);
 $docker_host_server_2->save();
