@@ -70,9 +70,7 @@
         },
         "patches": {
             "drupal/r4032login": {
-                "Use generateFromRoute instead of generateFromPath, fixes D8 RC1 issue": "https://www.drupal.org/files/issues/generate_from_route.patch",
-                "Override return destination parameter": "https://www.drupal.org/files/issues/r4032login_2534308_3.patch",
-                "Redirection triggers for all kernel exceptions, not just 403": "https://www.drupal.org/files/issues/r4032login_cleaned_2534878_4.patch"
+                "Override return destination parameter": "https://www.drupal.org/files/issues/r4032login_2534308_3.patch"
             }
         }
     }
