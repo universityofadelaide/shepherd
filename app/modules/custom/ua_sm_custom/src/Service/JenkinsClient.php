@@ -57,6 +57,7 @@ class JenkinsClient extends Client {
     $uasm_site_url = trim(Url::fromUri('base:', ['absolute' => TRUE])->toString(), '/');
 
     $query = [
+      'job' => $this->config[$job_type . '_job'],
       'token' => $this->config['token'],
       'build_host_ssh' => $build_host_ssh,
       'deploy_host_ssh' => $deploy_host_ssh,
@@ -67,7 +68,7 @@ class JenkinsClient extends Client {
     // Looks like there are some auth issues with anon read access.
     // buildByToken solves this issue.
     // todo: Ensure that the base url has a trailing slash.
-    return $this->get('job/' . $this->config[$job_type . '_job'] . '/buildWithParameters', ['query' => $query]);
+    return $this->get('buildWithParameters', ['query' => $query]);
   }
 
 }

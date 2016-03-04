@@ -2,7 +2,7 @@
   "custom": {
     "ua_sm_custom.settings": {
       "jenkins.enabled": true,
-      "jenkins.base_uri": "http://jenkins.adelaide.dev/",
+      "jenkins.base_uri": "http://jenkins.adelaide.dev/buildByToken/",
       "jenkins.token": "EZGl7429qBX707p65K97S282IxeBl3n9",
       "jenkins.provision_job": "deploy",
       "jenkins.deploy_job": null,
