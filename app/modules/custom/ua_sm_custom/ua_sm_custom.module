@@ -147,6 +147,7 @@ function ua_sm_custom_node_insert(EntityInterface $entity) {
       // Create default environment.
       $environment = Node::create([
         'type' => 'ua_sm_environment',
+        'uid' => 1,
         'title' => 'UAT',
         'field_ua_sm_site' => $entity->id(),
         'field_ua_sm_platform' => array_pop($platforms),
@@ -163,6 +164,7 @@ function ua_sm_custom_node_insert(EntityInterface $entity) {
       foreach ($platform->field_ua_sm_web_servers as $key => $web_server) {
         $site_instance = Node::create([
           'type' => 'ua_sm_site_instance',
+          'uid' => 1,
           'title' => $entity->title->value . ' ' . ($key + 1),
           'field_ua_sm_environment' => $entity->id(),
           'field_ua_sm_server' => $web_server->entity->id(),
