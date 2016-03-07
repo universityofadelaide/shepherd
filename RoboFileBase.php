@@ -77,7 +77,7 @@ abstract class RoboFileBase extends \Robo\Tasks implements RoboFileDrupalDeployI
   /**
    * Parse and import config.
    */
-  private function importConfig() {
+  protected function importConfig() {
     if (file_exists($this->config_file)) {
       $this->config = json_decode(file_get_contents($this->config_file), TRUE);
     }
@@ -284,6 +284,7 @@ abstract class RoboFileBase extends \Robo\Tasks implements RoboFileDrupalDeployI
     $this->devXdebugDisable();
     $this->devConfigWriteable();
 
+
     $successful = $this->_exec("$this->drush_cmd site-install" .
       " $this->drupal_profile install_configure_form.update_status_module='array(FALSE,FALSE)' -y" .
       " --db-url=" . $this->getDatabaseUrl() .
@@ -408,7 +409,7 @@ abstract class RoboFileBase extends \Robo\Tasks implements RoboFileDrupalDeployI
    * This only affects certain files in the root of the app folder.
    * @link https://github.com/drupal-composer/drupal-project/blob/8.x/scripts/drupal/update-scaffold
    */
-  function devRebuildScaffold() {
+  public function devRebuildScaffold() {
     $this->_exec("$this->drush_cmd dl drupal-8 --destination=/tmp --drupal-project-rename=drupal-8 --quiet -y");
     $this->_exec("rsync -avz --delete /tmp/drupal-8/ $this->application_root \\
       --exclude=.gitkeep \\
@@ -683,7 +684,7 @@ abstract class RoboFileBase extends \Robo\Tasks implements RoboFileDrupalDeployI
    * @param int $permission
    *   Permissions. E.g. 0644.
    */
-  private function setPermissions(Robo\Task\FileSystem\FilesystemStack $file_tasks, $file, $permission) {
+  protected function setPermissions(Robo\Task\FileSystem\FilesystemStack $file_tasks, $file, $permission) {
     if (file_exists($file)) {
       $file_tasks->chmod($file, $permission);
     }
@@ -789,7 +790,7 @@ abstract class RoboFileBase extends \Robo\Tasks implements RoboFileDrupalDeployI
    * @return string
    *   The IPv4 address of the Docker host.
    */
-  private function getDockerHostIP() {
+  protected function getDockerHostIP() {
     return trim($this->taskExec('/sbin/ip route|awk \'/default/ { print $3 }\'')->run()->getMessage());
   }
 
@@ -799,7 +800,7 @@ abstract class RoboFileBase extends \Robo\Tasks implements RoboFileDrupalDeployI
    * @return string
    *   A database url of the format mysql://user:pass@host:port/db_name
    */
-  private function getDatabaseUrl() {
+  protected function getDatabaseUrl() {
     $host = $this->config['database']['host'];
     if ($host == '{docker_host_ip}') {
       $host = $this->getDockerHostIP();

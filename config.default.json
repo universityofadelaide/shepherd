@@ -130,6 +130,6 @@
     "uuid": ""
   },
   "site_manager": {
-    "hostname": "site-manager.webapp.adelaide.edu.au"
+    "hostname": "site-manager.adelaide.dev"
   }
 }
