@@ -32,13 +32,27 @@ class SiteInstanceConfig {
     $result = $query->execute();
     if ($result) {
       $site_instance = \Drupal::entityManager()->getStorage('node')->load($nid);
-      $server = reset($site_instance->field_ua_sm_server->referencedEntities());
-      $environment = reset($site_instance->field_ua_sm_environment->referencedEntities());
-      $platform = reset($environment->field_ua_sm_platform->referencedEntities());
-      $site = reset($environment->field_ua_sm_site->referencedEntities());
-      $distribution = reset($site->field_ua_sm_distribution->referencedEntities());
-      $build_server = reset($platform->field_ua_sm_build_server->referencedEntities());
+
+      $servers = $site_instance->field_ua_sm_server->referencedEntities();
+      $server = reset($servers);
+
+      $environments = $site_instance->field_ua_sm_environment->referencedEntities();
+      $environment = reset($environments);
+
+      $platforms = $environment->field_ua_sm_platform->referencedEntities();
+      $platform = reset($platforms);
+
+      $sites = $environment->field_ua_sm_site->referencedEntities();
+      $site = reset($sites);
+
+      $distributions = $site->field_ua_sm_distribution->referencedEntities();
+      $distribution = reset($distributions);
+
+      $build_servers = $platform->field_ua_sm_build_server->referencedEntities();
+      $build_server = reset($build_servers);
+
       $database_servers = $platform->field_ua_sm_database_servers->referencedEntities();
+
       $web_servers = $platform->field_ua_sm_web_servers->referencedEntities();
 
       // @TODO: add users keys with 'develop' field_ua_sm_role.
