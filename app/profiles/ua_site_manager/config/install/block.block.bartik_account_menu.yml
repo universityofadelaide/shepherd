@@ -5,6 +5,7 @@ dependencies:
     - system.menu.account
   module:
     - system
+    - user
   theme:
     - bartik
 id: bartik_account_menu
@@ -20,4 +21,11 @@ settings:
   label_display: '0'
   level: 1
   depth: 1
-visibility: {  }
+visibility:
+  user_role:
+    id: user_role
+    roles:
+      authenticated: authenticated
+    negate: false
+    context_mapping:
+      user: '@user.current_user_context:current_user'

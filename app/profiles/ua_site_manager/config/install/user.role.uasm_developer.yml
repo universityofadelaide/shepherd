@@ -29,3 +29,4 @@ permissions:
   - 'sm view users'
   - 'sm access site wizard'
   - 'sm administer users'
+  - 'sm view homepage'

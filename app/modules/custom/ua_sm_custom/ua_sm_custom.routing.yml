@@ -1,3 +1,11 @@
+ua_sm_custom.home-page:
+  path: '/home'
+  defaults:
+    _controller: '\Drupal\ua_sm_custom\Controller\HomePageController::index'
+  options:
+    no_cache: TRUE
+  requirements:
+    _permission: 'sm view homepage'
 # @todo Find out if this is still required (ua_sm_custom.permissions).
 ua_sm_custom.permissions:
   path: '/user/{account_id}/permissions'

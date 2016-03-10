@@ -5,4 +5,5 @@ id: anonymous
 label: 'Anonymous user'
 weight: 1
 is_admin: false
-permissions: { }
+permissions:
+  - 'sm view homepage'

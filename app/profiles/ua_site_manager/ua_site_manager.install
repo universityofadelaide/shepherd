@@ -18,7 +18,7 @@ use Drupal\field\Entity\FieldConfig;
  */
 function ua_site_manager_install() {
   // Set front page to "node".
-  \Drupal::configFactory()->getEditable('system.site')->set('page.front', '/websites')->save(TRUE);
+  \Drupal::configFactory()->getEditable('system.site')->set('page.front', '/home')->save(TRUE);
 
   // Allow visitor account creation with administrative approval.
   $user_settings = \Drupal::configFactory()->getEditable('user.settings');
@@ -453,4 +453,24 @@ function ua_site_manager_update_8007(&$sandbox) {
     ->load('node.ua_sm_environment.default');
   $entity_view_display->removeComponent('field_ua_sm_config_sync')
     ->save();
+}
+
+/**
+ * Implements hook_update_N().
+ *
+ * Update homepage and login blocks.
+ */
+function ua_site_manager_update_8008(&$sandbox) {
+  \Drupal::configFactory()->getEditable('system.site')->set('page.front', '/home')->save(TRUE);
+  $config_storage = \Drupal::service('config.storage');
+
+  // Remove blocks.
+  $config_storage->delete('block.block.bartik_account_menu');
+  $config_storage->delete('block.block.bartik_login');
+  $config_storage->delete('block.block.seven_login');
+
+  // Add back in account menu block with modified access.
+  $config_path = drupal_get_path('profile', 'ua_site_manager') . '/config/install';
+  $source = new Drupal\Core\Config\FileStorage($config_path);
+  $config_storage->write('block.block.bartik_account_menu', $source->read('block.block.bartik_account_menu'));
 }

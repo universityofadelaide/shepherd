@@ -6,6 +6,8 @@ sm view distributions:
   title: 'View distributions'
 sm view environments:
   title: 'View environments'
+sm view homepage:
+  title: 'View homepage'
 sm view instances:
   title: 'View instances'
 sm view platforms:

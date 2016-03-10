@@ -5,4 +5,5 @@ id: authenticated
 label: 'Authenticated user'
 weight: 2
 is_admin: false
-permissions: {  }
+permissions:
+  - 'sm view homepage'
