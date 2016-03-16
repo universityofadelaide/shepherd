@@ -9,6 +9,7 @@ dependencies:
     - node
     - options
     - paragraphs
+    - ua_sm_custom
     - user
 id: ua_sm_site_users
 label: 'Site Users'
@@ -330,6 +331,55 @@ display:
           separator: ', '
           field_api_classes: false
           plugin_id: field
+        site_user_role_operations:
+          id: site_user_role_operations
+          table: paragraph__field_ua_sm_role
+          field: site_user_role_operations
+          relationship: field_ua_sm_users
+          group_type: group
+          admin_label: ''
+          label: Operations
+          exclude: false
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: true
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          plugin_id: site_user_role_operations
       filters:
         status:
           value: true

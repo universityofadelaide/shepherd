@@ -59,6 +59,15 @@ ua_sm_custom.user-edit-form:
     no_cache: TRUE
   requirements:
     _permission: 'sm administer users'
+ua_sm_custom.user-delete-form:
+  path: '/site/{node}/user/{user}/delete'
+  defaults:
+    _form: '\Drupal\ua_sm_custom\Form\UserDeleteForm'
+  options:
+    _auth: ['basic_auth', 'cookie']
+    no_cache: TRUE
+  requirements:
+    _permission: 'sm administer users'
 ua_sm_custom.varnish-config:
   path: '/api/varnish-config'
   defaults:
