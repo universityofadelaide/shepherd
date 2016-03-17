@@ -143,10 +143,10 @@ class SiteInstanceConfig {
 
       // Set default database config if none specified.
       if (!$config['database']['database']) {
-        $config['database']['database'] = $environment->id();
+        $config['database']['database'] = 'env_' . $environment->id();
       }
       if (!$config['database']['username']) {
-        $config['database']['username'] = $environment->id();
+        $config['database']['username'] = 'user_' . $environment->id();
       }
 
       return $config;

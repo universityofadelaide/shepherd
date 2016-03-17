@@ -145,16 +145,19 @@ function ua_sm_custom_node_insert(EntityInterface $entity) {
         ->condition('type', 'ua_sm_platform')
         ->execute();
 
-      // Create default environment.
-      $environment = Node::create([
-        'type' => 'ua_sm_environment',
-        'uid' => 1,
-        'title' => 'UAT',
-        'field_ua_sm_site' => $entity->id(),
-        'field_ua_sm_platform' => array_pop($platforms),
-        'field_ua_sm_database_host' => '{docker_host_ip}',
-      ]);
-      $environment->save();
+      // Check if default environment should be automatically created.
+      if (!isset($entity->sm_prevent_auto_environment) || !$entity->sm_prevent_auto_environment) {
+        // Create default environment.
+        $environment = Node::create([
+          'type' => 'ua_sm_environment',
+          'uid' => 1,
+          'title' => 'UAT',
+          'field_ua_sm_site' => $entity->id(),
+          'field_ua_sm_platform' => array_pop($platforms),
+          'field_ua_sm_domain_name' => $entity->field_ua_sm_domain_name->value,
+        ]);
+        $environment->save();
+      }
       break;
 
     case 'ua_sm_environment':

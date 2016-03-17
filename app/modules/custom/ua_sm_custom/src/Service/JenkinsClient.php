@@ -53,7 +53,6 @@ class JenkinsClient extends Client {
     $build_host_ssh = $build_server->field_ua_sm_ssh_user->value . '@' . $build_server->field_ua_sm_hostname->value;
     $deploy_host_ssh = $deploy_server->field_ua_sm_ssh_user->value . '@' . $deploy_server->field_ua_sm_hostname->value;
 
-    // @TODO: Don't insert the site manager url from global state so that we can run job from drush.
     $uasm_site_url = trim(Url::fromUri('base:', ['absolute' => TRUE])->toString(), '/');
 
     $query = [
