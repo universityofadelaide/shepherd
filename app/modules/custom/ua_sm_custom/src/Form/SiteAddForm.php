@@ -33,6 +33,17 @@ class SiteAddForm extends FormBase {
     $top_menu_style_settings = $top_menu_style_config->getSettings();
     $top_menu_style_options = $top_menu_style_settings['allowed_values'];
 
+    // @todo Use a better method of getting default distribution.
+    $distributionEntities = \Drupal::entityQuery('node')
+      ->condition('type', 'ua_sm_distribution')
+      ->execute();
+
+    $distribution = [];
+    foreach ($distributionEntities as $entity) {
+      $node = Node::load($entity);
+      $distribution[$entity] = $node->field_ua_sm_git_repository->value;
+    }
+
     $this->fields = [
       'title' => [
         '#type' => 'textfield',
@@ -94,6 +105,13 @@ class SiteAddForm extends FormBase {
         '#options' => $top_menu_style_options,
         '#default_value' => reset($top_menu_style_options),
       ],
+      'field_ua_sm_distribution' => [
+        '#type' => 'select',
+        '#title' => $this->t('Distribution'),
+        '#options' => $distribution,
+        '#default_value' => reset($distribution),
+        '#required' => TRUE,
+      ],
     ];
   }
 
@@ -136,15 +154,8 @@ class SiteAddForm extends FormBase {
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $input = $form_state->getUserInput();
 
-    // @todo Use a better method of getting default distribution.
-    $distribution = \Drupal::entityQuery('node')
-      ->condition('type', 'ua_sm_distribution')
-      ->condition('field_ua_sm_git_repository', 'git@gitlab.adelaide.edu.au:web-team/ua-wcms-d8.git')
-      ->execute();
-
     $site_fields = [
       'type' => 'ua_sm_site',
-      'field_ua_sm_distribution' => $distribution,
     ];
 
     foreach (array_keys($this->fields) as $field_name) {
