@@ -3,6 +3,8 @@ services:
     class: Drupal\ua_sm_custom\Service\SiteInstanceConfig
   ua_sm_custom.jenkins_client:
     class: Drupal\ua_sm_custom\Service\JenkinsClient
+  ua_sm_custom.password:
+    class: Drupal\ua_sm_custom\Service\Password
   ua_sm_custom.port_manager:
     class: Drupal\ua_sm_custom\Service\PortManager
   ua_sm_custom.site:

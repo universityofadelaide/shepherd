@@ -156,6 +156,7 @@ class SiteAddForm extends FormBase {
 
     $site_fields = [
       'type' => 'ua_sm_site',
+      'field_ua_sm_admin_password' => \Drupal::service('ua_sm_custom.password')->generate(),
     ];
 
     foreach (array_keys($this->fields) as $field_name) {
