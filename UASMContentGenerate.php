@@ -12,7 +12,6 @@ use Drupal\node\Entity\Node;
  */
 $environment_defaults = [
   'field_ua_sm_database_host' => 'mysql',
-  'field_ua_sm_database_username' => 'root',
   'field_ua_sm_git_reference' => 'develop',
 ];
 foreach ($environment_defaults as $field_name => $field_value) {
