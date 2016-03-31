@@ -60,6 +60,3 @@ ua_sm_custom.settings:
         uasm_content_editor:
           type: string
           label: 'Content Editor'
-        uasm_wizard:
-          type: string
-          label: 'YOURE A WIZARD HARRY'
