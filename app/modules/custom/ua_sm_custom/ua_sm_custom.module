@@ -9,8 +9,7 @@ use Drupal\Component\Utility\Crypt;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\node\Entity\Node;
-use Drupal\comment\CommentInterface;
-use Drupal\Core\Url;
+use Drupal\user\Entity\User;
 
 /**
  * Implements hook_help().
@@ -355,3 +354,14 @@ function ua_sm_custom_mail($key, &$message, $params) {
 
 }
 
+/**
+ * Implements hook_cron().
+ */
+function ua_sm_custom_cron() {
+  // Update users attributes from LDAP.
+  $user_ids = \Drupal::entityQuery('user')->execute();
+  $users = User::loadMultiple($user_ids);
+  foreach ($users as $user) {
+    \Drupal::service('ua_sm_custom.user')->populateFieldsFromLdap($user);
+  }
+}
