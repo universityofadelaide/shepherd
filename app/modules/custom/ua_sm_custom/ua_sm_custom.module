@@ -234,6 +234,26 @@ function ua_sm_custom_node_update(EntityInterface $entity) {
 }
 
 /**
+ * Implements hook_ENTITY_TYPE_predelete().
+ *
+ * Cascade the deletion of the environment by deleting its instances.
+ */
+function ua_sm_custom_node_predelete(EntityInterface $entity) {
+  switch ($entity->bundle()) {
+    case 'ua_sm_environment':
+      $instance_ids = \Drupal::entityQuery('node')
+        ->condition('type', 'ua_sm_site_instance')
+        ->condition('field_ua_sm_environment', $entity->id())
+        ->execute();
+      $instances = Node::loadMultiple($instance_ids);
+      foreach($instances as $instance) {
+        $instance->delete();
+      }
+      break;
+  }
+}
+
+/**
  * Implements hook_ENTITY_TYPE_delete().
  *
  * Cleans up LDAP when sites are removed, and triggers jenkins when site
