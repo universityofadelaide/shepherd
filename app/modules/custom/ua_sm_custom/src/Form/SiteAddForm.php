@@ -41,7 +41,7 @@ class SiteAddForm extends FormBase {
     $distribution = [];
     foreach ($distributionEntities as $entity) {
       $node = Node::load($entity);
-      $distribution[$entity] = $node->field_ua_sm_git_repository->value;
+      $distribution[$entity] = $node->getTitle();
     }
 
     $this->fields = [
