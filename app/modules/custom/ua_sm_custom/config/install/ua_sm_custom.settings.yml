@@ -6,6 +6,7 @@ jenkins:
   deploy_job: ''
   decommission_job: ''
   destroy_job: ''
+  backup_job: ''
 ldap:
   enabled: true
 controlled_roles:

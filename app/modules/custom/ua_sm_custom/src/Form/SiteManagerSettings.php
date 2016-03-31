@@ -76,6 +76,12 @@ class SiteManagerSettings extends ConfigFormBase {
       '#description' => $this->t('The job to trigger when a site instance is destroyed.'),
       '#default_value' => $config->get('jenkins.destroy_job'),
     ];
+    $form['jenkins']['backup_job'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('Backup Job'),
+      '#description' => $this->t('The job to trigger when the backup cron calls on a site instance.'),
+      '#default_value' => $config->get('jenkins.backup_job'),
+    ];
     $form['ldap'] = [
       '#type' => 'details',
       '#title' => $this->t('LDAP Integration'),

@@ -60,7 +60,7 @@ $docker_host_server_1 = Node::create([
   'field_ua_sm_hostname' => [['value' => 'docker-host']],
   'field_ua_sm_port_range_start' => [['value' => 10000]],
   'field_ua_sm_port_range_end' => [['value' => 12000]],
-  'field_ua_sm_ssh_user' => [['value' => 'docker']],
+  'field_ua_sm_ssh_user' => [['value' => 'root']],
 ]);
 $docker_host_server_1->save();
 
@@ -76,7 +76,7 @@ $docker_host_server_2 = Node::create([
   'field_ua_sm_hostname' => [['value' => 'docker-host']],
   'field_ua_sm_port_range_start' => [['value' => 12001]],
   'field_ua_sm_port_range_end' => [['value' => 14000]],
-  'field_ua_sm_ssh_user' => [['value' => 'docker']],
+  'field_ua_sm_ssh_user' => [['value' => 'root']],
 ]);
 $docker_host_server_2->save();
 

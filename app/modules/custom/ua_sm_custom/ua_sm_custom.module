@@ -245,7 +245,7 @@ function ua_sm_custom_node_predelete(EntityInterface $entity) {
         ->condition('field_ua_sm_environment', $entity->id())
         ->execute();
       $instances = Node::loadMultiple($instance_ids);
-      foreach($instances as $instance) {
+      foreach ($instances as $instance) {
         $instance->delete();
       }
       break;
@@ -358,10 +358,31 @@ function ua_sm_custom_mail($key, &$message, $params) {
  * Implements hook_cron().
  */
 function ua_sm_custom_cron() {
+
+  // Back up all environments; only one site instance per environment.
+  $site_instance_nids = \Drupal::entityQuery('node')
+    ->condition('type', 'ua_sm_site_instance')
+    ->execute();
+
+  $instances = [];
+  $nodes = Node::loadMultiple($site_instance_nids);
+
+  foreach ($nodes as $node) {
+    $environment_name = $node->field_ua_sm_environment->getString();
+    if (!array_key_exists($environment_name, $instances)) {
+      $instances[$environment_name] = $node;
+    }
+  }
+
+  foreach ($instances as $instance) {
+    ua_sm_custom_run_job('backup', $instance);
+  }
+
   // Update users attributes from LDAP.
   $user_ids = \Drupal::entityQuery('user')->execute();
   $users = User::loadMultiple($user_ids);
   foreach ($users as $user) {
     \Drupal::service('ua_sm_custom.user')->populateFieldsFromLdap($user);
   }
+
 }

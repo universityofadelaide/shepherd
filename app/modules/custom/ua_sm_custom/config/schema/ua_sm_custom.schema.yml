@@ -29,7 +29,9 @@ ua_sm_custom.settings:
         destroy_job:
           type: string
           label: 'Destroy Job'
-
+        backup_job:
+          type: string
+          label: 'Backup Job'
     ldap:
       type: mapping
       label: 'LDAP Integration'

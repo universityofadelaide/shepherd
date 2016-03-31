@@ -480,3 +480,15 @@ function ua_site_manager_update_8008(&$sandbox) {
   }
   $config_storage->write('views.view.ua_sm_site_users', $source->read('views.view.ua_sm_site_users'));
 }
+
+/**
+ * Implements hook_update_N().
+ *
+ * Update the ua_sm_custom.settings configuration yml.
+ */
+function ua_site_manager_update_8009(&$sandbox) {
+  $config_path = drupal_get_path('module', 'ua_sm_custom') . '/config/install';
+  $source = new Drupal\Core\Config\FileStorage($config_path);
+  $config_storage = \Drupal::service('config.storage');
+  $config_storage->write('ua_sm_custom.settings', $source->read('ua_sm_custom.settings'));
+}
