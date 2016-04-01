@@ -6,8 +6,10 @@
  */
 
 use Drupal\Component\Utility\Crypt;
+use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\Core\Session\AccountInterface;
 use Drupal\node\Entity\Node;
 use Drupal\user\Entity\User;
 
@@ -274,6 +276,22 @@ function ua_sm_custom_node_delete(EntityInterface $entity) {
       }
       break;
   }
+}
+
+/**
+ * Implements hook_node_access().
+ *
+ * Prevent production environments from being deleted.
+ */
+function ua_sm_custom_node_access(EntityInterface $entity, $operation, AccountInterface $account) {
+  if ($entity->bundle() == 'ua_sm_environment') {
+    if ($operation == 'delete') {
+      if ($entity->field_ua_sm_machine_name->value === 'prd') {
+        return AccessResult::forbidden();
+      }
+    }
+  }
+  return AccessResult::neutral();
 }
 
 /**
