@@ -492,3 +492,21 @@ function ua_site_manager_update_8009(&$sandbox) {
   $config_storage = \Drupal::service('config.storage');
   $config_storage->write('ua_sm_custom.settings', $source->read('ua_sm_custom.settings'));
 }
+
+/**
+ * Implements hook_update_N().
+ *
+ * Allow OCs to view environments.
+ */
+function ua_site_manager_update_8010(&$sandbox) {
+  $config_path = drupal_get_path('profile', 'ua_site_manager') . '/config/install';
+  $source = new Drupal\Core\Config\FileStorage($config_path);
+  $config_storage = \Drupal::service('config.storage');
+  $config = 'user.role.uasm_online_consultant';
+
+  // Delete config if it already exists.
+  if ($config_storage->exists($config)) {
+    $config_storage->delete($config);
+  }
+  $config_storage->write($config, $source->read($config));
+}
