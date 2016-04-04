@@ -11,7 +11,7 @@ use Drupal\node\Entity\Node;
  * Override production default values for local dev.
  */
 $environment_defaults = [
-  'field_ua_sm_database_host' => 'mysql',
+  'field_ua_sm_database_host' => '{docker_host_ip}',
   'field_ua_sm_git_reference' => 'develop',
 ];
 foreach ($environment_defaults as $field_name => $field_value) {

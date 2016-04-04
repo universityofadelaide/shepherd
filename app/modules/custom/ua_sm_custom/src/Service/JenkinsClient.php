@@ -58,10 +58,10 @@ class JenkinsClient extends Client {
     $query = [
       'job' => $this->config[$job_type . '_job'],
       'token' => $this->config['token'],
-      'build_host_ssh' => $build_host_ssh,
-      'deploy_host_ssh' => $deploy_host_ssh,
-      'site_instance_id' => $site_instance->id(),
-      'uasm_site_url' => $uasm_site_url,
+      'BUILD_HOST_SSH' => $build_host_ssh,
+      'DEPLOY_HOST_SSH' => $deploy_host_ssh,
+      'SITE_INSTANCE_ID' => $site_instance->id(),
+      'SM_SITE_URL' => $uasm_site_url,
     ];
 
     // Looks like there are some auth issues with anon read access.
