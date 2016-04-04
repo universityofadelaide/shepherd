@@ -401,6 +401,7 @@ function ua_sm_custom_cron() {
   $users = User::loadMultiple($user_ids);
   foreach ($users as $user) {
     \Drupal::service('ua_sm_custom.user')->populateFieldsFromLdap($user);
+    $user->save();
   }
 
 }
