@@ -13,6 +13,8 @@ use Drupal\Core\Session\AccountInterface;
 use Drupal\node\Entity\Node;
 use Drupal\user\Entity\User;
 
+const UA_SM_CUSTOM_INSTANCE_LIMIT = 20;
+
 /**
  * Implements hook_help().
  */
@@ -108,6 +110,21 @@ function ua_sm_custom_ports(Node $site_instance) {
 }
 
 /**
+ * Implements hook_entity_type_alter().
+ *
+ * Adds a constraint to node types to prevent exceeding the instance limit.
+ */
+function ua_sm_custom_entity_type_alter(array &$entity_types) {
+  /** @var \Drupal\Core\Entity\ContentEntityType $node */
+  $node = $entity_types['node'];
+  $node->addConstraint('SiteInstance', [
+    'limit' => UA_SM_CUSTOM_INSTANCE_LIMIT,
+    'entity' => 'ua_sm_environment'
+  ]);
+
+}
+
+/**
  * Implements hook_ENTITY_TYPE_insert().
  *
  * Triggers numerous actions when certain entities are created.
@@ -133,7 +150,6 @@ function ua_sm_custom_node_insert(EntityInterface $entity) {
         \Drupal::service('ua_ldap.ldap_site')
           ->addSite($entity->id(), $controlled_roles);
         // @todo Deal with failure - consider a queue.
-
         // Synchronise any users that were added to LDAP.
         \Drupal::service('ua_ldap.ldap_site')
           ->syncUsers($entity->id());
@@ -158,6 +174,15 @@ function ua_sm_custom_node_insert(EntityInterface $entity) {
           'field_ua_sm_domain_name' => $entity->field_ua_sm_domain_name->value,
           'field_ua_sm_database_password' => \Drupal::service('ua_sm_custom.password')->generate(),
         ]);
+        // Validate the environment, against any plugin constraints added.
+        $validate = $environment->validate();
+        if ($validate->getEntityViolations() instanceof \Drupal\Core\Entity\EntityConstraintViolationList) {
+          foreach ($validate->getEntityViolations() as $violation) {
+            drupal_set_message($violation->getMessage(), 'error');
+          }
+          // Prevent the environment from being created.
+          break;
+        }
         $environment->save();
       }
       break;
@@ -175,6 +200,8 @@ function ua_sm_custom_node_insert(EntityInterface $entity) {
           'field_ua_sm_environment' => $entity->id(),
           'field_ua_sm_server' => $web_server->entity->id(),
         ]);
+        // Validate the site instance, against any plugin constraints added.
+        $site_instance->validate();
         $site_instance->save();
       }
       break;

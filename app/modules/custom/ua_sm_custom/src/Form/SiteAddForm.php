@@ -163,6 +163,7 @@ class SiteAddForm extends FormBase {
       $site_fields[$field_name] = $input[$field_name];
     }
     $site = Node::create($site_fields);
+    $site->validate();
     $site->save();
 
     drupal_set_message($this->t('Successfully added site %title.', [
