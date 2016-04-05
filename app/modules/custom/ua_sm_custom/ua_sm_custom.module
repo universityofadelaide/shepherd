@@ -174,11 +174,14 @@ function ua_sm_custom_node_insert(EntityInterface $entity) {
           'field_ua_sm_domain_name' => $entity->field_ua_sm_domain_name->value,
           'field_ua_sm_database_password' => \Drupal::service('ua_sm_custom.password')->generate(),
         ]);
+
         // Validate the environment, against any plugin constraints added.
         $validate = $environment->validate();
-        if ($validate->getEntityViolations() instanceof \Drupal\Core\Entity\EntityConstraintViolationList) {
+        $violations = $validate->getEntityViolations();
+        if ($violations->count()) {
           foreach ($validate->getEntityViolations() as $violation) {
             drupal_set_message($violation->getMessage(), 'error');
+            \Drupal::logger('ua_sm_custom')->info('Environment was not automatically created. %violation', array('%violation' => $violation->getMessage()));
           }
           // Prevent the environment from being created.
           break;
