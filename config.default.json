@@ -7,7 +7,7 @@
       "jenkins.provision_job": "deploy",
       "jenkins.deploy_job": null,
       "jenkins.decommission_job": null,
-      "jenkins.destroy_job": "remove-drupal-site-instance",
+      "jenkins.destroy_job": "decommission",
       "jenkins.backup_job": "backup",
       "ldap.enabled": false
     }
