@@ -116,7 +116,7 @@
     "maintainer_name": "maintainer name",
     "path": "sprint/11",
     "site_title": "Site Manager",
-    "top_menu_style": "mega_menu",
+    "top_menu_style": "tab_nav_menu",
     "uuid": ""
   },
   "site_instance": {

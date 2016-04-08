@@ -19,6 +19,7 @@ ua_sm_custom.site-add-form:
   path: '/site/add'
   defaults:
     _form: '\Drupal\ua_sm_custom\Form\SiteAddForm'
+    _title: 'Add Site'
   options:
     _auth: [ 'basic_auth', 'cookie' ]
     no_cache: TRUE
@@ -45,6 +46,7 @@ ua_sm_custom.user-add-form:
   path: '/site/{node}/user/add'
   defaults:
     _form: '\Drupal\ua_sm_custom\Form\UserAddForm'
+    _title: 'Add User'
   options:
     _auth: [ 'basic_auth', 'cookie' ]
     no_cache: TRUE
@@ -54,6 +56,7 @@ ua_sm_custom.user-edit-form:
   path: '/site/{node}/user/{user}/edit'
   defaults:
     _form: '\Drupal\ua_sm_custom\Form\UserEditForm'
+    _title: 'Edit User'
   options:
     _auth: [ 'basic_auth', 'cookie' ]
     no_cache: TRUE
@@ -63,6 +66,7 @@ ua_sm_custom.user-delete-form:
   path: '/site/{node}/user/{user}/delete'
   defaults:
     _form: '\Drupal\ua_sm_custom\Form\UserDeleteForm'
+    _title: 'Delete User'
   options:
     _auth: ['basic_auth', 'cookie']
     no_cache: TRUE

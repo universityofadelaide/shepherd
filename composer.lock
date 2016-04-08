@@ -4,21 +4,21 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "742f92cd4ebf2795a765904a8bebd926",
-    "content-hash": "bfa688580f93d97b42f0c05c15afb8d4",
+    "hash": "9382439407a37c3d615b494b9b449632",
+    "content-hash": "6acf5cd96f3d028f6b3c27feef9d69d7",
     "packages": [
         {
             "name": "composer/installers",
-            "version": "v1.0.23",
+            "version": "v1.0.24",
             "source": {
                 "type": "git",
                 "url": "https://github.com/composer/installers.git",
-                "reference": "6213d900e92647831f7a406d5c530ea1f3d4360e"
+                "reference": "1cf7cc4b89d5e8549bbb7d6ab1de75da13d27988"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/composer/installers/zipball/6213d900e92647831f7a406d5c530ea1f3d4360e",
-                "reference": "6213d900e92647831f7a406d5c530ea1f3d4360e",
+                "url": "https://api.github.com/repos/composer/installers/zipball/1cf7cc4b89d5e8549bbb7d6ab1de75da13d27988",
+                "reference": "1cf7cc4b89d5e8549bbb7d6ab1de75da13d27988",
                 "shasum": ""
             },
             "require": {
@@ -40,8 +40,8 @@
                 }
             },
             "autoload": {
-                "psr-0": {
-                    "Composer\\Installers\\": "src/"
+                "psr-4": {
+                    "Composer\\Installers\\": "src/Composer/Installers"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -56,12 +56,14 @@
                 }
             ],
             "description": "A multi-framework Composer library installer",
-            "homepage": "http://composer.github.com/installers/",
+            "homepage": "https://composer.github.io/installers/",
             "keywords": [
                 "Craft",
                 "Dolibarr",
                 "Hurad",
+                "ImageCMS",
                 "MODX Evo",
+                "Mautic",
                 "OXID",
                 "SMF",
                 "Thelia",
@@ -103,20 +105,20 @@
                 "zend",
                 "zikula"
             ],
-            "time": "2016-01-27 12:54:22"
+            "time": "2016-04-05 11:42:46"
         },
         {
             "name": "composer/semver",
-            "version": "1.3.0",
+            "version": "1.4.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/composer/semver.git",
-                "reference": "df4463baa9f44fe6cf0a6da4fde2934d4c0a2747"
+                "reference": "84c47f3d8901440403217afc120683c7385aecb8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/composer/semver/zipball/df4463baa9f44fe6cf0a6da4fde2934d4c0a2747",
-                "reference": "df4463baa9f44fe6cf0a6da4fde2934d4c0a2747",
+                "url": "https://api.github.com/repos/composer/semver/zipball/84c47f3d8901440403217afc120683c7385aecb8",
+                "reference": "84c47f3d8901440403217afc120683c7385aecb8",
                 "shasum": ""
             },
             "require": {
@@ -165,7 +167,7 @@
                 "validation",
                 "versioning"
             ],
-            "time": "2016-02-25 22:23:39"
+            "time": "2016-03-30 13:16:03"
         },
         {
             "name": "cweagans/composer-patches",
@@ -648,7 +650,7 @@
             "source": {
                 "type": "git",
                 "url": "https://git.drupal.org/project/cas",
-                "reference": "9d77f4b5e3afcfd8f345e2bef7f61330998c6c4c"
+                "reference": "b7934c07c51cd1988a1940a459cc7e7df45c383a"
             },
             "require": {
                 "drupal/core": "8.*"
@@ -660,22 +662,25 @@
                 }
             },
             "notification-url": "https://packagist.drupal-composer.org/downloads/",
+            "license": [
+                "GPL-2.0+"
+            ],
             "description": "Provides CAS authentication for Drupal.",
             "homepage": "https://www.drupal.org/project/cas",
-            "time": "2016-02-12 20:18:30"
+            "time": "2016-04-01 20:22:53"
         },
         {
             "name": "drupal/core",
-            "version": "8.0.5",
+            "version": "8.0.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/drupal-composer/drupal-core.git",
-                "reference": "da4c151b0ca4b27197b0407a590e117c4d2866e7"
+                "reference": "0691e597e80fc047279f9ef273d7028b96b19c1a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/drupal-composer/drupal-core/zipball/da4c151b0ca4b27197b0407a590e117c4d2866e7",
-                "reference": "da4c151b0ca4b27197b0407a590e117c4d2866e7",
+                "url": "https://api.github.com/repos/drupal-composer/drupal-core/zipball/0691e597e80fc047279f9ef273d7028b96b19c1a",
+                "reference": "0691e597e80fc047279f9ef273d7028b96b19c1a",
                 "shasum": ""
             },
             "require": {
@@ -827,7 +832,7 @@
                 "GPL-2.0+"
             ],
             "description": "Drupal is an open source content management platform powering millions of websites and applications.",
-            "time": "2016-03-02 10:31:56"
+            "time": "2016-04-05 23:34:17"
         },
         {
             "name": "drupal/diff",
@@ -859,25 +864,26 @@
         },
         {
             "name": "drupal/entity",
-            "version": "8.1.0-alpha1",
+            "version": "8.0.1",
             "source": {
                 "type": "git",
                 "url": "https://git.drupal.org/project/entity",
-                "reference": "ef00e241ca3b985698d3cdf42eea445761f4e7de"
+                "reference": "886a5b75fa1fd6893ada6da93e0d79fbdd44dc4c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://ftp.drupal.org/files/projects/entity-8.x-1.0-alpha1.zip",
+                "url": "https://ftp.drupal.org/files/projects/entity-8.x-0.1.zip",
                 "reference": null,
                 "shasum": null
             },
             "require": {
-                "drupal/core": "8.*"
+                "drupal/core": "8.*",
+                "drupal/system": "<8.1.0"
             },
             "type": "drupal-module",
             "extra": {
                 "branch-alias": {
-                    "dev-8.x-1.x": "8.1.x-dev"
+                    "dev-8.x-0.x": "8.0.x-dev"
                 }
             },
             "notification-url": "https://packagist.drupal-composer.org/downloads/",
@@ -886,7 +892,7 @@
             ],
             "description": "Provides expanded entity APIs, which will be moved to Drupal core one day.",
             "homepage": "http://drupal.org/project/entity",
-            "time": "2015-12-23 18:25:04"
+            "time": "2016-03-29 20:38:01"
         },
         {
             "name": "drupal/entity_reference_revisions",
@@ -916,7 +922,7 @@
             "source": {
                 "type": "git",
                 "url": "https://git.drupal.org/project/paragraphs",
-                "reference": "e1d36da2a24d0a6dc3733b18e60d2be057bf4ad9"
+                "reference": "6f946be51adb6348d0a7bb31309cfe0476565a33"
             },
             "require": {
                 "drupal/core": "8.*",
@@ -948,7 +954,7 @@
             ],
             "description": "Implements the Paragraphs entity types, Entity Reference selection type and Entity Reference field widget. To safely uninstall, go first to Structure > Paragraphs types > Settings.",
             "homepage": "https://www.drupal.org/project/paragraphs",
-            "time": "2016-03-27 06:33:57"
+            "time": "2016-04-05 11:39:23"
         },
         {
             "name": "drupal/r4032login",
@@ -971,9 +977,6 @@
                 }
             },
             "notification-url": "https://packagist.drupal-composer.org/downloads/",
-            "license": [
-                "GPL-2.0+"
-            ],
             "description": "Redirect anonymous users from 403 Access Denied pages to the /user/login page.",
             "homepage": "https://www.drupal.org/project/r4032login",
             "time": "2016-03-01 13:56:38"
@@ -1873,7 +1876,7 @@
             ],
             "authors": [
                 {
-                    "name": "Symfony CMF community",
+                    "name": "Symfony CMF Community",
                     "homepage": "https://github.com/symfony-cmf/Routing/contributors"
                 }
             ],
@@ -2804,16 +2807,16 @@
         },
         {
             "name": "symfony/var-dumper",
-            "version": "v3.0.3",
+            "version": "v3.0.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/var-dumper.git",
-                "reference": "9a6a883c48acb215d4825ce9de61dccf93d62074"
+                "reference": "3841ed86527d18ee2c35fe4afb1b2fc60f8fae79"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/var-dumper/zipball/9a6a883c48acb215d4825ce9de61dccf93d62074",
-                "reference": "9a6a883c48acb215d4825ce9de61dccf93d62074",
+                "url": "https://api.github.com/repos/symfony/var-dumper/zipball/3841ed86527d18ee2c35fe4afb1b2fc60f8fae79",
+                "reference": "3841ed86527d18ee2c35fe4afb1b2fc60f8fae79",
                 "shasum": ""
             },
             "require": {
@@ -2863,7 +2866,7 @@
                 "debug",
                 "dump"
             ],
-            "time": "2016-02-13 09:23:44"
+            "time": "2016-03-10 10:34:12"
         },
         {
             "name": "symfony/yaml",
@@ -3010,6 +3013,21 @@
                 "Drupal"
             ],
             "time": "2016-02-11 02:46:51"
+        },
+        {
+            "name": "ua-web-team/ua_theme",
+            "version": "dev-develop",
+            "source": {
+                "type": "git",
+                "url": "git@gitlab.adelaide.edu.au:web-team/ua_d8_theme.git",
+                "reference": "bc1a2f0d1c3f57562eaf03cc861f108b63746e74"
+            },
+            "type": "drupal-theme",
+            "license": [
+                "GPL-2.0+"
+            ],
+            "description": "The University of Adelaide's official Drupal 8 theme.",
+            "time": "2016-04-06 04:07:18"
         },
         {
             "name": "zendframework/zend-diactoros",
@@ -3566,7 +3584,7 @@
             "source": {
                 "type": "git",
                 "url": "https://git.drupal.org/project/devel",
-                "reference": "90b2213397f2d3fc3bb2bfa8b7ef482494cf6815"
+                "reference": "c4cf2d4d600cabd489b02098e7494b95d01fd521"
             },
             "require": {
                 "drupal/core": "8.*"
@@ -3601,7 +3619,7 @@
             ],
             "description": "Various blocks, pages, and functions for developers.",
             "homepage": "http://drupal.org/project/devel",
-            "time": "2016-03-26 08:51:18"
+            "time": "2016-03-29 16:12:53"
         },
         {
             "name": "fabpot/goutte",
@@ -4550,16 +4568,16 @@
         },
         {
             "name": "symfony/browser-kit",
-            "version": "v3.0.3",
+            "version": "v3.0.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/browser-kit.git",
-                "reference": "dde849a0485b70a24b36f826ed3fb95b904d80c3"
+                "reference": "e07127ac31230b30887c2dddf3708d883d239b14"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/browser-kit/zipball/dde849a0485b70a24b36f826ed3fb95b904d80c3",
-                "reference": "dde849a0485b70a24b36f826ed3fb95b904d80c3",
+                "url": "https://api.github.com/repos/symfony/browser-kit/zipball/e07127ac31230b30887c2dddf3708d883d239b14",
+                "reference": "e07127ac31230b30887c2dddf3708d883d239b14",
                 "shasum": ""
             },
             "require": {
@@ -4603,7 +4621,7 @@
             ],
             "description": "Symfony BrowserKit Component",
             "homepage": "https://symfony.com",
-            "time": "2016-01-27 11:34:55"
+            "time": "2016-03-04 07:55:57"
         },
         {
             "name": "symfony/css-selector",
@@ -4660,16 +4678,16 @@
         },
         {
             "name": "symfony/dom-crawler",
-            "version": "v3.0.3",
+            "version": "v3.0.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/dom-crawler.git",
-                "reference": "981c8edb4538f88ba976ed44bdcaa683fce3d6c6"
+                "reference": "18a06d7a9af41718c20764a674a0ebba3bc40d1f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/dom-crawler/zipball/981c8edb4538f88ba976ed44bdcaa683fce3d6c6",
-                "reference": "981c8edb4538f88ba976ed44bdcaa683fce3d6c6",
+                "url": "https://api.github.com/repos/symfony/dom-crawler/zipball/18a06d7a9af41718c20764a674a0ebba3bc40d1f",
+                "reference": "18a06d7a9af41718c20764a674a0ebba3bc40d1f",
                 "shasum": ""
             },
             "require": {
@@ -4712,7 +4730,7 @@
             ],
             "description": "Symfony DomCrawler Component",
             "homepage": "https://symfony.com",
-            "time": "2016-02-28 16:24:34"
+            "time": "2016-03-23 13:23:25"
         }
     ],
     "aliases": [],
@@ -4725,6 +4743,7 @@
         "drupal/r4032login": 20,
         "ua-drupal-modules/ua_ldap": 20,
         "ua-drupal-modules/ua_ldap_authorisation": 20,
+        "ua-web-team/ua_theme": 20,
         "drupal/devel": 20
     },
     "prefer-stable": true,

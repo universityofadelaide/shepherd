@@ -510,3 +510,39 @@ function ua_site_manager_update_8010(&$sandbox) {
   }
   $config_storage->write($config, $source->read($config));
 }
+
+/**
+ * Implements hook_update_N().
+ *
+ * Updates for theming with ua_theme.
+ */
+function ua_site_manager_update_8011(&$sandbox) {
+  $config_path = drupal_get_path('profile', 'ua_site_manager') . '/config/install';
+  $source = new Drupal\Core\Config\FileStorage($config_path);
+  $config_storage = \Drupal::service('config.storage');
+
+  $configs = [
+    'block.block.exposedform_ua_sm_sitespage_1',
+    'block.block.ua_theme_branding',
+    'block.block.ua_theme_content',
+    'block.block.ua_theme_help',
+    'block.block.ua_theme_local_actions',
+    'block.block.ua_theme_local_tasks',
+    'block.block.ua_theme_main_menu',
+    'block.block.ua_theme_messages',
+    'block.block.ua_theme_page_title',
+    'block.block.ua_theme_tabs',
+    'system.theme.global',
+    'system.theme',
+    'views.view.ua_sm_sites',
+  ];
+
+  foreach ($configs as $config) {
+    // Delete config if it already exists.
+    if ($config_storage->exists($config)) {
+      $config_storage->delete($config);
+    }
+    $config_storage->write($config, $source->read($config));
+  }
+
+}

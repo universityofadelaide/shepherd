@@ -1,0 +1,26 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - system
+  theme:
+    - ua_theme
+id: ua_theme_tabs
+theme: ua_theme
+region: secondary_menu
+weight: null
+provider: null
+plugin: local_tasks_block
+settings:
+  id: local_tasks_block
+  label: Tabs
+  provider: core
+  label_display: '0'
+  primary: false
+  secondary: true
+visibility:
+  request_path:
+    id: request_path
+    pages: "/site/*/details\r\n/site/*/users"
+    negate: false
+    context_mapping: {  }
