@@ -142,7 +142,8 @@ class SiteManagerSettings extends ConfigFormBase {
       ->set('jenkins.provision_job', $jenkins_data['provision_job'])
       ->set('jenkins.deploy_job', $jenkins_data['deploy_job'])
       ->set('jenkins.decommission_job', $jenkins_data['decommission_job'])
-      ->set('jenkins.destroy_job', $jenkins_data['destroy_job']);
+      ->set('jenkins.destroy_job', $jenkins_data['destroy_job'])
+      ->set('jenkins.backup_job', $jenkins_data['backup_job']);
     $config
       ->set('ldap.enabled', $form_state->getValue('ldap')['enabled']);
     $config->save();
