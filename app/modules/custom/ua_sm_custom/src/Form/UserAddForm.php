@@ -45,7 +45,7 @@ class UserAddForm extends FormBase {
       '#type' => 'select',
       '#title' => $this->t('Role'),
       '#options' => $roles,
-      '#default_value' => $roles[0],
+      '#default_value' => reset($roles),
       '#description' => $this->t('Choose the role.'),
     ];
     $build['submit'] = [
