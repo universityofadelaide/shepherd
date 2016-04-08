@@ -3020,14 +3020,14 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.adelaide.edu.au:web-team/ua_d8_theme.git",
-                "reference": "bc1a2f0d1c3f57562eaf03cc861f108b63746e74"
+                "reference": "51a907d1ae574e282d958cb72a555992c3daf134"
             },
             "type": "drupal-theme",
             "license": [
                 "GPL-2.0+"
             ],
             "description": "The University of Adelaide's official Drupal 8 theme.",
-            "time": "2016-04-06 04:07:18"
+            "time": "2016-04-08 02:22:29"
         },
         {
             "name": "zendframework/zend-diactoros",
@@ -3584,7 +3584,7 @@
             "source": {
                 "type": "git",
                 "url": "https://git.drupal.org/project/devel",
-                "reference": "c4cf2d4d600cabd489b02098e7494b95d01fd521"
+                "reference": "449d8ed0c040ae265dc8d4146ee6d7043d619b41"
             },
             "require": {
                 "drupal/core": "8.*"
@@ -3619,7 +3619,7 @@
             ],
             "description": "Various blocks, pages, and functions for developers.",
             "homepage": "http://drupal.org/project/devel",
-            "time": "2016-03-29 16:12:53"
+            "time": "2016-04-07 06:41:07"
         },
         {
             "name": "fabpot/goutte",
