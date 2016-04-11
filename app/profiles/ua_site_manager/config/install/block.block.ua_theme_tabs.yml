@@ -21,6 +21,6 @@ settings:
 visibility:
   request_path:
     id: request_path
-    pages: "/site/*/details\r\n/site/*/users"
+    pages: "/site/*/details\r\n/site/*/users\r\n/site/*/environments"
     negate: false
     context_mapping: {  }

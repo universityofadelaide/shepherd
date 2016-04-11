@@ -546,3 +546,26 @@ function ua_site_manager_update_8011(&$sandbox) {
   }
 
 }
+
+/**
+ * Implements hook_update_N().
+ *
+ * Adds site environments view and updates the tabs.
+ */
+function ua_site_manager_update_8012(&$sandbox) {
+  $config_path = drupal_get_path('profile', 'ua_site_manager') . '/config/install';
+  $source = new Drupal\Core\Config\FileStorage($config_path);
+  $config_storage = \Drupal::service('config.storage');
+
+  $configs = [
+    'views.view.ua_sm_site_environments',
+    'block.block.ua_theme_tabs',
+  ];
+
+  foreach ($configs as $config) {
+    if ($config_storage->exists($config)) {
+      $config_storage->delete($config);
+    }
+    $config_storage->write($config, $source->read($config));
+  }
+}

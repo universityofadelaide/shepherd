@@ -8,3 +8,8 @@ ua_sm_custom.site_users:
   parent_id: entity.node.canonical
   route_name: view.ua_sm_site_users.page_1
   base_route: entity.node.canonical
+ua_sm_custom.site_environments:
+  title: Environments
+  parent_id: entity.node.canonical
+  route_name: view.ua_sm_site_environments.page_1
+  base_route: entity.node.canonical
