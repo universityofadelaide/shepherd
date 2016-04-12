@@ -110,6 +110,19 @@ function ua_sm_custom_ports(Node $site_instance) {
 }
 
 /**
+ * Invalidate site entity caches because environments for sites have changed.
+ *
+ * @param EntityInterface $environment
+ *   The environment entity whose site needs cache invalidate.
+ */
+function ua_sm_custom_invalidate_site_cache(EntityInterface $environment) {
+  $site_nid = $environment->field_ua_sm_site->target_id;
+  if ($site_nid) {
+    \Drupal::service('cache_tags.invalidator')->invalidateTags(['node:' . $site_nid]);
+  }
+}
+
+/**
  * Implements hook_entity_type_alter().
  *
  * Adds a constraint to node types to prevent exceeding the instance limit.
@@ -207,6 +220,7 @@ function ua_sm_custom_node_insert(EntityInterface $entity) {
         $site_instance->validate();
         $site_instance->save();
       }
+      ua_sm_custom_invalidate_site_cache($entity);
       break;
 
     case 'ua_sm_site_instance':
@@ -242,6 +256,10 @@ function ua_sm_custom_node_update(EntityInterface $entity) {
         \Drupal::service('ua_ldap.ldap_site')->syncUsers($entity->id());
         // @todo Deal with failure - consider a queue.
       }
+      break;
+
+    case 'ua_sm_environment':
+      ua_sm_custom_invalidate_site_cache($entity);
       break;
 
     case 'ua_sm_site_instance':
@@ -298,6 +316,10 @@ function ua_sm_custom_node_delete(EntityInterface $entity) {
         // \Drupal::service('ua_ldap.ldap_site')->removeSite($entity->id());
         // @todo Deal with failure - consider a queue.
       }
+      break;
+
+    case 'ua_sm_environment':
+      ua_sm_custom_invalidate_site_cache($entity);
       break;
 
     case 'ua_sm_site_instance':

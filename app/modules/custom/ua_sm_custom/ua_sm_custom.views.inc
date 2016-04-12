@@ -22,4 +22,13 @@ function ua_sm_custom_views_data_alter(array &$data) {
     ],
   ];
 
+  $data['node_field_data']['site_environments'] = [
+    'title' => t('Site Environments'),
+    'field' => [
+      'title' => t('Environments'),
+      'help' => t('Show environments for a site.'),
+      'id' => 'site_environments'
+    ]
+  ];
+
 }
