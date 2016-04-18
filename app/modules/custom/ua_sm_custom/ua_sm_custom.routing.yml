@@ -1,3 +1,13 @@
+ua_sm_custom.environment-add-form:
+  path: '/site/{node}/environment/add'
+  defaults:
+    _form: '\Drupal\ua_sm_custom\Form\EnvironmentAddForm'
+    _title: 'Add Environment'
+  options:
+    _auth: [ 'basic_auth', 'cookie' ]
+    no_cache: TRUE
+  requirements:
+    _permission: 'sm access environment wizard'
 ua_sm_custom.home-page:
   path: '/home'
   defaults:

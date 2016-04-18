@@ -19,3 +19,4 @@ permissions:
   - 'sm access site wizard'
   - 'sm administer users'
   - 'sm view homepage'
+  - 'sm access environment wizard'

@@ -561,6 +561,9 @@ function ua_site_manager_update_8012(&$sandbox) {
     'views.view.ua_sm_site_environments',
     'views.view.ua_sm_sites',
     'block.block.ua_theme_tabs',
+    'user.role.uasm_developer',
+    'user.role.uasm_online_consultant',
+    'user.role.uasm_site_administrator',
   ];
 
   foreach ($configs as $config) {
