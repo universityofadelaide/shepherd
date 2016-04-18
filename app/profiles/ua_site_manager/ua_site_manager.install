@@ -560,6 +560,7 @@ function ua_site_manager_update_8012(&$sandbox) {
   $configs = [
     'views.view.ua_sm_site_environments',
     'views.view.ua_sm_sites',
+    'views.view.users',
     'block.block.ua_theme_tabs',
     'user.role.uasm_developer',
     'user.role.uasm_online_consultant',
