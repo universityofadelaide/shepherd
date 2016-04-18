@@ -574,3 +574,27 @@ function ua_site_manager_update_8012(&$sandbox) {
     $config_storage->write($config, $source->read($config));
   }
 }
+
+/**
+ * Implements hook_update_N().
+ *
+ * Adds dynamic view titles by pulling nid from args.
+ */
+function ua_site_manager_update_8013(&$sandbox) {
+  $config_path = drupal_get_path('profile', 'ua_site_manager') . '/config/install';
+  $source = new Drupal\Core\Config\FileStorage($config_path);
+  $config_storage = \Drupal::service('config.storage');
+
+  $configs = [
+    'views.view.ua_sm_site_environments',
+    'views.view.ua_sm_site_users',
+    'views.view.ua_sm_site_details',
+  ];
+
+  foreach ($configs as $config) {
+    if ($config_storage->exists($config)) {
+      $config_storage->delete($config);
+    }
+    $config_storage->write($config, $source->read($config));
+  }
+}

@@ -417,7 +417,7 @@ display:
           expose:
             label: ''
           granularity: second
-      title: 'Site Users'
+      title: ''
       header:
         area:
           id: area
@@ -429,7 +429,7 @@ display:
           empty: true
           tokenize: true
           content:
-            value: '<a href="/site/{{ raw_arguments.nid }}/user/add" class="c-btn button">Add</a>'
+            value: '<h1>{{ arguments.nid }} - Users</h1> <a href="/site/{{ raw_arguments.nid }}/user/add" class="c-btn button">Add</a>'
             format: full_html
           plugin_id: text
       footer: {  }
