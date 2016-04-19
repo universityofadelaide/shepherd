@@ -2984,7 +2984,7 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.adelaide.edu.au:drupal-modules/ua_ldap.git",
-                "reference": "4a193d9d4d99fc9f4b6406584d50d4ecf1ee076f"
+                "reference": "e7b99577d828a57ac3bc35f06b97d1089c8e4063"
             },
             "require": {
                 "zendframework/zend-ldap": "~2.5.1"
@@ -2994,7 +2994,7 @@
                 "GPL-2.0+"
             ],
             "description": "Provides configuration and services to interact with LDAP.",
-            "time": "2016-03-09 04:11:10"
+            "time": "2016-04-19 02:25:41"
         },
         {
             "name": "ua-drupal-modules/ua_ldap_authorisation",

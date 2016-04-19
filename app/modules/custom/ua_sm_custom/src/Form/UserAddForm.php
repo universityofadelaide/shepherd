@@ -36,7 +36,8 @@ class UserAddForm extends FormBase {
 
     $build['uid'] = [
       '#type' => 'textfield',
-      '#title' => t('User ID'),
+      '#title' => t('User'),
+      '#autocomplete_route_name' => 'ua_ldap.user_autocomplete',
       '#size' => 60,
       '#maxlength' => 128,
       '#required' => TRUE,
