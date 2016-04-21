@@ -29,7 +29,7 @@ $dev_server = Node::create([
   'uid' => '1',
   'status' => 1,
   'title' => 'Dev server',
-  'field_ua_sm_hostname' => [['value' => 'adelaide.dev']],
+  'field_ua_sm_hostname' => [['value' => 'docker-host']],
   'field_ua_sm_ssh_user' => [['value' => 'root']],
 ]);
 $dev_server->save();
