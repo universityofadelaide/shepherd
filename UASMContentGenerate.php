@@ -21,7 +21,7 @@ foreach ($environment_defaults as $field_name => $field_value) {
 }
 
 /**
- * Create a build "dev" server.
+ * Create a build server.
  */
 $dev_server = Node::create([
   'type' => 'ua_sm_server',
@@ -35,7 +35,7 @@ $dev_server = Node::create([
 $dev_server->save();
 
 /**
- * Create a db "dev" server.
+ * Create a database server.
  */
 $db_server = Node::create([
   'type' => 'ua_sm_server',
@@ -96,7 +96,7 @@ $platform = Node::create([
   ],
   'field_ua_sm_database_servers' => [['target_id' => $db_server->id()]],
   'field_ua_sm_task_runner' => [['value' => 'jenkins']],
-  'field_ua_sm_docker_registry' => [['value' => 'registry-backend:5000']],
+  'field_ua_sm_docker_registry' => [['value' => 'registry:5000']],
 ]);
 $platform->save();
 
