@@ -598,3 +598,55 @@ function ua_site_manager_update_8013(&$sandbox) {
     $config_storage->write($config, $source->read($config));
   }
 }
+
+/**
+ * Implements hook_update_N().
+ *
+ * Updates the rest settings, adds the status field to environment, updates all.
+ */
+function ua_site_manager_update_8014(&$sandbox) {
+  $config_path = drupal_get_path('profile', 'ua_site_manager') . '/config/install';
+  $source = new Drupal\Core\Config\FileStorage($config_path);
+  $config_storage = \Drupal::service('config.storage');
+
+  $configs = [
+    'rest.settings'
+  ];
+
+  foreach ($configs as $config) {
+    if ($config_storage->exists($config)) {
+      $config_storage->delete($config);
+    }
+    $config_storage->write($config, $source->read($config));
+  }
+
+  // Add the new field to environments.
+  $field_storage = FieldStorageConfig::create([
+    'entity_type' => 'node',
+    'type' => 'string',
+    'field_name' => 'field_ua_sm_environment_status',
+    'cardinality' => 1,
+  ]);
+  $field_storage->save();
+
+  $field = FieldConfig::create([
+    'entity_type' => 'node',
+    'bundle' => 'ua_sm_environment',
+    'field_name' => 'field_ua_sm_environment_status',
+    'label' => t('Status'),
+  ]);
+  $field->save();
+
+  // Update all existing ua_sm_environment entities.
+  $query = \Drupal::entityQuery('node')
+    ->condition('type', 'ua_sm_environment')
+    ->execute();
+
+  $environments = \Drupal::entityTypeManager()->getStorage('node')
+    ->loadMultiple($query);
+
+  foreach ($environments as $environment) {
+    $environment->field_ua_sm_environment_status->setValue = 1;
+    $environment->save();
+  }
+}

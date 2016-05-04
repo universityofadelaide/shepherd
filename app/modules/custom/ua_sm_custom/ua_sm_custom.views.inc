@@ -31,4 +31,13 @@ function ua_sm_custom_views_data_alter(array &$data) {
     ]
   ];
 
+  $data['node_field_data']['site_environments_operations'] = [
+    'title' => t('Site Environment Operations'),
+    'field' => [
+      'title' => t('Operations'),
+      'help' => t('Show operations that can be performed on environments'),
+      'id' => 'site_environments_operations'
+    ]
+  ];
+
 }

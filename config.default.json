@@ -9,7 +9,9 @@
       "jenkins.decommission_job": null,
       "jenkins.destroy_job": "decommission",
       "jenkins.backup_job": "backup",
-      "ldap.enabled": false
+      "jenkins.restore_job": "restore",
+      "ldap.enabled": false,
+      "backup_service.path": "/code/backup/"
     }
   },
   "database": {

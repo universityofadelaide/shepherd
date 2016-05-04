@@ -95,6 +95,7 @@ class SiteInstanceConfig {
           'id' => $environment->id(),
           'machine_name' => $environment->field_ua_sm_machine_name->value,
           'uuid' => $environment->uuid(),
+          'status' => $environment->field_ua_sm_environment_status->value,
         ],
         'platform' => [
           'build_server' => $this->formatServer($build_server),

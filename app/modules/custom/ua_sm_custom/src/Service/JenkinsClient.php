@@ -7,6 +7,7 @@
 
 namespace Drupal\ua_sm_custom\Service;
 
+use Drupal\Core\Entity\EntityInterface;
 use GuzzleHttp\Client;
 use Psr\Http\Message\ResponseInterface;
 use Drupal\Core\Url;
@@ -44,7 +45,7 @@ class JenkinsClient extends Client {
    * @return ResponseInterface
    *   The response from Jenkins.
    */
-  public function job($job_type, $site_instance) {
+  public function job($job_type, EntityInterface $site_instance) {
     $environment = reset($site_instance->field_ua_sm_environment->referencedEntities());
     $platform = reset($environment->field_ua_sm_platform->referencedEntities());
     $build_server = reset($platform->field_ua_sm_build_server->referencedEntities());
@@ -55,6 +56,14 @@ class JenkinsClient extends Client {
 
     $uasm_site_url = trim(Url::fromUri('base:', ['absolute' => TRUE])->toString(), '/');
 
+    // Create token with environment_id and unix timestamp of backup to restore.
+    if (isset($site_instance->backup_timestamp) && isset($site_instance->backup_env_id)) {
+      $backup = $site_instance->backup_env_id . '/' . $site_instance->backup_timestamp;
+    }
+    else {
+      $backup = NULL;
+    }
+
     $query = [
       'job' => $this->config[$job_type . '_job'],
       'token' => $this->config['token'],
@@ -62,6 +71,7 @@ class JenkinsClient extends Client {
       'DEPLOY_HOST_SSH' => $deploy_host_ssh,
       'SITE_INSTANCE_ID' => $site_instance->id(),
       'SM_SITE_URL' => $uasm_site_url,
+      'BACKUP_TOKEN' => $backup
     ];
 
     // Looks like there are some auth issues with anon read access.

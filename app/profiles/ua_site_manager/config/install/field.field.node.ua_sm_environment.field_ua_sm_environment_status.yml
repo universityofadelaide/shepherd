@@ -1,0 +1,22 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_ua_sm_environment_status
+    - node.type.ua_sm_environment
+id: node.ua_sm_environment.field_ua_sm_environment_status
+field_name: field_ua_sm_environment_status
+entity_type: node
+bundle: ua_sm_environment
+label: Status
+description: 'Tracks the state of an environment, active signals that the environment is visible to varnish'
+required: false
+translatable: false
+default_value:
+  -
+    value: 1
+default_value_callback: ''
+settings:
+  on_label: Active
+  off_label: Inactive
+field_type: boolean

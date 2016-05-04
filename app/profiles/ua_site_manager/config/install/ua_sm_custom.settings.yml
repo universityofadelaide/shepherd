@@ -6,6 +6,7 @@ jenkins:
   deploy_job: null
   decommission_job: null
   destroy_job: null
+  restore_job: null
 ldap:
   enabled: false
 controlled_roles:
@@ -15,4 +16,5 @@ controlled_roles:
   uasm_site_administrator: 'Site Administrator'
   uasm_web_author: 'Web Author'
   uasm_content_editor: 'Content Editor'
-  uasm_wizard: 'YOURE A WIZARD HARRY'
+backup_service:
+  path: null

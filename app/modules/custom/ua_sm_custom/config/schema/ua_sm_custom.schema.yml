@@ -32,6 +32,9 @@ ua_sm_custom.settings:
         backup_job:
           type: string
           label: 'Backup Job'
+        restore_job:
+          type: string
+          label: 'Restore Job'
     ldap:
       type: mapping
       label: 'LDAP Integration'
@@ -62,3 +65,10 @@ ua_sm_custom.settings:
         uasm_content_editor:
           type: string
           label: 'Content Editor'
+    backup_service:
+      type: mapping
+      label: 'Backup Service'
+      mapping:
+        path:
+          type: string
+          label: 'Backup path'

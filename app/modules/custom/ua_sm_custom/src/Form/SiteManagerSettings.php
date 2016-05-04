@@ -82,6 +82,12 @@ class SiteManagerSettings extends ConfigFormBase {
       '#description' => $this->t('The job to trigger when the backup cron calls on a site instance.'),
       '#default_value' => $config->get('jenkins.backup_job'),
     ];
+    $form['jenkins']['restore_job'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('Restore Job'),
+      '#description' => $this->t('The job to trigger when a clone/restore environment is created.'),
+      '#default_value' => $config->get('jenkins.restore_job'),
+    ];
     $form['ldap'] = [
       '#type' => 'details',
       '#title' => $this->t('LDAP Integration'),
@@ -114,6 +120,21 @@ class SiteManagerSettings extends ConfigFormBase {
       '#description' => $this->t('Setup your controlled roles using the format <i>role|description</i>'),
       '#default_value' => $controlled_roles,
     ];
+
+    $form['backup_service'] = [
+      '#type' => 'details',
+      '#title' => $this->t('Backups'),
+      '#open' => TRUE,
+      '#tree' => TRUE,
+    ];
+
+    $form['backup_service']['path'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('Path'),
+      '#description' => 'Directory path to the backup directory',
+      '#default_value' => $config->get('backup_service.path'),
+    ];
+
 
     return parent::buildForm($form, $form_state);
   }

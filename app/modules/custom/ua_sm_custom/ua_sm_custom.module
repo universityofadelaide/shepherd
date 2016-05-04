@@ -209,13 +209,22 @@ function ua_sm_custom_node_insert(EntityInterface $entity) {
 
       // Create a new site instance for each of the platform's webservers.
       foreach ($platform->field_ua_sm_web_servers as $key => $web_server) {
-        $site_instance = Node::create([
+
+        $site_instance_params = [
           'type' => 'ua_sm_site_instance',
           'uid' => 1,
           'title' => $entity->title->value . ' ' . ($key + 1),
           'field_ua_sm_environment' => $entity->id(),
           'field_ua_sm_server' => $web_server->entity->id(),
-        ]);
+        ];
+        // Add conditionals if environment has the following properties.
+        if (isset($entity->backup_timestamp) && isset($entity->previous_env_id)) {
+          $site_instance_params['backup_timestamp'] = $entity->backup_timestamp;
+          $site_instance_params['backup_env_id'] = $entity->previous_env_id;
+          $site_instance_params['isRestore'] = TRUE;
+        }
+
+        $site_instance = Node::create($site_instance_params);
         // Validate the site instance, against any plugin constraints added.
         $site_instance->validate();
         $site_instance->save();
@@ -225,7 +234,14 @@ function ua_sm_custom_node_insert(EntityInterface $entity) {
 
     case 'ua_sm_site_instance':
       if (\Drupal::config('ua_sm_custom.settings')->get('jenkins')['enabled']) {
-        ua_sm_custom_run_job('provision', $entity);
+        // @todo - check to see if
+        if (isset($entity->isRestore) && $entity->isRestore) {
+          // Run the restore job.
+          ua_sm_custom_run_job('restore', $entity);
+        }
+        else {
+          ua_sm_custom_run_job('provision', $entity);
+        }
       }
       break;
   }

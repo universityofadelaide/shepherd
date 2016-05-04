@@ -7,6 +7,7 @@ jenkins:
   decommission_job: ''
   destroy_job: ''
   backup_job: ''
+  restore_job: ''
 ldap:
   enabled: true
 controlled_roles:
@@ -16,3 +17,5 @@ controlled_roles:
   uasm_site_administrator: 'Site Administrator'
   uasm_web_author: 'Web Author'
   uasm_content_editor: 'Content Editor'
+backup_service:
+  path: ''

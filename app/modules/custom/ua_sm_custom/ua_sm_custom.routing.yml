@@ -8,6 +8,21 @@ ua_sm_custom.environment-add-form:
     no_cache: TRUE
   requirements:
     _permission: 'sm access environment wizard'
+ua_sm_custom.environment-clone-form:
+  path: '/site/{site}/environment/clone/{environment}'
+  defaults:
+    _form: '\Drupal\ua_sm_custom\Form\EnvironmentCloneForm'
+    _title: 'Clone Environment'
+  options:
+    _auth: [ 'basic_auth', 'cookie' ]
+    parameters:
+      site:
+        type: entity:node
+      environment:
+        type: entity:node
+    no_cache: TRUE
+  requirements:
+    _permission: 'sm access environment'
 ua_sm_custom.home-page:
   path: '/home'
   defaults:
