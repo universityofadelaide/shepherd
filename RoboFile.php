@@ -17,7 +17,7 @@ include_once 'RoboFileBase.php';
 class RoboFile extends RoboFileBase {
 
   /**
-   * @{inheritdoc}
+   * {@inheritdoc}
    */
   public function __construct() {
     parent::__construct();
@@ -29,7 +29,7 @@ class RoboFile extends RoboFileBase {
   }
 
   /**
-   * @{inheritdoc}
+   * {@inheritdoc}
    */
   public function build() {
     // Use the default build steps.

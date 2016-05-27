@@ -20,14 +20,14 @@ use Drupal\views\ResultRow;
 class SiteUserRoleOperations extends FieldPluginBase {
 
   /**
-   * @{inheritdoc}
+   * {@inheritdoc}
    */
   public function query() {
 
   }
 
   /**
-   * @{inheritdoc}
+   * {@inheritdoc}
    */
   public function render(ResultRow $values) {
     $entity = $values->_entity;

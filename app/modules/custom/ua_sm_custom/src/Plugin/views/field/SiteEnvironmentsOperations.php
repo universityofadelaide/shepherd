@@ -22,13 +22,13 @@ use Drupal\views\ResultRow;
 class SiteEnvironmentsOperations extends FieldPluginBase {
 
   /**
-   * @{inheritdoc}
+   * {@inheritdoc}
    */
   public function query() {
   }
 
   /**
-   * @{inheritdoc}
+   * {@inheritdoc}
    */
   public function render(ResultRow $values) {
     $entity = $values->_entity;
