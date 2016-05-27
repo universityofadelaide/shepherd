@@ -654,3 +654,24 @@ function ua_site_manager_update_8014(&$sandbox) {
     $environment->save();
   }
 }
+
+/**
+ * Implements hook_update_N().
+ *
+ * Updates the local tasks links configuration.
+ * Also adds a heading as per other views.
+ */
+function ua_site_manager_update_8015(&$sandbox) {
+  $config_path = drupal_get_path('profile', 'ua_site_manager') . '/config/install';
+  $source = new Drupal\Core\Config\FileStorage($config_path);
+  $config_storage = \Drupal::service('config.storage');
+
+  $configs = [
+    'block.block.tabs',
+    'views.view.ua_sm_site_environments'
+  ];
+
+  foreach ($configs as $config) {
+    $config_storage->write($config, $source->read($config));
+  }
+}
