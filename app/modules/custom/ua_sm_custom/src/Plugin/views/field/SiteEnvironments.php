@@ -16,14 +16,14 @@ use Drupal\node\Entity\Node;
 class SiteEnvironments extends FieldPluginBase {
 
   /**
-   * @{inheritdoc}
+   * {@inheritdoc}
    */
   public function query() {
 
   }
 
   /**
-   * @{inheritdoc}
+   * {@inheritdoc}
    */
   public function render(ResultRow $values) {
     $site_id = $values->_entity->nid->value;
