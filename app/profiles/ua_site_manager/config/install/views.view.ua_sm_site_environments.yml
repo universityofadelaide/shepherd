@@ -504,7 +504,7 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
-          empty: false
+          empty: true
           tokenize: true
           content:
             value: '<a class="c-btn button" href="/site/{{ raw_arguments.field_ua_sm_site_target_id }}/environment/add">Add Environment</a>'
