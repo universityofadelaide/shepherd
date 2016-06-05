@@ -50,7 +50,7 @@ abstract class RoboFileBase extends \Robo\Tasks implements RoboFileDrupalDeployI
 
     $this->sudo_cmd = posix_getuid() == 0 ? '' : 'sudo';
     $this->webserver_restart    = "$this->sudo_cmd service apache2 restart";
-    $this->webserver_user       = "www-data";
+    $this->webserver_user       = $this->getWebServerUser();
 
     $this->config_file          = "config.json";
     $this->config_default_file  = "config.default.json";
@@ -148,6 +148,7 @@ abstract class RoboFileBase extends \Robo\Tasks implements RoboFileDrupalDeployI
   public function environmentBuild() {
     $this->initLocalSettings();
     $this->buildInstall();
+    $this->setSitePath();
     $this->writeLocalSettings();
     $this->includeLocalSettings();
     $this->devCreateConfigSyncDir();
@@ -163,6 +164,7 @@ abstract class RoboFileBase extends \Robo\Tasks implements RoboFileDrupalDeployI
    */
   public function environmentRebuild() {
     $this->initLocalSettings();
+    $this->setSitePath();
     $this->writeLocalSettings();
     $this->includeLocalSettings();
     $this->devCreateConfigSyncDir();
@@ -189,7 +191,7 @@ abstract class RoboFileBase extends \Robo\Tasks implements RoboFileDrupalDeployI
    * Clean the application root in preparation for a new build.
    */
   public function buildClean() {
-    $this->_exec("$this->sudo_cmd chmod 775 $this->application_root/sites/default");
+    $this->setPermissions("$this->application_root/sites/default", '0755');
     $this->_exec("$this->sudo_cmd rm -fR $this->application_root/core");
     $this->_exec("$this->sudo_cmd rm -fR $this->application_root/modules/contrib");
     $this->_exec("$this->sudo_cmd rm -fR $this->application_root/profiles/contrib");
@@ -230,6 +232,21 @@ abstract class RoboFileBase extends \Robo\Tasks implements RoboFileDrupalDeployI
     $this->devConfigReadOnly();
 
     $this->checkFail($successful, "Couldn't copy default configuration files.");
+  }
+
+  /**
+   * Set the RewriteBase value in .htaccess appropriate for the site.
+   */
+  public function setSitePath() {
+    if (strlen($this->config['site']['path']) > 0) {
+      $this->say("Setting site path.");
+      $successful = $this->taskReplaceInFile("$this->application_root/.htaccess")
+        ->from('# RewriteBase /')
+        ->to('RewriteBase /' . $this->config['site']['path'])
+        ->run();
+
+      $this->checkFail($successful, "Couldn't update .htaccess file with path.");
+    }
   }
 
   /**
@@ -654,24 +671,20 @@ abstract class RoboFileBase extends \Robo\Tasks implements RoboFileDrupalDeployI
    * Make config files write-able.
    */
   public function devConfigWriteable() {
-    $file_tasks = $this->taskFilesystemStack();
-    $this->setPermissions($file_tasks, "$this->application_root/sites/default/services.yml", 0644);
-    $this->setPermissions($file_tasks, "$this->application_root/sites/default/settings.php", 0644);
-    $this->setPermissions($file_tasks, "$this->application_root/sites/default/settings.local.php", 0644);
-    $file_tasks->chmod("$this->application_root/sites/default", 0755);
-    $file_tasks->run();
+    $this->setPermissions("$this->application_root/sites/default/services.yml", '0644');
+    $this->setPermissions("$this->application_root/sites/default/settings.php", '0644');
+    $this->setPermissions("$this->application_root/sites/default/settings.local.php", '0644');
+    $this->setPermissions("$this->application_root/sites/default", '0755');
   }
 
   /**
    * Make config files read only.
    */
   public function devConfigReadOnly() {
-    $file_tasks = $this->taskFilesystemStack();
-    $this->setPermissions($file_tasks, "$this->application_root/sites/default/services.yml", 0444);
-    $this->setPermissions($file_tasks, "$this->application_root/sites/default/settings.php", 0444);
-    $this->setPermissions($file_tasks, "$this->application_root/sites/default/settings.local.php", 0444);
-    $file_tasks->chmod("$this->application_root/sites/default", 0555);
-    $file_tasks->run();
+    $this->setPermissions("$this->application_root/sites/default/services.yml", '0444');
+    $this->setPermissions("$this->application_root/sites/default/settings.php", '0444');
+    $this->setPermissions("$this->application_root/sites/default/settings.local.php", '0444');
+    $this->setPermissions("$this->application_root/sites/default", '0555');
   }
 
   /**
@@ -681,12 +694,12 @@ abstract class RoboFileBase extends \Robo\Tasks implements RoboFileDrupalDeployI
    *   Tasks to perform.
    * @param string $file
    *   File to modify.
-   * @param int $permission
-   *   Permissions. E.g. 0644.
+   * @param string $permission
+   *   Permissions. E.g. '0644'.
    */
-  protected function setPermissions(Robo\Task\FileSystem\FilesystemStack $file_tasks, $file, $permission) {
+  protected function setPermissions($file, $permission) {
     if (file_exists($file)) {
-      $file_tasks->chmod($file, $permission);
+      $this->_exec("sudo chmod $permission $file");
     }
   }
 
@@ -782,6 +795,17 @@ abstract class RoboFileBase extends \Robo\Tasks implements RoboFileDrupalDeployI
       }
     }
     return $code;
+  }
+
+  /**
+   * Get the web server user.
+   *
+   * @return string
+   *   'vagrant' for dev environment and 'www-data' for other environments.
+   */
+  protected function getWebServerUser() {
+    $user = posix_getpwuid(posix_getuid());
+    return $user['name'] == 'vagrant' ? 'vagrant' : 'www-data';
   }
 
   /**
