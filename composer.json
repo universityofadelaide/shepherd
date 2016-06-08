@@ -47,10 +47,7 @@
     "minimum-stability": "dev",
     "prefer-stable": true,
     "config": {
-        "bin-dir": "bin/",
-        "github-oauth": {
-            "github.com": "681de8b61108d3c64168e26426860b50c97aa86d"
-        }
+        "bin-dir": "bin/"
     },
     "extra": {
         "installer-paths": {
