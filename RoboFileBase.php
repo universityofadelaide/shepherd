@@ -241,8 +241,8 @@ abstract class RoboFileBase extends \Robo\Tasks implements RoboFileDrupalDeployI
     if (strlen($this->config['site']['path']) > 0) {
       $this->say("Setting site path.");
       $successful = $this->taskReplaceInFile("$this->application_root/.htaccess")
-        ->from('# RewriteBase /')
-        ->to('RewriteBase /' . $this->config['site']['path'])
+        ->from('# RewriteBase /drupal')
+        ->to("\n  RewriteBase /" . ltrim($this->config['site']['path'], '/') . "\n")
         ->run();
 
       $this->checkFail($successful, "Couldn't update .htaccess file with path.");
