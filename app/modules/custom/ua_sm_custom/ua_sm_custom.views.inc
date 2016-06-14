@@ -40,4 +40,13 @@ function ua_sm_custom_views_data_alter(array &$data) {
     ]
   ];
 
+  $data['node_field_data']['site_environment_instances'] = [
+    'title' => t('Site Environment Instances'),
+    'field' => [
+      'title' => t('Instances'),
+      'help' => t('Show links to instances of an environment.'),
+      'id' => 'site_environment_instances'
+    ]
+  ];
+
 }
