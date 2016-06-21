@@ -78,6 +78,29 @@ function ua_sm_custom_environment_defaults(Node $environment) {
 }
 
 /**
+ * Populate an array with a list of entities and titles for display/use
+ * in a select type box.
+ *
+ * @param string $type
+ * @return array
+ */
+function ua_sm_custom_choices($type) {
+  $ids = \Drupal::entityQuery('node')
+    ->condition('type', $type)
+    ->sort('title', 'ASC')
+    ->execute();
+
+  $entities = Node::loadMultiple($ids);
+
+  $choices = [];
+  foreach ($entities as $entity) {
+    $choices[$entity->Id()] = $entity->getTitle();
+  }
+
+  return $choices;
+}
+
+  /**
  * Populates the site instance with unique ports per host.
  *
  * @param Node $site_instance
@@ -176,15 +199,17 @@ function ua_sm_custom_node_insert(EntityInterface $entity) {
         ->execute();
 
       // Check if default environment should be automatically created.
-      if (!isset($entity->sm_prevent_auto_environment) || !$entity->sm_prevent_auto_environment) {
+      // Note fields presented only in the UI don't get setup as a node ->value
+      if (isset($entity->field_ua_sm_create_site) && $entity->field_ua_sm_create_site) {
         // Create default environment.
         $environment = Node::create([
           'type' => 'ua_sm_environment',
           'uid' => 1,
           'title' => 'UAT',
           'field_ua_sm_site' => $entity->id(),
-          'field_ua_sm_platform' => array_pop($platforms),
+          'field_ua_sm_platform' => $platforms[$entity->field_ua_sm_platform],
           'field_ua_sm_domain_name' => $entity->field_ua_sm_domain_name->value,
+          'field_ua_sm_git_reference' => $entity->field_ua_sm_git_reference,
           'field_ua_sm_database_password' => \Drupal::service('ua_sm_custom.password')->generate(),
         ]);
 

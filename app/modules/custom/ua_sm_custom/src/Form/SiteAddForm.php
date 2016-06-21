@@ -33,16 +33,8 @@ class SiteAddForm extends FormBase {
     $top_menu_style_settings = $top_menu_style_config->getSettings();
     $top_menu_style_options = $top_menu_style_settings['allowed_values'];
 
-    // @todo Use a better method of getting default distribution.
-    $distributionEntities = \Drupal::entityQuery('node')
-      ->condition('type', 'ua_sm_distribution')
-      ->execute();
-
-    $distribution = [];
-    foreach ($distributionEntities as $entity) {
-      $node = Node::load($entity);
-      $distribution[$entity] = $node->getTitle();
-    }
+    $distribution = ua_sm_custom_choices('ua_sm_distribution');
+    $platform = ua_sm_custom_choices('ua_sm_platform');
 
     $this->fields = [
       'title' => [
@@ -111,6 +103,35 @@ class SiteAddForm extends FormBase {
         '#options' => $distribution,
         '#default_value' => reset($distribution),
         '#required' => TRUE,
+      ],
+      'field_ua_sm_create_site' => [
+        '#type' => 'checkbox',
+        '#title' => $this->t('Create default environment'),
+        '#default_value' => TRUE,
+      ],
+      'field_ua_sm_git_reference' => [
+        '#type' => 'textfield',
+        '#title' => $this->t('Git tag/branch'),
+        '#size' => 60,
+        '#maxlength' => 255,
+        '#default_value' => 'master',
+        '#states' => [
+          'invisible' => [
+            ':input[name="field_ua_sm_create_site"]' => ['checked' => FALSE],
+          ],
+        ],
+      ],
+      'field_ua_sm_platform' => [
+        '#type' => 'select',
+        '#title' => $this->t('Platform'),
+        '#options' => $platform,
+        '#default_value' => reset($platform),
+        '#required' => TRUE,
+        '#states' => [
+          'invisible' => [
+            ':input[name="field_ua_sm_create_site"]' => ['checked' => FALSE],
+          ],
+        ],
       ],
     ];
   }
