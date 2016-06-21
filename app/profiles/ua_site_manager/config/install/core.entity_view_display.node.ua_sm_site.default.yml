@@ -16,6 +16,7 @@ dependencies:
     - field.field.node.ua_sm_site.field_ua_sm_maintainer_email
     - field.field.node.ua_sm_site.field_ua_sm_maintainer_name
     - field.field.node.ua_sm_site.field_ua_sm_path
+    - field.field.node.ua_sm_site.field_ua_sm_site_mail
     - field.field.node.ua_sm_site.field_ua_sm_site_title
     - field.field.node.ua_sm_site.field_ua_sm_top_menu_style
     - field.field.node.ua_sm_site.field_ua_sm_users
@@ -132,6 +133,12 @@ content:
       link_to_entity: false
     third_party_settings: {  }
     label: inline
+  field_ua_sm_site_mail:
+    weight: 19
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    type: basic_string
   field_ua_sm_site_title:
     type: string
     weight: 0

@@ -123,6 +123,7 @@ class SiteInstanceConfig {
           'keys' => $keys,
           'path' => $site->field_ua_sm_path->value,
           'site_title' => $site->field_ua_sm_site_title->value,
+          'site_mail' => $site->field_ua_sm_site_mail->value,
           'top_menu_style' => $site->field_ua_sm_top_menu_style->value,
           'uuid' => $site->uuid(),
         ],

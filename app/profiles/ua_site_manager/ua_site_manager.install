@@ -718,3 +718,27 @@ function ua_site_manager_update_8018(&$sandbox) {
 
   $config_storage->write($config, $source->read($config));
 }
+
+/**
+ * Implements hook_update_N().
+ *
+ * Add new site_mail field to site
+ */
+function ua_site_manager_update_8019(&$sandbox) {
+  // Add the new field to environments.
+  $field_storage = FieldStorageConfig::create([
+    'entity_type' => 'node',
+    'type'        => 'string',
+    'field_name'  => 'field_ua_sm_site_mail',
+    'cardinality' => 1,
+  ]);
+  $field_storage->save();
+
+  $field = FieldConfig::create([
+    'entity_type' => 'node',
+    'bundle'      => 'ua_sm_site',
+    'field_name'  => 'field_ua_sm_site_mail',
+    'label'       => t('Site mail'),
+  ]);
+  $field->save();
+}

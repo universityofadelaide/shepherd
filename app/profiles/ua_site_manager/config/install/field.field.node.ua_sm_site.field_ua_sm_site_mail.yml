@@ -1,0 +1,20 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_ua_sm_site_mail
+    - node.type.ua_sm_site
+id: node.ua_sm_site.field_ua_sm_site_mail
+field_name: field_ua_sm_site_mail
+entity_type: node
+bundle: ua_sm_site
+label: 'Site mail'
+description: 'The site mail is used for outgoing communications from the website.'
+required: false
+translatable: false
+default_value:
+  -
+    value: web.requests@adelaide.edu.au
+default_value_callback: ''
+settings: {  }
+field_type: email

@@ -51,6 +51,14 @@ class SiteAddForm extends FormBase {
         '#maxlength' => 255,
         '#required' => TRUE,
       ],
+      'field_ua_sm_site_mail' => [
+        '#type' => 'textfield',
+        '#title' =>  $this->t('Site mail'),
+        '#default_value' => 'web.requests@adelaide.edu.au',
+        '#size' => 60,
+        '#maxlength' => 255,
+        '#required' => TRUE,
+      ],
       'field_ua_sm_authoriser_name' => [
         '#type' => 'textfield',
         '#title' =>  $this->t('Authoriser title'),
