@@ -53,7 +53,7 @@ class SiteInstanceConstraintValidator extends ConstraintValidator {
     // Get each of the web servers assigned to the platform.
     foreach ($node->field_ua_sm_platform->entity->field_ua_sm_web_servers->getValue() as $web_server) {
       $instances = \Drupal::entityQuery('node')
-        ->condition('type', 'ua_sm_site_instace')
+        ->condition('type', 'ua_sm_site_instance')
         ->condition('field_ua_sm_server', $web_server['target_id'])
         ->execute();
       // Check instance limit.
