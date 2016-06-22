@@ -742,3 +742,22 @@ function ua_site_manager_update_8019(&$sandbox) {
   ]);
   $field->save();
 }
+
+/**
+ * Implements hook_update_N().
+ *
+ * Remove no longer used
+ */
+function ua_site_manager_update_8020(&$sandbox) {
+  $entity_form_display = \Drupal::entityTypeManager()
+    ->getStorage('entity_form_display')
+    ->load('node.ua_sm_environment.default');
+  $entity_form_display->removeComponent('field_ua_sm_deployment_type')
+    ->save();
+
+  $entity_view_display = \Drupal::entityTypeManager()
+    ->getStorage('entity_view_display')
+    ->load('node.ua_sm_environment.default');
+  $entity_view_display->removeComponent('field_ua_sm_deployment_type')
+    ->save();
+}

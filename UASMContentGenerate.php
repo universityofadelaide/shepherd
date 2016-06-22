@@ -11,7 +11,7 @@ use Drupal\node\Entity\Node;
  * Override production default values for local dev.
  */
 $environment_defaults = [
-  'field_ua_sm_database_host' => '{docker_host_ip}',
+  'field_ua_sm_database_host' => 'mysql',
   'field_ua_sm_git_reference' => 'develop',
 ];
 foreach ($environment_defaults as $field_name => $field_value) {
@@ -89,6 +89,7 @@ $platform = Node::create([
   'uid' => '1',
   'status' => 1,
   'title' => 'Dev Platform',
+  'field_ua_sm_deploy_type' => [['value' => 'DOCKER_LOCAL']],
   'field_ua_sm_build_server' => [['target_id' => $dev_server->id()]],
   'field_ua_sm_web_servers' => [
     ['target_id' => $docker_host_server_1->id()],
@@ -120,11 +121,14 @@ $distribution->save();
  * This spawns a "UAT" environment and a corresponding site instance.
  */
 $site = Node::create([
-  'type' => 'ua_sm_site',
-  'langcode' => 'en',
-  'uid' => '1',
-  'status' => 1,
-  'title' => 'wcms site',
+  'type' =>                         'ua_sm_site',
+  'langcode' =>                     'en',
+  'uid' =>                          '1',
+  'status' =>                       1,
+  'title' =>                        'wcms site',
+  'field_ua_sm_create_site' =>      TRUE,
+  'field_ua_sm_platform' =>         $platform->id(),
+  'field_ua_sm_git_reference' =>    $environment_defaults['field_ua_sm_git_reference'],
   'field_ua_sm_site_title' =>       [['value' => 'WCMS Site']],
   'field_ua_sm_top_menu_style' =>   [['value' => 'mega_menu']],
   'field_ua_sm_authoriser_name' =>  [['value' => 'Prancy']],

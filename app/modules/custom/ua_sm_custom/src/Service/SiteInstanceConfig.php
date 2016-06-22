@@ -98,6 +98,7 @@ class SiteInstanceConfig {
           'status' => $environment->field_ua_sm_environment_status->value,
         ],
         'platform' => [
+          'deployment_type' => $platform->field_ua_sm_deployment_type->value,
           'build_server' => $this->formatServer($build_server),
           'docker_registry' => $platform->field_ua_sm_docker_registry->value,
           'id' => $platform->id(),

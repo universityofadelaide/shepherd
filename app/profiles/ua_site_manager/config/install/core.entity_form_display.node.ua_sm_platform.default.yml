@@ -2,10 +2,10 @@ langcode: en
 status: true
 dependencies:
   config:
-    - field.field.node.ua_sm_platform.body
     - field.field.node.ua_sm_platform.field_tags
     - field.field.node.ua_sm_platform.field_ua_sm_build_server
     - field.field.node.ua_sm_platform.field_ua_sm_database_servers
+    - field.field.node.ua_sm_platform.field_ua_sm_deployment_type
     - field.field.node.ua_sm_platform.field_ua_sm_docker_registry
     - field.field.node.ua_sm_platform.field_ua_sm_rev_proxy_addresses
     - field.field.node.ua_sm_platform.field_ua_sm_reverse_proxy_header
@@ -14,20 +14,11 @@ dependencies:
     - node.type.ua_sm_platform
   module:
     - path
-    - text
 id: node.ua_sm_platform.default
 targetEntityType: node
 bundle: ua_sm_platform
 mode: default
 content:
-  body:
-    type: text_textarea_with_summary
-    weight: 7
-    settings:
-      rows: 9
-      summary_rows: 3
-      placeholder: ''
-    third_party_settings: {  }
   created:
     type: datetime_timestamp
     weight: 10
@@ -42,7 +33,7 @@ content:
     third_party_settings: {  }
     type: entity_reference_autocomplete
   field_ua_sm_build_server:
-    weight: 2
+    weight: 3
     settings:
       match_operator: CONTAINS
       size: 60
@@ -50,43 +41,50 @@ content:
     third_party_settings: {  }
     type: entity_reference_autocomplete
   field_ua_sm_database_servers:
-    weight: 26
+    weight: 14
     settings:
       match_operator: CONTAINS
       size: 60
       placeholder: ''
     third_party_settings: {  }
     type: entity_reference_autocomplete
-  field_ua_sm_docker_registry:
-    weight: 4
-    settings:
-      size: 60
-      placeholder: ''
-    third_party_settings: {  }
-    type: string_textfield
-  field_ua_sm_rev_proxy_addresses:
-    weight: 5
-    settings:
-      size: 60
-      placeholder: ''
-    third_party_settings: {  }
-    type: string_textfield
-  field_ua_sm_reverse_proxy_header:
-    weight: 6
-    settings:
-      size: 60
-      placeholder: ''
-    third_party_settings: {  }
-    type: string_textfield
-  field_ua_sm_task_runner:
+  field_ua_sm_deployment_type:
     weight: 1
     settings:
       size: 60
       placeholder: ''
     third_party_settings: {  }
     type: string_textfield
+  field_ua_sm_docker_registry:
+    weight: 5
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: string_textfield
+  field_ua_sm_rev_proxy_addresses:
+    weight: 6
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: string_textfield
+  field_ua_sm_reverse_proxy_header:
+    weight: 7
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: string_textfield
+  field_ua_sm_task_runner:
+    weight: 2
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: string_textfield
   field_ua_sm_web_servers:
-    weight: 3
+    weight: 4
     settings:
       match_operator: CONTAINS
       size: 60
