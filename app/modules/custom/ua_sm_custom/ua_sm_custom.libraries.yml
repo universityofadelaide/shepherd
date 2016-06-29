@@ -1,0 +1,13 @@
+react:
+  version: VERSION
+  js:
+    js/contrib/react/react.min.js: {}
+    js/contrib/react/react-dom.min.js: {}
+
+site_environment_status:
+  version: VERSION
+  js:
+    js/app/site_environment_status.js: {preprocess: false}
+  dependencies:
+    - core/jquery
+    - ua_sm_custom/react

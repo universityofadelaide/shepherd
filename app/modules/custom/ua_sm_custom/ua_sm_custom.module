@@ -30,6 +30,22 @@ function ua_sm_custom_help($route_name, RouteMatchInterface $route_match) {
 }
 
 /**
+ * Implements hook_theme().
+ */
+function ua_sm_custom_theme($existing, $type, $theme, $path) {
+  return [
+    'site_environment_status' => [
+      'variables' => [
+        'running' => NULL,
+        'building' => NULL,
+        'failed' => NULL,
+        'environment' => NULL,
+      ],
+    ],
+  ];
+}
+
+/**
  * Implements hook_ENTITY_TYPE_presave().
  *
  * Determines available port numbers for new instances, and generates random
@@ -306,7 +322,7 @@ function ua_sm_custom_node_update(EntityInterface $entity) {
     case 'ua_sm_site_instance':
       if (\Drupal::config('ua_sm_custom.settings')->get('jenkins')['enabled']) {
         // Check if the published state of the site instance has changed.
-        if ($entity->status->value !== $entity->original->status->value) {
+        if ((int) $entity->status->value !== (int) $entity->original->status->value) {
           // If status has transitioned to published, run deploy, otherwise run
           // decommission.
           ua_sm_custom_run_job(

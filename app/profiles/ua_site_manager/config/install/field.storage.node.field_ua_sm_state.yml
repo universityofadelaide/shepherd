@@ -22,6 +22,9 @@ settings:
     -
       value: stopped
       label: Stopped
+    -
+      value: failed
+      label: Failed
   allowed_values_function: ''
 module: options
 locked: false

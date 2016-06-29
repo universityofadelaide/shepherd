@@ -1,0 +1,18 @@
+<div class="sm_site_environment_status"
+     data-running="{{ running }}"
+     data-building="{{ building }}"
+     data-failed="{{ failed }}"
+     data-url="{{ path('view.ua_sm_environment_instances.rest_export_1', {'node': environment}) }}">
+  {% if running %}
+    <span class="u-text--success">{{ running }} Success</span>
+  {% elseif building %}
+    <span class="u-text--warning">{{ building }} Building</span>
+  {%  elseif failed %}
+    <span class="u-text--error">{{ failed }} Failed</span>
+  {% endif %}
+</div>
+{#
+   Attach libs this will trigger React and ReactDOM
+#}
+{{ attach_library('ua_sm_custom/site_environment_status') }}
+

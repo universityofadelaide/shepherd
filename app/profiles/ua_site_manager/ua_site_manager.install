@@ -761,3 +761,38 @@ function ua_site_manager_update_8020(&$sandbox) {
   $entity_view_display->removeComponent('field_ua_sm_deployment_type')
     ->save();
 }
+
+/**
+ * Implements hook_update_N().
+ *
+ * Adds environment status to site_environments view,
+ * also add 'failed' string to field_ua_sm_state.
+ */
+function ua_site_manager_update_8021(&$sandbox) {
+  $config_path = drupal_get_path('profile', 'ua_site_manager') . '/config/install';
+  $source = new Drupal\Core\Config\FileStorage($config_path);
+  $config_storage = \Drupal::service('config.storage');
+  $config_storage->write('views.view.ua_sm_site_environments', $source->read('views.view.ua_sm_site_environments'));
+  // Add a new view to show instances related to an environment.
+  $config_storage->write('views.view.ua_sm_environment_instances', $source->read('views.view.ua_sm_environment_instances'));
+
+  $field_storage_configs = \Drupal::entityTypeManager()
+    ->getStorage('field_storage_config')
+    ->loadByProperties(['type' => 'node.field_ua_sm_state']);
+
+  foreach ($field_storage_configs as $field_storage) {
+    $new_field_storage = $field_storage->toArray();
+    // Set the new allowed values.
+    $new_field_storage['settings']['allowed_values'] = [
+      ['Running' => 'running'],
+      ['Starting' => 'starting'],
+      ['Stopping' => 'stopping'],
+      ['Stopped' => 'stopped'],
+      ['Failed' => 'failed']
+    ];
+    $new_field_storage = FieldStorageConfig::create($new_field_storage);
+    $new_field_storage->original = $new_field_storage;
+    $new_field_storage->enforceIsNew(FALSE);
+    $new_field_storage->save();
+  }
+}
