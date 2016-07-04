@@ -15,22 +15,23 @@ abstract class RoboFileBase extends \Robo\Tasks implements RoboFileDrupalDeployI
 
   protected $application_root;
   protected $composer_bin;
+  protected $config_file;
+  protected $config;
+  protected $config_default_file;
+  protected $config_new_directory;
+  protected $config_old_directory;
+  protected $database_host;
+  protected $drupal_profile;
   protected $drush_bin;
   protected $drush_cmd;
   protected $phpcs_bin;
-  protected $webserver_restart;
-  protected $webserver_user;
-  protected $config_file;
-  protected $config_default_file;
+  protected $php_enable_module_command;
+  protected $php_disable_module_command;
   protected $settings_php;
   protected $services_yml;
-  protected $config_old_directory;
-  protected $config_new_directory;
-  protected $config;
-  protected $drupal_profile;
   protected $sudo_cmd;
-  protected $phpenmod_cmd;
-  protected $phpdismod_cmd;
+  protected $web_server_restart;
+  protected $web_server_user;
 
   /**
    * Initialize config variables and apply overrides.
@@ -45,12 +46,12 @@ abstract class RoboFileBase extends \Robo\Tasks implements RoboFileDrupalDeployI
 
     // Support PHP 5 and 7.
     $php5 = strpos(PHP_VERSION, '5') === 0;
-    $this->phpenmod_cmd = $php5 ? 'php5enmod' : 'phpenmod -v ALL';
-    $this->phpdismod_cmd = $php5 ? 'php5dismod' : 'phpdismod -v ALL';
+    $this->php_enable_module_command = $php5 ? 'php5enmod' : 'phpenmod -v ALL';
+    $this->php_disable_module_command = $php5 ? 'php5dismod' : 'phpdismod -v ALL';
 
     $this->sudo_cmd = posix_getuid() == 0 ? '' : 'sudo';
-    $this->webserver_restart    = "$this->sudo_cmd service apache2 restart";
-    $this->webserver_user       = $this->getWebServerUser();
+    $this->web_server_restart   = "$this->sudo_cmd service apache2 restart";
+    $this->web_server_user      = $this->getWebServerUser();
 
     $this->config_file          = "config.json";
     $this->config_default_file  = "config.default.json";
@@ -91,6 +92,7 @@ abstract class RoboFileBase extends \Robo\Tasks implements RoboFileDrupalDeployI
     if (!is_array($this->config)) {
       $this->checkFail(FALSE, "Couldn't decode config file.");
     }
+    $this->database_host = trim($this->config['database']['host']);
   }
 
   /**
@@ -308,7 +310,8 @@ abstract class RoboFileBase extends \Robo\Tasks implements RoboFileDrupalDeployI
       " --account-mail=" . $this->config['site']['admin_email'] .
       " --account-name=" . $this->config['site']['admin_user'] .
       " --account-pass=" . $this->config['site']['admin_password'] .
-      " --site-name='" . $this->config['site']['site_title'] . "'")
+      " --site-name='" . $this->config['site']['site_title'] . "'" .
+      " --site-mail='" . $this->config['site']['site_mail'] . "'")
       ->wasSuccessful();
 
     // Re-set settings.php permissions.
@@ -445,14 +448,14 @@ abstract class RoboFileBase extends \Robo\Tasks implements RoboFileDrupalDeployI
    * CLI debug enable.
    */
   public function devXdebugEnable() {
-    $this->_exec("sudo $this->phpenmod_cmd -s cli xdebug");
+    $this->_exec("sudo $this->php_enable_module_command -s cli xdebug");
   }
 
   /**
    * CLI debug disable.
    */
   public function devXdebugDisable() {
-    $this->_exec("sudo $this->phpdismod_cmd -s cli xdebug");
+    $this->_exec("sudo $this->php_disable_module_command -s cli xdebug");
   }
 
   /**
@@ -543,7 +546,7 @@ abstract class RoboFileBase extends \Robo\Tasks implements RoboFileDrupalDeployI
    */
   public function devSetFilesOwner() {
     $this->say("Setting files directory owner.");
-    $this->_exec("chown $this->webserver_user:$this->webserver_user -R $this->application_root/sites/default/files");
+    $this->_exec("chown $this->web_server_user:$this->web_server_user -R $this->application_root/sites/default/files");
   }
 
   /**
@@ -577,7 +580,7 @@ abstract class RoboFileBase extends \Robo\Tasks implements RoboFileDrupalDeployI
    * Restart Web server.
    */
   public function devRestartWebserver() {
-    $this->_exec($this->webserver_restart);
+    $this->_exec($this->web_server_restart);
   }
 
   /**
@@ -710,6 +713,7 @@ abstract class RoboFileBase extends \Robo\Tasks implements RoboFileDrupalDeployI
    *   Settings.php text, intended to be output to file.
    */
   protected function generateDrupalSettings($return_code = TRUE) {
+    $this->setDatabaseHostIP();
     $drupal_settings = [];
 
     // Enable fast 404.
@@ -730,11 +734,7 @@ abstract class RoboFileBase extends \Robo\Tasks implements RoboFileDrupalDeployI
     $drupal_settings['databases']['default']['default'] = $this->config['database'];
     $drupal_settings['databases']['default']['default']['namespace'] = 'Drupal\\Core\\Database\\Driver\\mysql';
     $drupal_settings['databases']['default']['default']['prefix'] = '';
-
-    // Fetch Docker host IP address from the environment variable.
-    if ($this->config['database']['host'] == '{docker_host_ip}') {
-      $drupal_settings['databases']['default']['default']['host'] = $this->getDockerHostIP();
-    }
+    $drupal_settings['databases']['default']['default']['host'] = $this->database_host;
 
     // Reverse proxy configuration.
     if ($this->config['platform']['reverse_proxy_addresses']) {
@@ -809,13 +809,15 @@ abstract class RoboFileBase extends \Robo\Tasks implements RoboFileDrupalDeployI
   }
 
   /**
-   * Get the Docker host IP address from the environment.
+   * Set the Database host IP address from the environment.
    *
    * @return string
-   *   The IPv4 address of the Docker host.
+   *   The IPv4 address of the Database host.
    */
-  protected function getDockerHostIP() {
-    return trim($this->taskExec('/sbin/ip route|awk \'/default/ { print $3 }\'')->run()->getMessage());
+  protected function setDatabaseHostIP() {
+    if (empty($this->database_host) || $this->database_host == '{docker_host_ip}') {
+      $this->database_host = trim($this->taskExec('/sbin/ip route|awk \'/default/ { print $3 }\'')->run()->getMessage());
+    }
   }
 
   /**
@@ -825,15 +827,11 @@ abstract class RoboFileBase extends \Robo\Tasks implements RoboFileDrupalDeployI
    *   A database url of the format mysql://user:pass@host:port/db_name
    */
   protected function getDatabaseUrl() {
-    $host = $this->config['database']['host'];
-    if ($host == '{docker_host_ip}') {
-      $host = $this->getDockerHostIP();
-    }
-
+    $this->setDatabaseHostIP();
     return
       $this->config['database']['driver'] . '://' .
       $this->config['database']['username'] . ':' .
-      $this->config['database']['password'] . '@' . $host . ':' .
+      $this->config['database']['password'] . '@' . $this->database_host . ':' .
       $this->config['database']['port'] . '/' .
       $this->config['database']['database'];
   }

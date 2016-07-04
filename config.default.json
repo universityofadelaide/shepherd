@@ -2,7 +2,7 @@
   "custom": {
     "ua_sm_custom.settings": {
       "jenkins.enabled": true,
-      "jenkins.base_uri": "http://jenkins.adelaide.dev/buildByToken/",
+      "jenkins.base_uri": "http://jenkins:8080/buildByToken/",
       "jenkins.token": "EZGl7429qBX707p65K97S282IxeBl3n9",
       "jenkins.provision_job": "deploy",
       "jenkins.deploy_job": null,
@@ -118,6 +118,7 @@
     "maintainer_name": "maintainer name",
     "path": "sprint/11",
     "site_title": "Site Manager",
+    "site_mail": "web.requests@adelaide.edu.au",
     "top_menu_style": "tab_nav_menu",
     "uuid": ""
   },
@@ -133,6 +134,6 @@
     "uuid": ""
   },
   "site_manager": {
-    "hostname": "site-manager.adelaide.dev"
+    "hostname": "site-manager.localhost"
   }
 }

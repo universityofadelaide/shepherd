@@ -7,6 +7,8 @@
 use Drupal\field\Entity\FieldConfig;
 use Drupal\node\Entity\Node;
 
+$domain_name = getenv("DOMAIN");
+
 /**
  * Override production default values for local dev.
  */
@@ -97,7 +99,7 @@ $platform = Node::create([
   ],
   'field_ua_sm_database_servers' => [['target_id' => $db_server->id()]],
   'field_ua_sm_task_runner' => [['value' => 'jenkins']],
-  'field_ua_sm_docker_registry' => [['value' => 'registry:5000']],
+  'field_ua_sm_docker_registry' => [['value' => "registry.$domain_name:5000"]],
 ]);
 $platform->save();
 
@@ -135,7 +137,7 @@ $site = Node::create([
   'field_ua_sm_authoriser_email' => [['value' => 'prancy@adelaide.edu.au']],
   'field_ua_sm_maintainer_name' =>  [['value' => 'Banana']],
   'field_ua_sm_maintainer_email' => [['value' => 'banana@adelaide.edu.au']],
-  'field_ua_sm_domain_name' =>      [['value' => 'adelaide.dev']],
+  'field_ua_sm_domain_name' =>      [['value' => "wcms-site.$domain_name"]],
   'field_ua_sm_distribution' =>     [['target_id' => $distribution->id()]],
   'field_ua_sm_admin_email' =>      [['value' => 'admin@localhost']],
   'field_ua_sm_admin_password' =>   [['value' => 'password']],
