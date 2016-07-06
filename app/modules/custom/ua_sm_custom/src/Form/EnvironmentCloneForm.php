@@ -24,7 +24,7 @@ class EnvironmentCloneForm extends FormBase {
   const MACHINENAMES = [
     'dev' => 'DEV',
     'uat' => 'UAT',
-    'prd' => 'PRD'
+    'prd' => 'PRD',
   ];
 
   /**

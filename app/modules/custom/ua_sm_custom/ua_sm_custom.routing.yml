@@ -23,6 +23,21 @@ ua_sm_custom.environment-clone-form:
     no_cache: TRUE
   requirements:
     _permission: 'sm access environment'
+ua_sm_custom.environment-backup-form:
+  path: '/site/{site}/environment/backup/{environment}'
+  defaults:
+    _form: '\Drupal\ua_sm_custom\Form\EnvironmentBackupForm'
+    _title: 'Backup Environment'
+  options:
+    _auth: [ 'basic_auth', 'cookie' ]
+    parameters:
+      site:
+        type: entity:node
+      environment:
+        type: entity:node
+    no_cache: TRUE
+  requirements:
+    _permission: 'sm access environment'
 ua_sm_custom.home-page:
   path: '/home'
   defaults:

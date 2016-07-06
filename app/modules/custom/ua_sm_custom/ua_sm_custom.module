@@ -497,12 +497,13 @@ function ua_sm_custom_cron() {
   foreach ($nodes as $node) {
     $environment_name = $node->field_ua_sm_environment->getString();
     if (!array_key_exists($environment_name, $instances)) {
+      // Add once instance per environment, to be backed up.
       $instances[$environment_name] = $node;
     }
   }
 
   foreach ($instances as $instance) {
-    ua_sm_custom_run_job('backup', $instance);
+    \Drupal::service('ua_sm_custom.backup')->createBackup($instance);
   }
 
   // Update users attributes from LDAP.

@@ -9,7 +9,6 @@ namespace Drupal\ua_sm_custom\Service;
 
 use Drupal\Core\Entity\EntityInterface;
 use GuzzleHttp\Client;
-use Psr\Http\Message\ResponseInterface;
 use Drupal\Core\Url;
 
 /**
