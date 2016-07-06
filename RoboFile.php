@@ -44,7 +44,10 @@ class RoboFile extends RoboFileBase {
    * Create default content for the site manager.
    */
   public function devContentGenerate() {
-    $this->_exec("$this->drush_cmd scr UASMContentGenerate.php --uri=" . $this->config['site_manager']['hostname']);
+    $domain_name = getenv("DOMAIN");
+    if (!empty($domain_name)) {
+      $this->_exec("$this->drush_cmd scr UASMContentGenerate.php --uri=site-manager.$domain_name");
+    }
   }
 
 }
