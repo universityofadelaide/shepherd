@@ -36,7 +36,6 @@ dependencies:
   - views
   - views_ui
   - tour
-  - diff
   - rest
   - basic_auth
   - entity_reference_revisions

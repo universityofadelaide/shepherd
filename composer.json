@@ -28,7 +28,6 @@
         "drush/drush": "8.*",
         "drupal/core": "8.1.*",
         "drupal/cas": "8.1.*@dev",
-        "drupal/diff": "8.1.*@dev",
         "drupal/entity_reference_revisions": "dev-8.x-1.x",
         "drupal/paragraphs": "dev-8.x-1.x",
         "drupal/r4032login": "8.1.*@dev",
