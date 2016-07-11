@@ -98,7 +98,10 @@ function ua_sm_custom_environment_defaults(Node $environment) {
  * in a select type box.
  *
  * @param string $type
+ *   Provide choices for all entities of this type. E.g. ua_sm_platform.
+ *
  * @return array
+ *   The choices formatted as id => label.
  */
 function ua_sm_custom_choices($type) {
   $ids = \Drupal::entityQuery('node')
@@ -116,7 +119,7 @@ function ua_sm_custom_choices($type) {
   return $choices;
 }
 
-  /**
+/**
  * Populates the site instance with unique ports per host.
  *
  * @param Node $site_instance
@@ -171,7 +174,7 @@ function ua_sm_custom_entity_type_alter(array &$entity_types) {
   $node = $entity_types['node'];
   $node->addConstraint('SiteInstance', [
     'limit' => UA_SM_CUSTOM_INSTANCE_LIMIT,
-    'entity' => 'ua_sm_environment'
+    'entity' => 'ua_sm_environment',
   ]);
 
 }
@@ -215,7 +218,7 @@ function ua_sm_custom_node_insert(EntityInterface $entity) {
         ->execute();
 
       // Check if default environment should be automatically created.
-      // Note fields presented only in the UI don't get setup as a node ->value
+      // Note fields presented only in the UI don't get setup as a node ->value.
       if (isset($entity->field_ua_sm_create_site) && $entity->field_ua_sm_create_site) {
         // Create default environment.
         $environment = Node::create([
@@ -453,15 +456,11 @@ function ua_sm_custom_comment_insert(EntityInterface $entity) {
     $result = \Drupal::service('plugin.manager.mail')->mail('ua_sm_custom', 'ua_sm_site', $author_email, $langcode, $mail_message);
 
     if ($result['result'] !== TRUE) {
-      drupal_set_message(t('There was an issue sending an email notification to %email with message %msg', [
-        '%email' => $author_email,
-        '%msg' => $entity->comment_body->value
-      ]), 'error');
+      drupal_set_message(t('There was an issue sending an email notification to %email with message %msg', ['%email' => $author_email, '%msg' => $entity->comment_body->value]), 'error');
       return;
     }
 
-    drupal_set_message(t('An email notification has been sent to %user', [ '%user' => $author->field_ua_user_preferred_name->value ]));
-
+    drupal_set_message(t('An email notification has been sent to %user', ['%user' => $author->field_ua_user_preferred_name->value]));
   }
 
 }
