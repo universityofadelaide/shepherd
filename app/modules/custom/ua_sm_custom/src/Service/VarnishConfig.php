@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains Drupal\ua_sm_custom\Service\VarnishConfig.
- */
-
 namespace Drupal\ua_sm_custom\Service;
 
 /**
@@ -16,6 +11,7 @@ class VarnishConfig {
 
   /**
    * Generates a varnish configuration.
+   *
    * @return array
    *   The varnish configuration.
    */
@@ -28,14 +24,20 @@ class VarnishConfig {
 
     foreach ($instance_ids as $nid) {
       $site_instance = \Drupal::entityManager()->getStorage('node')->load($nid);
-      $environment = reset($site_instance->field_ua_sm_environment->referencedEntities());
+
+      $environments = $site_instance->field_ua_sm_environment->referencedEntities();
+      $environment = reset($environments);
       $status = $environment->field_ua_sm_environment_status->value;
-      $server = reset($site_instance->field_ua_sm_server->referencedEntities());
-      $site = reset($environment->field_ua_sm_site->referencedEntities());
 
       if (!$status) {
         continue;
       }
+
+      $servers = $site_instance->field_ua_sm_server->referencedEntities();
+      $server = reset($servers);
+      $sites = $environment->field_ua_sm_site->referencedEntities();
+      $site = reset($sites);
+
       if (!isset($varnish_config[$environment->id()])) {
         $varnish_config[$environment->id()] = [
           'domain' => $environment->field_ua_sm_domain_name->value,
