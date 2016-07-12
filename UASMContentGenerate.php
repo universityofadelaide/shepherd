@@ -22,6 +22,17 @@ foreach ($environment_defaults as $field_name => $field_value) {
   $field_config->save();
 }
 
+// Clobber env/domain config with dev versions.
+\Drupal::service('config.factory')->getEditable('ua_sm_custom.settings')->set(
+  'environment_domains',
+  [
+    'prd' => $domain_name,
+    'stg' => $domain_name,
+    'uat' => $domain_name,
+    'dev' => $domain_name,
+  ]
+)->save();
+
 /**
  * Create a build server.
  */

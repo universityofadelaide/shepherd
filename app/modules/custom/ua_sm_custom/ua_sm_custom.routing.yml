@@ -112,10 +112,10 @@ ua_sm_custom.user-delete-form:
     no_cache: TRUE
   requirements:
     _permission: 'sm administer users'
-ua_sm_custom.varnish-config:
-  path: '/api/varnish-config'
+ua_sm_custom.hosts-config:
+  path: '/api/hosts-config'
   defaults:
-    _controller: '\Drupal\ua_sm_custom\Controller\SiteConfigController::varnishConfig'
+    _controller: '\Drupal\ua_sm_custom\Controller\SiteConfigController::hostsConfig'
   options:
     _auth: [ 'basic_auth', 'cookie' ]
     no_cache: TRUE

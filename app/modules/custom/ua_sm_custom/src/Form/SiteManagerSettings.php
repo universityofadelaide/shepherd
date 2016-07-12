@@ -117,8 +117,27 @@ class SiteManagerSettings extends ConfigFormBase {
     $form['controlled_roles']['textarea'] = [
       '#type' => 'textarea',
       '#rows' => 10,
-      '#description' => $this->t('Setup your controlled roles using the format <i>role|description</i>'),
+      '#description' => $this->t('Setup your controlled roles using the format role|description.'),
       '#default_value' => $controlled_roles,
+    ];
+
+    $form['environment_domains'] = [
+      '#type' => 'details',
+      '#title' => $this->t('Environment domains'),
+      '#open' => TRUE,
+      '#tree' => TRUE,
+    ];
+
+    $environment_domains = '';
+    foreach ($config->get('environment_domains') as $key => $val) {
+      $environment_domains .= $key . '|' . $val . "\n";
+    }
+
+    $form['environment_domains']['textarea'] = [
+      '#type' => 'textarea',
+      '#rows' => 10,
+      '#description' => $this->t('Setup the domain each each environment corresponds using the format environment|domain.'),
+      '#default_value' => $environment_domains,
     ];
 
     $form['backup_service'] = [
@@ -135,7 +154,6 @@ class SiteManagerSettings extends ConfigFormBase {
       '#default_value' => $config->get('backup_service.path'),
     ];
 
-
     return parent::buildForm($form, $form_state);
   }
 
@@ -144,13 +162,22 @@ class SiteManagerSettings extends ConfigFormBase {
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $config = $this->config('ua_sm_custom.settings');
+
     $controlled_roles_data = explode("\r\n", trim($form_state->getValue('controlled_roles')['textarea']));
     $config->delete('controlled_roles');
-
     foreach ($controlled_roles_data as $role) {
       $controlled_role = explode('|', $role);
       if (trim($controlled_role[0]) != '' && trim($controlled_role[1]) != '') {
         $config->set('controlled_roles.' . str_replace(' ', '_', trim($controlled_role[0])), trim($controlled_role[1]));
+      }
+    }
+
+    $environment_domains_data = explode("\r\n", trim($form_state->getValue('environment_domains')['textarea']));
+    $config->delete('environment_domains');
+    foreach ($environment_domains_data as $environment_domain) {
+      list($environment, $domain) = explode('|', $environment_domain);
+      if (trim($environment) != '' && trim($domain) != '') {
+        $config->set('environment_domains.' . str_replace(' ', '-', trim($environment)), trim($domain));
       }
     }
 
