@@ -11,8 +11,8 @@ services:
     class: Drupal\ua_sm_custom\Service\Site
   ua_sm_custom.user:
     class: Drupal\ua_sm_custom\Service\User
-  ua_sm_custom.varnish_config:
-    class: Drupal\ua_sm_custom\Service\VarnishConfig
+  ua_sm_custom.hosts_config:
+    class: Drupal\ua_sm_custom\Service\HostsConfig
   ua_sm_custom.backup:
     class: Drupal\ua_sm_custom\Service\Backup
     arguments: ['@config.factory', '@ua_sm_custom.jenkins_client']

@@ -41,13 +41,13 @@ class SiteConfigController extends ControllerBase {
   }
 
   /**
-   * Handles varnish config json request.
+   * Handles hosts config json request.
    *
    * @return \Symfony\Component\HttpFoundation\JsonResponse
-   *   Varnish config as JSON.
+   *   Hosts config as JSON.
    */
-  public function varnishConfig() {
-    $config = \Drupal::service('ua_sm_custom.varnish_config')->generate();
+  public function hostsConfig() {
+    $config = \Drupal::service('ua_sm_custom.hosts_config')->generate();
     return new JsonResponse($config);
   }
 
