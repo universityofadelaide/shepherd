@@ -796,3 +796,10 @@ function ua_site_manager_update_8021(&$sandbox) {
     $new_field_storage->save();
   }
 }
+
+function ua_site_manager_update_8022(&$sandbox) {
+  $config_path = drupal_get_path('profile', 'ua_site_manager') . '/config/install';
+  $source = new Drupal\Core\Config\FileStorage($config_path);
+  $config_storage = \Drupal::service('config.storage');
+  $config_storage->write('block.block.ua_theme_tabs', $source->read('block.block.ua_theme_tabs'));
+}

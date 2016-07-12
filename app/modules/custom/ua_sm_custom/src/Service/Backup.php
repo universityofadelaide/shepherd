@@ -49,13 +49,14 @@ class Backup {
    * @param int $site
    *    Site id.
    * @param int $environment
-   *    Environment id.
+   *    Optional Environment id.
    *
    * @return array
    *   An array of backup files.
    */
-  public function get($site, $environment) {
-    $path = $this->config['path'] . "$site/$environment";
+  public function get($site, $environment = NULL) {
+    $path = is_null($environment) ? $this->config['path'] . $site :
+      $this->config['path'] . "$site/$environment";
     return array_diff(scandir($path), ['.', '..']);
   }
 

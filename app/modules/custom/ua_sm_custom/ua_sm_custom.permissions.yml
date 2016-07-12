@@ -4,6 +4,8 @@ sm access site wizard:
   title: 'Access site wizard'
 sm administer users:
   title: 'Administer users'
+sm view backups:
+  title: 'View backups'
 sm view distributions:
   title: 'View distributions'
 sm view environments:

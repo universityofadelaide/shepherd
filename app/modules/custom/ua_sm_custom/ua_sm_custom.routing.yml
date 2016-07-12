@@ -122,3 +122,17 @@ ua_sm_custom.varnish-config:
   requirements:
     _user_is_logged_in: 'TRUE'
     _access: 'TRUE'
+ua_sm_custom.site-backups-list:
+  path: '/site/{node}/backups'
+  defaults:
+    _controller: '\Drupal\ua_sm_custom\Controller\SiteBackupListController::index'
+    _title: 'Backups'
+    _title_callback: '\Drupal\ua_sm_custom\Controller\SiteBackupListController::getPageTitle'
+  options:
+    _auth: [ 'basic_auth', 'cookie' ]
+    parameters:
+      node:
+        type: entity:node
+    no_cache: TRUE
+  requirements:
+    _permission: 'sm view backups'
