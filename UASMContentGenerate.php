@@ -124,7 +124,7 @@ $distribution = Node::create([
   'status' => 1,
   'title' => 'WCMS D8 Dev Distribution',
   'field_ua_sm_git_repository' => [['value' => 'git@gitlab.adelaide.edu.au:web-team/ua-wcms-d8.git']],
-  'field_ua_sm_box_type' =>       [['value' => 'web']],
+  'field_ua_sm_box_type' =>       [['value' => 'uofa/apache2-php7']],
 ]);
 $distribution->save();
 

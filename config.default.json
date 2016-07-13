@@ -23,7 +23,7 @@
     "username": "root"
   },
   "distribution": {
-    "box_type": "ua/lamp",
+    "box_type": "uofa/apache2-php7",
     "git_repository": "git@gitlab.adelaide.edu.au:web-team/ua-d8-base-site.git",
     "id": "0",
     "uuid": ""
