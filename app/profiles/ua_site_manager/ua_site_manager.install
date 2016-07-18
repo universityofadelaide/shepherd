@@ -1,7 +1,8 @@
 <?php
+
 /**
  * @file
- * Install, update and uninstall functions for the University of Adelaide installation profile.
+ * Install, update and uninstall functions for the ua_site_manager profile.
  */
 
 use Drupal\user\Entity\User;

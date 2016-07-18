@@ -69,7 +69,6 @@ class UserDeleteForm extends ConfirmFormBase {
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
-
     $paragraph_entities = $this->node->field_ua_sm_users->referencedEntities();
     foreach ($paragraph_entities as $delta => $paragraph_entity) {
       if ($paragraph_entity->field_ua_sm_user->getString() == $this->user->uid->value) {

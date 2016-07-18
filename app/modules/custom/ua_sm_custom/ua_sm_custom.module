@@ -436,7 +436,6 @@ function ua_sm_custom_entity_prepare_form(EntityInterface $entity) {
  * Implements hook_entity_type_insert().
  */
 function ua_sm_custom_comment_insert(EntityInterface $entity) {
-
   // Send an email notification to the user who created a site instance.
   $commented_entity = $entity->getCommentedEntity();
 
@@ -482,7 +481,6 @@ function ua_sm_custom_mail($key, &$message, $params) {
  * Implements hook_cron().
  */
 function ua_sm_custom_cron() {
-
   // Back up all environments; only one site instance per environment.
   $site_instance_nids = \Drupal::entityQuery('node')
     ->condition('type', 'ua_sm_site_instance')

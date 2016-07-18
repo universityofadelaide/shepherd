@@ -21,7 +21,6 @@ class UserSitesRolesController extends ControllerBase {
    * {@inheritdoc}
    */
   public function index($account_id) {
-
     // Basic account id validation.
     if (!ctype_alnum($account_id)) {
       throw new NotFoundHttpException();

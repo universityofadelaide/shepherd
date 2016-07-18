@@ -19,6 +19,7 @@ class SiteAliases {
    *
    * @param \Drupal\node\Entity\Node $site
    *   A site node.
+   *
    * @return string
    *   Generate PHP code containing Drush aliases for the given site.
    */

@@ -49,7 +49,6 @@ class SiteInstanceConstraintValidator extends ConstraintValidator {
    *    Constraint.
    */
   protected function validateNodeEntity(NodeInterface $node, SiteInstanceConstraint $constraint) {
-
     // Get each of the web servers assigned to the platform.
     foreach ($node->field_ua_sm_platform->entity->field_ua_sm_web_servers->getValue() as $web_server) {
       $instances = \Drupal::entityQuery('node')
