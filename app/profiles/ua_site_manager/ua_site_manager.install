@@ -79,8 +79,6 @@ function ua_site_manager_update_dependencies() {
 }
 
 /**
- * Implements hook_update_N().
- *
  * Add the hash salt field to the environment entity.
  */
 function ua_site_manager_update_8001(&$sandbox) {
@@ -114,8 +112,6 @@ function ua_site_manager_update_8001(&$sandbox) {
 }
 
 /**
- * Implements hook_update_N().
- *
  * Add the new authoriser and maintainer fields, remove old authorizer fields.
  * Set the form and view weights.
  */
@@ -212,8 +208,6 @@ function ua_site_manager_update_8002(&$sandbox) {
 }
 
 /**
- * Implements hook_update_N().
- *
  * Add the ssh user field to the server entity.
  */
 function ua_site_manager_update_8003(&$sandbox) {
@@ -378,8 +372,6 @@ function ua_site_manager_update_8004(&$sandbox) {
 }
 
 /**
- * Implements hook_update_N().
- *
  * Add permissions to views.
  */
 function ua_site_manager_update_8005(&$sandbox) {
@@ -412,8 +404,6 @@ function ua_site_manager_update_8005(&$sandbox) {
 }
 
 /**
- * Implements hook_update_N().
- *
  * Update route to site add.
  */
 function ua_site_manager_update_8006(&$sandbox) {
@@ -426,8 +416,6 @@ function ua_site_manager_update_8006(&$sandbox) {
 }
 
 /**
- * Implements hook_update_N().
- *
  * Add the config sync field to the environment entity.
  */
 function ua_site_manager_update_8007(&$sandbox) {
@@ -461,8 +449,6 @@ function ua_site_manager_update_8007(&$sandbox) {
 }
 
 /**
- * Implements hook_update_N().
- *
  * Update the site users view with a custom view field for operations.
  * Update homepage and login blocks.
  */
@@ -487,8 +473,6 @@ function ua_site_manager_update_8008(&$sandbox) {
 }
 
 /**
- * Implements hook_update_N().
- *
  * Update the ua_sm_custom.settings configuration yml.
  */
 function ua_site_manager_update_8009(&$sandbox) {
@@ -499,8 +483,6 @@ function ua_site_manager_update_8009(&$sandbox) {
 }
 
 /**
- * Implements hook_update_N().
- *
  * Allow OCs to view environments.
  */
 function ua_site_manager_update_8010(&$sandbox) {
@@ -517,8 +499,6 @@ function ua_site_manager_update_8010(&$sandbox) {
 }
 
 /**
- * Implements hook_update_N().
- *
  * Updates for theming with ua_theme.
  */
 function ua_site_manager_update_8011(&$sandbox) {
@@ -553,8 +533,6 @@ function ua_site_manager_update_8011(&$sandbox) {
 }
 
 /**
- * Implements hook_update_N().
- *
  * Adds site environments view and updates the tabs.
  */
 function ua_site_manager_update_8012(&$sandbox) {
@@ -581,8 +559,6 @@ function ua_site_manager_update_8012(&$sandbox) {
 }
 
 /**
- * Implements hook_update_N().
- *
  * Adds dynamic view titles by pulling nid from args.
  */
 function ua_site_manager_update_8013(&$sandbox) {
@@ -605,8 +581,6 @@ function ua_site_manager_update_8013(&$sandbox) {
 }
 
 /**
- * Implements hook_update_N().
- *
  * Updates the rest settings, adds the status field to environment, updates all.
  */
 function ua_site_manager_update_8014(&$sandbox) {
@@ -657,8 +631,6 @@ function ua_site_manager_update_8014(&$sandbox) {
 }
 
 /**
- * Implements hook_update_N().
- *
  * Updates the local tasks links configuration.
  * Also adds a heading as per other views.
  */
@@ -668,7 +640,7 @@ function ua_site_manager_update_8015(&$sandbox) {
   $config_storage = \Drupal::service('config.storage');
 
   $configs = [
-    'block.block.tabs',
+    'block.block.ua_theme_tabs',
     'views.view.ua_sm_site_environments'
   ];
 
@@ -678,8 +650,6 @@ function ua_site_manager_update_8015(&$sandbox) {
 }
 
 /**
- * Implements hook_update_N().
- *
  * Updates sites view to remove tags text field
  */
 function ua_site_manager_update_8016(&$sandbox) {
@@ -692,8 +662,6 @@ function ua_site_manager_update_8016(&$sandbox) {
 }
 
 /**
- * Implements hook_update_N().
- *
  * Updates sites view to remove tags text field
  */
 function ua_site_manager_update_8017(&$sandbox) {
@@ -706,8 +674,6 @@ function ua_site_manager_update_8017(&$sandbox) {
 }
 
 /**
- * Implements hook_update_N().
- *
  * Updates sites environments view with a new field operation to add instances.
  */
 function ua_site_manager_update_8018(&$sandbox) {
@@ -721,8 +687,6 @@ function ua_site_manager_update_8018(&$sandbox) {
 }
 
 /**
- * Implements hook_update_N().
- *
  * Add new site_mail field to site
  */
 function ua_site_manager_update_8019(&$sandbox) {
@@ -745,8 +709,6 @@ function ua_site_manager_update_8019(&$sandbox) {
 }
 
 /**
- * Implements hook_update_N().
- *
  * Remove no longer used
  */
 function ua_site_manager_update_8020(&$sandbox) {
@@ -764,8 +726,6 @@ function ua_site_manager_update_8020(&$sandbox) {
 }
 
 /**
- * Implements hook_update_N().
- *
  * Adds environment status to site_environments view,
  * also add 'failed' string to field_ua_sm_state.
  */
