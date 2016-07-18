@@ -44,7 +44,7 @@ class Backup {
   }
 
   /**
-   * Gets a list of backups by scan dir and filter.
+   * Gets a list of backups for a specific environment.
    *
    * @param int $site
    *    Site id.
@@ -52,12 +52,45 @@ class Backup {
    *    Optional Environment id.
    *
    * @return array
-   *   An array of backup files.
+   *   An array of backup folders.
    */
-  public function get($site, $environment = NULL) {
-    $path = is_null($environment) ? $this->config['path'] . $site :
-      $this->config['path'] . "$site/$environment";
-    return array_diff(scandir($path), ['.', '..']);
+  public function get($site, $environment) {
+    $path = $this->config['path'] . "$site/$environment";
+    return array_values(array_diff(scandir($path), ['.', '..']));
+  }
+
+  /**
+   * Gets a sorted list of backups for all the environments of a site.
+   *
+   * @param int $site
+   *    Site id.
+   *
+   * @return array
+   *   An array of backup folders.
+   */
+  public function getAll($site) {
+    $path = $this->config['path'] . "$site";
+    $environments = array_diff(scandir($path), ['.', '..']);
+    $backups = [];
+    foreach ($environments as $environment) {
+      foreach ($this->get($site, $environment) as $backup) {
+        $backups[] = [
+          'environment' => $environment,
+          'backup' => $backup,
+        ];
+      }
+    }
+
+    // Sort backups by date descending.
+    uasort($backups, function ($a, $b) {
+      if ($a['backup'] == $b['backup']) {
+        return 0;
+      }
+      return ($a['backup'] > $b['backup']) ? -1 : 1;
+    });
+
+    // Make the array keys pretty.
+    return array_values($backups);
   }
 
   /**
@@ -67,7 +100,17 @@ class Backup {
    *   The instance to backup.
    */
   public function createBackup(EntityInterface $instance) {
-    $this->jobRunner->job('backup', $instance);
+    $this->jobRunner->job(JenkinsClient::BACKUP_JOB, $instance);
+  }
+
+  /**
+   * Restore a backup for a given instance.
+   *
+   * @param EntityInterface $instance
+   *   The instance to restore to.
+   */
+  public function restore(EntityInterface $instance) {
+    $this->jobRunner->job(JenkinsClient::RESTORE_JOB, $instance);
   }
 
 }

@@ -21,7 +21,7 @@ use \DateTimeZone;
  */
 class EnvironmentCloneForm extends FormBase {
 
-  const MACHINENAMES = [
+  const MACHINE_NAMES = [
     'dev' => 'DEV',
     'uat' => 'UAT',
     'prd' => 'PRD',
@@ -45,9 +45,7 @@ class EnvironmentCloneForm extends FormBase {
     $backup_times = [];
     if (isset($backups) && !is_null($backups)) {
       foreach ($backups as $backup) {
-        $backup_times[$backup] = DateTime::createFromFormat('U', $backup)
-          ->setTimezone(new DateTimeZone(date_default_timezone_get()))
-          ->format('Y-m-d H:i:s');
+        $backup_times[$backup] = \Drupal::service('date.formatter')->format($backup);
       }
     }
 
@@ -94,8 +92,8 @@ class EnvironmentCloneForm extends FormBase {
       'field_ua_sm_machine_name' => [
         '#type' => 'select',
         '#title' => $this->t('Clone to environment'),
-        '#options' => self::MACHINENAMES,
-        '#default_value' => $this->machineNames[$environment->field_ua_sm_machine_name->value],
+        '#options' => self::MACHINE_NAMES,
+        '#default_value' => self::MACHINE_NAMES[$environment->field_ua_sm_machine_name->value],
         '#maxlength' => 255,
         '#required' => TRUE,
       ],
@@ -138,10 +136,15 @@ class EnvironmentCloneForm extends FormBase {
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $form_state->cleanValues();
     $input = $form_state->getUserInput();
-    // Get the current environments node id.
+
+    // Pass through the source environment id, to trigger the clone job on save.
     $input['previous_env_id'] = $form_state->get('environment')->id();
 
     $environment = Node::create($input);
+
+    // Assign a unique domain name.
+    $environment->field_ua_sm_domain_name->value = \Drupal::service('ua_sm_custom.hosts_config')->generateDomainForEnv($environment->field_ua_sm_domain_name->value, $environment->field_ua_sm_machine_name->value);
+
     $environment->validate();
     $environment->save();
 

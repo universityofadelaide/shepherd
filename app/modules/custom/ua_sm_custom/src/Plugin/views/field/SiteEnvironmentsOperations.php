@@ -37,6 +37,7 @@ class SiteEnvironmentsOperations extends FieldPluginBase {
     $site = $entity->field_ua_sm_site->getValue()[0]['target_id'];
     $clone_url = Url::fromRoute('ua_sm_custom.environment-clone-form', ['site' => $site, 'environment' => $environment]);
     $backup_url = Url::fromRoute('ua_sm_custom.environment-backup-form', ['site' => $site, 'environment' => $environment]);
+    $restore_url = Url::fromRoute('ua_sm_custom.environment-restore-form', ['site' => $site, 'environment' => $environment]);
 
     $build['clone_environment'] = [
       '#type' => 'link',
@@ -56,6 +57,20 @@ class SiteEnvironmentsOperations extends FieldPluginBase {
       '#type' => 'link',
       '#title' => $this->t('Backup'),
       '#url' => $backup_url,
+      '#options' => [
+        'attributes' => [
+          'class' => [
+            'button',
+            'c-btn',
+          ],
+        ],
+      ],
+    ];
+
+    $build['restore_environment'] = [
+      '#type' => 'link',
+      '#title' => $this->t('Restore'),
+      '#url' => $restore_url,
       '#options' => [
         'attributes' => [
           'class' => [

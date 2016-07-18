@@ -22,35 +22,35 @@ class SiteBackupListController extends ControllerBase {
       throw new NotFoundHttpException();
     }
 
-    // With the site id.
-    $backups = [];
-    $environments = \Drupal::service('ua_sm_custom.backup')->get($node->id());
-    foreach ($environments as $environment) {
-      $environment_name = Node::load($environment)->getTitle();
-      $backup_dates = \Drupal::service('ua_sm_custom.backup')->get($node->id(), $environment);
+    $formatted_backups = [];
+    $backups = \Drupal::service('ua_sm_custom.backup')->getAll($node->id());
+    foreach ($backups as $backup) {
       // Make table rows from each of the backup dates returned.
-      foreach ($backup_dates as $date) {
-        $converted_date = DateTime::createFromFormat('U', $date)
-          ->setTimezone(new DateTimeZone(date_default_timezone_get()))
-          ->format('Y-m-d H:i:s');
-        $backups[] = [
-          $environment_name,
-          // Convert to a readable time format.
-          $converted_date
-        ];
+      if ($environment = Node::load($backup['environment'])) {
+        $environment_name = $environment->getTitle();
       }
+      else {
+        $environment_name = 'Env:' . $backup['environment'];
+      }
+
+      $converted_date = \Drupal::service('date.formatter')->format($backup['backup']);
+      $formatted_backups[] = [
+        $environment_name,
+        // Convert to a readable time format.
+        $converted_date,
+      ];
     }
 
     $output = [
       '#type' => 'table',
       '#header' => [
         t('Environment Name'),
-        t('Backup')
+        t('Backup'),
       ],
-      '#rows' => $backups,
+      '#rows' => $formatted_backups,
       '#attributes' => [
-        'class' => ['c-table']
-      ]
+        'class' => ['c-table'],
+      ],
     ];
     return $output;
   }

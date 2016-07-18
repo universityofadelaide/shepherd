@@ -12,6 +12,7 @@ use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\node\Entity\Node;
 use Drupal\user\Entity\User;
+use Drupal\ua_sm_custom\Service\JenkinsClient;
 
 const UA_SM_CUSTOM_INSTANCE_LIMIT = 20;
 
@@ -61,18 +62,6 @@ function ua_sm_custom_node_presave(Node $entity) {
       ua_sm_custom_environment_defaults($entity);
       break;
   }
-}
-
-/**
- * Triggers the requested Jenkins job.
- *
- * @param string $job_name
- *   The name of the Jenkins job to run.
- * @param \Drupal\Core\Entity\EntityInterface $entity
- *   The site_instance entity to post the comment to, or it's parent anyway.
- */
-function ua_sm_custom_run_job($job_name, EntityInterface $entity) {
-  \Drupal::service('ua_sm_custom.jenkins_client')->job($job_name, $entity);
 }
 
 /**
@@ -229,7 +218,7 @@ function ua_sm_custom_node_insert(EntityInterface $entity) {
           'field_ua_sm_platform' => isset($entity->field_ua_sm_platform) ? $platforms[$entity->field_ua_sm_platform] : reset($platforms),
           // @todo Convert environment types (e.g 'uat') to constants.
           'field_ua_sm_domain_name' => \Drupal::service('ua_sm_custom.hosts_config')
-            ->generateDomainforEnv($entity->field_ua_sm_domain_name->value, 'uat'),
+            ->generateDomainForEnv($entity->field_ua_sm_domain_name->value, 'uat'),
           'field_ua_sm_git_reference' => isset($entity->field_ua_sm_git_reference) ? $entity->field_ua_sm_git_reference : 'develop',
           'field_ua_sm_database_password' => \Drupal::service('ua_sm_custom.password')->generate(),
         ]);
@@ -253,9 +242,10 @@ function ua_sm_custom_node_insert(EntityInterface $entity) {
       // Load the selected environment.
       $platform = $entity->field_ua_sm_platform->first()->entity;
 
+      $cloned_already = FALSE;
+
       // Create a new site instance for each of the platform's webservers.
       foreach ($platform->field_ua_sm_web_servers as $key => $web_server) {
-
         $site_instance_params = [
           'type' => 'ua_sm_site_instance',
           'uid' => 1,
@@ -263,11 +253,18 @@ function ua_sm_custom_node_insert(EntityInterface $entity) {
           'field_ua_sm_environment' => $entity->id(),
           'field_ua_sm_server' => $web_server->entity->id(),
         ];
+
         // Add conditionals if environment has the following properties.
         if (isset($entity->backup_timestamp) && isset($entity->previous_env_id)) {
-          $site_instance_params['backup_timestamp'] = $entity->backup_timestamp;
-          $site_instance_params['backup_env_id'] = $entity->previous_env_id;
-          $site_instance_params['isRestore'] = TRUE;
+          $site_instance_params['isClone'] = TRUE;
+
+          // On subsequent instances, run the "clone" job, but don't attempt to
+          // restore another environment. It's already been done.
+          if (!$cloned_already) {
+            $site_instance_params['backup_timestamp'] = $entity->backup_timestamp;
+            $site_instance_params['backup_env_id'] = $entity->previous_env_id;
+          }
+          $cloned_already = TRUE;
         }
 
         $site_instance = Node::create($site_instance_params);
@@ -280,13 +277,12 @@ function ua_sm_custom_node_insert(EntityInterface $entity) {
 
     case 'ua_sm_site_instance':
       if (\Drupal::config('ua_sm_custom.settings')->get('jenkins')['enabled']) {
-        // @todo - check to see if
-        if (isset($entity->isRestore) && $entity->isRestore) {
-          // Run the restore job.
-          ua_sm_custom_run_job('restore', $entity);
+        if (isset($entity->isClone) && $entity->isClone) {
+          // Run the clone job.
+          \Drupal::service('ua_sm_custom.jenkins_client')->job(JenkinsClient::CLONE_JOB, $entity);
         }
         else {
-          ua_sm_custom_run_job('provision', $entity);
+          \Drupal::service('ua_sm_custom.jenkins_client')->job(JenkinsClient::DEPLOY_JOB, $entity);
         }
       }
       break;
@@ -330,8 +326,8 @@ function ua_sm_custom_node_update(EntityInterface $entity) {
         if ((int) $entity->status->value !== (int) $entity->original->status->value) {
           // If status has transitioned to published, run deploy, otherwise run
           // decommission.
-          ua_sm_custom_run_job(
-            $entity->status->value ? 'deploy' : 'decommission',
+          \Drupal::service('ua_sm_custom.jenkins_client')->job(
+            $entity->status->value ? JenkinsClient::DEPLOY_JOB : JenkinsClient::DECOMMISSION_JOB,
             $entity
           );
 
@@ -386,7 +382,7 @@ function ua_sm_custom_node_delete(EntityInterface $entity) {
 
     case 'ua_sm_site_instance':
       if (\Drupal::config('ua_sm_custom.settings')->get('jenkins')['enabled']) {
-        ua_sm_custom_run_job('destroy', $entity);
+        \Drupal::service('ua_sm_custom.jenkins_client')->job(JenkinsClient::DECOMMISSION_JOB, $entity);
       }
       break;
   }

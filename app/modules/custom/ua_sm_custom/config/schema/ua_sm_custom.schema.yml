@@ -17,21 +17,18 @@ ua_sm_custom.settings:
         token:
           type: string
           label: 'Token'
-        provision_job:
-          type: string
-          label: 'Provision Job'
-        deploy_job:
-          type: string
-          label: 'Deploy Job'
-        decommission_job:
-          type: string
-          label: 'Decommission Job'
-        destroy_job:
-          type: string
-          label: 'Destroy Job'
         backup_job:
           type: string
           label: 'Backup Job'
+        clone_job:
+          type: string
+          label: 'Clone Job'
+        decommission_job:
+          type: string
+          label: 'Decommission Job'
+        deploy_job:
+          type: string
+          label: 'Deploy Job'
         restore_job:
           type: string
           label: 'Restore Job'

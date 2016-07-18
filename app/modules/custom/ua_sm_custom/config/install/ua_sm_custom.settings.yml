@@ -2,11 +2,10 @@ jenkins:
   enabled: true
   base_uri: ''
   token: ''
-  provision_job: ''
-  deploy_job: ''
-  decommission_job: ''
-  destroy_job: ''
   backup_job: ''
+  clone_job: ''
+  decommission_job: ''
+  deploy_job: ''
   restore_job: ''
 ldap:
   enabled: true

@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains Drupal\ua_sm_custom\Service\JenkinsClient.
- */
-
 namespace Drupal\ua_sm_custom\Service;
 
 use Drupal\Core\Entity\EntityInterface;
@@ -26,6 +21,15 @@ class JenkinsClient extends Client {
   private $config;
 
   /**
+   * Supported Jenkins jobs.
+   */
+  const BACKUP_JOB = 'backup';
+  const CLONE_JOB = 'clone';
+  const DECOMMISSION_JOB = 'decommission';
+  const DEPLOY_JOB = 'deploy';
+  const RESTORE_JOB = 'restore';
+
+  /**
    * Override constructor and feed in base URI from config.
    */
   public function __construct() {
@@ -45,10 +49,14 @@ class JenkinsClient extends Client {
    *   The response from Jenkins.
    */
   public function job($job_type, EntityInterface $site_instance) {
-    $environment = reset($site_instance->field_ua_sm_environment->referencedEntities());
-    $platform = reset($environment->field_ua_sm_platform->referencedEntities());
-    $build_server = reset($platform->field_ua_sm_build_server->referencedEntities());
-    $deploy_server = reset($site_instance->field_ua_sm_server->referencedEntities());
+    $environments = $site_instance->field_ua_sm_environment->referencedEntities();
+    $environment = reset($environments);
+    $platforms = $environment->field_ua_sm_platform->referencedEntities();
+    $platform = reset($platforms);
+    $build_servers = $platform->field_ua_sm_build_server->referencedEntities();
+    $build_server = reset($build_servers);
+    $deploy_servers = $site_instance->field_ua_sm_server->referencedEntities();
+    $deploy_server = reset($deploy_servers);
 
     $build_host_ssh = $build_server->field_ua_sm_ssh_user->value . '@' . $build_server->field_ua_sm_hostname->value;
     $deploy_host_ssh = $deploy_server->field_ua_sm_ssh_user->value . '@' . $deploy_server->field_ua_sm_hostname->value;
@@ -57,10 +65,10 @@ class JenkinsClient extends Client {
 
     // Create token with environment_id and unix timestamp of backup to restore.
     if (isset($site_instance->backup_timestamp) && isset($site_instance->backup_env_id)) {
-      $backup = $site_instance->backup_env_id . '/' . $site_instance->backup_timestamp;
+      $backup_token = $site_instance->backup_env_id . '/' . $site_instance->backup_timestamp;
     }
     else {
-      $backup = NULL;
+      $backup_token = NULL;
     }
 
     $query = [
@@ -70,7 +78,7 @@ class JenkinsClient extends Client {
       'DEPLOY_HOST_SSH' => $deploy_host_ssh,
       'SITE_INSTANCE_ID' => $site_instance->id(),
       'SM_SITE_URL' => $uasm_site_url,
-      'BACKUP_TOKEN' => $backup
+      'BACKUP_TOKEN' => $backup_token,
     ];
 
     // Looks like there are some auth issues with anon read access.

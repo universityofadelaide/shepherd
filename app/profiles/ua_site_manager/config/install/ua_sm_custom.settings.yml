@@ -2,10 +2,10 @@ jenkins:
   enabled: false
   base_uri: null
   token: null
-  provision_job: null
-  deploy_job: null
+  backup_job: null
+  clone_job: null
   decommission_job: null
-  destroy_job: null
+  deploy_job: null
   restore_job: null
 ldap:
   enabled: false

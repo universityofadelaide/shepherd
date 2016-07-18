@@ -2,7 +2,7 @@ ua_sm_custom.environment-add-form:
   path: '/site/{node}/environment/add'
   defaults:
     _form: '\Drupal\ua_sm_custom\Form\EnvironmentAddForm'
-    _title: 'Add Environment'
+    _title: 'Add environment'
   options:
     _auth: [ 'basic_auth', 'cookie' ]
     no_cache: TRUE
@@ -12,7 +12,7 @@ ua_sm_custom.environment-clone-form:
   path: '/site/{site}/environment/clone/{environment}'
   defaults:
     _form: '\Drupal\ua_sm_custom\Form\EnvironmentCloneForm'
-    _title: 'Clone Environment'
+    _title: 'Clone environment'
   options:
     _auth: [ 'basic_auth', 'cookie' ]
     parameters:
@@ -27,7 +27,22 @@ ua_sm_custom.environment-backup-form:
   path: '/site/{site}/environment/backup/{environment}'
   defaults:
     _form: '\Drupal\ua_sm_custom\Form\EnvironmentBackupForm'
-    _title: 'Backup Environment'
+    _title: 'Backup environment'
+  options:
+    _auth: [ 'basic_auth', 'cookie' ]
+    parameters:
+      site:
+        type: entity:node
+      environment:
+        type: entity:node
+    no_cache: TRUE
+  requirements:
+    _permission: 'sm access environment'
+ua_sm_custom.environment-restore-form:
+  path: '/site/{site}/environment/restore/{environment}'
+  defaults:
+    _form: '\Drupal\ua_sm_custom\Form\EnvironmentRestoreForm'
+    _title: 'Restore backup'
   options:
     _auth: [ 'basic_auth', 'cookie' ]
     parameters:
@@ -59,7 +74,7 @@ ua_sm_custom.site-add-form:
   path: '/site/add'
   defaults:
     _form: '\Drupal\ua_sm_custom\Form\SiteAddForm'
-    _title: 'Add Site'
+    _title: 'Add site'
   options:
     _auth: [ 'basic_auth', 'cookie' ]
     no_cache: TRUE
@@ -96,7 +111,7 @@ ua_sm_custom.user-edit-form:
   path: '/site/{node}/user/{user}/edit'
   defaults:
     _form: '\Drupal\ua_sm_custom\Form\UserEditForm'
-    _title: 'Edit User'
+    _title: 'Edit user'
   options:
     _auth: [ 'basic_auth', 'cookie' ]
     no_cache: TRUE
