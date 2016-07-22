@@ -10,7 +10,17 @@
     componentDidMount: function() {
       this.loadStateFromServer();
       // Component has been mounted, now we can update the state every 5 seconds.
-      setInterval(this.loadStateFromServer, 5000);
+      this.intervalFromServer = setInterval(this.loadStateFromServer, 5000);
+    },
+    componentWillUpdate: function(nextProps, nextState) {
+      if (nextState.instanceState.failed == 0 && nextState.instanceState.building == 0 ) {
+        // We reached a level of desired state.
+        // Everything on this environment is running.
+        // Set the inverval time to something longer
+        // Every 10 minutes.
+        clearInterval(this.intervalFromServer);
+        this.intervalFromServer(this.loadStateFromServer, 100000);
+      }
     },
     loadStateFromServer: function() {
       // Make an ajax request to the server.
