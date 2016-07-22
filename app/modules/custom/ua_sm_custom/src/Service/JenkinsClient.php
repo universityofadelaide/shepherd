@@ -23,11 +23,11 @@ class JenkinsClient extends Client {
   /**
    * Supported Jenkins jobs.
    */
-  const BACKUP_JOB = 'backup';
-  const CLONE_JOB = 'clone';
-  const DECOMMISSION_JOB = 'decommission';
-  const DEPLOY_JOB = 'deploy';
-  const RESTORE_JOB = 'restore';
+  const BACKUP_JOB = 'backup_job';
+  const CLONE_JOB = 'clone_job';
+  const DECOMMISSION_JOB = 'decommission_job';
+  const DEPLOY_JOB = 'deploy_job';
+  const RESTORE_JOB = 'restore_job';
 
   /**
    * Override constructor and feed in base URI from config.
@@ -72,7 +72,7 @@ class JenkinsClient extends Client {
     }
 
     $query = [
-      'job' => $this->config[$job_type . '_job'],
+      'job' => $this->config[$job_type],
       'token' => $this->config['token'],
       'BUILD_HOST_SSH' => $build_host_ssh,
       'DEPLOY_HOST_SSH' => $deploy_host_ssh,
