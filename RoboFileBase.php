@@ -190,6 +190,14 @@ abstract class RoboFileBase extends \Robo\Tasks implements RoboFileDrupalDeployI
   }
 
   /**
+   * Run all the drupal updates against a build.
+   */
+  public function buildApplyUpdates() {
+    $successful = $this->_exec("$this->drush_cmd -y updatedb")->wasSuccessful();
+    $this->checkFail($successful, 'running drupal updates failed.');
+  }
+
+  /**
    * Clean the application root in preparation for a new build.
    */
   public function buildClean() {
