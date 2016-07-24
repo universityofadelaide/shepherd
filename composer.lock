@@ -967,7 +967,7 @@
             "source": {
                 "type": "git",
                 "url": "https://git.drupal.org/project/entity_reference_revisions.git",
-                "reference": "3734a44acf08234d00c5183f1d3e5ca2cb06fa0f"
+                "reference": "713c9a259931d37dd836536415e165c102317c0f"
             },
             "require": {
                 "drupal/core": "8.*"
@@ -984,7 +984,7 @@
             ],
             "description": "Adds a Entity Reference field type with revision support.",
             "homepage": "https://www.drupal.org/project/entity_reference_revisions",
-            "time": "2016-07-12 09:40:07"
+            "time": "2016-07-21 15:49:03"
         },
         {
             "name": "drupal/paragraphs",
@@ -992,7 +992,7 @@
             "source": {
                 "type": "git",
                 "url": "https://git.drupal.org/project/paragraphs",
-                "reference": "2a1b0bf13fccae71c45bf233924ed15958186507"
+                "reference": "7d70adcb69416f35eb2d2596340461df8efda009"
             },
             "require": {
                 "drupal/core": "8.*",
@@ -1027,7 +1027,7 @@
             ],
             "description": "Enables the creation of paragraphs entities. To safely uninstall, go first to Structure > Paragraphs types > Settings.",
             "homepage": "https://www.drupal.org/project/paragraphs",
-            "time": "2016-07-19 11:56:37"
+            "time": "2016-07-23 11:51:27"
         },
         {
             "name": "drupal/r4032login",
@@ -3465,14 +3465,14 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.adelaide.edu.au:web-team/ua_d8_theme.git",
-                "reference": "4372379ad2b67d5a424ca009e07ffaad9482946c"
+                "reference": "67977faf09fee31bafd309368e307bf5001a59cf"
             },
             "type": "drupal-theme",
             "license": [
                 "GPL-2.0+"
             ],
             "description": "The University of Adelaide's official Drupal 8 theme.",
-            "time": "2016-07-20 07:54:16"
+            "time": "2016-07-22 01:20:18"
         },
         {
             "name": "zendframework/zend-diactoros",
