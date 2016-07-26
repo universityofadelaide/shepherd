@@ -14,7 +14,7 @@ required: true
 translatable: false
 default_value:
   -
-    value: 'git@gitlab.adelaide.edu.au:web-team/ua-d8-base-site.git'
+    value: 'git@gitlab.adelaide.edu.au:web-team/ua-wcms-d8.git'
 default_value_callback: ''
 settings: {  }
 field_type: string
