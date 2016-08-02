@@ -156,9 +156,9 @@ class SiteManagerSettings extends ConfigFormBase {
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $config = $this->config('ua_sm_custom.settings');
+    $config->delete();
 
     $controlled_roles_data = explode("\r\n", trim($form_state->getValue('controlled_roles')['textarea']));
-    $config->delete('controlled_roles');
     foreach ($controlled_roles_data as $role) {
       $controlled_role = explode('|', $role);
       if (trim($controlled_role[0]) != '' && trim($controlled_role[1]) != '') {
@@ -167,7 +167,6 @@ class SiteManagerSettings extends ConfigFormBase {
     }
 
     $environment_domains_data = explode("\r\n", trim($form_state->getValue('environment_domains')['textarea']));
-    $config->delete('environment_domains');
     foreach ($environment_domains_data as $environment_domain) {
       list($environment, $domain) = explode('|', $environment_domain);
       if (trim($environment) != '' && trim($domain) != '') {
