@@ -14,7 +14,7 @@ required: false
 translatable: false
 default_value:
   -
-    value: 'ua/lamp'
+    value: 'uofa/apache2-php7'
 default_value_callback: ''
 settings: {  }
 field_type: string
