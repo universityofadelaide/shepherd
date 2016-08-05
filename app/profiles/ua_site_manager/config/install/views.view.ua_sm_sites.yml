@@ -445,7 +445,7 @@ display:
           exclude: false
           alter:
             alter_text: true
-            text: '<a href="http://{{ field_ua_sm_domain_name }}/{{ field_ua_sm_path }}" target="_blank">{{ field_ua_sm_domain_name }}/{{ field_ua_sm_path }}</a>'
+            text: '<a href="http://{{ field_ua_sm_domain_name }}{{ field_ua_sm_path }}" target="_blank">{{ field_ua_sm_domain_name }}{{ field_ua_sm_path }}</a>'
             make_link: false
             path: ''
             absolute: false

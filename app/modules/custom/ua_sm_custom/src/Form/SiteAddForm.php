@@ -162,8 +162,12 @@ class SiteAddForm extends FormBase {
   public function validateForm(array &$form, FormStateInterface $form_state) {
     $input = $form_state->getUserInput();
 
+    // Check path has a leading slash.
+    if (!empty($input['field_ua_sm_path']) && substr($input['field_ua_sm_path'], 0, 1) != '/') {
+      $form_state->setValue('field_ua_sm_path', '/' . $form_state->getValue('field_ua_sm_path'));
+    }
+
     // Prevent duplicate path domain.
-    // @todo Handle slashes before/after path.
     $query = \Drupal::entityQuery('node')
       ->condition('type', 'ua_sm_site')
       ->condition('field_ua_sm_domain_name', $input['field_ua_sm_domain_name']);
@@ -181,7 +185,7 @@ class SiteAddForm extends FormBase {
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
-    $input = $form_state->getUserInput();
+    $input = $form_state->getValues();
 
     $site_fields = [
       'type' => 'ua_sm_site',
