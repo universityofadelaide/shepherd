@@ -30,4 +30,14 @@ interface RoboFileDrupalDeployInterface {
    */
   public function environmentRebuild();
 
+  /**
+   * Apply updates.
+   */
+  public function buildApplyUpdates();
+
+  /**
+   * Set files permissions.
+   */
+  public function devSetFilesOwner();
+
 }
