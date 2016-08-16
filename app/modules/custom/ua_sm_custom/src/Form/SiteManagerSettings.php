@@ -144,7 +144,7 @@ class SiteManagerSettings extends ConfigFormBase {
     $form['backup_service']['path'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Path'),
-      '#description' => 'Directory path to the backup directory',
+      '#description' => 'Directory path to the backup directory, no trailing slash required.',
       '#default_value' => $config->get('backup_service.path'),
     ];
 
@@ -187,6 +187,8 @@ class SiteManagerSettings extends ConfigFormBase {
       ->set('jenkins.restore_job', $jenkins_data['restore_job']);
     $config
       ->set('ldap.enabled', $form_state->getValue('ldap')['enabled']);
+    $config
+      ->set('backup_service.path', rtrim($form_state->getValue('backup_service')['path'], '/'));
     $config->save();
     parent::submitForm($form, $form_state);
   }

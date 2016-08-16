@@ -55,7 +55,7 @@ class Backup {
    *   An array of backup folders.
    */
   public function get($site, $environment) {
-    $path = $this->config['path'] . "$site/$environment";
+    $path = $this->config['path'] . "/$site/$environment";
     return array_values(array_diff(scandir($path), ['.', '..']));
   }
 
@@ -69,7 +69,7 @@ class Backup {
    *   An array of backup folders.
    */
   public function getAll($site) {
-    $path = $this->config['path'] . "$site";
+    $path = $this->config['path'] . "/$site";
     $environments = array_diff(scandir($path), ['.', '..']);
     $backups = [];
     foreach ($environments as $environment) {
