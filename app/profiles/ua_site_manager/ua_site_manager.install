@@ -768,7 +768,7 @@ function ua_site_manager_update_8022(&$sandbox) {
 /**
  * Update site environmnts view with URL field.
  */
-function ua_site_manager_update_8023(&$sandbox) {
+function ua_site_manager_update_8024(&$sandbox) {
   $config_path = drupal_get_path('profile', 'ua_site_manager') . '/config/install';
   $source = new Drupal\Core\Config\FileStorage($config_path);
   $config_storage = \Drupal::service('config.storage');
