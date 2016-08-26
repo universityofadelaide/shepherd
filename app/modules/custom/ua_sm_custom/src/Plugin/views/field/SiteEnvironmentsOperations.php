@@ -17,9 +17,9 @@ use Drupal\views\ResultRow;
  *
  * @ingroup views_field_handlers
  *
- * @ViewsField("site_environment_operations")
+ * @ViewsField("site_environments_operations")
  */
-class SiteEnvironmentOperations extends FieldPluginBase {
+class SiteEnvironmentsOperations extends FieldPluginBase {
 
   /**
    * {@inheritdoc}
