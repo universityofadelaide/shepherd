@@ -9,6 +9,7 @@
       "jenkins.decommission_job": "decommission",
       "jenkins.deploy_job": "deploy",
       "jenkins.restore_job": "restore",
+      "jenkins.reverse_proxy_job": "varnish",
       "ldap.enabled": false,
       "backup_service.path": "/code/backup"
     }

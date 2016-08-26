@@ -82,6 +82,12 @@ class SiteManagerSettings extends ConfigFormBase {
       '#description' => $this->t('The job to trigger when a clone/restore environment is created.'),
       '#default_value' => $config->get('jenkins.restore_job'),
     ];
+    $form['jenkins']['reverse_proxy_job'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('Reverse Proxy Job'),
+      '#description' => $this->t('The job to trigger when the domain and paths of an environment are changed.'),
+      '#default_value' => $config->get('jenkins.reverse_proxy_job'),
+    ];
     $form['ldap'] = [
       '#type' => 'details',
       '#title' => $this->t('LDAP Integration'),
@@ -184,7 +190,8 @@ class SiteManagerSettings extends ConfigFormBase {
       ->set('jenkins.clone_job', $jenkins_data['clone_job'])
       ->set('jenkins.decommission_job', $jenkins_data['decommission_job'])
       ->set('jenkins.deploy_job', $jenkins_data['deploy_job'])
-      ->set('jenkins.restore_job', $jenkins_data['restore_job']);
+      ->set('jenkins.restore_job', $jenkins_data['restore_job'])
+      ->set('jenkins.reverse_proxy_job', $jenkins_data['reverse_proxy_job']);
     $config
       ->set('ldap.enabled', $form_state->getValue('ldap')['enabled']);
     $config

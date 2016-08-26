@@ -318,6 +318,8 @@ function ua_sm_custom_node_update(EntityInterface $entity) {
 
     case 'ua_sm_environment':
       ua_sm_custom_invalidate_site_cache($entity);
+      \Drupal::service('ua_sm_custom.jenkins_client')->environmentJob(
+        JenkinsClient::REVERSE_PROXY_JOB, $entity);
       break;
 
     case 'ua_sm_site_instance':

@@ -7,6 +7,7 @@ jenkins:
   decommission_job: 'decommission_job'
   deploy_job: 'deploy_job'
   restore_job: 'restore_job'
+  reverse_proxy_job: 'reverse_proxy_job'
 ldap:
   enabled: true
 controlled_roles:

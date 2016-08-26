@@ -28,6 +28,7 @@ class JenkinsClient extends Client {
   const DECOMMISSION_JOB = 'decommission_job';
   const DEPLOY_JOB = 'deploy_job';
   const RESTORE_JOB = 'restore_job';
+  const REVERSE_PROXY_JOB = 'reverse_proxy_job';
 
   /**
    * Override constructor and feed in base URI from config.
@@ -87,4 +88,39 @@ class JenkinsClient extends Client {
     return $this->get('buildWithParameters', ['query' => $query]);
   }
 
+  /**
+   * Runs a given jenkins job for a provided environment. Added to enable
+   * support for environment level jobs, without deprecating instance level
+   * jobs.
+   *
+   * @param string $job_type
+   *   The type of jenkins job to run.
+   * @param \Drupal\Core\Entity\EntityInterface $environment
+   *   The environment entity to apply job to.
+   *
+   * @return ResponseInterface
+   *   The response from Jenkins.
+   */
+  public function environmentJob($job_type, EntityInterface $environment) {
+    $platforms = $environment->field_ua_sm_platform->referencedEntities();
+    $platform = reset($platforms);
+    $build_servers = $platform->field_ua_sm_build_server->referencedEntities();
+    $build_server = reset($build_servers);
+
+    $build_host_ssh = $build_server->field_ua_sm_ssh_user->value . '@' . $build_server->field_ua_sm_hostname->value;
+
+    $uasm_site_url = trim(Url::fromUri('base:', ['absolute' => TRUE])->toString(), '/');
+
+    $query = [
+      'job' => $this->config[$job_type],
+      'token' => $this->config['token'],
+      'BUILD_HOST_SSH' => $build_host_ssh,
+      'SM_SITE_URL' => $uasm_site_url,
+    ];
+
+    // Looks like there are some auth issues with anon read access.
+    // buildByToken solves this issue.
+    // todo: Ensure that the base url has a trailing slash.
+    return $this->get('buildWithParameters', ['query' => $query]);
+  }
 }

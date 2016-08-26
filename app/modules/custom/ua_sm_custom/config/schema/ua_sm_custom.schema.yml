@@ -32,6 +32,9 @@ ua_sm_custom.settings:
         restore_job:
           type: string
           label: 'Restore Job'
+        reverse_proxy_job:
+          type: string
+          label: 'Reverse Proxy Job'
     ldap:
       type: mapping
       label: 'LDAP Integration'
