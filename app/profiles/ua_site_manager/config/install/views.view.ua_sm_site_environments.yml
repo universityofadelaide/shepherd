@@ -228,14 +228,14 @@ display:
           separator: ', '
           field_api_classes: false
           plugin_id: field
-        field_ua_sm_domain_name:
-          id: field_ua_sm_domain_name
-          table: node__field_ua_sm_domain_name
-          field: field_ua_sm_domain_name
+        field_ua_sm_url:
+          id: field_ua_sm_url
+          table: node_field_data
+          field: site_environment_url
           relationship: none
           group_type: group
           admin_label: ''
-          label: 'Domain name'
+          label: 'Url'
           exclude: false
           alter:
             alter_text: false
@@ -290,7 +290,7 @@ display:
           multi_type: separator
           separator: ', '
           field_api_classes: false
-          plugin_id: field
+          plugin_id: site_environment_url
         site_environment_instances:
           id: site_environment_instances
           table: node_field_data

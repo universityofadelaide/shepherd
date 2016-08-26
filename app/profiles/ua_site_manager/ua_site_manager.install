@@ -764,3 +764,15 @@ function ua_site_manager_update_8022(&$sandbox) {
   $config_storage = \Drupal::service('config.storage');
   $config_storage->write('block.block.ua_theme_tabs', $source->read('block.block.ua_theme_tabs'));
 }
+
+/**
+ * Update site environmnts view with URL field.
+ */
+function ua_site_manager_update_8023(&$sandbox) {
+  $config_path = drupal_get_path('profile', 'ua_site_manager') . '/config/install';
+  $source = new Drupal\Core\Config\FileStorage($config_path);
+  $config_storage = \Drupal::service('config.storage');
+  $config = 'views.view.ua_sm_site_environments';
+  $config_storage->delete($config);
+  $config_storage->write($config, $source->read($config));
+}

@@ -53,7 +53,7 @@ class SiteEnvironmentInstances extends FieldPluginBase {
       $urls['#items']["$hostname$port"] = [
         '#type' => 'link',
         '#title' => $this->t("$hostname:$port"),
-        '#url' => Url::fromUri("http://${hostname}:${port}"),
+        '#url' => Url::fromUri('entity:node/' . $instance->id()),
       ];
     }
     $build['environment_instances'] = $urls;

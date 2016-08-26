@@ -1,7 +1,7 @@
 <?php
 /**
  * @file
- * Definition of Drupal\ua_sm_custom\Plugin\views\field\SiteEnvironmentsOperations.
+ * Definition of Drupal\ua_sm_custom\Plugin\views\field\SiteEnvironmentOperations.
  */
 
 namespace Drupal\ua_sm_custom\Plugin\views\field;
@@ -17,9 +17,9 @@ use Drupal\views\ResultRow;
  *
  * @ingroup views_field_handlers
  *
- * @ViewsField("site_environments_operations")
+ * @ViewsField("site_environment_operations")
  */
-class SiteEnvironmentsOperations extends FieldPluginBase {
+class SiteEnvironmentOperations extends FieldPluginBase {
 
   /**
    * {@inheritdoc}
