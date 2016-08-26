@@ -140,11 +140,14 @@ class EnvironmentCloneForm extends FormBase {
     // Pass through the source environment id, to trigger the clone job on save.
     $input['previous_env_id'] = $form_state->get('environment')->id();
 
-    $environment = Node::create($input);
+    // Load parent site to get its domain.
+    $site = Node::load($input['field_ua_sm_site']);
 
     // Assign a unique domain name.
-    $environment->field_ua_sm_domain_name->value = \Drupal::service('ua_sm_custom.hosts_config')->generateDomainForEnv($environment->field_ua_sm_domain_name->value, $environment->field_ua_sm_machine_name->value);
+    $input['field_ua_sm_domain_name'] = \Drupal::service('ua_sm_custom.hosts_config')
+      ->generateDomainForEnv($site, $input['field_ua_sm_machine_name']);
 
+    $environment = Node::create($input);
     $environment->validate();
     $environment->save();
 

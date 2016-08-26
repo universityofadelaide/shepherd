@@ -53,7 +53,7 @@ class EnvironmentAddForm extends FormBase {
         '#options' => [
           'dev' => 'DEV',
           'uat' => 'UAT',
-          'prd' => 'PROD',
+          'prd' => 'PRD',
         ],
         '#default_value' => 'dev',
         '#maxlength' => 255,
@@ -95,8 +95,16 @@ class EnvironmentAddForm extends FormBase {
     $form_state->cleanValues();
     $input = $form_state->getUserInput();
 
+    // Load parent site to get its domain.
+    $site = Node::load($input['field_ua_sm_site']);
+
+    // Generate unique domain for environment.
+    $input['field_ua_sm_domain_name'] = \Drupal::service('ua_sm_custom.hosts_config')
+      ->generateDomainForEnv($site, $input['field_ua_sm_machine_name']);
+
     $environment = Node::create($input);
     $environment->validate();
+    // @todo We should validate this to ensure only one prd environment exists.
     $environment->save();
 
     drupal_set_message($this->t('Successfully added environment %title.', [

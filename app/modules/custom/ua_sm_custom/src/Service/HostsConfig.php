@@ -2,6 +2,8 @@
 
 namespace Drupal\ua_sm_custom\Service;
 
+use Drupal\node\Entity\Node;
+
 /**
  * Provides hosts configuration for export.
  *
@@ -70,31 +72,53 @@ class HostsConfig {
    * Caveat: this function does not care about uniqueness of domain/path
    * combinations.
    *
-   * @param string $site_domain
-   *   The domain of the parent site.
+   * @param Node $site
+   *   The parent site node.
    * @param string $environment_type
    *   The environment type machine name, i.e. stg, dev, prd.
    *
    * @return string
    *   The resultant generated domain name.
    */
-  public function generateDomainForEnv($site_domain, $environment_type) {
+  public function generateDomainForEnv($site, $environment_type) {
+    // Generate default domain.
     $environment_domains = \Drupal::config('ua_sm_custom.settings')
       ->get('environment_domains');
 
     // Use site domain for production environments.
     if ($environment_type === 'prd') {
-      return $site_domain;
+      return $site->field_ua_sm_domain_name->value;
     }
 
     // For other environments, prepend the first token of the site domain.
-    list($subdomain) = explode('.', $site_domain);
+    list($subdomain) = explode('.', $site->field_ua_sm_domain_name->value);
     if (strlen($subdomain) && array_key_exists($environment_type, $environment_domains)) {
-      return $subdomain . '.' . $environment_domains[$environment_type];
+      $defaultDomain = $subdomain . '.' . $environment_domains[$environment_type];
+    }
+    else {
+      // Fallback case.
+      $defaultDomain = $site->field_ua_sm_domain_name->value;
     }
 
-    // Fallback case.
-    return $site_domain;
+    // Fetch site's existing domains.
+    $environments = \Drupal::service('ua_sm_custom.site')
+      ->loadRelatedEntitiesByField($site, 'field_ua_sm_site', 'ua_sm_environment');
+    $domains = array_map(function ($env) {
+      return $env->field_ua_sm_domain_name->value;
+    }, $environments);
+
+    $domain = $defaultDomain;
+    $i = 1;
+
+    // Generate a unique domain.
+    while (in_array($domain, $domains)) {
+      $pieces = explode('.', $defaultDomain);
+      $pieces[0] .= '-' . $i;
+      $domain = implode('.', $pieces);
+      $i++;
+    }
+
+    return $domain;
   }
 
 }

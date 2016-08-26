@@ -218,7 +218,7 @@ function ua_sm_custom_node_insert(EntityInterface $entity) {
           'field_ua_sm_platform' => isset($entity->field_ua_sm_platform) ? $platforms[$entity->field_ua_sm_platform] : reset($platforms),
           // @todo Convert environment types (e.g 'uat') to constants.
           'field_ua_sm_domain_name' => \Drupal::service('ua_sm_custom.hosts_config')
-            ->generateDomainForEnv($entity->field_ua_sm_domain_name->value, 'uat'),
+            ->generateDomainForEnv($entity, 'uat'),
           'field_ua_sm_git_reference' => isset($entity->field_ua_sm_git_reference) ? $entity->field_ua_sm_git_reference : 'develop',
           'field_ua_sm_database_password' => \Drupal::service('ua_sm_custom.password')->generate(),
         ]);
