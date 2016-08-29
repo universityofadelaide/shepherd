@@ -750,7 +750,7 @@
             "source": {
                 "type": "git",
                 "url": "https://git.drupal.org/project/cas",
-                "reference": "28ef9c54ba76694ee2dba0bb4aceb38ef6a84d4d"
+                "reference": "df1d032cfb5285c8df419defcaf54e3a9701fe03"
             },
             "require": {
                 "drupal/core": "8.*"
@@ -789,7 +789,7 @@
             ],
             "description": "Provides CAS authentication for Drupal.",
             "homepage": "http://drupal.org/project/cas",
-            "time": "2016-07-04 14:46:59"
+            "time": "2016-08-12 12:39:21"
         },
         {
             "name": "drupal/core",
@@ -969,7 +969,7 @@
             "source": {
                 "type": "git",
                 "url": "https://git.drupal.org/project/entity_reference_revisions.git",
-                "reference": "500d30fe98e8cafd05ff770c9748169acd257aeb"
+                "reference": "1dbb85a961e12b33ec60666ba06ef9b1fbc66c86"
             },
             "require": {
                 "drupal/core": "8.*"
@@ -986,7 +986,7 @@
             ],
             "description": "Adds a Entity Reference field type with revision support.",
             "homepage": "https://www.drupal.org/project/entity_reference_revisions",
-            "time": "2016-07-21 15:50:27"
+            "time": "2016-08-20 07:04:07"
         },
         {
             "name": "drupal/paragraphs",
@@ -994,7 +994,7 @@
             "source": {
                 "type": "git",
                 "url": "https://git.drupal.org/project/paragraphs",
-                "reference": "33663b563ad24f6616409ef65eab6c506d653fdf"
+                "reference": "c025fa8206ce3897317965a592c27194ff724ac2"
             },
             "require": {
                 "drupal/core": "8.*",
@@ -1015,6 +1015,7 @@
                 "drupal/node": "Required by drupal/paragraphs_demo",
                 "drupal/search_api": "Required by drupal/paragraphs_demo",
                 "drupal/search_api_db": "Required by drupal/paragraphs_demo",
+                "drupal/taxonomy": "Required by drupal/paragraphs_demo",
                 "drupal/views": "Required by drupal/paragraphs_demo"
             },
             "type": "drupal-module",
@@ -1029,7 +1030,7 @@
             ],
             "description": "Enables the creation of paragraphs entities. To safely uninstall, go first to Structure > Paragraphs types > Settings.",
             "homepage": "https://www.drupal.org/project/paragraphs",
-            "time": "2016-08-07 22:38:36"
+            "time": "2016-08-17 15:15:13"
         },
         {
             "name": "drupal/r4032login",
@@ -3468,14 +3469,14 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.adelaide.edu.au:web-team/ua_d8_theme.git",
-                "reference": "908ebfb254d12b8d9d533d18c1418efa5fc43c6b"
+                "reference": "ad75eaf5fd1fb133b799298dee8717b6c41d5867"
             },
             "type": "drupal-theme",
             "license": [
                 "GPL-2.0+"
             ],
             "description": "The University of Adelaide's official Drupal 8 theme.",
-            "time": "2016-08-12 03:15:07"
+            "time": "2016-08-26 05:39:31"
         },
         {
             "name": "zendframework/zend-diactoros",
@@ -4650,23 +4651,23 @@
         },
         {
             "name": "sebastian/environment",
-            "version": "1.3.7",
+            "version": "1.3.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/environment.git",
-                "reference": "4e8f0da10ac5802913afc151413bc8c53b6c2716"
+                "reference": "be2c607e43ce4c89ecd60e75c6a85c126e754aea"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/environment/zipball/4e8f0da10ac5802913afc151413bc8c53b6c2716",
-                "reference": "4e8f0da10ac5802913afc151413bc8c53b6c2716",
+                "url": "https://api.github.com/repos/sebastianbergmann/environment/zipball/be2c607e43ce4c89ecd60e75c6a85c126e754aea",
+                "reference": "be2c607e43ce4c89ecd60e75c6a85c126e754aea",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.3.3"
+                "php": "^5.3.3 || ^7.0"
             },
             "require-dev": {
-                "phpunit/phpunit": "~4.4"
+                "phpunit/phpunit": "^4.8 || ^5.0"
             },
             "type": "library",
             "extra": {
@@ -4696,7 +4697,7 @@
                 "environment",
                 "hhvm"
             ],
-            "time": "2016-05-17 03:18:57"
+            "time": "2016-08-18 05:49:44"
         },
         {
             "name": "sebastian/exporter",
