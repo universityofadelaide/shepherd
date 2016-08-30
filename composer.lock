@@ -3469,14 +3469,14 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.adelaide.edu.au:web-team/ua_d8_theme.git",
-                "reference": "ad75eaf5fd1fb133b799298dee8717b6c41d5867"
+                "reference": "ce721e978068d98390d30673f492804dd8ba0d4e"
             },
             "type": "drupal-theme",
             "license": [
                 "GPL-2.0+"
             ],
             "description": "The University of Adelaide's official Drupal 8 theme.",
-            "time": "2016-08-26 05:39:31"
+            "time": "2016-08-29 06:19:24"
         },
         {
             "name": "zendframework/zend-diactoros",
