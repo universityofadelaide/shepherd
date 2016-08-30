@@ -53,6 +53,8 @@ abstract class RoboFileBase extends \Robo\Tasks implements RoboFileDrupalDeployI
     $this->web_server_restart   = "$this->sudo_cmd service apache2 restart";
     $this->web_server_user      = $this->getWebServerUser();
 
+    $this->file_private_path    = $this->web_server_user == 'vagrant' ? '/vagrant/private' : '/web/private';
+
     $this->config_file          = "config.json";
     $this->config_default_file  = "config.default.json";
     $this->settings_php         = "$this->application_root/sites/default/settings.php";
@@ -102,6 +104,7 @@ abstract class RoboFileBase extends \Robo\Tasks implements RoboFileDrupalDeployI
     $start = new DateTime();
     $this->buildMake();
     $this->initLocalSettings();
+    $this->devCreateFilesFolders();
     $this->buildInstall();
     $this->writeLocalSettings();
     $this->includeLocalSettings();
@@ -193,8 +196,12 @@ abstract class RoboFileBase extends \Robo\Tasks implements RoboFileDrupalDeployI
    * Run all the drupal updates against a build.
    */
   public function buildApplyUpdates() {
+    // Run the module updates.
     $successful = $this->_exec("$this->drush_cmd -y updatedb")->wasSuccessful();
     $this->checkFail($successful, 'running drupal updates failed.');
+
+    // Apply current configuration.
+    $this->buildApplyConfig();
   }
 
   /**
@@ -550,11 +557,25 @@ abstract class RoboFileBase extends \Robo\Tasks implements RoboFileDrupalDeployI
   }
 
   /**
+   * Create a private files folder for local dev.
+   */
+  public function devCreateFilesFolders() {
+    $this->devConfigWriteable();
+    $this->taskFilesystemStack()
+      ->stopOnFail(FALSE)
+      ->mkdir($this->application_root . '/sites/default/files')
+      ->mkdir($this->file_private_path)
+      ->run();
+    $this->devConfigReadOnly();
+  }
+
+  /**
    * Set the owner and group of all files in the files dir to the web user.
    */
   public function devSetFilesOwner() {
     $this->say("Setting files directory owner.");
     $this->_exec("chown $this->web_server_user:$this->web_server_user -R $this->application_root/sites/default/files");
+    $this->_exec("chown $this->web_server_user:$this->web_server_user -R $this->file_private_path");
   }
 
   /**
@@ -732,8 +753,14 @@ abstract class RoboFileBase extends \Robo\Tasks implements RoboFileDrupalDeployI
     // Set site_id in php file so that it is immutable.
     $drupal_settings['settings']['site_id'] = $this->config['site']['id'];
 
+    // Set the install profile.
+    $drupal_settings['settings']['install_profile'] = $this->drupal_profile;
+
     // Set the config_sync_dir from config.
     $drupal_settings['config_directories']['sync'] = $this->config['environment']['config_sync_dir'];
+
+    // Set the private files directory.
+    $drupal_settings['settings']['file_private_path'] = $this->file_private_path;
 
     // Set the hash_salt from config.
     $drupal_settings['settings']['hash_salt'] = $this->config['environment']['hash_salt'];
