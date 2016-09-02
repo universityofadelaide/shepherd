@@ -71,7 +71,7 @@
         },
         "patches": {
             "drupal/r4032login": {
-                "Override return destination parameter": "https://www.drupal.org/files/issues/r4032login_2534308_3.patch"
+                "Override return destination parameter": "https://www.drupal.org/files/issues/r4032login_2534308_2.patch"
             }
         }
     }

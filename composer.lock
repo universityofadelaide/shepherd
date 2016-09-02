@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "a6165c46f49dbca54e89639292aad8e9",
-    "content-hash": "4075f7c8d5d40da0b51cae13b1a53368",
+    "hash": "713e65439d21aa39966bcf51e2c33e7a",
+    "content-hash": "55070a7c9d0a4d3208b40cc9c2ce251f",
     "packages": [
         {
             "name": "composer/installers",
@@ -1054,7 +1054,7 @@
                     "dev-8.x-1.x": "8.1.x-dev"
                 },
                 "patches_applied": {
-                    "Override return destination parameter": "https://www.drupal.org/files/issues/r4032login_2534308_3.patch"
+                    "Override return destination parameter": "https://www.drupal.org/files/issues/r4032login_2534308_2.patch"
                 }
             },
             "notification-url": "https://packagist.drupal-composer.org/downloads/",
@@ -3373,16 +3373,16 @@
         },
         {
             "name": "twig/twig",
-            "version": "v1.24.1",
+            "version": "v1.24.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/twigphp/Twig.git",
-                "reference": "3566d311a92aae4deec6e48682dc5a4528c4a512"
+                "reference": "33093f6e310e6976baeac7b14f3a6ec02f2d79b7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/twigphp/Twig/zipball/3566d311a92aae4deec6e48682dc5a4528c4a512",
-                "reference": "3566d311a92aae4deec6e48682dc5a4528c4a512",
+                "url": "https://api.github.com/repos/twigphp/Twig/zipball/33093f6e310e6976baeac7b14f3a6ec02f2d79b7",
+                "reference": "33093f6e310e6976baeac7b14f3a6ec02f2d79b7",
                 "shasum": ""
             },
             "require": {
@@ -3430,7 +3430,7 @@
             "keywords": [
                 "templating"
             ],
-            "time": "2016-05-30 09:11:59"
+            "time": "2016-09-01 17:50:53"
         },
         {
             "name": "ua-drupal-modules/ua_ldap",
@@ -3474,14 +3474,14 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.adelaide.edu.au:web-team/ua_d8_theme.git",
-                "reference": "7fc41303d1de9ec39fa789801a6bc7d222f05193"
+                "reference": "e1cee5efeb4b6c303a2ec5dac4e3d1fe9d0c5757"
             },
             "type": "drupal-theme",
             "license": [
                 "GPL-2.0+"
             ],
             "description": "The University of Adelaide's official Drupal 8 theme.",
-            "time": "2016-09-01 02:10:00"
+            "time": "2016-09-01 03:29:38"
         },
         {
             "name": "zendframework/zend-diactoros",
@@ -4969,7 +4969,7 @@
         },
         {
             "name": "symfony/css-selector",
-            "version": "v2.7.16",
+            "version": "v2.7.17",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/css-selector.git",
