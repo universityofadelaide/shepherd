@@ -29,9 +29,11 @@ abstract class RoboFileBase extends \Robo\Tasks implements RoboFileDrupalDeployI
   protected $php_disable_module_command;
   protected $settings_php;
   protected $services_yml;
+  protected $file_private_path;
   protected $sudo_cmd;
   protected $web_server_restart;
   protected $web_server_user;
+  protected $local_user;
 
   /**
    * Initialize config variables and apply overrides.
@@ -51,7 +53,8 @@ abstract class RoboFileBase extends \Robo\Tasks implements RoboFileDrupalDeployI
 
     $this->sudo_cmd = posix_getuid() == 0 ? '' : 'sudo';
     $this->web_server_restart   = "$this->sudo_cmd service apache2 restart";
-    $this->web_server_user      = $this->getWebServerUser();
+
+    $this->getWebServerUser();
 
     $this->file_private_path    = $this->web_server_user == 'vagrant' ? '/vagrant/private' : '/web/private';
 
@@ -102,16 +105,17 @@ abstract class RoboFileBase extends \Robo\Tasks implements RoboFileDrupalDeployI
    */
   public function build() {
     $start = new DateTime();
+    $this->devCreateFilesFolders();
+    $this->devSetFilesOwner();
     $this->buildMake();
     $this->initLocalSettings();
-    $this->devCreateFilesFolders();
     $this->buildInstall();
     $this->writeLocalSettings();
     $this->includeLocalSettings();
     $this->devCreateConfigSyncDir();
-    $this->devSetFilesOwner();
     $this->setAdminPassword();
     $this->buildApplyConfig();
+    $this->devSetFilesOwner();
     $this->say('Total build duration: ' . date_diff(new DateTime(), $start)->format('%im %Ss'));
   }
 
@@ -151,13 +155,13 @@ abstract class RoboFileBase extends \Robo\Tasks implements RoboFileDrupalDeployI
    * Install a brand new site for a given environment.
    */
   public function environmentBuild() {
+    $this->devSetFilesOwner();
     $this->initLocalSettings();
     $this->buildInstall();
     $this->setSitePath();
     $this->writeLocalSettings();
     $this->includeLocalSettings();
     $this->devCreateConfigSyncDir();
-    $this->devSetFilesOwner();
     $this->setAdminPassword();
     $this->buildApplyConfig();
   }
@@ -168,12 +172,12 @@ abstract class RoboFileBase extends \Robo\Tasks implements RoboFileDrupalDeployI
    * I.e. Deploy a new release.
    */
   public function environmentRebuild() {
+    $this->devSetFilesOwner();
     $this->initLocalSettings();
     $this->setSitePath();
     $this->writeLocalSettings();
     $this->includeLocalSettings();
     $this->devCreateConfigSyncDir();
-    $this->devSetFilesOwner();
   }
 
   /**
@@ -574,8 +578,10 @@ abstract class RoboFileBase extends \Robo\Tasks implements RoboFileDrupalDeployI
    */
   public function devSetFilesOwner() {
     $this->say("Setting files directory owner.");
-    $this->_exec("chown $this->web_server_user:$this->web_server_user -R $this->application_root/sites/default/files");
-    $this->_exec("chown $this->web_server_user:$this->web_server_user -R $this->file_private_path");
+    $this->_exec("$this->sudo_cmd chown $this->web_server_user:$this->local_user -R $this->application_root/sites/default/files");
+    $this->_exec("$this->sudo_cmd chown $this->web_server_user:$this->local_user -R $this->file_private_path");
+    $this->setPermissions("$this->application_root/sites/default/files", '0775');
+    $this->setPermissions($this->file_private_path, '0775');
   }
 
   /**
@@ -703,10 +709,10 @@ abstract class RoboFileBase extends \Robo\Tasks implements RoboFileDrupalDeployI
    * Make config files write-able.
    */
   public function devConfigWriteable() {
-    $this->setPermissions("$this->application_root/sites/default/services.yml", '0644');
-    $this->setPermissions("$this->application_root/sites/default/settings.php", '0644');
-    $this->setPermissions("$this->application_root/sites/default/settings.local.php", '0644');
-    $this->setPermissions("$this->application_root/sites/default", '0755');
+    $this->setPermissions("$this->application_root/sites/default/services.yml", '0664');
+    $this->setPermissions("$this->application_root/sites/default/settings.php", '0664');
+    $this->setPermissions("$this->application_root/sites/default/settings.local.php", '0664');
+    $this->setPermissions("$this->application_root/sites/default", '0775');
   }
 
   /**
@@ -840,7 +846,15 @@ abstract class RoboFileBase extends \Robo\Tasks implements RoboFileDrupalDeployI
    */
   protected function getWebServerUser() {
     $user = posix_getpwuid(posix_getuid());
-    return $user['name'] == 'vagrant' ? 'vagrant' : 'www-data';
+
+    if ($user['name'] == 'vagrant') {
+      $this->local_user = 'vagrant';
+      $this->web_server_user = 'vagrant';
+    }
+    else {
+      $this->local_user = $user['name'];
+      $this->web_server_user = 'www-data';
+    }
   }
 
   /**
