@@ -1,7 +1,7 @@
 UA Site Manager
 ===============
 
-The University of Adelaide Site Manager. Provides an administration UI for provisioning web sites and managing user access.
+The University of Adelaide Site Manager provides an administration UI for provisioning web sites and managing user access.
 
 ## Requirements
 
