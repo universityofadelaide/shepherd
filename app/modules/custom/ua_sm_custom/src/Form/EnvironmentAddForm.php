@@ -60,23 +60,23 @@ class EnvironmentAddForm extends FormBase {
         '#required' => TRUE,
       ],
       'field_ua_sm_domain_name' => [
-        '#type' => 'hidden',
+        '#type' => 'value',
         '#value' => $site->field_ua_sm_domain_name->value,
       ],
       'field_ua_sm_site' => [
-        '#type' => 'hidden',
+        '#type' => 'value',
         '#value' => $site->id(),
       ],
       'field_ua_sm_database_password' => [
-        '#type' => 'hidden',
+        '#type' => 'value',
         '#value' => \Drupal::service('ua_sm_custom.password')->generate(),
       ],
       'field_ua_sm_platform' => [
-        '#type' => 'hidden',
+        '#type' => 'value',
         '#value' => $platform_id,
       ],
       'type' => [
-        '#type' => 'hidden',
+        '#type' => 'value',
         '#value' => 'ua_sm_environment',
       ],
       'submit' => [
@@ -93,7 +93,7 @@ class EnvironmentAddForm extends FormBase {
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $form_state->cleanValues();
-    $input = $form_state->getUserInput();
+    $input = $form_state->getValues();
 
     // Load parent site to get its domain.
     $site = Node::load($input['field_ua_sm_site']);

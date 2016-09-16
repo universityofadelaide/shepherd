@@ -160,7 +160,7 @@ class SiteAddForm extends FormBase {
    * {@inheritdoc}
    */
   public function validateForm(array &$form, FormStateInterface $form_state) {
-    $input = $form_state->getUserInput();
+    $input = $form_state->getValues();
 
     // Check path has a leading slash.
     if (!empty($input['field_ua_sm_path']) && substr($input['field_ua_sm_path'], 0, 1) != '/') {

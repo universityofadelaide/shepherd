@@ -106,7 +106,7 @@ class UserEditForm extends FormBase {
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
-    $input = $form_state->getUserInput();
+    $input = $form_state->getValues();
     $role = $input['role'];
 
     $user = $form_state->get('user');

@@ -60,7 +60,7 @@ class UserAddForm extends FormBase {
    * {@inheritdoc}
    */
   public function validateForm(array &$form, FormStateInterface $form_state) {
-    $input = $form_state->getUserInput();
+    $input = $form_state->getValues();
     $uid = $input['uid'];
     $role = $input['role'];
 
@@ -84,7 +84,7 @@ class UserAddForm extends FormBase {
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
-    $input = $form_state->getUserInput();
+    $input = $form_state->getValues();
     $uid = $input['uid'];
     $role = $input['role'];
 
