@@ -755,7 +755,7 @@
             "source": {
                 "type": "git",
                 "url": "https://git.drupal.org/project/cas",
-                "reference": "f20df0d95157efc8239899370362d359d5d1938b"
+                "reference": "1aa23bc778e68adfc6e4506476cfd517b3c906d2"
             },
             "require": {
                 "drupal/core": "8.*"
@@ -794,20 +794,20 @@
             ],
             "description": "Provides CAS authentication for Drupal.",
             "homepage": "http://drupal.org/project/cas",
-            "time": "2016-09-10 21:59:20"
+            "time": "2016-09-20 01:20:42"
         },
         {
             "name": "drupal/core",
-            "version": "8.1.9",
+            "version": "8.1.10",
             "source": {
                 "type": "git",
                 "url": "https://github.com/drupal-composer/drupal-core.git",
-                "reference": "b4fce409224b6351dce94f74b1e48f82515e191d"
+                "reference": "9562f733cdefd735337bf827b3ba5ad031aba4c3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/drupal-composer/drupal-core/zipball/b4fce409224b6351dce94f74b1e48f82515e191d",
-                "reference": "b4fce409224b6351dce94f74b1e48f82515e191d",
+                "url": "https://api.github.com/repos/drupal-composer/drupal-core/zipball/9562f733cdefd735337bf827b3ba5ad031aba4c3",
+                "reference": "9562f733cdefd735337bf827b3ba5ad031aba4c3",
                 "shasum": ""
             },
             "require": {
@@ -966,7 +966,7 @@
                 "GPL-2.0+"
             ],
             "description": "Drupal is an open source content management platform powering millions of websites and applications.",
-            "time": "2016-09-07 19:16:42"
+            "time": "2016-09-21 17:09:42"
         },
         {
             "name": "drupal/entity_reference_revisions",
@@ -974,7 +974,7 @@
             "source": {
                 "type": "git",
                 "url": "https://git.drupal.org/project/entity_reference_revisions.git",
-                "reference": "1dbb85a961e12b33ec60666ba06ef9b1fbc66c86"
+                "reference": "19ee3c4ea220c8690304218da8f3154f6ac3b3bc"
             },
             "require": {
                 "drupal/core": "8.*"
@@ -991,7 +991,7 @@
             ],
             "description": "Adds a Entity Reference field type with revision support.",
             "homepage": "https://www.drupal.org/project/entity_reference_revisions",
-            "time": "2016-08-20 07:04:07"
+            "time": "2016-09-21 02:09:00"
         },
         {
             "name": "drupal/paragraphs",
@@ -999,7 +999,7 @@
             "source": {
                 "type": "git",
                 "url": "https://git.drupal.org/project/paragraphs",
-                "reference": "271c7bf57785ebd9d00cd0e51532b14c7571fbba"
+                "reference": "4cfbed91e287c95fcdd255e09ebc296755f9eb2f"
             },
             "require": {
                 "drupal/core": "8.*",
@@ -1010,18 +1010,8 @@
                 "drupal/paragraphs_type_permissions": "self.version"
             },
             "suggest": {
-                "drupal/block": "Required by drupal/paragraphs_demo",
-                "drupal/content_translation": "Required by drupal/paragraphs_demo",
                 "drupal/core": "Required by drupal/paragraphs_demo, drupal/paragraphs_type_permissions",
-                "drupal/field": "Required by drupal/paragraphs_demo",
-                "drupal/field_ui": "Required by drupal/paragraphs_demo",
-                "drupal/image": "Required by drupal/paragraphs_demo",
-                "drupal/language": "Required by drupal/paragraphs_demo",
-                "drupal/node": "Required by drupal/paragraphs_demo",
-                "drupal/search_api": "Required by drupal/paragraphs_demo",
-                "drupal/search_api_db": "Required by drupal/paragraphs_demo",
-                "drupal/taxonomy": "Required by drupal/paragraphs_demo",
-                "drupal/views": "Required by drupal/paragraphs_demo"
+                "drupal/search_api": "Required by drupal/paragraphs_demo"
             },
             "type": "drupal-module",
             "extra": {
@@ -1035,7 +1025,7 @@
             ],
             "description": "Enables the creation of paragraphs entities. To safely uninstall, go first to Structure > Paragraphs types > Settings.",
             "homepage": "https://www.drupal.org/project/paragraphs",
-            "time": "2016-09-14 16:00:08"
+            "time": "2016-09-20 10:12:01"
         },
         {
             "name": "drupal/r4032login",
@@ -1649,16 +1639,16 @@
         },
         {
             "name": "nikic/php-parser",
-            "version": "v2.1.0",
+            "version": "v2.1.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/nikic/PHP-Parser.git",
-                "reference": "47b254ea51f1d6d5dc04b9b299e88346bf2369e3"
+                "reference": "4dd659edadffdc2143e4753df655d866dbfeedf0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nikic/PHP-Parser/zipball/47b254ea51f1d6d5dc04b9b299e88346bf2369e3",
-                "reference": "47b254ea51f1d6d5dc04b9b299e88346bf2369e3",
+                "url": "https://api.github.com/repos/nikic/PHP-Parser/zipball/4dd659edadffdc2143e4753df655d866dbfeedf0",
+                "reference": "4dd659edadffdc2143e4753df655d866dbfeedf0",
                 "shasum": ""
             },
             "require": {
@@ -1696,7 +1686,7 @@
                 "parser",
                 "php"
             ],
-            "time": "2016-04-19 13:41:41"
+            "time": "2016-09-16 12:04:44"
         },
         {
             "name": "paragonie/random_compat",
@@ -1902,22 +1892,30 @@
         },
         {
             "name": "psr/log",
-            "version": "1.0.0",
+            "version": "1.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/php-fig/log.git",
-                "reference": "fe0936ee26643249e916849d48e3a51d5f5e278b"
+                "reference": "5277094ed527a1c4477177d102fe4c53551953e0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/php-fig/log/zipball/fe0936ee26643249e916849d48e3a51d5f5e278b",
-                "reference": "fe0936ee26643249e916849d48e3a51d5f5e278b",
+                "url": "https://api.github.com/repos/php-fig/log/zipball/5277094ed527a1c4477177d102fe4c53551953e0",
+                "reference": "5277094ed527a1c4477177d102fe4c53551953e0",
                 "shasum": ""
             },
+            "require": {
+                "php": ">=5.3.0"
+            },
             "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.0.x-dev"
+                }
+            },
             "autoload": {
-                "psr-0": {
-                    "Psr\\Log\\": ""
+                "psr-4": {
+                    "Psr\\Log\\": "Psr/Log/"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -1931,12 +1929,13 @@
                 }
             ],
             "description": "Common interface for logging libraries",
+            "homepage": "https://github.com/php-fig/log",
             "keywords": [
                 "log",
                 "psr",
                 "psr-3"
             ],
-            "time": "2012-12-21 11:40:51"
+            "time": "2016-09-19 16:02:08"
         },
         {
             "name": "psy/psysh",
@@ -3373,16 +3372,16 @@
         },
         {
             "name": "twig/twig",
-            "version": "v1.24.2",
+            "version": "v1.25.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/twigphp/Twig.git",
-                "reference": "33093f6e310e6976baeac7b14f3a6ec02f2d79b7"
+                "reference": "f16a634ab08d87e520da5671ec52153d627f10f6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/twigphp/Twig/zipball/33093f6e310e6976baeac7b14f3a6ec02f2d79b7",
-                "reference": "33093f6e310e6976baeac7b14f3a6ec02f2d79b7",
+                "url": "https://api.github.com/repos/twigphp/Twig/zipball/f16a634ab08d87e520da5671ec52153d627f10f6",
+                "reference": "f16a634ab08d87e520da5671ec52153d627f10f6",
                 "shasum": ""
             },
             "require": {
@@ -3395,7 +3394,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.24-dev"
+                    "dev-master": "1.25-dev"
                 }
             },
             "autoload": {
@@ -3430,7 +3429,7 @@
             "keywords": [
                 "templating"
             ],
-            "time": "2016-09-01 17:50:53"
+            "time": "2016-09-21 23:05:12"
         },
         {
             "name": "ua-drupal-modules/ua_ldap",
@@ -3474,14 +3473,14 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.adelaide.edu.au:web-team/ua_d8_theme.git",
-                "reference": "c0fddacb5037d6c9dc3b38176c7a1cdc9282c2f8"
+                "reference": "b06c35d69919e699f5dd73a7334f3dd387f90f4c"
             },
             "type": "drupal-theme",
             "license": [
                 "GPL-2.0+"
             ],
             "description": "The University of Adelaide's official Drupal 8 theme.",
-            "time": "2016-09-15 04:16:30"
+            "time": "2016-09-16 12:10:40"
         },
         {
             "name": "zendframework/zend-diactoros",
