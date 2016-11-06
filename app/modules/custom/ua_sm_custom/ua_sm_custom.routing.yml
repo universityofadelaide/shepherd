@@ -23,6 +23,8 @@ ua_sm_custom.environment-clone-form:
     no_cache: TRUE
   requirements:
     _permission: 'sm access environment'
+    site: ^[0-9]+
+    environment: ^[0-9]+
 ua_sm_custom.environment-backup-form:
   path: '/site/{site}/environment/backup/{environment}'
   defaults:
@@ -38,6 +40,8 @@ ua_sm_custom.environment-backup-form:
     no_cache: TRUE
   requirements:
     _permission: 'sm access environment'
+    site: ^[0-9]+
+    environment: ^[0-9]+
 ua_sm_custom.environment-restore-form:
   path: '/site/{site}/environment/restore/{environment}'
   defaults:
@@ -53,6 +57,8 @@ ua_sm_custom.environment-restore-form:
     no_cache: TRUE
   requirements:
     _permission: 'sm access environment'
+    site: ^[0-9]+
+    environment: ^[0-9]+
 ua_sm_custom.home-page:
   path: '/home'
   defaults:
@@ -70,6 +76,7 @@ ua_sm_custom.permissions:
     _controller: '\Drupal\ua_sm_custom\Controller\UserSitesRolesController::index'
   requirements:
     _permission: 'access content'
+    account_id: ^[0-9]+
 ua_sm_custom.site-add-form:
   path: '/site/add'
   defaults:
@@ -117,6 +124,7 @@ ua_sm_custom.user-edit-form:
     no_cache: TRUE
   requirements:
     _permission: 'sm administer users'
+    user: ^[0-9]+
 ua_sm_custom.user-delete-form:
   path: '/site/{node}/user/{user}/delete'
   defaults:
@@ -127,6 +135,7 @@ ua_sm_custom.user-delete-form:
     no_cache: TRUE
   requirements:
     _permission: 'sm administer users'
+    user: ^[0-9]+
 ua_sm_custom.hosts-config:
   path: '/api/hosts-config'
   defaults:
