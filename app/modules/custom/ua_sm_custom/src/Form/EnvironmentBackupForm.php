@@ -28,6 +28,21 @@ class EnvironmentBackupForm extends FormBase {
   }
 
   /**
+   * Callback to get page title for the name of the site.
+   *
+   * @param \Drupal\node\NodeInterface $site
+   *   Site node.
+   * @param \Drupal\node\NodeInterface $environment
+   *   Evnironment node.
+   *
+   * @return \Drupal\Core\StringTranslation\TranslatableMarkup
+   *   Translated markup.
+   */
+  public function getPageTitle(NodeInterface $site, NodeInterface $environment) {
+    return t('Backup environment - @site_title : @environment_title', ['@site_title' => $site->getTitle(), '@environment_title' => $environment->getTitle()]);
+  }
+
+  /**
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state, NodeInterface $site = NULL, NodeInterface $environment = NULL) {

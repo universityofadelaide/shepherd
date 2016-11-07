@@ -2,16 +2,17 @@ ua_sm_custom.environment-add-form:
   path: '/site/{node}/environment/add'
   defaults:
     _form: '\Drupal\ua_sm_custom\Form\EnvironmentAddForm'
-    _title: 'Add environment'
+    _title_callback: '\Drupal\ua_sm_custom\Form\EnvironmentAddForm::getPageTitle'
   options:
     _auth: [ 'basic_auth', 'cookie' ]
     no_cache: TRUE
   requirements:
-    _permission: 'sm access environment wizard'
+    _permission: 'sm access environment'
 ua_sm_custom.environment-clone-form:
   path: '/site/{site}/environment/clone/{environment}'
   defaults:
     _form: '\Drupal\ua_sm_custom\Form\EnvironmentCloneForm'
+    _title_callback: '\Drupal\ua_sm_custom\Form\EnvironmentCloneForm::getPageTitle'
     _title: 'Clone environment'
   options:
     _auth: [ 'basic_auth', 'cookie' ]
@@ -29,6 +30,7 @@ ua_sm_custom.environment-backup-form:
   path: '/site/{site}/environment/backup/{environment}'
   defaults:
     _form: '\Drupal\ua_sm_custom\Form\EnvironmentBackupForm'
+    _title_callback: '\Drupal\ua_sm_custom\Form\EnvironmentBackupForm::getPageTitle'
     _title: 'Backup environment'
   options:
     _auth: [ 'basic_auth', 'cookie' ]
@@ -46,6 +48,7 @@ ua_sm_custom.environment-restore-form:
   path: '/site/{site}/environment/restore/{environment}'
   defaults:
     _form: '\Drupal\ua_sm_custom\Form\EnvironmentRestoreForm'
+    _title_callback: '\Drupal\ua_sm_custom\Form\EnvironmentRestoreForm::getPageTitle'
     _title: 'Restore backup'
   options:
     _auth: [ 'basic_auth', 'cookie' ]

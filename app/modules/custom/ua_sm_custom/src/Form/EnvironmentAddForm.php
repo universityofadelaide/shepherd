@@ -5,6 +5,7 @@ namespace Drupal\ua_sm_custom\Form;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\node\Entity\Node;
+use Drupal\node\NodeInterface;
 
 /**
  * Class SiteAddForm.
@@ -21,10 +22,22 @@ class EnvironmentAddForm extends FormBase {
   }
 
   /**
+   * Callback to get page title for the name of the site.
+   *
+   * @param \Drupal\node\NodeInterface $node
+   *   Site node.
+   *
+   * @return \Drupal\Core\StringTranslation\TranslatableMarkup
+   *   Translated markup.
+   */
+  public function getPageTitle(NodeInterface $node) {
+    return t('Create new environment for @site_title', ['@site_title' => $node->getTitle()]);
+  }
+
+  /**
    * {@inheritdoc}
    */
-  public function buildForm(array $form, FormStateInterface $form_state, $node = NULL) {
-    $site = Node::load($node);
+  public function buildForm(array $form, FormStateInterface $form_state, NodeInterface $node = NULL) {
 
     // @todo Revisit this when there's more than one platform.
     $platform_ids = \Drupal::entityQuery('node')
@@ -35,21 +48,21 @@ class EnvironmentAddForm extends FormBase {
     $build = [
       'title' => [
         '#type' => 'textfield',
-        '#title' =>  $this->t('Name'),
+        '#title' => $this->t('Name'),
         '#size' => 60,
         '#maxlength' => 255,
         '#required' => TRUE,
       ],
       'field_ua_sm_git_reference' => [
         '#type' => 'textfield',
-        '#title' =>  $this->t('Git tag/branch'),
+        '#title' => $this->t('Git tag/branch'),
         '#size' => 60,
         '#maxlength' => 50,
         '#required' => TRUE,
       ],
       'field_ua_sm_machine_name' => [
         '#type' => 'select',
-        '#title' =>  $this->t('Type'),
+        '#title' => $this->t('Type'),
         '#options' => [
           'dev' => 'DEV',
           'uat' => 'UAT',
@@ -61,11 +74,11 @@ class EnvironmentAddForm extends FormBase {
       ],
       'field_ua_sm_domain_name' => [
         '#type' => 'value',
-        '#value' => $site->field_ua_sm_domain_name->value,
+        '#value' => $node->field_ua_sm_domain_name->value,
       ],
       'field_ua_sm_site' => [
         '#type' => 'value',
-        '#value' => $site->id(),
+        '#value' => $node->id(),
       ],
       'field_ua_sm_database_password' => [
         '#type' => 'value',
