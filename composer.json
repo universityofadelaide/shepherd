@@ -4,39 +4,27 @@
     "type": "project",
     "license": "MIT",
     "repositories": [
-        {
-            "type": "vcs",
-            "url": "git@gitlab.adelaide.edu.au:drupal-modules/ua_ldap.git"
-        },
-        {
-            "type": "composer",
-            "url": "https://packagist.drupal-composer.org"
-        },
-        {
-            "type": "vcs",
-            "url": "git@gitlab.adelaide.edu.au:drupal-modules/ua_ldap_authorisation.git"
-        },
-        {
-            "type": "vcs",
-            "url": "git@gitlab.adelaide.edu.au:web-team/ua_d8_theme.git"
-        }
+        {"type": "vcs", "url": "git@gitlab.adelaide.edu.au:drupal-modules/ua_ldap.git"},
+        {"type": "vcs", "url": "git@gitlab.adelaide.edu.au:drupal-modules/ua_ldap_authorisation.git"},
+        {"type": "vcs", "url": "git@gitlab.adelaide.edu.au:web-team/ua_d8_theme.git"},
+        {"type": "composer", "url": "https://packages.drupal.org/8"}
     ],
     "require": {
-        "composer-plugin-api": "^1.0",
-        "composer/installers": "^1.0.25",
-        "cweagans/composer-patches": "~1.0",
-        "drush/drush": "8.*",
-        "drupal/core": "8.1.*",
-        "drupal/cas": "8.1.*@dev",
-        "drupal/entity_reference_revisions": "dev-8.x-1.x",
-        "drupal/paragraphs": "dev-8.x-1.x",
-        "drupal/r4032login": "8.1.*@dev",
-        "ua-drupal-modules/ua_ldap": "dev-develop",
+        "composer-plugin-api":                     "^1.0",
+        "composer/installers":                     "^1.0.25",
+        "cweagans/composer-patches":               "~1.0",
+        "drush/drush":                             "8.*",
+        "drupal/core":                             "8.2.*",
+        "drupal/cas":                              "1.x-dev#1aa23bc778e68adfc6e4506476cfd517b3c906d2",
+        "drupal/entity_reference_revisions":       "dev-1.x",
+        "drupal/paragraphs":                       "1.*",
+        "drupal/r4032login":                       "1.*@dev",
+        "ua-drupal-modules/ua_ldap":               "dev-develop",
         "ua-drupal-modules/ua_ldap_authorisation": "dev-develop",
-        "ua-web-team/ua_theme": "dev-develop"
+        "ua-web-team/ua_theme":                    "dev-develop"
     },
     "require-dev": {
-        "drupal/devel":             "8.1.*@dev",
+        "drupal/devel":             "1.*@dev",
         "behat/mink":               "~1.6",
         "behat/mink-goutte-driver": "~1.2",
         "mikey179/vfsStream":       "~1.2",
@@ -50,28 +38,17 @@
     },
     "extra": {
         "installer-paths": {
-            "app/core": [
-                "type:drupal-core"
-            ],
-            "app/modules/contrib/{$name}": [
-                "type:drupal-module"
-            ],
-            "app/profiles/contrib/{$name}": [
-                "type:drupal-profile"
-            ],
-            "app/themes/contrib/{$name}": [
-                "type:drupal-theme"
-            ],
-            "app/libraries/{$name}": [
-                "type:drupal-library"
-            ],
-            "app/drush/commands/{$name}": [
-                "type:drupal-drush"
-            ]
+            "app/core":                     ["type:drupal-core"],
+            "app/modules/contrib/{$name}":  ["type:drupal-module"],
+            "app/profiles/contrib/{$name}": ["type:drupal-profile"],
+            "app/themes/contrib/{$name}":   ["type:drupal-theme"],
+            "app/libraries/{$name}":        ["type:drupal-library"],
+            "app/drush/commands/{$name}":   ["type:drupal-drush"]
         },
         "patches": {
             "drupal/r4032login": {
-                "Override return destination parameter": "https://www.drupal.org/files/issues/r4032login_2534308_2.patch"
+                "Override return destination parameter": "https://www.drupal.org/files/issues/r4032login_2534308_2.patch",
+                "Allow redirecting user to front": "https://www.drupal.org/files/issues/r4032login-redirect_to_front-2748151-2.patch"
             }
         }
     }
