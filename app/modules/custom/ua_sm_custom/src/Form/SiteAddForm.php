@@ -162,9 +162,10 @@ class SiteAddForm extends FormBase {
   public function validateForm(array &$form, FormStateInterface $form_state) {
     $input = $form_state->getValues();
 
-    // Check path has a leading slash.
-    if (!empty($input['field_ua_sm_path']) && substr($input['field_ua_sm_path'], 0, 1) != '/') {
-      $form_state->setValue('field_ua_sm_path', '/' . $form_state->getValue('field_ua_sm_path'));
+    // Make sure we are using the correct slashes in the site path.
+    if (!empty($input['field_ua_sm_path']))
+    {
+      $form_state->setValue('field_ua_sm_path', '/' . trim($form_state->getValue('field_ua_sm_path'), '/'));
     }
 
     // Prevent duplicate path domain.
