@@ -2,15 +2,19 @@
 
   var SiteEnvironmentStatus = React.createClass({
     displayName: 'SiteEnvStatus',
+    intervalID: '',
     getInitialState: function() {
       return {
         instanceState: this.props.state
       }
     },
+    setIntervalFromServer: function () {
+      this.intervalID = setInterval(this.loadStateFromServer, 5000);
+    },
     componentDidMount: function() {
       this.loadStateFromServer();
       // Component has been mounted, now we can update the state every 5 seconds.
-      this.intervalFromServer = setInterval(this.loadStateFromServer, 5000);
+      this.setIntervalFromServer(this.loadStateFromServer, 5000);
     },
     componentWillUpdate: function(nextProps, nextState) {
       if (nextState.instanceState.failed == 0 && nextState.instanceState.building == 0 ) {
@@ -18,8 +22,8 @@
         // Everything on this environment is running.
         // Set the inverval time to something longer
         // Every 10 minutes.
-        clearInterval(this.intervalFromServer);
-        this.intervalFromServer(this.loadStateFromServer, 100000);
+        clearInterval(this.intervalID);
+        this.setIntervalFromServer(this.loadStateFromServer, 100000);
       }
     },
     loadStateFromServer: function() {

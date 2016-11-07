@@ -48,6 +48,7 @@ class SiteEnvironmentOperations extends FieldPluginBase {
           'class' => [
             'button',
             'c-btn',
+            'c-btn--small'
           ],
         ],
       ],
@@ -62,6 +63,7 @@ class SiteEnvironmentOperations extends FieldPluginBase {
           'class' => [
             'button',
             'c-btn',
+            'c-btn--small'
           ],
         ],
       ],
@@ -76,6 +78,7 @@ class SiteEnvironmentOperations extends FieldPluginBase {
           'class' => [
             'button',
             'c-btn',
+            'c-btn--small'
           ],
         ],
       ],
