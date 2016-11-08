@@ -67,7 +67,8 @@ class SiteInstanceConfig {
 
       $reverse_proxy_addresses = [];
       foreach ($platform->get('field_ua_sm_rev_proxy_addresses') as $address) {
-        $reverse_proxy_addresses[] = reset($address->getValue());
+        $address_value = $address->getValue();
+        $reverse_proxy_addresses[] = reset($address_value);
       }
 
       $config = [
