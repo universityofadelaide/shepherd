@@ -39,11 +39,7 @@ class EnvironmentAddForm extends FormBase {
    */
   public function buildForm(array $form, FormStateInterface $form_state, NodeInterface $node = NULL) {
 
-    // @todo Revisit this when there's more than one platform.
-    $platform_ids = \Drupal::entityQuery('node')
-      ->condition('type', 'ua_sm_platform')
-      ->execute();
-    $platform_id = array_pop($platform_ids);
+    $platform = ua_sm_custom_choices('ua_sm_platform');
 
     $build = [
       'title' => [
@@ -85,8 +81,16 @@ class EnvironmentAddForm extends FormBase {
         '#value' => \Drupal::service('ua_sm_custom.password')->generate(),
       ],
       'field_ua_sm_platform' => [
-        '#type' => 'value',
-        '#value' => $platform_id,
+        '#type' => 'select',
+        '#title' => $this->t('Platform'),
+        '#options' => $platform,
+        '#default_value' => reset($platform),
+        '#required' => TRUE,
+        '#states' => [
+          'invisible' => [
+            ':input[name="field_ua_sm_create_site"]' => ['checked' => FALSE],
+          ],
+        ],
       ],
       'type' => [
         '#type' => 'value',
