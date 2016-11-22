@@ -98,7 +98,6 @@ class EnvironmentCloneForm extends FormBase {
         '#size' => 60,
         '#maxlength' => 50,
         '#required' => TRUE,
-        '#disabled' => TRUE,
       ],
       'field_ua_sm_machine_name' => [
         '#type' => 'select',
