@@ -83,18 +83,15 @@ function ua_sm_custom_environment_defaults(Node $environment) {
 }
 
 /**
- * Populate an array with a list of entities and titles for display/use
+ * Populate an array with a list of platform entities and titles for display/use
  * in a select type box.
- *
- * @param string $type
- *   Provide choices for all entities of this type. E.g. ua_sm_platform.
  *
  * @return array
  *   The choices formatted as id => label.
  */
-function ua_sm_custom_choices($type) {
+function ua_sm_custom_platforms() {
   $ids = \Drupal::entityQuery('node')
-    ->condition('type', $type)
+    ->condition('type', 'ua_sm_platform')
     ->sort('title', 'ASC')
     ->execute();
 
@@ -102,7 +99,35 @@ function ua_sm_custom_choices($type) {
 
   $choices = [];
   foreach ($entities as $entity) {
-    $choices[$entity->Id()] = $entity->getTitle();
+    $environments = \Drupal::entityQuery('node')
+      ->condition('type', 'ua_sm_environment')
+      ->condition('field_ua_sm_platform', $entity->id())
+      ->count()
+      ->execute();
+    $choices[$entity->id()] = $entity->getTitle() . ' (' . $environments . ')';
+  }
+
+  return $choices;
+}
+
+/**
+ * Populate an array with a list of distribution entities and titles for display/use
+ * in a select type box.
+ *
+ * @return array
+ *   The choices formatted as id => label.
+ */
+function ua_sm_custom_distributions() {
+  $ids = \Drupal::entityQuery('node')
+    ->condition('type', 'ua_sm_distribution')
+    ->sort('title', 'ASC')
+    ->execute();
+
+  $entities = Node::loadMultiple($ids);
+
+  $choices = [];
+  foreach ($entities as $entity) {
+    $choices[$entity->id()] = $entity->getTitle();
   }
 
   return $choices;

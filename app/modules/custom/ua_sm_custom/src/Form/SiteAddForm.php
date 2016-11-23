@@ -33,8 +33,8 @@ class SiteAddForm extends FormBase {
     $top_menu_style_settings = $top_menu_style_config->getSettings();
     $top_menu_style_options = $top_menu_style_settings['allowed_values'];
 
-    $distribution = ua_sm_custom_choices('ua_sm_distribution');
-    $platform = ua_sm_custom_choices('ua_sm_platform');
+    $distributions = ua_sm_custom_distributions();
+    $platforms = ua_sm_custom_platforms();
 
     $this->fields = [
       'title' => [
@@ -108,8 +108,8 @@ class SiteAddForm extends FormBase {
       'field_ua_sm_distribution' => [
         '#type' => 'select',
         '#title' => $this->t('Distribution'),
-        '#options' => $distribution,
-        '#default_value' => reset($distribution),
+        '#options' => $distributions,
+        '#default_value' => reset($distributions),
         '#required' => TRUE,
       ],
       'field_ua_sm_create_site' => [
@@ -132,8 +132,8 @@ class SiteAddForm extends FormBase {
       'field_ua_sm_platform' => [
         '#type' => 'select',
         '#title' => $this->t('Platform'),
-        '#options' => $platform,
-        '#default_value' => reset($platform),
+        '#options' => $platforms,
+        '#default_value' => reset($platforms),
         '#required' => TRUE,
         '#states' => [
           'invisible' => [

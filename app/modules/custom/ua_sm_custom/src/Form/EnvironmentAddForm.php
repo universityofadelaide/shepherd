@@ -39,7 +39,7 @@ class EnvironmentAddForm extends FormBase {
    */
   public function buildForm(array $form, FormStateInterface $form_state, NodeInterface $node = NULL) {
 
-    $platform = ua_sm_custom_choices('ua_sm_platform');
+    $platforms = ua_sm_custom_platforms();
 
     $build = [
       'title' => [
@@ -83,8 +83,8 @@ class EnvironmentAddForm extends FormBase {
       'field_ua_sm_platform' => [
         '#type' => 'select',
         '#title' => $this->t('Platform'),
-        '#options' => $platform,
-        '#default_value' => reset($platform),
+        '#options' => $platforms,
+        '#default_value' => reset($platforms),
         '#required' => TRUE,
         '#states' => [
           'invisible' => [
