@@ -14,7 +14,7 @@ use Drupal\node\Entity\Node;
 use Drupal\user\Entity\User;
 use Drupal\ua_sm_custom\Service\JenkinsClient;
 
-const UA_SM_CUSTOM_INSTANCE_LIMIT = 20;
+const UA_SM_CUSTOM_INSTANCE_LIMIT = 100;
 
 /**
  * Implements hook_help().
