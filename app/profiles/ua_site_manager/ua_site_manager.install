@@ -776,3 +776,15 @@ function ua_site_manager_update_8024(&$sandbox) {
   $config_storage->delete($config);
   $config_storage->write($config, $source->read($config));
 }
+
+/**
+ * Update the site details view with drush aliases.
+ */
+function ua_site_manager_update_8025(&$sandbox) {
+  $config_path = drupal_get_path('profile', 'ua_site_manager') . '/config/install';
+  $source = new Drupal\Core\Config\FileStorage($config_path);
+  $config_storage = \Drupal::service('config.storage');
+  $config = 'views.view.ua_sm_site_details';
+  $config_storage->delete($config);
+  $config_storage->write($config, $source->read($config));
+}

@@ -55,6 +55,7 @@ class SiteAliases {
           $environments[$machine_name] = [
             'title' => $environment->title->value,
             'uri' => $environment->field_ua_sm_domain_name->value,
+            'site_instance_id' => $site_instance->id(),
             'remote_host' => $site_instance->field_ua_sm_hostname->value,
             'ssh_port' => $site_instance->field_ua_sm_ssh_port->value,
             'path-aliases' => [

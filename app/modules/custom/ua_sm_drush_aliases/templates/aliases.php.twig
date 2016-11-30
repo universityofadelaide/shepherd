@@ -15,7 +15,7 @@ $aliases['{{ environment_machine_name }}'] = [
   'uri' => '{{ environment.uri }}',
   'remote-host' => '{{ environment.remote_host }}',
   'remote-user' => 'root',
-  'ssh-options' => '-p {{ environment.ssh_port }}',
+  'ssh-options' => '-p {{environment.ssh_port}} -o "ProxyCommand ssh -q deployment@{{ environment.remote_host }} /usr/local/bin/dsh-host.sh %h %p site_instance_{{ environment.site_instance_id }}"'
 ];
 
 {% endfor %}
