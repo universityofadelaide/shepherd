@@ -508,7 +508,31 @@ function ua_sm_custom_mail($key, &$message, $params) {
  * Implements hook_cron().
  */
 function ua_sm_custom_cron() {
-  // Back up all environments; only one site instance per environment.
+  ua_sm_custom_populate_user_attributes();
+
+  // Only run backups at 3am.
+  if (date('G', time()) == 3) {
+    ua_sm_custom_backup_environments();
+  }
+}
+
+/**
+ * Populates site manager users with name and email from LDAP.
+ */
+function ua_sm_custom_populate_user_attributes() {
+  // Update users attributes from LDAP.
+  $user_ids = \Drupal::entityQuery('user')->execute();
+  $users = User::loadMultiple($user_ids);
+  foreach ($users as $user) {
+    \Drupal::service('ua_sm_custom.user')->populateFieldsFromLdap($user);
+    $user->save();
+  }
+}
+
+/**
+ * Back up all environments.
+ */
+function ua_sm_custom_backup_environments() {
   $site_instance_nids = \Drupal::entityQuery('node')
     ->condition('type', 'ua_sm_site_instance')
     ->execute();
@@ -519,7 +543,7 @@ function ua_sm_custom_cron() {
   foreach ($nodes as $node) {
     $environment_name = $node->field_ua_sm_environment->getString();
     if (!array_key_exists($environment_name, $instances)) {
-      // Add once instance per environment, to be backed up.
+      // Just pick once instance per environment to run the backup.
       $instances[$environment_name] = $node;
     }
   }
@@ -527,13 +551,4 @@ function ua_sm_custom_cron() {
   foreach ($instances as $instance) {
     \Drupal::service('ua_sm_custom.backup')->createBackup($instance);
   }
-
-  // Update users attributes from LDAP.
-  $user_ids = \Drupal::entityQuery('user')->execute();
-  $users = User::loadMultiple($user_ids);
-  foreach ($users as $user) {
-    \Drupal::service('ua_sm_custom.user')->populateFieldsFromLdap($user);
-    $user->save();
-  }
-
 }

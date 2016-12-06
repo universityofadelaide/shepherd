@@ -43,8 +43,9 @@ class User {
    */
   public function populateFieldsFromLdap(DrupalUser $account) {
     $uid = $account->name->value;
-    $attributes = \Drupal::service('ua_ldap.ldap_user')->getAttributes($uid);
-    $this->populateFields($account, $attributes);
+    if ($attributes = \Drupal::service('ua_ldap.ldap_user')->getAttributes($uid)) {
+      $this->populateFields($account, $attributes);
+    }
   }
 
   /**
