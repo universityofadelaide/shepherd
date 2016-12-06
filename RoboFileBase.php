@@ -42,7 +42,7 @@ abstract class RoboFileBase extends \Robo\Tasks implements RoboFileDrupalDeployI
     $this->application_root     = "app";
 
     $this->composer_bin         = "/usr/local/bin/composer";
-    $this->drush_bin            = "bin/drush";
+    $this->drush_bin            = "drush";
     $this->drush_cmd            = "$this->drush_bin -r $this->application_root";
     $this->phpcs_bin            = "phpcs";
 
@@ -51,7 +51,7 @@ abstract class RoboFileBase extends \Robo\Tasks implements RoboFileDrupalDeployI
     $this->php_enable_module_command = $php5 ? 'php5enmod' : 'phpenmod -v ALL';
     $this->php_disable_module_command = $php5 ? 'php5dismod' : 'phpdismod -v ALL';
 
-    $this->sudo_cmd = posix_getuid() == 0 ? '' : 'sudo';
+    $this->sudo_cmd             = posix_getuid() == 0 ? '' : 'sudo';
     $this->web_server_restart   = "$this->sudo_cmd service apache2 restart";
 
     $this->getWebServerUser();
@@ -105,6 +105,7 @@ abstract class RoboFileBase extends \Robo\Tasks implements RoboFileDrupalDeployI
    */
   public function build() {
     $start = new DateTime();
+    $this->devComposerValidate();
     $this->devCreateFilesFolders();
     $this->devSetFilesOwner();
     $this->buildMake();
@@ -137,7 +138,8 @@ abstract class RoboFileBase extends \Robo\Tasks implements RoboFileDrupalDeployI
    */
   public function distributionBuild() {
     $this->buildKeys();
-    $this->buildMake();
+    $this->devComposerValidate();
+    $this->buildMake('--no-dev');
   }
 
   /**
@@ -224,11 +226,14 @@ abstract class RoboFileBase extends \Robo\Tasks implements RoboFileDrupalDeployI
 
   /**
    * Run composer install to fetch the application code from dependencies.
+   *
+   * @param $flags
+   *   Additional flags to pass to the composer install command.
    */
-  public function buildMake() {
+  public function buildMake($flags = '') {
     // Disable xdebug while running "composer install".
     $this->devXdebugDisable();
-    $successful = $this->_exec("$this->composer_bin --no-progress install")->wasSuccessful();
+    $successful = $this->_exec("$this->composer_bin --no-progress $flags install")->wasSuccessful();
     $this->devXdebugEnable();
 
     $this->checkFail($successful, "Composer install failed.");
@@ -430,6 +435,17 @@ abstract class RoboFileBase extends \Robo\Tasks implements RoboFileDrupalDeployI
   }
 
   /**
+   * Validate composer files and installed dependencies with strict mode off.
+   */
+  public function devComposerValidate(){
+    $this->taskComposerValidate()
+      ->withDependencies()
+      ->noCheckPublish()
+      ->run()
+      ->stopOnFail(true);
+  }
+
+  /**
    * Install Adminer for database administration.
    */
   public function devInstallAdminer() {
@@ -482,6 +498,7 @@ abstract class RoboFileBase extends \Robo\Tasks implements RoboFileDrupalDeployI
    */
   public function configExportOld() {
     $this->_exec("$this->drush_cmd -y cex --destination=" . $this->config_old_directory);
+    $this->_exec("sed -i '/^uuid: .*$/d' $this->application_root/$this->config_old_directory/*.yml");
   }
 
   /**
@@ -489,6 +506,7 @@ abstract class RoboFileBase extends \Robo\Tasks implements RoboFileDrupalDeployI
    */
   public function configExportNew() {
     $this->_exec("$this->drush_cmd -y cex --destination=" . $this->config_new_directory);
+    $this->_exec("sed -i '/^uuid: .*$/d' $this->application_root/$this->config_new_directory/*.yml");
   }
 
   /**
@@ -517,7 +535,14 @@ abstract class RoboFileBase extends \Robo\Tasks implements RoboFileDrupalDeployI
     foreach ($results_array as $line) {
       // Handle/remove blank lines.
       $line = trim($line);
-      if (empty($line)) { continue; }
+      if (empty($line)) {
+        continue;
+      }
+
+      // Never sync the extension file, it breaks things.
+      if (stristr($line, 'core.extension.yml')) {
+        continue;
+      }
 
       // Break up the line into fields and put the parts in their place.
       $parts = explode(' ', $line);
@@ -602,7 +627,7 @@ abstract class RoboFileBase extends \Robo\Tasks implements RoboFileDrupalDeployI
       $output_style = '-ubr';
     }
 
-    $results = $this->taskExec("diff -N -I 'uuid:.*' -I \"   - 'file:.*\" $output_style $config_old_path $config_new_path")
+    $results = $this->taskExec("diff -N -I \"   - 'file:.*\" $output_style $config_old_path $config_new_path")
       ->run()
       ->getMessage();
 
@@ -737,7 +762,7 @@ abstract class RoboFileBase extends \Robo\Tasks implements RoboFileDrupalDeployI
    */
   protected function setPermissions($file, $permission) {
     if (file_exists($file)) {
-      $this->_exec("sudo chmod $permission $file");
+      $this->_exec("$this->sudo_cmd chmod $permission $file");
     }
   }
 
@@ -800,13 +825,14 @@ abstract class RoboFileBase extends \Robo\Tasks implements RoboFileDrupalDeployI
    * Generates php code from an array in a non clobbering recursive fashion.
    *
    * @param array $array
-   *   the array to convert to php code.
+   *   The array to convert to php code.
    * @param string $code
-   *   code being generated.
+   *   Code being generated.
    * @param array $parents
-   *   parent array keys.
-   * @return string $code
-   *   the generated php code.
+   *   Parent array keys.
+   *
+   * @return string
+   *   The generated php code.
    */
   protected function generatePhpCodeFromArray($array, $code = '', $parents = []) {
     foreach ($array as $key => $val) {
@@ -840,9 +866,6 @@ abstract class RoboFileBase extends \Robo\Tasks implements RoboFileDrupalDeployI
 
   /**
    * Get the web server user.
-   *
-   * @return string
-   *   'vagrant' for dev environment and 'www-data' for other environments.
    */
   protected function getWebServerUser() {
     $user = posix_getpwuid(posix_getuid());
@@ -859,9 +882,6 @@ abstract class RoboFileBase extends \Robo\Tasks implements RoboFileDrupalDeployI
 
   /**
    * Set the Database host IP address from the environment.
-   *
-   * @return string
-   *   The IPv4 address of the Database host.
    */
   protected function setDatabaseHostIP() {
     if (empty($this->database_host) || $this->database_host == '{docker_host_ip}') {

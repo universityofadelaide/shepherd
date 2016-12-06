@@ -13,7 +13,6 @@
         "composer-plugin-api":                     "^1.0",
         "composer/installers":                     "^1.0.25",
         "cweagans/composer-patches":               "~1.0",
-        "drush/drush":                             "8.*",
         "drupal/core":                             "8.2.*",
         "drupal/cas":                              "1.x-dev#1aa23bc778e68adfc6e4506476cfd517b3c906d2",
         "drupal/entity_reference_revisions":       "dev-1.x",
