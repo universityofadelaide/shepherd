@@ -11,6 +11,22 @@
  * Interface RoboFileDrupalDeploy.
  */
 interface RoboFileDrupalDeployInterface {
+
+  /**
+   * Apply site configuration.
+   */
+  public function buildApplyConfig();
+
+  /**
+   * Apply updates.
+   */
+  public function buildApplyUpdates();
+
+  /**
+   * Set files permissions.
+   */
+  public function devSetFilesOwner();
+
   /**
    * Perform a build for automated deployments.
    *
@@ -29,15 +45,5 @@ interface RoboFileDrupalDeployInterface {
    * I.e. Deploy a new release.
    */
   public function environmentRebuild();
-
-  /**
-   * Apply updates.
-   */
-  public function buildApplyUpdates();
-
-  /**
-   * Set files permissions.
-   */
-  public function devSetFilesOwner();
 
 }

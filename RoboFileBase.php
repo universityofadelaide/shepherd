@@ -327,15 +327,14 @@ abstract class RoboFileBase extends \Robo\Tasks implements RoboFileDrupalDeployI
     $this->devXdebugDisable();
     $this->devConfigWriteable();
 
-
     $successful = $this->_exec("$this->drush_cmd site-install" .
       " $this->drupal_profile install_configure_form.update_status_module='array(FALSE,FALSE)' -y" .
       " --db-url=" . $this->getDatabaseUrl() .
-      " --account-mail=" . $this->config['site']['admin_email'] .
-      " --account-name=" . $this->config['site']['admin_user'] .
-      " --account-pass=" . $this->config['site']['admin_password'] .
-      " --site-name='" . $this->config['site']['site_title'] . "'" .
-      " --site-mail='" . $this->config['site']['site_mail'] . "'")
+      " --account-mail=\"" . $this->config['site']['admin_email'] . "\"" .
+      " --account-name=\"" . $this->config['site']['admin_user'] . "\"" .
+      " --account-pass=\"" . $this->config['site']['admin_password'] . "\"" .
+      " --site-name=\"" . $this->config['site']['site_title'] . "\"" .
+      " --site-mail=\"" . $this->config['site']['site_mail'] . "\"")
       ->wasSuccessful();
 
     // Re-set settings.php permissions.
@@ -363,7 +362,7 @@ abstract class RoboFileBase extends \Robo\Tasks implements RoboFileDrupalDeployI
         'name' => $this->config['site']['maintainer_name'],
         'email' => $this->config['site']['maintainer_email'],
       ],
-      'system.ua_menu' => [
+      'ua_theme.settings' => [
         'top_menu_style' => $this->config['site']['top_menu_style'],
       ],
     ];
@@ -392,7 +391,10 @@ abstract class RoboFileBase extends \Robo\Tasks implements RoboFileDrupalDeployI
    */
   public function setAdminPassword() {
     $this->say("Set the admin password.");
-    $successful = $this->_exec("$this->drush_cmd user-password admin --password=" . $this->config['site']['admin_password'])->wasSuccessful();
+    $successful = $this->_exec("$this->drush_cmd " .
+      "user-password \"" . $this->config['site']['admin_user'] . "\" " .
+      "--password=\"" . $this->config['site']['admin_password'] . "\"")
+      ->wasSuccessful();
 
     $this->checkFail($successful, 'setting user password failed.');
   }
