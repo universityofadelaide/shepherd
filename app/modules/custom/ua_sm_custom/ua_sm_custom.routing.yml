@@ -7,7 +7,7 @@ ua_sm_custom.environment-add-form:
     _auth: [ 'basic_auth', 'cookie' ]
     no_cache: TRUE
   requirements:
-    _permission: 'sm access environment'
+    _permission: 'sm access environment wizard'
 ua_sm_custom.environment-clone-form:
   path: '/site/{site}/environment/clone/{environment}'
   defaults:
@@ -23,7 +23,7 @@ ua_sm_custom.environment-clone-form:
         type: entity:node
     no_cache: TRUE
   requirements:
-    _permission: 'sm access environment'
+    _permission: 'sm access environment wizard'
     site: ^[0-9]+
     environment: ^[0-9]+
 ua_sm_custom.environment-backup-form:
@@ -41,7 +41,7 @@ ua_sm_custom.environment-backup-form:
         type: entity:node
     no_cache: TRUE
   requirements:
-    _permission: 'sm access environment'
+    _permission: 'sm access environment wizard'
     site: ^[0-9]+
     environment: ^[0-9]+
 ua_sm_custom.environment-restore-form:
@@ -59,7 +59,7 @@ ua_sm_custom.environment-restore-form:
         type: entity:node
     no_cache: TRUE
   requirements:
-    _permission: 'sm access environment'
+    _permission: 'sm access environment wizard'
     site: ^[0-9]+
     environment: ^[0-9]+
 ua_sm_custom.home-page:
