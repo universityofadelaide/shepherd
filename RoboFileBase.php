@@ -13,75 +13,63 @@ include_once 'RoboFileDrupalDeployInterface.php';
  */
 abstract class RoboFileBase extends \Robo\Tasks implements RoboFileDrupalDeployInterface {
 
-  protected $application_root;
-  protected $composer_bin;
-  protected $config_file;
-  protected $config;
-  protected $config_default_file;
-  protected $config_new_directory;
-  protected $config_old_directory;
-  protected $database_host;
-  protected $drupal_profile;
-  protected $drush_bin;
+  protected $database_host; // @todo: Fix it.
   protected $drush_cmd;
-  protected $phpcs_bin;
-  protected $php_enable_module_command;
-  protected $php_disable_module_command;
-  protected $settings_php;
-  protected $services_yml;
   protected $file_private_path;
-  protected $sudo_cmd;
-  protected $web_server_restart;
-  protected $web_server_user;
   protected $local_user;
+  protected $php_disable_module_command;
+  protected $php_enable_module_command;
+  protected $sudo_cmd;
+  protected $web_server_user;
+
+  protected $application_root = "app";
+  protected $services_yml = "app/sites/default/services.yml";
+  protected $settings_php = "app/sites/default/settings.php";
+
+  protected $config = [];
+  protected $config_file = "config.json";
+  protected $config_default_file = "config.default.json";
+  protected $config_new_directory = 'config_new';
+  protected $config_old_directory = 'config_old';
+
+  protected $composer_bin = "/usr/local/bin/composer";
+  protected $drush_bin = "drush";
+  protected $phpcs_bin = "phpcs";
 
   /**
    * Initialize config variables and apply overrides.
    */
   public function __construct() {
-    $this->application_root     = "app";
-
-    $this->composer_bin         = "/usr/local/bin/composer";
-    $this->drush_bin            = "drush";
+    // Where are my binaries?
     $this->drush_cmd            = "$this->drush_bin -r $this->application_root";
-    $this->phpcs_bin            = "phpcs";
+    $this->sudo_cmd             = posix_getuid() == 0 ? '' : 'sudo';
 
     // Support PHP 5 and 7.
     $php5 = strpos(PHP_VERSION, '5') === 0;
     $this->php_enable_module_command = $php5 ? 'php5enmod' : 'phpenmod -v ALL';
     $this->php_disable_module_command = $php5 ? 'php5dismod' : 'phpdismod -v ALL';
 
-    $this->sudo_cmd             = posix_getuid() == 0 ? '' : 'sudo';
-    $this->web_server_restart   = "$this->sudo_cmd service apache2 restart";
-
-    $this->getWebServerUser();
+    $this->web_server_user = $this->getWebServerUser();
+    $this->local_user = $this->getLocalUser();
 
     $this->file_private_path    = $this->web_server_user == 'vagrant' ? '/vagrant/private' : '/web/private';
 
-    $this->config_file          = "config.json";
-    $this->config_default_file  = "config.default.json";
-    $this->settings_php         = "$this->application_root/sites/default/settings.php";
-    $this->services_yml         = "$this->application_root/sites/default/services.yml";
-
-    $this->config_old_directory = 'config_old';
-    $this->config_new_directory = 'config_new';
-
-    $this->config = [];
     $this->importConfig();
-
-    $this->drupal_profile       = '';
-    $this->setDrupalProfile();
   }
 
   /**
    * Force projects to declare which install profile to use.
    *
-   * I.e. $this->drupal_profile = 'some_profile'.
+   * I.e. return 'some_profile'.
    */
-  protected abstract function setDrupalProfile();
+  protected abstract function getDrupalProfile();
 
   /**
    * Parse and import config.
+   *
+   * This method is special, because it's called from the constructor. Core Robo
+   * methods are not available until after the constructor has run - which means
+   * exit() is used in place of a more graceful way to fail.
    */
   protected function importConfig() {
     if (file_exists($this->config_file)) {
@@ -91,13 +79,23 @@ abstract class RoboFileBase extends \Robo\Tasks implements RoboFileDrupalDeployI
       $this->config = json_decode(file_get_contents($this->config_default_file), TRUE);
     }
     else {
-      $this->checkFail(FALSE, "Couldn't find any config files.");
+      // @todo: Can't use checkFail() from the constructor. No output allowed.
+      echo "Couldn't find any config files.\n";
     }
 
+    // Read config from env vars.
+    $environment_config = $this->readConfigFromEnv();
+    $this->config = array_merge($this->config, $environment_config);
+
     if (!is_array($this->config)) {
-      $this->checkFail(FALSE, "Couldn't decode config file.");
+      echo "Couldn't decode config.\n";
+      exit(1);
     }
-    $this->database_host = trim($this->config['database']['host']);
+    if (!isset($this->config['database']['username'])) {
+      echo "Database config is missing.\n";
+      exit(1);
+    }
+    $this->setDatabaseHostIp($this->config['database']['host']);
   }
 
   /**
@@ -327,8 +325,9 @@ abstract class RoboFileBase extends \Robo\Tasks implements RoboFileDrupalDeployI
     $this->devXdebugDisable();
     $this->devConfigWriteable();
 
-    $successful = $this->_exec("$this->drush_cmd site-install" .
-      " $this->drupal_profile install_configure_form.update_status_module='array(FALSE,FALSE)' -y" .
+    $successful = $this->_exec("$this->drush_cmd site-install " .
+      $this->getDrupalProfile() .
+      " install_configure_form.update_status_module='array(FALSE,FALSE)' -y" .
       " --db-url=" . $this->getDatabaseUrl() .
       " --account-mail=\"" . $this->config['site']['admin_email'] . "\"" .
       " --account-name=\"" . $this->config['site']['admin_user'] . "\"" .
@@ -353,6 +352,7 @@ abstract class RoboFileBase extends \Robo\Tasks implements RoboFileDrupalDeployI
     $custom_config = [
       'system.site' => [
         'name' => $this->config['site']['site_title'],
+        'mail' => $this->config['site']['site_mail'],
       ],
       'ua_footer.authoriser' => [
         'name' => $this->config['site']['authoriser_name'],
@@ -367,7 +367,7 @@ abstract class RoboFileBase extends \Robo\Tasks implements RoboFileDrupalDeployI
       ],
     ];
 
-    if ($this->config['custom']) {
+    if (!empty($this->config['custom'])) {
       $custom_config = array_merge($custom_config, $this->config['custom']);
     }
 
@@ -384,6 +384,59 @@ abstract class RoboFileBase extends \Robo\Tasks implements RoboFileDrupalDeployI
 
     $this->devCacheRebuild();
     $this->say('Site configuration applied.');
+  }
+
+  /**
+   * Returns known configuration from environment variables.
+   *
+   * Runs during the constructor; be careful not to use Robo methods.
+   */
+  protected function readConfigFromEnv() {
+    $config = [];
+
+    // Site.
+    $config['site']['id']               = getenv('UA_SITE__ID');
+    $config['site']['site_title']       = getenv('UA_SITE__SITE_TITLE');
+    $config['site']['site_mail']        = getenv('UA_SITE__SITE_MAIL');
+    $config['site']['authoriser_name']  = getenv('UA_SITE__AUTHORISER_NAME');
+    $config['site']['authoriser_email'] = getenv('UA_SITE__AUTHORISER_EMAIL');
+    $config['site']['maintainer_name']  = getenv('UA_SITE__MAINTAINER_NAME');
+    $config['site']['maintainer_email'] = getenv('UA_SITE__MAINTAINER_EMAIL');
+    $config['site']['top_menu_style']   = getenv('UA_SITE__TOP_MENU_STYLE');
+    $config['site']['admin_email']      = getenv('UA_SITE__ADMIN_EMAIL');
+    $config['site']['admin_user']       = getenv('UA_SITE__ADMIN_USER');
+    $config['site']['admin_password']   = getenv('UA_SITE__ADMIN_PASSWORD');
+
+    // Environment.
+    $config['environment']['site_id']         = getenv('UA_ENVIRONMENT__ID');
+    $config['environment']['hash_salt']       = getenv('UA_ENVIRONMENT__HASH_SALT');
+    $config['environment']['config_sync_dir'] = getenv('UA_ENVIRONMENT__CONFIG_SYNC_DIR');
+
+    // Databases.
+    $config['database']['database']  = getenv('UA_DATABASE__DATABASE');
+    $config['database']['driver']    = getenv('UA_DATABASE__DRIVER');
+    $config['database']['host']      = getenv('UA_DATABASE__HOST');
+    $config['database']['password']  = getenv('UA_DATABASE__PASSWORD');
+    $config['database']['port']      = getenv('UA_DATABASE__PORT');
+    $config['database']['username']  = getenv('UA_DATABASE__USERNAME');
+    $config['database']['namespace'] = getenv('UA_DATABASE__NAMESPACE');
+    $config['database']['prefix']    = getenv('UA_DATABASE__PREFIX');
+
+    // Clean up NULL values and empty arrays.
+    $array_clean = function (&$item) use (&$array_clean) {
+      foreach ($item as $key => $value) {
+        if (is_array($value)) {
+          $array_clean($item[$key]);
+        }
+        if (empty($item[$key]) && $value !== '0') {
+          unset($item[$key]);
+        }
+      }
+    };
+
+    $array_clean($config);
+
+    return $config;
   }
 
   /**
@@ -522,7 +575,7 @@ abstract class RoboFileBase extends \Robo\Tasks implements RoboFileDrupalDeployI
    */
   public function configSync($path = NULL) {
     $config_sync_already_run = FALSE;
-    $output_path = $this->application_root . '/profiles/' . $this->drupal_profile . '/config/install';
+    $output_path = $this->application_root . '/profiles/' . $this->getDrupalProfile() . '/config/install';
     $config_new_path = $this->application_root . '/' . $this->config_new_directory;
 
     // If a path is passed in, use it to override the destination.
@@ -642,7 +695,7 @@ abstract class RoboFileBase extends \Robo\Tasks implements RoboFileDrupalDeployI
    * Restart Web server.
    */
   public function devRestartWebserver() {
-    $this->_exec($this->web_server_restart);
+    $this->_exec("$this->sudo_cmd service apache2 restart");
   }
 
   /**
@@ -773,9 +826,12 @@ abstract class RoboFileBase extends \Robo\Tasks implements RoboFileDrupalDeployI
    *
    * @return string
    *   Settings.php text, intended to be output to file.
+   *
+   * @deprecated This will be completely replaced by setting Drupal config
+   *   directly from environment variables, rather than pre-computed values...
+   *   so probably a static file?
    */
   protected function generateDrupalSettings($return_code = TRUE) {
-    $this->setDatabaseHostIP();
     $drupal_settings = [];
 
     // Enable fast 404.
@@ -787,7 +843,7 @@ abstract class RoboFileBase extends \Robo\Tasks implements RoboFileDrupalDeployI
     $drupal_settings['settings']['site_id'] = $this->config['site']['id'];
 
     // Set the install profile.
-    $drupal_settings['settings']['install_profile'] = $this->drupal_profile;
+    $drupal_settings['settings']['install_profile'] = $this->getDrupalProfile();
 
     // Set the config_sync_dir from config.
     $drupal_settings['config_directories']['sync'] = $this->config['environment']['config_sync_dir'];
@@ -805,10 +861,10 @@ abstract class RoboFileBase extends \Robo\Tasks implements RoboFileDrupalDeployI
     $drupal_settings['databases']['default']['default']['host'] = $this->database_host;
 
     // Reverse proxy configuration.
-    if ($this->config['platform']['reverse_proxy_addresses']) {
+    if (!empty($this->config['platform']['reverse_proxy_addresses'])) {
       $drupal_settings['settings']['reverse_proxy'] = TRUE;
       $drupal_settings['settings']['reverse_proxy_addresses'] = $this->config['platform']['reverse_proxy_addresses'];
-      if ($this->config['platform']['reverse_proxy_header']) {
+      if (!empty($this->config['platform']['reverse_proxy_header'])) {
         $drupal_settings['settings']['reverse_proxy_header'] = $this->config['platform']['reverse_proxy_header'];
       }
     }
@@ -874,20 +930,36 @@ abstract class RoboFileBase extends \Robo\Tasks implements RoboFileDrupalDeployI
 
     if ($user['name'] == 'vagrant') {
       $this->local_user = 'vagrant';
-      $this->web_server_user = 'vagrant';
+      return 'vagrant';
     }
-    else {
-      $this->local_user = $user['name'];
-      $this->web_server_user = 'www-data';
-    }
+    return 'www-data';
+  }
+
+  /**
+   * Return the name of the local user.
+   *
+   * @return string
+   *   Returns the current user.
+   */
+  protected function getLocalUser() {
+    $user = posix_getpwuid(posix_getuid());
+    return $user['name'];
   }
 
   /**
    * Set the Database host IP address from the environment.
+   *
+   * This method is called during the constructor.
+   *
+   * @param string $database_host
+   *   An IP address or token for replacement with an IP from the host machine.
    */
-  protected function setDatabaseHostIP() {
-    if (empty($this->database_host) || $this->database_host == '{docker_host_ip}') {
-      $this->database_host = trim($this->taskExec('/sbin/ip route|awk \'/default/ { print $3 }\'')->run()->getMessage());
+  protected function setDatabaseHostIp($database_host = '') {
+    if (empty($database_host) || $database_host == '{docker_host_ip}') {
+      $this->database_host = trim(shell_exec('/sbin/ip route|awk \'/default/ { print $3 }\''));
+    }
+    else {
+      $this->database_host = trim($database_host);
     }
   }
 
@@ -898,7 +970,6 @@ abstract class RoboFileBase extends \Robo\Tasks implements RoboFileDrupalDeployI
    *   A database url of the format mysql://user:pass@host:port/db_name
    */
   protected function getDatabaseUrl() {
-    $this->setDatabaseHostIP();
     return
       $this->config['database']['driver'] . '://' .
       $this->config['database']['username'] . ':' .

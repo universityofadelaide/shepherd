@@ -24,8 +24,8 @@ class RoboFile extends RoboFileBase {
     // Put project specific overrides here, below the parent constructor.
   }
 
-  protected function setDrupalProfile() {
-    $this->drupal_profile = "ua_site_manager";
+  protected function getDrupalProfile() {
+    return "ua_site_manager";
   }
 
   /**
