@@ -50,13 +50,14 @@ class SiteAliases {
     foreach ($entities['ua_sm_environment'] as $environment) {
       $machine_name = $environment->field_ua_sm_machine_name->value;
       foreach ($entities['ua_sm_site_instance'] as $site_instance) {
-        if ($site_instance->field_ua_sm_environment->target_id == $environment->Id() &&
+        $remote_host = reset($site_instance->field_ua_sm_server->referencedEntities());
+        if ($site_instance->field_ua_sm_environment->target_id == $environment->id() &&
           !isset($environments[$machine_name])) {
-          $environments[$machine_name] = [
+          $environments[$machine_name . '_' . $site_instance->id()] = [
             'title' => $environment->title->value,
             'uri' => $environment->field_ua_sm_domain_name->value,
             'site_instance_id' => $site_instance->id(),
-            'remote_host' => $site_instance->field_ua_sm_hostname->value,
+            'remote_host' => $remote_host->field_ua_sm_hostname->value,
             'ssh_port' => $site_instance->field_ua_sm_ssh_port->value,
             'path-aliases' => [
               '%drush' => '/web/vendor/drush/drush',
