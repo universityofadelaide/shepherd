@@ -46,8 +46,7 @@
         },
         "patches": {
             "drupal/r4032login": {
-                "Override return destination parameter": "https://www.drupal.org/files/issues/r4032login_2534308_2.patch",
-                "Allow redirecting user to front": "https://www.drupal.org/files/issues/r4032login-redirect_to_front-2748151-2.patch"
+                "Override return destination parameter": "https://www.drupal.org/files/issues/r4032login_2534308_7.patch"
             },
             "drupal/core": {
                 "Twig debug output does not display all suggestions": "https://www.drupal.org/files/issues/twig_debug_output_does-2118743-93.patch"
