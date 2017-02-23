@@ -1,7 +1,0 @@
-name: UA Site Manager Default Content
-type: module
-description: 'Provides default dev and test content to the Site Manager.'
-core: 8.x
-package: UA
-dependencies:
- - default_content

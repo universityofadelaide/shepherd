@@ -1,8 +1,8 @@
 
-UA Site Manager
-===============
+Shepherd
+========
 
-The University of Adelaide Site Manager provides an administration UI for provisioning web sites and managing user access.
+The University of Adelaide Shepherd provides an administration UI for provisioning web sites and managing user access.
 
 ## Requirements
 
@@ -62,7 +62,7 @@ $ robo -l
 
 **4) Go to the site**
 
-The site can be found on the domain: `http://uasm.dev`
+The site can be found on the domain: `http://shepherd.dev`
 
 This address is configurable in the Vagrantfile - feel free to change it to whatever suits your project.
 

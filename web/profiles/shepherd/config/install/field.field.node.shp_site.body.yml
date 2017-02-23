@@ -1,0 +1,21 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.body
+    - node.type.shp_site
+  module:
+    - text
+id: node.shp_site.body
+field_name: body
+entity_type: node
+bundle: shp_site
+label: Description
+description: 'A short description about the site and its'' responsibilities.'
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  display_summary: true
+field_type: text_with_summary

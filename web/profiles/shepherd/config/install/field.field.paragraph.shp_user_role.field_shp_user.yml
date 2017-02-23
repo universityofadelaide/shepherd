@@ -1,0 +1,26 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_shp_user
+    - paragraphs.paragraphs_type.shp_user_role
+id: paragraph.shp_user_role.field_shp_user
+field_name: field_shp_user
+entity_type: paragraph
+bundle: shp_user_role
+label: User
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:user'
+  handler_settings:
+    include_anonymous: true
+    filter:
+      type: _none
+    target_bundles: null
+    sort:
+      field: _none
+field_type: entity_reference

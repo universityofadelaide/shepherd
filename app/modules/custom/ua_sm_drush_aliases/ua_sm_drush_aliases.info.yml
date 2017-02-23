@@ -1,5 +1,0 @@
-name: UA Site Manager Drush Alias
-type: module
-description: 'Provides functionality specific to the Site Manager.'
-core: 8.x
-package: UA

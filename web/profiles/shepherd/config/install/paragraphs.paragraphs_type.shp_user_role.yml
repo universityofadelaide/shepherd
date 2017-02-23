@@ -1,0 +1,7 @@
+langcode: en
+status: true
+dependencies: {  }
+_core:
+  default_config_hash: wjdWWMkSR1aohznBP2G21P6cmpghXwVdgX6cfEm3MDo
+id: shp_user_role
+label: User

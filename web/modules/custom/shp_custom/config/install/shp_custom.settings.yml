@@ -1,0 +1,21 @@
+jenkins:
+  enabled: true
+  base_uri: ''
+  token: ''
+  backup_job: 'backup_job'
+  clone_job: 'clone_job'
+  decommission_job: 'decommission_job'
+  deploy_job: 'deploy_job'
+  restore_job: 'restore_job'
+  reverse_proxy_job: 'reverse_proxy_job'
+ldap:
+  enabled: true
+controlled_roles:
+  administrator: 'Administrator'
+  shp_developer: 'Developer'
+  shp_online_consultant: 'Online Consultant'
+  shp_site_administrator: 'Site Administrator'
+  shp_web_author: 'Web Author'
+  shp_content_editor: 'Content Editor'
+backup_service:
+  path: ''

@@ -1,0 +1,165 @@
+shp_custom.environment-add-form:
+  path: '/site/{node}/environment/add'
+  defaults:
+    _form: '\Drupal\shp_custom\Form\EnvironmentAddForm'
+    _title_callback: '\Drupal\shp_custom\Form\EnvironmentAddForm::getPageTitle'
+  options:
+    _auth: [ 'basic_auth', 'cookie' ]
+    no_cache: TRUE
+  requirements:
+    _permission: 'shp access environment wizard'
+shp_custom.environment-clone-form:
+  path: '/site/{site}/environment/clone/{environment}'
+  defaults:
+    _form: '\Drupal\shp_custom\Form\EnvironmentCloneForm'
+    _title_callback: '\Drupal\shp_custom\Form\EnvironmentCloneForm::getPageTitle'
+    _title: 'Clone environment'
+  options:
+    _auth: [ 'basic_auth', 'cookie' ]
+    parameters:
+      site:
+        type: entity:node
+      environment:
+        type: entity:node
+    no_cache: TRUE
+  requirements:
+    _permission: 'shp access environment wizard'
+    site: ^[0-9]+
+    environment: ^[0-9]+
+shp_custom.environment-backup-form:
+  path: '/site/{site}/environment/backup/{environment}'
+  defaults:
+    _form: '\Drupal\shp_custom\Form\EnvironmentBackupForm'
+    _title_callback: '\Drupal\shp_custom\Form\EnvironmentBackupForm::getPageTitle'
+    _title: 'Backup environment'
+  options:
+    _auth: [ 'basic_auth', 'cookie' ]
+    parameters:
+      site:
+        type: entity:node
+      environment:
+        type: entity:node
+    no_cache: TRUE
+  requirements:
+    _permission: 'shp access environment wizard'
+    site: ^[0-9]+
+    environment: ^[0-9]+
+shp_custom.environment-restore-form:
+  path: '/site/{site}/environment/restore/{environment}'
+  defaults:
+    _form: '\Drupal\shp_custom\Form\EnvironmentRestoreForm'
+    _title_callback: '\Drupal\shp_custom\Form\EnvironmentRestoreForm::getPageTitle'
+    _title: 'Restore backup'
+  options:
+    _auth: [ 'basic_auth', 'cookie' ]
+    parameters:
+      site:
+        type: entity:node
+      environment:
+        type: entity:node
+    no_cache: TRUE
+  requirements:
+    _permission: 'shp access environment wizard'
+    site: ^[0-9]+
+    environment: ^[0-9]+
+shp_custom.home-page:
+  path: '/home'
+  defaults:
+    _controller: '\Drupal\shp_custom\Controller\HomePageController::index'
+  options:
+    no_cache: TRUE
+  requirements:
+    _permission: 'shp view homepage'
+# @todo Find out if this is still required (shp_custom.permissions).
+shp_custom.permissions:
+  path: '/user/{account_id}/permissions'
+  defaults:
+    _title: 'Permissions'
+    _title_callback: '\Drupal\shp_custom\Controller\UserSitesRolesController::getPageTitle'
+    _controller: '\Drupal\shp_custom\Controller\UserSitesRolesController::index'
+  requirements:
+    _permission: 'access content'
+    account_id: ^[0-9]+
+shp_custom.site-add-form:
+  path: '/site/add'
+  defaults:
+    _form: '\Drupal\shp_custom\Form\SiteAddForm'
+    _title: 'Add site'
+  options:
+    _auth: [ 'basic_auth', 'cookie' ]
+    no_cache: TRUE
+  requirements:
+    _permission: 'shp access site wizard'
+shp_custom.site-instance-config:
+  path: '/api/site-instance-config/{nid}'
+  defaults:
+    _controller: '\Drupal\shp_custom\Controller\SiteConfigController::siteInstanceConfig'
+  options:
+    _auth: [ 'basic_auth', 'cookie' ]
+    no_cache: TRUE
+  requirements:
+    _user_is_logged_in: 'TRUE'
+    _access: 'TRUE'
+shp_custom.shepherd_settings:
+  path: '/admin/config/system/shepherd'
+  defaults:
+    _form: '\Drupal\shp_custom\Form\ShepherdSettings'
+    _title: 'Shepherd settings'
+  requirements:
+    _permission: 'administer account settings'
+shp_custom.user-add-form:
+  path: '/site/{node}/user/add'
+  defaults:
+    _form: '\Drupal\shp_custom\Form\UserAddForm'
+    _title: 'Add User'
+  options:
+    _auth: [ 'basic_auth', 'cookie' ]
+    no_cache: TRUE
+  requirements:
+    _permission: 'shp administer users'
+shp_custom.user-edit-form:
+  path: '/site/{node}/user/{user}/edit'
+  defaults:
+    _form: '\Drupal\shp_custom\Form\UserEditForm'
+    _title: 'Edit user'
+  options:
+    _auth: [ 'basic_auth', 'cookie' ]
+    no_cache: TRUE
+  requirements:
+    _permission: 'shp administer users'
+    user: ^[0-9]+
+shp_custom.user-delete-form:
+  path: '/site/{node}/user/{user}/delete'
+  defaults:
+    _form: '\Drupal\shp_custom\Form\UserDeleteForm'
+    _title: 'Delete User'
+  options:
+    _auth: ['basic_auth', 'cookie']
+    no_cache: TRUE
+  requirements:
+    _permission: 'shp administer users'
+    user: ^[0-9]+
+shp_custom.hosts-config:
+  path: '/api/hosts-config'
+  defaults:
+    _controller: '\Drupal\shp_custom\Controller\SiteConfigController::hostsConfig'
+  options:
+    _auth: [ 'basic_auth', 'cookie' ]
+    no_cache: TRUE
+  requirements:
+    _user_is_logged_in: 'TRUE'
+    _access: 'TRUE'
+shp_custom.site-backups-list:
+  path: '/site/{node}/backups'
+  defaults:
+    _controller: '\Drupal\shp_custom\Controller\SiteBackupListController::index'
+    _title: 'Backups'
+    _title_callback: '\Drupal\shp_custom\Controller\SiteBackupListController::getPageTitle'
+  options:
+    _auth: [ 'basic_auth', 'cookie' ]
+    parameters:
+      node:
+        type: entity:node
+    no_cache: TRUE
+  requirements:
+    _permission: 'shp view backups'

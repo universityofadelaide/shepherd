@@ -1,0 +1,36 @@
+ualangcode: en
+status: true
+dependencies:
+  config:
+    - views.view.shp_sites
+  module:
+    - system
+    - user
+    - views
+  theme:
+    - ua_theme
+id: exposedformshp_sitespage_1
+theme: ua_theme
+region: sidebar_right
+weight: -5
+provider: null
+plugin: 'views_exposed_filter_block:shp_sites-page_1'
+settings:
+  id: 'views_exposed_filter_block:shp_sites-page_1'
+  label: ''
+  provider: views
+  label_display: visible
+  views_label: ''
+visibility:
+  request_path:
+    id: request_path
+    pages: /websites
+    negate: false
+    context_mapping: {  }
+  user_role:
+    id: user_role
+    roles:
+      authenticated: authenticated
+    negate: false
+    context_mapping:
+      user: '@user.current_user_context:current_user'

@@ -1,5 +1,0 @@
-ua_sm_custom.site_manager_settings:
-  title: 'Site Manager'
-  description: 'Configure Site Manager settings and integrations.'
-  parent: system.admin_config_system
-  route_name: ua_sm_custom.site_manager_settings

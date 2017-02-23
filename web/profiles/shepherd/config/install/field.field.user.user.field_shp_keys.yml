@@ -1,0 +1,19 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.user.field_shp_keys
+  module:
+    - user
+id: user.user.field_shp_keys
+field_name: field_shp_keys
+entity_type: user
+bundle: user
+label: 'Public keys'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string_long

@@ -1,0 +1,26 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_shp_environment
+    - node.type.shp_site_instance
+  module:
+    - entity_reference
+id: node.shp_site_instance.field_shp_environment
+field_name: field_shp_environment
+entity_type: node
+bundle: shp_site_instance
+label: Environment
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:node'
+  handler_settings:
+    target_bundles:
+      shp_environment: shp_environment
+    sort:
+      field: _none
+field_type: entity_reference

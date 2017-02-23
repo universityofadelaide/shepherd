@@ -1,0 +1,20 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_shp_hostname
+    - node.type.shp_site_instance
+id: node.shp_site_instance.field_shp_hostname
+field_name: field_shp_hostname
+entity_type: node
+bundle: shp_site_instance
+label: 'Hostname '
+description: 'Internal host name.'
+required: false
+translatable: false
+default_value:
+  -
+    value: ''
+default_value_callback: ''
+settings: {  }
+field_type: string

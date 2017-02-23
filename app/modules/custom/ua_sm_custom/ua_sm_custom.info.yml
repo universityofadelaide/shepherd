@@ -1,7 +1,0 @@
-name: UA Site Manager Custom
-type: module
-description: 'Provides functionality specific to the Site Manager.'
-core: 8.x
-package: UA
-dependencies:
- - ua_ldap

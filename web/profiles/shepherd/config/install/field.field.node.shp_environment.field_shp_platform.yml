@@ -1,0 +1,26 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_shp_platform
+    - node.type.shp_environment
+  module:
+    - entity_reference
+id: node.shp_environment.field_shp_platform
+field_name: field_shp_platform
+entity_type: node
+bundle: shp_environment
+label: Platform
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:node'
+  handler_settings:
+    target_bundles:
+      shp_platform: shp_platform
+    sort:
+      field: _none
+field_type: entity_reference

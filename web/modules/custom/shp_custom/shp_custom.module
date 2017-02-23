@@ -1,0 +1,554 @@
+<?php
+
+/**
+ * @file
+ * Contains shp_custom.module.
+ */
+
+use Drupal\Component\Utility\Crypt;
+use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\Core\Session\AccountInterface;
+use Drupal\node\Entity\Node;
+use Drupal\user\Entity\User;
+use Drupal\shp_custom\Service\JenkinsClient;
+
+const SHP_CUSTOM_INSTANCE_LIMIT = 100;
+
+/**
+ * Implements hook_help().
+ */
+function shp_custom_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    // Main module help for the shp_custom module.
+    case 'help.page.shp_custom':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('This module provides functionality specific to the Shepherd.') . '</p>';
+      return $output;
+  }
+}
+
+/**
+ * Implements hook_theme().
+ */
+function shp_custom_theme($existing, $type, $theme, $path) {
+  return [
+    'site_environment_status' => [
+      'variables' => [
+        'running' => NULL,
+        'building' => NULL,
+        'failed' => NULL,
+        'environment' => NULL,
+      ],
+    ],
+  ];
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_presave().
+ *
+ * Determines available port numbers for new instances, and generates random
+ * hash salt for new environments.
+ */
+function shp_custom_node_presave(Node $entity) {
+  switch ($entity->bundle()) {
+    case 'shp_site_instance':
+      shp_custom_ports($entity);
+      break;
+
+    case 'shp_environment':
+      shp_custom_environment_defaults($entity);
+      break;
+  }
+}
+
+/**
+ * Populates an environment with a new hash_salt and config sync dir.
+ *
+ * @param Node $environment
+ *   Node to generate config default values for.
+ */
+function shp_custom_environment_defaults(Node $environment) {
+  if ($environment->field_shp_config_sync->isEmpty()) {
+    // Generate a config sync dir and store it for each new environment.
+    $config_directories_hash = Crypt::randomBytesBase64(55);
+    $environment->field_shp_config_sync->value = 'sites/default/files/config_' . $config_directories_hash . '/sync';
+  }
+  if ($environment->field_shp_hash_salt->isEmpty()) {
+    // Generate a hash salt and store it for each new environment.
+    $environment->field_shp_hash_salt->value = Crypt::randomBytesBase64(55);
+  }
+}
+
+/**
+ * Populate an array with a list of platform entities and titles for display/use
+ * in a select type box.
+ *
+ * @return array
+ *   The choices formatted as id => label.
+ */
+function shp_custom_platforms() {
+  $ids = \Drupal::entityQuery('node')
+    ->condition('type', 'shp_platform')
+    ->sort('title', 'ASC')
+    ->execute();
+
+  $entities = Node::loadMultiple($ids);
+
+  $choices = [];
+  foreach ($entities as $entity) {
+    $environments = \Drupal::entityQuery('node')
+      ->condition('type', 'shp_environment')
+      ->condition('field_shp_platform', $entity->id())
+      ->count()
+      ->execute();
+    $choices[$entity->id()] = $entity->getTitle() . ' (' . $environments . ')';
+  }
+
+  return $choices;
+}
+
+/**
+ * Populate an array with a list of distribution entities and titles for display/use
+ * in a select type box.
+ *
+ * @return array
+ *   The choices formatted as id => label.
+ */
+function shp_custom_distributions() {
+  $ids = \Drupal::entityQuery('node')
+    ->condition('type', 'shp_distribution')
+    ->sort('title', 'ASC')
+    ->execute();
+
+  $entities = Node::loadMultiple($ids);
+
+  $choices = [];
+  foreach ($entities as $entity) {
+    $choices[$entity->id()] = $entity->getTitle();
+  }
+
+  return $choices;
+}
+
+/**
+ * Populates the site instance with unique ports per host.
+ *
+ * @param Node $site_instance
+ *   Site instance to assign free ports to.
+ */
+function shp_custom_ports(Node $site_instance) {
+  $server_id = $site_instance->field_shp_server->target_id;
+  $port_manager = \Drupal::service('shp_custom.port_manager');
+  $used_ports = $port_manager->getUsedPorts($server_id);
+
+  // Find which ports have not already been allocated to the instance.
+  $required_ports = [];
+  foreach ($port_manager->port_fields as $port_field) {
+    $port_number = $site_instance->{$port_field}->value;
+    if (!$port_number) {
+      $required_ports[] = $port_field;
+    }
+    elseif (in_array($port_number, $used_ports)) {
+      // @todo Handle case where assigned port already in use.
+      return;
+    }
+  }
+
+  $available_port_numbers = $port_manager->getAvailablePorts($server_id, count($required_ports));
+  if ($available_port_numbers) {
+    foreach ($required_ports as $required_port) {
+      $site_instance->get($required_port)->setValue(array_pop($available_port_numbers));
+    }
+  }
+}
+
+/**
+ * Invalidate site entity caches because environments for sites have changed.
+ *
+ * @param EntityInterface $environment
+ *   The environment entity whose site needs cache invalidate.
+ */
+function shp_custom_invalidate_site_cache(EntityInterface $environment) {
+  $site_nid = $environment->field_shp_site->target_id;
+  if ($site_nid) {
+    \Drupal::service('cache_tags.invalidator')->invalidateTags(['node:' . $site_nid]);
+  }
+}
+
+/**
+ * Implements hook_entity_type_alter().
+ *
+ * Adds a constraint to node types to prevent exceeding the instance limit.
+ */
+function shp_custom_entity_type_alter(array &$entity_types) {
+  /** @var \Drupal\Core\Entity\ContentEntityType $node */
+  $node = $entity_types['node'];
+  $node->addConstraint('SiteInstance', [
+    'limit' => SHP_CUSTOM_INSTANCE_LIMIT,
+    'entity' => 'shp_environment',
+  ]);
+
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_insert().
+ *
+ * Triggers numerous actions when certain entities are created.
+ *
+ * Site:
+ *  * Adds LDAP entries for each 'site_id#role' combination.
+ *  * Synchronises any users for the site with LDAP.
+ *  * Adds a default 'UAT' environment for the new site.
+ *
+ * Environment:
+ *  * Creates new site instances on each of the selected platform's web servers.
+ *
+ * Site Instance:
+ *  * Triggers the Jenkins provision job for the new site instance.
+ */
+function shp_custom_node_insert(EntityInterface $entity) {
+  switch ($entity->bundle()) {
+    case 'shp_site':
+      if (\Drupal::config('shp_custom.settings')->get('ldap')['enabled']) {
+        // Add LDAP entries for each 'site_id#role' combination.
+        $controlled_roles = array_keys(\Drupal::config('shp_custom.settings')
+          ->get('controlled_roles'));
+        \Drupal::service('ua_ldap.ldap_site')
+          ->addSite($entity->id(), $controlled_roles);
+        // @todo Deal with failure - consider a queue.
+        // Synchronise any users that were added to LDAP.
+        \Drupal::service('ua_ldap.ldap_site')
+          ->syncUsers($entity->id());
+        // @todo Deal with failure - consider a queue.
+      }
+
+      // @todo Figure out which platform to default to. Maybe in config?
+      // Fetch the ID of the first platform, we'll default to that for now.
+      $platforms = \Drupal::entityQuery('node')
+        ->condition('type', 'shp_platform')
+        ->execute();
+
+      // Check if default environment should be automatically created.
+      // Note fields presented only in the UI don't get setup as a node ->value.
+      if (isset($entity->field_shp_create_site) && $entity->field_shp_create_site) {
+        // Create default environment.
+        $environment = Node::create([
+          'type' => 'shp_environment',
+          'uid' => 1,
+          'title' => 'UAT',
+          'field_shp_site' => $entity->id(),
+          'field_shp_platform' => isset($entity->field_shp_platform) ? $platforms[$entity->field_shp_platform] : reset($platforms),
+          // @todo Convert environment types (e.g 'uat') to constants.
+          'field_shp_domain_name' => \Drupal::service('shp_custom.hosts_config')
+            ->generateDomainForEnv($entity, 'uat'),
+          'field_shp_git_reference' => isset($entity->field_shp_git_reference) ? $entity->field_shp_git_reference : 'develop',
+          'field_shp_database_password' => \Drupal::service('shp_custom.password')->generate(),
+        ]);
+
+        // Validate the environment, against any plugin constraints added.
+        $validate = $environment->validate();
+        $violations = $validate->getEntityViolations();
+        if ($violations->count()) {
+          foreach ($validate->getEntityViolations() as $violation) {
+            drupal_set_message($violation->getMessage(), 'error');
+            \Drupal::logger('shp_custom')->info('Environment was not automatically created. %violation', array('%violation' => $violation->getMessage()));
+          }
+          // Prevent the environment from being created.
+          break;
+        }
+        $environment->save();
+      }
+      break;
+
+    case 'shp_environment':
+      // Load the selected environment.
+      $platform = $entity->field_shp_platform->first()->entity;
+
+      $cloned_already = FALSE;
+
+      // Create a new site instance for each of the platform's webservers.
+      foreach ($platform->field_shp_web_servers as $key => $web_server) {
+        $site_instance_params = [
+          'type' => 'shp_site_instance',
+          'uid' => 1,
+          'title' => $entity->title->value . ' ' . ($key + 1),
+          'field_shp_environment' => $entity->id(),
+          'field_shp_server' => $web_server->entity->id(),
+        ];
+
+        // Add conditionals if environment has the following properties.
+        if (isset($entity->backup_timestamp) && isset($entity->previous_env_id)) {
+          $site_instance_params['isClone'] = TRUE;
+
+          // On subsequent instances, run the "clone" job, but don't attempt to
+          // restore another environment. It's already been done.
+          if (!$cloned_already) {
+            $site_instance_params['backup_timestamp'] = $entity->backup_timestamp;
+            $site_instance_params['backup_env_id'] = $entity->previous_env_id;
+          }
+          $cloned_already = TRUE;
+        }
+
+        $site_instance = Node::create($site_instance_params);
+        // Validate the site instance, against any plugin constraints added.
+        $site_instance->validate();
+        $site_instance->save();
+      }
+      shp_custom_invalidate_site_cache($entity);
+      break;
+
+    case 'shp_site_instance':
+      if (\Drupal::config('shp_custom.settings')->get('jenkins')['enabled']) {
+        if (isset($entity->isClone) && $entity->isClone) {
+          // Run the clone job.
+          \Drupal::service('shp_custom.jenkins_client')->job(JenkinsClient::CLONE_JOB, $entity);
+        }
+        else {
+          \Drupal::service('shp_custom.jenkins_client')->job(JenkinsClient::DEPLOY_JOB, $entity);
+        }
+      }
+      break;
+  }
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_presave().
+ *
+ * Fetches a user's details from LDAP to fill out a provisioned account.
+ */
+function shp_custom_user_presave(EntityInterface $entity) {
+  if ($entity->isNew()) {
+    \Drupal::service('shp_custom.user')->populateFieldsFromLdap($entity);
+    // @todo Consider breaking this functionality into its own module for reuse.
+  }
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_update().
+ *
+ * Synchronises a site's users to LDAP when it is updated, and triggers jenkins
+ * jobs when an instance's status is changed.
+ */
+function shp_custom_node_update(EntityInterface $entity) {
+  switch ($entity->bundle()) {
+    case 'shp_site':
+      if (\Drupal::config('shp_custom.settings')->get('ldap.enabled')) {
+        \Drupal::service('ua_ldap.ldap_site')->syncUsers($entity->id());
+        // @todo Deal with failure - consider a queue.
+      }
+      break;
+
+    case 'shp_environment':
+      shp_custom_invalidate_site_cache($entity);
+      \Drupal::service('shp_custom.jenkins_client')->environmentJob(
+        JenkinsClient::REVERSE_PROXY_JOB, $entity);
+      break;
+
+    case 'shp_site_instance':
+      if (\Drupal::config('shp_custom.settings')->get('jenkins')['enabled']) {
+        // Check if the published state of the site instance has changed.
+        if ((int) $entity->status->value !== (int) $entity->original->status->value) {
+          // If status has transitioned to published, run deploy, otherwise run
+          // decommission.
+          \Drupal::service('shp_custom.jenkins_client')->job(
+            $entity->status->value ? JenkinsClient::DEPLOY_JOB : JenkinsClient::DECOMMISSION_JOB,
+            $entity
+          );
+
+          // Finally, set the state field to indicate this transition.
+          $entity->field_shp_state->value = $entity->status->value ? 'starting' : 'stopping';
+          $entity->save();
+        }
+      }
+      break;
+  }
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_predelete().
+ *
+ * Cascade the deletion of the environment by deleting its instances.
+ */
+function shp_custom_node_predelete(EntityInterface $entity) {
+  switch ($entity->bundle()) {
+    case 'shp_environment':
+      $instance_ids = \Drupal::entityQuery('node')
+        ->condition('type', 'shp_site_instance')
+        ->condition('field_shp_environment', $entity->id())
+        ->execute();
+      $instances = Node::loadMultiple($instance_ids);
+      foreach ($instances as $instance) {
+        $instance->delete();
+      }
+      break;
+  }
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_delete().
+ *
+ * Cleans up LDAP when sites are removed, and triggers jenkins when site
+ * instances are deleted.
+ */
+function shp_custom_node_delete(EntityInterface $entity) {
+  switch ($entity->bundle()) {
+    case 'shp_site':
+      if (\Drupal::config('shp_custom.settings')->get('ldap')['enabled']) {
+        // @todo Implement some sensible LDAP cleanup.
+        // \Drupal::service('ua_ldap.ldap_site')->removeSite($entity->id());
+        // @todo Deal with failure - consider a queue.
+      }
+      break;
+
+    case 'shp_environment':
+      shp_custom_invalidate_site_cache($entity);
+      break;
+
+    case 'shp_site_instance':
+      if (\Drupal::config('shp_custom.settings')->get('jenkins')['enabled']) {
+        \Drupal::service('shp_custom.jenkins_client')->job(JenkinsClient::DECOMMISSION_JOB, $entity);
+      }
+      break;
+  }
+}
+
+/**
+ * Implements hook_node_access().
+ *
+ * Prevent production environments from being deleted.
+ */
+function shp_custom_node_access(EntityInterface $entity, $operation, AccountInterface $account) {
+  if ($entity->bundle() == 'shp_environment') {
+    if ($operation == 'delete') {
+      if ($entity->field_shp_machine_name->value === 'prd') {
+        return AccessResult::forbidden();
+      }
+    }
+  }
+  return AccessResult::neutral();
+}
+
+/**
+ * Implements hook_entity_prepare_form().
+ *
+ * Automatically generates site admin and environment database passwords if they
+ * are unset.
+ */
+function shp_custom_entity_prepare_form(EntityInterface $entity) {
+  switch ($entity->bundle()) {
+    case 'shp_site':
+      $password_field = $entity->get('field_shp_admin_password');
+      $password = $password_field->value;
+      if (!$password) {
+        $password = \Drupal::service('shp_custom.password')->generate();
+        $password_field->setValue($password);
+      }
+      break;
+
+    case 'shp_environment':
+      $password_field = $entity->get('field_shp_database_password');
+      $password = $password_field->value;
+      if (!$password) {
+        $password = \Drupal::service('shp_custom.password')->generate();
+        $password_field->setValue($password);
+      }
+      break;
+  }
+}
+
+/**
+ * Implements hook_entity_type_insert().
+ */
+function shp_custom_comment_insert(EntityInterface $entity) {
+  // Send an email notification to the user who created a site instance.
+  $commented_entity = $entity->getCommentedEntity();
+
+  if ($commented_entity->getType() === "shp_site") {
+    $author = $commented_entity->getRevisionAuthor();
+    $author_email = $author->getEmail();
+
+    $mail_message = [
+      'author_name' => $author->field_ua_user_preferred_name->value ?: $author->getAccountName(),
+      'message' => $entity->comment_body->value,
+      'subject' => $entity->getSubject(),
+    ];
+    $langcode = $author->getPreferredLangCode();
+
+    $result = \Drupal::service('plugin.manager.mail')->mail('shp_custom', 'shp_site', $author_email, $langcode, $mail_message);
+
+    if ($result['result'] !== TRUE) {
+      drupal_set_message(t('There was an issue sending an email notification to %email with message %msg', ['%email' => $author_email, '%msg' => $entity->comment_body->value]), 'error');
+      return;
+    }
+
+    drupal_set_message(t('An email notification has been sent to %user', ['%user' => $author->field_ua_user_preferred_name->value]));
+  }
+
+}
+
+/**
+ * Implements hook_mail().
+ */
+function shp_custom_mail($key, &$message, $params) {
+  // Set the content of the email message, escape any html prior to send.
+  switch ($key) {
+    case 'shp_site':
+      $message['from'] = \Drupal::config('system.site')->get('mail');
+      $message['subject'] = t('Site Instance : @subject', ['subject' => $params['subject']]);
+      $message['body'][] = t('Hello @name,', ['name' => $params['author_name']]);
+      $message['body'][] = \Drupal\Component\Utility\Html::escape($params['message']);
+  }
+
+}
+
+/**
+ * Implements hook_cron().
+ */
+function shp_custom_cron() {
+  shp_custom_populate_user_attributes();
+
+  // Only run backups at 3am.
+  if (date('G', time()) == 3) {
+    shp_custom_backup_environments();
+  }
+}
+
+/**
+ * Populates shepherd users with name and email from LDAP.
+ */
+function shp_custom_populate_user_attributes() {
+  // Update users attributes from LDAP.
+  $user_ids = \Drupal::entityQuery('user')->execute();
+  $users = User::loadMultiple($user_ids);
+  foreach ($users as $user) {
+    \Drupal::service('shp_custom.user')->populateFieldsFromLdap($user);
+    $user->save();
+  }
+}
+
+/**
+ * Back up all environments.
+ */
+function shp_custom_backup_environments() {
+  $site_instance_nids = \Drupal::entityQuery('node')
+    ->condition('type', 'shp_site_instance')
+    ->execute();
+
+  $instances = [];
+  $nodes = Node::loadMultiple($site_instance_nids);
+
+  foreach ($nodes as $node) {
+    $environment_name = $node->field_shp_environment->getString();
+    if (!array_key_exists($environment_name, $instances)) {
+      // Just pick once instance per environment to run the backup.
+      $instances[$environment_name] = $node;
+    }
+  }
+
+  foreach ($instances as $instance) {
+    \Drupal::service('shp_custom.backup')->createBackup($instance);
+  }
+}

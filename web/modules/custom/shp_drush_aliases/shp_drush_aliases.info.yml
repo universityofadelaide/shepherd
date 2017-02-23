@@ -1,0 +1,5 @@
+name: Shepherd Drush Alias
+type: module
+description: 'Provides functionality specific to the Shepherd.'
+core: 8.x
+package: UA

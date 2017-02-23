@@ -1,0 +1,9 @@
+{
+  "name": "ua-drupal-modules/shp_default_content",
+  "description": "Provides default Shepherd content for dev and testing.",
+  "type": "drupal-module",
+  "license": "GPL-2.0+",
+  "require": {
+    "drupal/default_content": "8.1.*@dev"
+  }
+}

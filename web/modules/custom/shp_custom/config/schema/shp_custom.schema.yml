@@ -1,0 +1,89 @@
+# Configuration schema for shp_custom module
+
+shp_custom.settings:
+  type: mapping
+  label: 'Shepherd settings'
+  mapping:
+    jenkins:
+      type: mapping
+      label: 'Jenkins Build Server'
+      mapping:
+        enabled:
+          type: boolean
+          label: 'Enabled'
+        base_uri:
+          type: string
+          label: 'Base URI'
+        token:
+          type: string
+          label: 'Token'
+        backup_job:
+          type: string
+          label: 'Backup Job'
+        clone_job:
+          type: string
+          label: 'Clone Job'
+        decommission_job:
+          type: string
+          label: 'Decommission Job'
+        deploy_job:
+          type: string
+          label: 'Deploy Job'
+        restore_job:
+          type: string
+          label: 'Restore Job'
+        reverse_proxy_job:
+          type: string
+          label: 'Reverse Proxy Job'
+    ldap:
+      type: mapping
+      label: 'LDAP Integration'
+      mapping:
+       enabled:
+        type: boolean
+        label: 'Enabled'
+    controlled_roles:
+      type: mapping
+      label: 'Controlled Roles'
+      mapping:
+        administrator:
+          type: string
+          label: 'Administrator'
+        shp_developer:
+          type: string
+          label: 'Developer'
+        shp_online_consultant:
+          type: string
+          label: 'Online Consultant'
+        shp_site_administrator:
+          type: string
+          label: 'Site Administrator'
+        shp_web_author:
+          type: string
+          label: 'Web Author'
+        shp_content_editor:
+          type: string
+          label: 'Content Editor'
+    backup_service:
+      type: mapping
+      label: 'Backup Service'
+      mapping:
+        path:
+          type: string
+          label: 'Backup path'
+    environment_domains:
+      type: mapping
+      label: 'Environments and Domains'
+      mapping:
+        prd:
+          type: string
+          label: 'adelaide.edu.au'
+        stg:
+          type: string
+          label: 'stg.adelaide.edu.au'
+        uat:
+          type: string
+          label: 'uat.adelaide.edu.au'
+        dev:
+          type: string
+          label: 'test'

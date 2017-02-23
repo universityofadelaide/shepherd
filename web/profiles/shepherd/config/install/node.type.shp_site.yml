@@ -1,0 +1,16 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - menu_ui
+third_party_settings:
+  menu_ui:
+    available_menus: {  }
+    parent: ''
+name: Site
+type: shp_site
+description: 'A site describes the metadata associated with a website hosted by the University of Adelaide.'
+help: ''
+new_revision: true
+preview_mode: 1
+display_submitted: true

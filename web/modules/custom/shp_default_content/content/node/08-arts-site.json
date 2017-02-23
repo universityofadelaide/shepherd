@@ -1,0 +1,237 @@
+{
+    "_links": {
+        "self": {
+            "href": "http:\/\/default\/node\/8?_format=hal_json"
+        },
+        "type": {
+            "href": "http:\/\/drupal.org\/rest\/type\/node\/shp_site"
+        },
+        "http:\/\/drupal.org\/rest\/relation\/node\/shp_site\/uid": [
+            {
+                "href": "http:\/\/default\/user\/1?_format=hal_json",
+                "lang": "en"
+            }
+        ],
+        "http:\/\/drupal.org\/rest\/relation\/node\/shp_site\/revision_uid": [
+            {
+                "href": "http:\/\/default\/user\/1?_format=hal_json"
+            }
+        ],
+        "http:\/\/drupal.org\/rest\/relation\/node\/shp_site\/field_shp_distribution": [
+            {
+                "href": "http:\/\/default\/node\/6?_format=hal_json"
+            }
+        ],
+        "http:\/\/drupal.org\/rest\/relation\/node\/shp_site\/field_shp_users": [
+            {
+                "href": ""
+            }
+        ]
+    },
+    "uuid": [
+        {
+            "value": "16434847-296c-4999-ae13-1924b9430086"
+        }
+    ],
+    "type": [
+        {
+            "target_id": "shp_site"
+        }
+    ],
+    "langcode": [
+        {
+            "value": "en",
+            "lang": "en"
+        }
+    ],
+    "title": [
+        {
+            "value": "Arts",
+            "lang": "en"
+        }
+    ],
+    "_embedded": {
+        "http:\/\/drupal.org\/rest\/relation\/node\/shp_site\/uid": [
+            {
+                "_links": {
+                    "self": {
+                        "href": "http:\/\/default\/user\/1?_format=hal_json"
+                    },
+                    "type": {
+                        "href": "http:\/\/drupal.org\/rest\/type\/user\/user"
+                    }
+                },
+                "uuid": [
+                    {
+                        "value": "5385210c-bd73-4c54-ae08-8a96f6591c9e"
+                    }
+                ],
+                "lang": "en"
+            }
+        ],
+        "http:\/\/drupal.org\/rest\/relation\/node\/shp_site\/revision_uid": [
+            {
+                "_links": {
+                    "self": {
+                        "href": "http:\/\/default\/user\/1?_format=hal_json"
+                    },
+                    "type": {
+                        "href": "http:\/\/drupal.org\/rest\/type\/user\/user"
+                    }
+                },
+                "uuid": [
+                    {
+                        "value": "5385210c-bd73-4c54-ae08-8a96f6591c9e"
+                    }
+                ]
+            }
+        ],
+        "http:\/\/drupal.org\/rest\/relation\/node\/shp_site\/field_shp_distribution": [
+            {
+                "_links": {
+                    "self": {
+                        "href": "http:\/\/default\/node\/6?_format=hal_json"
+                    },
+                    "type": {
+                        "href": "http:\/\/drupal.org\/rest\/type\/node\/shp_distribution"
+                    }
+                },
+                "uuid": [
+                    {
+                        "value": "77279229-d30c-433a-b700-c3c69f1d33c7"
+                    }
+                ]
+            }
+        ],
+        "http:\/\/drupal.org\/rest\/relation\/node\/shp_site\/field_shp_users": [
+            {
+                "_links": {
+                    "self": {
+                        "href": ""
+                    },
+                    "type": {
+                        "href": "http:\/\/drupal.org\/rest\/type\/paragraph\/shp_user_role"
+                    }
+                },
+                "uuid": [
+                    {
+                        "value": "0d9b7982-904d-4798-8341-65acacbadf87"
+                    }
+                ]
+            }
+        ]
+    },
+    "status": [
+        {
+            "value": "1",
+            "lang": "en"
+        }
+    ],
+    "created": [
+        {
+            "value": "1447976489",
+            "lang": "en"
+        }
+    ],
+    "changed": [
+        {
+            "value": "1447976553",
+            "lang": "en"
+        }
+    ],
+    "promote": [
+        {
+            "value": "0",
+            "lang": "en"
+        }
+    ],
+    "sticky": [
+        {
+            "value": "0",
+            "lang": "en"
+        }
+    ],
+    "revision_timestamp": [
+        {
+            "value": "1447976553"
+        }
+    ],
+    "revision_translation_affected": [
+        {
+            "value": "1",
+            "lang": "en"
+        }
+    ],
+    "default_langcode": [
+        {
+            "value": "1",
+            "lang": "en"
+        }
+    ],
+    "field_shp_admin_email": [
+        {
+            "value": "admin@localhost"
+        }
+    ],
+    "field_shp_admin_password": [
+        {
+            "value": "WcS0g35tAxkjcHEjhhv2"
+        }
+    ],
+    "field_shp_admin_user": [
+        {
+            "value": "admin"
+        }
+    ],
+    "field_shp_authoriser_email": [
+        {
+            "value": "facultyofarts@adelaide.edu.au"
+        }
+    ],
+    "field_shp_authoriser_name": [
+        {
+            "value": "Faculty of Arts"
+        }
+    ],
+    "field_shp_domain_name": [
+        {
+            "value": "adelaide.edu.au"
+        }
+    ],
+    "field_shp_instance_log": [
+        {
+            "status": "2",
+            "cid": "0",
+            "last_comment_timestamp": "1447976553",
+            "last_comment_name": null,
+            "last_comment_uid": "1",
+            "comment_count": "0",
+            "lang": "en"
+        }
+    ],
+    "field_shp_maintainer_email": [
+        {
+            "value": "facultyofarts@adelaide.edu.au"
+        }
+    ],
+    "field_shp_maintainer_name": [
+        {
+            "value": "Faculty of Arts"
+        }
+    ],
+    "field_shp_path": [
+        {
+            "value": "arts"
+        }
+    ],
+    "field_shp_site_title": [
+        {
+            "value": "Faculty of Arts"
+        }
+    ],
+    "field_shp_top_menu_style": [
+        {
+            "value": "no_menu"
+        }
+    ]
+}

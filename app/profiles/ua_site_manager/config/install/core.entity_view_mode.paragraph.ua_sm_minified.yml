@@ -1,9 +1,0 @@
-langcode: en
-status: true
-dependencies:
-  module:
-    - paragraphs
-id: paragraph.ua_sm_minified
-label: Minified
-targetEntityType: paragraph
-cache: true

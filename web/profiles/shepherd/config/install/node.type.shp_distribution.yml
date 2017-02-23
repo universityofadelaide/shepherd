@@ -1,0 +1,16 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - menu_ui
+third_party_settings:
+  menu_ui:
+    available_menus: {  }
+    parent: ''
+name: Distribution
+type: shp_distribution
+description: 'A distribution specifies a specific repository for a web application. E.g. "UA D8 base site", "Admissions at Adelaide" etc.'
+help: ''
+new_revision: false
+preview_mode: 1
+display_submitted: true

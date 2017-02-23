@@ -1,0 +1,58 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.teaser
+    - field.field.node.shp_site.body
+    - field.field.node.shp_site.field_tags
+    - field.field.node.shp_site.field_shp_aliases
+    - field.field.node.shp_site.field_shp_authoriser_email
+    - field.field.node.shp_site.field_shp_authoriser_name
+    - field.field.node.shp_site.field_shp_distribution
+    - field.field.node.shp_site.field_shp_domain_name
+    - field.field.node.shp_site.field_shp_instance_log
+    - field.field.node.shp_site.field_shp_maintainer_email
+    - field.field.node.shp_site.field_shp_maintainer_name
+    - field.field.node.shp_site.field_shp_path
+    - field.field.node.shp_site.field_shp_site_title
+    - field.field.node.shp_site.field_shp_top_menu_style
+    - field.field.node.shp_site.field_shp_users
+    - node.type.shp_site
+  module:
+    - text
+    - user
+id: node.shp_site.teaser
+targetEntityType: node
+bundle: shp_site
+mode: teaser
+content:
+  body:
+    label: hidden
+    type: text_summary_or_trimmed
+    weight: 101
+    settings:
+      trim_length: 600
+    third_party_settings: {  }
+  field_drush_aliases:
+    weight: 100
+  links:
+    weight: 100
+  users:
+    weight: 10
+hidden:
+  field_tags: true
+  field_shp_admin_email: true
+  field_shp_admin_password: true
+  field_shp_admin_user: true
+  field_shp_aliases: true
+  field_shp_authoriser_email: true
+  field_shp_authoriser_id: true
+  field_shp_distribution: true
+  field_shp_domain_name: true
+  field_shp_instance_log: true
+  field_shp_maintainer_email: true
+  field_shp_maintainer_id: true
+  field_shp_path: true
+  field_shp_site_title: true
+  field_shp_top_menu_style: true
+  field_shp_users: true

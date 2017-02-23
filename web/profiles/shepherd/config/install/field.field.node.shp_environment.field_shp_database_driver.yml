@@ -1,0 +1,20 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_shp_database_driver
+    - node.type.shp_environment
+id: node.shp_environment.field_shp_database_driver
+field_name: field_shp_database_driver
+entity_type: node
+bundle: shp_environment
+label: 'Database driver'
+description: ''
+required: false
+translatable: false
+default_value:
+  -
+    value: mysql
+default_value_callback: ''
+settings: {  }
+field_type: string

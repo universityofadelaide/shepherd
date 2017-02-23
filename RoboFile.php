@@ -25,7 +25,7 @@ class RoboFile extends RoboFileBase {
   }
 
   protected function getDrupalProfile() {
-    return "ua_site_manager";
+    return "shepherd";
   }
 
   /**
@@ -41,12 +41,12 @@ class RoboFile extends RoboFileBase {
   }
 
   /**
-   * Create default content for the site manager.
+   * Create default content for the Shepherd.
    */
   public function devContentGenerate() {
     $domain_name = getenv("DOMAIN");
     if (!empty($domain_name)) {
-      $this->_exec("$this->drush_cmd scr UASMContentGenerate.php --uri=site-manager.$domain_name");
+      $this->_exec("$this->drush_cmd scr ShepherdContentGenerate.php --uri=shepherd.$domain_name");
     }
   }
 

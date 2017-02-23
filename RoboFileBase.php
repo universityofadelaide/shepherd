@@ -395,32 +395,32 @@ abstract class RoboFileBase extends \Robo\Tasks implements RoboFileDrupalDeployI
     $config = [];
 
     // Site.
-    $config['site']['id']               = getenv('UA_SITE__ID');
-    $config['site']['site_title']       = getenv('UA_SITE__SITE_TITLE');
-    $config['site']['site_mail']        = getenv('UA_SITE__SITE_MAIL');
-    $config['site']['authoriser_name']  = getenv('UA_SITE__AUTHORISER_NAME');
-    $config['site']['authoriser_email'] = getenv('UA_SITE__AUTHORISER_EMAIL');
-    $config['site']['maintainer_name']  = getenv('UA_SITE__MAINTAINER_NAME');
-    $config['site']['maintainer_email'] = getenv('UA_SITE__MAINTAINER_EMAIL');
-    $config['site']['top_menu_style']   = getenv('UA_SITE__TOP_MENU_STYLE');
-    $config['site']['admin_email']      = getenv('UA_SITE__ADMIN_EMAIL');
-    $config['site']['admin_user']       = getenv('UA_SITE__ADMIN_USER');
-    $config['site']['admin_password']   = getenv('UA_SITE__ADMIN_PASSWORD');
+    $config['site']['id']               = getenv('SHP_SITE__ID');
+    $config['site']['site_title']       = getenv('SHP_SITE__SITE_TITLE');
+    $config['site']['site_mail']        = getenv('SHP_SITE__SITE_MAIL');
+    $config['site']['authoriser_name']  = getenv('SHP_SITE__AUTHORISER_NAME');
+    $config['site']['authoriser_email'] = getenv('SHP_SITE__AUTHORISER_EMAIL');
+    $config['site']['maintainer_name']  = getenv('SHP_SITE__MAINTAINER_NAME');
+    $config['site']['maintainer_email'] = getenv('SHP_SITE__MAINTAINER_EMAIL');
+    $config['site']['top_menu_style']   = getenv('SHP_SITE__TOP_MENU_STYLE');
+    $config['site']['admin_email']      = getenv('SHP_SITE__ADMIN_EMAIL');
+    $config['site']['admin_user']       = getenv('SHP_SITE__ADMIN_USER');
+    $config['site']['admin_password']   = getenv('SHP_SITE__ADMIN_PASSWORD');
 
     // Environment.
-    $config['environment']['site_id']         = getenv('UA_ENVIRONMENT__ID');
-    $config['environment']['hash_salt']       = getenv('UA_ENVIRONMENT__HASH_SALT');
-    $config['environment']['config_sync_dir'] = getenv('UA_ENVIRONMENT__CONFIG_SYNC_DIR');
+    $config['environment']['site_id']         = getenv('SHP_ENVIRONMENT__ID');
+    $config['environment']['hash_salt']       = getenv('SHP_ENVIRONMENT__HASH_SALT');
+    $config['environment']['config_sync_dir'] = getenv('SHP_ENVIRONMENT__CONFIG_SYNC_DIR');
 
     // Databases.
-    $config['database']['database']  = getenv('UA_DATABASE__DATABASE');
-    $config['database']['driver']    = getenv('UA_DATABASE__DRIVER');
-    $config['database']['host']      = getenv('UA_DATABASE__HOST');
-    $config['database']['password']  = getenv('UA_DATABASE__PASSWORD');
-    $config['database']['port']      = getenv('UA_DATABASE__PORT');
-    $config['database']['username']  = getenv('UA_DATABASE__USERNAME');
-    $config['database']['namespace'] = getenv('UA_DATABASE__NAMESPACE');
-    $config['database']['prefix']    = getenv('UA_DATABASE__PREFIX');
+    $config['database']['database']  = getenv('SHP_DATABASE__DATABASE');
+    $config['database']['driver']    = getenv('SHP_DATABASE__DRIVER');
+    $config['database']['host']      = getenv('SHP_DATABASE__HOST');
+    $config['database']['password']  = getenv('SHP_DATABASE__PASSWORD');
+    $config['database']['port']      = getenv('SHP_DATABASE__PORT');
+    $config['database']['username']  = getenv('SHP_DATABASE__USERNAME');
+    $config['database']['namespace'] = getenv('SHP_DATABASE__NAMESPACE');
+    $config['database']['prefix']    = getenv('SHP_DATABASE__PREFIX');
 
     // Clean up NULL values and empty arrays.
     $array_clean = function (&$item) use (&$array_clean) {

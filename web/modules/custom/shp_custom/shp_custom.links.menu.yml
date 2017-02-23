@@ -1,0 +1,5 @@
+shp_custom.shepherd_settings:
+  title: 'Shepherd'
+  description: 'Configure Shepherd settings and integrations.'
+  parent: system.admin_config_system
+  route_name: shp_custom.shepherd_settings

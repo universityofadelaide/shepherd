@@ -1,0 +1,18 @@
+services:
+  shp_custom.site_instance_config:
+    class: Drupal\shp_custom\Service\SiteInstanceConfig
+  shp_custom.jenkins_client:
+    class: Drupal\shp_custom\Service\JenkinsClient
+  shp_custom.password:
+    class: Drupal\shp_custom\Service\Password
+  shp_custom.port_manager:
+    class: Drupal\shp_custom\Service\PortManager
+  shp_custom.site:
+    class: Drupal\shp_custom\Service\Site
+  shp_custom.user:
+    class: Drupal\shp_custom\Service\User
+  shp_custom.hosts_config:
+    class: Drupal\shp_custom\Service\HostsConfig
+  shp_custom.backup:
+    class: Drupal\shp_custom\Service\Backup
+    arguments: ['@config.factory', '@shp_custom.jenkins_client']

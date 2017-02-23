@@ -1,0 +1,790 @@
+<?php
+
+/**
+ * @file
+ * Install, update and uninstall functions for the shepherd profile.
+ */
+
+use Drupal\user\Entity\User;
+use Drupal\user\RoleInterface;
+use Drupal\field\Entity\FieldStorageConfig;
+use Drupal\field\Entity\FieldConfig;
+
+/**
+ * Implements hook_install().
+ *
+ * Perform actions to set up the site for this profile.
+ *
+ * @see system_install()
+ */
+function shepherd_install() {
+  // Set front page to "node".
+  \Drupal::configFactory()->getEditable('system.site')->set('page.front', '/home')->save(TRUE);
+
+  // Allow visitor account creation with administrative approval.
+  $user_settings = \Drupal::configFactory()->getEditable('user.settings');
+  $user_settings->set('register', USER_REGISTER_VISITORS_ADMINISTRATIVE_APPROVAL)->save(TRUE);
+
+  // Revoke default permissions for system roles.
+  user_role_revoke_permissions(RoleInterface::ANONYMOUS_ID, ['access content', 'restful get entity:node']);
+  user_role_revoke_permissions(RoleInterface::AUTHENTICATED_ID, ['access content']);
+
+  // Assign user 1 the "administrator" role.
+  $user = User::load(1);
+  $user->roles[] = 'administrator';
+  $user->save();
+
+  // We install some menu links, so we have to rebuild the router, to ensure the
+  // menu links are valid.
+  \Drupal::service('router.builder')->rebuildIfNeeded();
+
+  // Enable the Contact link in the footer menu.
+  /** @var \Drupal\Core\Menu\MenuLinkManagerInterface $menu_link_manager */
+  $menu_link_manager = \Drupal::service('plugin.manager.menu.link');
+  $menu_link_manager->updateDefinition('contact.site_page', array('enabled' => TRUE));
+
+  // TODO: Remove this. Temporarily provides anon access to nodes via REST.
+  user_role_grant_permissions(RoleInterface::ANONYMOUS_ID, array('restful get entity:node'));
+
+  // Allow authenticated users to use shortcuts.
+  user_role_grant_permissions(RoleInterface::AUTHENTICATED_ID, array('access shortcuts'));
+
+  // Populate the default shortcut set.
+  $shortcut = entity_create('shortcut', array(
+    'shortcut_set' => 'default',
+    'title' => t('Add content'),
+    'weight' => -20,
+    'link' => array('uri' => 'internal:/node/add'),
+  ));
+  $shortcut->save();
+
+  $shortcut = entity_create('shortcut', array(
+    'shortcut_set' => 'default',
+    'title' => t('All content'),
+    'weight' => -19,
+    'link' => array('uri' => 'internal:/admin/content'),
+  ));
+  $shortcut->save();
+
+  // Enable the admin theme.
+  \Drupal::configFactory()->getEditable('node.settings')->set('use_admin_theme', TRUE)->save(TRUE);
+}
+
+/**
+ * Implements hook_update_dependencies().
+ */
+function shepherd_update_dependencies() {
+  $dependencies['shepherd']['8004'] = ['paragraphs' => '8001'];
+  return $dependencies;
+}
+
+/**
+ * Add the hash salt field to the environment entity.
+ */
+function shepherd_update_8001(&$sandbox) {
+  $field_storage = FieldStorageConfig::create([
+    'entity_type' => 'node',
+    'type' => 'string',
+    'field_name' => 'field_shp_hash_salt',
+    'cardinality' => 1,
+  ]);
+  $field_storage->save();
+
+  $field = FieldConfig::create([
+    'entity_type' => 'node',
+    'bundle' => 'shp_environment',
+    'field_name' => 'field_shp_hash_salt',
+    'label' => t('Hash salt'),
+  ]);
+  $field->save();
+
+  $entity_form_display = \Drupal::entityTypeManager()
+    ->getStorage('entity_form_display')
+    ->load('node.shp_environment.default');
+  $entity_form_display->removeComponent('field_shp_hash_salt')
+    ->save();
+
+  $entity_view_display = \Drupal::entityTypeManager()
+    ->getStorage('entity_view_display')
+    ->load('node.shp_environment.default');
+  $entity_view_display->removeComponent('field_shp_hash_salt')
+    ->save();
+}
+
+/**
+ * Add the new authoriser and maintainer fields, remove old authorizer fields.
+ * Set the form and view weights.
+ */
+function shepherd_update_8002(&$sandbox) {
+  // Remove authorizer email and ID.
+  $field = FieldConfig::load('node.shp_site.field_shp_authorizer_email');
+  $field->delete();
+  $field = FieldConfig::load('node.shp_site.field_shp_authorizer_id');
+  $field->delete();
+
+  // Authoriser email.
+  $field_storage = FieldStorageConfig::create([
+    'entity_type' => 'node',
+    'type' => 'string',
+    'field_name' => 'field_shp_authoriser_email',
+    'cardinality' => 1,
+  ]);
+  $field_storage->save();
+
+  $field = FieldConfig::create([
+    'entity_type' => 'node',
+    'bundle' => 'shp_site',
+    'description' => 'E.g. feedback@adelaide.edu.au.',
+    'field_name' => 'field_shp_authoriser_email',
+    'label' => t('Authoriser email'),
+  ]);
+  $field->save();
+
+  // Authoriser name.
+  $field_storage = FieldStorageConfig::create([
+    'entity_type' => 'node',
+    'type' => 'string',
+    'field_name' => 'field_shp_authoriser_name',
+    'cardinality' => 1,
+  ]);
+  $field_storage->save();
+
+  $field = FieldConfig::create([
+    'entity_type' => 'node',
+    'bundle' => 'shp_site',
+    'description' => 'E.g. Director, Marketing and Communications.',
+    'field_name' => 'field_shp_authoriser_name',
+    'label' => t('Authoriser name'),
+  ]);
+  $field->save();
+
+  // Maintainer email.
+  $field_storage = FieldStorageConfig::create([
+    'entity_type' => 'node',
+    'type' => 'string',
+    'field_name' => 'field_shp_maintainer_email',
+    'cardinality' => 1,
+  ]);
+  $field_storage->save();
+
+  $field = FieldConfig::create([
+    'entity_type' => 'node',
+    'bundle' => 'shp_site',
+    'description' => 'E.g. feedback@adelaide.edu.au.',
+    'field_name' => 'field_shp_maintainer_email',
+    'label' => t('Maintainer email'),
+  ]);
+  $field->save();
+
+  // Maintainer name.
+  $field_storage = FieldStorageConfig::create([
+    'entity_type' => 'node',
+    'type' => 'string',
+    'field_name' => 'field_shp_maintainer_name',
+    'cardinality' => 1,
+  ]);
+  $field_storage->save();
+
+  $field = FieldConfig::create([
+    'entity_type' => 'node',
+    'bundle' => 'shp_site',
+    'description' => 'E.g. Director, Marketing and Communications.',
+    'field_name' => 'field_shp_maintainer_name',
+    'label' => t('Maintainer name'),
+  ]);
+  $field->save();
+
+  $entity_form_display = \Drupal::entityTypeManager()
+    ->getStorage('entity_form_display')
+    ->load('node.shp_site.default');
+  $entity_form_display->setComponent('field_shp_authoriser_name', ['weight' => 7])
+    ->save();
+  $entity_form_display->setComponent('field_shp_authoriser_email', ['weight' => 8])
+    ->save();
+  $entity_form_display->setComponent('field_shp_maintainer_name', ['weight' => 8])
+    ->save();
+  $entity_form_display->setComponent('field_shp_maintainer_email', ['weight' => 8])
+    ->save();
+}
+
+/**
+ * Add the ssh user field to the server entity.
+ */
+function shepherd_update_8003(&$sandbox) {
+  $field_storage = FieldStorageConfig::create([
+    'entity_type' => 'node',
+    'type' => 'string',
+    'field_name' => 'field_shp_ssh_user',
+    'cardinality' => 1,
+  ]);
+  $field_storage->save();
+
+  $field = FieldConfig::create([
+    'entity_type' => 'node',
+    'bundle' => 'shp_server',
+    'field_name' => 'field_shp_ssh_user',
+    'label' => t('SSH user'),
+  ]);
+  $field->save();
+
+  $entity_form_display = \Drupal::entityTypeManager()
+    ->getStorage('entity_form_display')
+    ->load('node.shp_server.default');
+
+  $entity_form_display->setComponent('field_shp_ssh_user', ['weight' => 1])
+    ->save();
+
+  $entity_view_display = \Drupal::entityTypeManager()
+    ->getStorage('entity_view_display')
+    ->load('node.shp_server.default');
+
+  $entity_view_display->setComponent('field_shp_ssh_user', ['weight' => 2])
+    ->save();
+}
+
+/**
+ * Replace user ID field from user paragraph with user entity reference.
+ *
+ * Add Preferred Name field to User entity.
+ *
+ * Add new view configuration.
+ */
+function shepherd_update_8004(&$sandbox) {
+  // Add 'user' entity reference field to user role paragraph.
+  // @see app/profiles/shepherd/config/install/field.storage.paragraph.field_shp_user.yml
+  $field_storage = FieldStorageConfig::create([
+    'entity_type' => 'paragraph',
+    'type' => 'entity_reference',
+    'field_name' => 'field_shp_user',
+    'cardinality' => 1,
+    'settings' => [
+      'target_type' => 'user',
+    ],
+  ]);
+  $field_storage->save();
+
+  // @see app/profiles/shepherd/config/install/field.field.paragraph.shp_user_role.field_shp_user.yml
+  $field = FieldConfig::create([
+    'entity_type' => 'paragraph',
+    'bundle' => 'shp_user_role',
+    'field_name' => 'field_shp_user',
+    'label' => t('User'),
+  ]);
+  $field->save();
+
+  // Create 'string' field_ua_user_preferred_name.
+  // @see app/profiles/shepherd/config/install/field.field.user.field_ua_user_preferred_name.yml
+  $field_storage = FieldStorageConfig::create([
+    'entity_type' => 'user',
+    'type' => 'string',
+    'field_name' => 'field_ua_user_preferred_name',
+    'cardinality' => 1,
+  ]);
+  $field_storage->save();
+
+  // Add preferred name field to User entity.
+  // @see app/profiles/shepherd/config/install/field.field.user.field_ua_user_preferred_name.yml
+  $field = FieldConfig::create([
+    'entity_type' => 'user',
+    'bundle' => 'user',
+    'field_name' => 'field_ua_user_preferred_name',
+    'label' => t('Preferred name'),
+  ]);
+  $field->save();
+
+  // @see app/profiles/shepherd/config/install/core.entity_form_display.paragraph.shp_user_role.default.yml
+  $entity_form_display = \Drupal::entityTypeManager()
+    ->getStorage('entity_form_display')
+    ->load('paragraph.shp_user_role.default');
+  $entity_form_display->setComponent('field_shp_user', ['weight' => 0])
+    ->save();
+
+  // @see app/profiles/shepherd/config/install/core.entity_view_display.paragraph.shp_user_role.default.yml
+  $entity_view_display = \Drupal::entityTypeManager()
+    ->getStorage('entity_view_display')
+    ->load('paragraph.shp_user_role.default');
+  $entity_view_display->setComponent('field_shp_user', ['weight' => 0])
+    ->save();
+
+  // Disable LDAP integration if it's enabled.
+  $config = \Drupal::service('config.factory')->getEditable('shp_custom.settings');
+  $ldap_integration = $config->get('ldap.enabled');
+  $config->set('ldap.enabled', FALSE);
+  $config->save();
+
+  $query = \Drupal::entityQuery('node')
+    ->condition('type', 'shp_site')
+    ->execute();
+
+  $sites = \Drupal::entityTypeManager()->getStorage('node')
+    ->loadMultiple($query);
+
+  foreach ($sites as $site) {
+    // @todo get the paragraph referenced entities.
+    $user_roles = $site->field_shp_users->referencedEntities();
+    foreach ($user_roles as $user_role) {
+      $account = user_load_by_name($user_role->field_shp_user_id->value);
+      if (!$account) {
+        $account = \Drupal::service('shp_custom.user')
+          ->provision($user_role->field_shp_user_id->value);
+      }
+
+      $user_role->field_shp_user->target_id = $account->id();
+      $user_role->save();
+    }
+
+    $site->save();
+  }
+
+  // Set LDAP integration back to whatever it was before.
+  $config->set('ldap.enabled', $ldap_integration);
+  $config->save();
+
+  // Load in the views needed.
+  $config_path = drupal_get_path('profile', 'shepherd') . '/config/install';
+  $active_storage = \Drupal::service('config.storage');
+  $source = new Drupal\Core\Config\FileStorage($config_path);
+
+  // This configuration may or may not exist on prd.
+  if ($active_storage->exists('views.view_shp_site_instances')) {
+    // Delete the old configuration.
+    $active_storage->delete('views.view_shp_site_instances');
+  }
+
+  // Set front page to new path /websites.
+  \Drupal::configFactory()->getEditable('system.site')->set('page.front', '/websites')->save(TRUE);
+
+  /** @var \Drupal\Core\Config\StorageInterface $active_storage */
+  $active_storage->write('views.view.users', $source->read('views.view.users'));
+  $active_storage->write('views.view.shp_sites', $source->read('views.view.shp_sites'));
+  $active_storage->write('views.view.shp_site_users', $source->read('views.view.shp_site_users'));
+  $active_storage->write('views.view.shp_site_instances', $source->read('views.view.shp_site_instances'));
+  $active_storage->write('views.view.shp_site_details', $source->read('views.view.shp_site_details'));
+  $active_storage->write('views.view.shp_servers', $source->read('views.view.shp_servers'));
+  $active_storage->write('views.view.shp_platforms', $source->read('views.view.shp_platforms'));
+  $active_storage->write('views.view.shp_environments', $source->read('views.view.shp_environments'));
+  $active_storage->write('views.view.shp_distributions', $source->read('views.view.shp_distributions'));
+
+  // Delete user_id field from user role paragraph.
+  $field = FieldConfig::load('paragraph.shp_user_role.field_shp_user_id');
+  $field->delete();
+
+}
+
+/**
+ * Add permissions to views.
+ */
+function shepherd_update_8005(&$sandbox) {
+  $config_path = drupal_get_path('profile', 'shepherd') . '/config/install';
+  $source = new Drupal\Core\Config\FileStorage($config_path);
+  $config_storage = \Drupal::service('config.storage');
+
+  $configs = [
+    'user.role.shp_developer',
+    'user.role.shp_online_consultant',
+    'user.role.shp_site_administrator',
+    'views.view.users',
+    'views.view.shp_sites',
+    'views.view.shp_site_users',
+    'views.view.shp_site_instances',
+    'views.view.shp_site_details',
+    'views.view.shp_servers',
+    'views.view.shp_platforms',
+    'views.view.shp_environments',
+    'views.view.shp_distributions',
+  ];
+
+  foreach ($configs as $config) {
+    // Delete config if it already exists.
+    if ($config_storage->exists($config)) {
+      $config_storage->delete($config);
+    }
+    $config_storage->write($config, $source->read($config));
+  }
+}
+
+/**
+ * Update route to site add.
+ */
+function shepherd_update_8006(&$sandbox) {
+  $config_path = drupal_get_path('profile', 'shepherd') . '/config/install';
+  $source = new Drupal\Core\Config\FileStorage($config_path);
+  $config_storage = \Drupal::service('config.storage');
+  $config = 'views.view.shp_sites';
+  $config_storage->delete($config);
+  $config_storage->write($config, $source->read($config));
+}
+
+/**
+ * Add the config sync field to the environment entity.
+ */
+function shepherd_update_8007(&$sandbox) {
+  $field_storage = FieldStorageConfig::create([
+    'entity_type' => 'node',
+    'type' => 'string',
+    'field_name' => 'field_shp_config_sync',
+    'cardinality' => 1,
+  ]);
+  $field_storage->save();
+
+  $field = FieldConfig::create([
+    'entity_type' => 'node',
+    'bundle' => 'shp_environment',
+    'field_name' => 'field_shp_config_sync',
+    'label' => t('Config sync dir'),
+  ]);
+  $field->save();
+
+  $entity_form_display = \Drupal::entityTypeManager()
+    ->getStorage('entity_form_display')
+    ->load('node.shp_environment.default');
+  $entity_form_display->removeComponent('field_shp_config_sync')
+    ->save();
+
+  $entity_view_display = \Drupal::entityTypeManager()
+    ->getStorage('entity_view_display')
+    ->load('node.shp_environment.default');
+  $entity_view_display->removeComponent('field_shp_config_sync')
+    ->save();
+}
+
+/**
+ * Update the site users view with a custom view field for operations.
+ * Update homepage and login blocks.
+ */
+function shepherd_update_8008(&$sandbox) {
+  \Drupal::configFactory()->getEditable('system.site')->set('page.front', '/home')->save(TRUE);
+  $config_storage = \Drupal::service('config.storage');
+
+  // Remove blocks.
+  $config_storage->delete('block.block.bartik_account_menu');
+  $config_storage->delete('block.block.bartik_login');
+  $config_storage->delete('block.block.seven_login');
+
+  // Add back in account menu block with modified access.
+  $config_path = drupal_get_path('profile', 'shepherd') . '/config/install';
+  $source = new Drupal\Core\Config\FileStorage($config_path);
+  $config_storage->write('block.block.bartik_account_menu', $source->read('block.block.bartik_account_menu'));
+
+  if ($config_storage->exists('views.view.shp_site_users')) {
+    $config_storage->delete('views.view.shp_site_users');
+  }
+  $config_storage->write('views.view.shp_site_users', $source->read('views.view.shp_site_users'));
+}
+
+/**
+ * Update the shp_custom.settings configuration yml.
+ */
+function shepherd_update_8009(&$sandbox) {
+  $config_path = drupal_get_path('module', 'shp_custom') . '/config/install';
+  $source = new Drupal\Core\Config\FileStorage($config_path);
+  $config_storage = \Drupal::service('config.storage');
+  $config_storage->write('shp_custom.settings', $source->read('shp_custom.settings'));
+}
+
+/**
+ * Allow OCs to view environments.
+ */
+function shepherd_update_8010(&$sandbox) {
+  $config_path = drupal_get_path('profile', 'shepherd') . '/config/install';
+  $source = new Drupal\Core\Config\FileStorage($config_path);
+  $config_storage = \Drupal::service('config.storage');
+  $config = 'user.role.shp_online_consultant';
+
+  // Delete config if it already exists.
+  if ($config_storage->exists($config)) {
+    $config_storage->delete($config);
+  }
+  $config_storage->write($config, $source->read($config));
+}
+
+/**
+ * Updates for theming with ua_theme.
+ */
+function shepherd_update_8011(&$sandbox) {
+  $config_path = drupal_get_path('profile', 'shepherd') . '/config/install';
+  $source = new Drupal\Core\Config\FileStorage($config_path);
+  $config_storage = \Drupal::service('config.storage');
+
+  $configs = [
+    'block.block.exposedform_shp_sitespage_1',
+    'block.block.ua_theme_branding',
+    'block.block.ua_theme_content',
+    'block.block.ua_theme_help',
+    'block.block.ua_theme_local_actions',
+    'block.block.ua_theme_local_tasks',
+    'block.block.ua_theme_main_menu',
+    'block.block.ua_theme_messages',
+    'block.block.ua_theme_page_title',
+    'block.block.ua_theme_tabs',
+    'system.theme.global',
+    'system.theme',
+    'views.view.shp_sites',
+  ];
+
+  foreach ($configs as $config) {
+    // Delete config if it already exists.
+    if ($config_storage->exists($config)) {
+      $config_storage->delete($config);
+    }
+    $config_storage->write($config, $source->read($config));
+  }
+
+}
+
+/**
+ * Adds site environments view and updates the tabs.
+ */
+function shepherd_update_8012(&$sandbox) {
+  $config_path = drupal_get_path('profile', 'shepherd') . '/config/install';
+  $source = new Drupal\Core\Config\FileStorage($config_path);
+  $config_storage = \Drupal::service('config.storage');
+
+  $configs = [
+    'views.view.shp_site_environments',
+    'views.view.shp_sites',
+    'views.view.users',
+    'block.block.ua_theme_tabs',
+    'user.role.shp_developer',
+    'user.role.shp_online_consultant',
+    'user.role.shp_site_administrator',
+  ];
+
+  foreach ($configs as $config) {
+    if ($config_storage->exists($config)) {
+      $config_storage->delete($config);
+    }
+    $config_storage->write($config, $source->read($config));
+  }
+}
+
+/**
+ * Adds dynamic view titles by pulling nid from args.
+ */
+function shepherd_update_8013(&$sandbox) {
+  $config_path = drupal_get_path('profile', 'shepherd') . '/config/install';
+  $source = new Drupal\Core\Config\FileStorage($config_path);
+  $config_storage = \Drupal::service('config.storage');
+
+  $configs = [
+    'views.view.shp_site_environments',
+    'views.view.shp_site_users',
+    'views.view.shp_site_details',
+  ];
+
+  foreach ($configs as $config) {
+    if ($config_storage->exists($config)) {
+      $config_storage->delete($config);
+    }
+    $config_storage->write($config, $source->read($config));
+  }
+}
+
+/**
+ * Updates the rest settings, adds the status field to environment, updates all.
+ */
+function shepherd_update_8014(&$sandbox) {
+  $config_path = drupal_get_path('profile', 'shepherd') . '/config/install';
+  $source = new Drupal\Core\Config\FileStorage($config_path);
+  $config_storage = \Drupal::service('config.storage');
+
+  $configs = [
+    'rest.settings'
+  ];
+
+  foreach ($configs as $config) {
+    if ($config_storage->exists($config)) {
+      $config_storage->delete($config);
+    }
+    $config_storage->write($config, $source->read($config));
+  }
+
+  // Add the new field to environments.
+  $field_storage = FieldStorageConfig::create([
+    'entity_type' => 'node',
+    'type' => 'string',
+    'field_name' => 'field_shp_environment_status',
+    'cardinality' => 1,
+  ]);
+  $field_storage->save();
+
+  $field = FieldConfig::create([
+    'entity_type' => 'node',
+    'bundle' => 'shp_environment',
+    'field_name' => 'field_shp_environment_status',
+    'label' => t('Status'),
+  ]);
+  $field->save();
+
+  // Update all existing shp_environment entities.
+  $query = \Drupal::entityQuery('node')
+    ->condition('type', 'shp_environment')
+    ->execute();
+
+  $environments = \Drupal::entityTypeManager()->getStorage('node')
+    ->loadMultiple($query);
+
+  foreach ($environments as $environment) {
+    $environment->field_shp_environment_status->setValue = 1;
+    $environment->save();
+  }
+}
+
+/**
+ * Updates the local tasks links configuration.
+ * Also adds a heading as per other views.
+ */
+function shepherd_update_8015(&$sandbox) {
+  $config_path = drupal_get_path('profile', 'shepherd') . '/config/install';
+  $source = new Drupal\Core\Config\FileStorage($config_path);
+  $config_storage = \Drupal::service('config.storage');
+
+  $configs = [
+    'block.block.ua_theme_tabs',
+    'views.view.shp_site_environments'
+  ];
+
+  foreach ($configs as $config) {
+    $config_storage->write($config, $source->read($config));
+  }
+}
+
+/**
+ * Updates sites view to remove tags text field
+ */
+function shepherd_update_8016(&$sandbox) {
+  $config_path = drupal_get_path('profile', 'shepherd') . '/config/install';
+  $source = new Drupal\Core\Config\FileStorage($config_path);
+  $config_storage = \Drupal::service('config.storage');
+  $config = 'views.view.shp_sites';
+
+  $config_storage->write($config, $source->read($config));
+}
+
+/**
+ * Updates sites view to remove tags text field
+ */
+function shepherd_update_8017(&$sandbox) {
+  $config_path = drupal_get_path('profile', 'shepherd') . '/config/install';
+  $source = new Drupal\Core\Config\FileStorage($config_path);
+  $config_storage = \Drupal::service('config.storage');
+  $config = 'views.view.shp_site_environments';
+
+  $config_storage->write($config, $source->read($config));
+}
+
+/**
+ * Updates sites environments view with a new field operation to add instances.
+ */
+function shepherd_update_8018(&$sandbox) {
+  $config_path = drupal_get_path('profile', 'shepherd') . '/config/install';
+  $source = new Drupal\Core\Config\FileStorage($config_path);
+  $config_storage = \Drupal::service('config.storage');
+
+  $config = 'views.view.shp_site_environments';
+
+  $config_storage->write($config, $source->read($config));
+}
+
+/**
+ * Add new site_mail field to site
+ */
+function shepherd_update_8019(&$sandbox) {
+  // Add the new field to environments.
+  $field_storage = FieldStorageConfig::create([
+    'entity_type' => 'node',
+    'type'        => 'string',
+    'field_name'  => 'field_shp_site_mail',
+    'cardinality' => 1,
+  ]);
+  $field_storage->save();
+
+  $field = FieldConfig::create([
+    'entity_type' => 'node',
+    'bundle'      => 'shp_site',
+    'field_name'  => 'field_shp_site_mail',
+    'label'       => t('Site mail'),
+  ]);
+  $field->save();
+}
+
+/**
+ * Remove no longer used
+ */
+function shepherd_update_8020(&$sandbox) {
+  $entity_form_display = \Drupal::entityTypeManager()
+    ->getStorage('entity_form_display')
+    ->load('node.shp_environment.default');
+  $entity_form_display->removeComponent('field_shp_deployment_type')
+    ->save();
+
+  $entity_view_display = \Drupal::entityTypeManager()
+    ->getStorage('entity_view_display')
+    ->load('node.shp_environment.default');
+  $entity_view_display->removeComponent('field_shp_deployment_type')
+    ->save();
+}
+
+/**
+ * Adds environment status to site_environments view,
+ * also add 'failed' string to field_shp_state.
+ */
+function shepherd_update_8021(&$sandbox) {
+  $config_path = drupal_get_path('profile', 'shepherd') . '/config/install';
+  $source = new Drupal\Core\Config\FileStorage($config_path);
+  $config_storage = \Drupal::service('config.storage');
+  $config_storage->write('views.view.shp_site_environments', $source->read('views.view.shp_site_environments'));
+  // Add a new view to show instances related to an environment.
+  $config_storage->write('views.view.shp_environment_instances', $source->read('views.view.shp_environment_instances'));
+
+  $field_storage_configs = \Drupal::entityTypeManager()
+    ->getStorage('field_storage_config')
+    ->loadByProperties(['type' => 'node.field_shp_state']);
+
+  foreach ($field_storage_configs as $field_storage) {
+    $new_field_storage = $field_storage->toArray();
+    // Set the new allowed values.
+    $new_field_storage['settings']['allowed_values'] = [
+      ['Running' => 'running'],
+      ['Starting' => 'starting'],
+      ['Stopping' => 'stopping'],
+      ['Stopped' => 'stopped'],
+      ['Failed' => 'failed']
+    ];
+    $new_field_storage = FieldStorageConfig::create($new_field_storage);
+    $new_field_storage->original = $new_field_storage;
+    $new_field_storage->enforceIsNew(FALSE);
+    $new_field_storage->save();
+  }
+}
+
+function shepherd_update_8022(&$sandbox) {
+  $config_path = drupal_get_path('profile', 'shepherd') . '/config/install';
+  $source = new Drupal\Core\Config\FileStorage($config_path);
+  $config_storage = \Drupal::service('config.storage');
+  $config_storage->write('block.block.ua_theme_tabs', $source->read('block.block.ua_theme_tabs'));
+}
+
+/**
+ * Update site environmnts view with URL field.
+ */
+function shepherd_update_8024(&$sandbox) {
+  $config_path = drupal_get_path('profile', 'shepherd') . '/config/install';
+  $source = new Drupal\Core\Config\FileStorage($config_path);
+  $config_storage = \Drupal::service('config.storage');
+  $config = 'views.view.shp_site_environments';
+  $config_storage->delete($config);
+  $config_storage->write($config, $source->read($config));
+}
+
+/**
+ * Update the site details view with drush aliases.
+ */
+function shepherd_update_8025(&$sandbox) {
+  $config_path = drupal_get_path('profile', 'shepherd') . '/config/install';
+  $source = new Drupal\Core\Config\FileStorage($config_path);
+  $config_storage = \Drupal::service('config.storage');
+  $config = 'views.view.shp_site_details';
+  $config_storage->delete($config);
+  $config_storage->write($config, $source->read($config));
+}

@@ -1,0 +1,20 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_shp_ip_address
+    - node.type.shp_site_instance
+id: node.shp_site_instance.field_shp_ip_address
+field_name: field_shp_ip_address
+entity_type: node
+bundle: shp_site_instance
+label: 'IP address'
+description: 'IPv4 address.'
+required: false
+translatable: false
+default_value:
+  -
+    value: ''
+default_value_callback: ''
+settings: {  }
+field_type: string

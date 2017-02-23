@@ -1,0 +1,3 @@
+services:
+  shp_drush_aliases.site_aliases:
+    class: Drupal\shp_drush_aliases\Service\SiteAliases

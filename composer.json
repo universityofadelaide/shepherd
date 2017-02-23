@@ -1,6 +1,6 @@
 {
-    "name": "ua-web-team/ua-site-manager",
-    "description": "University of Adelaide Drupal 8 base project.",
+    "name": "ua-web-team/shepherd",
+    "description": "University of Adelaide Shepherd site management system.",
     "type": "project",
     "license": "MIT",
     "repositories": [
@@ -37,12 +37,12 @@
     },
     "extra": {
         "installer-paths": {
-            "app/core":                     ["type:drupal-core"],
-            "app/modules/contrib/{$name}":  ["type:drupal-module"],
-            "app/profiles/contrib/{$name}": ["type:drupal-profile"],
-            "app/themes/contrib/{$name}":   ["type:drupal-theme"],
-            "app/libraries/{$name}":        ["type:drupal-library"],
-            "app/drush/commands/{$name}":   ["type:drupal-drush"]
+            "web/core":                     ["type:drupal-core"],
+            "web/modules/contrib/{$name}":  ["type:drupal-module"],
+            "web/profiles/contrib/{$name}": ["type:drupal-profile"],
+            "web/themes/contrib/{$name}":   ["type:drupal-theme"],
+            "web/libraries/{$name}":        ["type:drupal-library"],
+            "web/drush/commands/{$name}":   ["type:drupal-drush"]
         },
         "patches": {
             "drupal/r4032login": {

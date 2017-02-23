@@ -1,9 +1,9 @@
-# UASM Gitlab CI script
+# Shepherd Gitlab CI script
 variables:
   SIMPLETEST_DB: "mysql://drupal:drupal@localhost/local"
   SIMPLETEST_BASE_URL: "http://localhost"
 
-uasm:
+shepherd:
   script:
   - /bin/ln -s ${CI_PROJECT_DIR}/app /var/www/app
   - nohup /root/scripts/start.sh &

@@ -1,0 +1,24 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_shp_aliases
+    - node.type.shp_site
+id: node.shp_site.field_shp_aliases
+field_name: field_shp_aliases
+entity_type: node
+bundle: shp_site
+label: Aliases
+description: 'Aliases allow extra domains associated with a site, which redirect to the primary domain name. E.g. www.adelaide.edu.au, health.adelaide.edu.au.'
+required: false
+translatable: false
+default_value:
+  -
+    value: ''
+  -
+    value: ''
+  -
+    value: ''
+default_value_callback: ''
+settings: {  }
+field_type: string

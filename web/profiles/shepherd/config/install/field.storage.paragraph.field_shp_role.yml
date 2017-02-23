@@ -1,0 +1,31 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - options
+    - paragraphs
+_core:
+  default_config_hash: 5roDZz_bjjuP-c-uVm9WaRVSxWgEeWAfptHGCeWQQqM
+id: paragraph.field_shp_role
+field_name: field_shp_role
+entity_type: paragraph
+type: list_string
+settings:
+  allowed_values:
+    -
+      value: ua_author
+      label: Author
+    -
+      value: ua_editor
+      label: Editor
+    -
+      value: administrator
+      label: Administrator
+  allowed_values_function: ''
+module: options
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

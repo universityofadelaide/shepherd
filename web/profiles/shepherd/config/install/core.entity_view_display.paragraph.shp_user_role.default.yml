@@ -1,0 +1,33 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.shp_user_role.field_shp_role
+    - field.field.paragraph.shp_user_role.field_shp_user
+    - paragraphs.paragraphs_type.shp_user_role
+  module:
+    - options
+_core:
+  default_config_hash: DStMtTZ2Legey977GlWcsa-dQyc5Q4-2HuRvq4o4tTU
+id: paragraph.shp_user_role.default
+targetEntityType: paragraph
+bundle: shp_user_role
+mode: default
+content:
+  field_shp_role:
+    weight: 1
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    type: list_default
+  field_shp_user:
+    weight: 0
+    label: above
+    settings:
+      view_mode: default
+      link: false
+    third_party_settings: {  }
+    type: entity_reference_entity_view
+hidden:
+  created: true
+  uid: true

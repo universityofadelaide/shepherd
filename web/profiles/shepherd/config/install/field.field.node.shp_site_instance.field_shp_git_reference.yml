@@ -1,0 +1,20 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_shp_git_reference
+    - node.type.shp_site_instance
+id: node.shp_site_instance.field_shp_git_reference
+field_name: field_shp_git_reference
+entity_type: node
+bundle: shp_site_instance
+label: 'Git Reference'
+description: 'The actual commit ID deployed to this instance.'
+required: false
+translatable: false
+default_value:
+  -
+    value: ''
+default_value_callback: ''
+settings: {  }
+field_type: string

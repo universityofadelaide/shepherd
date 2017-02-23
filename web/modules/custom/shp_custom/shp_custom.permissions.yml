@@ -1,0 +1,24 @@
+shp access environment wizard:
+  title: 'Access environment wizard'
+shp access site wizard:
+  title: 'Access site wizard'
+shp administer users:
+  title: 'Administer users'
+shp view backups:
+  title: 'View backups'
+shp view distributions:
+  title: 'View distributions'
+shp view environments:
+  title: 'View environments'
+shp view homepage:
+  title: 'View homepage'
+shp view instances:
+  title: 'View instances'
+shp view platforms:
+  title: 'View platforms'
+shp view servers:
+  title: 'View servers'
+shp view sites:
+  title: 'View sites'
+shp view users:
+  title: 'View users'
