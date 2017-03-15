@@ -16,8 +16,8 @@ The University of Adelaide Shepherd provides an administration UI for provisioni
 composer install
 # bring up containers
 docker compose up -d
-# bring down containers
-docker composer down
+# bring down containers, -v to remove volumes
+docker composer down -v
 ```
 
 ### Additional Notes
