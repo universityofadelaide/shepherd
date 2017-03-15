@@ -21,4 +21,4 @@ docker-composer down
 
 ### Additional Notes
 
-- mysql host is `db`
+- mysql host is `db`, database is `shepherd`, user is `user` and password is `password`
