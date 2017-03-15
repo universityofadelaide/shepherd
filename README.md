@@ -1,4 +1,3 @@
-
 Shepherd
 ========
 
@@ -15,9 +14,9 @@ The University of Adelaide Shepherd provides an administration UI for provisioni
 # setup 
 composer install
 # bring up containers
-docker compose up -d
+docker-compose up -d
 # bring down containers
-docker composer down
+docker-composer down
 ```
 
 ### Additional Notes
