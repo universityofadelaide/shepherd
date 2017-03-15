@@ -1,4 +1,3 @@
-
 Shepherd
 ========
 
@@ -22,4 +21,4 @@ docker composer down -v
 
 ### Additional Notes
 
-- mysql host is `db`
+- mysql host is `db`, database is `shepherd`, user is `user` and password is `password`
