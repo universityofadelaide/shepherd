@@ -15,6 +15,8 @@ The University of Adelaide Shepherd provides an administration UI for provisioni
 composer install
 # bring up containers
 docker compose up -d
+# drop into a utility shell ( this creates a ssh-agent container for macOS )
+./dsh shell
 # bring down containers, -v to remove volumes
 docker composer down -v
 ```
@@ -30,3 +32,4 @@ composer update
 ### Additional Notes
 
 - mysql host is `db`, database is `shepherd`, user is `user` and password is `password`
+- you may need to make `dsh` executable after a `composer update` - `chmod +x dsh`
