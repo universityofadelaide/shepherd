@@ -3266,12 +3266,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/universityofadelaide/shepherd-drupal-scaffold.git",
-                "reference": "18ad861d77921cfb897b13c733208762b076680b"
+                "reference": "6a6c336916e6302d2799f6feb05990a25e16131f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/universityofadelaide/shepherd-drupal-scaffold/zipball/18ad861d77921cfb897b13c733208762b076680b",
-                "reference": "18ad861d77921cfb897b13c733208762b076680b",
+                "url": "https://api.github.com/repos/universityofadelaide/shepherd-drupal-scaffold/zipball/6a6c336916e6302d2799f6feb05990a25e16131f",
+                "reference": "6a6c336916e6302d2799f6feb05990a25e16131f",
                 "shasum": ""
             },
             "require": {
@@ -3293,7 +3293,7 @@
                 "GPL-2.0+"
             ],
             "description": "Composer Plugin for updating the Shepherd Drupal tools.",
-            "time": "2017-03-16 00:00:03"
+            "time": "2017-03-16 05:48:03"
         },
         {
             "name": "zendframework/zend-diactoros",

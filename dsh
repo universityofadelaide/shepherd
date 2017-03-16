@@ -4,6 +4,12 @@
 set -euo pipefail
 IFS=$'\n\t'
 
+# Figure out some names/directories.
+DIR=$(pwd)
+
+# Used as the prefix for docker networking, container naming and nginx hostname.
+export PROJECT=$(basename ${DIR} | sed 's/[-_]//g')
+
 # Setup some functions to output warnings
 notice() {
   printf "\e[32;01m$1\e[39;49;00m\n"
@@ -17,19 +23,69 @@ error() {
   printf "\e[31;01m$1\e[39;49;00m\n"
 }
 
+setup_ssh_agent_proxy() {
+  if docker ps -a | grep "ssh-agent" > /dev/null; then
+    docker start ssh-agent
+  else
+    notice "Creating ssh agent proxy, because no ssh-agent forwarding available on macOS :( "
+    docker run -u ${UID} -d -v ssh:/ssh --name=ssh-agent whilp/ssh-agent:latest
+    setup_ssh_agent_keys
+  fi
+
+  if ! docker ps | grep "ssh-agent" > /dev/null; then
+    error "whilp/ssh-agent could not be started."
+  fi
+
+  notice "Connecting ssh-agent to the network."
+  set +e
+  docker network connect ${PROJECT}_default ssh-agent
+  set -e
+}
+
+setup_ssh_agent_keys() {
+  # Get all your keys in your agent
+  CURRENT_SSH_KEYS=$(ssh-add -l | awk '{print $3}')
+  notice "Adding ssh keys to agent proxy"
+  # Add keys into the ssh agent proxy
+  docker run -u ${UID} --rm -v ssh:/ssh -v $HOME:$HOME -it whilp/ssh-agent:latest ssh-add ${CURRENT_SSH_KEYS}
+}
+
+setup_docker_network() {
+  # creates the network if doesn't exist
+  if ! docker network ls | grep ${PROJECT}_default > /dev/null;  then
+    notice "Creating project docker network."
+    docker network create ${PROJECT}_default
+  fi
+}
 dsh_shell() {
+
+  setup_docker_network
+
   notice "Starting shell"
 
   CONTAINER="shepherd_utility"
   DIR=$(pwd)
   SHELL_USER=${USER}
 
+  # SSH AGENT
+  SOCK=$(dirname ${SSH_AUTH_SOCK})
+  CONTAINER_SOCK=${SOCK}
+    # Using macOS ? Then get a ssh-agent container
+    if [ ${OSTYPE} != 'linux-gnu' ]; then
+      # Run the agent proxy first.
+      setup_ssh_agent_proxy
+      # Change vars to mount the /ssh volume create by the ssh_agent_proxy.
+      SOCK="ssh"
+      CONTAINER_SOCK="/ssh"
+      SSH_AUTH_SOCK="/ssh/auth/sock"
+    fi
   set +e
     docker run --rm -it -h utility --name ${CONTAINER} \
       -e USER=${SHELL_USER} \
       -e UID=${UID} \
       -v ${DIR}:/code \
-      --network shepherd_default \
+      -v ${SOCK}:${CONTAINER_SOCK} -e SSH_AUTH_SOCK=${SSH_AUTH_SOCK} \
+      --network ${PROJECT}_default \
       uofa/utility-php7 /entry.sh
   set -e
 }
