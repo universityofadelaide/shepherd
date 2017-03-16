@@ -19,6 +19,14 @@ docker compose up -d
 docker composer down -v
 ```
 
+### Updating scaffolds 
+
+Anything using the `master` branch is going to be cached by composer. To unsure you get the latest, clear the composer cache
+```bash
+composer clear-cache
+# update - look at the composer.json > "scripts" to see the commands that are run during an update
+composer update
+```
 ### Additional Notes
 
 - mysql host is `db`, database is `shepherd`, user is `user` and password is `password`
