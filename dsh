@@ -1,0 +1,60 @@
+#!/bin/bash
+
+# `set +e` is used to continue on errors throughout this script.
+set -euo pipefail
+IFS=$'\n\t'
+
+# Setup some functions to output warnings
+notice() {
+  printf "\e[32;01m$1\e[39;49;00m\n"
+}
+
+warning() {
+  printf "\e[33;01m$1\e[39;49;00m\n"
+}
+
+error() {
+  printf "\e[31;01m$1\e[39;49;00m\n"
+}
+
+dsh_shell() {
+  notice "Starting shell"
+
+  CONTAINER="shepherd_utility"
+  DIR=$(pwd)
+  SHELL_USER=${USER}
+
+  set +e
+    docker run --rm -it -h utility --name ${CONTAINER} \
+      -e USER=${SHELL_USER} \
+      -e UID=${UID} \
+      -v ${DIR}:/code \
+      --network shepherd_default \
+      uofa/utility-php7 /entry.sh
+  set -e
+}
+
+dsh_help() {
+  printf "\nUsage: dsh COMMAND\n\n"
+  printf "Commands:\n"
+  printf "\thelp\tShow this help.\n"
+  printf "\tshell\tStart a shell which is connected to the containers and can be used to run commands.\n"
+  printf "\nIf no command is given, shell is the default.\n"
+  printf "Commands can be shortened to their uniqe component, eg ./dsh sh is the same as ./dsh shell.\n\n"
+}
+
+# Set a default command to show usage when no arguments provided.
+COMMAND=${1:-default}
+
+case ${COMMAND} in
+  h*|-h|--help)
+    dsh_help
+    ;;
+  sh*|ss*)
+    dsh_shell
+    ;;
+  *)
+    warning "Unknown command specified, defaulting to shell. For other options try:\n$0 [help|shell].\n"
+    dsh_shell
+    ;;
+esac

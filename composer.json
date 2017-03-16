@@ -11,18 +11,19 @@
         {"type": "composer", "url": "https://packages.drupal.org/8"}
     ],
     "require": {
-        "composer/installers":                     "^1.2",
-        "drupal-composer/drupal-scaffold": "^2.2",
-        "cweagans/composer-patches":               "~1.0",
-        "drupal/core":                             "8.2.*",
-        "drupal/cas":                              "1.x-dev#1aa23bc778e68adfc6e4506476cfd517b3c906d2",
-        "drupal/entity_reference_revisions":       "dev-1.x",
-        "drupal/paragraphs":                       "1.*",
-        "drupal/r4032login":                       "1.*@dev",
-        "shepherd/shepherd_custom":                "dev-develop",
-        "ua-drupal-modules/ua_ldap":               "dev-develop",
-        "ua-drupal-modules/ua_ldap_authorisation": "dev-develop",
-        "ua-web-team/ua_theme":                    "dev-develop"
+        "composer/installers":                           "^1.2",
+        "drupal-composer/drupal-scaffold":               "^2.2",
+        "universityofadelaide/shepherd-drupal-scaffold": "dev-master",
+        "cweagans/composer-patches":                     "~1.0",
+        "drupal/core":                                   "8.2.*",
+        "drupal/cas":                                    "1.x-dev#1aa23bc778e68adfc6e4506476cfd517b3c906d2",
+        "drupal/entity_reference_revisions":             "dev-1.x",
+        "drupal/paragraphs":                             "1.*",
+        "drupal/r4032login":                             "1.*@dev",
+        "shepherd/shepherd_custom":                      "dev-develop",
+        "ua-drupal-modules/ua_ldap":                     "dev-develop",
+        "ua-drupal-modules/ua_ldap_authorisation":       "dev-develop",
+        "ua-web-team/ua_theme":                          "dev-develop"
     },
     "require-dev": {
         "drupal/devel":             "1.*@dev",
@@ -47,6 +48,7 @@
     },
     "scripts": {
         "drupal-scaffold": "DrupalComposer\\DrupalScaffold\\Plugin::scaffold",
+        "shepherd-scaffold": "UniversityOfAdelaide\\ShepherdDrupalScaffold\\Plugin::scaffold",
         "pre-install-cmd": [
             "DrupalProject\\composer\\ScriptHandler::checkComposerVersion"
         ],
@@ -59,6 +61,7 @@
         ],
         "post-update-cmd": [
             "@drupal-scaffold",
+            "@shepherd-scaffold",
             "DrupalProject\\composer\\ScriptHandler::createRequiredFiles"
         ]
     },
