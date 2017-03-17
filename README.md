@@ -21,6 +21,13 @@ docker compose up -d
 docker composer down -v
 ```
 
+### Installing via Drush
+
+```drush
+./dsh shell
+drush -r web si shepherd --db-url=mysql://user:password@db/shepherd --account-name=admin --account-pass=password --site-name=Shepherd
+```
+
 ### Updating scaffolds 
 
 Anything using the `master` branch is going to be cached by composer. To unsure you get the latest, clear the composer cache
