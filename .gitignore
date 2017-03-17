@@ -13,3 +13,9 @@
 /build
 /vendor
 .DS_Store
+
+# Ignore dev cruft.
+.bash_history
+.console/
+.drush/
+console/
