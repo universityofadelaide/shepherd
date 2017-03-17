@@ -36,9 +36,12 @@ setup_ssh_agent_proxy() {
     error "whilp/ssh-agent could not be started."
   fi
 
-  notice "Connecting ssh-agent to the network."
   set +e
-  docker network connect ${PROJECT}_default ssh-agent
+  # Test to make sure its not already on the network
+  if ! docker network inspect ${PROJECT}_default | grep "ssh-agent" > /dev/null; then
+    notice "Connecting ssh-agent to the network."
+    docker network connect ${PROJECT}_default ssh-agent
+  fi
   set -e
 }
 
@@ -63,8 +66,7 @@ dsh_shell() {
 
   notice "Starting shell"
 
-  CONTAINER="shepherd_utility"
-  DIR=$(pwd)
+  CONTAINER="${PROJECT}_utility"
   SHELL_USER=${USER}
 
   # SSH AGENT
@@ -74,7 +76,7 @@ dsh_shell() {
     if [ ${OSTYPE} != 'linux-gnu' ]; then
       # Run the agent proxy first.
       setup_ssh_agent_proxy
-      # Change vars to mount the /ssh volume create by the ssh_agent_proxy.
+      # Change vars to mount the ssh volume create by the ssh_agent_proxy.
       SOCK="ssh"
       CONTAINER_SOCK="/ssh"
       SSH_AUTH_SOCK="/ssh/auth/sock"
