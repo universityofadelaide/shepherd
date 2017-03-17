@@ -10,7 +10,7 @@ services:
       DATABASE_NAME: drupal
       DATABASE_USER: user
       DATABASE_PASSWORD: password
-      WEB_PATH: /path
+      # WEB_PATH: /path
       PRIVATE_DIR: /shared/private
       PUBLIC_DIR: web/sites/default/files
     volumes:
