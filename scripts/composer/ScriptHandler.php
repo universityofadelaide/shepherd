@@ -40,6 +40,38 @@ class ScriptHandler {
       $fs->copy($root . '/sites/default/default.settings.php', $root . '/sites/default/settings.php');
       $fs->chmod($root . '/sites/default/settings.php', 0666);
       $event->getIO()->write("Create a sites/default/settings.php file with chmod 0666");
+
+      // Append Shepherd-specific environment variable settings to settings.php.
+      file_put_contents(
+        $root . '/sites/default/settings.php',
+        "\n/**\n * START SHEPHERD CONFIG \n */\n" .
+        "\$databases['default']['default'] = array (\n" .
+        "  'database' => getenv('DATABASE_NAME'),\n" .
+        "  'username' => getenv('DATABASE_USER'),\n" .
+        "  'password' => (getenv('DATABASE_PASSWORD_FILE') ? file_get_contents(getenv('DATABASE_PASSWORD_FILE')) : getenv('DATABASE_PASSWORD')),\n" .
+        "  'host' => getenv('DATABASE_HOST'),\n" .
+        "  'port' => (getenv('DATABASE_PORT') ?: '3306'),\n" .
+        "  'driver' => (getenv('DATABASE_DRIVER') ?: 'mysql'),\n" .
+        "  'prefix' => getenv('DATABASE_PREFIX') ?: '',\n" .
+        "  'collation' => (getenv('DATABASE_COLLATION') ?: 'utf8mb4_general_ci'),\n" .
+        ");\n" .
+        "\$settings['file_private_path'] = getenv('PRIVATE_DIR');\n" .
+        "/**\n * END SHEPHERD CONFIG \n */\n\n",
+        FILE_APPEND
+      );
+
+      // Append inclusion of settings.local.php to settings.php.
+      file_put_contents(
+        $root . '/sites/default/settings.php',
+        "/**\n * START LOCAL CONFIG \n */\n" .
+        "if (file_exists(__DIR__ . '/settings.local.php')) {\n" .
+        "  include __DIR__ . '/settings.local.php';\n" .
+        "}\n" .
+        "/**\n * END LOCAL CONFIG \n */\n\n",
+        FILE_APPEND
+      );
+
+      $event->getIO()->write("Added Shepherd env var parsing to sites/default/settings.php file");
     }
 
     // Prepare the services file for installation
