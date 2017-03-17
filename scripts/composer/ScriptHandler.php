@@ -80,14 +80,6 @@ class ScriptHandler {
       $fs->chmod($root . '/sites/default/services.yml', 0666);
       $event->getIO()->write("Create a sites/default/services.yml file with chmod 0666");
     }
-
-    // Create the files directory with chmod 0777
-    if (!$fs->exists($root . '/sites/default/files')) {
-      $oldmask = umask(0);
-      $fs->mkdir($root . '/sites/default/files', 0777);
-      umask($oldmask);
-      $event->getIO()->write("Create a sites/default/files directory with chmod 0777");
-    }
   }
 
   /**
