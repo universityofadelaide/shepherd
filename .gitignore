@@ -17,5 +17,7 @@
 # Ignore dev cruft.
 .bash_history
 .console/
+.composer/
 .drush/
+.ssh/
 console/
