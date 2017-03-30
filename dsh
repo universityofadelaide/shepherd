@@ -10,6 +10,8 @@ DIR=$(pwd)
 # Used as the prefix for docker networking, container naming and nginx hostname.
 export PROJECT=$(basename ${DIR} | sed 's/[-_]//g')
 
+export DOMAIN=test
+
 # Setup some functions to output warnings
 notice() {
   printf "\e[32;01m$1\e[39;49;00m\n"
@@ -21,6 +23,48 @@ warning() {
 
 error() {
   printf "\e[31;01m$1\e[39;49;00m\n"
+}
+
+setup_dnsmasq() {
+  set +e
+  # macOS dnsmasq special config
+  if [ ${OSTYPE} != 'linux-gnu' ]; then
+    notice "Attempting to configure dnsmasq"
+    # Test to see if dnsmasq.conf exists
+    if [ ! -f /usr/local/etc/dnsmasq.conf ]; then
+      notice "Dnsmasq.conf doesn't exist, creating one..."
+      # copy example file across
+      mkdir -p /usr/local/etc
+      touch /usr/local/etc/dnsmasq.conf
+    fi
+    # Write to dnsconf
+    notice "Writing dnsconf"
+    # Detect if running docker for mac.
+   echo "address=/${DOMAIN}/127.0.0.1" > /usr/local/etc/dnsmasq.conf
+   # Write resolver if none exists.
+    if [ ! -f /etc/resolver/${DOMAIN} ]; then
+      mkdir -p /etc/resolver
+      notice "Resolver does not exist for ${DOMAIN}, creating one..."
+      sudo bash -c 'echo "nameserver 127.0.0.1" > /etc/resolver/'${DOMAIN}''
+    fi
+    # Stop start dnsmasq
+    notice "Restarting dnsmasq with homebrew services."
+    sudo brew services stop dnsmasq
+    sudo brew services start dnsmasq
+  else
+    ping -c 1 ${PROJECT}.${DOMAIN} 2>&1 > /dev/null
+    if [[ $? != 0 ]]; then
+      notice "Attempting to configure dnsmasq"
+      if [ ! -f /etc/dnsmasq.d/${DOMAIN} ]; then
+        echo "address=/${DOMAIN}/127.0.0.1" | sudo tee -a /etc/dnsmasq.d/${DOMAIN} > /dev/null
+        notice "Restarting dnsmasq"
+        sudo service dnsmasq restart
+      else
+        error "Dnsmasq not configured, please configure manually. Read readme documentation for further information."
+      fi
+    fi
+  fi
+  set -e
 }
 
 setup_ssh_agent_proxy() {
@@ -92,6 +136,14 @@ dsh_shell() {
   set -e
 }
 
+dsh_pull() {
+  docker pull helder/mailcatcher
+  docker pull jwilder/nginx-proxy
+  docker pull mariadb
+  docker pull uofa/utility-php7:shepherd
+  docker pull uofa/apache2-php7-dev:shepherd
+}
+
 dsh_help() {
   printf "\nUsage: dsh COMMAND\n\n"
   printf "Commands:\n"
@@ -108,8 +160,14 @@ case ${COMMAND} in
   h*|-h|--help)
     dsh_help
     ;;
+  p*)
+    dsh_pull
+    ;;
   sh*|ss*)
     dsh_shell
+    ;;
+  dnsmasq_setup)
+    setup_dnsmasq
     ;;
   *)
     warning "Unknown command specified, defaulting to shell. For other options try:\n$0 [help|shell].\n"

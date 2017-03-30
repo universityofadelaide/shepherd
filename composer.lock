@@ -220,16 +220,16 @@
         },
         {
             "name": "cweagans/composer-patches",
-            "version": "1.6.0",
+            "version": "1.6.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/cweagans/composer-patches.git",
-                "reference": "7cd5c6eb7e68b8f7436ce1a7b9fffa4418bf59c6"
+                "reference": "b3036f23b73570ab5d869e345277786c8eb248a9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/cweagans/composer-patches/zipball/7cd5c6eb7e68b8f7436ce1a7b9fffa4418bf59c6",
-                "reference": "7cd5c6eb7e68b8f7436ce1a7b9fffa4418bf59c6",
+                "url": "https://api.github.com/repos/cweagans/composer-patches/zipball/b3036f23b73570ab5d869e345277786c8eb248a9",
+                "reference": "b3036f23b73570ab5d869e345277786c8eb248a9",
                 "shasum": ""
             },
             "require": {
@@ -260,7 +260,7 @@
                 }
             ],
             "description": "Provides a way to patch Composer packages.",
-            "time": "2016-12-01T01:19:32+00:00"
+            "time": "2017-03-19T18:18:52+00:00"
         },
         {
             "name": "doctrine/annotations",
@@ -721,8 +721,8 @@
                     "dev-8.x-1.x": "8.1.x-dev"
                 },
                 "drupal": {
-                    "version": "8.x-1.0-beta2+4-dev",
-                    "datestamp": "1487851084"
+                    "version": "8.x-1.0-beta3+0-dev",
+                    "datestamp": "1490138583"
                 }
             },
             "notification-url": "https://packages.drupal.org/8/downloads",
@@ -993,17 +993,17 @@
         },
         {
             "name": "drupal/externalauth",
-            "version": "1.0.0-alpha4",
+            "version": "1.0.0",
             "source": {
                 "type": "git",
                 "url": "https://git.drupal.org/project/externalauth",
-                "reference": "8.x-1.0-alpha4"
+                "reference": "8.x-1.0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://ftp.drupal.org/files/projects/externalauth-8.x-1.0-alpha4.zip",
+                "url": "https://ftp.drupal.org/files/projects/externalauth-8.x-1.0.zip",
                 "reference": null,
-                "shasum": "f7ff45c609ad2ac462f05c00c80340ba0de90f14"
+                "shasum": "f1298e1d34f5e1c4ebc130c2b90443b5167e405b"
             },
             "require": {
                 "drupal/core": "~8.0"
@@ -1014,8 +1014,8 @@
                     "dev-1.x": "1.x-dev"
                 },
                 "drupal": {
-                    "version": "8.x-1.0-alpha4",
-                    "datestamp": "1474662540"
+                    "version": "8.x-1.0",
+                    "datestamp": "1490096883"
                 }
             },
             "notification-url": "https://packages.drupal.org/8/downloads",
@@ -1412,16 +1412,16 @@
         },
         {
             "name": "guzzlehttp/psr7",
-            "version": "1.4.1",
+            "version": "1.4.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/guzzle/psr7.git",
-                "reference": "0d6c7ca039329247e4f0f8f8f6506810e8248855"
+                "reference": "f5b8a8512e2b58b0071a7280e39f14f72e05d87c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/guzzle/psr7/zipball/0d6c7ca039329247e4f0f8f8f6506810e8248855",
-                "reference": "0d6c7ca039329247e4f0f8f8f6506810e8248855",
+                "url": "https://api.github.com/repos/guzzle/psr7/zipball/f5b8a8512e2b58b0071a7280e39f14f72e05d87c",
+                "reference": "f5b8a8512e2b58b0071a7280e39f14f72e05d87c",
                 "shasum": ""
             },
             "require": {
@@ -1473,7 +1473,7 @@
                 "uri",
                 "url"
             ],
-            "time": "2017-02-27T10:51:17+00:00"
+            "time": "2017-03-20T17:10:46+00:00"
         },
         {
             "name": "illuminate/contracts",
@@ -1883,7 +1883,7 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.adelaide.edu.au:drupal-modules/shepherd_custom.git",
-                "reference": "a3af7dc94a5cb7f3d8d820e1c2e6f73c437454e3"
+                "reference": "d659e79a12343f4b216bf3f828ddfd5bb567059e"
             },
             "require": {
                 "maclof/kubernetes-client": "^0.2.0"
@@ -1893,7 +1893,7 @@
                 "GPL-2.0+"
             ],
             "description": "Provides functionality specific to the Shepherd distribution.",
-            "time": "2017-03-02 05:57:58"
+            "time": "2017-03-22 23:14:42"
         },
         {
             "name": "stack/builder",
@@ -3149,16 +3149,16 @@
         },
         {
             "name": "twig/twig",
-            "version": "v1.32.0",
+            "version": "v1.33.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/twigphp/Twig.git",
-                "reference": "9935b662e24d6e634da88901ab534cc12e8c728f"
+                "reference": "05cf49921b13f6f01d3cfdf9018cfa7a8086fd5a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/twigphp/Twig/zipball/9935b662e24d6e634da88901ab534cc12e8c728f",
-                "reference": "9935b662e24d6e634da88901ab534cc12e8c728f",
+                "url": "https://api.github.com/repos/twigphp/Twig/zipball/05cf49921b13f6f01d3cfdf9018cfa7a8086fd5a",
+                "reference": "05cf49921b13f6f01d3cfdf9018cfa7a8086fd5a",
                 "shasum": ""
             },
             "require": {
@@ -3167,12 +3167,12 @@
             "require-dev": {
                 "psr/container": "^1.0",
                 "symfony/debug": "~2.7",
-                "symfony/phpunit-bridge": "~3.2"
+                "symfony/phpunit-bridge": "~3.3@dev"
             },
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.32-dev"
+                    "dev-master": "1.33-dev"
                 }
             },
             "autoload": {
@@ -3207,7 +3207,7 @@
             "keywords": [
                 "templating"
             ],
-            "time": "2017-02-27T00:07:03+00:00"
+            "time": "2017-03-22T15:40:09+00:00"
         },
         {
             "name": "ua-drupal-modules/ua_ldap",
@@ -3233,7 +3233,7 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.adelaide.edu.au:drupal-modules/ua_ldap_authorisation.git",
-                "reference": "f7c0c2249318ed6051cd30e2c505a7b0995405fc"
+                "reference": "646add0b6d42a5794c99ec314468dfffcb4ab992"
             },
             "type": "drupal-module",
             "license": [
@@ -3243,7 +3243,7 @@
             "keywords": [
                 "Drupal"
             ],
-            "time": "2016-11-21 04:44:05"
+            "time": "2017-03-29 02:10:43"
         },
         {
             "name": "ua-web-team/ua_theme",
@@ -3251,14 +3251,14 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.adelaide.edu.au:web-team/ua_d8_theme.git",
-                "reference": "d84f1343170c45eef00540675ae7a8644e66bd74"
+                "reference": "1fe3ac1553bb4a8b0a3fa335432ac60d98676e71"
             },
             "type": "drupal-theme",
             "license": [
                 "GPL-2.0+"
             ],
             "description": "The University of Adelaide's official Drupal 8 theme.",
-            "time": "2017-03-07 23:38:51"
+            "time": "2017-03-29 23:41:44"
         },
         {
             "name": "universityofadelaide/shepherd-drupal-scaffold",
@@ -3266,12 +3266,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/universityofadelaide/shepherd-drupal-scaffold.git",
-                "reference": "02235f517a8b3afc988fa80e1b3668721022bc1c"
+                "reference": "a288e4c76bc57d1ce11fd22b87598f22f8d04e8b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/universityofadelaide/shepherd-drupal-scaffold/zipball/02235f517a8b3afc988fa80e1b3668721022bc1c",
-                "reference": "02235f517a8b3afc988fa80e1b3668721022bc1c",
+                "url": "https://api.github.com/repos/universityofadelaide/shepherd-drupal-scaffold/zipball/a288e4c76bc57d1ce11fd22b87598f22f8d04e8b",
+                "reference": "a288e4c76bc57d1ce11fd22b87598f22f8d04e8b",
                 "shasum": ""
             },
             "require": {
@@ -3293,7 +3293,7 @@
                 "GPL-2.0+"
             ],
             "description": "Composer Plugin for updating the Shepherd Drupal tools.",
-            "time": "2017-03-16 06:44:17"
+            "time": "2017-03-30 02:09:12"
         },
         {
             "name": "zendframework/zend-diactoros",
