@@ -35,7 +35,7 @@ docker composer down -v
 ./dsh shell
 # Run the drush site install
 # set user:password
-drush -r web si shepherd --db-url=mysql://user:password@db/shepherd --account-name=admin --account-pass=password --site-name=Shepherd -y
+drush -r web si shepherd --db-url=mysql://user:password@db/drupal --account-name=admin --account-pass=password --site-name=Shepherd -y
 # Remove previous install settings and files {from host}
 sudo rm -rf web/sites/default/files/
 sudo rm -f web/sites/default/settings.php
@@ -65,7 +65,7 @@ Test the API configuration by triggering an environment by editing an existing s
 
 ### Additional notes
 
-- mysql host is `db`, database is `shepherd`, user is `user` and password is `password`
+- mysql host is `db`, database is `drupal`, user is `user` and password is `password`
 - You may need to make `dsh` executable after a `composer update` - `chmod +x dsh`
 - If performing a site install using `drush` ensure you have removed the `web/sites/default/files/` `web/sites/default/settings.php` and 
 `web/sites/default/services.yml`
