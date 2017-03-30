@@ -8,6 +8,7 @@ The University of Adelaide Shepherd provides an administration UI for provisioni
 * Docker ( macOS - docker for mac)
 * PHP installed on your host machine
 * Composer
+* [Minishift](https://github.com/minishift/minishift) 
 
 
 ```bash
@@ -36,6 +37,12 @@ composer clear-cache
 # update - look at the composer.json > "scripts" to see the commands that are run during an update
 composer update
 ```
+
+### Setting up Minishift Orchestration
+
+Documentation can be found on [Google Drive](https://docs.google.com/document/d/1ZeypugCthqFfHiLXCe6XyEJ9kO0rWhTzLb3bQa3KLqY/edit#heading=h.e4erzx509ekv)
+
+
 ### Additional Notes
 
 - mysql host is `db`, database is `shepherd`, user is `user` and password is `password`
