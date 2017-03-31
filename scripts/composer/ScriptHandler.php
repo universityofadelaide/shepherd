@@ -48,12 +48,13 @@ class ScriptHandler {
         "\$databases['default']['default'] = array (\n" .
         "  'database' => getenv('DATABASE_NAME'),\n" .
         "  'username' => getenv('DATABASE_USER'),\n" .
-        "  'password' => (getenv('DATABASE_PASSWORD_FILE') ? file_get_contents(getenv('DATABASE_PASSWORD_FILE')) : getenv('DATABASE_PASSWORD')),\n" .
+        "  'password' => getenv('DATABASE_PASSWORD_FILE') ? file_get_contents(getenv('DATABASE_PASSWORD_FILE')) : getenv('DATABASE_PASSWORD'),\n" .
         "  'host' => getenv('DATABASE_HOST'),\n" .
-        "  'port' => (getenv('DATABASE_PORT') ?: '3306'),\n" .
-        "  'driver' => (getenv('DATABASE_DRIVER') ?: 'mysql'),\n" .
+        "  'port' => getenv('DATABASE_PORT') ?: '3306',\n" .
+        "  'driver' => getenv('DATABASE_DRIVER') ?: 'mysql',\n" .
         "  'prefix' => getenv('DATABASE_PREFIX') ?: '',\n" .
-        "  'collation' => (getenv('DATABASE_COLLATION') ?: 'utf8mb4_general_ci'),\n" .
+        "  'collation' => getenv('DATABASE_COLLATION') ?: 'utf8mb4_general_ci',\n" .
+        "  'namespace' => getenv('DATABASE_NAMESPACE') ?: 'Drupal\\\\Core\\\\Database\\\\Driver\\\\mysql',\n" .
         ");\n" .
         "\$settings['file_private_path'] = getenv('PRIVATE_DIR');\n" .
         "/**\n * END SHEPHERD CONFIG \n */\n\n",

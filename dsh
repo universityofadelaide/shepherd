@@ -4,15 +4,30 @@
 set -euo pipefail
 IFS=$'\n\t'
 
-# Figure out some names/directories.
-DIR=$(pwd)
+# Set the docker machine to be used by the project. Ignored on Linux.
+MACHINE='default'
+
+# Set the top level domain used to by nginx-proxy to direct traffic to
+# conatiners. The TLDs 'local' and 'localhost' are reserved in macOS, and 'dev'
+# exists in global DNS, which may cause issues reassigning it with dnsmasq.
+export DOMAIN=${DOMAIN:-'test'}
 
 # Used as the prefix for docker networking, container naming and nginx hostname.
-export PROJECT=$(basename ${DIR} | sed 's/[-_]//g')
+export PROJECT=$(basename ${PWD} | sed 's/[-_]//g')
 
-export DOMAIN=test
+# Determine the OS type of the host machine.
+if [ "$(uname)" == "Darwin" ]; then
+  HOST_TYPE='mac'
+  # On macOS ths SSH Sock directory is actually a named docker volume.
+  export HOST_SSH_AUTH_SOCK_DIR="ssh"
+  export CONTAINER_SSH_AUTH_SOCK="/ssh/auth/sock"
+else
+  HOST_TYPE='linux'
+  export HOST_SSH_AUTH_SOCK_DIR=$(dirname ${SSH_AUTH_SOCK})
+  export CONTAINER_SSH_AUTH_SOCK=/ssh/$(basename ${SSH_AUTH_SOCK})
+fi
 
-# Setup some functions to output warnings
+# Setup some functions to output warnings.
 notice() {
   printf "\e[32;01m$1\e[39;49;00m\n"
 }
@@ -25,29 +40,219 @@ error() {
   printf "\e[31;01m$1\e[39;49;00m\n"
 }
 
-setup_dnsmasq() {
+# Ensure script is NOT running inside a container - must be run from host.
+if [ -f /.dockerenv ]; then
+  error "Inception error - you can't run $0 within a docker container."
+  exit
+fi
+
+# Command: ./dsh start
+# Configures environment then brings up project using docker-compose.yml file.
+dsh_start() {
+  setup
+  notice "Starting project containers."
+  docker-compose up -d
+  # setup_xdebug
+  notice "Please wait about 10 seconds for the database to settle.
+You can now access the site from http://${PROJECT}.${DOMAIN}.
+Project files are available in /code, You may need to build and install your
+  project before it starts working.
+Connecting via ./dsh shell and running robo build is a common next step."
+}
+
+# Command: ./dsh shell
+# Connects a shell to the web image as the current user.
+dsh_shell() {
+  if ! docker ps | grep ${PROJECT} > /dev/null; then
+    notice "Project not running, starting."
+    dsh_start
+  fi
+
+  # @note This logic could be moved to a script that's added to the dev image.
+  # Add host machine user to web container if it doesn't already exist.
+  if ! docker exec ${PROJECT}_web_1 id -u ${USER} > /dev/null 2>&1; then
+    notice "Setting up user $USER on web container."
+    # Add user with local $USER name to container.
+    docker exec ${PROJECT}_web_1 adduser --disabled-password --uid ${UID} \
+      --gecos ${USER} --home /home/${USER} ${USER} > /dev/null
+    # Add local .gitconfig to user's home dir on container.
+    docker cp ${HOME}/.gitconfig ${PROJECT}_web_1:/home/${USER}/
+    # Allow sudo without password for user.
+    docker exec ${PROJECT}_web_1 /bin/bash -c "echo '${USER} ALL=(ALL) NOPASSWD: ALL' > /etc/sudoers.d/${USER}"
+  fi
+
+  notice "Starting shell."
+  docker exec --interactive --tty --user ${USER} \
+    --env SSH_AUTH_SOCK=${CONTAINER_SSH_AUTH_SOCK} \
+    ${PROJECT}_web_1 /bin/bash
+}
+
+# Command: ./dsh stop
+# Stops project and brings down network after disconnecting nginx proxy.
+dsh_stop() {
+  notice "Stopping containers."
+  docker-compose stop
+  if docker network ls | grep ${PROJECT}_default > /dev/null; then
+    notice "Disconnecting nginx proxy from network."
+    set +e
+    docker network disconnect ${PROJECT}_default nginx-proxy
+    notice "Removing network."
+    docker network rm ${PROJECT}_default
+    set -e
+  fi
+}
+
+# Command: ./dsh stop
+# Stops project, then takes down containers and removes volumes if possible.
+dsh_purge() {
+  dsh_stop
+  notice "Taking down containers, removing volumes if possible."
   set +e
-  # macOS dnsmasq special config
-  if [ ${OSTYPE} != 'linux-gnu' ]; then
-    notice "Attempting to configure dnsmasq"
-    # Test to see if dnsmasq.conf exists
+  docker-compose down -v
+  set -e
+}
+
+# Command: ./dsh status
+# Shows status information about project containers.
+dsh_status() {
+  if ! docker ps | grep ${PROJECT}; then
+    notice "${PROJECT} not running."
+  fi
+}
+
+# Command: ./dsh logs
+# Tails logs from web container.
+dsh_logs() {
+  if docker ps | grep ${PROJECT}_web_1 > /dev/null; then
+    docker logs --follow --tail 1 ${PROJECT}_web_1
+  fi
+}
+
+setup() {
+  if [ ${HOST_TYPE} == 'mac' ]; then
+    # If Docker for Mac isn't running, assume Docker Machine.
+    if [[ ! $(docker version --format "{{.Server.KernelVersion}}") == *-moby ]]; then
+      setup_docker_machine
+    fi
+    setup_ssh_agent_proxy
+  fi
+  setup_docker_network
+  setup_nginx_proxy
+}
+
+setup_docker_machine() {
+  set +e
+  STATUS=$(docker-machine status ${MACHINE})
+
+  # Check if the docker machine exists already, create one if not.
+  if [[ $? == 1 ]]; then
+    notice "No ${MACHINE} environment found."
+    create_machine
+  fi
+  set -e
+
+  if [[ ${STATUS} == 'Stopped' ]]; then
+    notice "Docker machine not running, starting now."
+    docker-machine start ${MACHINE}
+  fi
+
+  if [[ ${STATUS} == 'Saved' ]]; then
+    notice "Docker machine in saved state, restarting now."
+    docker-machine start ${MACHINE}
+  fi
+
+  if [[ ${STATUS} == 'Error' ]]; then
+    notice "Docker machine vm does not exist but docker-machine still has it registered, remove then create."
+    docker-machine rm ${MACHINE}
+    create_machine
+  fi
+
+  notice "Loading vars for docker machine."
+  eval "$(docker-machine env ${MACHINE})"
+}
+
+setup_ssh_agent_proxy() {
+  if docker ps -a | grep "ssh-agent" > /dev/null; then
+    docker start ssh-agent > /dev/null
+  else
+    notice "Creating ssh agent proxy."
+    docker run -u ${UID} -d -v ${PROJECT}_${HOST_SSH_AUTH_SOCK_DIR}:/ssh --name=ssh-agent whilp/ssh-agent
+
+    # Add all ssh keys from host machine to the agent proxy.
+    CURRENT_SSH_KEYS=$(ssh-add -l | awk '{print $3}')
+    notice "Adding ssh keys to agent proxy."
+    docker run -u ${UID} --rm -v ${PROJECT}_${HOST_SSH_AUTH_SOCK_DIR}:/ssh \
+      -v ${HOME}:${HOME} -it whilp/ssh-agent ssh-add ${CURRENT_SSH_KEYS}
+  fi
+
+  if ! docker ps | grep "ssh-agent" > /dev/null; then
+    error "whilp/ssh-agent could not be started."
+  fi
+}
+
+setup_docker_network() {
+  if ! docker network ls | grep ${PROJECT}_default > /dev/null; then
+    notice "Creating docker network for project."
+    docker network create ${PROJECT}_default
+  fi
+}
+
+setup_nginx_proxy() {
+  # Nginx proxy is not needed for CI.
+  if [ -n "${GITLAB_CI+1}" ]; then
+    return;
+  fi
+
+  if docker ps -a | grep "nginx-proxy" > /dev/null; then
+    docker start nginx-proxy > /dev/null
+  else
+    docker run -d -p 80:80 \
+      -v /var/run/docker.sock:/tmp/docker.sock:ro \
+      --restart always --name nginx-proxy \
+      jwilder/nginx-proxy
+  fi
+
+  if ! docker ps | grep "nginx-proxy" > /dev/null; then
+    error "jwilder/nginx-proxy could not be started."
+  fi
+
+  set +e
+  # Test to make sure its not already on the network.
+  if ! docker network inspect ${PROJECT}_default | grep "nginx-proxy" > /dev/null; then
+    notice "Connecting nginx-proxy to the network."
+    docker network connect ${PROJECT}_default nginx-proxy
+  fi
+  set -e
+}
+
+dsh_setup_dnsmasq() {
+  set +e
+  if [ ${HOST_TYPE} == 'mac' ]; then
+    notice "Attempting to configure dnsmasq."
+    WEB_HOST_IP="127.0.0.1"
+    if [[ $(docker version --format "{{.Server.KernelVersion}}") != *-moby ]]; then
+      eval "$(docker-machine env ${MACHINE})"
+      WEB_HOST_IP=$(docker-machine ip ${MACHINE})
+    fi
+
+    # Test to see if dnsmasq.conf exists.
     if [ ! -f /usr/local/etc/dnsmasq.conf ]; then
-      notice "Dnsmasq.conf doesn't exist, creating one..."
-      # copy example file across
+      notice "Creating missing dnsmasq.conf file."
+      # Copy example file across.
       mkdir -p /usr/local/etc
       touch /usr/local/etc/dnsmasq.conf
     fi
-    # Write to dnsconf
-    notice "Writing dnsconf"
-    # Detect if running docker for mac.
-   echo "address=/${DOMAIN}/127.0.0.1" > /usr/local/etc/dnsmasq.conf
-   # Write resolver if none exists.
+    notice "Writing dnsmasq config: *.${DOMAIN} traffic to ${WEB_HOST_IP}."
+    echo "address=/${DOMAIN}/${WEB_HOST_IP}" > /usr/local/etc/dnsmasq.conf
+
+    # Write resolver if none exists.
     if [ ! -f /etc/resolver/${DOMAIN} ]; then
+      notice "Creating missing resolver config for ${DOMAIN}."
       mkdir -p /etc/resolver
-      notice "Resolver does not exist for ${DOMAIN}, creating one..."
       sudo bash -c 'echo "nameserver 127.0.0.1" > /etc/resolver/'${DOMAIN}''
     fi
-    # Stop start dnsmasq
+
+    # Restart dnsmasq.
     notice "Restarting dnsmasq with homebrew services."
     sudo brew services stop dnsmasq
     sudo brew services start dnsmasq
@@ -67,110 +272,189 @@ setup_dnsmasq() {
   set -e
 }
 
-setup_ssh_agent_proxy() {
-  if docker ps -a | grep "ssh-agent" > /dev/null; then
-    docker start ssh-agent
-  else
-    notice "Creating ssh agent proxy, because no ssh-agent forwarding available on macOS :( "
-    docker run -u ${UID} -d -v ssh:/ssh --name=ssh-agent whilp/ssh-agent:latest
-    setup_ssh_agent_keys
-  fi
-
-  if ! docker ps | grep "ssh-agent" > /dev/null; then
-    error "whilp/ssh-agent could not be started."
-  fi
-
+setup_xdebug() {
+  HOST_IP=$(ifconfig | sed -En 's/127.0.0.1//;s/.*inet (addr:)?(([0-9]*\.){3}[0-9]*).*/\2/p' | head -1)
+  notice "Configuring xdebug to connect to host at: ${HOST_IP}."
+  docker exec -t "${PROJECT}_web_1" sed -i "s/^xdebug\.remote_host=.*$/xdebug.remote_host=${HOST_IP}/" /etc/php/7.0/mods-available/xdebug.ini
   set +e
-  # Test to make sure its not already on the network
-  if ! docker network inspect ${PROJECT}_default | grep "ssh-agent" > /dev/null; then
-    notice "Connecting ssh-agent to the network."
-    docker network connect ${PROJECT}_default ssh-agent
-  fi
+  docker exec -t -u root "${PROJECT}_web_1" apachectl graceful 2> /dev/null
   set -e
 }
 
-setup_ssh_agent_keys() {
-  # Get all your keys in your agent
-  CURRENT_SSH_KEYS=$(ssh-add -l | awk '{print $3}')
-  notice "Adding ssh keys to agent proxy"
-  # Add keys into the ssh agent proxy
-  docker run -u ${UID} --rm -v ssh:/ssh -v $HOME:$HOME -it whilp/ssh-agent:latest ssh-add ${CURRENT_SSH_KEYS}
-}
-
-setup_docker_network() {
-  # creates the network if doesn't exist
-  if ! docker network ls | grep ${PROJECT}_default > /dev/null;  then
-    notice "Creating project docker network."
-    docker network create ${PROJECT}_default
+create_machine() {
+  notice "Creating new machine."
+  docker-machine create --driver virtualbox --engine-insecure-registry registry.${DOMAIN}:5000 ${MACHINE}
+  # If docker-machine-nfs is not present, error out
+  if ! type "docker-machine-nfs" > /dev/null; then
+    error "Please install 'docker-machine-nfs' using\n  $ brew install docker-machine-nfs"
+    exit 1
   fi
+
+  # Use nfs, configure all directories to root.
+  docker-machine-nfs ${MACHINE} -f --nfs-config="-alldirs -maproot=0"
+  docker-machine ssh ${MACHINE} ln -s $(pwd)/code code
+  docker-machine ssh ${MACHINE} sudo mv code /code
+
+  # Reconfigure dnsmasq due to possible docker machine IP change.
+  dsh_setup_dnsmasq
 }
-dsh_shell() {
 
-  setup_docker_network
-
-  notice "Starting shell"
-
-  CONTAINER="${PROJECT}_utility"
+# @todo Currently unsupported - hasn't been upgraded, may not work.
+dsh_run() {
+  dsh_start
   SHELL_USER=${USER}
+  SHELL_PID=$$
+  DSH_IMAGE=${1}
+  DSH_COMMAND=${*:2}
 
-  # SSH AGENT
-  SOCK=$(dirname ${SSH_AUTH_SOCK})
-  CONTAINER_SOCK=${SOCK}
-    # Using macOS ? Then get a ssh-agent container
+  notice "Executing command."
+
+  mkdir -p ${HOME}/.dsh/${PROJECT}/code
+
+  if [ ! -z "${SSH_AUTH_SOCK}" ]; then
+    SOCK=$(dirname ${SSH_AUTH_SOCK})
+    CONTAINER_SOCK=${SOCK}
     if [ ${OSTYPE} != 'linux-gnu' ]; then
       # Run the agent proxy first.
       setup_ssh_agent_proxy
-      # Change vars to mount the ssh volume create by the ssh_agent_proxy.
+      # Change vars to mount the /ssh volume create by the ssh_agent_proxy.
       SOCK="ssh"
       CONTAINER_SOCK="/ssh"
       SSH_AUTH_SOCK="/ssh/auth/sock"
     fi
-  set +e
-    docker run --rm -it -h utility --name ${CONTAINER} \
+    set +e
+    docker run -t --rm \
       -e USER=${SHELL_USER} \
       -e UID=${UID} \
-      -v ${DIR}:/code \
       -v ${SOCK}:${CONTAINER_SOCK} -e SSH_AUTH_SOCK=${SSH_AUTH_SOCK} \
-      --network ${PROJECT}_default \
-      uofa/utility-php7 /entry.sh
+      -v ${PWD}:/web \
+      -v ${HOME}/.dsh/${PROJECT}/code:/code \
+      -v ${HOME}/.composer:/code/.composer \
+      --net=${PROJECT}_default \
+      ${DSH_IMAGE} /entry.sh ${DSH_COMMAND}
+    set -e
+  fi
+}
+
+# @todo Currently unsupported - hasn't been upgraded, may not work.
+dsh_exec() {
+  dsh_start
+  DSH_IMAGE=${1}
+  DSH_USER=${2}
+  DSH_COMMAND=${*:3}
+
+  notice "Executing command."
+
+  set +e
+  docker exec -t \
+    -u ${DSH_USER} \
+    ${DSH_IMAGE} sh -c "${DSH_COMMAND}"
   set -e
 }
 
+# Command: ./dsh install
+# Installs project dependencies for Mac.
+dsh_install_tools() {
+ # For macOS, linux ppl please add your tests here.
+ if [ ${HOST_TYPE} != 'mac' ]; then
+   error "Only for mac users, you yourself before wrecking thou self \n \n ... fool!"
+   exit
+ fi
+
+  if ! which brew > /dev/null; then
+    error "Missing homebrew, please install. \n http://brew.sh/"
+    exit;
+  else
+    notice "You have homebrew installed!"
+  fi
+
+  if ! which docker-machine > /dev/null; then
+    error "Missing the docker toolbox, please install. \n https://www.docker.com/products/docker-toolbox"
+    exit;
+  else
+    notice "You have the docker toolbox installed!"
+  fi
+
+  if ! which docker-machine-nfs > /dev/null; then
+    warning "Missing docker-machine-nfs \n Now attempting to install docker-machine-nfs with homebrew \n"
+    brew install docker-machine-nfs
+  else
+    notice "You have docker-machine-nfs installed!"
+  fi
+
+  if ! brew ls --versions dnsmasq > /dev/null; then
+    warning "Missing dnsmasq \n Now attempting to install dnsmasq with homebrew \n"
+    brew install dnsmasq
+    exit;
+  else
+    notice "You have dnsmasq installed"
+  fi
+}
+
+# Command: ./dsh pull
+# Fetches all images used by the project.
 dsh_pull() {
+  docker-compose pull
   docker pull helder/mailcatcher
   docker pull jwilder/nginx-proxy
-  docker pull mariadb
-  docker pull uofa/utility-php7:shepherd
-  docker pull uofa/apache2-php7-dev:shepherd
 }
 
 dsh_help() {
-  printf "\nUsage: dsh COMMAND\n\n"
-  printf "Commands:\n"
-  printf "\thelp\tShow this help.\n"
-  printf "\tshell\tStart a shell which is connected to the containers and can be used to run commands.\n"
-  printf "\nIf no command is given, shell is the default.\n"
-  printf "Commands can be shortened to their uniqe component, eg ./dsh sh is the same as ./dsh shell.\n\n"
+  printf "\nUsage: dsh COMMAND\n\n
+Commands:\n
+\thelp\tShow this help.\n
+\tinstall\tInstall dependencies and tools for development.\n
+\tpurge\tPurge the docker containers, network and proxy and remove all data.\n
+\tshell\tStart a shell which is connected to the containers and can be used to run commands.\n
+\tstart\tStart the docker containers, network and proxy.\n
+\tstatus\tShow the status of this projects containers.\n
+\tstop\tStop the docker containers, network and proxy, but keep data for a re-start.\n
+\nIf no command is given, shell is the default.\n
+Commands can be shortened to their uniqe component, eg ./dsh sh is the same as ./dsh shell.\n\n"
 }
 
 # Set a default command to show usage when no arguments provided.
 COMMAND=${1:-default}
 
 case ${COMMAND} in
+  e*)
+    dsh_exec ${@:2}
+    ;;
   h*|-h|--help)
     dsh_help
     ;;
-  p*)
+  i*)
+    dsh_install_tools
+    ;;
+  l*)
+    dsh_logs
+    ;;
+  pul*)
     dsh_pull
+    ;;
+  pur*)
+    dsh_purge
+    ;;
+  r*)
+    dsh_run ${@:2}
+    ;;
+  se*)
+    dsh_setup_dnsmasq
     ;;
   sh*|ss*)
     dsh_shell
     ;;
-  dnsmasq_setup)
-    setup_dnsmasq
+  star*)
+    dsh_start
+    ;;
+  stat*)
+    dsh_status
+    ;;
+  sto*)
+    dsh_stop
     ;;
   *)
-    warning "Unknown command specified, defaulting to shell. For other options try:\n$0 [help|shell].\n"
+    warning "Unknown command specified, defaulting to shell. For other options try:\n$0 [help|logs|purge|shell|start|status|stop].\n"
     dsh_shell
     ;;
 esac
