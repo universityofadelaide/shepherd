@@ -55,13 +55,8 @@ dsh_start() {
   # setup_xdebug
   notice "Please wait about 10 seconds for the database to settle.
 You can now access the site from http://${PROJECT}.${DOMAIN}.
-Project files are available in /web, You may need to build and install your
+Project files are available in /code, You may need to build and install your
   project before it starts working.
-
-  Optionally you may need to navigative to the install php script:
-
-  http://${PROJECT}.${DOMAIN}/install.php
-
 Connecting via ./dsh shell and running robo build is a common next step."
 }
 
@@ -409,7 +404,6 @@ dsh_help() {
 Commands:\n
 \thelp\tShow this help.\n
 \tinstall\tInstall dependencies and tools for development.\n
-\tsetup_dnsmasq\tConfigure and setup dnsmasq for docker development.\n
 \tpurge\tPurge the docker containers, network and proxy and remove all data.\n
 \tshell\tStart a shell which is connected to the containers and can be used to run commands.\n
 \tstart\tStart the docker containers, network and proxy.\n

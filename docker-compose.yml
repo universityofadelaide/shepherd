@@ -13,6 +13,8 @@ services:
       # WEB_PATH: /path
       PRIVATE_DIR: /shared/private
       PUBLIC_DIR: web/sites/default/files
+      # HASH_SALT: random-hash
+      # CONFIG_SYNC_DIRECTORY: sites/default/files/random-hash/sync
     volumes:
       - .:/code
       - shared:/shared
