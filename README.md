@@ -33,7 +33,7 @@ composer install
 ./dsh start
 
 # Configure dsnmasq
-./dsh dnsmasq_setup
+./dsh setup_dnsmasq
 
 # Drop into a utility shell ( this creates a ssh-agent container for macOS )
 ./dsh shell
