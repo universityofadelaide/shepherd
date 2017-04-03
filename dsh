@@ -409,6 +409,7 @@ dsh_help() {
 Commands:\n
 \thelp\tShow this help.\n
 \tinstall\tInstall dependencies and tools for development.\n
+\tsetup_dnsmasq\tConfigure and setup dnsmasq for docker development.\n
 \tpurge\tPurge the docker containers, network and proxy and remove all data.\n
 \tshell\tStart a shell which is connected to the containers and can be used to run commands.\n
 \tstart\tStart the docker containers, network and proxy.\n
