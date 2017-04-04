@@ -13,6 +13,7 @@
     "require": {
         "composer/installers":                           "^1.2",
         "drupal-composer/drupal-scaffold":               "^2.2",
+        "drush/drush":                                   "8.*",
         "universityofadelaide/shepherd-drupal-scaffold": "dev-master",
         "cweagans/composer-patches":                     "~1.0",
         "drupal/core":                                   "8.2.*",
@@ -26,6 +27,7 @@
         "ua-web-team/ua_theme":                          "dev-develop"
     },
     "require-dev": {
+        "drupal/console":           "dev-master",
         "drupal/devel":             "1.*@dev",
         "behat/mink":               "~1.6",
         "behat/mink-goutte-driver": "~1.2",
