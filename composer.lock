@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "32f5666467776a309e2b97ad4bbea74b",
+    "content-hash": "7f91b62e3ac971a8239be5cfa9f651b6",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -1714,105 +1714,6 @@
             "time": "2017-03-20T17:10:46+00:00"
         },
         {
-            "name": "illuminate/contracts",
-            "version": "v5.4.17",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/illuminate/contracts.git",
-                "reference": "ab2825726bee46a67c8cc66789852189dbef74a9"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/illuminate/contracts/zipball/ab2825726bee46a67c8cc66789852189dbef74a9",
-                "reference": "ab2825726bee46a67c8cc66789852189dbef74a9",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.6.4"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "5.4-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Illuminate\\Contracts\\": ""
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Taylor Otwell",
-                    "email": "taylor@laravel.com"
-                }
-            ],
-            "description": "The Illuminate Contracts package.",
-            "homepage": "https://laravel.com",
-            "time": "2017-03-29T13:17:47+00:00"
-        },
-        {
-            "name": "illuminate/support",
-            "version": "v5.4.17",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/illuminate/support.git",
-                "reference": "c7e7c9daf5044e76b46085b8351f8235a3e979c6"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/illuminate/support/zipball/c7e7c9daf5044e76b46085b8351f8235a3e979c6",
-                "reference": "c7e7c9daf5044e76b46085b8351f8235a3e979c6",
-                "shasum": ""
-            },
-            "require": {
-                "doctrine/inflector": "~1.0",
-                "ext-mbstring": "*",
-                "illuminate/contracts": "5.4.*",
-                "paragonie/random_compat": "~1.4|~2.0",
-                "php": ">=5.6.4"
-            },
-            "replace": {
-                "tightenco/collect": "self.version"
-            },
-            "suggest": {
-                "illuminate/filesystem": "Required to use the composer class (5.2.*).",
-                "symfony/process": "Required to use the composer class (~3.2).",
-                "symfony/var-dumper": "Required to use the dd function (~3.2)."
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "5.4-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Illuminate\\Support\\": ""
-                },
-                "files": [
-                    "helpers.php"
-                ]
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Taylor Otwell",
-                    "email": "taylor@laravel.com"
-                }
-            ],
-            "description": "The Illuminate Support package.",
-            "homepage": "https://laravel.com",
-            "time": "2017-03-28T12:49:45+00:00"
-        },
-        {
             "name": "ircmaxell/password-compat",
             "version": "v1.0.4",
             "source": {
@@ -1940,57 +1841,6 @@
                 }
             ],
             "time": "2015-04-20T18:58:01+00:00"
-        },
-        {
-            "name": "maclof/kubernetes-client",
-            "version": "0.2.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/maclof/kubernetes-client.git",
-                "reference": "85a696cb15e9369f51e964dbf555ae1d6aaf5bbd"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/maclof/kubernetes-client/zipball/85a696cb15e9369f51e964dbf555ae1d6aaf5bbd",
-                "reference": "85a696cb15e9369f51e964dbf555ae1d6aaf5bbd",
-                "shasum": ""
-            },
-            "require": {
-                "guzzlehttp/guzzle": "~5.0|~6.0",
-                "illuminate/support": "~5.0",
-                "php": ">=5.4"
-            },
-            "require-dev": {
-                "mockery/mockery": "~0.9",
-                "phpunit/phpunit": "~4.0",
-                "satooshi/php-coveralls": "~1.0"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Maclof\\Kubernetes\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Marc Lough",
-                    "homepage": "http://maclof.com"
-                }
-            ],
-            "description": "A simple yet elegant client for accessing and controlling a Kubernetes cluster.",
-            "keywords": [
-                "Guzzle",
-                "cluster",
-                "container",
-                "docker",
-                "guzzlehttp",
-                "kubernetes"
-            ],
-            "time": "2016-12-31T19:11:04+00:00"
         },
         {
             "name": "masterminds/html5",
@@ -2429,24 +2279,6 @@
                 "shell"
             ],
             "time": "2017-03-19T21:40:44+00:00"
-        },
-        {
-            "name": "shepherd/shepherd_custom",
-            "version": "dev-develop",
-            "source": {
-                "type": "git",
-                "url": "git@gitlab.adelaide.edu.au:drupal-modules/shepherd_custom.git",
-                "reference": "d659e79a12343f4b216bf3f828ddfd5bb567059e"
-            },
-            "require": {
-                "maclof/kubernetes-client": "^0.2.0"
-            },
-            "type": "drupal-module",
-            "license": [
-                "GPL-2.0+"
-            ],
-            "description": "Provides functionality specific to the Shepherd distribution.",
-            "time": "2017-03-22 23:14:42"
         },
         {
             "name": "stack/builder",
@@ -4848,7 +4680,7 @@
                 "drupal",
                 "symfony"
             ],
-            "time": "2017-04-03T05:30:23+00:00"
+            "time": "2017-04-03 05:30:23"
         },
         {
             "name": "drupal/console-core",
@@ -6223,7 +6055,7 @@
         },
         {
             "name": "symfony/css-selector",
-            "version": "v2.7.25",
+            "version": "v2.7.26",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/css-selector.git",
@@ -6473,7 +6305,6 @@
         "drupal/cas": 20,
         "drupal/entity_reference_revisions": 20,
         "drupal/r4032login": 20,
-        "shepherd/shepherd_custom": 20,
         "ua-drupal-modules/ua_ldap": 20,
         "ua-drupal-modules/ua_ldap_authorisation": 20,
         "ua-web-team/ua_theme": 20,

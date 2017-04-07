@@ -46,7 +46,7 @@ dependencies:
   - ua_ldap_authorisation
   - shp_custom
   - shp_drush_aliases
-  - shepherd_custom
+  - shp_orchestration
 themes:
   - bartik
   - seven

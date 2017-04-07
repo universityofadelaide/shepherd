@@ -1,0 +1,8 @@
+shp_orchestration.orchestration_provider.base_settings:
+  title: 'Base settings'
+  route_name: shp_orchestration.orchestration_provider.settings
+  base_route: shp_orchestration.orchestration_provider.settings
+shp_orchestration.orchestration_provider.provider_settings:
+  title: 'Provider settings'
+  route_name: shp_orchestration.orchestration_provider.provider_settings
+  base_route: shp_orchestration.orchestration_provider.settings

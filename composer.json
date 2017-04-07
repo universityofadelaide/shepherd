@@ -6,7 +6,6 @@
     "repositories": [
         {"type": "vcs", "url": "git@gitlab.adelaide.edu.au:drupal-modules/ua_ldap.git"},
         {"type": "vcs", "url": "git@gitlab.adelaide.edu.au:drupal-modules/ua_ldap_authorisation.git"},
-        {"type": "vcs", "url": "git@gitlab.adelaide.edu.au:drupal-modules/shepherd_custom.git"},
         {"type": "vcs", "url": "git@gitlab.adelaide.edu.au:web-team/ua_d8_theme.git"},
         {"type": "composer", "url": "https://packages.drupal.org/8"}
     ],
@@ -21,7 +20,6 @@
         "drupal/entity_reference_revisions":             "dev-1.x",
         "drupal/paragraphs":                             "1.*",
         "drupal/r4032login":                             "1.*@dev",
-        "shepherd/shepherd_custom":                      "dev-develop",
         "ua-drupal-modules/ua_ldap":                     "dev-develop",
         "ua-drupal-modules/ua_ldap_authorisation":       "dev-develop",
         "ua-web-team/ua_theme":                          "dev-develop"

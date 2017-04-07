@@ -1,0 +1,4 @@
+services:
+  plugin.manager.orchestration_provider:
+    class: Drupal\shp_orchestration\OrchestrationProviderPluginManager
+    parent: default_plugin_manager

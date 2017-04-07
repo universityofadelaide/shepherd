@@ -1,0 +1,91 @@
+<?php
+
+use Drupal\Core\Entity\EntityInterface;
+
+/**
+ * Implements hook_ENTITY_TYPE_insert().
+ */
+function shp_orchestration_node_insert(EntityInterface $entity) {
+  switch ($entity->bundle()) {
+    case 'shp_environment':
+      $orchestration_provider_plugin = \Drupal::service('plugin.manager.orchestration_provider')->getProviderInstance();
+      // Call something on the plugin.
+      break;
+  }
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_update().
+ */
+function shp_orchestration_node_update(EntityInterface $entity) {
+  switch ($entity->bundle()) {
+    case 'shp_environment':
+      // Load the provider plugin.
+      $orchestration_provider_plugin = \Drupal::service('plugin.manager.orchestration_provider')->getProviderInstance();
+
+      // Below is an example to show the creation of the following:
+      // Creation of a Secret.
+      // Replication Controller.
+      // Service.
+      // Do with it what you will ...
+      // HALP make this thing work :-)
+      try {
+        $secret_name = 'supersecret';
+        $data = [
+          'username' => base64_encode('User'),
+          'password' => base64_encode('supersecretpassword'),
+        ];
+        $request = $orchestration_provider_plugin->createSecret($secret_name, $data);
+      }
+      catch (GuzzleHttp\Exception\ClientException $e) {
+        $response = $e->getResponse();
+        $response_body_string = $response->getBody()->getContents();
+      }
+
+      try {
+        $config = _shp_orchestration_create_demo_rc_config();
+        $request = $orchestration_provider_plugin->createPod('openshift_demo', $config);
+      }
+      catch (GuzzleHttp\Exception\ClientException $e) {
+        $response = $e->getResponse();
+        $response_body_string = $response->getBody()->getContents();
+        // @todo - handle this.
+      }
+
+      // RC has been created ... now create a service to expose it.
+      try {
+        $config = _shp_orchestration_create_demo_service_config();
+        $request = $orchestration_provider_plugin->createService('openshift_demo', $config);
+      }
+      catch (GuzzleHttp\Exception\ClientException $e) {
+        $response = $e->getResponse();
+        $response_body_string = $response->getBody()->getContents();
+        // @todo - handle this.
+      }
+      break;
+  }
+}
+
+/**
+ * Create a demo guestbook - replication controller.
+ */
+function _shp_orchestration_create_demo_rc_config() {
+  // Kube demo guestbook image.
+  return [
+    'container_name' => 'guestbook-demo',
+    'image' => 'kubernetes/example-guestbook-php-redis',
+    'port' => ''
+  ];
+
+}
+
+/**
+ * Create a service to expose the kube-demo.
+ */
+function _shp_orchestration_create_demo_service_config() {
+  return [
+    'protocol' => 'TCP',
+    'src_port' => 80,
+    'targetPort' => 80
+  ];
+}

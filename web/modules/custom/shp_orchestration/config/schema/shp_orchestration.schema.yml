@@ -1,0 +1,7 @@
+shp_orchestration.settings:
+  type: config_object
+  label: 'Orchestration provider settings'
+  mapping:
+    selected_provider:
+      type: string
+      label: 'Selected orchestration provider to use.'
