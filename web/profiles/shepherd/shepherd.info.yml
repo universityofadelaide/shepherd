@@ -4,49 +4,55 @@ description: 'University of Adelaide Drupal 8 Shepherd.'
 version: VERSION
 core: 8.x
 dependencies:
-  - node
-  - history
+  - basic_auth
+  - big_pipe
   - block
+  - block_content
   - breakpoint
-  - cas
   - ckeditor
   - config
   - comment
   - contextual
   - contact
-  - menu_link_content
   - datetime
-  - block_content
+  - dblog
+  - dynamic_page_cache
   - editor
-  - entity_reference
+  - field_ui
+  - file
+  - hal
   - help
+  - history
   - image
+  - menu_link_content
   - menu_ui
+  - node
   - options
   - path
   - page_cache
-  - taxonomy
-  - dblog
+  - rdf
+  - rest
   - search
   - shortcut
+  - taxonomy
   - toolbar
-  - field_ui
-  - file
-  - rdf
+  - tour
   - views
   - views_ui
-  - tour
-  - rest
-  - basic_auth
+  # Contributed modules
+  - cas
+  - entity_reference
   - entity_reference_revisions
-  - hal
+  - externalauth
   - paragraphs
   - r4032login
-  - ua_ldap
-  - ua_ldap_authorisation
+  # Shepherd modules
   - shp_custom
   - shp_drush_aliases
   - shp_orchestration
+  # University created modules
+  - ua_ldap
+  - ua_ldap_authorisation
 themes:
   - bartik
   - seven

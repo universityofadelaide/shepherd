@@ -15,8 +15,8 @@
         "drush/drush":                                   "8.*",
         "universityofadelaide/shepherd-drupal-scaffold": "dev-master",
         "cweagans/composer-patches":                     "~1.0",
-        "drupal/core":                                   "8.2.*",
-        "drupal/cas":                                    "1.x-dev#1aa23bc778e68adfc6e4506476cfd517b3c906d2",
+        "drupal/core":                                   "8.3.*",
+        "drupal/cas":                                    "1.x-dev",
         "drupal/entity_reference_revisions":             "dev-1.x",
         "drupal/paragraphs":                             "1.*",
         "drupal/r4032login":                             "1.*@dev",
@@ -79,7 +79,7 @@
                 "Override return destination parameter": "https://www.drupal.org/files/issues/r4032login_2534308_7.patch"
             },
             "drupal/core": {
-                "Twig debug output does not display all suggestions": "https://www.drupal.org/files/issues/twig_debug_output_does-2118743-93.patch"
+                "Twig debug output does not display all suggestions": "https://www.drupal.org/files/issues/core-8.3.0-twig_debug_not_display-suggestions-array-2118743-107.patch"
             }
         }
     }
