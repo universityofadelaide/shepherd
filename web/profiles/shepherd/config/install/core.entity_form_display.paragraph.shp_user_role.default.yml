@@ -5,8 +5,6 @@ dependencies:
     - field.field.paragraph.shp_user_role.field_shp_role
     - field.field.paragraph.shp_user_role.field_shp_user
     - paragraphs.paragraphs_type.shp_user_role
-_core:
-  default_config_hash: 7aiGtk6sfo0akfP3p1Lp7SxjyJPvR9s0FvAGdDWIHyk
 id: paragraph.shp_user_role.default
 targetEntityType: paragraph
 bundle: shp_user_role
@@ -27,4 +25,5 @@ content:
     type: entity_reference_autocomplete
 hidden:
   created: true
+  status: true
   uid: true

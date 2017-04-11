@@ -4,8 +4,6 @@ dependencies:
   config:
     - field.storage.node.field_shp_site
     - node.type.shp_environment
-  module:
-    - entity_reference
 id: node.shp_environment.field_shp_site
 field_name: field_shp_site
 entity_type: node

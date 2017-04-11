@@ -5,11 +5,10 @@ dependencies:
     - field.field.user.user.field_shp_keys
     - field.field.user.user.field_ua_user_preferred_name
     - field.field.user.user.user_picture
+    - image.style.thumbnail
   module:
     - image
     - user
-_core:
-  default_config_hash: YBJOiJiPB1_FILcQ8WjqcCUw6GgjDzLFmMTLS28Y3Rk
 id: user.user.default
 targetEntityType: user
 bundle: user

@@ -14,7 +14,7 @@ id: shp_distributions
 label: Distributions
 module: views
 description: ''
-tag: 'Shepherd'
+tag: Shepherd
 base_table: node_field_data
 base_field: nid
 core: 8.x

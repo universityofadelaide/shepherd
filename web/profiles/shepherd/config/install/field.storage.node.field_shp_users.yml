@@ -4,6 +4,7 @@ dependencies:
   module:
     - entity_reference_revisions
     - node
+    - paragraphs
 id: node.field_shp_users
 field_name: field_shp_users
 entity_type: node
@@ -16,3 +17,4 @@ cardinality: -1
 translatable: true
 indexes: {  }
 persist_with_no_fields: false
+custom_storage: false

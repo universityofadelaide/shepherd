@@ -14,7 +14,7 @@ forced_login:
   enabled: true
   paths:
     id: request_path
-    pages: 'user/login'
+    pages: user/login
     negate: false
 redirection:
   logout_destination: ''

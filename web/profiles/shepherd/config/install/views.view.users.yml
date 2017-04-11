@@ -10,7 +10,7 @@ id: users
 label: Users
 module: views
 description: ''
-tag: 'Shepherd'
+tag: Shepherd
 base_table: users_field_data
 base_field: uid
 core: 8.x

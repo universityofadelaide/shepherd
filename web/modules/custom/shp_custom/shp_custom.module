@@ -13,6 +13,8 @@ use Drupal\Core\Session\AccountInterface;
 use Drupal\node\Entity\Node;
 use Drupal\user\Entity\User;
 use Drupal\shp_custom\Service\JenkinsClient;
+use Drupal\Core\Url;
+
 
 const SHP_CUSTOM_INSTANCE_LIMIT = 100;
 
@@ -44,6 +46,51 @@ function shp_custom_theme($existing, $type, $theme, $path) {
       ],
     ],
   ];
+}
+
+/**
+ * Implements hook_toolbar().
+ */
+function shp_custom_toolbar(&$items) {
+  // Load the menu tree for shepherd.
+  $menu_tree = \Drupal::service('toolbar.menu_tree');
+  $parameters = new \Drupal\Core\Menu\MenuTreeParameters();
+  $parameters->setMinDepth(2)->setMaxDepth(2)->onlyEnabledLinks();
+  $tree = $menu_tree->load('shepherd', $parameters);
+  $links = $menu_tree->build($tree);
+
+  // Declare our custom tab and tray.
+  $items['shepherd'] = [
+    '#cache' => [
+      'contexts' => [
+        'user.permissions',
+      ],
+    ],
+    '#type' => 'toolbar_item',
+    'tab' => [
+      '#type' => 'link',
+      '#title' => t('Shepherd'),
+      '#url' => Url::fromRoute('shp_custom.sites'),
+      '#attributes' => [
+        'title' => t('Shepherd menu'),
+        'class' => ['toolbar-icon', 'toolbar-icon-system-admin-structure'],
+        // A data attribute that indicates to the client to defer loading of
+        // the admin menu subtrees until this tab is activated. Admin menu
+        // subtrees will not render to the DOM if this attribute is removed.
+        // The value of the attribute is intentionally left blank. Only the
+        // presence of the attribute is necessary.
+        'data-drupal-subtrees' => '',
+      ],
+    ],
+    'tray' => [
+      '#heading' => t('Shepherd menu'),
+      '#attached' => '',
+      'shepherd' => $links,
+    ],
+    '#weight' => -20,
+  ];
+
+  return $items;
 }
 
 /**
@@ -235,6 +282,7 @@ function shp_custom_node_insert(EntityInterface $entity) {
       // Note fields presented only in the UI don't get setup as a node ->value.
       if (isset($entity->field_shp_create_site) && $entity->field_shp_create_site) {
         // Create default environment.
+        // TODO - refactor to matches the changes to the environment for orchestration.
         $environment = Node::create([
           'type' => 'shp_environment',
           'uid' => 1,

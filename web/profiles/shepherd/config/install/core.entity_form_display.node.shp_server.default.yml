@@ -3,13 +3,13 @@ status: true
 dependencies:
   config:
     - field.field.node.shp_server.body
-    - field.field.node.shp_server.field_tags
     - field.field.node.shp_server.field_shp_hostname
     - field.field.node.shp_server.field_shp_ip_address
     - field.field.node.shp_server.field_shp_ipv6_address
     - field.field.node.shp_server.field_shp_port_range_end
     - field.field.node.shp_server.field_shp_port_range_start
     - field.field.node.shp_server.field_shp_ssh_user
+    - field.field.node.shp_server.field_tags
     - node.type.shp_server
   module:
     - path
@@ -32,14 +32,6 @@ content:
     weight: 9
     settings: {  }
     third_party_settings: {  }
-  field_tags:
-    weight: 7
-    settings:
-      match_operator: CONTAINS
-      size: 60
-      placeholder: ''
-    third_party_settings: {  }
-    type: entity_reference_autocomplete
   field_shp_hostname:
     weight: 1
     settings:
@@ -80,6 +72,14 @@ content:
       placeholder: ''
     third_party_settings: {  }
     type: string_textfield
+  field_tags:
+    weight: 7
+    settings:
+      match_operator: CONTAINS
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: entity_reference_autocomplete
   path:
     type: path
     weight: 12

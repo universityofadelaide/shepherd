@@ -125,7 +125,6 @@ class SiteInstanceConfig {
           'keys' => $keys,
           'path' => $site->field_shp_path->value,
           'site_title' => $site->field_shp_site_title->value,
-          'site_mail' => $site->field_shp_site_mail->value,
           'top_menu_style' => $site->field_shp_top_menu_style->value,
           'uuid' => $site->uuid(),
         ],

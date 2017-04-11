@@ -6,4 +6,6 @@ label: 'Authenticated user'
 weight: 2
 is_admin: false
 permissions:
-  - 'sm view homepage'
+  0: 'sm view homepage'
+  2: 'use text format basic_html'
+  3: 'access shortcuts'

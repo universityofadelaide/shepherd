@@ -2,7 +2,6 @@ langcode: en
 status: true
 dependencies:
   config:
-    - field.field.node.shp_platform.field_tags
     - field.field.node.shp_platform.field_shp_build_server
     - field.field.node.shp_platform.field_shp_database_servers
     - field.field.node.shp_platform.field_shp_deployment_type
@@ -11,6 +10,7 @@ dependencies:
     - field.field.node.shp_platform.field_shp_reverse_proxy_header
     - field.field.node.shp_platform.field_shp_task_runner
     - field.field.node.shp_platform.field_shp_web_servers
+    - field.field.node.shp_platform.field_tags
     - node.type.shp_platform
   module:
     - path
@@ -24,14 +24,6 @@ content:
     weight: 10
     settings: {  }
     third_party_settings: {  }
-  field_tags:
-    weight: 8
-    settings:
-      match_operator: CONTAINS
-      size: 60
-      placeholder: ''
-    third_party_settings: {  }
-    type: entity_reference_autocomplete
   field_shp_build_server:
     weight: 3
     settings:
@@ -85,6 +77,14 @@ content:
     type: string_textfield
   field_shp_web_servers:
     weight: 4
+    settings:
+      match_operator: CONTAINS
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: entity_reference_autocomplete
+  field_tags:
+    weight: 8
     settings:
       match_operator: CONTAINS
       size: 60
