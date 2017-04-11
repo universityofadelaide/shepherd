@@ -113,6 +113,9 @@ dsh_purge() {
   notice "Taking down containers, removing volumes if possible."
   set +e
   docker-compose down -v
+  notice "Removing settings.php and services.yml."
+  rm web/sites/default/settings.php
+  rm web/sites/default/services.yml
   set -e
 }
 
@@ -142,6 +145,14 @@ setup() {
   fi
   setup_docker_network
   setup_nginx_proxy
+
+  # Detect if there is a settings.php or services.yml
+  # If not found perform a composer install.
+  if [ ! -f web/sites/default/settings.php ] || [ ! -f web/sites/default/services.yml ]; then
+    warning "Missing settings.php, performing a composer install."
+    composer install
+  fi
+
 }
 
 setup_docker_machine() {
