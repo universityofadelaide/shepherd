@@ -7,8 +7,6 @@ dependencies:
     - system
   theme:
     - bartik
-_core:
-  default_config_hash: X1O-fXAwTioMDWGAU9KOnzwZDQFbbkjmdtf9-SpZR4s
 id: bartik_tools
 theme: bartik
 region: '-1'

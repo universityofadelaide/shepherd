@@ -4,8 +4,6 @@ dependencies:
   config:
     - field.storage.node.field_tags
     - node.type.shp_site
-  module:
-    - entity_reference
 id: node.shp_site.field_tags
 field_name: field_tags
 entity_type: node

@@ -3,9 +3,8 @@ status: true
 dependencies:
   config:
     - field.storage.node.field_shp_distribution
+    - node.type.shp_distribution
     - node.type.shp_site
-  module:
-    - entity_reference
 id: node.shp_site.field_shp_distribution
 field_name: field_shp_distribution
 entity_type: node

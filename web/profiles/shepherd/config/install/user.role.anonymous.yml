@@ -6,4 +6,6 @@ label: 'Anonymous user'
 weight: 1
 is_admin: false
 permissions:
-  - 'sm view homepage'
+  0: 'sm view homepage'
+  2: 'use text format restricted_html'
+  3: 'restful get entity:node'

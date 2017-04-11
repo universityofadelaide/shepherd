@@ -11,8 +11,8 @@ jenkins:
 ldap:
   enabled: false
 controlled_roles:
-  administrator: 'Administrator'
-  shp_developer: 'Developer'
+  administrator: Administrator
+  shp_developer: Developer
   shp_online_consultant: 'Online Consultant'
   shp_site_administrator: 'Site Administrator'
   shp_web_author: 'Web Author'

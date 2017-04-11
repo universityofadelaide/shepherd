@@ -1,3 +1,32 @@
+shp_custom.admin:
+  title: Shepherd
+  route_name: shp_custom.sites
+  weight: 9
+  menu_name: shepherd
+shp_custom.sites_view:
+  title: Sites
+  description: 'View of sites'
+  route_name: shp_custom.sites
+  parent: shp_custom.admin
+  weight: -10
+shp_custom.environments_view:
+  title: Environments
+  description: 'View of environments'
+  route_name: shp_custom.environments
+  parent: shp_custom.admin
+  weight: -9
+shp_custom.users_view:
+  title: Users
+  description: 'View of users'
+  route_name: shp_custom.users
+  parent: shp_custom.admin
+  weight: -8
+shp_custom.distributions_view:
+  title: Distributions
+  description: 'View of distributions available'
+  route_name: shp_custom.distributions
+  parent: shp_custom.admin
+  weight: -7
 shp_custom.shepherd_settings:
   title: 'Shepherd'
   description: 'Configure Shepherd settings and integrations.'

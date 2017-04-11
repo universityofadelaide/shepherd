@@ -4,12 +4,12 @@ dependencies:
   config:
     - core.entity_view_mode.user.compact
     - field.field.user.user.field_shp_keys
+    - field.field.user.user.field_ua_user_preferred_name
     - field.field.user.user.user_picture
+    - image.style.thumbnail
   module:
     - image
     - user
-_core:
-  default_config_hash: T2PsplcZ3qhzqgwW_aYCKQshCg_UQkSsKV45b03pEl4
 id: user.user.compact
 targetEntityType: user
 bundle: user
@@ -25,4 +25,5 @@ content:
     label: hidden
 hidden:
   field_shp_keys: true
+  field_ua_user_preferred_name: true
   member_for: true

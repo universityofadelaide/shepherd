@@ -78,7 +78,36 @@ composer update
 ```
 
 
-### Additional notes
+### Additional notes and troubleshooting
 
 - mysql host is `db`, database is `drupal`, user is `user` and password is `password`
 - You may need to make `dsh` executable after a `composer update` - `chmod +x dsh`
+- If performing a site install using `drush` ensure you have removed the `web/sites/default/files/` `web/sites/default/settings.php` and 
+`web/sites/default/services.yml`
+- Purging doesn't remove the `ssh_agent` or `nginx_proxy` there will be some volumes that will continue living. You will need to 
+occasionally remove these : `docker volume ls` and `docker volume rm ${vol_name}` - to remove dangling volumes.
+- Updating `/web/sites/default/settings.php` using `composer update` requires you to remove the file before. 
+
+
+#### Exporting configuration 
+
+When exporting config always to remember to clean the `yml` files of `uuid` and config hashes.
+
+```bash
+# You can run this in the container.
+# Replace {config_dir} with the destination you exported config to.
+sed -i '/^uuid: .*$/d' /code/web/{config_dir}*.yml
+```
+
+```bash
+# Regex to replace config hashes:
+# case insensitive and multi-line
+/\_core\:.*\n.*default\_config\_hash:.*$/im
+```
+
+To diff the configuration : 
+```bash
+# you can run this on the container 
+diff -N -I "   - 'file:.*" -qbr {old_config_path} {new_config_path}
+```
+

@@ -4,6 +4,7 @@ dependencies:
   module:
     - node
     - rest
+    - serialization
     - user
 id: shp_environment_instances
 label: 'Environment instances'

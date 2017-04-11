@@ -4,8 +4,6 @@ dependencies:
   module:
     - options
     - paragraphs
-_core:
-  default_config_hash: 5roDZz_bjjuP-c-uVm9WaRVSxWgEeWAfptHGCeWQQqM
 id: paragraph.field_shp_role
 field_name: field_shp_role
 entity_type: paragraph

@@ -4,12 +4,13 @@ dependencies:
   config:
     - core.entity_view_mode.node.teaser
     - field.field.node.shp_server.body
-    - field.field.node.shp_server.field_tags
     - field.field.node.shp_server.field_shp_hostname
     - field.field.node.shp_server.field_shp_ip_address
     - field.field.node.shp_server.field_shp_ipv6_address
     - field.field.node.shp_server.field_shp_port_range_end
     - field.field.node.shp_server.field_shp_port_range_start
+    - field.field.node.shp_server.field_shp_ssh_user
+    - field.field.node.shp_server.field_tags
     - node.type.shp_server
   module:
     - text
@@ -29,9 +30,10 @@ content:
   links:
     weight: 100
 hidden:
-  field_tags: true
   field_shp_hostname: true
   field_shp_ip_address: true
   field_shp_ipv6_address: true
   field_shp_port_range_end: true
   field_shp_port_range_start: true
+  field_shp_ssh_user: true
+  field_tags: true

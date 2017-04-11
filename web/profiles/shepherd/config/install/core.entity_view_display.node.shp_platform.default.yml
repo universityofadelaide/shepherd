@@ -2,7 +2,6 @@ langcode: en
 status: true
 dependencies:
   config:
-    - field.field.node.shp_platform.field_tags
     - field.field.node.shp_platform.field_shp_build_server
     - field.field.node.shp_platform.field_shp_database_servers
     - field.field.node.shp_platform.field_shp_deployment_type
@@ -11,6 +10,7 @@ dependencies:
     - field.field.node.shp_platform.field_shp_reverse_proxy_header
     - field.field.node.shp_platform.field_shp_task_runner
     - field.field.node.shp_platform.field_shp_web_servers
+    - field.field.node.shp_platform.field_tags
     - node.type.shp_platform
   module:
     - user
@@ -19,13 +19,6 @@ targetEntityType: node
 bundle: shp_platform
 mode: default
 content:
-  field_tags:
-    weight: 7
-    label: above
-    settings:
-      link: true
-    third_party_settings: {  }
-    type: entity_reference_label
   field_shp_build_server:
     weight: 2
     label: above
@@ -77,6 +70,13 @@ content:
     type: string
   field_shp_web_servers:
     weight: 3
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    type: entity_reference_label
+  field_tags:
+    weight: 7
     label: above
     settings:
       link: true

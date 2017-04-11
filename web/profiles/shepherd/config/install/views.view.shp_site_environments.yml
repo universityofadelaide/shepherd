@@ -3,7 +3,6 @@ status: true
 dependencies:
   config:
     - core.entity_view_mode.node.teaser
-    - field.storage.node.field_shp_domain_name
     - field.storage.node.field_shp_machine_name
     - field.storage.node.field_shp_platform
     - field.storage.node.field_shp_site
@@ -235,7 +234,7 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
-          label: 'Url'
+          label: Url
           exclude: false
           alter:
             alter_text: false
@@ -659,7 +658,6 @@ display:
         - 'user.node_grants:view'
         - user.permissions
       tags:
-        - 'config:field.storage.node.field_shp_domain_name'
         - 'config:field.storage.node.field_shp_machine_name'
         - 'config:field.storage.node.field_shp_platform'
         - 'config:field.storage.node.field_shp_site'
@@ -690,7 +688,6 @@ display:
         - 'user.node_grants:view'
         - user.permissions
       tags:
-        - 'config:field.storage.node.field_shp_domain_name'
         - 'config:field.storage.node.field_shp_machine_name'
         - 'config:field.storage.node.field_shp_platform'
         - 'config:field.storage.node.field_shp_site'

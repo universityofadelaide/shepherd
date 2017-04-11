@@ -1,7 +1,15 @@
+shp_custom.sites.view:
+  title: 'List'
+  route_name: shp_custom.sites
+  base_route: shp_custom.sites
+shp_custom.sites.create:
+  title: 'Create new site'
+  route_name: shp_custom.site-add-form
+  base_route: shp_custom.sites
 shp_custom.details:
   title: Details
   parent_id: entity.node.canonical
-  route_name: view.shp_site_details.page_1
+  route_name: entity.node.canonical
   base_route: entity.node.canonical
 shp_custom.site_users:
   title: Users

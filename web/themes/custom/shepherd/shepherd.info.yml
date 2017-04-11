@@ -1,0 +1,7 @@
+name: Shepherd
+type: theme
+base theme: seven
+description: 'Shepherd subtheme of seven admin theme.'
+package: Custom
+version: VERSION
+core: 8.x

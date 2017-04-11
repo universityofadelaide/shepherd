@@ -3,6 +3,9 @@ status: true
 dependencies:
   config:
     - core.entity_view_mode.node.teaser
+    - field.field.node.shp_distribution.body
+    - field.field.node.shp_distribution.field_shp_box_type
+    - field.field.node.shp_distribution.field_shp_git_repository
     - node.type.shp_distribution
   module:
     - user
