@@ -51,7 +51,7 @@ function shp_custom_theme($existing, $type, $theme, $path) {
 /**
  * Implements hook_toolbar().
  */
-function shp_custom_toolbar(&$items) {
+function shp_custom_toolbar() {
   // Load the menu tree for shepherd.
   $menu_tree = \Drupal::service('toolbar.menu_tree');
   $parameters = new \Drupal\Core\Menu\MenuTreeParameters();
