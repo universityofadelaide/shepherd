@@ -32,7 +32,7 @@ function shp_drush_aliases_entity_extra_field_info() {
 /**
  * Implements hook_ENTITY_TYPE_view().
  */
-function shp_drush_aliases_node_view(array &$build, EntityInterface $entity, EntityViewDisplayInterface $display, $view_mode, $langcode) {
+function shp_drush_aliases_node_view(array &$build, EntityInterface $entity, EntityViewDisplayInterface $display, $view_mode) {
   if ($display->getComponent('field_drush_aliases')) {
     $url = Url::fromRoute('shp_drush_aliases.drush_aliases', ['nid' => $entity->id()]);
     $markup = t('<a href="@link">Download Drush aliases</a>', [
