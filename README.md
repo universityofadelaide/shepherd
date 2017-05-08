@@ -1,20 +1,99 @@
 Shepherd
 ========
 
-The University of Adelaide Shepherd provides an administration UI for provisioning web sites and managing user access. 
+The University of Adelaide Shepherd provides an administration UI for
+provisioning web sites and managing user access built on OpenShift.
+
+The suggested development environment for Shepherd requires both an instance of
+the Drupal app itself running in Docker and OpenShift running in a virtual
+machine provided by the [Minishift](https://www.openshift.org/minishift/)
+command line tool.
+
+## Getting started for Shepherd development
+The following prerequisites must be installed.
+
+### All systems
+* PHP 7+
+* [Composer](https://getcomposer.org/)
+* [Docker](https://www.docker.com/)
+* dnsmasq
+* [VirtualBox](https://www.virtualbox.org/wiki/Downloads)
+* [Minishift](https://github.com/minishift/minishift/releases)
+
+### macOS
+* [Docker Toolbox](https://www.docker.com/products/docker-toolbox) or [Docker
+for Mac](https://www.docker.com/docker-mac)
+* [docker-machine-nfs](https://github.com/adlogix/docker-machine-nfs)
+
+### Starting Minishift
+Minishift provides an OpenShift environment that Shepherd uses to deploy sites.
+
+Minishift can use multiple virtualisation backends. On Linux we recommend using
+virtualbox due to stability issues with kvm. On macOS the default is xhyve which
+is fine, though you may wish to use virtualbox if you're running Docker Toolbox.
+```bash
+# On Linux, change default vm-driver to virtualbox.
+minishift config set vm-driver virtualbox
+```
+
+Start Minishift and add an SSH key to it for authentication against private git
+repositories. The key must have no password and have sufficient access.
+```bash
+minishift start
+
+# Adds the oc command to your $PATH.
+eval $(minishift oc-env)
+
+oc secrets new-sshauth build-key --ssh-privatekey=${HOME}/.ssh/id_rsa
+```
+
+### Starting Shepherd
+```bash
+composer install
+./dsh install_tools (macOS only)
+./dsh start
+```
+
+### Perform site install on Shepherd
+Visit http://shepherd.test/core/install.php and complete the install wizard.
+
+### Configure Shepherd to use local Minishift
+Visit http://shepherd.test/admin/config/system/shepherd/orchestration/provider_settings
+and enter the following details:
+
+Endpoint (API base url):
+```bash
+minishift console --url
+```
+
+Token (for authenticating against API):
+```bash
+oc login -u developer -p developer >/dev/null && oc whoami -t
+```
+
+Environment mode: dev.
+
+Namespace (project name, default to myproject):
+```bash
+oc project -q
+```
+
+### Test connection to API:
+```bash
+curl --insecure -H "Authorization: Bearer $(oc login -u developer -p developer >/dev/null && oc whoami -t)" $(minishift console --url)/oapi/v1
+```
 
 ## Requirements
 
 #### ATTN: macOS users
-
 You can use Docker Toolbox or Docker for Mac with this project. Both are supported in the `dsh` script. Both environments
-have [issues with filesystem speed](https://github.com/docker/for-mac/issues/77). Docker Toolbox ( `docker-machine` ) is using `docker-machine-nfs` to address the issue by using NFS. 
-This has improved speed massively for users. A similar solution for `docker for mac` called [d4m nfs](https://github.com/IFSight/d4m-nfs) is available and essentially does the same 
+have [issues with filesystem speed](https://github.com/docker/for-mac/issues/77). Docker Toolbox ( `docker-machine` ) is using `docker-machine-nfs` to address the issue by using NFS.
+This has improved speed massively for users. A similar solution for `docker for mac` called [d4m nfs](https://github.com/IFSight/d4m-nfs) is available and essentially does the same
 thing, however this has not been implemented in the `dsh` script. If using `docker for mac` you will experience speed and peformance issues
-performing tasks large writes inside the container. 
+performing tasks large writes inside the container.
 
 
-* [Docker](https://www.docker.com/community-edition) ( **optional** macOS - docker for mac) 
+* [Docker](https://www.docker.com/community-edition) ( **optional** macOS - docker for mac)
 * [Docker Toolbox](https://www.docker.com/products/docker-toolbox) - ( macOS only )
 * PHP installed on your host machine
 * [Composer](https://getcomposer.org/)
@@ -26,7 +105,7 @@ performing tasks large writes inside the container.
 # this will ensure that all deps for docker toolbox/machine development are installed.
 ./dsh install_tools
 
-# setup 
+# setup
 composer install
 
 # bring up containers, runs any configuration tasks
@@ -42,20 +121,7 @@ composer install
 ./dsh purge
 ```
 
-### Setting up Minishift orchestration
-
-Documentation can be found on [Google Drive](https://docs.google.com/document/d/1ZeypugCthqFfHiLXCe6XyEJ9kO0rWhTzLb3bQa3KLqY/edit#heading=h.e4erzx509ekv)
-
-Once you have configured your minishift openshift environment do the following : 
-- Go to the orchestration settings in the configuration page. 
-- Select openshift as the provider. 
-- Select the openshift tab and update the details.
-
-Test the API configuration by triggering an environment by editing an existing site definition.
-
-
 ### Installing via Drush
-
 ```drush
 # Drop into the utility shell
 ./dsh shell
@@ -68,8 +134,7 @@ sudo rm -f web/sites/default/settings.php
 sudo rm -f web/sites/default/services.yml
 ```
 
-### Updating scaffolds 
-
+### Updating scaffolds
 Anything using the `master` branch is going to be cached by composer. To unsure you get the latest, clear the composer cache
 ```bash
 composer clear-cache
@@ -77,20 +142,16 @@ composer clear-cache
 composer update
 ```
 
-
 ### Additional notes and troubleshooting
-
 - mysql host is `db`, database is `drupal`, user is `user` and password is `password`
 - You may need to make `dsh` executable after a `composer update` - `chmod +x dsh`
-- If performing a site install using `drush` ensure you have removed the `web/sites/default/files/` `web/sites/default/settings.php` and 
+- If performing a site install using `drush` ensure you have removed the `web/sites/default/files/` `web/sites/default/settings.php` and
 `web/sites/default/services.yml`
-- Purging doesn't remove the `ssh_agent` or `nginx_proxy` there will be some volumes that will continue living. You will need to 
+- Purging doesn't remove the `ssh_agent` or `nginx_proxy` there will be some volumes that will continue living. You will need to
 occasionally remove these : `docker volume ls` and `docker volume rm ${vol_name}` - to remove dangling volumes.
-- Updating `/web/sites/default/settings.php` using `composer update` requires you to remove the file before. 
+- Updating `/web/sites/default/settings.php` using `composer update` requires you to remove the file before.
 
-
-#### Exporting configuration 
-
+#### Exporting configuration
 When exporting config always to remember to clean the `yml` files of `uuid` and config hashes.
 
 ```bash
@@ -105,9 +166,8 @@ sed -i '/^uuid: .*$/d' /code/web/{config_dir}*.yml
 /\_core\:.*\n.*default\_config\_hash:.*$/im
 ```
 
-To diff the configuration : 
+To diff the configuration :
 ```bash
-# you can run this on the container 
+# you can run this on the container
 diff -N -I "   - 'file:.*" -qbr {old_config_path} {new_config_path}
 ```
-

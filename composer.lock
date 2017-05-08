@@ -813,16 +813,16 @@
         },
         {
             "name": "drupal-composer/drupal-scaffold",
-            "version": "2.2.0",
+            "version": "2.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/drupal-composer/drupal-scaffold.git",
-                "reference": "3ad465ac853c2e52e6a808f5529859917662c256"
+                "reference": "1374e1031b98beb502abea3854f361304965c628"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/drupal-composer/drupal-scaffold/zipball/3ad465ac853c2e52e6a808f5529859917662c256",
-                "reference": "3ad465ac853c2e52e6a808f5529859917662c256",
+                "url": "https://api.github.com/repos/drupal-composer/drupal-scaffold/zipball/1374e1031b98beb502abea3854f361304965c628",
+                "reference": "1374e1031b98beb502abea3854f361304965c628",
                 "shasum": ""
             },
             "require": {
@@ -850,7 +850,7 @@
                 "GPL-2.0+"
             ],
             "description": "Composer Plugin for updating the Drupal scaffold files when using drupal/core",
-            "time": "2016-11-05T10:46:44+00:00"
+            "time": "2017-05-05T21:26:28+00:00"
         },
         {
             "name": "drupal/cas",
@@ -3784,14 +3784,14 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.adelaide.edu.au:web-team/ua_d8_theme.git",
-                "reference": "9b94812a64679e15e0cd59a11416356e4369d71a"
+                "reference": "cbe5ae9f4a97a6ea64abd63cda3e98ec21d76def"
             },
             "type": "drupal-theme",
             "license": [
                 "GPL-2.0+"
             ],
             "description": "The University of Adelaide's official Drupal 8 theme.",
-            "time": "2017-05-04 06:40:52"
+            "time": "2017-05-05 06:07:46"
         },
         {
             "name": "universityofadelaide/shepherd-drupal-scaffold",
@@ -3799,12 +3799,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/universityofadelaide/shepherd-drupal-scaffold.git",
-                "reference": "a12fb632abe1bf68f23948fab9c1e8bdf12d0fdd"
+                "reference": "606d1f174e75f3d933424aabd9aeaca9af1ace18"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/universityofadelaide/shepherd-drupal-scaffold/zipball/a12fb632abe1bf68f23948fab9c1e8bdf12d0fdd",
-                "reference": "a12fb632abe1bf68f23948fab9c1e8bdf12d0fdd",
+                "url": "https://api.github.com/repos/universityofadelaide/shepherd-drupal-scaffold/zipball/606d1f174e75f3d933424aabd9aeaca9af1ace18",
+                "reference": "606d1f174e75f3d933424aabd9aeaca9af1ace18",
                 "shasum": ""
             },
             "require": {
@@ -3826,7 +3826,7 @@
                 "GPL-2.0+"
             ],
             "description": "Composer Plugin for updating the Shepherd Drupal tools.",
-            "time": "2017-05-03 01:27:35"
+            "time": "2017-05-08 03:52:21"
         },
         {
             "name": "webmozart/assert",
@@ -4645,12 +4645,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/hechoendrupal/drupal-console.git",
-                "reference": "fb23cb5c6a13043c26288fc92ac6548ce987379f"
+                "reference": "18db499b822ffb01ec80f18d0a87ae317ba90cf3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/hechoendrupal/drupal-console/zipball/fb23cb5c6a13043c26288fc92ac6548ce987379f",
-                "reference": "fb23cb5c6a13043c26288fc92ac6548ce987379f",
+                "url": "https://api.github.com/repos/hechoendrupal/drupal-console/zipball/18db499b822ffb01ec80f18d0a87ae317ba90cf3",
+                "reference": "18db499b822ffb01ec80f18d0a87ae317ba90cf3",
                 "shasum": ""
             },
             "require": {
@@ -4715,7 +4715,7 @@
                 "drupal",
                 "symfony"
             ],
-            "time": "2017-05-02 19:15:12"
+            "time": "2017-05-07T02:54:32+00:00"
         },
         {
             "name": "drupal/console-core",
