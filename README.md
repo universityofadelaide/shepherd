@@ -51,6 +51,7 @@ oc secrets new-sshauth build-key --ssh-privatekey=${HOME}/.ssh/id_rsa
 ```bash
 composer install
 ./dsh install_tools (macOS only)
+./dsh setup_dnsmasq (Linux only)
 ./dsh start
 ```
 
