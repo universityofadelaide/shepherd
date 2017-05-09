@@ -50,6 +50,8 @@ oc secrets new-sshauth build-key --ssh-privatekey=${HOME}/.ssh/id_rsa
 ### Starting Shepherd
 ```bash
 composer install
+# make dsh executable
+chmod +x ./dsh
 ./dsh install_tools (macOS only)
 ./dsh setup_dnsmasq (Linux only)
 ./dsh start
