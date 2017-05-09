@@ -10,6 +10,7 @@
         {"type": "composer", "url": "https://packages.drupal.org/8"}
     ],
     "require": {
+        "composer-plugin-api":                           "^1.0",
         "composer/installers":                           "^1.2",
         "drupal-composer/drupal-scaffold":               "^2.2",
         "drush/drush":                                   "8.*",
