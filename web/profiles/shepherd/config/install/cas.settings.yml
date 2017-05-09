@@ -5,13 +5,13 @@ server:
   path: /cas
   cert: ''
 gateway:
-  check_frequency: -2
+  check_frequency: 0
   paths:
     id: request_path
     pages: ''
     negate: false
 forced_login:
-  enabled: true
+  enabled: false
   paths:
     id: request_path
     pages: user/login

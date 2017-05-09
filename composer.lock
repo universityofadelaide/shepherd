@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "87ba342b986ffe591d79a3f0707ba5b2",
+    "content-hash": "d0487c8c67476c5564bd090d81f34b78",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -2356,16 +2356,16 @@
         },
         {
             "name": "symfony-cmf/routing",
-            "version": "1.4.0",
+            "version": "1.4.1",
             "source": {
                 "type": "git",
-                "url": "https://github.com/symfony-cmf/Routing.git",
-                "reference": "b93704ca098334f56e9b317932f21a4362e620db"
+                "url": "https://github.com/symfony-cmf/routing.git",
+                "reference": "fb1e7f85ff8c6866238b7e73a490a0a0243ae8ac"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony-cmf/Routing/zipball/b93704ca098334f56e9b317932f21a4362e620db",
-                "reference": "b93704ca098334f56e9b317932f21a4362e620db",
+                "url": "https://api.github.com/repos/symfony-cmf/routing/zipball/fb1e7f85ff8c6866238b7e73a490a0a0243ae8ac",
+                "reference": "fb1e7f85ff8c6866238b7e73a490a0a0243ae8ac",
                 "shasum": ""
             },
             "require": {
@@ -2411,7 +2411,7 @@
                 "database",
                 "routing"
             ],
-            "time": "2016-03-31T09:11:39+00:00"
+            "time": "2017-05-09T08:10:41+00:00"
         },
         {
             "name": "symfony/class-loader",
@@ -3923,6 +3923,55 @@
             ],
             "description": "A robust cross-platform utility for normalizing, comparing and modifying file paths.",
             "time": "2015-12-17T08:42:14+00:00"
+        },
+        {
+            "name": "wikimedia/composer-merge-plugin",
+            "version": "v1.4.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/wikimedia/composer-merge-plugin.git",
+                "reference": "ca453f9f13d8b05f86f20ea10be992a782e6f78c"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/wikimedia/composer-merge-plugin/zipball/ca453f9f13d8b05f86f20ea10be992a782e6f78c",
+                "reference": "ca453f9f13d8b05f86f20ea10be992a782e6f78c",
+                "shasum": ""
+            },
+            "require": {
+                "composer-plugin-api": "^1.0",
+                "php": ">=5.3.2"
+            },
+            "require-dev": {
+                "composer/composer": "~1.0.0",
+                "jakub-onderka/php-parallel-lint": "~0.8",
+                "phpunit/phpunit": "~4.8|~5.0",
+                "squizlabs/php_codesniffer": "~2.1.0"
+            },
+            "type": "composer-plugin",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.3.x-dev"
+                },
+                "class": "Wikimedia\\Composer\\MergePlugin"
+            },
+            "autoload": {
+                "psr-4": {
+                    "Wikimedia\\Composer\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Bryan Davis",
+                    "email": "bd808@wikimedia.org"
+                }
+            ],
+            "description": "Composer plugin to merge multiple composer.json files",
+            "time": "2017-03-13T16:52:55+00:00"
         },
         {
             "name": "zendframework/zend-diactoros",

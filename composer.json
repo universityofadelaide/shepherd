@@ -23,7 +23,8 @@
         "drupal/r4032login":                             "1.*@dev",
         "ua-drupal-modules/ua_ldap":                     "dev-develop",
         "ua-drupal-modules/ua_ldap_authorisation":       "dev-develop",
-        "ua-web-team/ua_theme":                          "dev-develop"
+        "ua-web-team/ua_theme":                          "dev-develop",
+        "wikimedia/composer-merge-plugin":               "^1.4"
     },
     "require-dev": {
         "drupal/console":           "dev-master",
@@ -74,6 +75,11 @@
             "web/themes/contrib/{$name}":   ["type:drupal-theme"],
             "web/libraries/{$name}":        ["type:drupal-library"],
             "web/drush/commands/{$name}":   ["type:drupal-drush"]
+        },
+        "merge-plugin": {
+            "require": [
+                "web/modules/custom/shp_orchestration/composer.json"
+            ]
         },
         "patches": {
             "drupal/r4032login": {
