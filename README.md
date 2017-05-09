@@ -47,6 +47,14 @@ eval $(minishift oc-env)
 oc secrets new-sshauth build-key --ssh-privatekey=${HOME}/.ssh/id_rsa
 ```
 
+#### Troubleshooting Minishift 
+
+If you receive a `connection refused` error when running `minishift start` the DNS settings out of the box for minishift are incorrect.
+Change to a working DNS server .. try google : 
+```bash
+  minishift ssh "echo 'nameserver 8.8.8.8 | sudo tee /etc/resolv.conf"
+```
+
 ### Starting Shepherd
 ```bash
 composer install
