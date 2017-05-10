@@ -27,8 +27,6 @@ class HostsConfig {
     foreach ($instance_ids as $nid) {
       $site_instance = \Drupal::entityManager()->getStorage('node')->load($nid);
 
-      $environments = $site_instance->field_shp_environment->referencedEntities();
-      $environment = reset($environments);
       $status = $environment->field_shp_environment_status->value;
 
       if (!$status) {

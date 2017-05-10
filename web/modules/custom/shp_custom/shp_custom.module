@@ -557,22 +557,5 @@ function shp_custom_populate_user_attributes() {
  * Back up all environments.
  */
 function shp_custom_backup_environments() {
-  $site_instance_nids = \Drupal::entityQuery('node')
-    ->condition('type', 'shp_site_instance')
-    ->execute();
-
-  $instances = [];
-  $nodes = Node::loadMultiple($site_instance_nids);
-
-  foreach ($nodes as $node) {
-    $environment_name = $node->field_shp_environment->getString();
-    if (!array_key_exists($environment_name, $instances)) {
-      // Just pick once instance per environment to run the backup.
-      $instances[$environment_name] = $node;
-    }
-  }
-
-  foreach ($instances as $instance) {
-    \Drupal::service('shp_custom.backup')->createBackup($instance);
-  }
+  // TODO - Perform backups on orchestration provider.
 }
