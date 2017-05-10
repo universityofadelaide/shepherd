@@ -98,9 +98,12 @@ class Backup {
    *
    * @param EntityInterface $instance
    *   The instance to backup.
+   *
+   * @TODO: Shepherd: Instances no longer exist.
    */
   public function createBackup(EntityInterface $instance) {
-    $this->jobRunner->job(JenkinsClient::BACKUP_JOB, $instance);
+    // @TODO: Shepherd: Replace the JenkinsClient call with call to some other runner?
+    // $this->jobRunner->job(JenkinsClient::BACKUP_JOB, $instance);
   }
 
   /**
@@ -108,9 +111,12 @@ class Backup {
    *
    * @param EntityInterface $instance
    *   The instance to restore to.
+   *
+   * @TODO: Shepherd: Instances no longer exist.
    */
   public function restore(EntityInterface $instance) {
-    $this->jobRunner->job(JenkinsClient::RESTORE_JOB, $instance);
+    // @TODO: Shepherd: Replace the JenkinsClient call with call to some other runner?
+    // $this->jobRunner->job(JenkinsClient::RESTORE_JOB, $instance);
   }
 
 }

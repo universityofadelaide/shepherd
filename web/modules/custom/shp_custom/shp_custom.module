@@ -12,7 +12,6 @@ use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\node\Entity\Node;
 use Drupal\user\Entity\User;
-use Drupal\shp_custom\Service\JenkinsClient;
 use Drupal\Core\Url;
 
 
@@ -332,18 +331,6 @@ function shp_custom_node_insert(EntityInterface $entity) {
       }
       shp_custom_invalidate_site_cache($entity);
       break;
-
-    case 'shp_site_instance':
-      if (\Drupal::config('shp_custom.settings')->get('jenkins')['enabled']) {
-        if (isset($entity->isClone) && $entity->isClone) {
-          // Run the clone job.
-          \Drupal::service('shp_custom.jenkins_client')->job(JenkinsClient::CLONE_JOB, $entity);
-        }
-        else {
-          \Drupal::service('shp_custom.jenkins_client')->job(JenkinsClient::DEPLOY_JOB, $entity);
-        }
-      }
-      break;
   }
 }
 
@@ -376,26 +363,9 @@ function shp_custom_node_update(EntityInterface $entity) {
 
     case 'shp_environment':
       shp_custom_invalidate_site_cache($entity);
-      \Drupal::service('shp_custom.jenkins_client')->environmentJob(
-        JenkinsClient::REVERSE_PROXY_JOB, $entity);
-      break;
-
-    case 'shp_site_instance':
-      if (\Drupal::config('shp_custom.settings')->get('jenkins')['enabled']) {
-        // Check if the published state of the site instance has changed.
-        if ((int) $entity->status->value !== (int) $entity->original->status->value) {
-          // If status has transitioned to published, run deploy, otherwise run
-          // decommission.
-          \Drupal::service('shp_custom.jenkins_client')->job(
-            $entity->status->value ? JenkinsClient::DEPLOY_JOB : JenkinsClient::DECOMMISSION_JOB,
-            $entity
-          );
-
-          // Finally, set the state field to indicate this transition.
-          $entity->field_shp_state->value = $entity->status->value ? 'starting' : 'stopping';
-          $entity->save();
-        }
-      }
+      // @TODO: Shepherd: Add new environment to reverse proxy.
+      // @TODO: Shepherd: Published environments should trigger re-deploy.
+      // @TODO: Shepherd: Move state transitioning to environment?
       break;
   }
 }
@@ -425,6 +395,9 @@ function shp_custom_node_predelete(EntityInterface $entity) {
  *
  * Cleans up LDAP when sites are removed, and triggers jenkins when site
  * instances are deleted.
+ *
+ * @TODO: Shepherd: Don't do this at all and archive sites and environments.
+ * @TODO: Shepherd: Move the decommissioning to environment update hook.
  */
 function shp_custom_node_delete(EntityInterface $entity) {
   switch ($entity->bundle()) {
@@ -438,12 +411,6 @@ function shp_custom_node_delete(EntityInterface $entity) {
 
     case 'shp_environment':
       shp_custom_invalidate_site_cache($entity);
-      break;
-
-    case 'shp_site_instance':
-      if (\Drupal::config('shp_custom.settings')->get('jenkins')['enabled']) {
-        \Drupal::service('shp_custom.jenkins_client')->job(JenkinsClient::DECOMMISSION_JOB, $entity);
-      }
       break;
   }
 }
