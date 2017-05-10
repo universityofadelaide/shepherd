@@ -34,7 +34,6 @@ is fine, though you may wish to use virtualbox if you're running Docker Toolbox.
 
 *NOTE:* Ensure you are running 1.x.x of `minishift`, beta versions 1.x do not have the `oc-env` commands.
 
-
 ```bash
 # On Linux, change default vm-driver to virtualbox.
 minishift config set vm-driver virtualbox
@@ -47,14 +46,15 @@ minishift start
 
 # Adds the oc command to your $PATH.
 eval $(minishift oc-env)
+# Alternatively, permanently add oc to /usr/local/bin.
+sudo ln -sf $(find ~/.minishift -name oc -type f | tail -1) /usr/local/bin/
 
 oc secrets new-sshauth build-key --ssh-privatekey=${HOME}/.ssh/id_rsa
 ```
 
-#### Troubleshooting Minishift 
-
+#### Troubleshooting Minishift
 If you receive a `connection refused` error when running `minishift start` the DNS settings out of the box for minishift are incorrect.
-Change to a working DNS server .. try google : 
+Change to a working DNS server .. try google :
 ```bash
   minishift ssh "echo 'nameserver 8.8.8.8' | sudo tee /etc/resolv.conf"
 ```
@@ -62,7 +62,7 @@ Change to a working DNS server .. try google :
 ### Starting Shepherd
 ```bash
 composer install
-# make dsh executable
+# Make dsh executable.
 chmod +x ./dsh
 ./dsh install_tools (macOS only)
 ./dsh setup_dnsmasq (Linux only)
