@@ -110,11 +110,6 @@ class EnvironmentRestoreForm extends FormBase {
       ]));
     }
 
-    // Redirect back to where we started from. The site's environment page.
-    $form_state->setRedirect(
-      'view.shp_site_environments.page_1',
-      ['node' => $form_state->get('environment')->field_shp_site->target_id]
-    );
   }
 
 }

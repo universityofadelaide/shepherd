@@ -10,6 +10,20 @@ function shp_orchestration_node_insert(EntityInterface $entity) {
     case 'shp_environment':
       $orchestration_provider_plugin = \Drupal::service('plugin.manager.orchestration_provider')->getProviderInstance();
       // Call something on the plugin.
+
+      try {
+        $secret_name = 'supersecret';
+        $data = [
+          'username' => base64_encode('User'),
+          'password' => base64_encode('supersecretpassword'),
+        ];
+        $request = $orchestration_provider_plugin->createSecret($secret_name, $data);
+      }
+      catch (GuzzleHttp\Exception\ClientException $e) {
+        $response = $e->getResponse();
+        $response_body_string = $response->getBody()->getContents();
+      }
+
       break;
   }
 }

@@ -174,10 +174,6 @@ class EnvironmentCloneForm extends FormBase {
       '%new_title' => $input['title'],
     ]));
 
-    $form_state->setRedirect(
-      'view.shp_site_environments.page_1',
-      ['node' => $input['field_shp_site']]
-    );
   }
 
 }

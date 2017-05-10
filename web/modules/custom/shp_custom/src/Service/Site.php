@@ -46,9 +46,6 @@ class Site {
     ];
 
     foreach ($nodes['shp_environment'] as $environment) {
-      // Site instances.
-      $nodes['shp_site_instance'] += $this->loadRelatedEntitiesByField($environment, 'field_shp_environment', 'shp_site_instance');
-
       // Platforms.
       $nodes['shp_platform'] += $this->loadRelatedEntitiesByField($environment, 'field_shp_platform', 'shp_platform');
     }
