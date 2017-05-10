@@ -18,7 +18,7 @@ The following prerequisites must be installed.
 * [Docker](https://www.docker.com/)
 * dnsmasq
 * [VirtualBox](https://www.virtualbox.org/wiki/Downloads)
-* [Minishift](https://github.com/minishift/minishift/releases)
+* [Minishift](https://github.com/minishift/minishift/releases) - 1.x.x
 
 ### macOS
 * [Docker Toolbox](https://www.docker.com/products/docker-toolbox) or [Docker
@@ -31,6 +31,10 @@ Minishift provides an OpenShift environment that Shepherd uses to deploy sites.
 Minishift can use multiple virtualisation backends. On Linux we recommend using
 virtualbox due to stability issues with kvm. On macOS the default is xhyve which
 is fine, though you may wish to use virtualbox if you're running Docker Toolbox.
+
+*NOTE:* Ensure you are running 1.x.x of `minishift`, beta versions 1.x do not have the `oc-env` commands.
+
+
 ```bash
 # On Linux, change default vm-driver to virtualbox.
 minishift config set vm-driver virtualbox
