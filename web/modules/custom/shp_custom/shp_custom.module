@@ -226,21 +226,6 @@ function shp_custom_invalidate_site_cache(EntityInterface $environment) {
 }
 
 /**
- * Implements hook_entity_type_alter().
- *
- * Adds a constraint to node types to prevent exceeding the instance limit.
- */
-function shp_custom_entity_type_alter(array &$entity_types) {
-  /** @var \Drupal\Core\Entity\ContentEntityType $node */
-  $node = $entity_types['node'];
-  $node->addConstraint('SiteInstance', [
-    'limit' => SHP_CUSTOM_INSTANCE_LIMIT,
-    'entity' => 'shp_environment',
-  ]);
-
-}
-
-/**
  * Implements hook_ENTITY_TYPE_insert().
  *
  * Triggers numerous actions when certain entities are created.
@@ -487,15 +472,6 @@ function shp_custom_node_access(EntityInterface $entity, $operation, AccountInte
  */
 function shp_custom_entity_prepare_form(EntityInterface $entity) {
   switch ($entity->bundle()) {
-    case 'shp_site':
-      $password_field = $entity->get('field_shp_admin_password');
-      $password = $password_field->value;
-      if (!$password) {
-        $password = \Drupal::service('shp_custom.password')->generate();
-        $password_field->setValue($password);
-      }
-      break;
-
     case 'shp_environment':
       $password_field = $entity->get('field_shp_database_password');
       $password = $password_field->value;
