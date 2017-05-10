@@ -4,37 +4,6 @@ shp_custom.settings:
   type: mapping
   label: 'Shepherd settings'
   mapping:
-    jenkins:
-      type: mapping
-      label: 'Jenkins Build Server'
-      mapping:
-        enabled:
-          type: boolean
-          label: 'Enabled'
-        base_uri:
-          type: string
-          label: 'Base URI'
-        token:
-          type: string
-          label: 'Token'
-        backup_job:
-          type: string
-          label: 'Backup Job'
-        clone_job:
-          type: string
-          label: 'Clone Job'
-        decommission_job:
-          type: string
-          label: 'Decommission Job'
-        deploy_job:
-          type: string
-          label: 'Deploy Job'
-        restore_job:
-          type: string
-          label: 'Restore Job'
-        reverse_proxy_job:
-          type: string
-          label: 'Reverse Proxy Job'
     ldap:
       type: mapping
       label: 'LDAP Integration'

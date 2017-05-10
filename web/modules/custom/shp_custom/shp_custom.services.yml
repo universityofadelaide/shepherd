@@ -1,8 +1,6 @@
 services:
   shp_custom.site_instance_config:
     class: Drupal\shp_custom\Service\SiteInstanceConfig
-  shp_custom.jenkins_client:
-    class: Drupal\shp_custom\Service\JenkinsClient
   shp_custom.password:
     class: Drupal\shp_custom\Service\Password
   shp_custom.port_manager:
