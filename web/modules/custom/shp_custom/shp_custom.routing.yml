@@ -96,16 +96,7 @@ shp_custom.permissions:
   requirements:
     _permission: 'access content'
     account_id: ^[0-9]+
-shp_custom.site-add-form:
-  path: '/site/add'
-  defaults:
-    _form: '\Drupal\shp_custom\Form\SiteAddForm'
-    _title: 'Add site'
-  options:
-    _auth: [ 'basic_auth', 'cookie' ]
-    no_cache: TRUE
-  requirements:
-    _permission: 'shp access site wizard'
+
 shp_custom.site-instance-config:
   path: '/api/site-instance-config/{nid}'
   defaults:
