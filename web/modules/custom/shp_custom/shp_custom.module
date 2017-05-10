@@ -295,42 +295,6 @@ function shp_custom_node_insert(EntityInterface $entity) {
       }
       break;
 
-    case 'shp_environment':
-      // Load the selected environment.
-      $platform = $entity->field_shp_platform->first()->entity;
-
-      $cloned_already = FALSE;
-
-      // Create a new site instance for each of the platform's webservers.
-      foreach ($platform->field_shp_web_servers as $key => $web_server) {
-        $site_instance_params = [
-          'type' => 'shp_site_instance',
-          'uid' => 1,
-          'title' => $entity->title->value . ' ' . ($key + 1),
-          'field_shp_environment' => $entity->id(),
-          'field_shp_server' => $web_server->entity->id(),
-        ];
-
-        // Add conditionals if environment has the following properties.
-        if (isset($entity->backup_timestamp) && isset($entity->previous_env_id)) {
-          $site_instance_params['isClone'] = TRUE;
-
-          // On subsequent instances, run the "clone" job, but don't attempt to
-          // restore another environment. It's already been done.
-          if (!$cloned_already) {
-            $site_instance_params['backup_timestamp'] = $entity->backup_timestamp;
-            $site_instance_params['backup_env_id'] = $entity->previous_env_id;
-          }
-          $cloned_already = TRUE;
-        }
-
-        $site_instance = Node::create($site_instance_params);
-        // Validate the site instance, against any plugin constraints added.
-        $site_instance->validate();
-        $site_instance->save();
-      }
-      shp_custom_invalidate_site_cache($entity);
-      break;
   }
 }
 
@@ -366,26 +330,6 @@ function shp_custom_node_update(EntityInterface $entity) {
       // @TODO: Shepherd: Add new environment to reverse proxy.
       // @TODO: Shepherd: Published environments should trigger re-deploy.
       // @TODO: Shepherd: Move state transitioning to environment?
-      break;
-  }
-}
-
-/**
- * Implements hook_ENTITY_TYPE_predelete().
- *
- * Cascade the deletion of the environment by deleting its instances.
- */
-function shp_custom_node_predelete(EntityInterface $entity) {
-  switch ($entity->bundle()) {
-    case 'shp_environment':
-      $instance_ids = \Drupal::entityQuery('node')
-        ->condition('type', 'shp_site_instance')
-        ->condition('field_shp_environment', $entity->id())
-        ->execute();
-      $instances = Node::loadMultiple($instance_ids);
-      foreach ($instances as $instance) {
-        $instance->delete();
-      }
       break;
   }
 }

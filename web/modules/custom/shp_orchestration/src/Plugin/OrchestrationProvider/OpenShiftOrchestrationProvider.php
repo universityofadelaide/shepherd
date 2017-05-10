@@ -47,7 +47,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     ];
 
     if ($this->configEntity->mode === "dev") {
-      // Turn off SSL cert verfication for development.
+      // Turn off SSL cert verification for development.
       $guzzle_options['verify'] = FALSE;
     }
 
