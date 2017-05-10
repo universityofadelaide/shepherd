@@ -36,9 +36,6 @@ class SiteInstanceConfig {
       $servers = $site_instance->field_shp_server->referencedEntities();
       $server = reset($servers);
 
-      $environments = $site_instance->field_shp_environment->referencedEntities();
-      $environment = reset($environments);
-
       $platforms = $environment->field_shp_platform->referencedEntities();
       $platform = reset($platforms);
 
