@@ -19,7 +19,7 @@ class DockerSwarmOrchestrationProvider extends OrchestrationProviderBase {
    * {@inheritdoc}
    */
   public function getFormat() {
-    // TODO: Implement getFormat() method.
+    // @todo Implement getFormat() method.
     return [];
   }
 
@@ -27,7 +27,7 @@ class DockerSwarmOrchestrationProvider extends OrchestrationProviderBase {
    * {@inheritdoc}
    */
   public function getType() {
-    // TODO: Implement getType() method.
+    // @todo Implement getType() method.
     return "";
   }
 

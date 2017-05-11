@@ -8,6 +8,7 @@
 namespace Drupal\shp_custom\Controller;
 
 use Drupal\Core\Controller\ControllerBase;
+use Drupal\Core\Link;
 use Drupal\Core\Url;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
@@ -29,7 +30,7 @@ class HomePageController extends ControllerBase {
       $login_url = $base_url_path . '/caslogin';
       $response = [
         '#type' => 'markup',
-        '#markup' => t('You need to <a href="' . $login_url . '">login</a> to use Shepherd.'),
+        '#markup' => t('You need to @login to use Shepherd.', ['@login' => Link::fromTextAndUrl('login', Url::fromUri($login_url))->toString()]),
       ];
     }
     elseif ($user->hasPermission('shp view sites')) {
@@ -38,7 +39,7 @@ class HomePageController extends ControllerBase {
     else {
       $response = [
         '#type' => 'markup',
-        '#markup' => t('You don\'t have permission to use Shepherd.'),
+        '#markup' => t("You don't have permission to use Shepherd."),
       ];
     }
     return $response;

@@ -48,6 +48,7 @@ class UserDeleteForm extends ConfirmFormBase {
   public function getCancelUrl() {
     return Url::fromRoute('view.shp_site_users.page_1', ['node' => $this->node->nid->value]);
   }
+
   /**
    * {@inheritdoc}
    */
@@ -62,7 +63,7 @@ class UserDeleteForm extends ConfirmFormBase {
     return $this->t('Are you sure you want to remove %user from %site', [
       '%user' => $this->user->field_ua_user_preferred_name->getString(),
       '%site' => $this->node->title->value,
-      ]);
+    ]);
   }
 
   /**
@@ -83,7 +84,7 @@ class UserDeleteForm extends ConfirmFormBase {
 
     drupal_set_message($this->t('The %user has been removed from the site : %site'), [
       '%user' => $this->user->field_ua_user_preferred_name->getString(),
-      '%site' => $this->node->title->value
+      '%site' => $this->node->title->value,
     ]);
 
     $form_state->setRedirect(

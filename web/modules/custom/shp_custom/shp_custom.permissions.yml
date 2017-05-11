@@ -12,12 +12,8 @@ shp view environments:
   title: 'View environments'
 shp view homepage:
   title: 'View homepage'
-shp view instances:
-  title: 'View instances'
 shp view platforms:
   title: 'View platforms'
-shp view servers:
-  title: 'View servers'
 shp view sites:
   title: 'View sites'
 shp view users:

@@ -5,17 +5,15 @@
  * Contains shp_custom.module.
  */
 
-use Drupal\Component\Utility\Crypt;
+use Drupal\Component\Utility\Html;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Menu\MenuTreeParameters;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\node\Entity\Node;
 use Drupal\user\Entity\User;
 use Drupal\Core\Url;
-
-
-const SHP_CUSTOM_INSTANCE_LIMIT = 100;
 
 /**
  * Implements hook_help().
@@ -53,7 +51,7 @@ function shp_custom_theme($existing, $type, $theme, $path) {
 function shp_custom_toolbar() {
   // Load the menu tree for shepherd.
   $menu_tree = \Drupal::service('toolbar.menu_tree');
-  $parameters = new \Drupal\Core\Menu\MenuTreeParameters();
+  $parameters = new MenuTreeParameters();
   $parameters->setMinDepth(2)->setMaxDepth(2)->onlyEnabledLinks();
   $tree = $menu_tree->load('shepherd', $parameters);
   $links = $menu_tree->build($tree);
@@ -90,42 +88,6 @@ function shp_custom_toolbar() {
   ];
 
   return $items;
-}
-
-/**
- * Implements hook_ENTITY_TYPE_presave().
- *
- * Determines available port numbers for new instances, and generates random
- * hash salt for new environments.
- */
-function shp_custom_node_presave(Node $entity) {
-  switch ($entity->bundle()) {
-    case 'shp_site_instance':
-      shp_custom_ports($entity);
-      break;
-
-    case 'shp_environment':
-      shp_custom_environment_defaults($entity);
-      break;
-  }
-}
-
-/**
- * Populates an environment with a new hash_salt and config sync dir.
- *
- * @param Node $environment
- *   Node to generate config default values for.
- */
-function shp_custom_environment_defaults(Node $environment) {
-  if ($environment->field_shp_config_sync->isEmpty()) {
-    // Generate a config sync dir and store it for each new environment.
-    $config_directories_hash = Crypt::randomBytesBase64(55);
-    $environment->field_shp_config_sync->value = 'sites/default/files/config_' . $config_directories_hash . '/sync';
-  }
-  if ($environment->field_shp_hash_salt->isEmpty()) {
-    // Generate a hash salt and store it for each new environment.
-    $environment->field_shp_hash_salt->value = Crypt::randomBytesBase64(55);
-  }
 }
 
 /**
@@ -180,41 +142,9 @@ function shp_custom_distributions() {
 }
 
 /**
- * Populates the site instance with unique ports per host.
- *
- * @param Node $site_instance
- *   Site instance to assign free ports to.
- */
-function shp_custom_ports(Node $site_instance) {
-  $server_id = $site_instance->field_shp_server->target_id;
-  $port_manager = \Drupal::service('shp_custom.port_manager');
-  $used_ports = $port_manager->getUsedPorts($server_id);
-
-  // Find which ports have not already been allocated to the instance.
-  $required_ports = [];
-  foreach ($port_manager->port_fields as $port_field) {
-    $port_number = $site_instance->{$port_field}->value;
-    if (!$port_number) {
-      $required_ports[] = $port_field;
-    }
-    elseif (in_array($port_number, $used_ports)) {
-      // @todo Handle case where assigned port already in use.
-      return;
-    }
-  }
-
-  $available_port_numbers = $port_manager->getAvailablePorts($server_id, count($required_ports));
-  if ($available_port_numbers) {
-    foreach ($required_ports as $required_port) {
-      $site_instance->get($required_port)->setValue(array_pop($available_port_numbers));
-    }
-  }
-}
-
-/**
  * Invalidate site entity caches because environments for sites have changed.
  *
- * @param EntityInterface $environment
+ * @param \Drupal\Core\Entity\EntityInterface $environment
  *   The environment entity whose site needs cache invalidate.
  */
 function shp_custom_invalidate_site_cache(EntityInterface $environment) {
@@ -236,13 +166,11 @@ function shp_custom_invalidate_site_cache(EntityInterface $environment) {
  *
  * Environment:
  *  * Creates new site instances on each of the selected platform's web servers.
- *
- * Site Instance:
- *  * Triggers the Jenkins provision job for the new site instance.
  */
 function shp_custom_node_insert(EntityInterface $entity) {
   switch ($entity->bundle()) {
     case 'shp_site':
+      // @todo Shepherd: Move all the ldap dreams to their own dream module.
       if (\Drupal::config('shp_custom.settings')->get('ldap')['enabled']) {
         // Add LDAP entries for each 'site_id#role' combination.
         $controlled_roles = array_keys(\Drupal::config('shp_custom.settings')
@@ -266,7 +194,7 @@ function shp_custom_node_insert(EntityInterface $entity) {
       // Note fields presented only in the UI don't get setup as a node ->value.
       if (isset($entity->field_shp_create_site) && $entity->field_shp_create_site) {
         // Create default environment.
-        // TODO - refactor to matches the changes to the environment for orchestration.
+        // @todo - refactor to matches the changes to the environment for orchestration.
         $environment = Node::create([
           'type' => 'shp_environment',
           'uid' => 1,
@@ -305,8 +233,8 @@ function shp_custom_node_insert(EntityInterface $entity) {
  */
 function shp_custom_user_presave(EntityInterface $entity) {
   if ($entity->isNew()) {
+    // @todo Break this functionality into its own module for reuse.
     \Drupal::service('shp_custom.user')->populateFieldsFromLdap($entity);
-    // @todo Consider breaking this functionality into its own module for reuse.
   }
 }
 
@@ -319,6 +247,7 @@ function shp_custom_user_presave(EntityInterface $entity) {
 function shp_custom_node_update(EntityInterface $entity) {
   switch ($entity->bundle()) {
     case 'shp_site':
+      // @todo Break this functionality into its own module for reuse.
       if (\Drupal::config('shp_custom.settings')->get('ldap.enabled')) {
         \Drupal::service('ua_ldap.ldap_site')->syncUsers($entity->id());
         // @todo Deal with failure - consider a queue.
@@ -327,9 +256,9 @@ function shp_custom_node_update(EntityInterface $entity) {
 
     case 'shp_environment':
       shp_custom_invalidate_site_cache($entity);
-      // @TODO: Shepherd: Add new environment to reverse proxy.
-      // @TODO: Shepherd: Published environments should trigger re-deploy.
-      // @TODO: Shepherd: Move state transitioning to environment?
+      // @todo Shepherd: Add new environment to reverse proxy.
+      // @todo Shepherd: Published environments should trigger re-deploy.
+      // @todo Shepherd: Move state transitioning to environment?
       break;
   }
 }
@@ -340,12 +269,13 @@ function shp_custom_node_update(EntityInterface $entity) {
  * Cleans up LDAP when sites are removed, and triggers jenkins when site
  * instances are deleted.
  *
- * @TODO: Shepherd: Don't do this at all and archive sites and environments.
- * @TODO: Shepherd: Move the decommissioning to environment update hook.
+ * @todo Shepherd: Don't do this at all and archive sites and environments.
+ * @todo Shepherd: Move the decommissioning to environment update hook.
  */
 function shp_custom_node_delete(EntityInterface $entity) {
   switch ($entity->bundle()) {
     case 'shp_site':
+      // @todo Break this functionality into its own module for reuse.
       if (\Drupal::config('shp_custom.settings')->get('ldap')['enabled']) {
         // @todo Implement some sensible LDAP cleanup.
         // \Drupal::service('ua_ldap.ldap_site')->removeSite($entity->id());
@@ -396,6 +326,8 @@ function shp_custom_entity_prepare_form(EntityInterface $entity) {
 
 /**
  * Implements hook_entity_type_insert().
+ *
+ * @todo Shepherd: Modify this to be useful in some way. When environment ready?
  */
 function shp_custom_comment_insert(EntityInterface $entity) {
   // Send an email notification to the user who created a site instance.
@@ -434,9 +366,8 @@ function shp_custom_mail($key, &$message, $params) {
       $message['from'] = \Drupal::config('system.site')->get('mail');
       $message['subject'] = t('Site Instance : @subject', ['subject' => $params['subject']]);
       $message['body'][] = t('Hello @name,', ['name' => $params['author_name']]);
-      $message['body'][] = \Drupal\Component\Utility\Html::escape($params['message']);
+      $message['body'][] = Html::escape($params['message']);
   }
-
 }
 
 /**
@@ -453,6 +384,8 @@ function shp_custom_cron() {
 
 /**
  * Populates shepherd users with name and email from LDAP.
+ *
+ * @todo Shepherd: Move to its own module.
  */
 function shp_custom_populate_user_attributes() {
   // Update users attributes from LDAP.
@@ -468,5 +401,5 @@ function shp_custom_populate_user_attributes() {
  * Back up all environments.
  */
 function shp_custom_backup_environments() {
-  // TODO - Perform backups on orchestration provider.
+  // @todo Shepherd: Perform backups on orchestration provider.
 }

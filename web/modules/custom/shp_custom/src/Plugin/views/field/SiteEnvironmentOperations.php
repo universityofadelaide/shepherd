@@ -34,7 +34,7 @@ class SiteEnvironmentOperations extends FieldPluginBase {
     $entity = $values->_entity;
     // For each row.
     $environment = $entity->id();
-    $site = $entity->field_shp_site->getValue()[0]['target_id'];
+    $site = $entity->field_shp_site->target_id;
     $clone_url = Url::fromRoute('shp_custom.environment-clone-form', ['site' => $site, 'environment' => $environment]);
     $backup_url = Url::fromRoute('shp_custom.environment-backup-form', ['site' => $site, 'environment' => $environment]);
     $restore_url = Url::fromRoute('shp_custom.environment-restore-form', ['site' => $site, 'environment' => $environment]);
@@ -48,7 +48,7 @@ class SiteEnvironmentOperations extends FieldPluginBase {
           'class' => [
             'button',
             'c-btn',
-            'c-btn--small'
+            'c-btn--small',
           ],
         ],
       ],
@@ -63,7 +63,7 @@ class SiteEnvironmentOperations extends FieldPluginBase {
           'class' => [
             'button',
             'c-btn',
-            'c-btn--small'
+            'c-btn--small',
           ],
         ],
       ],
@@ -78,7 +78,7 @@ class SiteEnvironmentOperations extends FieldPluginBase {
           'class' => [
             'button',
             'c-btn',
-            'c-btn--small'
+            'c-btn--small',
           ],
         ],
       ],

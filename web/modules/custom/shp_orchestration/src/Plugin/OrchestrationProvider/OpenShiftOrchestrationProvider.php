@@ -112,8 +112,8 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
    * {@inheritdoc}
    */
   public function getService($name) {
-    // TODO: only finds by name.
-    // TODO: test first to see if exists.
+    // @todo only finds by name.
+    // @todo test first to see if exists.
     return $this->client->services()->setFieldSelector([
       'metadata.name' => $name
     ])->find();
@@ -134,7 +134,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       'spec' => [
         'ports' => [
           [
-            // TODO: Not actually passed through yet, nor defined.
+            // @todo Not actually passed through yet, nor defined.
             "protocol" => $data['protocol'] || 'TCP',
             "port" => $data['src_port'],
             "targetPort" => $data['target_port']

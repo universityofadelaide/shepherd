@@ -38,12 +38,12 @@ class SiteEnvironmentStatus extends FieldPluginBase {
     foreach ($values as $row) {
       $entity = $row->_entity;
       $environment = $entity->id();
+
+      // @todo Refactor this to query OpenShift?
+      // @todo Replace the 4 variables passed to the template with a single state.
+
       // Get instance ids.
-      $instance_ids = \Drupal::entityQuery('node')
-        ->condition('type', 'shp_site_instance')
-        ->condition('field_shp_environment', $environment)
-        ->execute();
-      $instances = Node::loadMultiple($instance_ids);
+      $instances = [];
 
       $building = 0;
       $running = 0;
@@ -71,7 +71,7 @@ class SiteEnvironmentStatus extends FieldPluginBase {
       $this->build[$entity->id()] = [
         'failed' => $failed,
         'running' => $running,
-        'building' => $building
+        'building' => $building,
       ];
     }
   }
@@ -87,7 +87,7 @@ class SiteEnvironmentStatus extends FieldPluginBase {
       '#failed' => $this->build[$environment]['failed'],
       '#running' => $this->build[$environment]['running'],
       '#building' => $this->build[$environment]['building'],
-      '#theme' => 'site_environment_status'
+      '#theme' => 'site_environment_status',
     ];
     return $build;
   }
