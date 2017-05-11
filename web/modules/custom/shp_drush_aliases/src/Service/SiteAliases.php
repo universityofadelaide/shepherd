@@ -43,7 +43,7 @@ class SiteAliases {
    * @return array
    */
   public function preprocessEntities($entities) {
-    // TODO - provide drush aliases for orchestration provider.
+    // @todo - provide drush aliases for orchestration provider.
   }
 
 }

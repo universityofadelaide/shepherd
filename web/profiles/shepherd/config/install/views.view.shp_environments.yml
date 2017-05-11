@@ -30,7 +30,7 @@ display:
       access:
         type: perm
         options:
-          perm: 'sm view environments'
+          perm: 'shp view environments'
       cache:
         type: tag
         options: {  }

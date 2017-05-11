@@ -42,7 +42,7 @@ class UserEditForm extends FormBase {
     if (!$account) {
       // @todo - throw exception
       drupal_set_message($this->t('User %id not found', [
-        '%id' => $user
+        '%id' => $user,
       ]), 'error');
       return $form;
     }
@@ -57,7 +57,7 @@ class UserEditForm extends FormBase {
       // @todo - throw exception
       drupal_set_message($this->t('User %id does not belong to %site', [
         '%id' => $user,
-        '%site' => $node->getTitle()
+        '%site' => $node->getTitle(),
       ]), 'error');
       return $form;
     }
@@ -71,19 +71,19 @@ class UserEditForm extends FormBase {
       '#type' => 'textfield',
       '#title' => $this->t('Name'),
       '#value' => $account->field_ua_user_preferred_name->getString(),
-      '#disabled' => TRUE
+      '#disabled' => TRUE,
     ];
     $form['ua_uid'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Users employee id'),
       '#value' => $account->getAccountName(),
-      '#disabled' => TRUE
+      '#disabled' => TRUE,
     ];
     $form['email'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Email Address'),
       '#value' => $account->getEmail(),
-      '#disabled' => TRUE
+      '#disabled' => TRUE,
     ];
     $form['role'] = [
       '#type' => 'select',
@@ -95,7 +95,7 @@ class UserEditForm extends FormBase {
 
     $form['submit'] = [
       '#type' => 'submit',
-      '#value' => $this->t('Update')
+      '#value' => $this->t('Update'),
     ];
 
     return $form;

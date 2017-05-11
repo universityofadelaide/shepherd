@@ -29,7 +29,7 @@ display:
       access:
         type: perm
         options:
-          perm: 'sm view servers'
+          perm: 'shp view servers'
       cache:
         type: tag
         options: {  }
