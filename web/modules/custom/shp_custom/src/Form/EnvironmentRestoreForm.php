@@ -14,6 +14,7 @@ use Drupal\node\NodeInterface;
  */
 class EnvironmentRestoreForm extends FormBase {
 
+  // @todo Remove this crud.
   const MACHINE_NAMES = [
     'dev' => 'DEV',
     'uat' => 'UAT',
@@ -81,35 +82,26 @@ class EnvironmentRestoreForm extends FormBase {
 
   /**
    * {@inheritdoc}
+   *
+   * @todo Shepherd: Completely refactor restore for shepherd.
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $form_state->cleanValues();
 
     $backup = $form_state->getValue('backup');
 
-    // Find instances relating to the environment.
-    $instance_ids = \Drupal::entityQuery('node')
-      ->condition('type', 'shp_site_instance')
-      ->condition('field_shp_environment', $form_state->get('environment')->Id())
-      ->execute();
-
-    if (count($instance_ids)) {
-      // Run the restore from an arbitrary (first returned) instance.
-      $instance = Node::load(current($instance_ids));
-      // Set the backup to restore from.
-      list($instance->backup_env_id, $instance->backup_timestamp) = explode('/', $backup);
-      \Drupal::service('shp_custom.backup')->restore($instance);
-
+    // Set the backup to restore from.
+    if (\Drupal::service('shp_custom.backup')->restore()) {
       drupal_set_message($this->t('Restore has been queued for %title', [
         '%title' => $form_state->get('environment')->getTitle(),
       ]));
     }
     else {
-      drupal_set_message($this->t('Restore failed. Could not find any instances for %title', [
-        '%title' => $form_state->get('environment')->getTitle(),
-      ]));
+      drupal_set_message($this->t('Restore failed. Could not find any instances for %title',
+        [
+          '%title' => $form_state->get('environment')->getTitle(),
+        ]));
     }
-
   }
 
 }

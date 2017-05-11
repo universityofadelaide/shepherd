@@ -114,6 +114,7 @@ class ShepherdSettings extends ConfigFormBase {
       $controlled_roles .= $key . '|' . $val . "\n";
     }
 
+    // @todo Should either reference the field storage settings or just remove it.
     $form['controlled_roles']['textarea'] = [
       '#type' => 'textarea',
       '#rows' => 10,

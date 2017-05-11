@@ -1739,6 +1739,105 @@
             "time": "2017-03-20T17:10:46+00:00"
         },
         {
+            "name": "illuminate/contracts",
+            "version": "v5.4.19",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/illuminate/contracts.git",
+                "reference": "ab2825726bee46a67c8cc66789852189dbef74a9"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/illuminate/contracts/zipball/ab2825726bee46a67c8cc66789852189dbef74a9",
+                "reference": "ab2825726bee46a67c8cc66789852189dbef74a9",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.6.4"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "5.4-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Illuminate\\Contracts\\": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Taylor Otwell",
+                    "email": "taylor@laravel.com"
+                }
+            ],
+            "description": "The Illuminate Contracts package.",
+            "homepage": "https://laravel.com",
+            "time": "2017-03-29T13:17:47+00:00"
+        },
+        {
+            "name": "illuminate/support",
+            "version": "v5.4.19",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/illuminate/support.git",
+                "reference": "b8cb37e15331c59da51c8ee5838038baa22d7955"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/illuminate/support/zipball/b8cb37e15331c59da51c8ee5838038baa22d7955",
+                "reference": "b8cb37e15331c59da51c8ee5838038baa22d7955",
+                "shasum": ""
+            },
+            "require": {
+                "doctrine/inflector": "~1.0",
+                "ext-mbstring": "*",
+                "illuminate/contracts": "5.4.*",
+                "paragonie/random_compat": "~1.4|~2.0",
+                "php": ">=5.6.4"
+            },
+            "replace": {
+                "tightenco/collect": "self.version"
+            },
+            "suggest": {
+                "illuminate/filesystem": "Required to use the composer class (5.2.*).",
+                "symfony/process": "Required to use the composer class (~3.2).",
+                "symfony/var-dumper": "Required to use the dd function (~3.2)."
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "5.4-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Illuminate\\Support\\": ""
+                },
+                "files": [
+                    "helpers.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Taylor Otwell",
+                    "email": "taylor@laravel.com"
+                }
+            ],
+            "description": "The Illuminate Support package.",
+            "homepage": "https://laravel.com",
+            "time": "2017-04-09T14:34:57+00:00"
+        },
+        {
             "name": "ircmaxell/password-compat",
             "version": "v1.0.4",
             "source": {
@@ -1866,6 +1965,57 @@
                 }
             ],
             "time": "2015-04-20T18:58:01+00:00"
+        },
+        {
+            "name": "maclof/kubernetes-client",
+            "version": "0.2.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/maclof/kubernetes-client.git",
+                "reference": "7be10ea556ef33b2e7340029d5b3c245fb6e5eae"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/maclof/kubernetes-client/zipball/7be10ea556ef33b2e7340029d5b3c245fb6e5eae",
+                "reference": "7be10ea556ef33b2e7340029d5b3c245fb6e5eae",
+                "shasum": ""
+            },
+            "require": {
+                "guzzlehttp/guzzle": "~5.0|~6.0",
+                "illuminate/support": "~5.0",
+                "php": ">=5.4"
+            },
+            "require-dev": {
+                "mockery/mockery": "~0.9",
+                "phpunit/phpunit": "~4.0",
+                "satooshi/php-coveralls": "~1.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Maclof\\Kubernetes\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Marc Lough",
+                    "homepage": "http://maclof.com"
+                }
+            ],
+            "description": "A simple yet elegant client for accessing and controlling a Kubernetes cluster.",
+            "keywords": [
+                "Guzzle",
+                "cluster",
+                "container",
+                "docker",
+                "guzzlehttp",
+                "kubernetes"
+            ],
+            "time": "2017-05-02T05:04:26+00:00"
         },
         {
             "name": "masterminds/html5",
@@ -3784,14 +3934,14 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.adelaide.edu.au:web-team/ua_d8_theme.git",
-                "reference": "8b14e3f11b53d09b591501d3efce96af7d20b9d9"
+                "reference": "60d0ead82faebb875279df969b4d637483c6ce09"
             },
             "type": "drupal-theme",
             "license": [
                 "GPL-2.0+"
             ],
             "description": "The University of Adelaide's official Drupal 8 theme.",
-            "time": "2017-05-08 23:29:14"
+            "time": "2017-05-11 05:08:44"
         },
         {
             "name": "universityofadelaide/shepherd-drupal-scaffold",
@@ -4764,7 +4914,7 @@
                 "drupal",
                 "symfony"
             ],
-            "time": "2017-05-08T16:49:07+00:00"
+            "time": "2017-05-08 16:49:07"
         },
         {
             "name": "drupal/console-core",

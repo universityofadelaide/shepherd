@@ -96,17 +96,6 @@ shp_custom.permissions:
   requirements:
     _permission: 'access content'
     account_id: ^[0-9]+
-
-shp_custom.site-instance-config:
-  path: '/api/site-instance-config/{nid}'
-  defaults:
-    _controller: '\Drupal\shp_custom\Controller\SiteConfigController::siteInstanceConfig'
-  options:
-    _auth: [ 'basic_auth', 'cookie' ]
-    no_cache: TRUE
-  requirements:
-    _user_is_logged_in: 'TRUE'
-    _access: 'TRUE'
 shp_custom.shepherd_settings:
   path: '/admin/config/system/shepherd'
   defaults:
@@ -146,16 +135,6 @@ shp_custom.user-delete-form:
   requirements:
     _permission: 'shp administer users'
     user: ^[0-9]+
-shp_custom.hosts-config:
-  path: '/api/hosts-config'
-  defaults:
-    _controller: '\Drupal\shp_custom\Controller\SiteConfigController::hostsConfig'
-  options:
-    _auth: [ 'basic_auth', 'cookie' ]
-    no_cache: TRUE
-  requirements:
-    _user_is_logged_in: 'TRUE'
-    _access: 'TRUE'
 shp_custom.site-backups-list:
   path: '/site/{node}/backups'
   defaults:

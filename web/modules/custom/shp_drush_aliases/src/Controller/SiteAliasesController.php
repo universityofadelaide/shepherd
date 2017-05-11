@@ -23,7 +23,7 @@ class SiteAliasesController extends ControllerBase {
     $node = Node::load($nid);
     $aliases = \Drupal::service('shp_drush_aliases.site_aliases')->generateAliases($node);
     if ($aliases) {
-      // @TODO: Site machine name?
+      // @todo Site machine name?
       // Stolen from Drupal\migrate\Plugin\migrate\process\MachineName.
       $trans = new PHPTransliteration();
       $site_machine_name = $trans->transliterate($node->title->value, LanguageInterface::LANGCODE_DEFAULT, '_');

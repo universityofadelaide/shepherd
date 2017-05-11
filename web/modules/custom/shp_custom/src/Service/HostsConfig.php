@@ -12,52 +12,6 @@ use Drupal\node\Entity\Node;
 class HostsConfig {
 
   /**
-   * Generates a hosts configuration.
-   *
-   * @return array
-   *   The hosts configuration.
-   */
-  public function generate() {
-    $hosts_config = [];
-
-    $query = \Drupal::entityQuery('node')
-      ->condition('type', 'shp_site_instance');
-    $instance_ids = $query->execute();
-
-    foreach ($instance_ids as $nid) {
-      $site_instance = \Drupal::entityManager()->getStorage('node')->load($nid);
-
-      $status = $environment->field_shp_environment_status->value;
-
-      if (!$status) {
-        continue;
-      }
-
-      $servers = $site_instance->field_shp_server->referencedEntities();
-      $server = reset($servers);
-      $sites = $environment->field_shp_site->referencedEntities();
-      $site = reset($sites);
-
-      if (!isset($hosts_config[$environment->id()])) {
-        $hosts_config[$environment->id()] = [
-          'domain' => $environment->field_shp_domain_name->value,
-          'id' => $environment->id(),
-          'path' => $site->field_shp_path->value,
-          'environment' => $environment->field_shp_machine_name->value,
-          'servers' => [],
-        ];
-      }
-
-      $hosts_config[$environment->id()]['servers'][] = [
-        'host' => $server->field_shp_hostname->value,
-        'port' => $site_instance->field_shp_http_port->value,
-      ];
-    }
-
-    return array_values($hosts_config);
-  }
-
-  /**
    * Generates a domain name for an environment based on the following rules.
    *
    * 1. If the environment type is 'prd' then the site's domain is used.
@@ -77,6 +31,9 @@ class HostsConfig {
    *
    * @return string
    *   The resultant generated domain name.
+   *
+   * @todo Shepherd: What does this have to do with generating config for export?
+   *   It's about generating a UAT domain name for example.
    */
   public function generateDomainForEnv($site, $environment_type) {
     // Generate default domain.

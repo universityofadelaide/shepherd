@@ -5,8 +5,6 @@ namespace Drupal\shp_custom\Controller;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\node\Entity\Node;
 use Drupal\node\NodeInterface;
-use \DateTime;
-use \DateTimeZone;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
@@ -36,7 +34,7 @@ class SiteBackupListController extends ControllerBase {
       $converted_date = \Drupal::service('date.formatter')->format($backup['backup']);
       $formatted_backups[] = [
         $environment_name,
-        // Convert to a readable time format.
+        // @todo Convert to a readable time format.
         $converted_date,
       ];
     }

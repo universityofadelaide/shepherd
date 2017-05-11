@@ -2,7 +2,7 @@
 
 namespace Drupal\shp_custom\Service;
 
-use Drupal\Core\Config\ConfigFactory;
+use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityInterface;
 use GuzzleHttp\Client;
 
@@ -32,24 +32,24 @@ class Backup {
   /**
    * Backup constructor.
    *
-   * @param ConfigFactory $config_factory
+   * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
    *   Config factory.
-   * @param Client $job_runner
+   * @param \GuzzleHttp\Client $job_runner
    *   Job runner.
    */
-  public function __construct(ConfigFactory $config_factory, Client $job_runner) {
+  public function __construct(ConfigFactoryInterface $config_factory) { // }, Client $job_runner) {
     $this->configFactory = $config_factory;
     $this->config = $this->configFactory->get('shp_custom.settings')->get('backup_service');
-    $this->jobRunner = $job_runner;
+//    $this->jobRunner = $job_runner;
   }
 
   /**
    * Gets a list of backups for a specific environment.
    *
    * @param int $site
-   *    Site id.
+   *   Site id.
    * @param int $environment
-   *    Optional Environment id.
+   *   Optional Environment id.
    *
    * @return array
    *   An array of backup folders.
@@ -63,7 +63,7 @@ class Backup {
    * Gets a sorted list of backups for all the environments of a site.
    *
    * @param int $site
-   *    Site id.
+   *   Site id.
    *
    * @return array
    *   An array of backup folders.
@@ -96,26 +96,26 @@ class Backup {
   /**
    * Create a backup for a given instance.
    *
-   * @param EntityInterface $instance
+   * @param \Drupal\Core\Entity\EntityInterface $instance
    *   The instance to backup.
    *
-   * @TODO: Shepherd: Instances no longer exist.
+   * @todo Shepherd: Instances no longer exist.
    */
   public function createBackup(EntityInterface $instance) {
-    // @TODO: Shepherd: Replace the JenkinsClient call with call to some other runner?
+    // @todo Shepherd: Replace the JenkinsClient call with call to some other runner?
     // $this->jobRunner->job(JenkinsClient::BACKUP_JOB, $instance);
   }
 
   /**
    * Restore a backup for a given instance.
    *
-   * @param EntityInterface $instance
+   * @param \Drupal\Core\Entity\EntityInterface $instance
    *   The instance to restore to.
    *
-   * @TODO: Shepherd: Instances no longer exist.
+   * @todo Shepherd: Instances no longer exist.
    */
   public function restore(EntityInterface $instance) {
-    // @TODO: Shepherd: Replace the JenkinsClient call with call to some other runner?
+    // @todo Shepherd: Replace the JenkinsClient call with call to some other runner?
     // $this->jobRunner->job(JenkinsClient::RESTORE_JOB, $instance);
   }
 

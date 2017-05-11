@@ -6,13 +6,14 @@
 
 namespace Drupal\shp_custom\Service;
 
-use Drupal\Core\Entity\Entity;
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\node\Entity\Node;
 use Drupal\paragraphs\Entity\Paragraph;
 use Drupal\user\Entity\User;
 
 /**
- * Class Site
+ * Class Site.
+ *
  * @package Drupal\shp_custom\Service
  */
 class Site {
@@ -28,7 +29,7 @@ class Site {
    */
   public function loadRelatedEntities(Node $site) {
     // referencedEntities() doesn't key by node id; This re-keys by node id.
-    $keyedArray = function($nodes) {
+    $keyedArray = function ($nodes) {
       $keyed_array = [];
       foreach ($nodes as $node) {
         $keyed_array[$node->id()] = $node;
@@ -42,17 +43,11 @@ class Site {
       'shp_distribution' => $keyedArray($site->field_shp_distribution->referencedEntities()),
       'shp_site_instance' => [],
       'shp_platform' => [],
-      'shp_server' => [],
     ];
 
     foreach ($nodes['shp_environment'] as $environment) {
       // Platforms.
       $nodes['shp_platform'] += $this->loadRelatedEntitiesByField($environment, 'field_shp_platform', 'shp_platform');
-    }
-
-    // Servers.
-    foreach ($nodes['shp_site_instance'] as $site_instance) {
-      $nodes['shp_server'] += $keyedArray($site_instance->field_shp_server->referencedEntities());
     }
 
     return $nodes;
@@ -88,7 +83,7 @@ class Site {
    * @param string|bool $role
    *   Optional parameter to filter returned users by a role.
    *
-   * @return array $users
+   * @return array
    *   An array of users.
    */
   public function loadUsers(Node $site, $role = FALSE) {
@@ -109,12 +104,17 @@ class Site {
   /**
    * Check if user role combo exists on site.
    *
-   * @param $site the site to check for the combo.
-   * @param $account the user to check for.
-   * @param $role the role to check for.
-   * @return bool $user_role_exists whether the user role combo exists.
+   * @param \Drupal\Core\Entity\EntityInterface $site
+   *   The site to check for the combo.
+   * @param \Drupal\Core\Entity\EntityInterface $account
+   *   User.
+   * @param string $role
+   *   The role to check for.
+   *
+   * @return bool
+   *   whether the user role combo exists.
    */
-  public function userRoleExists($site, $account, $role) {
+  public function userRoleExists(EntityInterface $site, EntityInterface $account, $role) {
     $user_roles = $site->get('field_shp_users');
     $user_role_exists = FALSE;
     foreach ($user_roles as $user_role_field) {

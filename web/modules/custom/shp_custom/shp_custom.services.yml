@@ -1,10 +1,6 @@
 services:
-  shp_custom.site_instance_config:
-    class: Drupal\shp_custom\Service\SiteInstanceConfig
   shp_custom.password:
     class: Drupal\shp_custom\Service\Password
-  shp_custom.port_manager:
-    class: Drupal\shp_custom\Service\PortManager
   shp_custom.site:
     class: Drupal\shp_custom\Service\Site
   shp_custom.user:
