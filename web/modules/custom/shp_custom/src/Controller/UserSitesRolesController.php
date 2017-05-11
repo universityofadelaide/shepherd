@@ -19,6 +19,8 @@ class UserSitesRolesController extends ControllerBase {
 
   /**
    * {@inheritdoc}
+   *
+   * @todo Shepherd: Separate presentation from logic and data.
    */
   public function index($account_id) {
     // Basic account id validation.
@@ -48,7 +50,7 @@ class UserSitesRolesController extends ControllerBase {
     $sites = Node::loadMultiple($site_ids);
 
     // Err, ma gerd. Load the field options to get human readable roles.
-    // @TODO: Make this not err ma gerd.
+    // @todo Make this not err ma gerd.
     $user_role = reset($user_roles);
     $definitions = \Drupal::entityManager()->getFieldStorageDefinitions('paragraph', 'shp_site');
     $definition = $definitions['field_shp_role'];

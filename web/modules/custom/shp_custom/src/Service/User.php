@@ -1,8 +1,4 @@
 <?php
-/**
- * @file
- * Contains Drupal\shp_custom\Service\User.
- */
 
 namespace Drupal\shp_custom\Service;
 
@@ -24,7 +20,7 @@ class User {
    * @return array
    *   An array of keys.
    */
-  public function loadKeys($users) {
+  public function loadKeys(array $users) {
     $keys = [];
     foreach ($users as $user) {
       $users_keys = $user->get('field_shp_keys');
@@ -38,7 +34,7 @@ class User {
   /**
    * Populate users fields with attributes from LDAP.
    *
-   * @param DrupalUser $account
+   * @param \Drupal\user\Entity\User $account
    *   The user account to populate.
    */
   public function populateFieldsFromLdap(DrupalUser $account) {
@@ -51,7 +47,7 @@ class User {
   /**
    * Sets fields of account with attributes.
    *
-   * @param DrupalUser $account
+   * @param \Drupal\user\Entity\User $account
    *   The Drupal user account.
    * @param array $attributes
    *   The attributes associated with the account.

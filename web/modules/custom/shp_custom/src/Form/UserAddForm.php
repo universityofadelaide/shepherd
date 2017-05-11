@@ -37,6 +37,7 @@ class UserAddForm extends FormBase {
     $build['uid'] = [
       '#type' => 'textfield',
       '#title' => t('User'),
+      // @todo Remove dependency on ua_ldap - should be a form_alter in ua_ldap.
       '#autocomplete_route_name' => 'ua_ldap.user_autocomplete',
       '#size' => 60,
       '#maxlength' => 128,
@@ -58,6 +59,8 @@ class UserAddForm extends FormBase {
 
   /**
    * {@inheritdoc}
+   *
+   * @todo move the ldap validation out.
    */
   public function validateForm(array &$form, FormStateInterface $form_state) {
     $input = $form_state->getValues();
@@ -69,13 +72,13 @@ class UserAddForm extends FormBase {
     if (!$account) {
       $attributes = \Drupal::service('ua_ldap.ldap_user')->getAttributes($uid);
       if (!$attributes) {
-        $form_state->setErrorByName('uid', $this->t('Unable to find user id ' . $uid . '.'));
+        $form_state->setErrorByName('uid', $this->t('Unable to find user id %uid.', ['%uid' => $uid]));
       }
     }
     else {
       $site = $form_state->get('site');
       if (\Drupal::service('shp_custom.site')->userRoleExists($site, $account, $role)) {
-        $form_state->setErrorByName('uid', $this->t('User role already exists for ' . $uid . '.'));
+        $form_state->setErrorByName('uid', $this->t('User role already exists for %uid.', ['%uid' => $uid]));
       }
     }
   }
