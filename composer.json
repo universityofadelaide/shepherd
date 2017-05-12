@@ -6,7 +6,6 @@
     "repositories": [
         {"type": "vcs", "url": "git@gitlab.adelaide.edu.au:drupal-modules/ua_ldap.git"},
         {"type": "vcs", "url": "git@gitlab.adelaide.edu.au:drupal-modules/ua_ldap_authorisation.git"},
-        {"type": "vcs", "url": "git@gitlab.adelaide.edu.au:web-team/ua_d8_theme.git"},
         {"type": "composer", "url": "https://packages.drupal.org/8"}
     ],
     "require": {
@@ -23,7 +22,6 @@
         "drupal/r4032login":                             "1.*@dev",
         "ua-drupal-modules/ua_ldap":                     "dev-develop",
         "ua-drupal-modules/ua_ldap_authorisation":       "dev-develop",
-        "ua-web-team/ua_theme":                          "dev-develop",
         "wikimedia/composer-merge-plugin":               "^1.4"
     },
     "require-dev": {

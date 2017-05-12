@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "d0487c8c67476c5564bd090d81f34b78",
+    "content-hash": "ea850e02b1ada24880093801db680440",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -3929,21 +3929,6 @@
             "time": "2017-03-29 02:10:43"
         },
         {
-            "name": "ua-web-team/ua_theme",
-            "version": "dev-develop",
-            "source": {
-                "type": "git",
-                "url": "git@gitlab.adelaide.edu.au:web-team/ua_d8_theme.git",
-                "reference": "60d0ead82faebb875279df969b4d637483c6ce09"
-            },
-            "type": "drupal-theme",
-            "license": [
-                "GPL-2.0+"
-            ],
-            "description": "The University of Adelaide's official Drupal 8 theme.",
-            "time": "2017-05-11 05:08:44"
-        },
-        {
             "name": "universityofadelaide/shepherd-drupal-scaffold",
             "version": "dev-master",
             "source": {
@@ -6528,7 +6513,6 @@
         "drupal/r4032login": 20,
         "ua-drupal-modules/ua_ldap": 20,
         "ua-drupal-modules/ua_ldap_authorisation": 20,
-        "ua-web-team/ua_theme": 20,
         "drupal/console": 20,
         "drupal/devel": 20
     },
