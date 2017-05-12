@@ -82,6 +82,7 @@ shp_custom.home-page:
   path: '/home'
   defaults:
     _controller: '\Drupal\shp_custom\Controller\HomePageController::index'
+    _title: 'Shepherd'
   options:
     no_cache: TRUE
   requirements:
