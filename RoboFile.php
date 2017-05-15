@@ -36,7 +36,6 @@ class RoboFile extends RoboFileBase {
     parent::build();
 
     // Add default content.
-    $this->say("Adding default content.");
     $this->devContentGenerate();
   }
 
@@ -44,9 +43,10 @@ class RoboFile extends RoboFileBase {
    * Create default content for the Shepherd.
    */
   public function devContentGenerate() {
-    $domain_name = getenv("DOMAIN");
-    if (!empty($domain_name)) {
-      $this->_exec("$this->drush_cmd scr ShepherdContentGenerate.php --uri=shepherd.$domain_name");
+    $virtual_host = getenv("VIRTUAL_HOST");
+    if (!empty($virtual_host)) {
+      $this->say("Adding default content.");
+      $this->_exec("$this->drush_cmd scr ShepherdContentGenerate.php --uri=$virtual_host");
     }
   }
 
