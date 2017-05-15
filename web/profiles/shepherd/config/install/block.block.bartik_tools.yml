@@ -20,9 +20,4 @@ settings:
   label_display: visible
   level: 1
   depth: 0
-visibility:
-  request_path:
-    id: request_path
-    pages: /site-instances
-    negate: true
-    context_mapping: {  }
+visibility: {  }

@@ -1,0 +1,21 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.teaser
+    - field.field.node.shp_distribution.body
+    - field.field.node.shp_distribution.field_shp_git_repository
+    - node.type.shp_distribution
+  module:
+    - user
+id: node.shp_distribution.teaser
+targetEntityType: node
+bundle: shp_distribution
+mode: teaser
+content:
+  links:
+    weight: 100
+hidden:
+  body: true
+  field_shp_dist_summary: true
+  field_shp_git_repository: true

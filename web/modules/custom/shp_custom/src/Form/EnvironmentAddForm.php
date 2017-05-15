@@ -39,8 +39,6 @@ class EnvironmentAddForm extends FormBase {
    */
   public function buildForm(array $form, FormStateInterface $form_state, NodeInterface $node = NULL) {
 
-    $platforms = shp_custom_platforms();
-
     $build = [
       'title' => [
         '#type' => 'textfield',
@@ -75,22 +73,6 @@ class EnvironmentAddForm extends FormBase {
       'field_shp_site' => [
         '#type' => 'value',
         '#value' => $node->id(),
-      ],
-      'field_shp_database_password' => [
-        '#type' => 'value',
-        '#value' => \Drupal::service('shp_custom.password')->generate(),
-      ],
-      'field_shp_platform' => [
-        '#type' => 'select',
-        '#title' => $this->t('Platform'),
-        '#options' => $platforms,
-        '#default_value' => reset($platforms),
-        '#required' => TRUE,
-        '#states' => [
-          'invisible' => [
-            ':input[name="field_shp_create_site"]' => ['checked' => FALSE],
-          ],
-        ],
       ],
       'type' => [
         '#type' => 'value',

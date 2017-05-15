@@ -41,13 +41,10 @@ class Site {
       'shp_site' => [$site->id() => $site],
       'shp_environment' => $this->loadRelatedEntitiesByField($site, 'field_shp_site', 'shp_environment'),
       'shp_distribution' => $keyedArray($site->field_shp_distribution->referencedEntities()),
-      'shp_site_instance' => [],
-      'shp_platform' => [],
     ];
 
     foreach ($nodes['shp_environment'] as $environment) {
-      // Platforms.
-      $nodes['shp_platform'] += $this->loadRelatedEntitiesByField($environment, 'field_shp_platform', 'shp_platform');
+      // @todo Shepherd: Platforms are gone, what to do here?
     }
 
     return $nodes;
