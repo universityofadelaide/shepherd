@@ -47,6 +47,7 @@ dependencies:
   - paragraphs
   - r4032login
   # Shepherd modules
+  - shp_content_types
   - shp_custom
   - shp_drush_aliases
   - shp_orchestration

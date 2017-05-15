@@ -1,0 +1,25 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.teaser
+    - field.field.node.shp_environment.field_shp_custom_config
+    - field.field.node.shp_environment.field_shp_domain_name
+    - field.field.node.shp_environment.field_shp_git_reference
+    - field.field.node.shp_environment.field_shp_site
+    - node.type.shp_environment
+  module:
+    - user
+id: node.shp_environment.teaser
+targetEntityType: node
+bundle: shp_environment
+mode: teaser
+content:
+  links:
+    weight: 100
+    region: content
+hidden:
+  field_shp_custom_config: true
+  field_shp_domain_name: true
+  field_shp_git_reference: true
+  field_shp_site: true

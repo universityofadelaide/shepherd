@@ -65,8 +65,6 @@ class EnvironmentCloneForm extends FormBase {
       }
     }
 
-    $platforms = shp_custom_platforms();
-
     $build = [
       'intro' => [
         '#markup' => $this->t('Clone this environment to another'),
@@ -100,14 +98,6 @@ class EnvironmentCloneForm extends FormBase {
         '#maxlength' => 50,
         '#required' => TRUE,
       ],
-      'field_shp_machine_name' => [
-        '#type' => 'select',
-        '#title' => $this->t('Clone to environment'),
-        '#options' => self::MACHINE_NAMES,
-        '#default_value' => self::MACHINE_NAMES[$environment->field_shp_machine_name->value],
-        '#maxlength' => 255,
-        '#required' => TRUE,
-      ],
       'field_shp_domain_name' => [
         '#type' => 'value',
         '#value' => $site->field_shp_domain_name->value,
@@ -119,22 +109,6 @@ class EnvironmentCloneForm extends FormBase {
       'field_shp_site' => [
         '#type' => 'value',
         '#value' => $site->id(),
-      ],
-      'field_shp_database_password' => [
-        '#type' => 'value',
-        '#value' => \Drupal::service('shp_custom.password')->generate(),
-      ],
-      'field_shp_platform' => [
-        '#type' => 'select',
-        '#title' => $this->t('Platform'),
-        '#options' => $platforms,
-        '#default_value' => reset($platforms),
-        '#required' => TRUE,
-        '#states' => [
-          'invisible' => [
-            ':input[name="field_shp_create_site"]' => ['checked' => FALSE],
-          ],
-        ],
       ],
       'type' => [
         '#type' => 'value',
