@@ -64,27 +64,7 @@ class EnvironmentBackupForm extends FormBase {
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $form_state->cleanValues();
-    // Find instances relating to the environment.
-    $instance_ids = \Drupal::entityQuery('node')
-      ->condition('type', 'shp_site_instance')
-      ->condition('field_shp_environment', $form_state->get('environment')->Id())
-      ->execute();
-
-    if (count($instance_ids)) {
-      // Run the backup from an arbitrary (first returned) instance.
-      $instance = Node::load(current($instance_ids));
-      \Drupal::service('shp_custom.backup')->createBackup($instance);
-
-      drupal_set_message($this->t('Backup has been queued for %title', [
-        '%title' => $form_state->get('environment')->getTitle(),
-      ]));
-    }
-    else {
-      drupal_set_message($this->t('Could not find any instances to backup for %title', [
-        '%title' => $form_state->get('environment')->getTitle(),
-      ]));
-    }
-
+    // @todo: Shepherd: Instances are gone, need to backup some other way.
   }
 
 }

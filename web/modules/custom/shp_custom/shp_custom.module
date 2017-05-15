@@ -91,34 +91,6 @@ function shp_custom_toolbar() {
 }
 
 /**
- * Populate an array with a list of platform entities and titles for display/use
- * in a select type box.
- *
- * @return array
- *   The choices formatted as id => label.
- */
-function shp_custom_platforms() {
-  $ids = \Drupal::entityQuery('node')
-    ->condition('type', 'shp_platform')
-    ->sort('title', 'ASC')
-    ->execute();
-
-  $entities = Node::loadMultiple($ids);
-
-  $choices = [];
-  foreach ($entities as $entity) {
-    $environments = \Drupal::entityQuery('node')
-      ->condition('type', 'shp_environment')
-      ->condition('field_shp_platform', $entity->id())
-      ->count()
-      ->execute();
-    $choices[$entity->id()] = $entity->getTitle() . ' (' . $environments . ')';
-  }
-
-  return $choices;
-}
-
-/**
  * Populate an array with a list of distribution entities and titles for display/use
  * in a select type box.
  *
@@ -164,8 +136,6 @@ function shp_custom_invalidate_site_cache(EntityInterface $environment) {
  *  * Synchronises any users for the site with LDAP.
  *  * Adds a default 'UAT' environment for the new site.
  *
- * Environment:
- *  * Creates new site instances on each of the selected platform's web servers.
  */
 function shp_custom_node_insert(EntityInterface $entity) {
   switch ($entity->bundle()) {
@@ -182,44 +152,6 @@ function shp_custom_node_insert(EntityInterface $entity) {
         \Drupal::service('ua_ldap.ldap_site')
           ->syncUsers($entity->id());
         // @todo Deal with failure - consider a queue.
-      }
-
-      // @todo Figure out which platform to default to. Maybe in config?
-      // Fetch the ID of the first platform, we'll default to that for now.
-      $platforms = \Drupal::entityQuery('node')
-        ->condition('type', 'shp_platform')
-        ->execute();
-
-      // Check if default environment should be automatically created.
-      // Note fields presented only in the UI don't get setup as a node ->value.
-      if (isset($entity->field_shp_create_site) && $entity->field_shp_create_site) {
-        // Create default environment.
-        // @todo - refactor to matches the changes to the environment for orchestration.
-        $environment = Node::create([
-          'type' => 'shp_environment',
-          'uid' => 1,
-          'title' => 'UAT',
-          'field_shp_site' => $entity->id(),
-          'field_shp_platform' => isset($entity->field_shp_platform) ? $platforms[$entity->field_shp_platform] : reset($platforms),
-          // @todo Convert environment types (e.g 'uat') to constants.
-          'field_shp_domain_name' => \Drupal::service('shp_custom.hosts_config')
-            ->generateDomainForEnv($entity, 'uat'),
-          'field_shp_git_reference' => isset($entity->field_shp_git_reference) ? $entity->field_shp_git_reference : 'develop',
-          'field_shp_database_password' => \Drupal::service('shp_custom.password')->generate(),
-        ]);
-
-        // Validate the environment, against any plugin constraints added.
-        $validate = $environment->validate();
-        $violations = $validate->getEntityViolations();
-        if ($violations->count()) {
-          foreach ($validate->getEntityViolations() as $violation) {
-            drupal_set_message($violation->getMessage(), 'error');
-            \Drupal::logger('shp_custom')->info('Environment was not automatically created. %violation', array('%violation' => $violation->getMessage()));
-          }
-          // Prevent the environment from being created.
-          break;
-        }
-        $environment->save();
       }
       break;
 
@@ -303,25 +235,6 @@ function shp_custom_node_access(EntityInterface $entity, $operation, AccountInte
     }
   }
   return AccessResult::neutral();
-}
-
-/**
- * Implements hook_entity_prepare_form().
- *
- * Automatically generates site admin and environment database passwords if they
- * are unset.
- */
-function shp_custom_entity_prepare_form(EntityInterface $entity) {
-  switch ($entity->bundle()) {
-    case 'shp_environment':
-      $password_field = $entity->get('field_shp_database_password');
-      $password = $password_field->value;
-      if (!$password) {
-        $password = \Drupal::service('shp_custom.password')->generate();
-        $password_field->setValue($password);
-      }
-      break;
-  }
 }
 
 /**
