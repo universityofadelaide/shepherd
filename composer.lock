@@ -7,6 +7,96 @@
     "content-hash": "ea850e02b1ada24880093801db680440",
     "packages": [
         {
+            "name": "apimatic/jsonmapper",
+            "version": "v1.2.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/apimatic/jsonmapper.git",
+                "reference": "4a678b12ce7116645d10d4854bf22473be683267"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/apimatic/jsonmapper/zipball/4a678b12ce7116645d10d4854bf22473be683267",
+                "reference": "4a678b12ce7116645d10d4854bf22473be683267",
+                "shasum": ""
+            },
+            "require-dev": {
+                "phpunit/phpunit": "4.2.*",
+                "squizlabs/php_codesniffer": "~1.5"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "apimatic\\jsonmapper\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "OSL-3.0"
+            ],
+            "authors": [
+                {
+                    "name": "Christian Weiske",
+                    "email": "christian.weiske@netresearch.de",
+                    "homepage": "http://www.netresearch.de/",
+                    "role": "Developer"
+                },
+                {
+                    "name": "Mehdi Jaffery",
+                    "email": "mehdi.jaffery@apimatic.io",
+                    "homepage": "http://apimatic.io/",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Map nested JSON structures onto PHP classes",
+            "time": "2017-04-06T13:14:24+00:00"
+        },
+        {
+            "name": "apimatic/openshiftapiwithkubernetes",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/universityofadelaide/openshift-client-php-apimatic.git",
+                "reference": "d6bae5543dfe6b72752c8da8d0b637426e32c249"
+            },
+            "require": {
+                "apimatic/jsonmapper": "~1.2.0",
+                "ext-curl": "*",
+                "ext-json": "*",
+                "ext-mbstring": "*",
+                "mashape/unirest-php": "~3.0.1",
+                "php": ">=5.4.0"
+            },
+            "require-dev": {
+                "squizlabs/php_codesniffer": "^2.7"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "OpenShiftAPIWithKubernetesLib\\": "src/"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "APIMatic SDK Generator",
+                    "email": "support@apimatic.io",
+                    "homepage": "https://apimatic.io",
+                    "role": "API Tool"
+                }
+            ],
+            "description": "OpenShift PHP client generated with APIMATIC.",
+            "homepage": "https://apimatic.io",
+            "keywords": [
+                "API",
+                "OpenShift API (with Kubernetes)",
+                "SDK"
+            ],
+            "time": "2017-05-18 04:16:22"
+        },
+        {
             "name": "asm89/stack-cors",
             "version": "1.1.0",
             "source": {
@@ -858,7 +948,7 @@
             "source": {
                 "type": "git",
                 "url": "https://git.drupal.org/project/cas",
-                "reference": "080cf8c6de6517ccaa139da98a994ed9a096077b"
+                "reference": "0a257acde64f9ed224065a390c7b65303b04b799"
             },
             "require": {
                 "drupal/core": "~8.0",
@@ -871,8 +961,8 @@
                     "dev-8.x-1.x": "8.1.x-dev"
                 },
                 "drupal": {
-                    "version": "8.x-1.0-beta3+0-dev",
-                    "datestamp": "1490138583"
+                    "version": "8.x-1.0-rc1+0-dev",
+                    "datestamp": "1494724687"
                 }
             },
             "notification-url": "https://packages.drupal.org/8/downloads",
@@ -908,7 +998,7 @@
                 "issues": "http://drupal.org/project/issues/cas",
                 "irc": "irc://irc.freenode.org/drupal-contribute"
             },
-            "time": "2017-03-24 12:56:12"
+            "time": "2017-05-14 01:15:05"
         },
         {
             "name": "drupal/core",
@@ -1562,16 +1652,16 @@
         },
         {
             "name": "guzzlehttp/guzzle",
-            "version": "6.2.3",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "https://github.com/guzzle/guzzle.git",
-                "reference": "8d6c6cc55186db87b7dc5009827429ba4e9dc006"
+                "reference": "1739e8b94e058421d4da8b66887c52ee523f7d45"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/guzzle/guzzle/zipball/8d6c6cc55186db87b7dc5009827429ba4e9dc006",
-                "reference": "8d6c6cc55186db87b7dc5009827429ba4e9dc006",
+                "url": "https://api.github.com/repos/guzzle/guzzle/zipball/1739e8b94e058421d4da8b66887c52ee523f7d45",
+                "reference": "1739e8b94e058421d4da8b66887c52ee523f7d45",
                 "shasum": ""
             },
             "require": {
@@ -1581,8 +1671,11 @@
             },
             "require-dev": {
                 "ext-curl": "*",
-                "phpunit/phpunit": "^4.0",
+                "phpunit/phpunit": "^4.0 || ^5.0",
                 "psr/log": "^1.0"
+            },
+            "suggest": {
+                "psr/log": "Required for using the Log middleware"
             },
             "type": "library",
             "extra": {
@@ -1620,7 +1713,7 @@
                 "rest",
                 "web service"
             ],
-            "time": "2017-02-28T22:50:30+00:00"
+            "time": "2017-05-15 08:45:24"
         },
         {
             "name": "guzzlehttp/promises",
@@ -1737,105 +1830,6 @@
                 "url"
             ],
             "time": "2017-03-20T17:10:46+00:00"
-        },
-        {
-            "name": "illuminate/contracts",
-            "version": "v5.4.19",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/illuminate/contracts.git",
-                "reference": "ab2825726bee46a67c8cc66789852189dbef74a9"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/illuminate/contracts/zipball/ab2825726bee46a67c8cc66789852189dbef74a9",
-                "reference": "ab2825726bee46a67c8cc66789852189dbef74a9",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.6.4"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "5.4-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Illuminate\\Contracts\\": ""
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Taylor Otwell",
-                    "email": "taylor@laravel.com"
-                }
-            ],
-            "description": "The Illuminate Contracts package.",
-            "homepage": "https://laravel.com",
-            "time": "2017-03-29T13:17:47+00:00"
-        },
-        {
-            "name": "illuminate/support",
-            "version": "v5.4.19",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/illuminate/support.git",
-                "reference": "b8cb37e15331c59da51c8ee5838038baa22d7955"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/illuminate/support/zipball/b8cb37e15331c59da51c8ee5838038baa22d7955",
-                "reference": "b8cb37e15331c59da51c8ee5838038baa22d7955",
-                "shasum": ""
-            },
-            "require": {
-                "doctrine/inflector": "~1.0",
-                "ext-mbstring": "*",
-                "illuminate/contracts": "5.4.*",
-                "paragonie/random_compat": "~1.4|~2.0",
-                "php": ">=5.6.4"
-            },
-            "replace": {
-                "tightenco/collect": "self.version"
-            },
-            "suggest": {
-                "illuminate/filesystem": "Required to use the composer class (5.2.*).",
-                "symfony/process": "Required to use the composer class (~3.2).",
-                "symfony/var-dumper": "Required to use the dd function (~3.2)."
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "5.4-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Illuminate\\Support\\": ""
-                },
-                "files": [
-                    "helpers.php"
-                ]
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Taylor Otwell",
-                    "email": "taylor@laravel.com"
-                }
-            ],
-            "description": "The Illuminate Support package.",
-            "homepage": "https://laravel.com",
-            "time": "2017-04-09T14:34:57+00:00"
         },
         {
             "name": "ircmaxell/password-compat",
@@ -1967,55 +1961,50 @@
             "time": "2015-04-20T18:58:01+00:00"
         },
         {
-            "name": "maclof/kubernetes-client",
-            "version": "0.2.2",
+            "name": "mashape/unirest-php",
+            "version": "v3.0.4",
             "source": {
                 "type": "git",
-                "url": "https://github.com/maclof/kubernetes-client.git",
-                "reference": "7be10ea556ef33b2e7340029d5b3c245fb6e5eae"
+                "url": "https://github.com/Mashape/unirest-php.git",
+                "reference": "842c0f242dfaaf85f16b72e217bf7f7c19ab12cb"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/maclof/kubernetes-client/zipball/7be10ea556ef33b2e7340029d5b3c245fb6e5eae",
-                "reference": "7be10ea556ef33b2e7340029d5b3c245fb6e5eae",
+                "url": "https://api.github.com/repos/Mashape/unirest-php/zipball/842c0f242dfaaf85f16b72e217bf7f7c19ab12cb",
+                "reference": "842c0f242dfaaf85f16b72e217bf7f7c19ab12cb",
                 "shasum": ""
             },
             "require": {
-                "guzzlehttp/guzzle": "~5.0|~6.0",
-                "illuminate/support": "~5.0",
-                "php": ">=5.4"
+                "ext-curl": "*",
+                "php": ">=5.4.0"
             },
             "require-dev": {
-                "mockery/mockery": "~0.9",
-                "phpunit/phpunit": "~4.0",
-                "satooshi/php-coveralls": "~1.0"
+                "codeclimate/php-test-reporter": "0.1.*",
+                "phpunit/phpunit": "~4.4"
+            },
+            "suggest": {
+                "ext-json": "Allows using JSON Bodies for sending and parsing requests"
             },
             "type": "library",
             "autoload": {
-                "psr-4": {
-                    "Maclof\\Kubernetes\\": "src/"
+                "psr-0": {
+                    "Unirest\\": "src/"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
-            "authors": [
-                {
-                    "name": "Marc Lough",
-                    "homepage": "http://maclof.com"
-                }
-            ],
-            "description": "A simple yet elegant client for accessing and controlling a Kubernetes cluster.",
+            "description": "Unirest PHP",
+            "homepage": "https://github.com/Mashape/unirest-php",
             "keywords": [
-                "Guzzle",
-                "cluster",
-                "container",
-                "docker",
-                "guzzlehttp",
-                "kubernetes"
+                "client",
+                "curl",
+                "http",
+                "https",
+                "rest"
             ],
-            "time": "2017-05-02T05:04:26+00:00"
+            "time": "2016-08-11T17:49:21+00:00"
         },
         {
             "name": "masterminds/html5",
@@ -2384,16 +2373,16 @@
         },
         {
             "name": "psy/psysh",
-            "version": "v0.8.3",
+            "version": "v0.8.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/bobthecow/psysh.git",
-                "reference": "1dd4bbbc64d71e7ec075ffe82b42d9e096dc8d5e"
+                "reference": "38a9d21406597a0440690eafbcb0222f528c8ac6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/bobthecow/psysh/zipball/1dd4bbbc64d71e7ec075ffe82b42d9e096dc8d5e",
-                "reference": "1dd4bbbc64d71e7ec075ffe82b42d9e096dc8d5e",
+                "url": "https://api.github.com/repos/bobthecow/psysh/zipball/38a9d21406597a0440690eafbcb0222f528c8ac6",
+                "reference": "38a9d21406597a0440690eafbcb0222f528c8ac6",
                 "shasum": ""
             },
             "require": {
@@ -2453,7 +2442,7 @@
                 "interactive",
                 "shell"
             ],
-            "time": "2017-03-19T21:40:44+00:00"
+            "time": "2017-05-17T06:49:19+00:00"
         },
         {
             "name": "stack/builder",
@@ -3929,17 +3918,55 @@
             "time": "2017-03-29 02:10:43"
         },
         {
+            "name": "universityofadelaide/openshift-client",
+            "version": "dev-develop",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/universityofadelaide/openshift-client.git",
+                "reference": "72e9acff4168f238ced6ecbca507d85ab0a2bd98"
+            },
+            "require": {
+                "guzzlehttp/guzzle": "dev-master"
+            },
+            "require-dev": {
+                "mockery/mockery": "~0.9",
+                "phpunit/phpunit": "~4.0",
+                "satooshi/php-coveralls": "~1.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "UniversityOfAdelaide\\OpenShift\\": "src/"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Chris Barton",
+                    "email": "c.barton@adelaide.edu.au"
+                },
+                {
+                    "name": "Casey Fulton",
+                    "email": "casey.fulton@adelaide.edu.au"
+                }
+            ],
+            "description": "Simple OpenShift client for PHP.",
+            "time": "2017-05-23 06:09:42"
+        },
+        {
             "name": "universityofadelaide/shepherd-drupal-scaffold",
             "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "https://github.com/universityofadelaide/shepherd-drupal-scaffold.git",
-                "reference": "606d1f174e75f3d933424aabd9aeaca9af1ace18"
+                "reference": "b7a6e0f1d1ed7e1a6a56b3c18af3943402465b78"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/universityofadelaide/shepherd-drupal-scaffold/zipball/606d1f174e75f3d933424aabd9aeaca9af1ace18",
-                "reference": "606d1f174e75f3d933424aabd9aeaca9af1ace18",
+                "url": "https://api.github.com/repos/universityofadelaide/shepherd-drupal-scaffold/zipball/b7a6e0f1d1ed7e1a6a56b3c18af3943402465b78",
+                "reference": "b7a6e0f1d1ed7e1a6a56b3c18af3943402465b78",
                 "shasum": ""
             },
             "require": {
@@ -3961,7 +3988,7 @@
                 "GPL-2.0+"
             ],
             "description": "Composer Plugin for updating the Shepherd Drupal tools.",
-            "time": "2017-05-08 03:52:21"
+            "time": "2017-05-12 03:39:50"
         },
         {
             "name": "webmozart/assert",
@@ -4829,12 +4856,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/hechoendrupal/drupal-console.git",
-                "reference": "98ad4c0362146689f3d4f895394ef35a4f95443d"
+                "reference": "d67c75c3058bf31cbc84dee1bf627e00933824f2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/hechoendrupal/drupal-console/zipball/98ad4c0362146689f3d4f895394ef35a4f95443d",
-                "reference": "98ad4c0362146689f3d4f895394ef35a4f95443d",
+                "url": "https://api.github.com/repos/hechoendrupal/drupal-console/zipball/d67c75c3058bf31cbc84dee1bf627e00933824f2",
+                "reference": "d67c75c3058bf31cbc84dee1bf627e00933824f2",
                 "shasum": ""
             },
             "require": {
@@ -4899,7 +4926,7 @@
                 "drupal",
                 "symfony"
             ],
-            "time": "2017-05-08 16:49:07"
+            "time": "2017-05-13 16:50:58"
         },
         {
             "name": "drupal/console-core",
@@ -5795,23 +5822,23 @@
         },
         {
             "name": "sebastian/diff",
-            "version": "1.4.1",
+            "version": "1.4.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/diff.git",
-                "reference": "13edfd8706462032c2f52b4b862974dd46b71c9e"
+                "reference": "7f066a26a962dbe58ddea9f72a4e82874a3975a4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/diff/zipball/13edfd8706462032c2f52b4b862974dd46b71c9e",
-                "reference": "13edfd8706462032c2f52b4b862974dd46b71c9e",
+                "url": "https://api.github.com/repos/sebastianbergmann/diff/zipball/7f066a26a962dbe58ddea9f72a4e82874a3975a4",
+                "reference": "7f066a26a962dbe58ddea9f72a4e82874a3975a4",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.3.3"
+                "php": "^5.3.3 || ^7.0"
             },
             "require-dev": {
-                "phpunit/phpunit": "~4.8"
+                "phpunit/phpunit": "^4.8.35 || ^5.7 || ^6.0"
             },
             "type": "library",
             "extra": {
@@ -5843,7 +5870,7 @@
             "keywords": [
                 "diff"
             ],
-            "time": "2015-12-08T07:14:41+00:00"
+            "time": "2017-05-22T07:24:03+00:00"
         },
         {
             "name": "sebastian/environment",
@@ -6514,7 +6541,9 @@
         "ua-drupal-modules/ua_ldap": 20,
         "ua-drupal-modules/ua_ldap_authorisation": 20,
         "drupal/console": 20,
-        "drupal/devel": 20
+        "drupal/devel": 20,
+        "universityofadelaide/openshift-client": 20,
+        "apimatic/openshiftapiwithkubernetes": 20
     },
     "prefer-stable": true,
     "prefer-lowest": false,

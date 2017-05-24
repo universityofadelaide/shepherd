@@ -3,7 +3,18 @@
   "description": "Provides functionality specific to the Shepherd distribution.",
   "type": "drupal-module",
   "license": "GPL-2.0+",
+  "repositories": [
+    {
+      "type": "git",
+      "url": "https://github.com/universityofadelaide/openshift-client-php-apimatic.git"
+    },
+    {
+      "type": "git",
+      "url": "https://github.com/universityofadelaide/openshift-client.git"
+    }
+  ],
   "require": {
-    "maclof/kubernetes-client": "^0.2.0"
+    "universityofadelaide/openshift-client": "dev-develop",
+    "apimatic/openshiftapiwithkubernetes": "dev-master"
   }
 }
