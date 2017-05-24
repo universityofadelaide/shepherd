@@ -98,6 +98,20 @@ oc project -q
 curl --insecure -H "Authorization: Bearer $(oc login -u developer -p developer >/dev/null && oc whoami -t)" $(minishift console --url)/oapi/v1
 ```
 
+### Installing SwaggerUI for developing with OpenShift API
+
+```bash
+# run the swagger ui container
+docker run -d -p 8000:8080 swaggerapi/swagger-ui
+```
+	
+then visit `http://swagger.test:8000` and paste 
+`http://home.caseyfulton.com/openshift-openapi-spec.json` into the box at the top and hit explore
+
+#### NOTE 
+This is assuming you have setup dnsmasq to the `test` domain.
+
+
 ## Requirements
 
 #### ATTN: macOS users
@@ -185,4 +199,10 @@ To diff the configuration :
 ```bash
 # you can run this on the container
 diff -N -I "   - 'file:.*" -qbr {old_config_path} {new_config_path}
+```
+
+#### Configuring xdebug to run on the container ( CLI scripts )
+
+```bash
+export PHP_IDE_CONFIG="serverName=shepherd.test"
 ```
