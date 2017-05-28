@@ -32,10 +32,18 @@ class SiteEnvironmentUrl extends FieldPluginBase {
     $domain = $environment->field_shp_domain_name->value;
     $path = $environment->field_shp_site->entity->field_shp_path->value;
 
+    // If the url is bunk, don't diaf.
+    if (isset($domain)) {
+      $url = Url::fromUri('//' . $domain . $path);
+    }
+    else {
+      $url = '';
+    }
+
     $build = [
       '#type' => 'link',
       '#title' => $domain . $path,
-      '#url' => Url::fromUri('//' . $domain . $path),
+      '#url' => $url,
     ];
 
     return $build;

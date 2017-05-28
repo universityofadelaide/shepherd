@@ -9,6 +9,23 @@ the Drupal app itself running in Docker and OpenShift running in a virtual
 machine provided by the [Minishift](https://www.openshift.org/minishift/)
 command line tool.
 
+## Developing Shepherd - common tasks
+First, output the developer token for openshift.
+```bash
+oc login -udeveloper -pdeveloper && oc whoami -t
+```
+
+Now start up the shepherd environment and configure it.
+```bash
+./dsh
+robo build
+TOKEN=output_from_oc_whoami_-t bin/drush -r web scr ShepherdContentGenerate.php --uri=shepherd.test
+```
+
+Thats it, there should already be a build running, and a deployment ready to occur when the
+build finishes.
+
+
 ## Getting started for Shepherd development
 The following prerequisites must be installed.
 
@@ -43,12 +60,20 @@ Start Minishift and add an SSH key to it for authentication against private git
 repositories. The key must have no password and have sufficient access.
 ```bash
 minishift start
+```
 
-# Adds the oc command to your $PATH.
+Add the oc command to your $PATH.
+```bash
 eval $(minishift oc-env)
-# Alternatively, permanently add oc to /usr/local/bin.
-sudo ln -sf $(find ~/.minishift -name oc -type f | tail -1) /usr/local/bin/
+```
 
+Alternatively, permanently add oc to /usr/local/bin.
+```bash
+sudo ln -sf $(find ~/.minishift -name oc -type f | tail -1) /usr/local/bin/
+```
+
+Create a secret to use to build with (needs password less key)
+```bash
 oc secrets new-sshauth build-key --ssh-privatekey=${HOME}/.ssh/id_rsa
 ```
 
@@ -73,6 +98,11 @@ chmod +x ./dsh
 Visit http://shepherd.test/core/install.php and complete the install wizard.
 
 ### Configure Shepherd to use local Minishift
+Create a mysql database in OpenShift for deployments to use:
+```bash
+oc new-app mysql MYSQL_USER=shepherd MYSQL_PASSWORD=shepherd MYSQL_DATABASE=shepherd -l db=shepherd
+```
+
 Visit http://shepherd.test/admin/config/system/shepherd/orchestration/provider_settings
 and enter the following details:
 
@@ -86,6 +116,9 @@ Token (for authenticating against API):
 oc login -u developer -p developer >/dev/null && oc whoami -t
 ```
 
+* NOTE * The token expires every 24 hours. After this time you will need to re-login and generate a new token. 
+
+
 Environment mode: dev.
 
 Namespace (project name, default to myproject):
@@ -97,6 +130,14 @@ oc project -q
 ```bash
 curl --insecure -H "Authorization: Bearer $(oc login -u developer -p developer >/dev/null && oc whoami -t)" $(minishift console --url)/oapi/v1
 ```
+
+### Updating token 
+
+```bash
+# from utility container : 
+bin/drush -r web cset shp_orchestration.openshift.openshift token ${NEW_TOKEN}
+```
+
 
 ### Installing SwaggerUI for developing with OpenShift API
 
@@ -206,3 +247,11 @@ diff -N -I "   - 'file:.*" -qbr {old_config_path} {new_config_path}
 ```bash
 export PHP_IDE_CONFIG="serverName=shepherd.test"
 ```
+
+## Deploying shepherd Directly via the OpenShift ui (not for development).
+Login as admin and Import the shepherd OpenShift deployment template globally
+```bash
+oc login -u system:admin
+oc create -f shepherd-openshift.yaml -n openshift
+```
+You can now click Add to project in the OpenShift ui to deploy shepherd directly.

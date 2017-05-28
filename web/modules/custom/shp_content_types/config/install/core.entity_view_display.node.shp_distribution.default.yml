@@ -5,6 +5,7 @@ dependencies:
     - field.field.node.shp_distribution.body
     - field.field.node.shp_distribution.field_shp_builder_image
     - field.field.node.shp_distribution.field_shp_git_repository
+    - field.field.node.shp_distribution.field_shp_ssh_key
     - node.type.shp_distribution
   module:
     - text
@@ -31,6 +32,14 @@ content:
     region: content
   field_shp_git_repository:
     weight: 101
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    type: string
+    region: content
+  field_shp_ssh_key:
+    weight: 106
     label: above
     settings:
       link_to_entity: false
