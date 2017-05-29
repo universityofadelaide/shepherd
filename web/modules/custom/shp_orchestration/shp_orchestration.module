@@ -53,6 +53,7 @@ function shp_orchestration_node_insert(EntityInterface $entity) {
         }
 
         // If we have no distro, we can't do teh berks.
+        // @todo - This should be a validation level hook.
         if (!isset($distribution)) {
           return FALSE;
         }
