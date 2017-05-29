@@ -151,6 +151,13 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
    */
   public function getDistribution($name) {
     // TODO: Implement getDistribution() method.
+    $buildConfig = $this->client->getBuildConfig($name);
+
+    if($buildConfig && $buildConfig['body']) {
+      return $buildConfig;
+    }
+
+    return FALSE;
   }
 
   /**
