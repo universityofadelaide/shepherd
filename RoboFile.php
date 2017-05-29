@@ -45,7 +45,6 @@ class RoboFile extends RoboFileBase {
   public function devContentGenerate() {
     $virtual_host = getenv("VIRTUAL_HOST");
     if (!empty($virtual_host)) {
-      $this->say("Now login and configure the OpenShift provider settings, then add default content with:");
       $this->say("$this->drush_cmd scr ShepherdContentGenerate.php --uri=$virtual_host");
     }
   }

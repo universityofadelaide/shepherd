@@ -92,7 +92,7 @@ if (!empty($token)) {
     'title'                     => 'wcms-d8',
     'field_shp_deployment_name' => 'wcms-d8-dev-environment',
     'field_shp_domain_name'     => $domain_name,
-    'field_shp_git_reference'   => 'develop',
+    'field_shp_git_reference'   => 'master',
     'field_shp_site'            => [['target_id' => $site->id()]],
     'field_shp_custom_config'   => '',
   ]);
