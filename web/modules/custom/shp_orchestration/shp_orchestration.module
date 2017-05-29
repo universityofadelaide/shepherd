@@ -33,7 +33,7 @@ function shp_orchestration_node_insert(EntityInterface $entity) {
         break;
 
       case 'shp_environment':
-        // @todo - convert the name into some set standard.
+
         $name = $entity->getTitle();
 
         if (isset($entity->field_shp_site->target_id)) {
@@ -94,7 +94,17 @@ function shp_orchestration_node_update(EntityInterface $entity) {
     switch ($entity->bundle()) {
       case 'shp_distribution':
         // TODO: Handle updates
-        //$orchestration_provider_plugin->updateDistribution();
+        $name = $entity->getTitle();
+
+        $data = [
+          'build_image' => $entity->field_shp_builder_image->value,
+          'secret' => $entity->field_shp_ssh_key->value,
+          'git' => [
+            'uri' => $entity->field_shp_git_repository->value,
+          ],
+        ];
+
+        $distribution = $orchestration_provider_plugin->updateDistribution($name, $data);
 
         break;
       case 'shp_environment':

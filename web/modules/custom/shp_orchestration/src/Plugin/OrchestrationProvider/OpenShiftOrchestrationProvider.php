@@ -143,7 +143,35 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
    * {@inheritdoc}
    */
   public function updateDistribution($name, array $data) {
-    // TODO: Implement updateDistribution() method.
+
+    // Serialize the name
+    $name = $this->serializeTitle($name);
+
+    // Test to see if there is a branch specified in the build_image.
+    if (strpos($data['build_image'], ':') !== TRUE) {
+      $data['build_image'] = $data['build_image'] . ':develop';
+    }
+
+    // Unpack the data.
+    $build_data = [
+      'git' => [
+        'ref' => 'master',
+        'uri' => $data['git']['uri']
+      ],
+      'source' => [
+        'type' => 'DockerImage',
+        'name' => $data['build_image']
+      ],
+    ];
+
+    $image_stream_name = $name . '-stream:' . $build_data['git']['ref'];
+    $build_config_name = $name;
+    $secret = $data['secret'];
+    $buildConfig = $this->client->updateBuildConfig($build_config_name, $secret, $image_stream_name, $build_data);
+
+    if ($buildConfig && $buildConfig['body']) {
+      return TRUE;
+    }
   }
 
   /**
