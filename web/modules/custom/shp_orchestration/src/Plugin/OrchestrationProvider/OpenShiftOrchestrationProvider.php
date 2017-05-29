@@ -231,7 +231,18 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
 
     // TODO: Allocate storage for public/private?!
     $public_volume = $name . '-public';
+    $request = $this->client->createPersistentVolumeClaim(
+      $public_volume,
+      'ReadWriteMany',
+      '10Gi'
+    );
+
     $private_volume = $name . '-private';
+    $request = $this->client->createPersistentVolumeClaim(
+      $private_volume,
+      'ReadWriteMany',
+      '10Gi'
+    );
 
     $deploy_data = [
       'containerPort' => 8080,

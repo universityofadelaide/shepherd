@@ -10,16 +10,18 @@ machine provided by the [Minishift](https://www.openshift.org/minishift/)
 command line tool.
 
 ## Developing Shepherd - common tasks
-First, output the developer token for openshift.
+Make a long lived token for api calls
 ```bash
-oc login -udeveloper -pdeveloper && oc whoami -t
+oc create serviceaccount shepherd
+oc policy add-role-to-user admin system:serviceaccount:myproject:shepherd
+oc describe secret $(oc describe serviceaccount shepherd | grep Token | awk '{ print $2 }') | grep "token:" | awk '{ print $2 }'
 ```
 
 Now start up the shepherd environment and configure it.
 ```bash
 ./dsh
 robo build
-TOKEN=output_from_oc_whoami_-t bin/drush -r web scr ShepherdContentGenerate.php --uri=shepherd.test
+TOKEN=paste_token_from_above bin/drush -r web scr ShepherdContentGenerate.php --uri=shepherd.test
 ```
 
 Thats it, there should already be a build running, and a deployment ready to occur when the
@@ -116,8 +118,7 @@ Token (for authenticating against API):
 oc login -u developer -p developer >/dev/null && oc whoami -t
 ```
 
-* NOTE * The token expires every 24 hours. After this time you will need to re-login and generate a new token. 
-
+* NOTE * Ths token expires every 24 hours. After this time you will need to re-login and generate a new token. 
 
 Environment mode: dev.
 
