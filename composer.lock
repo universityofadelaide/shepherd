@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "ea850e02b1ada24880093801db680440",
+    "content-hash": "a4818156352285149436c44c644021d2",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -1074,6 +1074,7 @@
             "type": "drupal-core",
             "extra": {
                 "patches_applied": {
+                    "Switch to a memory cache backend during installation": "https://www.drupal.org/files/issues/2488350-2-58.patch",
                     "Twig debug output does not display all suggestions": "https://www.drupal.org/files/issues/core-8.3.0-twig_debug_not_display-suggestions-array-2118743-107.patch"
                 }
             },
@@ -4794,7 +4795,7 @@
                 "drupal",
                 "symfony"
             ],
-            "time": "2017-05-27T00:08:40+00:00"
+            "time": "2017-05-27 00:08:40"
         },
         {
             "name": "drupal/console-core",
