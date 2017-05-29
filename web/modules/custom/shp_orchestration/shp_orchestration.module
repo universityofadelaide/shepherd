@@ -109,10 +109,14 @@ function shp_orchestration_node_update(EntityInterface $entity) {
  * Implements hook_form_node_form_alter().
  */
 function shp_orchestration_form_node_form_alter(&$form, FormStateInterface $form_state) {
-  if ($form_state->getFormObject()->getEntity()->bundle() === 'shp_distribution') {
+
+  $bundle = $form_state->getFormObject()->getEntity()->bundle();
+
+  if ($bundle === 'shp_distribution') {
     // Add the validator
     $form['#validate'][] = 'shp_orchestration_shp_distribution_form_validate';
   }
+
 }
 
 function shp_orchestration_shp_distribution_form_validate($form, FormStateInterface $form_state) {
