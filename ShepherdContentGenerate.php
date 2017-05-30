@@ -8,11 +8,8 @@ use Drupal\field\Entity\FieldConfig;
 use Drupal\node\Entity\Node;
 use Drupal\shp_orchestration\Entity\OpenShiftConfigEntity;
 
-$domain_name = getenv("DOMAIN");
-if (empty($domain_name)) {
-  $domain_name = '192.168.99.100.nip.io';
-}
-$token = getenv("TOKEN");
+$domain_name = getenv('DOMAIN') ?: '192.168.99.100.nip.io';
+$token = getenv('TOKEN');
 
 /**
  * Override production default values for local dev.
@@ -22,8 +19,7 @@ $environment_defaults = [
 ];
 foreach ($environment_defaults as $field_name => $field_value) {
   $field_config = FieldConfig::loadByName('node', 'shp_environment', $field_name);
-  $field_config->setDefaultValue($field_value);
-  $field_config->save();
+  $field_config->setDefaultValue($field_value)->save();
 }
 
 // Clobber env/domain config with dev versions.
@@ -38,9 +34,7 @@ foreach ($environment_defaults as $field_name => $field_value) {
 )->save();
 
 if (!empty($token)) {
-  /**
-   * Create an openshift endpoint
-   */
+  // Configure OpenShift backend.
   $openshift = OpenShiftConfigEntity::create([
     'endpoint'  => 'https://192.168.99.100:8443/',
     'token'     => $token,
@@ -50,9 +44,6 @@ if (!empty($token)) {
   ]);
   $openshift->save();
 
-  /**
-   * Create a WCMS "dev" distribution.
-   */
   $distribution = Node::create([
     'type'                     => 'shp_distribution',
     'langcode'                 => 'en',
@@ -65,10 +56,6 @@ if (!empty($token)) {
   ]);
   $distribution->save();
 
-  /**
-   * Create a WCMS "dev" site.
-   *
-   */
   $site = Node::create([
     'type'                   => 'shp_site',
     'langcode'               => 'en',
@@ -81,9 +68,6 @@ if (!empty($token)) {
   ]);
   $site->save();
 
-  /**
-   * Create a WCMS "dev" environment.
-   */
   $env = Node::create([
     'type'                      => 'shp_environment',
     'langcode'                  => 'en',
@@ -99,6 +83,6 @@ if (!empty($token)) {
   $env->save();
 }
 else {
-  echo "Better results would be achieved by specifying a token, eg.";
-  echo "TOKEN=output_from_oc_whoami_-t bin/drush -r web scr ShepherdContentGenerate.php --uri=shepherd.test";
+  echo 'Better results would be achieved by specifying a token, eg.';
+  echo 'TOKEN=output_from_oc_whoami_-t bin/drush -r web scr ShepherdContentGenerate.php --uri=shepherd.test';
 }
