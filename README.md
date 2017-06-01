@@ -15,6 +15,8 @@ Make a long lived token for api calls
 oc create serviceaccount shepherd
 oc policy add-role-to-user admin system:serviceaccount:myproject:shepherd
 oc describe secret $(oc describe serviceaccount shepherd | grep Token | awk '{ print $2 }') | grep "token:" | awk '{ print $2 }'
+# optional command : macOS add to clipboard buffer
+oc describe secret $(oc describe serviceaccount shepherd | grep Token | awk '{ print $2 }') | grep "token:" | awk '{ print $2 }' | pbcopy
 ```
 
 Now start up the shepherd environment and configure it.
