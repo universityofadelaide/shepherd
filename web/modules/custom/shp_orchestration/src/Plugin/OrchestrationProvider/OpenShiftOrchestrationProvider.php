@@ -26,7 +26,12 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
    */
   protected $client;
 
-  protected $configurationStatus = TRUE;
+  /**
+   * Default git ref.
+   *
+   * @var string
+   */
+  public $defaultGitRef = 'master';
 
   /**
    * {@inheritdoc}
@@ -34,23 +39,60 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
   public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityTypeManagerInterface $entity_type_manager) {
     parent::__construct($configuration, $plugin_id, $plugin_definition, $entity_type_manager);
 
-    if (!is_object($this->configEntity)) {
-      $this->configurationStatus = FALSE;
-      return NULL;
-    }
-
-    // @todo - throw exception if configEntity is not set or incorrectly set.
-    $devMode = FALSE;
-    if ($this->configEntity->mode === "dev") {
-      // Turn off SSL cert verification for development.
-      $devMode = TRUE;
-    }
-
-    $this->client = new OpenShiftClient($this->configEntity->endpoint, $this->configEntity->token, $this->configEntity->namespace, $devMode);
+    $this->client = new OpenShiftClient(
+      $this->configEntity->endpoint,
+      $this->configEntity->token,
+      $this->configEntity->namespace,
+      $this->configEntity->mode === 'dev'
+    );
   }
 
-  private function getConfigurationStatus() {
-    if (!$this->configurationStatus) {
+  /**
+   * Converts a string into a format acceptable for OpenShift.
+   *
+   * @param string $text
+   *   The title to be sanitised.
+   *
+   * @return string
+   *   sanitised title.
+   */
+  private function sanitise($text) {
+    return strtolower(preg_replace('/\s+/', '-', $text));
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function createdDistribution(string $name, string $builder_image, string $source_repo, string $source_ref = 'master', string $source_secret = NULL) {
+    $sanitised_name = $this->sanitise($name);
+
+    // Package config for the client.
+    $build_data = [
+      'git' => [
+        'ref' => $source_ref,
+        'uri' => $source_repo,
+      ],
+      'source' => [
+        'type' => 'DockerImage',
+        'name' => $builder_image,
+      ],
+    ];
+
+    $image_stream = $this->client->createImageStream($sanitised_name);
+    if (!$image_stream) {
+      // @todo Handle bad response.
+      return FALSE;
+    }
+
+    // Kick off build of default source ref - this is purely for optimisation.
+    $build_config = $this->client->createBuildConfig(
+      $sanitised_name . '-' . $source_ref,
+      $source_secret,
+      $sanitised_name . ':' . $source_ref,
+      $build_data
+    );
+    if (!$build_config) {
+      // @todo Handle bad response.
       return FALSE;
     }
     return TRUE;
@@ -59,287 +101,189 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
   /**
    * {@inheritdoc}
    */
-  public function getClient() {
-    if (!$this->getConfigurationStatus()) {
-      return NULL;
-    }
+  public function updatedDistribution(string $name, string $builder_image, string $source_repo, string $source_ref = 'master', string $source_secret = NULL) {
+    $sanitised_name = $this->sanitise($name);
 
-    return $this->client;
-  }
-
-  /**
-   * Converts the title into a format acceptable for OpenShift.
-   *
-   * @param string $title
-   * @return string Serialized title.
-   */
-  private function serializeTitle($title) {
-    return strtolower(preg_replace('/\s+/', '-', $title));
-  }
-
-  /**
-   * Converts back the title to Drupals format.
-   *
-   * @param string $title
-   * @return string Deserialized title.
-   */
-  private function deserializeTitle($title) {
-    // @todo - implement the method.
-    return $title;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function createDistribution($name, array $data) {
-    if (!$this->getConfigurationStatus()) {
-      return NULL;
-    }
-
-    // Serialize the name.
-    $name = $this->serializeTitle($name);
-
-    // Test to see if there is a branch specified in the build_image.
-    if (strpos($data['build_image'], ':') !== TRUE) {
-      $data['build_image'] = $data['build_image'] . ':develop';
-    }
-
-    // Unpack the data.
+    // Package config for the client.
     $build_data = [
       'git' => [
-        'ref' => 'master',
-        'uri' => $data['git']['uri']
+        'ref' => $source_ref,
+        'uri' => $source_repo,
       ],
       'source' => [
         'type' => 'DockerImage',
-        'name' => $data['build_image']
+        'name' => $builder_image,
       ],
     ];
 
-    $image_stream_name = $name . '-stream';
-    $build_config_name = $name;
-    $secret = $data['secret'];
-    // reference a secret.
-    // to be able to build we need a preconfigured key.
-
-
-    // create a imagestream
-    $image_stream = $this->client->createImageStream($image_stream_name);
-
-    // @todo - throw exceptions when any one of these client requests fail.
-    if ($image_stream && $image_stream['body']) {
-      // create the buildConfig
-      $image_stream_name = $name . '-stream' . ':' . $build_data['git']['ref'];
-      $buildConfig = $this->client->createBuildConfig($build_config_name, $secret, $image_stream_name, $build_data);
-      // @todo - throw exceptions if buildConfig fails.
-      if ($buildConfig && $buildConfig['body']) {
-        return TRUE;
-      }
+    $build_config = $this->client->updateBuildConfig(
+      $sanitised_name . '-' . $source_ref,
+      $source_secret,
+      $sanitised_name . ':' . $source_ref,
+      $build_data
+    );
+    if (!$build_config) {
+      // @todo Handle bad response.
+      return FALSE;
     }
-
+    return TRUE;
   }
 
   /**
    * {@inheritdoc}
    */
-  public function updateDistribution($name, array $data) {
-
-    // Serialize the name
-    $name = $this->serializeTitle($name);
-
-    // Test to see if there is a branch specified in the build_image.
-    if (strpos($data['build_image'], ':') !== TRUE) {
-      $data['build_image'] = $data['build_image'] . ':develop';
-    }
-
-    // Unpack the data.
-    $build_data = [
-      'git' => [
-        'ref' => 'master',
-        'uri' => $data['git']['uri']
-      ],
-      'source' => [
-        'type' => 'DockerImage',
-        'name' => $data['build_image']
-      ],
-    ];
-
-    $image_stream_name = $name . '-stream:' . $build_data['git']['ref'];
-    $build_config_name = $name;
-    $secret = $data['secret'];
-    $buildConfig = $this->client->updateBuildConfig($build_config_name, $secret, $image_stream_name, $build_data);
-
-    if ($buildConfig && $buildConfig['body']) {
-      return TRUE;
-    }
+  public function deletedDistribution($name) {
+    // @todo Implement deletedDistribution() method.
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getDistribution($name) {
-    // TODO: Implement getDistribution() method.
-    $buildConfig = $this->client->getBuildConfig($name);
+  public function createdEnvironment(
+    string $distribution_name,
+    string $site_name,
+    string $environment_name,
+    string $environment_id,
+    string $builder_image,
+    string $source_repo,
+    string $source_ref = 'master',
+    string $source_secret = NULL
+  ) {
+    $sanitised_distribution_name = $this->sanitise($distribution_name);
+    $sanitised_site_name = $this->sanitise($site_name);
+    $sanitised_environment_name = $this->sanitise($environment_name);
+    $image_stream_tag = $sanitised_distribution_name . ':' . $source_ref;
+    $build_config_name = $sanitised_distribution_name . '-' . $source_ref;
 
-    if($buildConfig && $buildConfig['body']) {
-      return $buildConfig;
-    }
+    // Create build config if it doesn't exist.
+    $build_config = $this->client->getBuildConfig($build_config_name);
+    if (!$build_config) {
+      // Package config for the client.
+      $build_data = [
+        'git' => [
+          'ref' => $source_ref,
+          'uri' => $source_repo,
+        ],
+        'source' => [
+          'type' => 'DockerImage',
+          'name' => $builder_image,
+        ],
+      ];
 
-    return FALSE;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function deleteDistribution($name) {
-    // TODO: Implement deleteDistribution() method.
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function createEnvironment($name, array $data) {
-    if (!$this->getConfigurationStatus()) {
-      return NULL;
-    }
-
-    $name = $this->serializeTitle($name);
-
-    $image_stream_tag = $data['imagestream']['tag'];
-    $image_stream_name = $data['imagestream']['name'];
-
-    // Check if the build already exists
-    $request = $this->client->getBuildConfig($name);
-    if (!$request['response']) {
-      $request = $this->client->createBuildConfig(
-        $name,
-        $data['secret'],
+      $build_config = $this->client->createBuildConfig(
+        $build_config_name,
+        $source_secret,
         $image_stream_tag,
-        $data
+        $build_data
       );
-      if (!$request) {
-        // TODO: Error output
-        return $request['response'];
+      if (!$build_config) {
+        // @todo Handle bad response.
+        return FALSE;
       }
     }
+    // TODO: Create new database for the environment.
+    // TODO: Build up env vars for database config.
+    $deploy_config_env_vars = [];
 
-    // TODO: Create new database for the environment
+    $deployment_name = implode('-', [
+      $sanitised_distribution_name,
+      $sanitised_site_name,
+      $sanitised_environment_name,
+      $environment_id,
+    ]);
 
-
-    // TODO: Build up env vars for database config
-    $env_vars = [];
-
-    // TODO: Allocate storage for public/private?!
-    $public_volume = $name . '-public';
-    $request = $this->client->createPersistentVolumeClaim(
-      $public_volume,
+    // @todo Parametrise storage size.
+    $public_pvc_name = $deployment_name . '-public';
+    $public_pvc_response = $this->client->createPersistentVolumeClaim(
+      $public_pvc_name,
       'ReadWriteMany',
       '10Gi'
     );
 
-    $private_volume = $name . '-private';
-    $request = $this->client->createPersistentVolumeClaim(
-      $private_volume,
+    $private_pvc_name = $deployment_name . '-private';
+    $private_pvc_response = $this->client->createPersistentVolumeClaim(
+      $private_pvc_name,
       'ReadWriteMany',
       '10Gi'
     );
+
+    if (!$public_pvc_response || !$private_pvc_response) {
+      // @todo Handle bad response.
+      return FALSE;
+    }
 
     $deploy_data = [
       'containerPort' => 8080,
       'memory_limit' => '128Mi',
-      'env_vars' => $env_vars,
-      'public_volume' => $public_volume,
-      'private_volume' => $private_volume,
+      'env_vars' => $deploy_config_env_vars,
+      'public_volume' => $public_pvc_name,
+      'private_volume' => $private_pvc_name,
     ];
 
-    $request = $this->client->createDeploymentConfig(
-      $name,
+    $deployment_config = $this->client->createDeploymentConfig(
+      $deployment_name,
       $image_stream_tag,
-      $image_stream_name,
+      $sanitised_distribution_name,
       $deploy_data
     );
+    if (!$deployment_config) {
+      // @todo Handle bad response.
+      return FALSE;
+    }
 
-    return $request['response'];
+    // Create a service.
+    // @todo - make port a var and great .. so great .. yuge!
+    $service_data = [
+      'port' => 8080,
+      'targetPort' => 8080,
+      'deployment' => $deployment_name,
+    ];
+    $service = $this->client->createService($deployment_name, $service_data);
+    if (!$service) {
+      // @todo Handle bad response.
+      return FALSE;
+    }
+
+    $route = $this->client->createRoute($deployment_name, $deployment_name, '');
+    if (!$route) {
+      // @todo Handle bad response.
+      return FALSE;
+    }
+    return TRUE;
   }
 
   /**
    * {@inheritdoc}
    */
-  public function updateEnvironment() {
+  public function updatedEnvironment() {
     // TODO: Implement updateEnvironment() method.
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getEnvironment() {
-    // TODO: Implement getEnvironment() method.
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function deleteEnvironment() {
+  public function deletedEnvironment() {
     // TODO: Implement deleteEnvironment() method.
   }
 
   /**
    * {@inheritdoc}
    */
-  public function createSite() {
+  public function createdSite() {
     // TODO: Implement createSite() method.
   }
 
   /**
    * {@inheritdoc}
    */
-  public function updateSite() {
+  public function updatedSite() {
     // TODO: Implement updateSite() method.
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getSite() {
-    // TODO: Implement getSite() method.
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function deleteSite() {
+  public function deletedSite() {
     // TODO: Implement deleteSite() method.
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getSecret($name) {
-    if (!$this->getConfigurationStatus()) {
-      return NULL;
-    }
-
-    return $this->client->getSecret($name);
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function createSecret($name, array $data) {
-    // TODO: Implement deleteSecret() method.
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function updateSecret($name, array $data) {
-    // TODO: Implement deleteSecret() method.
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function deleteSecret($name) {
-    // TODO: Implement deleteSecret() method.
   }
 }

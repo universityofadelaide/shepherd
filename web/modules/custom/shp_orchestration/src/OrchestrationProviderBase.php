@@ -33,14 +33,14 @@ abstract class OrchestrationProviderBase extends PluginBase implements Container
    *   Entity Type Manager service.
    */
   public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityTypeManagerInterface $entity_type_manager) {
-
-    $this->entityTypeManager = $entity_type_manager;
     parent::__construct($configuration, $plugin_id, $plugin_definition);
-
+    $this->entityTypeManager = $entity_type_manager;
     $config_entity_id = $plugin_definition['config_entity_id'];
     $entity_manager = $this->entityTypeManager->getStorage($config_entity_id);
     $this->configEntity = $entity_manager->load($config_entity_id);
-
+    if (!is_object($this->configEntity)) {
+      throw new \Exception('Orchestration provider is not configured.');
+    }
   }
 
   /**
@@ -54,6 +54,7 @@ abstract class OrchestrationProviderBase extends PluginBase implements Container
       $container->get('entity_type.manager')
     );
   }
+
   /**
    * {@inheritdoc}
    */
