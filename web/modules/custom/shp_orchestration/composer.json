@@ -4,6 +4,6 @@
   "type": "drupal-module",
   "license": "GPL-2.0+",
   "require": {
-    "universityofadelaide/openshift-client": "dev-develop"
+    "universityofadelaide/openshift-client": "dev-cleanup"
   }
 }
