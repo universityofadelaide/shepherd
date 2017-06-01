@@ -290,7 +290,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
   /**
    * {@inheritdoc}
    */
-  public function getSecret($name) {
+  public function getSecret(string $name) {
     return $this->client->getSecret($name);
   }
 
