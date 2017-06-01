@@ -125,4 +125,15 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
    * @return mixed
    */
   public function deletedSite();
+
+  /**
+   * Retrieves the metadata on a stored secret.
+   *
+   * @param string $name
+   *    Secret name.
+   *
+   * @return mixed
+   *   Returns the secret metadata if successful.
+   */
+  public function getSecret(string $name);
 }

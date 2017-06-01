@@ -286,4 +286,12 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
   public function deletedSite() {
     // TODO: Implement deleteSite() method.
   }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getSecret($name) {
+    return $this->client->getSecret($name);
+  }
+
 }
