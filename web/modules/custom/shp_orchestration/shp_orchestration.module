@@ -17,24 +17,21 @@ function shp_orchestration_node_insert(EntityInterface $entity) {
 
     switch ($bundle) {
       case 'shp_distribution':
+        $result = $orchestration_provider_plugin->createdDistribution(
+          $entity->getTitle(),
+          $entity->field_shp_builder_image->value,
+          $entity->field_shp_git_repository->value,
+          // @todo Consider fetching default source ref from config.
+          'master',
+          $entity->field_shp_ssh_key->value
+        );
 
-        $name = $entity->getTitle();
-
-        $data = [
-          'build_image' => $entity->field_shp_builder_image->value,
-          'secret' => $entity->field_shp_ssh_key->value,
-          'git' => [
-            'uri' => $entity->field_shp_git_repository->value,
-          ],
-        ];
-
-        $distribution = $orchestration_provider_plugin->createDistribution($name, $data);
-
+        if (!$result) {
+          // @todo Handle errors.
+        }
         break;
 
       case 'shp_environment':
-
-        $name = $entity->getTitle();
 
         if (isset($entity->field_shp_site->target_id)) {
           $site = $entity->get('field_shp_site')
@@ -51,30 +48,24 @@ function shp_orchestration_node_insert(EntityInterface $entity) {
               ->getValue();
           }
         }
-
-        // If we have no distro, we can't do teh berks.
-        // @todo - This should be a validation level hook.
         if (!isset($distribution)) {
-          return FALSE;
+          // @todo Handle errors.
         }
 
-        $data = [
-          'git' => [
-            'ref' => $entity->field_shp_git_reference->value,
-            'uri' => $distribution->field_shp_git_repository->value,
-          ],
-          'source' => [
-            'type' => 'DockerImage',
-            'name' => $distribution->field_shp_builder_image->value
-          ],
-          'secret' => $distribution->field_shp_ssh_key->value,
-          'imagestream' => [
-            'name' => $name . '-stream',
-            'tag' => $name . '-stream' . ':' . $entity->field_shp_git_reference->value,
-          ],
-        ];
+        $result = $orchestration_provider_plugin->createdEnvironment(
+          $distribution->getTitle(),
+          $site->getTitle(),
+          $entity->getTitle(),
+          $entity->id(),
+          $distribution->field_shp_builder_image->value,
+          $distribution->field_shp_git_repository->value,
+          $entity->field_shp_git_reference->value,
+          $distribution->field_shp_ssh_key->value
+        );
 
-        $orchestration_provider_plugin->createEnvironment($name, $data);
+        if (!$result) {
+          // @todo Handle errors.
+        }
         break;
     }
   }
@@ -93,7 +84,7 @@ function shp_orchestration_node_update(EntityInterface $entity) {
 
     switch ($entity->bundle()) {
       case 'shp_distribution':
-        // TODO: Handle updates
+        // TODO: Handle updates.
         $name = $entity->getTitle();
 
         $data = [
@@ -107,9 +98,9 @@ function shp_orchestration_node_update(EntityInterface $entity) {
         $distribution = $orchestration_provider_plugin->updateDistribution($name, $data);
 
         break;
+
       case 'shp_environment':
-        // TODO: Handle updates
-        //$orchestration_provider_plugin->updateEnvironment();
+        // TODO: Handle updates.
         break;
     }
   }
@@ -123,12 +114,15 @@ function shp_orchestration_form_node_form_alter(&$form, FormStateInterface $form
   $bundle = $form_state->getFormObject()->getEntity()->bundle();
 
   if ($bundle === 'shp_distribution') {
-    // Add the validator
+    // Add the validator.
     $form['#validate'][] = 'shp_orchestration_shp_distribution_form_validate';
   }
 
 }
 
+/**
+ * Validates distribution form.
+ */
 function shp_orchestration_shp_distribution_form_validate($form, FormStateInterface $form_state) {
   // Verify that the secret exists on openshift.
   $secret_name = $form_state->getValue('field_shp_ssh_key')[0]['value'];

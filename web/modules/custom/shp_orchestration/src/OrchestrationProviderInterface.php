@@ -12,71 +12,54 @@ use Drupal\Component\Plugin\PluginInspectionInterface;
 interface OrchestrationProviderInterface extends PluginInspectionInterface {
 
   /**
-   * Returns the client
-   *
-   * @return mixed
-   */
-  public function getClient();
-
-  /**
-   * Creates a secret.
+   * Creates artifacts in orchestration provider based on Shepherd distribution.
    *
    * @param string $name
-   * @param array $data
-   * @return mixed
+   *   Name of the distribution.
+   * @param string $builder_image
+   *   An s2i-enabled image to use to build (and run) the source code.
+   * @param string $source_repo
+   *   Source code git repository.
+   * @param string $source_ref
+   *   Source code git ref, defaults to 'master'.
+   * @param string|null $source_secret
+   *   The secret to use when pulling and building the source git repository.
+   *
+   * @return bool
+   *   Returns true if succeeded.
    */
-  public function createSecret($name, array $data);
+  public function createdDistribution(
+    string $name,
+    string $builder_image,
+    string $source_repo,
+    string $source_ref = 'master',
+    string $source_secret = NULL
+  );
 
   /**
-   * Updates an existing secret.
+   * Updates artifacts in orchestration provider based on Shepherd distribution.
    *
    * @param string $name
-   * @param array $data
-   * @return mixed
-   */
-  public function updateSecret($name, array $data);
-
-  /**
-   * Returns an existing secret
+   *   Name of the distribution.
+   * @param string $builder_image
+   *   An s2i-enabled image to use to build (and run) the source code.
+   * @param string $source_repo
+   *   Source code git repository.
+   * @param string $source_ref
+   *   Source code git ref, defaults to 'master'.
+   * @param string|null $source_secret
+   *   The secret to use when pulling and building the source git repository.
    *
-   * @param string $name
-   * @return mixed
+   * @return bool
+   *   Returns true if succeeded.
    */
-  public function getSecret($name);
-
-  /**
-   * Deletes an existing secret.
-   *
-   * @param string $name
-   * @return mixed
-   */
-  public function deleteSecret($name);
-
-  /**
-   * Creates a distribution.
-   *
-   * @param string $name Name of the distribution.
-   * @param array $data
-   * @return mixed
-   */
-  public function createDistribution($name, array $data);
-
-  /**
-   * Updates an existing distribution.
-   *
-   * @param string $name Name of distribution.
-   * @param array $data
-   * @return mixed
-   */
-  public function updateDistribution($name, array $data);
-
-  /**
-   * Retrieves an existing distribution.
-   *
-   * @param string $name Name of distribution.
-   * @return mixed
-   */
-  public function getDistribution($name);
+  public function updatedDistribution(
+    string $name,
+    string $builder_image,
+    string $source_repo,
+    string $source_ref = 'master',
+    string $source_secret = NULL
+  );
 
   /**
    * Deletes an existing distribution.
@@ -84,48 +67,62 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
    * @param string $name Name of distribution.
    * @return mixed
    */
-  public function deleteDistribution($name);
+  public function deletedDistribution($name);
 
   /**
-   * @param string $name Name of environment
-   * @param array $data
+   * @param string $distribution_name
+   *   Name of the distribution.
+   * @param string $site_name
+   *   Name of the site.
+   * @param string $environment_name
+   *   Name of the environment.
+   * @param string $environment_id
+   *   Unique id of the environment.
+   * @param string $builder_image
+   *   An s2i-enabled image to use to build (and run) the source code.
+   * @param string $source_repo
+   *   Source code git repository.
+   * @param string $source_ref
+   *   Source code git ref, defaults to 'master'.
+   * @param string|null $source_secret
+   *   The secret to use when pulling and building the source git repository.
    *
-   * @return mixed
+   * @return bool
+   *   Returns true if succeeded.
    */
-  public function createEnvironment($name, array $data);
+  public function createdEnvironment(
+    string $distribution_name,
+    string $site_name,
+    string $environment_name,
+    string $environment_id,
+    string $builder_image,
+    string $source_repo,
+    string $source_ref = 'master',
+    string $source_secret = NULL
+  );
 
   /**
    * @return mixed
    */
-  public function updateEnvironment();
+  public function updatedEnvironment();
 
   /**
    * @return mixed
    */
-  public function getEnvironment();
+  public function deletedEnvironment();
 
   /**
    * @return mixed
    */
-  public function deleteEnvironment();
+  public function createdSite();
 
   /**
    * @return mixed
    */
-  public function createSite();
+  public function updatedSite();
 
   /**
    * @return mixed
    */
-  public function updateSite();
-
-  /**
-   * @return mixed
-   */
-  public function getSite();
-
-  /**
-   * @return mixed
-   */
-  public function deleteSite();
+  public function deletedSite();
 }
