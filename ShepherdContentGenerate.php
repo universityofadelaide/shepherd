@@ -10,7 +10,7 @@ use Drupal\shp_orchestration\Entity\OpenShiftConfigEntity;
 
 $domain_name = getenv("DOMAIN") ?: '192.168.99.100.nip.io';
 $openshift_url = getenv("OPENSHIFT_URL") ?: 'https://192.168.99.100:8443';
-$token = getenv("TOKEN");
+$token = trim(getenv("TOKEN"));
 
 $environment_defaults = [
   'field_shp_git_reference' => 'develop',
@@ -33,8 +33,8 @@ foreach ($environment_defaults as $field_name => $field_value) {
 
 // Check for token.
 if (empty($token)) {
-  echo "Better results would be achieved by specifying a token, eg.";
-  echo "TOKEN=output_from_oc_whoami_-t bin/drush -r web scr ShepherdContentGenerate.php --uri=shepherd.test";
+  echo "Better results would be achieved by specifying a token, eg.\n";
+  echo "TOKEN=output_from_oc_whoami_-t bin/drush -r web scr ShepherdContentGenerate.php --uri=shepherd.test\n";
   exit(1);
 }
 
