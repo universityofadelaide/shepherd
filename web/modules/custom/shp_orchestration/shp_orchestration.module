@@ -110,14 +110,12 @@ function shp_orchestration_node_update(EntityInterface $entity) {
  * Implements hook_form_node_form_alter().
  */
 function shp_orchestration_form_node_form_alter(&$form, FormStateInterface $form_state) {
-
   $bundle = $form_state->getFormObject()->getEntity()->bundle();
 
   if ($bundle === 'shp_distribution') {
     // Add the validator.
     $form['#validate'][] = 'shp_orchestration_shp_distribution_form_validate';
   }
-
 }
 
 /**
@@ -133,7 +131,6 @@ function shp_orchestration_shp_distribution_form_validate($form, FormStateInterf
   $response = $orchestration_provider_plugin->getSecret($secret_name);
   // The client will respond FALSE if the status code doesn't return a 200.
   if (!$response) {
-    $form_state->setErrorByName('field_shp_ssh_key', t('Secret : ' . $secret_name . ' does not exist.'));
+    $form_state->setErrorByName('field_shp_ssh_key', t('Secret: @secret_name does not exist.', ['@secret_name' => $secret_name]));
   }
-
 }
