@@ -7,9 +7,13 @@
 
 namespace Drupal\shp_custom\Form;
 
+use Drupal\Component\Utility\Crypt;
+use Drupal\Core\Entity\Element\EntityAutocomplete;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Site\Settings;
 use Drupal\node\NodeInterface;
+use Drupal\user\Entity\User;
 
 /**
  * Class UserAddForm.
@@ -31,14 +35,30 @@ class UserAddForm extends FormBase {
   public function buildForm(array $form, FormStateInterface $form_state, NodeInterface $node = NULL) {
     $form_state->set('site', $node);
 
-    $roles = \Drupal::config('shp_custom.settings')
-      ->get('controlled_roles');
+    // @todo Provide restricted list of roles which are available in the site.
+    $roles = array_map('\Drupal\Component\Utility\Html::escape', user_role_names());
+
+    // Blatantly stolen from Drupal\Core\Entity\Element\EntityAutocomplete:L138.
+    $target_type = 'user';
+    $selection_handler = 'default';
+    $selection_settings = ['match_operator' => 'CONTAINS'];
+    $data = serialize($selection_settings) . $target_type . $selection_handler;
+    $selection_settings_key = Crypt::hmacBase64($data, Settings::getHashSalt());
+
+    $key_value_storage = \Drupal::keyValue('entity_autocomplete');
+    if (!$key_value_storage->has($selection_settings_key)) {
+      $key_value_storage->set($selection_settings_key, $selection_settings);
+    }
 
     $build['uid'] = [
       '#type' => 'textfield',
       '#title' => t('User'),
-      // @todo Remove dependency on ua_ldap - should be a form_alter in ua_ldap.
-      '#autocomplete_route_name' => 'ua_ldap.user_autocomplete',
+      '#autocomplete_route_name' => 'system.entity_autocomplete',
+      '#autocomplete_route_parameters' => [
+        'target_type' => $target_type,
+        'selection_handler' => $selection_handler,
+        'selection_settings_key' => $selection_settings_key,
+      ],
       '#size' => 60,
       '#maxlength' => 128,
       '#required' => TRUE,
@@ -59,26 +79,30 @@ class UserAddForm extends FormBase {
 
   /**
    * {@inheritdoc}
-   *
-   * @todo move the ldap validation out.
    */
   public function validateForm(array &$form, FormStateInterface $form_state) {
     $input = $form_state->getValues();
     $uid = $input['uid'];
     $role = $input['role'];
 
-    // If not a drupal user then check that the user is in LDAP.
-    $account = user_load_by_name($uid);
+    if (!$form_state->getValue('account')) {
+      $match   = EntityAutocomplete::extractEntityIdFromAutocompleteInput($uid);
+      $account = User::load($match);
+    }
+    else {
+      $account = $form_state->getValue('account');
+    }
+
     if (!$account) {
-      $attributes = \Drupal::service('ua_ldap.ldap_user')->getAttributes($uid);
-      if (!$attributes) {
-        $form_state->setErrorByName('uid', $this->t('Unable to find user id %uid.', ['%uid' => $uid]));
-      }
+      $form_state->setErrorByName('uid', $this->t('Unable to find user id %uid.', ['%uid' => $uid]));
     }
     else {
       $site = $form_state->get('site');
       if (\Drupal::service('shp_custom.site')->userRoleExists($site, $account, $role)) {
         $form_state->setErrorByName('uid', $this->t('User role already exists for %uid.', ['%uid' => $uid]));
+      }
+      else {
+        $form_state->setValue('account', $account);
       }
     }
   }
@@ -87,15 +111,10 @@ class UserAddForm extends FormBase {
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
-    $input = $form_state->getValues();
-    $uid = $input['uid'];
-    $role = $input['role'];
+    $role = $form_state->getValue('role');
 
     // If user not a drupal user yet then make them one.
-    $account = user_load_by_name($uid);
-    if (!$account) {
-      $account = \Drupal::service('shp_custom.user')->provision($uid);
-    }
+    $account = $form_state->getValue('account');
 
     // Create user role paragraph entity.
     $user_role_storage = \Drupal::entityTypeManager()->getStorage('paragraph');
@@ -113,7 +132,7 @@ class UserAddForm extends FormBase {
     $site->save();
 
     drupal_set_message($this->t('Successfully added user %uid to site.', [
-      '%uid' => $uid,
+      '%uid' => $account->name->value,
     ]));
 
     $form_state->setRedirect(

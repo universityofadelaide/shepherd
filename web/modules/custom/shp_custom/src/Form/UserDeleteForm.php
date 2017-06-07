@@ -61,7 +61,7 @@ class UserDeleteForm extends ConfirmFormBase {
    */
   public function getQuestion() {
     return $this->t('Are you sure you want to remove %user from %site', [
-      '%user' => $this->user->field_ua_user_preferred_name->getString(),
+      '%user' => $this->user->getAccountName(),
       '%site' => $this->node->title->value,
     ]);
   }
@@ -83,7 +83,7 @@ class UserDeleteForm extends ConfirmFormBase {
     }
 
     drupal_set_message($this->t('The %user has been removed from the site : %site'), [
-      '%user' => $this->user->field_ua_user_preferred_name->getString(),
+      '%user' => $author->getAccountName(),
       '%site' => $this->node->title->value,
     ]);
 

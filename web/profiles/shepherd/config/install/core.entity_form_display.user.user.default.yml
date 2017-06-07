@@ -2,8 +2,6 @@ langcode: en
 status: true
 dependencies:
   config:
-    - field.field.user.user.field_shp_keys
-    - field.field.user.user.field_ua_user_preferred_name
     - field.field.user.user.user_picture
     - image.style.thumbnail
   module:
@@ -18,20 +16,6 @@ content:
     weight: -10
   contact:
     weight: 5
-  field_shp_keys:
-    type: string_textarea
-    weight: 0
-    settings:
-      rows: 5
-      placeholder: ''
-    third_party_settings: {  }
-  field_ua_user_preferred_name:
-    weight: 7
-    settings:
-      size: 60
-      placeholder: ''
-    third_party_settings: {  }
-    type: string_textfield
   language:
     weight: 0
   timezone:

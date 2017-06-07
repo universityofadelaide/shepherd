@@ -3,8 +3,6 @@ services:
     class: Drupal\shp_custom\Service\Password
   shp_custom.site:
     class: Drupal\shp_custom\Service\Site
-  shp_custom.user:
-    class: Drupal\shp_custom\Service\User
   shp_custom.hosts_config:
     class: Drupal\shp_custom\Service\HostsConfig
   shp_custom.backup:

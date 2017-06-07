@@ -70,7 +70,7 @@ class UserEditForm extends FormBase {
     $form['username'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Name'),
-      '#value' => $account->field_ua_user_preferred_name->getString(),
+      '#value' => $author->getAccountName(),
       '#disabled' => TRUE,
     ];
     $form['ua_uid'] = [
@@ -118,7 +118,7 @@ class UserEditForm extends FormBase {
     $site->save();
 
     drupal_set_message($this->t('Successfully updated user %uid to site.', [
-      '%uid' => $user->field_ua_user_preferred_name->getString(),
+      '%uid' => $user->getAccountName(),
     ]));
 
     $form_state->setRedirect(

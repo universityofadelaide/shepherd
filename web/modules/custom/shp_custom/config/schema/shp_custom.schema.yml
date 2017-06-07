@@ -4,35 +4,6 @@ shp_custom.settings:
   type: mapping
   label: 'Shepherd settings'
   mapping:
-    ldap:
-      type: mapping
-      label: 'LDAP Integration'
-      mapping:
-       enabled:
-        type: boolean
-        label: 'Enabled'
-    controlled_roles:
-      type: mapping
-      label: 'Controlled Roles'
-      mapping:
-        administrator:
-          type: string
-          label: 'Administrator'
-        shp_developer:
-          type: string
-          label: 'Developer'
-        shp_online_consultant:
-          type: string
-          label: 'Online Consultant'
-        shp_site_administrator:
-          type: string
-          label: 'Site Administrator'
-        shp_web_author:
-          type: string
-          label: 'Web Author'
-        shp_content_editor:
-          type: string
-          label: 'Content Editor'
     backup_service:
       type: mapping
       label: 'Backup Service'

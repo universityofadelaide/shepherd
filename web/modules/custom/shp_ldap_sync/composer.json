@@ -1,0 +1,6 @@
+{
+  "name": "shepherd/ua_ldap_sync",
+  "description": "Provides ldap user role sync functionality specific to the Shepherd distribution.",
+  "type": "drupal-module",
+  "license": "GPL-2.0+"
+}

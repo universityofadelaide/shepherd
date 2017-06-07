@@ -1,0 +1,7 @@
+shp_ldap_sync.settings:
+  path: '/admin/config/system/shepherd-ldap'
+  defaults:
+    _form: '\Drupal\shp_ldap_sync\Form\LdapSyncSettings'
+    _title: 'Shepherd LDAP sync settings'
+  requirements:
+    _permission: 'administer account settings'

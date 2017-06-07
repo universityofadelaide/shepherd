@@ -1,0 +1,102 @@
+<?php
+
+/**
+ * @file
+ * Enables user role syncing to LDAP.
+ */
+
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Form\FormStateInterface;
+
+/**
+ * Implements hook_ENTITY_TYPE_insert().
+ *
+ * Triggers numerous actions when certain entities are created.
+ *
+ * Site:
+ *  * Adds LDAP entries for each 'site_id#role' combination.
+ *  * Synchronises any users for the site with LDAP.
+ *  * Adds a default 'UAT' environment for the new site.
+ */
+function shp_ldap_sync_node_insert(EntityInterface $entity) {
+  switch ($entity->bundle()) {
+    case 'shp_site':
+      if (\Drupal::config('shp_ldap_sync.settings')->get('enabled')) {
+        // Add LDAP entries for each 'site_id#role' combination.
+        $controlled_roles = array_keys(\Drupal::config('shp_ldap_sync.settings')
+          ->get('controlled_roles'));
+        \Drupal::service('ua_ldap.ldap_site')
+          ->addSite($entity->id(), $controlled_roles);
+        // @todo Deal with failure - consider a queue.
+        // Synchronise any users that were added to LDAP.
+        \Drupal::service('ua_ldap.ldap_site')
+          ->syncUsers($entity->id());
+        // @todo Deal with failure - consider a queue.
+      }
+      break;
+  }
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_update().
+ *
+ * Synchronises a site's users to LDAP when it is updated, and triggers jenkins
+ * jobs when an instance's status is changed.
+ */
+function shp_ldap_sync_node_update(EntityInterface $entity) {
+  switch ($entity->bundle()) {
+    case 'shp_site':
+      if (\Drupal::config('shp_ldap_sync.settings')->get('enabled')) {
+        \Drupal::service('ua_ldap.ldap_site')->syncUsers($entity->id());
+        // @todo Deal with failure - consider a queue.
+      }
+      break;
+  }
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_delete().
+ *
+ * Cleans up LDAP when sites are removed, and triggers jenkins when site
+ * instances are deleted.
+ *
+ * @todo Shepherd: Don't do this at all and archive sites and environments.
+ * @todo Shepherd: Move the decommissioning to environment update hook.
+ */
+function shp_ldap_sync_node_delete(EntityInterface $entity) {
+  switch ($entity->bundle()) {
+    case 'shp_site':
+      if (\Drupal::config('shp_ldap_sync.settings')->get('enabled')) {
+        // @todo Implement some sensible LDAP cleanup.
+        // \Drupal::service('ua_ldap.ldap_site')->removeSite($entity->id());
+        // @todo Deal with failure - consider a queue.
+      }
+      break;
+  }
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function shp_ldap_sync_form_shp_custom_user_add_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  // Use LDAP specific user lookup.
+  array_unshift($form['#validate'], 'shp_ldap_sync_add_user_validate_handler');
+  $form['uid']['#autocomplete_route_name'] = 'ua_ldap.user_autocomplete';
+  unset($form['#autocomplete_route_parameters']);
+}
+
+/**
+ * Add user to site form validation to provision Drupal users from LDAP.
+ */
+function shp_ldap_sync_add_user_validate_handler(&$form, FormStateInterface $form_state) {
+  $account_name = $form_state->getValue('uid');
+  $account = user_load_by_name($account_name);
+
+  if (!$account) {
+    $attributes = \Drupal::service('ua_ldap.ldap_user')->getAttributes($account);
+    if ($attributes) {
+      $account = \Drupal::service('ua_ldap.ldap_user_data')->provision($account);
+    }
+  }
+  $form_state->setValue('account', $account);
+}

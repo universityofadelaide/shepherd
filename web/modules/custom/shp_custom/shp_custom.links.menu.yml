@@ -27,8 +27,8 @@ shp_custom.distributions_view:
   route_name: shp_custom.distributions
   parent: shp_custom.admin
   weight: -7
-shp_custom.shepherd_settings:
+shp_custom.settings:
   title: 'Shepherd'
   description: 'Configure Shepherd settings and integrations.'
   parent: system.admin_config_system
-  route_name: shp_custom.shepherd_settings
+  route_name: shp_custom.settings

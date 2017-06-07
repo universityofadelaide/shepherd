@@ -1,8 +1,4 @@
 <?php
-/**
- * @file
- * Contains \Drupal\shp_custom\Form\ShepherdSettings.
- */
 
 namespace Drupal\shp_custom\Form;
 
@@ -88,39 +84,6 @@ class ShepherdSettings extends ConfigFormBase {
       '#description' => $this->t('The job to trigger when the domain and paths of an environment are changed.'),
       '#default_value' => $config->get('jenkins.reverse_proxy_job'),
     ];
-    $form['ldap'] = [
-      '#type' => 'details',
-      '#title' => $this->t('LDAP Integration'),
-      '#open' => TRUE,
-      '#tree' => TRUE,
-    ];
-    $form['ldap']['enabled'] = [
-      '#type' => 'checkbox',
-      '#title' => $this->t('Enabled'),
-      '#size' => 30,
-      '#description' => $this->t('When checked, Shepherd will attempt to synchronise users and sites with LDAP.'),
-      '#default_value' => $config->get('ldap.enabled'),
-    ];
-
-    $form['controlled_roles'] = [
-      '#type' => 'details',
-      '#title' => $this->t('Controlled Roles'),
-      '#open' => TRUE,
-      '#tree' => TRUE,
-    ];
-
-    $controlled_roles = '';
-    foreach ($config->get('controlled_roles') as $key => $val) {
-      $controlled_roles .= $key . '|' . $val . "\n";
-    }
-
-    // @todo Should either reference the field storage settings or just remove it.
-    $form['controlled_roles']['textarea'] = [
-      '#type' => 'textarea',
-      '#rows' => 10,
-      '#description' => $this->t('Setup your controlled roles using the format role|description.'),
-      '#default_value' => $controlled_roles,
-    ];
 
     $form['environment_domains'] = [
       '#type' => 'details',
@@ -165,14 +128,6 @@ class ShepherdSettings extends ConfigFormBase {
     $config = $this->config('shp_custom.settings');
     $config->delete();
 
-    $controlled_roles_data = explode("\r\n", trim($form_state->getValue('controlled_roles')['textarea']));
-    foreach ($controlled_roles_data as $role) {
-      $controlled_role = explode('|', $role);
-      if (trim($controlled_role[0]) != '' && trim($controlled_role[1]) != '') {
-        $config->set('controlled_roles.' . str_replace(' ', '_', trim($controlled_role[0])), trim($controlled_role[1]));
-      }
-    }
-
     $environment_domains_data = explode("\r\n", trim($form_state->getValue('environment_domains')['textarea']));
     foreach ($environment_domains_data as $environment_domain) {
       list($environment, $domain) = explode('|', $environment_domain);
@@ -193,8 +148,6 @@ class ShepherdSettings extends ConfigFormBase {
       ->set('jenkins.deploy_job', $jenkins_data['deploy_job'])
       ->set('jenkins.restore_job', $jenkins_data['restore_job'])
       ->set('jenkins.reverse_proxy_job', $jenkins_data['reverse_proxy_job']);
-    $config
-      ->set('ldap.enabled', $form_state->getValue('ldap')['enabled']);
     $config
       ->set('backup_service.path', rtrim($form_state->getValue('backup_service')['path'], '/'));
     $config->save();

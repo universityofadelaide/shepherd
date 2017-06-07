@@ -97,7 +97,7 @@ shp_custom.permissions:
   requirements:
     _permission: 'access content'
     account_id: ^[0-9]+
-shp_custom.shepherd_settings:
+shp_custom.settings:
   path: '/admin/config/system/shepherd'
   defaults:
     _form: '\Drupal\shp_custom\Form\ShepherdSettings'

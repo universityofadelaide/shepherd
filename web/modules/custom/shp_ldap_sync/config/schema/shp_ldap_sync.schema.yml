@@ -1,0 +1,11 @@
+# Configuration schema for shp_custom module
+shp_ldap_sync.settings:
+  type: mapping
+  label: 'LDAP sync settings'
+  mapping:
+    enabled:
+      type: boolean
+      label: 'Enabled'
+    controlled_roles:
+      type: sequence
+      label: 'Controlled Roles'

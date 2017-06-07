@@ -1,0 +1,6 @@
+enabled: false
+controlled_roles:
+  shp_site_administrator: shp_site_administrator
+  shp_online_consultant: shp_online_consultant
+  shp_developer: shp_developer
+  administrator: administrator

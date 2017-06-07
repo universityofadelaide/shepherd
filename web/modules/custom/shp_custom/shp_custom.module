@@ -127,65 +127,12 @@ function shp_custom_invalidate_site_cache(EntityInterface $environment) {
 }
 
 /**
- * Implements hook_ENTITY_TYPE_insert().
- *
- * Triggers numerous actions when certain entities are created.
- *
- * Site:
- *  * Adds LDAP entries for each 'site_id#role' combination.
- *  * Synchronises any users for the site with LDAP.
- *  * Adds a default 'UAT' environment for the new site.
- *
- */
-function shp_custom_node_insert(EntityInterface $entity) {
-  switch ($entity->bundle()) {
-    case 'shp_site':
-      // @todo Shepherd: Move all the ldap dreams to their own dream module.
-      if (\Drupal::config('shp_custom.settings')->get('ldap')['enabled']) {
-        // Add LDAP entries for each 'site_id#role' combination.
-        $controlled_roles = array_keys(\Drupal::config('shp_custom.settings')
-          ->get('controlled_roles'));
-        \Drupal::service('ua_ldap.ldap_site')
-          ->addSite($entity->id(), $controlled_roles);
-        // @todo Deal with failure - consider a queue.
-        // Synchronise any users that were added to LDAP.
-        \Drupal::service('ua_ldap.ldap_site')
-          ->syncUsers($entity->id());
-        // @todo Deal with failure - consider a queue.
-      }
-      break;
-
-  }
-}
-
-/**
- * Implements hook_ENTITY_TYPE_presave().
- *
- * Fetches a user's details from LDAP to fill out a provisioned account.
- */
-function shp_custom_user_presave(EntityInterface $entity) {
-  if ($entity->isNew()) {
-    // @todo Break this functionality into its own module for reuse.
-    \Drupal::service('shp_custom.user')->populateFieldsFromLdap($entity);
-  }
-}
-
-/**
  * Implements hook_ENTITY_TYPE_update().
  *
- * Synchronises a site's users to LDAP when it is updated, and triggers jenkins
- * jobs when an instance's status is changed.
+ * Triggers jenkins jobs when an instance's status is changed.
  */
 function shp_custom_node_update(EntityInterface $entity) {
   switch ($entity->bundle()) {
-    case 'shp_site':
-      // @todo Break this functionality into its own module for reuse.
-      if (\Drupal::config('shp_custom.settings')->get('ldap.enabled')) {
-        \Drupal::service('ua_ldap.ldap_site')->syncUsers($entity->id());
-        // @todo Deal with failure - consider a queue.
-      }
-      break;
-
     case 'shp_environment':
       shp_custom_invalidate_site_cache($entity);
       // @todo Shepherd: Add new environment to reverse proxy.
@@ -198,23 +145,13 @@ function shp_custom_node_update(EntityInterface $entity) {
 /**
  * Implements hook_ENTITY_TYPE_delete().
  *
- * Cleans up LDAP when sites are removed, and triggers jenkins when site
- * instances are deleted.
+ * Triggers jenkins when site instances are deleted.
  *
  * @todo Shepherd: Don't do this at all and archive sites and environments.
  * @todo Shepherd: Move the decommissioning to environment update hook.
  */
 function shp_custom_node_delete(EntityInterface $entity) {
   switch ($entity->bundle()) {
-    case 'shp_site':
-      // @todo Break this functionality into its own module for reuse.
-      if (\Drupal::config('shp_custom.settings')->get('ldap')['enabled']) {
-        // @todo Implement some sensible LDAP cleanup.
-        // \Drupal::service('ua_ldap.ldap_site')->removeSite($entity->id());
-        // @todo Deal with failure - consider a queue.
-      }
-      break;
-
     case 'shp_environment':
       shp_custom_invalidate_site_cache($entity);
       break;
@@ -251,7 +188,7 @@ function shp_custom_comment_insert(EntityInterface $entity) {
     $author_email = $author->getEmail();
 
     $mail_message = [
-      'author_name' => $author->field_ua_user_preferred_name->value ?: $author->getAccountName(),
+      'author_name' => $author->getAccountName(),
       'message' => $entity->comment_body->value,
       'subject' => $entity->getSubject(),
     ];
@@ -264,7 +201,7 @@ function shp_custom_comment_insert(EntityInterface $entity) {
       return;
     }
 
-    drupal_set_message(t('An email notification has been sent to %user', ['%user' => $author->field_ua_user_preferred_name->value]));
+    drupal_set_message(t('An email notification has been sent to %user', ['%user' => $author->getAccountName()]));
   }
 
 }
@@ -287,26 +224,9 @@ function shp_custom_mail($key, &$message, $params) {
  * Implements hook_cron().
  */
 function shp_custom_cron() {
-  shp_custom_populate_user_attributes();
-
   // Only run backups at 3am.
   if (date('G', time()) == 3) {
     shp_custom_backup_environments();
-  }
-}
-
-/**
- * Populates shepherd users with name and email from LDAP.
- *
- * @todo Shepherd: Move to its own module.
- */
-function shp_custom_populate_user_attributes() {
-  // Update users attributes from LDAP.
-  $user_ids = \Drupal::entityQuery('user')->execute();
-  $users = User::loadMultiple($user_ids);
-  foreach ($users as $user) {
-    \Drupal::service('shp_custom.user')->populateFieldsFromLdap($user);
-    $user->save();
   }
 }
 

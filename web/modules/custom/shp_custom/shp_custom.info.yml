@@ -4,4 +4,3 @@ description: 'Provides functionality specific to Shepherd.'
 core: 8.x
 package: UA
 dependencies:
- - ua_ldap
