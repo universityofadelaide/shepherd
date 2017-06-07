@@ -12,7 +12,7 @@ function shp_orchestration_node_insert(EntityInterface $entity) {
 
   if (strpos($bundle, 'shp') !== FALSE) {
     // Get the plugin.
-    /** @var Drupal\shp_orchestration\Plugin\OrchestrationProvider\OpenShiftOrchestrationProvider $orchestration_provider_plugin */
+    /** @var Drupal\shp_orchestration\OrchestrationProviderInterface $orchestration_provider_plugin */
     $orchestration_provider_plugin = \Drupal::service('plugin.manager.orchestration_provider')->getProviderInstance();
 
     switch ($bundle) {

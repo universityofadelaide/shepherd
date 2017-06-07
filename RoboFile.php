@@ -45,7 +45,8 @@ class RoboFile extends RoboFileBase {
   public function devContentGenerate() {
     $virtual_host = getenv("VIRTUAL_HOST");
     if (!empty($virtual_host)) {
-      $this->say("$this->drush_cmd scr ShepherdContentGenerate.php --uri=$virtual_host");
+      $this->_exec("$this->drush_cmd scr ShepherdContentGenerate.php --uri=$virtual_host");
     }
   }
+
 }

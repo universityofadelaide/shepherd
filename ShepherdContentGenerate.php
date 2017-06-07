@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file
  * Contains programmatic creation of Shepherd nodes for use by `drush scr`.
@@ -11,6 +12,14 @@ use Drupal\shp_orchestration\Entity\OpenShiftConfigEntity;
 $domain_name = getenv("DOMAIN") ?: '192.168.99.100.nip.io';
 $openshift_url = getenv("OPENSHIFT_URL") ?: 'https://192.168.99.100:8443';
 $token = trim(getenv("TOKEN"));
+
+// Check that the auth TOKEN environment variable is available.
+if (empty($token)) {
+  echo "To generate default configuration for development, export your auth TOKEN from your host.\n";
+  echo "export TOKEN=some-token\n";
+  echo "You can then safely re-run `robo dev:content-generate`\n";
+  exit(1);
+}
 
 $environment_defaults = [
   'field_shp_git_reference' => 'develop',
@@ -30,13 +39,6 @@ foreach ($environment_defaults as $field_name => $field_value) {
     'dev' => $domain_name,
   ]
 )->save();
-
-// Check for token.
-if (empty($token)) {
-  echo "Better results would be achieved by specifying a token, eg.\n";
-  echo "TOKEN=output_from_oc_whoami_-t bin/drush -r web scr ShepherdContentGenerate.php --uri=shepherd.test\n";
-  exit(1);
-}
 
 // Create orchestration provider config.
 if (!OpenShiftConfigEntity::load('openshift')) {

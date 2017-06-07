@@ -50,10 +50,10 @@ dependencies:
   - shp_content_types
   - shp_custom
   - shp_drush_aliases
+  - shp_ldap_sync
   - shp_orchestration
   # University created modules
   - ua_ldap
-  - ua_ldap_authorisation
 themes:
   - bartik
   - seven

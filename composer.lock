@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "a4818156352285149436c44c644021d2",
+    "content-hash": "89f1d3d03c86545e9e383c1db6f76a6d",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -288,16 +288,16 @@
         },
         {
             "name": "consolidation/output-formatters",
-            "version": "3.1.9",
+            "version": "3.1.10",
             "source": {
                 "type": "git",
                 "url": "https://github.com/consolidation/output-formatters.git",
-                "reference": "2e09069866bae89d3fb545365f997a40745e34d2"
+                "reference": "3872f19517bfc9da0e14c9e5b6fe0f8c7439ea3a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/consolidation/output-formatters/zipball/2e09069866bae89d3fb545365f997a40745e34d2",
-                "reference": "2e09069866bae89d3fb545365f997a40745e34d2",
+                "url": "https://api.github.com/repos/consolidation/output-formatters/zipball/3872f19517bfc9da0e14c9e5b6fe0f8c7439ea3a",
+                "reference": "3872f19517bfc9da0e14c9e5b6fe0f8c7439ea3a",
                 "shasum": ""
             },
             "require": {
@@ -333,7 +333,7 @@
                 }
             ],
             "description": "Format text by applying transformations provided by plug-in formatters.",
-            "time": "2017-05-08T15:59:33+00:00"
+            "time": "2017-06-06T19:08:54+00:00"
         },
         {
             "name": "cweagans/composer-patches",
@@ -1121,8 +1121,8 @@
                     "dev-1.x": "1.x-dev"
                 },
                 "drupal": {
-                    "version": "8.x-1.2+3-dev",
-                    "datestamp": "1494232385"
+                    "version": "8.x-1.2+2-dev",
+                    "datestamp": "1486636986"
                 }
             },
             "notification-url": "https://packages.drupal.org/8/downloads",
@@ -1161,7 +1161,7 @@
             "dist": {
                 "type": "zip",
                 "url": "https://ftp.drupal.org/files/projects/externalauth-8.x-1.0.zip",
-                "reference": null,
+                "reference": "8.x-1.0",
                 "shasum": "f1298e1d34f5e1c4ebc130c2b90443b5167e405b"
             },
             "require": {
@@ -1212,7 +1212,7 @@
             "dist": {
                 "type": "zip",
                 "url": "https://ftp.drupal.org/files/projects/paragraphs-8.x-1.1.zip",
-                "reference": null,
+                "reference": "8.x-1.1",
                 "shasum": "c678e5704a98c6a0549e415412da081cfeb03a00"
             },
             "require": {
@@ -1344,16 +1344,16 @@
         },
         {
             "name": "drush/drush",
-            "version": "8.1.11",
+            "version": "8.1.12",
             "source": {
                 "type": "git",
                 "url": "https://github.com/drush-ops/drush.git",
-                "reference": "8e7c3308dee06083b6bd065e24e009a34fb71d2a"
+                "reference": "a1d3ab0f1d9ce01556d70015906caaed723f7ba7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/drush-ops/drush/zipball/8e7c3308dee06083b6bd065e24e009a34fb71d2a",
-                "reference": "8e7c3308dee06083b6bd065e24e009a34fb71d2a",
+                "url": "https://api.github.com/repos/drush-ops/drush/zipball/a1d3ab0f1d9ce01556d70015906caaed723f7ba7",
+                "reference": "a1d3ab0f1d9ce01556d70015906caaed723f7ba7",
                 "shasum": ""
             },
             "require": {
@@ -1445,7 +1445,7 @@
             ],
             "description": "Drush is a command line shell and scripting interface for Drupal, a veritable Swiss Army knife designed to make life easier for those of us who spend some of our working hours hacking away at the command prompt.",
             "homepage": "http://www.drush.org",
-            "time": "2017-04-21T21:59:44+00:00"
+            "time": "2017-06-05T22:51:34+00:00"
         },
         {
             "name": "easyrdf/easyrdf",
@@ -2235,16 +2235,16 @@
         },
         {
             "name": "psy/psysh",
-            "version": "v0.8.5",
+            "version": "v0.8.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/bobthecow/psysh.git",
-                "reference": "38a9d21406597a0440690eafbcb0222f528c8ac6"
+                "reference": "7028d6d525fb183d50b249b7c07598e3d386b27d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/bobthecow/psysh/zipball/38a9d21406597a0440690eafbcb0222f528c8ac6",
-                "reference": "38a9d21406597a0440690eafbcb0222f528c8ac6",
+                "url": "https://api.github.com/repos/bobthecow/psysh/zipball/7028d6d525fb183d50b249b7c07598e3d386b27d",
+                "reference": "7028d6d525fb183d50b249b7c07598e3d386b27d",
                 "shasum": ""
             },
             "require": {
@@ -2274,7 +2274,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-develop": "0.9.x-dev"
+                    "dev-develop": "0.8.x-dev"
                 }
             },
             "autoload": {
@@ -2304,7 +2304,7 @@
                 "interactive",
                 "shell"
             ],
-            "time": "2017-05-17T06:49:19+00:00"
+            "time": "2017-06-04T10:34:20+00:00"
         },
         {
             "name": "stack/builder",
@@ -3683,20 +3683,20 @@
         },
         {
             "name": "twig/twig",
-            "version": "v1.33.2",
+            "version": "v1.34.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/twigphp/Twig.git",
-                "reference": "dd6ca96227917e1e85b41c7c3cc6507b411e0927"
+                "reference": "55e4beb721a044db9e31ae0470024fc205b6a008"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/twigphp/Twig/zipball/dd6ca96227917e1e85b41c7c3cc6507b411e0927",
-                "reference": "dd6ca96227917e1e85b41c7c3cc6507b411e0927",
+                "url": "https://api.github.com/repos/twigphp/Twig/zipball/55e4beb721a044db9e31ae0470024fc205b6a008",
+                "reference": "55e4beb721a044db9e31ae0470024fc205b6a008",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.2.7"
+                "php": ">=5.3.3"
             },
             "require-dev": {
                 "psr/container": "^1.0",
@@ -3706,12 +3706,15 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.33-dev"
+                    "dev-master": "1.34-dev"
                 }
             },
             "autoload": {
                 "psr-0": {
                     "Twig_": "lib/"
+                },
+                "psr-4": {
+                    "Twig\\": "src/"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -3741,7 +3744,7 @@
             "keywords": [
                 "templating"
             ],
-            "time": "2017-04-20T17:39:48+00:00"
+            "time": "2017-06-06T03:56:50+00:00"
         },
         {
             "name": "ua-drupal-modules/ua_ldap",
@@ -3749,7 +3752,7 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.adelaide.edu.au:drupal-modules/ua_ldap.git",
-                "reference": "9daf2c5afdf19df5b94b3777bb124ac167b535f2"
+                "reference": "ab855b341dfb6a249dbf785e25c206a2d321e775"
             },
             "require": {
                 "zendframework/zend-ldap": "^2.5.1"
@@ -3759,25 +3762,7 @@
                 "GPL-2.0+"
             ],
             "description": "Provides configuration and services to interact with LDAP.",
-            "time": "2016-11-23 00:43:11"
-        },
-        {
-            "name": "ua-drupal-modules/ua_ldap_authorisation",
-            "version": "dev-develop",
-            "source": {
-                "type": "git",
-                "url": "git@gitlab.adelaide.edu.au:drupal-modules/ua_ldap_authorisation.git",
-                "reference": "646add0b6d42a5794c99ec314468dfffcb4ab992"
-            },
-            "type": "drupal-module",
-            "license": [
-                "GPL-2.0+"
-            ],
-            "description": "Synchronises controlled roles for a user with LDAP, which is administered through UA Site Manager.",
-            "keywords": [
-                "Drupal"
-            ],
-            "time": "2017-03-29 02:10:43"
+            "time": "2017-06-07 00:59:53"
         },
         {
             "name": "universityofadelaide/openshift-client",
@@ -3785,12 +3770,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/universityofadelaide/openshift-client.git",
-                "reference": "b572c3dcdec05e99a2895bf930d225622b4762d5"
+                "reference": "af5ac4a782cb396ae72cc245fc94413d23ef8053"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/universityofadelaide/openshift-client/zipball/b572c3dcdec05e99a2895bf930d225622b4762d5",
-                "reference": "b572c3dcdec05e99a2895bf930d225622b4762d5",
+                "url": "https://api.github.com/repos/universityofadelaide/openshift-client/zipball/af5ac4a782cb396ae72cc245fc94413d23ef8053",
+                "reference": "af5ac4a782cb396ae72cc245fc94413d23ef8053",
                 "shasum": ""
             },
             "require": {
@@ -3822,7 +3807,7 @@
                 }
             ],
             "description": "Simple OpenShift client for PHP.",
-            "time": "2017-06-01 01:14:44"
+            "time": "2017-06-06 05:38:12"
         },
         {
             "name": "universityofadelaide/shepherd-drupal-scaffold",
@@ -4725,12 +4710,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/hechoendrupal/drupal-console.git",
-                "reference": "963dd3ddc31918fc622fff13c58160fd0ecbe324"
+                "reference": "0f0c8fc5041cdd83feabead25285d5a5b91d0ad3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/hechoendrupal/drupal-console/zipball/963dd3ddc31918fc622fff13c58160fd0ecbe324",
-                "reference": "963dd3ddc31918fc622fff13c58160fd0ecbe324",
+                "url": "https://api.github.com/repos/hechoendrupal/drupal-console/zipball/0f0c8fc5041cdd83feabead25285d5a5b91d0ad3",
+                "reference": "0f0c8fc5041cdd83feabead25285d5a5b91d0ad3",
                 "shasum": ""
             },
             "require": {
@@ -4795,7 +4780,7 @@
                 "drupal",
                 "symfony"
             ],
-            "time": "2017-05-29 18:58:38"
+            "time": "2017-06-04 23:36:54"
         },
         {
             "name": "drupal/console-core",
@@ -6044,7 +6029,7 @@
         },
         {
             "name": "symfony/browser-kit",
-            "version": "v3.3.0",
+            "version": "v3.3.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/browser-kit.git",
@@ -6408,7 +6393,6 @@
         "drupal/entity_reference_revisions": 20,
         "drupal/r4032login": 20,
         "ua-drupal-modules/ua_ldap": 20,
-        "ua-drupal-modules/ua_ldap_authorisation": 20,
         "drupal/console": 20,
         "drupal/devel": 20,
         "universityofadelaide/openshift-client": 20

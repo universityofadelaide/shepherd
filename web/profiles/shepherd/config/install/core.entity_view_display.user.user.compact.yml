@@ -3,8 +3,6 @@ status: true
 dependencies:
   config:
     - core.entity_view_mode.user.compact
-    - field.field.user.user.field_shp_keys
-    - field.field.user.user.field_ua_user_preferred_name
     - field.field.user.user.user_picture
     - image.style.thumbnail
   module:
@@ -24,6 +22,4 @@ content:
     third_party_settings: {  }
     label: hidden
 hidden:
-  field_shp_keys: true
-  field_ua_user_preferred_name: true
   member_for: true

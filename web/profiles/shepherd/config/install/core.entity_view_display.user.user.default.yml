@@ -2,8 +2,6 @@ langcode: en
 status: true
 dependencies:
   config:
-    - field.field.user.user.field_shp_keys
-    - field.field.user.user.field_ua_user_preferred_name
     - field.field.user.user.user_picture
     - image.style.thumbnail
   module:
@@ -14,13 +12,6 @@ targetEntityType: user
 bundle: user
 mode: default
 content:
-  field_ua_user_preferred_name:
-    weight: 6
-    label: above
-    settings:
-      link_to_entity: false
-    third_party_settings: {  }
-    type: string
   member_for:
     weight: 5
   user_picture:
@@ -32,4 +23,3 @@ content:
     third_party_settings: {  }
     label: hidden
 hidden:
-  field_shp_keys: true
