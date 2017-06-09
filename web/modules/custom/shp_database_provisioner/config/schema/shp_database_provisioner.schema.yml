@@ -1,0 +1,19 @@
+shp_database_provisioner.settings:
+  type: mapping
+  label: 'Database provisioner settings'
+  mapping:
+    enabled:
+      type: boolean
+      label: 'Enabled'
+    host:
+      type: string
+      label: 'Host'
+    port:
+      type: string
+      label: 'Port'
+    user:
+      type: string
+      label: 'User'
+    secret:
+      type: string
+      label: 'Secret'

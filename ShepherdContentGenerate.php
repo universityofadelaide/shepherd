@@ -12,6 +12,7 @@ use Drupal\shp_orchestration\Entity\OpenShiftConfigEntity;
 $domain_name = getenv("DOMAIN") ?: '192.168.99.100.nip.io';
 $openshift_url = getenv("OPENSHIFT_URL") ?: 'https://192.168.99.100:8443';
 $token = trim(getenv("TOKEN"));
+$database_port = getenv("DB_PORT") ?: '31632';
 
 // Check that the auth TOKEN environment variable is available.
 if (empty($token)) {
@@ -39,6 +40,18 @@ foreach ($environment_defaults as $field_name => $field_value) {
     'dev' => $domain_name,
   ]
 )->save();
+
+// Set deployment database config.
+$db_provisioner_config = \Drupal::service('config.factory')->getEditable('shp_database_provisioner.settings');
+$db_provisioner_config->set(
+  'host',
+  'mysql-myproject.' . $domain_name
+);
+$db_provisioner_config->set(
+  'port',
+  $database_port
+);
+$db_provisioner_config->save();
 
 // Create orchestration provider config.
 if (!OpenShiftConfigEntity::load('openshift')) {

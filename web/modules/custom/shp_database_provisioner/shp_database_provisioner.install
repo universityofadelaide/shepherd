@@ -1,0 +1,9 @@
+<?php
+
+/**
+ * Implements hook_install().
+ */
+function shp_database_provisioner_install() {
+  // Provision must run before shp_orchestration.
+  module_set_weight('shp_database_provisioner', -1);
+}

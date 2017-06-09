@@ -29,17 +29,6 @@ class RoboFile extends RoboFileBase {
   }
 
   /**
-   * {@inheritdoc}
-   */
-  public function build() {
-    // Use the default build steps.
-    parent::build();
-
-    // Add default content.
-    $this->devContentGenerate();
-  }
-
-  /**
    * Create default content for the Shepherd.
    */
   public function devContentGenerate() {

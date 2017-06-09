@@ -23,7 +23,9 @@ Now start up the shepherd environment and configure it.
 ```bash
 ./dsh
 robo build
-TOKEN=paste_token_from_above bin/drush -r web scr ShepherdContentGenerate.php --uri=shepherd.test
+export TOKEN=paste_token_from_above
+export DB_PORT=paste_db_port_from_below
+bin/drush -r web scr ShepherdContentGenerate.php --uri=shepherd.test
 ```
 
 Thats it, there should already be a build running, and a deployment ready to occur when the
@@ -104,7 +106,14 @@ Visit http://shepherd.test/core/install.php and complete the install wizard.
 ### Configure Shepherd to use local Minishift
 Create a mysql database in OpenShift for deployments to use:
 ```bash
-oc new-app mysql MYSQL_USER=shepherd MYSQL_PASSWORD=shepherd MYSQL_DATABASE=shepherd -l db=shepherd
+oc new-app mysql MYSQL_ROOT_PASSWORD=super-secret-password -l db=shepherd
+oc expose dc mysql --type=LoadBalancer
+echo "Database port: $(oc get service mysql --no-headers | sed 's/.*:\([0-9]*\).*/\1/')"
+```
+
+Create a secret to store the mysql root password (this is fetched by Shepherd):
+```bash
+oc create secret generic privileged-db-password --from-literal=DATABASE_PASSWORD=super-secret-password
 ```
 
 Visit http://shepherd.test/admin/config/system/shepherd/orchestration/provider_settings
@@ -140,7 +149,6 @@ curl --insecure -H "Authorization: Bearer $(oc login -u developer -p developer >
 # from utility container : 
 bin/drush -r web cset shp_orchestration.openshift.openshift token ${NEW_TOKEN}
 ```
-
 
 ### Installing SwaggerUI for developing with OpenShift API
 
