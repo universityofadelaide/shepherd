@@ -56,7 +56,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
    * @return string
    *   sanitised title.
    */
-  private function sanitise($text) {
+  private static function sanitise($text) {
     return strtolower(preg_replace('/\s+/', '-', $text));
   }
 
@@ -64,7 +64,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
    * {@inheritdoc}
    */
   public function createdDistribution(string $name, string $builder_image, string $source_repo, string $source_ref = 'master', string $source_secret = NULL) {
-    $sanitised_name = $this->sanitise($name);
+    $sanitised_name = self::sanitise($name);
 
     // Package config for the client.
     $build_data = [
@@ -102,7 +102,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
    * {@inheritdoc}
    */
   public function updatedDistribution(string $name, string $builder_image, string $source_repo, string $source_ref = 'master', string $source_secret = NULL) {
-    $sanitised_name = $this->sanitise($name);
+    $sanitised_name = self::sanitise($name);
 
     // Package config for the client.
     $build_data = [
@@ -149,9 +149,13 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     string $source_ref = 'master',
     string $source_secret = NULL
   ) {
-    $sanitised_distribution_name = $this->sanitise($distribution_name);
-    $sanitised_site_name = $this->sanitise($site_name);
-    $sanitised_environment_name = $this->sanitise($environment_name);
+    $sanitised_distribution_name = self::sanitise($distribution_name);
+    $deployment_name = self::generateDeploymentName(
+      $distribution_name,
+      $site_name,
+      $environment_name,
+      $environment_id
+    );
     $image_stream_tag = $sanitised_distribution_name . ':' . $source_ref;
     $build_config_name = $sanitised_distribution_name . '-' . $source_ref;
 
@@ -181,16 +185,30 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
         return FALSE;
       }
     }
-    // TODO: Create new database for the environment.
-    // TODO: Build up env vars for database config.
-    $deploy_config_env_vars = [];
 
-    $deployment_name = implode('-', [
-      $sanitised_distribution_name,
-      $sanitised_site_name,
-      $sanitised_environment_name,
-      $environment_id,
-    ]);
+    // @todo Consider building this array by calling a hook.
+    $deploy_config_env_vars = [];
+    $env_vars_from_secrets = [
+      'DATABASE_HOST',
+      'DATABASE_PORT',
+      'DATABASE_NAME',
+      'DATABASE_USER',
+    ];
+    foreach ($env_vars_from_secrets as $env_var) {
+      $deploy_config_env_vars[] = [
+        'name' => $env_var,
+        'valueFrom' => [
+          'secretKeyRef' => [
+            'key' => $env_var,
+            'name' => $deployment_name,
+          ],
+        ],
+      ];
+    }
+    $deploy_config_env_vars[] = [
+      'name' => 'DATABASE_PASSWORD_FILE',
+      'value' => '/etc/secret/DATABASE_PASSWORD',
+    ];
 
     // @todo Parametrise storage size.
     $public_pvc_name = $deployment_name . '-public';
@@ -212,12 +230,36 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       return FALSE;
     }
 
+    // @todo Consider parametrising volume paths. Are they set by the distro?
+    $volumes = [
+      [
+        'type' => 'pvc',
+        'name' => $public_pvc_name,
+        'path' => '/code/web/sites/default/files',
+      ],
+      [
+        'type' => 'pvc',
+        'name' => $private_pvc_name,
+        'path' => '/code/private',
+      ],
+    ];
+
+    // If a secret with the same name as the deployment exists, volume it in.
+    if ($this->client->getSecret($deployment_name)) {
+      // @todo Consider parametrising secret volume path. Is there a convention?
+      $volumes[] = [
+        'type' => 'secret',
+        'name' => $deployment_name . '-secret',
+        'path' => '/etc/secret',
+        'secret' => $deployment_name,
+      ];
+    }
+
     $deploy_data = [
       'containerPort' => 8080,
       'memory_limit' => '128Mi',
       'env_vars' => $deploy_config_env_vars,
-      'public_volume' => $public_pvc_name,
-      'private_volume' => $private_pvc_name,
+      'volumes' => $volumes,
     ];
 
     $deployment_config = $this->client->createDeploymentConfig(
@@ -290,8 +332,48 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
   /**
    * {@inheritdoc}
    */
-  public function getSecret(string $name) {
-    return $this->client->getSecret($name);
+  public function getSecret(string $name, string $key = NULL) {
+    $secret = $this->client->getSecret($name);
+    if (is_array($secret) && array_key_exists('data', $secret)) {
+      if ($key) {
+        return array_key_exists($key, $secret['data']) ? base64_decode($secret['data'][$key]) : FALSE;
+      }
+      return array_walk($secret['data'], 'base64_decode');
+    }
+    return FALSE;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function createSecret(string $name, array $data) {
+    // Simply pass through to the client.
+    return $this->client->createSecret($name, $data);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function updateSecret(string $name, array $data) {
+    // Simply pass through to the client.
+    return $this->client->updateSecret($name, $data);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function generateDeploymentName(
+    string $distribution_name,
+    string $site_name,
+    string $environment_name,
+    string $environment_id
+  ) {
+    return implode('-', [
+      self::sanitise($distribution_name),
+      self::sanitise($site_name),
+      self::sanitise($environment_name),
+      $environment_id,
+    ]);
   }
 
 }

@@ -131,9 +131,61 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
    *
    * @param string $name
    *    Secret name.
+   * @param string $key
+   *    Optional key name to return.
+   *
+   * @return array|string|bool
+   *   Returns the secret array if successful, the value of the key if set, or
+   *   false.
+   */
+  public function getSecret(string $name, string $key = NULL);
+
+  /**
+   * Creates a secret.
+   *
+   * @param string $name
+   *    The name of the secret to be stored.
+   * @param array $data
+   *    Key value array of secret data.
+   *
+   * @return array|bool
+   *    Returns the secret array if successful, otherwise false.
+   */
+  public function createSecret(string $name, array $data);
+
+  /**
+   * Updates a secret.
+   *
+   * @param string $name
+   *    The name of the secret to be updated.
+   * @param array $data
+   *    Key value array of secret data.
    *
    * @return mixed
-   *   Returns the secret metadata if successful.
+   *    Returns the secret metadata if successful.
    */
-  public function getSecret(string $name);
+  public function updateSecret(string $name, array $data);
+
+  /**
+   * Generates a deployment name from Shepherd entities.
+   *
+   * @param string $distribution_name
+   *   Name of the distribution.
+   * @param string $site_name
+   *   Name of the site.
+   * @param string $environment_name
+   *   Name of the environment.
+   * @param string $environment_id
+   *   Unique id of the environment.
+   *
+   * @return string
+   *   Returns the generated deployment name.
+   */
+  public static function generateDeploymentName(
+    string $distribution_name,
+    string $site_name,
+    string $environment_name,
+    string $environment_id
+  );
+
 }

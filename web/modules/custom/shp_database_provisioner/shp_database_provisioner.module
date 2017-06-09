@@ -1,0 +1,153 @@
+<?php
+
+/**
+ * @file
+ * Contains shp_database_provisioner.module.
+ */
+
+use Drupal\Core\Entity\EntityInterface;
+use \Drupal\Core\Form\FormStateInterface;
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ *
+ * Adds database provisioner config to shepherd settings form.
+ */
+function shp_database_provisioner_form_shp_custom_settings_alter(&$form, FormStateInterface $form_state, $form_id) {
+  $config = \Drupal::config('shp_database_provisioner.settings');
+
+  $form['database'] = [
+    '#type' => 'details',
+    '#title' => t('Database provisioner'),
+    '#open' => TRUE,
+    '#tree' => TRUE,
+  ];
+  $form['database']['enabled'] = [
+    '#type' => 'checkbox',
+    '#title' => t('Enabled'),
+    '#size' => 30,
+    '#description' => t('When checked, a database and user is provisioned when a new environment is created.'),
+    '#default_value' => $config->get('enabled'),
+  ];
+  $form['database']['host'] = [
+    '#type' => 'textfield',
+    '#title' => t('Host'),
+    '#description' => t('The database host to provision DBs on.'),
+    '#default_value' => $config->get('host'),
+  ];
+  $form['database']['port'] = [
+    '#type' => 'textfield',
+    '#title' => t('Port'),
+    '#description' => t('The database host port. Typically 3306.'),
+    '#default_value' => $config->get('port'),
+  ];
+  $form['database']['user'] = [
+    '#type' => 'textfield',
+    '#title' => t('User'),
+    '#description' => t('The privileged user to use when connecting to the DB. Must have permissions for CREATE DATABASE and GRANT.'),
+    '#default_value' => $config->get('user'),
+  ];
+  $form['database']['secret'] = [
+    '#type' => 'textfield',
+    '#title' => t('Secret'),
+    '#description' => t('The name of the secret in which the privileged user password is stored. Fetched from the orchestration provider.'),
+    '#default_value' => $config->get('secret'),
+  ];
+  $form['#submit'][] = 'shp_database_provisioner_form_shp_custom_settings_submit';
+}
+
+/**
+ * Bespoke form submission handler for shp_database_provisioner settings.
+ *
+ * @see shp_database_provisioner_form_shp_custom_settings_alter()
+ */
+function shp_database_provisioner_form_shp_custom_settings_submit($form, FormStateInterface $form_state) {
+  // @todo Validation.
+  $config = \Drupal::configFactory()->getEditable('shp_database_provisioner.settings');
+  $config->set('enabled', $form_state->getValue(['database', 'enabled']))->save();
+  $config->set('host', $form_state->getValue(['database', 'host']))->save();
+  $config->set('port', $form_state->getValue(['database', 'port']))->save();
+  $config->set('user', $form_state->getValue(['database', 'user']))->save();
+  $config->set('secret', $form_state->getValue(['database', 'secret']))->save();
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_insert().
+ */
+function shp_database_provisioner_node_insert(EntityInterface $entity) {
+  $config = \Drupal::config('shp_database_provisioner.settings');
+  if ($entity->bundle() === 'shp_environment' && $config->get('enabled')) {
+    $orchestration_provider_plugin = \Drupal::service('plugin.manager.orchestration_provider')->getProviderInstance();
+
+    if (isset($entity->field_shp_site->target_id)) {
+      $site = $entity->get('field_shp_site')
+        ->first()
+        ->get('entity')
+        ->getTarget()
+        ->getValue();
+
+      if (isset($site->field_shp_distribution->target_id)) {
+        $distribution = $site->get('field_shp_distribution')
+          ->first()
+          ->get('entity')
+          ->getTarget()
+          ->getValue();
+      }
+    }
+    $deployment_name = $orchestration_provider_plugin::generateDeploymentName(
+      $distribution->getTitle(),
+      $site->getTitle(),
+      $entity->getTitle(),
+      $entity->id()
+    );
+
+    // Construct credentials for the new environment.
+    $env_db_credentials = [
+      'DATABASE_HOST' => $config->get('host'),
+      'DATABASE_PORT' => $config->get('port'),
+      'DATABASE_NAME' => 'env_' . $entity->id(),
+      'DATABASE_USER' => 'user_' . $entity->id(),
+      'DATABASE_PASSWORD' => \Drupal::service('shp_custom.password')->generate(),
+    ];
+
+    // Add database credentials to deployment secret.
+    // Create the secret if it doesn't exist, otherwise add it to the existing.
+    if ($env_secret = $orchestration_provider_plugin->getSecret($deployment_name)) {
+      $secret_result = $orchestration_provider_plugin->updateSecret(
+        $deployment_name,
+        array_merge($env_secret, $env_db_credentials)
+      );
+    }
+    else {
+      $secret_result = $orchestration_provider_plugin->createSecret(
+        $deployment_name,
+        $env_db_credentials
+      );
+    }
+    if (!$secret_result) {
+      // @todo Handle errors.
+      return FALSE;
+    }
+
+    $privileged_db_password = $orchestration_provider_plugin->getSecret($config->get('secret'), 'DATABASE_PASSWORD');
+
+    $db = new mysqli(
+      $config->get('host') . ':' . $config->get('port'),
+      $config->get('user'),
+      $privileged_db_password
+    );
+
+    $query = sprintf('CREATE DATABASE `%s`', $env_db_credentials['DATABASE_NAME']);
+    $statement = $db->prepare($query);
+    $statement->execute();
+
+    $query = sprintf(
+      "GRANT ALL PRIVILEGES ON `%s`.* TO `%s`@`%%` IDENTIFIED BY '%s'",
+      $env_db_credentials['DATABASE_NAME'],
+      $env_db_credentials['DATABASE_USER'],
+      $env_db_credentials['DATABASE_PASSWORD']
+    );
+    $statement = $db->prepare($query);
+    $statement->execute();
+  }
+}
