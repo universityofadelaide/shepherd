@@ -84,7 +84,7 @@
             },
             "drupal/core": {
               "Switch to a memory cache backend during installation": "https://www.drupal.org/files/issues/2488350-2-58.patch",
-              "Twig debug output does not display all suggestions": "https://www.drupal.org/files/issues/core-8.3.0-twig_debug_not_display-suggestions-array-2118743-107.patch"
+              "Twig debug output does not display all suggestions": "https://www.drupal.org/files/issues/2118743-119-twig-debug-info.patch"
             }
         }
     }
