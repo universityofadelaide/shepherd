@@ -1340,7 +1340,7 @@
             "support": {
                 "source": "http://cgit.drupalcode.org/r4032login"
             },
-            "time": "2017-02-08T04:20:19+00:00"
+            "time": "2017-02-08 04:20:19"
         },
         {
             "name": "drush/drush",
@@ -3816,12 +3816,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/universityofadelaide/shepherd-drupal-scaffold.git",
-                "reference": "a6bc11744eaa813db01aa6d4b23818101011afc7"
+                "reference": "51701fc25c78274b6cce019973c5e6c1829db459"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/universityofadelaide/shepherd-drupal-scaffold/zipball/a6bc11744eaa813db01aa6d4b23818101011afc7",
-                "reference": "a6bc11744eaa813db01aa6d4b23818101011afc7",
+                "url": "https://api.github.com/repos/universityofadelaide/shepherd-drupal-scaffold/zipball/51701fc25c78274b6cce019973c5e6c1829db459",
+                "reference": "51701fc25c78274b6cce019973c5e6c1829db459",
                 "shasum": ""
             },
             "require": {
@@ -3843,7 +3843,7 @@
                 "GPL-2.0+"
             ],
             "description": "Composer Plugin for updating the Shepherd Drupal tools.",
-            "time": "2017-05-25 04:56:07"
+            "time": "2017-06-12 12:19:38"
         },
         {
             "name": "webmozart/assert",
@@ -4781,7 +4781,7 @@
                 "drupal",
                 "symfony"
             ],
-            "time": "2017-06-10T21:03:01+00:00"
+            "time": "2017-06-10 21:03:01"
         },
         {
             "name": "drupal/console-core",

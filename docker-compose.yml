@@ -24,7 +24,7 @@ services:
       - shared:/shared
       - ${HOST_SSH_AUTH_SOCK_DIR}:/ssh
   db:
-    image: mysql
+    image: mariadb
     environment:
       MYSQL_DATABASE: drupal
       MYSQL_USER: user
