@@ -132,9 +132,12 @@ function shp_database_provisioner_node_insert(EntityInterface $entity) {
     $privileged_db_password = $orchestration_provider_plugin->getSecret($config->get('secret'), 'DATABASE_PASSWORD');
 
     $db = new mysqli(
-      $config->get('host') . ':' . $config->get('port'),
+      $config->get('host'),
       $config->get('user'),
-      $privileged_db_password
+      $privileged_db_password,
+      NULL,
+      $config->get('port'),
+      NULL
     );
 
     $query = sprintf('CREATE DATABASE `%s`', $env_db_credentials['DATABASE_NAME']);
