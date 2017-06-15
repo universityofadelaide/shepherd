@@ -68,7 +68,7 @@ class EnvironmentAddForm extends FormBase {
       ],
       'field_shp_domain_name' => [
         '#type' => 'value',
-        '#value' => $node->field_shp_domain_name->value,
+        '#value' => $node->field_shp_domain->value,
       ],
       'field_shp_site' => [
         '#type' => 'value',

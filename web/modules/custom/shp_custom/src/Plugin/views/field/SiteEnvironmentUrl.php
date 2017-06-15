@@ -29,7 +29,7 @@ class SiteEnvironmentUrl extends FieldPluginBase {
    */
   public function render(ResultRow $values) {
     $environment = $values->_entity;
-    $domain = $environment->field_shp_domain_name->value;
+    $domain = $environment->field_shp_domain->value;
     $path = $environment->field_shp_site->entity->field_shp_path->value;
 
     // If the url is bunk, don't diaf.

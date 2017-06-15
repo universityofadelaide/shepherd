@@ -5,9 +5,9 @@
  * Contains programmatic creation of Shepherd nodes for use by `drush scr`.
  */
 
-use Drupal\field\Entity\FieldConfig;
 use Drupal\node\Entity\Node;
 use Drupal\shp_orchestration\Entity\OpenShiftConfigEntity;
+use Drupal\taxonomy\Entity\Term;
 
 $domain_name = getenv("OPENSHIFT_DOMAIN") ?: '192.168.99.100.nip.io';
 $openshift_url = getenv("OPENSHIFT_URL") ?: 'https://192.168.99.100:8443';
@@ -57,6 +57,16 @@ if (!OpenShiftConfigEntity::load('openshift')) {
   $openshift->save();
 }
 
+// Add dev environment types.
+array_map(function ($environment_type) {
+  Term::create($environment_type)->save();
+}, [
+  ['vid' => 'shp_environment_types', 'name' => 'Development', 'field_shp_base_domain' => $domain_name],
+  ['vid' => 'shp_environment_types', 'name' => 'UAT', 'field_shp_base_domain' => $domain_name],
+  ['vid' => 'shp_environment_types', 'name' => 'Staging', 'field_shp_base_domain' => $domain_name],
+  ['vid' => 'shp_environment_types', 'name' => 'Production', 'field_shp_base_domain' => $domain_name],
+]);
+
 $distribution = Node::create([
   'type'                     => 'shp_distribution',
   'langcode'                 => 'en',
@@ -88,7 +98,7 @@ $env = Node::create([
   'status'                    => 1,
   'title'                     => 'Test Environment',
   'field_shp_deployment_name' => 'wcms-d8-dev-environment',
-  'field_shp_domain_name'     => $domain_name,
+  'field_shp_domain'          => $domain_name,
   'field_shp_git_reference'   => 'shepherd',
   'field_shp_site'            => [['target_id' => $site->id()]],
   'field_shp_custom_config'   => '',

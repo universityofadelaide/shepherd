@@ -2,7 +2,7 @@ langcode: en
 status: true
 dependencies:
   config:
-    - field.storage.node.field_shp_domain_name
+    - field.storage.node.field_shp_domain
     - node.type.shp_environment
     - system.menu.main
   module:
@@ -121,14 +121,14 @@ display:
           multi_type: separator
           separator: ', '
           field_api_classes: false
-        field_shp_domain_name:
-          id: field_shp_domain_name
-          table: node__field_shp_domain_name
-          field: field_shp_domain_name
+        field_shp_domain:
+          id: field_shp_domain
+          table: node__field_shp_domain
+          field: field_shp_domain
           relationship: none
           group_type: group
           admin_label: ''
-          label: 'Domain name'
+          label: 'Domain'
           exclude: false
           alter:
             alter_text: false
@@ -250,7 +250,7 @@ display:
         - 'user.node_grants:view'
         - user.permissions
       tags:
-        - 'config:field.storage.node.field_shp_domain_name'
+        - 'config:field.storage.node.field_shp_domain'
   page_1:
     display_plugin: page
     id: page_1
@@ -273,4 +273,4 @@ display:
         - 'user.node_grants:view'
         - user.permissions
       tags:
-        - 'config:field.storage.node.field_shp_domain_name'
+        - 'config:field.storage.node.field_shp_domain'

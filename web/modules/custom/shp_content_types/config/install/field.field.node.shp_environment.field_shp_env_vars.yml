@@ -1,0 +1,20 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_shp_env_vars
+    - node.type.shp_environment
+  module:
+    - key_value_field
+id: node.shp_environment.field_shp_env_vars
+field_name: field_shp_env_vars
+entity_type: node
+bundle: shp_environment
+label: 'Custom environment variables'
+description: 'Variables entered here are made available to the container that is run when the environment is started in the orchestration provider.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: key_value

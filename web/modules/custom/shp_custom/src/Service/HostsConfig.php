@@ -42,24 +42,24 @@ class HostsConfig {
 
     // Use site domain for production environments.
     if ($environment_type === 'prd') {
-      return $site->field_shp_domain_name->value;
+      return $site->field_shp_domain->value;
     }
 
     // For other environments, prepend the first token of the site domain.
-    list($subdomain) = explode('.', $site->field_shp_domain_name->value);
+    list($subdomain) = explode('.', $site->field_shp_domain->value);
     if (strlen($subdomain) && array_key_exists($environment_type, $environment_domains)) {
       $defaultDomain = $subdomain . '.' . $environment_domains[$environment_type];
     }
     else {
       // Fallback case.
-      $defaultDomain = $site->field_shp_domain_name->value;
+      $defaultDomain = $site->field_shp_domain->value;
     }
 
     // Fetch site's existing domains.
     $environments = \Drupal::service('shp_custom.site')
       ->loadRelatedEntitiesByField($site, 'field_shp_site', 'shp_environment');
     $domains = array_map(function ($env) {
-      return $env->field_shp_domain_name->value;
+      return $env->field_shp_domain->value;
     }, $environments);
 
     $domain = $defaultDomain;
