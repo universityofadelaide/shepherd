@@ -5,6 +5,10 @@ use Drupal\Core\Form\FormStateInterface;
 
 /**
  * Implements hook_ENTITY_TYPE_insert().
+ *
+ * @param Drupal\Core\Entity\EntityInterface $entity
+ *
+ * @return boolean
  */
 function shp_orchestration_node_insert(EntityInterface $entity) {
   /** @var Drupal\node\Entity\Node $entity */
@@ -73,16 +77,19 @@ function shp_orchestration_node_insert(EntityInterface $entity) {
         break;
     }
   }
+  return TRUE;
 }
 
 /**
  * Implements hook_ENTITY_TYPE_update().
+ *
+ * @param Drupal\Core\Entity\EntityInterface $entity
  */
 function shp_orchestration_node_update(EntityInterface $entity) {
   $bundle = $entity->bundle();
 
   if (strpos($bundle, 'shp') !== FALSE) {
-    /** @var Drupal\shp_orchestration\Plugin\OrchestrationProvider\OpenShiftOrchestrationProvider $orchestration_provider_plugin */
+    /** @var Drupal\shp_orchestration\OrchestrationProviderInterface $orchestration_provider_plugin */
     $orchestration_provider_plugin = \Drupal::service('plugin.manager.orchestration_provider')
       ->getProviderInstance();
 
@@ -111,7 +118,51 @@ function shp_orchestration_node_update(EntityInterface $entity) {
 }
 
 /**
+ * Implements hook_ENTITY_TYPE_delete().
+ *
+ * @param Drupal\Core\Entity\EntityInterface $entity
+ */
+function shp_orchestration_node_delete(EntityInterface $entity) {
+  $bundle = $entity->bundle();
+
+  if (strpos($bundle, 'shp') !== FALSE) {
+    /** @var Drupal\shp_orchestration\OrchestrationProviderInterface $orchestration_provider_plugin */
+    $orchestration_provider_plugin = \Drupal::service('plugin.manager.orchestration_provider')
+      ->getProviderInstance();
+
+    switch ($entity->bundle()) {
+      case 'shp_environment':
+        $site = $entity->get('field_shp_site')
+          ->first()
+          ->get('entity')
+          ->getTarget()
+          ->getValue();
+
+        if (isset($site->field_shp_distribution->target_id)) {
+          $distribution = $site->get('field_shp_distribution')
+            ->first()
+            ->get('entity')
+            ->getTarget()
+            ->getValue();
+        }
+
+        $result = $orchestration_provider_plugin->deletedEnvironment(
+          $distribution->title->value,
+          $site->title->value,
+          $entity->title->value,
+          $entity->id()
+        );
+        break;
+    }
+  }
+  return;
+}
+
+/**
  * Implements hook_form_node_form_alter().
+ *
+ * @param array $form
+ * @param Drupal\Core\Form\FormStateInterface $form_state
  */
 function shp_orchestration_form_node_form_alter(&$form, FormStateInterface $form_state) {
   $bundle = $form_state->getFormObject()->getEntity()->bundle();
@@ -124,12 +175,15 @@ function shp_orchestration_form_node_form_alter(&$form, FormStateInterface $form
 
 /**
  * Validates distribution form.
+ *
+ * @param array $form
+ * @param Drupal\Core\Form\FormStateInterface $form_state
  */
 function shp_orchestration_shp_distribution_form_validate($form, FormStateInterface $form_state) {
   // Verify that the secret exists on openshift.
   $secret_name = $form_state->getValue('field_shp_ssh_key')[0]['value'];
 
-  /** @var Drupal\shp_orchestration\Plugin\OrchestrationProvider\OpenShiftOrchestrationProvider $orchestration_provider_plugin */
+  /** @var Drupal\shp_orchestration\OrchestrationProviderInterface $orchestration_provider_plugin */
   $orchestration_provider_plugin = \Drupal::service('plugin.manager.orchestration_provider')->getProviderInstance();
 
   $response = $orchestration_provider_plugin->getSecret($secret_name);
