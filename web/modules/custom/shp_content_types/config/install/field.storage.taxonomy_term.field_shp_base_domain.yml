@@ -2,10 +2,10 @@ langcode: en
 status: true
 dependencies:
   module:
-    - node
-id: node.field_shp_domain_name
-field_name: field_shp_domain_name
-entity_type: node
+    - taxonomy
+id: taxonomy_term.field_shp_base_domain
+field_name: field_shp_base_domain
+entity_type: taxonomy_term
 type: string
 settings:
   max_length: 255

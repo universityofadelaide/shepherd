@@ -1,0 +1,18 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_shp_domain_prefix
+    - node.type.shp_site
+id: node.shp_site.field_shp_domain_prefix
+field_name: field_shp_domain_prefix
+entity_type: node
+bundle: shp_site
+label: 'Domain prefix'
+description: 'The domain prefix is prepended to the an environment''s type base domain. This value should be short, succinct and unique to minimise domain/path collisions.'
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string
