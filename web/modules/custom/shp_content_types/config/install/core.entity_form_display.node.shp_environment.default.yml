@@ -2,13 +2,16 @@ langcode: en
 status: true
 dependencies:
   config:
-    - field.field.node.shp_environment.field_shp_custom_config
     - field.field.node.shp_environment.field_shp_deployment_name
-    - field.field.node.shp_environment.field_shp_domain_name
+    - field.field.node.shp_environment.field_shp_domain
+    - field.field.node.shp_environment.field_shp_env_vars
+    - field.field.node.shp_environment.field_shp_environment_type
     - field.field.node.shp_environment.field_shp_git_reference
+    - field.field.node.shp_environment.field_shp_path
     - field.field.node.shp_environment.field_shp_site
     - node.type.shp_environment
   module:
+    - key_value_field
     - path
 id: node.shp_environment.default
 targetEntityType: node
@@ -17,27 +20,11 @@ mode: default
 content:
   created:
     type: datetime_timestamp
-    weight: 13
+    weight: 7
     settings: {  }
     third_party_settings: {  }
     region: content
-  field_shp_custom_config:
-    weight: 17
-    settings:
-      rows: 5
-      placeholder: ''
-    third_party_settings: {  }
-    type: string_textarea
-    region: content
-  field_shp_deployment_name:
-    weight: 26
-    settings:
-      size: 60
-      placeholder: ''
-    third_party_settings: {  }
-    type: string_textfield
-    region: content
-  field_shp_domain_name:
+  field_shp_domain:
     weight: 2
     settings:
       size: 60
@@ -45,8 +32,36 @@ content:
     third_party_settings: {  }
     type: string_textfield
     region: content
-  field_shp_git_reference:
+  field_shp_env_vars:
+    weight: 11
+    settings:
+      key_label: 'Variable name'
+      key_size: 60
+      key_placeholder: VARIABLE
+      value_label: Value
+      size: 60
+      placeholder: value
+      description_placeholder: ''
+      description_enabled: false
+    third_party_settings: {  }
+    type: key_value_textfield
+    region: content
+  field_shp_environment_type:
     weight: 4
+    settings: {  }
+    third_party_settings: {  }
+    type: options_select
+    region: content
+  field_shp_git_reference:
+    weight: 5
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: string_textfield
+    region: content
+  field_shp_path:
+    weight: 3
     settings:
       size: 60
       placeholder: ''
@@ -54,7 +69,7 @@ content:
     type: string_textfield
     region: content
   field_shp_site:
-    weight: 11
+    weight: 1
     settings:
       match_operator: CONTAINS
       size: 60
@@ -64,7 +79,7 @@ content:
     region: content
   path:
     type: path
-    weight: 16
+    weight: 10
     settings: {  }
     third_party_settings: {  }
     region: content
@@ -72,14 +87,14 @@ content:
     type: boolean_checkbox
     settings:
       display_label: true
-    weight: 14
+    weight: 8
     third_party_settings: {  }
     region: content
   sticky:
     type: boolean_checkbox
     settings:
       display_label: true
-    weight: 15
+    weight: 9
     third_party_settings: {  }
     region: content
   title:
@@ -92,7 +107,7 @@ content:
     region: content
   uid:
     type: entity_reference_autocomplete
-    weight: 12
+    weight: 6
     settings:
       match_operator: CONTAINS
       size: 60
@@ -100,4 +115,4 @@ content:
     third_party_settings: {  }
     region: content
 hidden:
-  {  }
+  field_shp_deployment_name: true

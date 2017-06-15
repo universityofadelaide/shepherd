@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "3c90736b529fdd0562341b3048170440",
+    "content-hash": "a1e5c001b089990b0b742fde0d8439e2",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -1161,7 +1161,7 @@
             "dist": {
                 "type": "zip",
                 "url": "https://ftp.drupal.org/files/projects/externalauth-8.x-1.0.zip",
-                "reference": null,
+                "reference": "8.x-1.0",
                 "shasum": "f1298e1d34f5e1c4ebc130c2b90443b5167e405b"
             },
             "require": {
@@ -1202,6 +1202,47 @@
             }
         },
         {
+            "name": "drupal/key_value_field",
+            "version": "dev-1.x",
+            "source": {
+                "type": "git",
+                "url": "https://git.drupal.org/project/key_value_field",
+                "reference": "919637fd40e7f5d47377a639bd22388b8ad5a35c"
+            },
+            "require": {
+                "drupal/core": "*"
+            },
+            "type": "drupal-module",
+            "extra": {
+                "branch-alias": {
+                    "dev-1.x": "1.x-dev"
+                },
+                "drupal": {
+                    "version": "8.x-1.0-beta1+4-dev",
+                    "datestamp": "1475601839"
+                },
+                "patches_applied": {
+                    "Add key / value label as setting": "https://www.drupal.org/files/issues/key_value_field-labels_as_settings-2842240-2.patch"
+                }
+            },
+            "notification-url": "https://packages.drupal.org/8/downloads",
+            "license": [
+                "GPL-2.0+"
+            ],
+            "authors": [
+                {
+                    "name": "dawehner",
+                    "homepage": "https://www.drupal.org/user/99340"
+                }
+            ],
+            "description": "Provides a field with a key, value pair along with a description.",
+            "homepage": "https://www.drupal.org/project/key_value_field",
+            "support": {
+                "source": "http://cgit.drupalcode.org/key_value_field"
+            },
+            "time": "2017-04-04 17:16:34"
+        },
+        {
             "name": "drupal/paragraphs",
             "version": "1.1.0",
             "source": {
@@ -1212,7 +1253,7 @@
             "dist": {
                 "type": "zip",
                 "url": "https://ftp.drupal.org/files/projects/paragraphs-8.x-1.1.zip",
-                "reference": null,
+                "reference": "8.x-1.1",
                 "shasum": "c678e5704a98c6a0549e415412da081cfeb03a00"
             },
             "require": {
@@ -3816,12 +3857,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/universityofadelaide/shepherd-drupal-scaffold.git",
-                "reference": "51701fc25c78274b6cce019973c5e6c1829db459"
+                "reference": "ad58e4a2028e805cb447293c63f9321adeae7fe1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/universityofadelaide/shepherd-drupal-scaffold/zipball/51701fc25c78274b6cce019973c5e6c1829db459",
-                "reference": "51701fc25c78274b6cce019973c5e6c1829db459",
+                "url": "https://api.github.com/repos/universityofadelaide/shepherd-drupal-scaffold/zipball/ad58e4a2028e805cb447293c63f9321adeae7fe1",
+                "reference": "ad58e4a2028e805cb447293c63f9321adeae7fe1",
                 "shasum": ""
             },
             "require": {
@@ -3843,7 +3884,7 @@
                 "GPL-2.0+"
             ],
             "description": "Composer Plugin for updating the Shepherd Drupal tools.",
-            "time": "2017-06-12 12:19:38"
+            "time": "2017-06-15 03:52:25"
         },
         {
             "name": "webmozart/assert",
@@ -4781,7 +4822,7 @@
                 "drupal",
                 "symfony"
             ],
-            "time": "2017-06-10T21:03:01+00:00"
+            "time": "2017-06-10 21:03:01"
         },
         {
             "name": "drupal/console-core",
@@ -4969,7 +5010,7 @@
             "dist": {
                 "type": "zip",
                 "url": "https://ftp.drupal.org/files/projects/devel-8.x-1.0-rc2.zip",
-                "reference": null,
+                "reference": "8.x-1.0-rc2",
                 "shasum": "011322bf9c263dab29f94640829f4b654e9c5632"
             },
             "require": {
@@ -6392,6 +6433,7 @@
         "universityofadelaide/shepherd-drupal-scaffold": 20,
         "drupal/cas": 20,
         "drupal/entity_reference_revisions": 20,
+        "drupal/key_value_field": 20,
         "drupal/r4032login": 20,
         "ua-drupal-modules/ua_ldap": 20,
         "drupal/console": 20,

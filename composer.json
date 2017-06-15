@@ -18,6 +18,7 @@
         "drupal/core":                                   "8.3.*",
         "drupal/cas":                                    "1.x-dev",
         "drupal/entity_reference_revisions":             "dev-1.x",
+        "drupal/key_value_field":                        "1.x-dev",
         "drupal/paragraphs":                             "1.*",
         "drupal/r4032login":                             "1.*@dev",
         "ua-drupal-modules/ua_ldap":                     "dev-develop",
@@ -79,12 +80,15 @@
             ]
         },
         "patches": {
+            "drupal/core": {
+                "Switch to a memory cache backend during installation": "https://www.drupal.org/files/issues/2488350-2-58.patch",
+                "Twig debug output does not display all suggestions": "https://www.drupal.org/files/issues/2118743-119-twig-debug-info.patch"
+            },
+            "drupal/key_value_field": {
+                "Add key / value label as setting": "https://www.drupal.org/files/issues/key_value_field-labels_as_settings-2842240-2.patch"
+            },
             "drupal/r4032login": {
                 "Override return destination parameter": "https://www.drupal.org/files/issues/r4032login_2534308_7.patch"
-            },
-            "drupal/core": {
-              "Switch to a memory cache backend during installation": "https://www.drupal.org/files/issues/2488350-2-58.patch",
-              "Twig debug output does not display all suggestions": "https://www.drupal.org/files/issues/2118743-119-twig-debug-info.patch"
             }
         }
     }

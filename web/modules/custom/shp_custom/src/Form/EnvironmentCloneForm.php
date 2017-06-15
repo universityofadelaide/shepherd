@@ -100,7 +100,7 @@ class EnvironmentCloneForm extends FormBase {
       ],
       'field_shp_domain_name' => [
         '#type' => 'value',
-        '#value' => $site->field_shp_domain_name->value,
+        '#value' => $site->field_shp_domain->value,
       ],
       'field_shp_environment_status' => [
         '#type' => 'value',

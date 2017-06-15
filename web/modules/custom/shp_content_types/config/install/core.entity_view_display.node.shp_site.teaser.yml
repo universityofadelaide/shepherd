@@ -24,12 +24,16 @@ content:
     settings:
       trim_length: 600
     third_party_settings: {  }
+    region: content
   field_drush_aliases:
     weight: 100
+    region: content
   links:
     weight: 100
+    region: content
   users:
     weight: 10
+    region: content
 hidden:
   field_shp_authoriser_id: true
   field_shp_distribution: true
