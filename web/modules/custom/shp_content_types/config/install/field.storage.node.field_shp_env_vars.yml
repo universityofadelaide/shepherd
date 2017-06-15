@@ -2,18 +2,21 @@ langcode: en
 status: true
 dependencies:
   module:
+    - key_value_field
     - node
-id: node.field_shp_namespace
-field_name: field_shp_namespace
+id: node.field_shp_env_vars
+field_name: field_shp_env_vars
 entity_type: node
-type: string
+type: key_value
 settings:
+  key_max_length: 255
   max_length: 255
+  key_is_ascii: false
   is_ascii: false
   case_sensitive: false
-module: core
+module: key_value_field
 locked: false
-cardinality: 1
+cardinality: -1
 translatable: true
 indexes: {  }
 persist_with_no_fields: false

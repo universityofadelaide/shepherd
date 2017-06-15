@@ -3,11 +3,13 @@ status: true
 dependencies:
   module:
     - node
-id: node.field_shp_custom_config
-field_name: field_shp_custom_config
+id: node.field_shp_domain
+field_name: field_shp_domain
 entity_type: node
-type: string_long
+type: string
 settings:
+  max_length: 255
+  is_ascii: false
   case_sensitive: false
 module: core
 locked: false
