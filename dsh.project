@@ -1,0 +1,41 @@
+#!/bin/bash
+
+# Password for the mysql server
+SUPER_SECRET_PASSWORD=super-secret-password
+
+# Perform/check setup.
+MINISHIFT_STATUS=$(minishift status)
+if [ "${MINISHIFT_STATUS}" != "Running" ]; then
+    minishift start
+fi
+
+# Setup a new mysql server, expose it and group the services
+MYSQL_STATUS=$(oc get svc | grep mysql | wc -l)
+if [ ${MYSQL_STATUS} -lt 1 ]; then
+    oc new-app mysql MYSQL_ROOT_PASSWORD=${SUPER_SECRET_PASSWORD} -l db=shepherd
+    oc expose dc mysql --type=LoadBalancer --name=mysql-exposed
+    oc annotate svc mysql-exposed "service.alpha.openshift.io/dependencies=[{\"name\": \"mysql\", \"kind\": \"Service\"}]"
+fi
+
+# Setup the database password in an openshift secret
+oc create secret generic privileged-db-password --from-literal=DATABASE_PASSWORD=${SUPER_SECRET_PASSWORD}
+
+# Create a permanent token that shepherd can use to talk to openshift
+SERVICEACCOUNT_STATUS=$(oc get serviceaccount | grep shepherd | wc -l)
+if [ ${SERVICEACCOUNT_STATUS} -lt 1 ]; then
+    oc create serviceaccount shepherd
+    oc policy add-role-to-user admin system:serviceaccount:myproject:shepherd
+fi
+
+# Retrieve the service account token and the minishift ip
+SVC_ACCOUNT=$(oc describe serviceaccount shepherd | grep Token | awk '{ print $2 }')
+MINISHIFT_IP=$(minishift ip)
+
+# Now set the things that we need in the dsh shell.
+TOKEN=$(oc describe secret $SVC_ACCOUNT | grep "token:" | awk '{ print $2 }')
+DB_PORT=$(oc get service mysql-exposed --no-headers | sed 's/.*:\([0-9]*\).*/\1/')
+OPENSHIFT_DOMAIN="${MINISHIFT_IP}.nip.io"
+OPENSHIFT_URL="https://${MINISHIFT_IP}:8443"
+
+# Put everything into the var that dsh passes into the docker shell.
+DSH_PROJECT=(--env TOKEN=${TOKEN} --env DB_PORT=${DB_PORT} --env OPENSHIFT_DOMAIN=${OPENSHIFT_DOMAIN} --env OPENSHIFT_URL=${OPENSHIFT_URL})
