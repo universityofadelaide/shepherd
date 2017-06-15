@@ -9,6 +9,18 @@ the Drupal app itself running in Docker and OpenShift running in a virtual
 machine provided by the [Minishift](https://www.openshift.org/minishift/)
 command line tool.
 
+## Quickstart
+```bash
+./dsh
+robo build
+bin/drush -r web scr ShepherdContentGenerate.php --uri=shepherd.test
+```
+
+Create a secret to use to build with (needs password less key)
+```bash
+oc secrets new-sshauth build-key --ssh-privatekey=${HOME}/.ssh/id_rsa
+```
+
 ## Developing Shepherd - common tasks
 Make a long lived token for api calls
 ```bash
