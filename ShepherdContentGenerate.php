@@ -9,7 +9,7 @@ use Drupal\field\Entity\FieldConfig;
 use Drupal\node\Entity\Node;
 use Drupal\shp_orchestration\Entity\OpenShiftConfigEntity;
 
-$domain_name = getenv("DOMAIN") ?: '192.168.99.100.nip.io';
+$domain_name = getenv("OPENSHIFT_DOMAIN") ?: '192.168.99.100.nip.io';
 $openshift_url = getenv("OPENSHIFT_URL") ?: 'https://192.168.99.100:8443';
 $token = trim(getenv("TOKEN"));
 $database_port = getenv("DB_PORT") ?: '31632';
@@ -20,14 +20,6 @@ if (empty($token)) {
   echo "export TOKEN=some-token\n";
   echo "You can then safely re-run `robo dev:content-generate`\n";
   exit(1);
-}
-
-$environment_defaults = [
-  'field_shp_git_reference' => 'develop',
-];
-foreach ($environment_defaults as $field_name => $field_value) {
-  $field_config = FieldConfig::loadByName('node', 'shp_environment', $field_name);
-  $field_config->setDefaultValue($field_value)->save();
 }
 
 // Clobber env/domain config with dev versions.
