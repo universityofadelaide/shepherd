@@ -230,7 +230,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       return FALSE;
     }
 
-    // @todo Consider parametrising volume paths. Are they set by the distro?
+    // @todo Consider allowing parameters for volume paths. Are they set by the distro?
     $volumes = [
       [
         'type' => 'pvc',
@@ -246,7 +246,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
 
     // If a secret with the same name as the deployment exists, volume it in.
     if ($this->client->getSecret($deployment_name)) {
-      // @todo Consider parametrising secret volume path. Is there a convention?
+      // @todo Consider allowing parameters for secret volume path. Is there a convention?
       $volumes[] = [
         'type' => 'secret',
         'name' => $deployment_name . '-secret',
@@ -304,8 +304,26 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
   /**
    * {@inheritdoc}
    */
-  public function deletedEnvironment() {
-    // TODO: Implement deleteEnvironment() method.
+  public function deletedEnvironment(
+    string $distribution_name,
+    string $site_name,
+    string $environment_name,
+    string $environment_id
+  ) {
+    $deployment_name = self::generateDeploymentName(
+      $distribution_name,
+      $site_name,
+      $environment_name,
+      $environment_id
+    );
+
+    $this->client->deleteDeploymentConfig($deployment_name);
+    $this->client->deletePersistentVolumeClaim($deployment_name . '-public');
+    $this->client->deletePersistentVolumeClaim($deployment_name . '-private');
+    $this->client->deleteRoute($deployment_name);
+    $this->client->deleteService($deployment_name);
+
+    // TODO: // Check calls succeed.
   }
 
   /**

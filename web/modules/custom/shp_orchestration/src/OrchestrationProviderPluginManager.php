@@ -3,11 +3,9 @@
 namespace Drupal\shp_orchestration;
 
 use Drupal\Core\Cache\CacheBackendInterface;
-use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Plugin\DefaultPluginManager;
 use Drupal\shp_orchestration\Annotation\OrchestrationProvider;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
 
 /**

@@ -107,9 +107,21 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
   public function updatedEnvironment();
 
   /**
+   * Delete the environment in the orchestration provider.
+   *
+   * @param string $distribution_name
+   * @param string $site_name
+   * @param string $environment_name
+   * @param string $environment_id
+   *
    * @return mixed
    */
-  public function deletedEnvironment();
+  public function deletedEnvironment(
+    string $distribution_name,
+    string $site_name,
+    string $environment_name,
+    string $environment_id
+  );
 
   /**
    * @return mixed
