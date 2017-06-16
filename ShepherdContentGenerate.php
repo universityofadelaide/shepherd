@@ -83,7 +83,7 @@ $site = Node::create([
   'status'                  => 1,
   'title'                   => 'Test Site',
   'field_shp_namespace'     => 'myproject',
-  'field_shp_domain_prefix' => 'test',
+  'field_shp_short_name'    => 'test',
   'field_shp_domain'        => $domain_name,
   'field_shp_path'          => '/',
   'field_shp_distribution'  => [['target_id' => $distribution->id()]],
@@ -96,7 +96,7 @@ $env = Node::create([
   'uid'                        => '1',
   'status'                     => 1,
   // @todo Make title a useful value.
-  'title'                      => $site->field_shp_domain_prefix->value,
+  'title'                      => $site->field_shp_short_name->value,
   'field_shp_domain'           => $site->field_shp_domain->value,
   'field_shp_path'             => $site->field_shp_path->value,
   'field_shp_environment_type' => [['target_id' => $development_env->id()]],
