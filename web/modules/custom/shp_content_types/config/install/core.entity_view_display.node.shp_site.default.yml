@@ -2,7 +2,6 @@ langcode: en
 status: true
 dependencies:
   config:
-    - field.field.node.shp_site.body
     - field.field.node.shp_site.field_shp_distribution
     - field.field.node.shp_site.field_shp_domain
     - field.field.node.shp_site.field_shp_domain_prefix
@@ -12,20 +11,12 @@ dependencies:
     - field.field.node.shp_site.field_tags
     - node.type.shp_site
   module:
-    - text
     - user
 id: node.shp_site.default
 targetEntityType: node
 bundle: shp_site
 mode: default
 content:
-  body:
-    type: text_default
-    weight: 4
-    settings: {  }
-    third_party_settings: {  }
-    label: above
-    region: content
   field_drush_aliases:
     weight: 5
     region: content
@@ -40,7 +31,7 @@ content:
     type: entity_reference_label
     region: content
   field_shp_domain:
-    weight: 0
+    weight: 1
     label: above
     settings:
       link_to_entity: false
@@ -48,7 +39,7 @@ content:
     type: string
     region: content
   field_shp_domain_prefix:
-    weight: 1
+    weight: 0
     label: above
     settings:
       link_to_entity: false
@@ -65,20 +56,16 @@ content:
     region: content
   field_tags:
     type: entity_reference_label
-    weight: 6
+    weight: 4
     settings:
       link: true
     third_party_settings: {  }
     label: inline
     region: content
-  links:
-    weight: 7
-    region: content
-    settings: {  }
-    third_party_settings: {  }
   users:
     weight: 10
     region: content
 hidden:
   field_shp_site_log: true
   field_shp_users: true
+  links: true

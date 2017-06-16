@@ -4,22 +4,13 @@ dependencies:
   config:
     - field.field.taxonomy_term.shp_environment_types.field_shp_base_domain
     - taxonomy.vocabulary.shp_environment_types
-  module:
-    - path
-    - text
+_core:
+  default_config_hash: yv_l-coPcmJ8TvNFk_IKk3MTbfUN5RuIbgbMjZ3DO2Y
 id: taxonomy_term.shp_environment_types.default
 targetEntityType: taxonomy_term
 bundle: shp_environment_types
 mode: default
 content:
-  description:
-    type: text_textarea
-    weight: 2
-    region: content
-    settings:
-      placeholder: ''
-      rows: 5
-    third_party_settings: {  }
   field_shp_base_domain:
     weight: 1
     settings:
@@ -36,10 +27,6 @@ content:
       size: 60
       placeholder: ''
     third_party_settings: {  }
-  path:
-    type: path
-    weight: 3
-    region: content
-    settings: {  }
-    third_party_settings: {  }
-hidden: {  }
+hidden:
+  description: true
+  path: true
