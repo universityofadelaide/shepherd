@@ -4,8 +4,6 @@ dependencies:
   config:
     - field.field.taxonomy_term.shp_environment_types.field_shp_base_domain
     - taxonomy.vocabulary.shp_environment_types
-_core:
-  default_config_hash: yv_l-coPcmJ8TvNFk_IKk3MTbfUN5RuIbgbMjZ3DO2Y
 id: taxonomy_term.shp_environment_types.default
 targetEntityType: taxonomy_term
 bundle: shp_environment_types
