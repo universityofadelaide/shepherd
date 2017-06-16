@@ -322,6 +322,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     $this->client->deletePersistentVolumeClaim($deployment_name . '-private');
     $this->client->deleteRoute($deployment_name);
     $this->client->deleteService($deployment_name);
+    $this->client->deleteSecret($deployment_name);
 
     // TODO: // Check calls succeed.
   }
