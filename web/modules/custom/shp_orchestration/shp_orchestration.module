@@ -27,7 +27,7 @@ function shp_orchestration_node_insert(EntityInterface $entity) {
           $entity->field_shp_git_repository->value,
           // @todo Consider fetching default source ref from config.
           'master',
-          $entity->field_shp_ssh_key->value
+          $entity->field_shp_build_secret->value
         );
 
         if (!$result) {
@@ -67,7 +67,7 @@ function shp_orchestration_node_insert(EntityInterface $entity) {
           $distribution->field_shp_builder_image->value,
           $distribution->field_shp_git_repository->value,
           $entity->field_shp_git_reference->value,
-          $distribution->field_shp_ssh_key->value
+          $distribution->field_shp_build_secret->value
         );
 
         if (!$result) {
@@ -100,7 +100,7 @@ function shp_orchestration_node_update(EntityInterface $entity) {
 
         $data = [
           'build_image' => $entity->field_shp_builder_image->value,
-          'secret' => $entity->field_shp_ssh_key->value,
+          'secret' => $entity->field_shp_build_secret->value,
           'git' => [
             'uri' => $entity->field_shp_git_repository->value,
           ],
@@ -181,7 +181,7 @@ function shp_orchestration_form_node_form_alter(&$form, FormStateInterface $form
  */
 function shp_orchestration_shp_distribution_form_validate($form, FormStateInterface $form_state) {
   // Verify that the secret exists on openshift.
-  $secret_name = $form_state->getValue('field_shp_ssh_key')[0]['value'];
+  $secret_name = $form_state->getValue('field_shp_build_secret')[0]['value'];
 
   /** @var Drupal\shp_orchestration\OrchestrationProviderInterface $orchestration_provider_plugin */
   $orchestration_provider_plugin = \Drupal::service('plugin.manager.orchestration_provider')->getProviderInstance();
@@ -189,6 +189,6 @@ function shp_orchestration_shp_distribution_form_validate($form, FormStateInterf
   $response = $orchestration_provider_plugin->getSecret($secret_name);
   // The client will respond FALSE if the status code doesn't return a 200.
   if (!$response) {
-    $form_state->setErrorByName('field_shp_ssh_key', t('Secret: @secret_name does not exist.', ['@secret_name' => $secret_name]));
+    $form_state->setErrorByName('field_shp_build_secret', t('Secret: @secret_name does not exist.', ['@secret_name' => $secret_name]));
   }
 }

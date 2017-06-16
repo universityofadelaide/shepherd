@@ -4,12 +4,14 @@ dependencies:
   config:
     - field.storage.node.field_shp_domain_prefix
     - node.type.shp_site
+_core:
+  default_config_hash: RSMtvspgJ666b-Om6zuZkHCqxTOIBkLsQ8Rhp8M5Gs8
 id: node.shp_site.field_shp_domain_prefix
 field_name: field_shp_domain_prefix
 entity_type: node
 bundle: shp_site
 label: 'Domain prefix'
-description: 'The domain prefix is prepended to the an environment''s type base domain. This value should be short, succinct and unique to minimise domain/path collisions.'
+description: 'The domain prefix for non-production environments, which is prepended to the corresponding base domain. This value should be short, succinct and unique to minimise domain/path collisions, and use only lowercase letters, number and dashes. If this value is not unique when paired with path, numbers will be added to the end of it.'
 required: true
 translatable: false
 default_value: {  }
