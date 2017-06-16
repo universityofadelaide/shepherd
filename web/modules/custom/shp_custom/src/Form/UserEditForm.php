@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\shp_custom\Form\UserEditForm.
- */
-
 namespace Drupal\shp_custom\Form;
 
 use Drupal\Core\Form\FormBase;

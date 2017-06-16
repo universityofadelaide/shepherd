@@ -1,8 +1,4 @@
 <?php
-/**
- * @file
- * Contains Drupal\shp_drush_aliases\Controller\SiteAliasesController.
- */
 
 namespace Drupal\shp_drush_aliases\Controller;
 

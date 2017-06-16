@@ -1,8 +1,4 @@
 <?php
-/**
- * @file
- * Definition of Drupal\shp_custom\Plugin\views\field\SiteEnvironmentOperations.
- */
 
 namespace Drupal\shp_custom\Plugin\views\field;
 
