@@ -141,9 +141,9 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
    */
   public function createdEnvironment(
     string $distribution_name,
-    string $site_name,
-    string $environment_name,
+    string $short_name,
     string $environment_id,
+    string $environment_url,
     string $builder_image,
     string $source_repo,
     string $source_ref = 'master',
@@ -152,8 +152,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     $sanitised_distribution_name = self::sanitise($distribution_name);
     $deployment_name = self::generateDeploymentName(
       $distribution_name,
-      $site_name,
-      $environment_name,
+      $short_name,
       $environment_id
     );
     $image_stream_tag = $sanitised_distribution_name . ':' . $source_ref;
@@ -260,6 +259,9 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       'memory_limit' => '128Mi',
       'env_vars' => $deploy_config_env_vars,
       'volumes' => $volumes,
+      'annotations' => [
+        'shepherdUrl' => $environment_url,
+      ],
     ];
 
     $deployment_config = $this->client->createDeploymentConfig(
@@ -306,14 +308,12 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
    */
   public function deletedEnvironment(
     string $distribution_name,
-    string $site_name,
-    string $environment_name,
+    string $short_name,
     string $environment_id
   ) {
     $deployment_name = self::generateDeploymentName(
       $distribution_name,
-      $site_name,
-      $environment_name,
+      $short_name,
       $environment_id
     );
 
@@ -383,14 +383,12 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
    */
   public static function generateDeploymentName(
     string $distribution_name,
-    string $site_name,
-    string $environment_name,
+    string $short_name,
     string $environment_id
   ) {
     return implode('-', [
       self::sanitise($distribution_name),
-      self::sanitise($site_name),
-      self::sanitise($environment_name),
+      $short_name,
       $environment_id,
     ]);
   }
