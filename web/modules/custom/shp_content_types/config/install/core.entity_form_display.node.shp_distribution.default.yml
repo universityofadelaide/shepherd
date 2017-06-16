@@ -2,36 +2,17 @@ langcode: en
 status: true
 dependencies:
   config:
-    - field.field.node.shp_distribution.body
     - field.field.node.shp_distribution.field_shp_builder_image
     - field.field.node.shp_distribution.field_shp_git_repository
-    - field.field.node.shp_distribution.field_shp_ssh_key
+    - field.field.node.shp_distribution.field_shp_build_secret
     - node.type.shp_distribution
-  module:
-    - path
-    - text
 id: node.shp_distribution.default
 targetEntityType: node
 bundle: shp_distribution
 mode: default
 content:
-  body:
-    weight: 27
-    settings:
-      rows: 9
-      summary_rows: 3
-      placeholder: ''
-    third_party_settings: {  }
-    type: text_textarea_with_summary
-    region: content
-  created:
-    type: datetime_timestamp
-    weight: 2
-    settings: {  }
-    third_party_settings: {  }
-    region: content
   field_shp_builder_image:
-    weight: 28
+    weight: 2
     settings:
       size: 60
       placeholder: ''
@@ -40,39 +21,19 @@ content:
     region: content
   field_shp_git_repository:
     type: string_textfield
-    weight: 6
+    weight: 1
     settings:
       size: 60
       placeholder: ''
     third_party_settings: {  }
     region: content
-  field_shp_ssh_key:
-    weight: 29
+  field_shp_build_secret:
+    weight: 3
     settings:
       size: 60
       placeholder: ''
     third_party_settings: {  }
     type: string_textfield
-    region: content
-  path:
-    type: path
-    weight: 5
-    settings: {  }
-    third_party_settings: {  }
-    region: content
-  promote:
-    type: boolean_checkbox
-    weight: 3
-    settings:
-      display_label: true
-    third_party_settings: {  }
-    region: content
-  sticky:
-    type: boolean_checkbox
-    weight: 4
-    settings:
-      display_label: true
-    third_party_settings: {  }
     region: content
   title:
     type: string_textfield
@@ -82,13 +43,9 @@ content:
       placeholder: ''
     third_party_settings: {  }
     region: content
-  uid:
-    type: entity_reference_autocomplete
-    weight: 1
-    settings:
-      match_operator: CONTAINS
-      size: 60
-      placeholder: ''
-    third_party_settings: {  }
-    region: content
-hidden: {  }
+hidden:
+  created: true
+  path: true
+  promote: true
+  sticky: true
+  uid: true
