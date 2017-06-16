@@ -12,20 +12,13 @@ dependencies:
     - node.type.shp_environment
   module:
     - key_value_field
-    - path
 id: node.shp_environment.default
 targetEntityType: node
 bundle: shp_environment
 mode: default
 content:
-  created:
-    type: datetime_timestamp
-    weight: 7
-    settings: {  }
-    third_party_settings: {  }
-    region: content
   field_shp_domain:
-    weight: 2
+    weight: 1
     settings:
       size: 60
       placeholder: ''
@@ -33,7 +26,7 @@ content:
     type: string_textfield
     region: content
   field_shp_env_vars:
-    weight: 11
+    weight: 5
     settings:
       key_label: 'Variable name'
       key_size: 60
@@ -47,13 +40,13 @@ content:
     type: key_value_textfield
     region: content
   field_shp_environment_type:
-    weight: 4
+    weight: 3
     settings: {  }
     third_party_settings: {  }
     type: options_select
     region: content
   field_shp_git_reference:
-    weight: 5
+    weight: 4
     settings:
       size: 60
       placeholder: ''
@@ -61,7 +54,7 @@ content:
     type: string_textfield
     region: content
   field_shp_path:
-    weight: 3
+    weight: 2
     settings:
       size: 60
       placeholder: ''
@@ -69,50 +62,19 @@ content:
     type: string_textfield
     region: content
   field_shp_site:
-    weight: 1
-    settings:
-      match_operator: CONTAINS
-      size: 60
-      placeholder: ''
-    third_party_settings: {  }
-    type: entity_reference_autocomplete
-    region: content
-  path:
-    type: path
-    weight: 10
-    settings: {  }
-    third_party_settings: {  }
-    region: content
-  promote:
-    type: boolean_checkbox
-    settings:
-      display_label: true
-    weight: 8
-    third_party_settings: {  }
-    region: content
-  sticky:
-    type: boolean_checkbox
-    settings:
-      display_label: true
-    weight: 9
-    third_party_settings: {  }
-    region: content
-  title:
-    type: string_textfield
     weight: 0
     settings:
-      size: 60
-      placeholder: ''
-    third_party_settings: {  }
-    region: content
-  uid:
-    type: entity_reference_autocomplete
-    weight: 6
-    settings:
       match_operator: CONTAINS
       size: 60
       placeholder: ''
     third_party_settings: {  }
+    type: entity_reference_autocomplete
     region: content
 hidden:
+  created: true
   field_shp_deployment_name: true
+  path: true
+  promote: true
+  sticky: true
+  title: true
+  uid: true

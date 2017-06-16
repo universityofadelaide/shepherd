@@ -19,7 +19,7 @@ bundle: shp_environment
 mode: default
 content:
   field_shp_deployment_name:
-    weight: 6
+    weight: 5
     label: above
     settings:
       link_to_entity: false
@@ -35,9 +35,10 @@ content:
     type: string
     region: content
   field_shp_env_vars:
-    weight: 7
+    weight: 6
     label: inline
-    settings: {  }
+    settings:
+      value_only: false
     third_party_settings: {  }
     type: key_value
     region: content
@@ -73,9 +74,5 @@ content:
     third_party_settings: {  }
     type: entity_reference_label
     region: content
-  links:
-    weight: 5
-    region: content
-    settings: {  }
-    third_party_settings: {  }
-hidden: {  }
+hidden:
+  links: true
