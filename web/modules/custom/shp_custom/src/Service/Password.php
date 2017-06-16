@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains Drupal\shp_custom\Service\Password.
- */
-
 namespace Drupal\shp_custom\Service;
 
 /**

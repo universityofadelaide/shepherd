@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains Drupal\shp_custom\Controller\HomePageController.
- */
-
 namespace Drupal\shp_custom\Controller;
 
 use Drupal\Core\Controller\ControllerBase;
@@ -18,9 +13,10 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 class HomePageController extends ControllerBase {
 
   /**
-   * Processes incoming homepage requests and generates appropriate responses based on authentication and permissions.
+   * Processes homepage requests based on authentication and permissions.
    *
-   * @return mixed array|RedirectResponse
+   * @return array|RedirectResponse
+   *   A render array or redirect response.
    */
   public function index() {
     $user = \Drupal::currentUser();

@@ -1,6 +1,11 @@
 <?php
 
 /**
+ * @file
+ * Shepherd database provisioner install.
+ */
+
+/**
  * Implements hook_install().
  */
 function shp_database_provisioner_install() {

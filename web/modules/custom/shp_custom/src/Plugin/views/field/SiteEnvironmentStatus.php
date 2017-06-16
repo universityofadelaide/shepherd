@@ -37,7 +37,6 @@ class SiteEnvironmentStatus extends FieldPluginBase {
   public function preRender(&$values) {
     foreach ($values as $row) {
       $entity = $row->_entity;
-      $environment = $entity->id();
 
       // @todo Refactor this to query OpenShift?
       // @todo Replace the 4 variables passed to the template with a single state.
