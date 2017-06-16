@@ -76,12 +76,12 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
    *
    * @param string $distribution_name
    *   Name of the distribution.
-   * @param string $site_name
-   *   Name of the site.
-   * @param string $environment_name
-   *   Name of the environment.
+   * @param string $short_name
+   *   Short name of the site.
    * @param string $environment_id
    *   Unique id of the environment.
+   * @param string $environment_url
+   *   Absolute url for the environment.
    * @param string $builder_image
    *   An s2i-enabled image to use to build (and run) the source code.
    * @param string $source_repo
@@ -96,9 +96,9 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
    */
   public function createdEnvironment(
     string $distribution_name,
-    string $site_name,
-    string $environment_name,
+    string $short_name,
     string $environment_id,
+    string $environment_url,
     string $builder_image,
     string $source_repo,
     string $source_ref = 'master',
@@ -116,16 +116,18 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
    * Delete the environment in the orchestration provider.
    *
    * @param string $distribution_name
-   * @param string $site_name
-   * @param string $environment_name
+   *   Name of the distribution.
+   * @param string $short_name
+   *   Short name of the site.
    * @param string $environment_id
+   *   Unique id of the environment.
    *
-   * @return mixed
+   * @return bool
+   *   Returns true if succeeded.
    */
   public function deletedEnvironment(
     string $distribution_name,
-    string $site_name,
-    string $environment_name,
+    string $short_name,
     string $environment_id
   );
 
@@ -189,10 +191,8 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
    *
    * @param string $distribution_name
    *   Name of the distribution.
-   * @param string $site_name
-   *   Name of the site.
-   * @param string $environment_name
-   *   Name of the environment.
+   * @param string $short_name
+   *   Short name of the site.
    * @param string $environment_id
    *   Unique id of the environment.
    *
@@ -201,8 +201,7 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
    */
   public static function generateDeploymentName(
     string $distribution_name,
-    string $site_name,
-    string $environment_name,
+    string $short_name,
     string $environment_id
   );
 

@@ -5,7 +5,7 @@ dependencies:
     - core.entity_view_mode.node.teaser
     - field.field.node.shp_site.field_shp_distribution
     - field.field.node.shp_site.field_shp_domain
-    - field.field.node.shp_site.field_shp_domain_prefix
+    - field.field.node.shp_site.field_shp_short_name
     - field.field.node.shp_site.field_shp_path
     - field.field.node.shp_site.field_shp_site_log
     - field.field.node.shp_site.field_shp_users
@@ -31,7 +31,7 @@ hidden:
   field_shp_authoriser_id: true
   field_shp_distribution: true
   field_shp_domain: true
-  field_shp_domain_prefix: true
+  field_shp_short_name: true
   field_shp_path: true
   field_shp_site_log: true
   field_shp_users: true
