@@ -4,7 +4,6 @@ namespace Drupal\shp_orchestration\Annotation;
 
 use Drupal\Component\Annotation\Plugin;
 
-
 /**
  * Defines a OrchestrationProvider annoation object.
  *

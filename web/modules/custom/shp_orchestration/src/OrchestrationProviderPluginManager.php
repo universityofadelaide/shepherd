@@ -7,9 +7,9 @@ use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Plugin\DefaultPluginManager;
 use Drupal\shp_orchestration\Annotation\OrchestrationProvider;
 
-
 /**
- * Class OrchestrationProviderPluginManager
+ * Class OrchestrationProviderPluginManager.
+ *
  * @package Drupal\shp_orchestration
  */
 class OrchestrationProviderPluginManager extends DefaultPluginManager {

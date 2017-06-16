@@ -13,7 +13,7 @@ class ShepherdSettings extends ConfigFormBase {
   /**
    * {@inheritdoc}
    */
-  public function getFormID() {
+  public function getFormId() {
     return 'shp_custom_settings';
   }
 

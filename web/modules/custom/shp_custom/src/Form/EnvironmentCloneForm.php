@@ -1,18 +1,11 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\shp_custom\Form\EnvironmentCloneForm.
- */
-
 namespace Drupal\shp_custom\Form;
 
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\node\Entity\Node;
 use Drupal\node\NodeInterface;
-use \DateTime;
-use \DateTimeZone;
 
 /**
  * Class SiteCloneForm.

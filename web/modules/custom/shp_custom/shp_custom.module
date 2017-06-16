@@ -12,7 +12,6 @@ use Drupal\Core\Menu\MenuTreeParameters;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\node\Entity\Node;
-use Drupal\user\Entity\User;
 use Drupal\Core\Url;
 
 /**
@@ -91,8 +90,7 @@ function shp_custom_toolbar() {
 }
 
 /**
- * Populate an array with a list of distribution entities and titles for display/use
- * in a select type box.
+ * Generate a list of distributions for a select list.
  *
  * @return array
  *   The choices formatted as id => label.
