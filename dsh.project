@@ -19,12 +19,15 @@ fi
 MYSQL_STATUS=$(oc get svc | grep mysql | wc -l)
 if [ ${MYSQL_STATUS} -lt 1 ]; then
     oc new-app mysql MYSQL_ROOT_PASSWORD=${SUPER_SECRET_PASSWORD} -l db=shepherd
-    oc expose dc mysql --type=LoadBalancer --name=mysql-exposed
-    oc annotate svc mysql-exposed "service.alpha.openshift.io/dependencies=[{\"name\": \"mysql\", \"kind\": \"Service\"}]"
+    oc expose dc mysql --type=LoadBalancer --name=mysql-external
+    oc annotate svc mysql-external "service.alpha.openshift.io/dependencies=[{\"name\": \"mysql\", \"kind\": \"Service\"}]"
 fi
 
 # Setup the database password in an openshift secret
-oc create secret generic privileged-db-password --from-literal=DATABASE_PASSWORD=${SUPER_SECRET_PASSWORD}
+MYSQL_SECRET_STATUS=$(oc get secret | grep privileged-db-password | wc -l)
+if [ ${MYSQL_SECRET_STATUS} -lt 1 ]; then
+    oc create secret generic privileged-db-password --from-literal=DATABASE_PASSWORD=${SUPER_SECRET_PASSWORD}
+fi
 
 # Create a permanent token that shepherd can use to talk to openshift
 SERVICEACCOUNT_STATUS=$(oc get serviceaccount | grep shepherd | wc -l)
@@ -39,7 +42,7 @@ MINISHIFT_IP=$(minishift ip)
 
 # Now set the things that we need in the dsh shell.
 TOKEN=$(oc describe secret $SVC_ACCOUNT | grep "token:" | awk '{ print $2 }')
-DB_PORT=$(oc get service mysql-exposed --no-headers | sed 's/.*:\([0-9]*\).*/\1/')
+DB_PORT=$(oc get service mysql-external --no-headers | sed 's/.*:\([0-9]*\).*/\1/')
 OPENSHIFT_DOMAIN="${MINISHIFT_IP}.nip.io"
 OPENSHIFT_URL="https://${MINISHIFT_IP}:8443"
 
