@@ -9,6 +9,12 @@ if [ "${MINISHIFT_STATUS}" != "Running" ]; then
     minishift start
 fi
 
+# Are we logged in.
+if [ ! $(oc whoami) ]; then
+    # Prompt for login.
+    oc login
+fi
+
 # Setup a new mysql server, expose it and group the services
 MYSQL_STATUS=$(oc get svc | grep mysql | wc -l)
 if [ ${MYSQL_STATUS} -lt 1 ]; then
