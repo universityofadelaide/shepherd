@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\shp_custom\Form\UserDeleteForm.
- */
-
 namespace Drupal\shp_custom\Form;
 
 use Drupal\Core\Form\ConfirmFormBase;

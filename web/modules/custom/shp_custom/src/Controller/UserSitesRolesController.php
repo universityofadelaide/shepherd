@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains Drupal\shp_custom\Controller\UserSitesRolesController.
- */
-
 namespace Drupal\shp_custom\Controller;
 
 use Drupal\Core\Controller\ControllerBase;
@@ -38,8 +33,8 @@ class UserSitesRolesController extends ControllerBase {
       return ['#markup' => t("The user doesn't have access to any sites yet.")];
     }
 
-    $entity_manager = \Drupal::entityManager();
-    $user_roles = $entity_manager->getStorage('paragraph')->loadMultiple($user_role_ids);
+    $entity_type_manager = \Drupal::entityTypeManager();
+    $user_roles = $entity_type_manager->getStorage('paragraph')->loadMultiple($user_role_ids);
 
     // Load all sites associated with this user.
     $site_ids = \Drupal::entityQuery('node')
@@ -52,7 +47,7 @@ class UserSitesRolesController extends ControllerBase {
     // Err, ma gerd. Load the field options to get human readable roles.
     // @todo Make this not err ma gerd.
     $user_role = reset($user_roles);
-    $definitions = \Drupal::entityManager()->getFieldStorageDefinitions('paragraph', 'shp_site');
+    $definitions = \Drupal::service('entity_field.manager')->getFieldStorageDefinitions('paragraph');
     $definition = $definitions['field_shp_role'];
     $entity_type = \Drupal::entityManager()->loadEntityByUuid('paragraph', $user_role->uuid());
     $provider = $definition->getOptionsProvider('value', $entity_type);

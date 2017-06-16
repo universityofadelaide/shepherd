@@ -63,4 +63,5 @@ class OpenShiftConfigEntity extends ConfigEntityBase {
    * @var string
    */
   public $id;
+
 }

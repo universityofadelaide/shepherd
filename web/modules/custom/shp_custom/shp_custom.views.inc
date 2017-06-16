@@ -54,7 +54,6 @@ function shp_custom_views_data_alter(array &$data) {
     'field' => [
       'title' => t('Status'),
       'help' => t('Show environment status in terms of instances active, failed etc.'),
-//      'id' => 'site_environment_status',
     ],
   ];
 

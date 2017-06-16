@@ -5,7 +5,6 @@ namespace Drupal\shp_custom\Plugin\views\field;
 use Drupal\views\Plugin\views\field\FieldPluginBase;
 use Drupal\Core\Url;
 use Drupal\views\ResultRow;
-use Drupal\node\Entity\Node;
 
 /**
  * Field handler to add actual environment urls to environments view.

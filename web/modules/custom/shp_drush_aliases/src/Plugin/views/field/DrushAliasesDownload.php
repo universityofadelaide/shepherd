@@ -40,7 +40,7 @@ class DrushAliasesDownload extends FieldPluginBase {
             'c-btn',
           ],
           'style' => [
-            'margin-bottom:0px'
+            'margin-bottom:0px',
           ],
         ],
       ],
@@ -50,4 +50,3 @@ class DrushAliasesDownload extends FieldPluginBase {
   }
 
 }
-

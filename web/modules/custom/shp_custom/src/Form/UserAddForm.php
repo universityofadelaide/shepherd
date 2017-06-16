@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\shp_custom\Form\UserAddForm.
- */
-
 namespace Drupal\shp_custom\Form;
 
 use Drupal\Component\Utility\Crypt;

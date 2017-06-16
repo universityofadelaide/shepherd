@@ -64,12 +64,16 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
   /**
    * Deletes an existing distribution.
    *
-   * @param string $name Name of distribution.
+   * @param string $name
+   *   Name of distribution.
+   *
    * @return mixed
    */
   public function deletedDistribution($name);
 
   /**
+   * Creates an environment in the selected orchestration provider.
+   *
    * @param string $distribution_name
    *   Name of the distribution.
    * @param string $site_name
@@ -102,6 +106,8 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
   );
 
   /**
+   * Updates the environment in the selected orchestration provider.
+   *
    * @return mixed
    */
   public function updatedEnvironment();
@@ -156,12 +162,12 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
    * Creates a secret.
    *
    * @param string $name
-   *    The name of the secret to be stored.
+   *   The name of the secret to be stored.
    * @param array $data
-   *    Key value array of secret data.
+   *   Key value array of secret data.
    *
    * @return array|bool
-   *    Returns the secret array if successful, otherwise false.
+   *   Returns the secret array if successful, otherwise false.
    */
   public function createSecret(string $name, array $data);
 
@@ -169,12 +175,12 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
    * Updates a secret.
    *
    * @param string $name
-   *    The name of the secret to be updated.
+   *   The name of the secret to be updated.
    * @param array $data
-   *    Key value array of secret data.
+   *   Key value array of secret data.
    *
    * @return mixed
-   *    Returns the secret metadata if successful.
+   *   Returns the secret metadata if successful.
    */
   public function updateSecret(string $name, array $data);
 

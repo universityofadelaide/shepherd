@@ -24,11 +24,11 @@ class OrchestrationProviderSettingsForm extends ConfigFormBase {
    * OrchestrationProviderSettingsForm constructor.
    *
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
-   *    ConfigFactoryInterface.
+   *   ConfigFactoryInterface.
    * @param \Drupal\Component\Plugin\PluginManagerInterface $orchestration_provider_manager
-   *    PluginManagerInterface.
+   *   PluginManagerInterface.
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
-   *    EntityTypeManagerInterface.
+   *   EntityTypeManagerInterface.
    */
   public function __construct(ConfigFactoryInterface $config_factory,
                               PluginManagerInterface $orchestration_provider_manager,
@@ -77,7 +77,7 @@ class OrchestrationProviderSettingsForm extends ConfigFormBase {
       '#type' => 'select',
       '#title' => $this->t('Select an orchestration provider'),
       '#required' => TRUE,
-      '#default_value' => $selected_provider
+      '#default_value' => $selected_provider,
     ];
 
     foreach ($plugins as $id => $plugin) {

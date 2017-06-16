@@ -1,8 +1,4 @@
 <?php
-/**
- * @file
- * Contains Drupal\shp_custom\Service\Site.
- */
 
 namespace Drupal\shp_custom\Service;
 
