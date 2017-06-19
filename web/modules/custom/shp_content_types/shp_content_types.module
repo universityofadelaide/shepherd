@@ -1,0 +1,18 @@
+<?php
+
+/**
+ * @file
+ * Contains shp_content_types.module.
+ */
+
+use Drupal\node\NodeInterface;
+
+/**
+ * Implements hook_ENTITY_TYPE_presave().
+ */
+function shp_database_provisioner_node_presave(NodeInterface $node) {
+  if ($node->bundle() === 'shp_environment') {
+    // Set title to new environment's domain/path.
+    $node->setTitle($node->field_shp_domain->value . $node->field_shp_path->value);
+  }
+}
