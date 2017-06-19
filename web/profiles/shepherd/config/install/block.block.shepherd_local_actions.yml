@@ -1,11 +1,11 @@
 langcode: en
-status: true
+status: false
 dependencies:
   theme:
-    - seven
-id: seven_local_actions
-theme: seven
-region: content
+    - shepherd
+id: shepherd_local_actions
+theme: shepherd
+region: ''
 weight: -5
 provider: null
 plugin: local_actions_block
