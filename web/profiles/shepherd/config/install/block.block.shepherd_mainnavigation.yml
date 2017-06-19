@@ -1,15 +1,15 @@
 langcode: en
-status: true
+status: false
 dependencies:
   config:
     - system.menu.main
   module:
     - system
   theme:
-    - bartik
-id: bartik_main_menu
-theme: bartik
-region: primary_menu
+    - shepherd
+id: shepherd_mainnavigation
+theme: shepherd
+region: header
 weight: 0
 provider: null
 plugin: 'system_menu_block:main'
@@ -17,7 +17,7 @@ settings:
   id: 'system_menu_block:main'
   label: 'Main navigation'
   provider: system
-  label_display: '0'
+  label_display: visible
   level: 1
   depth: 0
 visibility: {  }
