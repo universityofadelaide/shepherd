@@ -95,8 +95,6 @@ $env = Node::create([
   'langcode'                   => 'en',
   'uid'                        => '1',
   'status'                     => 1,
-  // @todo Make title a useful value.
-  'title'                      => $site->field_shp_short_name->value,
   'field_shp_domain'           => $site->field_shp_domain->value,
   'field_shp_path'             => $site->field_shp_path->value,
   'field_shp_environment_type' => [['target_id' => $development_env->id()]],
