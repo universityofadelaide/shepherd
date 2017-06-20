@@ -1207,7 +1207,7 @@
             "source": {
                 "type": "git",
                 "url": "https://git.drupal.org/project/key_value_field",
-                "reference": "919637fd40e7f5d47377a639bd22388b8ad5a35c"
+                "reference": "69cf1bf7cb8ed62c3a51f30ff47dad8d013792ff"
             },
             "require": {
                 "drupal/core": "*"
@@ -1218,8 +1218,8 @@
                     "dev-1.x": "1.x-dev"
                 },
                 "drupal": {
-                    "version": "8.x-1.0-beta1+4-dev",
-                    "datestamp": "1475601839"
+                    "version": "8.x-1.0-beta1+5-dev",
+                    "datestamp": "1491326283"
                 },
                 "patches_applied": {
                     "Add key / value label as setting": "https://www.drupal.org/files/issues/key_value_field-labels_as_settings-2842240-2.patch"
@@ -1240,7 +1240,7 @@
             "support": {
                 "source": "http://cgit.drupalcode.org/key_value_field"
             },
-            "time": "2017-04-04 17:16:34"
+            "time": "2017-06-19 09:59:57"
         },
         {
             "name": "drupal/paragraphs",
@@ -3812,12 +3812,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/universityofadelaide/openshift-client.git",
-                "reference": "e9258933606fe6d137dc8e72382830a8d7f6a029"
+                "reference": "3c7edd4ee8e0e1e8de8cc50812935a4d6cd381c6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/universityofadelaide/openshift-client/zipball/e9258933606fe6d137dc8e72382830a8d7f6a029",
-                "reference": "e9258933606fe6d137dc8e72382830a8d7f6a029",
+                "url": "https://api.github.com/repos/universityofadelaide/openshift-client/zipball/3c7edd4ee8e0e1e8de8cc50812935a4d6cd381c6",
+                "reference": "3c7edd4ee8e0e1e8de8cc50812935a4d6cd381c6",
                 "shasum": ""
             },
             "require": {
@@ -3849,7 +3849,7 @@
                 }
             ],
             "description": "Simple OpenShift client for PHP.",
-            "time": "2017-06-09 03:53:20"
+            "time": "2017-06-20 03:32:40"
         },
         {
             "name": "universityofadelaide/shepherd-drupal-scaffold",
@@ -3857,12 +3857,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/universityofadelaide/shepherd-drupal-scaffold.git",
-                "reference": "ad58e4a2028e805cb447293c63f9321adeae7fe1"
+                "reference": "e29c7361d5cb21251e74ad555c28047011b3a2e5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/universityofadelaide/shepherd-drupal-scaffold/zipball/ad58e4a2028e805cb447293c63f9321adeae7fe1",
-                "reference": "ad58e4a2028e805cb447293c63f9321adeae7fe1",
+                "url": "https://api.github.com/repos/universityofadelaide/shepherd-drupal-scaffold/zipball/e29c7361d5cb21251e74ad555c28047011b3a2e5",
+                "reference": "e29c7361d5cb21251e74ad555c28047011b3a2e5",
                 "shasum": ""
             },
             "require": {
@@ -3884,7 +3884,7 @@
                 "GPL-2.0+"
             ],
             "description": "Composer Plugin for updating the Shepherd Drupal tools.",
-            "time": "2017-06-15 03:52:25"
+            "time": "2017-06-16 06:16:35"
         },
         {
             "name": "webmozart/assert",
