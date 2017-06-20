@@ -13,7 +13,7 @@ command line tool.
 ```bash
 ./dsh
 robo build
-bin/drush -r web scr ShepherdContentGenerate.php --uri=shepherd.test
+bin/drush -r web scr ShepherdContentGenerate.php --uri=${VIRTUAL_HOST}
 ```
 
 Create a secret to use to build with (needs password less key)
