@@ -194,10 +194,10 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
    * @param string $short_name
    *   Short name of the site.
    * @param string $environment_id
-   *   Unique id of the environment.
+   *   Environment node id.
    *
-   * @return string
-   *   Returns the generated deployment name.
+   * @return string Returns the generated deployment name.
+   * Returns the generated deployment name.
    */
   public static function generateDeploymentName(
     string $distribution_name,

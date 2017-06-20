@@ -77,6 +77,7 @@ function shp_database_provisioner_form_shp_custom_settings_submit($form, FormSta
 function shp_database_provisioner_node_insert(EntityInterface $entity) {
   $config = \Drupal::config('shp_database_provisioner.settings');
   if ($entity->bundle() === 'shp_environment' && $config->get('enabled')) {
+    /** @var \Drupal\shp_orchestration\OrchestrationProviderInterface $orchestration_provider_plugin */
     $orchestration_provider_plugin = \Drupal::service('plugin.manager.orchestration_provider')->getProviderInstance();
 
     if (isset($entity->field_shp_site->target_id)) {
@@ -93,11 +94,19 @@ function shp_database_provisioner_node_insert(EntityInterface $entity) {
           ->getTarget()
           ->getValue();
       }
+      else {
+        // @todo Handle errors.
+        return FALSE;
+      }
     }
+    else {
+      // @todo Handle errors.
+      return FALSE;
+    }
+
     $deployment_name = $orchestration_provider_plugin::generateDeploymentName(
       $distribution->getTitle(),
-      $site->getTitle(),
-      $entity->getTitle(),
+      $site->field_shp_short_name->value,
       $entity->id()
     );
 

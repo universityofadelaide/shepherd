@@ -388,7 +388,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
   ) {
     return implode('-', [
       self::sanitise($distribution_name),
-      $short_name,
+      self::sanitise($short_name),
       $environment_id,
     ]);
   }
