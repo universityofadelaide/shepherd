@@ -8,6 +8,8 @@ dependencies:
     - node
     - shp_custom
     - user
+_core:
+  default_config_hash: '-mM7P1bBf9YagkYaR3uJBjFD93CMrOtb5RGeDVtTXEM'
 id: shp_site_environments
 label: 'Site Environments'
 module: views
@@ -390,7 +392,7 @@ display:
           plugin_id: site_environment_operations
       filters:
         status:
-          value: true
+          value: '1'
           table: node_field_data
           field: status
           plugin_id: boolean
@@ -428,7 +430,7 @@ display:
           empty: true
           tokenize: true
           content:
-            value: '<a class="c-btn button" href="/site/{{ raw_arguments.field_shp_site_target_id }}/environment/add">Add Environment</a>'
+            value: '<a class="c-btn button" href="/node/add/shp_environment">Add environment</a>'
             format: full_html
           plugin_id: text
       footer: {  }
@@ -480,8 +482,6 @@ display:
         - 'user.node_grants:view'
         - user.permissions
       tags:
-        - 'config:field.storage.node.field_shp_machine_name'
-        - 'config:field.storage.node.field_shp_platform'
         - 'config:field.storage.node.field_shp_site'
   page_1:
     display_plugin: page
@@ -510,6 +510,4 @@ display:
         - 'user.node_grants:view'
         - user.permissions
       tags:
-        - 'config:field.storage.node.field_shp_machine_name'
-        - 'config:field.storage.node.field_shp_platform'
         - 'config:field.storage.node.field_shp_site'
