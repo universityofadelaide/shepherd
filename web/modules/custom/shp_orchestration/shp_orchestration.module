@@ -38,7 +38,6 @@ function shp_orchestration_node_insert(EntityInterface $entity) {
 
       case 'shp_environment':
 
-        // @todo - these should be required fields.
         if (isset($entity->field_shp_site->target_id)) {
           $site = $entity->get('field_shp_site')
             ->first()
@@ -54,7 +53,7 @@ function shp_orchestration_node_insert(EntityInterface $entity) {
               ->getValue();
           }
         }
-        if (!isset($distribution)) {
+        if (!isset($distribution) || !isset($site)) {
           // @todo Handle errors.
           return FALSE;
         }
@@ -157,11 +156,14 @@ function shp_orchestration_node_delete(EntityInterface $entity) {
             ->getTarget()
             ->getValue();
         }
+        if (!isset($distribution) || !isset($site)) {
+          // @todo Handle errors.
+          return FALSE;
+        }
 
         $result = $orchestration_provider_plugin->deletedEnvironment(
           $distribution->title->value,
-          $site->title->value,
-          $entity->title->value,
+          $site->field_shp_short_name->value,
           $entity->id()
         );
         break;

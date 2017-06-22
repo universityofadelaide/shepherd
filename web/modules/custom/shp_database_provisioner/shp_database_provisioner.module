@@ -171,7 +171,7 @@ function shp_database_provisioner_shp_env_vars(EntityInterface $entity) {
     'DATABASE_PORT' => $config->get('port'),
     'DATABASE_NAME' => 'env_' . $entity->id(),
     'DATABASE_USER' => 'user_' . $entity->id(),
-    'DATABASE_PASSWORD_FILE' => [
+    'DATABASE_PASSWORD' => [
       // Automatically replaced with deployment config secret name.
       'secret' => '_default',
       'secret_key' => 'DATABASE_PASSWORD',
