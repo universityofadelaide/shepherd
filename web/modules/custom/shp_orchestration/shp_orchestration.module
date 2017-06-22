@@ -59,6 +59,11 @@ function shp_orchestration_node_insert(EntityInterface $entity) {
           return FALSE;
         }
 
+        $cron_jobs = [];
+        foreach ($entity->field_shp_cron_jobs as $job) {
+          $cron_jobs[$job->key] = $job->value;
+        }
+
         // Collate environment variables and secrets.
         $env_vars = \Drupal::moduleHandler()->invokeAll('shp_env_vars', [$entity]);
         $secrets = \Drupal::moduleHandler()->invokeAll('shp_secrets', [$entity]);
@@ -73,7 +78,8 @@ function shp_orchestration_node_insert(EntityInterface $entity) {
           $entity->field_shp_git_reference->value,
           $distribution->field_shp_build_secret->value,
           $env_vars,
-          $secrets
+          $secrets,
+          $cron_jobs
         );
 
         if (!$result) {

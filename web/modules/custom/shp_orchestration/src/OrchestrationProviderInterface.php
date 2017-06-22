@@ -94,6 +94,8 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
    *   An array of key => value environment variables to set.
    * @param array $secrets
    *   An array of secrets to attach to the deployment.
+   * @param array $cron_jobs
+   *   An array of cron jobs associated with this environment.
    *
    * @return bool
    *   Returns true if succeeded.
@@ -108,15 +110,45 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
     string $source_ref = 'master',
     string $source_secret = NULL,
     array $environment_variables = [],
-    array $secrets = []
+    array $secrets = [],
+    array $cron_jobs
   );
 
   /**
    * Updates the environment in the selected orchestration provider.
    *
+   * @param string $distribution_name
+   *   Name of the distribution.
+   * @param string $short_name
+   *   Short name of the site.
+   * @param string $environment_id
+   *   Unique id of the environment.
+   * @param string $environment_url
+   *   Absolute url for the environment.
+   * @param string $builder_image
+   *   An s2i-enabled image to use to build (and run) the source code.
+   * @param string $source_repo
+   *   Source code git repository.
+   * @param string $source_ref
+   *   Source code git ref, defaults to 'master'.
+   * @param string|null $source_secret
+   *   The secret to use when pulling and building the source git repository.
+   * @param array $cron_jobs
+   *   An array of cron jobs associated with this environment.
+
    * @return mixed
    */
-  public function updatedEnvironment();
+  public function updatedEnvironment(
+    string $distribution_name,
+    string $short_name,
+    string $environment_id,
+    string $environment_url,
+    string $builder_image,
+    string $source_repo,
+    string $source_ref = 'master',
+    string $source_secret = NULL,
+    array $cron_jobs
+  );
 
   /**
    * Delete the environment in the orchestration provider.
