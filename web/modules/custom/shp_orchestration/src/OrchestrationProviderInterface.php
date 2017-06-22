@@ -90,6 +90,10 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
    *   Source code git ref, defaults to 'master'.
    * @param string|null $source_secret
    *   The secret to use when pulling and building the source git repository.
+   * @param array $environment_variables
+   *   An array of key => value environment variables to set.
+   * @param array $secrets
+   *   An array of secrets to attach to the deployment.
    *
    * @return bool
    *   Returns true if succeeded.
@@ -102,7 +106,9 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
     string $builder_image,
     string $source_repo,
     string $source_ref = 'master',
-    string $source_secret = NULL
+    string $source_secret = NULL,
+    array $environment_variables = [],
+    array $secrets = []
   );
 
   /**

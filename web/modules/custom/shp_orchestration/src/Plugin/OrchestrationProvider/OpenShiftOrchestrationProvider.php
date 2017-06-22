@@ -147,7 +147,9 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     string $builder_image,
     string $source_repo,
     string $source_ref = 'master',
-    string $source_secret = NULL
+    string $source_secret = NULL,
+    array $environment_variables = [],
+    array $secrets = []
   ) {
     $sanitised_distribution_name = self::sanitise($distribution_name);
     $deployment_name = self::generateDeploymentName(
@@ -185,29 +187,29 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       }
     }
 
-    // @todo Consider building this array by calling a hook.
-    $deploy_config_env_vars = [];
-    $env_vars_from_secrets = [
-      'DATABASE_HOST',
-      'DATABASE_PORT',
-      'DATABASE_NAME',
-      'DATABASE_USER',
-    ];
-    foreach ($env_vars_from_secrets as $env_var) {
-      $deploy_config_env_vars[] = [
-        'name' => $env_var,
-        'valueFrom' => [
-          'secretKeyRef' => [
-            'key' => $env_var,
-            'name' => $deployment_name,
+    $formatted_env_vars = [];
+    foreach ($environment_variables as $name => $value) {
+      if (is_string($value)) {
+        // Plain environment variable.
+        $formatted_env_vars[] = [
+          'name' => $name,
+          'value' => $value,
+        ];
+      }
+      elseif (is_array($value) && array_key_exists('secret', $value)) {
+        // Sourced from secret.
+        $formatted_env_vars[] = [
+          'name' => $name,
+          'valueFrom' => [
+            'secretKeyRef' => [
+              // If secret is '_default' use the deployment config secret.
+              'name' => $value['secret'] == '_default' ? $deployment_name : $value['secret'],
+              'key' => $value['secret_key'],
+            ],
           ],
-        ],
-      ];
+        ];
+      }
     }
-    $deploy_config_env_vars[] = [
-      'name' => 'DATABASE_PASSWORD_FILE',
-      'value' => '/etc/secret/DATABASE_PASSWORD',
-    ];
 
     // @todo Parametrise storage size.
     $public_pvc_name = $deployment_name . '-public';
@@ -254,10 +256,12 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       ];
     }
 
+    // @todo Add $secrets to $volumes.
+
     $deploy_data = [
       'containerPort' => 8080,
       'memory_limit' => '128Mi',
-      'env_vars' => $deploy_config_env_vars,
+      'env_vars' => $formatted_env_vars,
       'volumes' => $volumes,
       'annotations' => [
         'shepherdUrl' => $environment_url,
@@ -357,7 +361,8 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       if ($key) {
         return array_key_exists($key, $secret['data']) ? base64_decode($secret['data'][$key]) : FALSE;
       }
-      return array_walk($secret['data'], 'base64_decode');
+      array_walk($secret['data'], 'base64_decode');
+      return $secret['data'];
     }
     return FALSE;
   }

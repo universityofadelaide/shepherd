@@ -59,6 +59,10 @@ function shp_orchestration_node_insert(EntityInterface $entity) {
           return FALSE;
         }
 
+        // Collate environment variables and secrets.
+        $env_vars = \Drupal::moduleHandler()->invokeAll('shp_env_vars', [$entity]);
+        $secrets = \Drupal::moduleHandler()->invokeAll('shp_secrets', [$entity]);
+
         $result = $orchestration_provider_plugin->createdEnvironment(
           $distribution->getTitle(),
           $site->field_shp_short_name->value,
@@ -67,7 +71,9 @@ function shp_orchestration_node_insert(EntityInterface $entity) {
           $distribution->field_shp_builder_image->value,
           $distribution->field_shp_git_repository->value,
           $entity->field_shp_git_reference->value,
-          $distribution->field_shp_build_secret->value
+          $distribution->field_shp_build_secret->value,
+          $env_vars,
+          $secrets
         );
 
         if (!$result) {

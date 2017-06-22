@@ -111,26 +111,22 @@ function shp_database_provisioner_node_insert(EntityInterface $entity) {
     );
 
     // Construct credentials for the new environment.
-    $env_db_credentials = [
-      'DATABASE_HOST' => $config->get('host'),
-      'DATABASE_PORT' => $config->get('port'),
-      'DATABASE_NAME' => 'env_' . $entity->id(),
-      'DATABASE_USER' => 'user_' . $entity->id(),
-      'DATABASE_PASSWORD' => \Drupal::service('shp_custom.password')->generate(),
-    ];
+    $env_db_database = 'env_' . $entity->id();
+    $env_db_username = 'user_' . $entity->id();
+    $env_db_password = \Drupal::service('shp_custom.password')->generate();
 
     // Add database credentials to deployment secret.
     // Create the secret if it doesn't exist, otherwise add it to the existing.
     if ($env_secret = $orchestration_provider_plugin->getSecret($deployment_name)) {
       $secret_result = $orchestration_provider_plugin->updateSecret(
         $deployment_name,
-        array_merge($env_secret, $env_db_credentials)
+        array_merge($env_secret, ['DATABASE_PASSWORD' => $env_db_password])
       );
     }
     else {
       $secret_result = $orchestration_provider_plugin->createSecret(
         $deployment_name,
-        $env_db_credentials
+        ['DATABASE_PASSWORD' => $env_db_password]
       );
     }
     if (!$secret_result) {
@@ -138,6 +134,7 @@ function shp_database_provisioner_node_insert(EntityInterface $entity) {
       return FALSE;
     }
 
+    // Fetch privileged database password from orchestration secret store.
     $privileged_db_password = $orchestration_provider_plugin->getSecret($config->get('secret'), 'DATABASE_PASSWORD');
 
     $db = new mysqli(
@@ -149,17 +146,35 @@ function shp_database_provisioner_node_insert(EntityInterface $entity) {
       NULL
     );
 
-    $query = sprintf('CREATE DATABASE `%s`', $env_db_credentials['DATABASE_NAME']);
+    $query = sprintf('CREATE DATABASE `%s`', $env_db_database);
     $statement = $db->prepare($query);
     $statement->execute();
 
     $query = sprintf(
       "GRANT ALL PRIVILEGES ON `%s`.* TO `%s`@`%%` IDENTIFIED BY '%s'",
-      $env_db_credentials['DATABASE_NAME'],
-      $env_db_credentials['DATABASE_USER'],
-      $env_db_credentials['DATABASE_PASSWORD']
+      $env_db_database,
+      $env_db_username,
+      $env_db_password
     );
     $statement = $db->prepare($query);
     $statement->execute();
   }
+}
+
+/**
+ * Implements hook_shp_env_vars().
+ */
+function shp_database_provisioner_shp_env_vars(EntityInterface $entity) {
+  $config = \Drupal::config('shp_database_provisioner.settings');
+  return [
+    'DATABASE_HOST' => $config->get('host'),
+    'DATABASE_PORT' => $config->get('port'),
+    'DATABASE_NAME' => 'env_' . $entity->id(),
+    'DATABASE_USER' => 'user_' . $entity->id(),
+    'DATABASE_PASSWORD_FILE' => [
+      // Automatically replaced with deployment config secret name.
+      'secret' => '_default',
+      'secret_key' => 'DATABASE_PASSWORD',
+    ],
+  ];
 }
