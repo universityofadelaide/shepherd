@@ -1,7 +1,10 @@
 #!/bin/bash
 
-# Password for the mysql server
+# Password for the mysql server.
 SUPER_SECRET_PASSWORD=super-secret-password
+
+# Path to ssh key with no passphrase.
+: ${BUILD_KEY:=$HOME/.ssh/id_rsa}
 
 # Perform/check setup.
 MINISHIFT_STATUS=$(minishift status)
@@ -15,33 +18,35 @@ if [ ! $(oc whoami) ]; then
     oc login
 fi
 
-# Setup a new mysql server, expose it and group the services
-MYSQL_STATUS=$(oc get svc | grep mysql | wc -l)
-if [ ${MYSQL_STATUS} -lt 1 ]; then
+# Setup a new mysql server, expose it and group the services.
+if ! oc get svc | grep -q mysql; then
     oc new-app mysql MYSQL_ROOT_PASSWORD=${SUPER_SECRET_PASSWORD} -l db=shepherd
     oc expose dc mysql --type=LoadBalancer --name=mysql-external
     oc annotate svc mysql-external "service.alpha.openshift.io/dependencies=[{\"name\": \"mysql\", \"kind\": \"Service\"}]"
 fi
 
-# Setup the database password in an openshift secret
-MYSQL_SECRET_STATUS=$(oc get secret | grep privileged-db-password | wc -l)
-if [ ${MYSQL_SECRET_STATUS} -lt 1 ]; then
+# Setup the database password in an openshift secret.
+if ! oc get secret | grep -q privileged-db-password; then
     oc create secret generic privileged-db-password --from-literal=DATABASE_PASSWORD=${SUPER_SECRET_PASSWORD}
 fi
 
-# Create a permanent token that shepherd can use to talk to openshift
-SERVICEACCOUNT_STATUS=$(oc get serviceaccount | grep shepherd | wc -l)
-if [ ${SERVICEACCOUNT_STATUS} -lt 1 ]; then
+# Add local ssh key as build-key secret if it exists and has no passphrase.
+if ! oc get secret | grep -q build-key && [ -f ${BUILD_KEY} ] && ! grep -q ENCRYPTED ${BUILD_KEY}; then
+    oc create secret generic build-key --from-file=ssh-privatekey=${BUILD_KEY}
+fi
+
+# Create a permanent token that shepherd can use to talk to openshift.
+if ! oc get serviceaccount | grep -q shepherd; then
     oc create serviceaccount shepherd
     oc policy add-role-to-user admin system:serviceaccount:myproject:shepherd
 fi
 
-# Retrieve the service account token and the minishift ip
-SVC_ACCOUNT=$(oc describe serviceaccount shepherd | grep Token | awk '{ print $2 }')
+# Retrieve the service account token and the minishift ip.
+SERVICE_ACCOUNT=$(oc describe serviceaccount shepherd | grep Token | awk '{ print $2 }')
 MINISHIFT_IP=$(minishift ip)
 
 # Now set the things that we need in the dsh shell.
-TOKEN=$(oc describe secret $SVC_ACCOUNT | grep "token:" | awk '{ print $2 }')
+TOKEN=$(oc describe secret $SERVICE_ACCOUNT | grep "token:" | awk '{ print $2 }')
 DB_PORT=$(oc get service mysql-external --no-headers | sed 's/.*:\([0-9]*\).*/\1/')
 OPENSHIFT_DOMAIN="${MINISHIFT_IP}.nip.io"
 OPENSHIFT_URL="https://${MINISHIFT_IP}:8443"
