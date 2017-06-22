@@ -149,7 +149,8 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     string $source_ref = 'master',
     string $source_secret = NULL,
     array $environment_variables = [],
-    array $secrets = []
+    array $secrets = [],
+    array $cron_jobs
   ) {
     $sanitised_distribution_name = self::sanitise($distribution_name);
     $deployment_name = self::generateDeploymentName(
@@ -256,13 +257,10 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       ];
     }
 
-    // @todo Add $secrets to $volumes.
-
     $deploy_data = [
       'containerPort' => 8080,
       'memory_limit' => '128Mi',
       'env_vars' => $formatted_env_vars,
-      'volumes' => $volumes,
       'annotations' => [
         'shepherdUrl' => $environment_url,
       ],
@@ -272,11 +270,35 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       $deployment_name,
       $image_stream_tag,
       $sanitised_distribution_name,
+      $volumes,
       $deploy_data
     );
     if (!$deployment_config) {
       // @todo Handle bad response.
       return FALSE;
+    }
+
+    $image_stream = $this->client->getImageStream($sanitised_distribution_name);
+    if ($image_stream) {
+      foreach ($cron_jobs as $schedule => $args) {
+        $args_array = [
+          '/bin/sh',
+          '-c',
+          $args,
+        ];
+        $cron_job = $this->client->createCronJob(
+          $deployment_name,
+          $image_stream['status']['dockerImageRepository'] . ':' . $source_ref,
+          $schedule,
+          $args_array,
+          $volumes,
+          $deploy_data
+        );
+        if (!$cron_job) {
+          // @todo Handle bad response.
+          return FALSE;
+        }
+      }
     }
 
     // Create a service.
@@ -303,8 +325,18 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
   /**
    * {@inheritdoc}
    */
-  public function updatedEnvironment() {
-    // TODO: Implement updateEnvironment() method.
+  public function updatedEnvironment(
+    string $distribution_name,
+    string $short_name,
+    string $environment_id,
+    string $environment_url,
+    string $builder_image,
+    string $source_repo,
+    string $source_ref = 'master',
+    string $source_secret = NULL,
+    array $cron_jobs
+  ) {
+
   }
 
   /**

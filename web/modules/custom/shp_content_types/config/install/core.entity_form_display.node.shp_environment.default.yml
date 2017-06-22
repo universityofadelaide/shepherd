@@ -2,6 +2,7 @@ langcode: en
 status: true
 dependencies:
   config:
+    - field.field.node.shp_environment.field_shp_cron_jobs
     - field.field.node.shp_environment.field_shp_deployment_name
     - field.field.node.shp_environment.field_shp_domain
     - field.field.node.shp_environment.field_shp_env_vars
@@ -17,6 +18,20 @@ targetEntityType: node
 bundle: shp_environment
 mode: default
 content:
+  field_shp_cron_jobs:
+    weight: 26
+    settings:
+      key_label: Schedule
+      key_size: 60
+      key_placeholder: ''
+      value_label: Command(s)
+      size: 60
+      placeholder: ''
+      description_enabled: true
+      description_placeholder: ''
+    third_party_settings: {  }
+    type: key_value_textfield
+    region: content
   field_shp_domain:
     weight: 1
     settings:
