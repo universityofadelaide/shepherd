@@ -1161,7 +1161,7 @@
             "dist": {
                 "type": "zip",
                 "url": "https://ftp.drupal.org/files/projects/externalauth-8.x-1.0.zip",
-                "reference": "8.x-1.0",
+                "reference": null,
                 "shasum": "f1298e1d34f5e1c4ebc130c2b90443b5167e405b"
             },
             "require": {
@@ -1253,7 +1253,7 @@
             "dist": {
                 "type": "zip",
                 "url": "https://ftp.drupal.org/files/projects/paragraphs-8.x-1.1.zip",
-                "reference": "8.x-1.1",
+                "reference": null,
                 "shasum": "c678e5704a98c6a0549e415412da081cfeb03a00"
             },
             "require": {
@@ -3812,12 +3812,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/universityofadelaide/openshift-client.git",
-                "reference": "3c7edd4ee8e0e1e8de8cc50812935a4d6cd381c6"
+                "reference": "e1e67ba83f9c1e125a0548c2df7626980f1bef60"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/universityofadelaide/openshift-client/zipball/3c7edd4ee8e0e1e8de8cc50812935a4d6cd381c6",
-                "reference": "3c7edd4ee8e0e1e8de8cc50812935a4d6cd381c6",
+                "url": "https://api.github.com/repos/universityofadelaide/openshift-client/zipball/e1e67ba83f9c1e125a0548c2df7626980f1bef60",
+                "reference": "e1e67ba83f9c1e125a0548c2df7626980f1bef60",
                 "shasum": ""
             },
             "require": {
@@ -3849,7 +3849,7 @@
                 }
             ],
             "description": "Simple OpenShift client for PHP.",
-            "time": "2017-06-20 03:32:40"
+            "time": "2017-06-22 04:13:42"
         },
         {
             "name": "universityofadelaide/shepherd-drupal-scaffold",
