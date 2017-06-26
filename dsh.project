@@ -6,11 +6,20 @@ SUPER_SECRET_PASSWORD=super-secret-password
 # Path to ssh key with no passphrase.
 : ${BUILD_KEY:=$HOME/.ssh/id_rsa}
 
+# Exit if minishift isn't available.
+if ! which minishift > /dev/null; then
+    echo "Minishift not found, is it installed?"
+    exit 1
+fi
+
 # Perform/check setup.
 MINISHIFT_STATUS=$(minishift status)
 if [ "${MINISHIFT_STATUS}" != "Running" ]; then
     minishift start
 fi
+
+# Ensure oc command is available.
+eval $(minishift oc-env)
 
 # Are we logged in.
 if [ ! $(oc whoami) ]; then
