@@ -5,6 +5,7 @@
  * Contains shp_content_types.module.
  */
 
+use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\node\NodeInterface;
 
 /**
@@ -14,5 +15,34 @@ function shp_content_types_node_presave(NodeInterface $node) {
   if ($node->bundle() === 'shp_environment') {
     // Set title to new environment's domain/path.
     $node->setTitle($node->field_shp_domain->value . $node->field_shp_path->value);
+  }
+}
+
+/**
+ * Implements hook_entity_bundle_field_info_alter().
+ */
+function shp_content_types_entity_bundle_field_info_alter(&$fields, EntityTypeInterface $entity_type, $bundle) {
+  if ($bundle === 'shp_site') {
+    if (isset($fields['field_shp_domain'])) {
+      $fields['field_shp_domain']->addConstraint('ComboUniqueField', ['fields' => ['field_shp_path']]);
+      $fields['field_shp_domain']->addConstraint('Domain', []);
+    }
+    if (isset($fields['field_shp_path'])) {
+      $fields['field_shp_path']->addConstraint('Path', []);
+    }
+    if (isset($fields['field_shp_short_name'])) {
+      $fields['field_shp_short_name']->addConstraint('ComboUniqueField', ['fields' => ['field_shp_path']]);
+    }
+  }
+  elseif ($bundle === 'shp_environment') {
+    if (isset($fields['field_shp_domain'])) {
+      $fields['field_shp_domain']->addConstraint('Domain', []);
+    }
+    if (isset($fields['field_shp_env_vars'])) {
+      $fields['field_shp_env_vars']->addConstraint('EnvironmentVariableName', []);
+    }
+    if (isset($fields['field_shp_path'])) {
+      $fields['field_shp_path']->addConstraint('Path', []);
+    }
   }
 }
