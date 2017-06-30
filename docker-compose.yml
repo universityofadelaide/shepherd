@@ -2,6 +2,7 @@ version: '2'
 services:
   web:
     image: uofa/apache2-php7-dev:shepherd
+    hostname: ${PROJECT}
     environment:
       SITE_TITLE: Shepherd
       SITE_MAIL: site@example.com
