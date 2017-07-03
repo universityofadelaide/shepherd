@@ -1,0 +1,14 @@
+table:
+  version: VERSION
+  js:
+    js/table.js: {}
+  dependencies:
+  - shp_vue_view/common
+
+common:
+  version: VERSION
+  js:
+    js/vendor.js: {}
+  dependencies:
+    - core/jquery
+    - core/drupalSettings

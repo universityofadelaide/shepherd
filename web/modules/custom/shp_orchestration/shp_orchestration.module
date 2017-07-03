@@ -70,6 +70,7 @@ function shp_orchestration_node_insert(EntityInterface $entity) {
         $result = $orchestration_provider_plugin->createdEnvironment(
           $distribution->getTitle(),
           $site->field_shp_short_name->value,
+          $site->id(),
           $entity->id(),
           $entity->toUrl('canonical', ['absolute' => TRUE])->toString(),
           $distribution->field_shp_builder_image->value,

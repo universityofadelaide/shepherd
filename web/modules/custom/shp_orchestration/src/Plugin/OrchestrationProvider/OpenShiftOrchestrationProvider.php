@@ -142,6 +142,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
   public function createdEnvironment(
     string $distribution_name,
     string $short_name,
+    string $site_id,
     string $environment_id,
     string $environment_url,
     string $builder_image,
@@ -264,6 +265,10 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       'annotations' => [
         'shepherdUrl' => $environment_url,
       ],
+      'labels' => [
+        'site_id' => $site_id,
+        'environment_id' => $environment_id,
+      ],
     ];
 
     $deployment_config = $this->client->createDeploymentConfig(
@@ -328,6 +333,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
   public function updatedEnvironment(
     string $distribution_name,
     string $short_name,
+    string $site_id,
     string $environment_id,
     string $environment_url,
     string $builder_image,
@@ -428,6 +434,13 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       self::sanitise($short_name),
       $environment_id,
     ]);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getSiteEnvironmentsStatus(string $site_id) {
+    return $this->client->getDeploymentConfigs('site_id=' . $site_id);
   }
 
 }

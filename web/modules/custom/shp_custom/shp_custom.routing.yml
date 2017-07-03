@@ -150,3 +150,11 @@ shp_custom.site-backups-list:
     no_cache: TRUE
   requirements:
     _permission: 'shp view backups'
+shp_custom.api-site-environments:
+  path: '/api/site/{node}/environments'
+  defaults:
+    _controller: '\Drupal\shp_custom\Controller\SiteEnvironmentsController::getStatus'
+  methods: [GET]
+  requirements:
+    _permission: 'shp access environment'
+

@@ -7,9 +7,8 @@ dependencies:
   module:
     - node
     - shp_custom
+    - shp_vue_view
     - user
-_core:
-  default_config_hash: '-mM7P1bBf9YagkYaR3uJBjFD93CMrOtb5RGeDVtTXEM'
 id: shp_site_environments
 label: 'Site Environments'
 module: views
@@ -72,28 +71,35 @@ display:
             last: 'Last »'
           quantity: 9
       style:
-        type: table
+        type: vuetable
         options:
-          grouping: {  }
-          row_class: ''
-          default_row_class: true
-          override: true
-          sticky: false
-          caption: ''
-          summary: ''
-          description: ''
-          columns:
-            title: title
-          info:
+          field_options:
             title:
-              sortable: false
-              default_sort_order: asc
-              align: ''
-              separator: ''
-              empty_column: false
-              responsive: ''
-          default: '-1'
-          empty_table: false
+              url_endpoint: ''
+              javascript_property: ''
+              name: ''
+              active: 0
+            field_shp_url:
+              url_endpoint: ''
+              javascript_property: ''
+              name: ''
+              active: 0
+            site_environment_status:
+              url_endpoint: '/api/site/{node}/environments'
+              javascript_property: status
+              active: '1'
+              name: ''
+            field_shp_site:
+              url_endpoint: ''
+              javascript_property: ''
+              name: ''
+              active: 0
+            site_environment_operations:
+              url_endpoint: ''
+              javascript_property: ''
+              name: ''
+              active: 0
+          update_cycle: '5000'
       row:
         type: 'entity:node'
         options:
@@ -473,7 +479,7 @@ display:
           plugin_id: numeric
       display_extenders: {  }
     cache_metadata:
-      max-age: 0
+      max-age: -1
       contexts:
         - 'languages:language_content'
         - 'languages:language_interface'
@@ -501,7 +507,7 @@ display:
         context: '0'
         menu_name: main
     cache_metadata:
-      max-age: 0
+      max-age: -1
       contexts:
         - 'languages:language_content'
         - 'languages:language_interface'

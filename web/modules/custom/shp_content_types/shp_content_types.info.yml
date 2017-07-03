@@ -6,3 +6,4 @@ package: Shepherd
 dependencies:
   - paragraphs
   - shp_custom
+  - shp_vue_view
