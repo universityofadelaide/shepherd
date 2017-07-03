@@ -78,6 +78,8 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
    *   Name of the distribution.
    * @param string $short_name
    *   Short name of the site.
+   * @param string $site_id
+   *   Unique id of the site.
    * @param string $environment_id
    *   Unique id of the environment.
    * @param string $environment_url
@@ -103,6 +105,7 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
   public function createdEnvironment(
     string $distribution_name,
     string $short_name,
+    string $site_id,
     string $environment_id,
     string $environment_url,
     string $builder_image,
@@ -121,6 +124,8 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
    *   Name of the distribution.
    * @param string $short_name
    *   Short name of the site.
+   * @param string $site_id
+   *   Unique id of the site.
    * @param string $environment_id
    *   Unique id of the environment.
    * @param string $environment_url
@@ -141,6 +146,7 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
   public function updatedEnvironment(
     string $distribution_name,
     string $short_name,
+    string $site_id,
     string $environment_id,
     string $environment_url,
     string $builder_image,
@@ -242,5 +248,16 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
     string $short_name,
     string $environment_id
   );
+
+  /**
+   * Get the status of a collection of environments related to a site.
+   *
+   * @param string $site_id
+   *   Unique id of the site, used a label for environments.
+   *
+   * @return mixed
+   *   Returns a collection of environments and their statuses.
+   */
+  public function getSiteEnvironmentsStatus(string $site_id);
 
 }

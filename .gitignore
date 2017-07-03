@@ -48,3 +48,6 @@ RoboFileBase.php
 /private/
 /web/adminer.php
 *.sql
+/*/node_modules
+/node_modules
+/**/node_modules
