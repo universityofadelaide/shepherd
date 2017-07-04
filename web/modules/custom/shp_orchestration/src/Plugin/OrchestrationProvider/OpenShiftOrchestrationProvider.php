@@ -359,14 +359,24 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       $environment_id
     );
 
-    $this->client->deleteDeploymentConfig($deployment_name);
-    $this->client->deletePersistentVolumeClaim($deployment_name . '-public');
-    $this->client->deletePersistentVolumeClaim($deployment_name . '-private');
+    // Scale the pods to zero, then delete the pod creators.
+    $this->client->updateDeploymentConfig($deployment_name, 0);
+    $this->client->updateReplicationControllers('', 'openshift.io/deployment-config.name=' . $deployment_name, 0);
+
+    // Not sure if we need to delay a little here, do the cronjob and routes to artificially delay.
+    $this->client->deleteCronJob($deployment_name);
     $this->client->deleteRoute($deployment_name);
     $this->client->deleteService($deployment_name);
+
+    $this->client->deleteDeploymentConfig($deployment_name);
+    $this->client->deleteReplicationControllers('', 'openshift.io/deployment-config.name=' . $deployment_name);
+
+    // Now the things not in the typically visible ui.
+    $this->client->deletePersistentVolumeClaim($deployment_name . '-public');
+    $this->client->deletePersistentVolumeClaim($deployment_name . '-private');
     $this->client->deleteSecret($deployment_name);
 
-    // TODO: // Check calls succeed.
+    // TODO: Check calls succeed.
   }
 
   /**
