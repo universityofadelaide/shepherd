@@ -15,7 +15,7 @@ class DomainValidator extends ConstraintValidator {
    */
   public function validate($items, Constraint $constraint) {
     foreach ($items as $item) {
-      if (!preg_match('/^[a-z.-]*$/', $item->value)) {
+      if (!preg_match('/^[0-9a-z.-]*$/', $item->value)) {
         $this->context->addViolation($constraint->message, ['%value' => $item->value]);
       }
     }
