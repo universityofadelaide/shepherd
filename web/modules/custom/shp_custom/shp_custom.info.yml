@@ -4,3 +4,4 @@ description: 'Provides functionality specific to Shepherd.'
 core: 8.x
 package: UA
 dependencies:
+  - shp_vue_view

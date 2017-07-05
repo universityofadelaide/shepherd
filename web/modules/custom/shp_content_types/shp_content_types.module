@@ -7,6 +7,7 @@
 
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\node\NodeInterface;
+use Drupal\group\Entity\GroupContentType;
 
 /**
  * Implements hook_ENTITY_TYPE_presave().
@@ -39,10 +40,29 @@ function shp_content_types_entity_bundle_field_info_alter(&$fields, EntityTypeIn
       $fields['field_shp_domain']->addConstraint('Domain', []);
     }
     if (isset($fields['field_shp_env_vars'])) {
-      $fields['field_shp_env_vars']->addConstraint('EnvironmentVariableName', []);
+      $fields['field_shp_env_vars']->addConstraint('EnvironmentVariableName',
+        []);
     }
     if (isset($fields['field_shp_path'])) {
       $fields['field_shp_path']->addConstraint('Path', []);
     }
+  }
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_insert().
+ */
+function shp_content_types_node_insert(NodeInterface $node) {
+  if ($node->getType() === 'shp_site') {
+    \Drupal::service('shp_content_types.site_group_manager')->create($node);
+  }
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_delete().
+ */
+function shp_content_types_node_delete(NodeInterface $node) {
+  if ($node->getType() === 'shp_site') {
+    \Drupal::service('shp_content_types.site_group_manager')->delete($node);
   }
 }

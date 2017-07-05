@@ -4,7 +4,6 @@ namespace Drupal\shp_custom\Service;
 
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\node\Entity\Node;
-use Drupal\paragraphs\Entity\Paragraph;
 use Drupal\user\Entity\User;
 
 /**
@@ -66,58 +65,6 @@ class Site {
       ->condition('status', NODE_PUBLISHED)
       ->execute();
     return Node::loadMultiple($results);
-  }
-
-  /**
-   * Loads all public keys for a site from users who have admin access.
-   *
-   * @param \Drupal\node\Entity\Node $site
-   *   The site node.
-   * @param string|bool $role
-   *   Optional parameter to filter returned users by a role.
-   *
-   * @return array
-   *   An array of users.
-   */
-  public function loadUsers(Node $site, $role = FALSE) {
-    $user_paragraphs = $site->field_shp_users->referencedEntities();
-    $user_names = [];
-    foreach ($user_paragraphs as $user_paragraph) {
-      if (!$role || $user_paragraph->field_shp_role->value == $role) {
-        $user_names[] = $user_paragraph->field_shp_user_id->value;
-      }
-    }
-    $user_ids = \Drupal::entityQuery('user')
-      ->condition('name', $user_names, 'in')
-      ->execute();
-    $users = User::loadMultiple($user_ids);
-    return $users;
-  }
-
-  /**
-   * Check if user role combo exists on site.
-   *
-   * @param \Drupal\Core\Entity\EntityInterface $site
-   *   The site to check for the combo.
-   * @param \Drupal\Core\Entity\EntityInterface $account
-   *   User.
-   * @param string $role
-   *   The role to check for.
-   *
-   * @return bool
-   *   whether the user role combo exists.
-   */
-  public function userRoleExists(EntityInterface $site, EntityInterface $account, $role) {
-    $user_roles = $site->get('field_shp_users');
-    $user_role_exists = FALSE;
-    foreach ($user_roles as $user_role_field) {
-      $id = $user_role_field->getValue()['target_id'];
-      $user_role = Paragraph::load($id);
-      if ($user_role->field_shp_user->target_id == $account->id() && $user_role->field_shp_role->value == $role) {
-        $user_role_exists = TRUE;
-      }
-    }
-    return $user_role_exists;
   }
 
 }

@@ -1,6 +1,0 @@
-langcode: en
-status: true
-dependencies: {  }
-id: shp_user_role
-label: User
-behavior_plugins: {  }
