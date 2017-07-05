@@ -18,19 +18,25 @@
         "drupal/core":                                   "8.3.*",
         "drupal/cas":                                    "1.x-dev",
         "drupal/entity_reference_revisions":             "dev-1.x",
+        "drupal/group":                                  "^1.0@beta",
         "drupal/key_value_field":                        "1.x-dev",
         "drupal/paragraphs":                             "1.*",
         "drupal/r4032login":                             "1.*@dev",
         "ua-drupal-modules/ua_ldap":                     "dev-develop",
+        "ua-drupal-modules/ua_ldap_authorisation":       "dev-develop",
         "wikimedia/composer-merge-plugin":               "^1.4"
     },
     "require-dev": {
-        "drupal/devel":             "1.*@dev",
-        "behat/mink":               "~1.6",
-        "behat/mink-goutte-driver": "~1.2",
-        "mikey179/vfsStream":       "~1.2",
-        "phpunit/phpunit":          "~4.8",
-        "symfony/css-selector":     "2.7.*"
+        "drupal/devel_node_access":             "^1.0@alpha",
+        "behat/mink":                           "1.7.x-dev",
+        "behat/mink-goutte-driver":             "~1.2",
+        "drupal/coder":                         "8.2.12",
+        "jcalderonzumba/gastonjs":              "~1.0.2",
+        "jcalderonzumba/mink-phantomjs-driver": "~0.3.1",
+        "mikey179/vfsStream":                   "~1.2",
+        "phpunit/phpunit":                      ">=4.8.28 <5",
+        "symfony/browser-kit":                  ">=2.8.13 <3.0",
+        "symfony/css-selector":                 "~2.8"
     },
     "conflict": {
         "drupal/drupal": "*"

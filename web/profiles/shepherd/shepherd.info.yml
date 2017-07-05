@@ -28,7 +28,6 @@ dependencies:
   - menu_ui
   - node
   - options
-  - path
   - page_cache
   - rdf
   - rest
@@ -44,6 +43,8 @@ dependencies:
   - entity_reference
   - entity_reference_revisions
   - externalauth
+  - gnode
+  - group
   - key_value_field
   - paragraphs
   - r4032login

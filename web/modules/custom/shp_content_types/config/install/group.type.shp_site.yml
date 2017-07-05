@@ -1,0 +1,9 @@
+langcode: en
+status: true
+dependencies: {  }
+id: shp_site
+label: Site
+description: ''
+creator_membership: false
+creator_wizard: true
+creator_roles: {  }
