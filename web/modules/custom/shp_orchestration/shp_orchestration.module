@@ -2,22 +2,25 @@
 
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\shp_orchestration\Exception\OrchestrationProviderNotConfiguredException;
 
 /**
  * Implements hook_ENTITY_TYPE_insert().
- *
- * @param Drupal\Core\Entity\EntityInterface $entity
- *
- * @return boolean
  */
 function shp_orchestration_node_insert(EntityInterface $entity) {
   /** @var Drupal\node\Entity\Node $entity */
   $bundle = $entity->bundle();
 
   if (strpos($bundle, 'shp') !== FALSE) {
-    // Get the plugin.
-    /** @var Drupal\shp_orchestration\OrchestrationProviderInterface $orchestration_provider_plugin */
-    $orchestration_provider_plugin = \Drupal::service('plugin.manager.orchestration_provider')->getProviderInstance();
+    try {
+      /** @var Drupal\shp_orchestration\OrchestrationProviderInterface $orchestration_provider_plugin */
+      $orchestration_provider_plugin = \Drupal::service('plugin.manager.orchestration_provider')
+        ->getProviderInstance();
+    }
+    catch (OrchestrationProviderNotConfiguredException $e) {
+      drupal_set_message($e->getMessage(), 'warning');
+      return FALSE;
+    }
 
     switch ($bundle) {
       case 'shp_distribution':
@@ -31,7 +34,6 @@ function shp_orchestration_node_insert(EntityInterface $entity) {
         );
 
         if (!$result) {
-          // @todo Handle errors.
           return FALSE;
         }
         break;
@@ -54,7 +56,6 @@ function shp_orchestration_node_insert(EntityInterface $entity) {
           }
         }
         if (!isset($distribution) || !isset($site)) {
-          // @todo Handle errors.
           return FALSE;
         }
 
@@ -83,7 +84,6 @@ function shp_orchestration_node_insert(EntityInterface $entity) {
         );
 
         if (!$result) {
-          // @todo Handle errors.
           return FALSE;
         }
         break;
@@ -94,18 +94,22 @@ function shp_orchestration_node_insert(EntityInterface $entity) {
 
 /**
  * Implements hook_ENTITY_TYPE_update().
- *
- * @param Drupal\Core\Entity\EntityInterface $entity
  */
 function shp_orchestration_node_update(EntityInterface $entity) {
   $bundle = $entity->bundle();
 
   if (strpos($bundle, 'shp') !== FALSE) {
-    /** @var Drupal\shp_orchestration\OrchestrationProviderInterface $orchestration_provider_plugin */
-    $orchestration_provider_plugin = \Drupal::service('plugin.manager.orchestration_provider')
-      ->getProviderInstance();
+    try {
+      /** @var Drupal\shp_orchestration\OrchestrationProviderInterface $orchestration_provider_plugin */
+      $orchestration_provider_plugin = \Drupal::service('plugin.manager.orchestration_provider')
+        ->getProviderInstance();
+    }
+    catch (OrchestrationProviderNotConfiguredException $e) {
+      drupal_set_message($e->getMessage(), 'warning');
+      return FALSE;
+    }
 
-    switch ($entity->bundle()) {
+    switch ($bundle) {
       case 'shp_distribution':
         // TODO: Handle updates.
         $name = $entity->getTitle();
@@ -118,8 +122,10 @@ function shp_orchestration_node_update(EntityInterface $entity) {
           ],
         ];
 
-        $distribution = $orchestration_provider_plugin->updateDistribution($name, $data);
-
+        $result = $orchestration_provider_plugin->updateDistribution($name, $data);
+        if (!$result) {
+          return FALSE;
+        }
         break;
 
       case 'shp_environment':
@@ -127,20 +133,25 @@ function shp_orchestration_node_update(EntityInterface $entity) {
         break;
     }
   }
+  return TRUE;
 }
 
 /**
  * Implements hook_ENTITY_TYPE_delete().
- *
- * @param Drupal\Core\Entity\EntityInterface $entity
  */
 function shp_orchestration_node_delete(EntityInterface $entity) {
   $bundle = $entity->bundle();
 
   if (strpos($bundle, 'shp') !== FALSE) {
-    /** @var Drupal\shp_orchestration\OrchestrationProviderInterface $orchestration_provider_plugin */
-    $orchestration_provider_plugin = \Drupal::service('plugin.manager.orchestration_provider')
-      ->getProviderInstance();
+    try {
+      /** @var Drupal\shp_orchestration\OrchestrationProviderInterface $orchestration_provider_plugin */
+      $orchestration_provider_plugin = \Drupal::service('plugin.manager.orchestration_provider')
+        ->getProviderInstance();
+    }
+    catch (OrchestrationProviderNotConfiguredException $e) {
+      drupal_set_message($e->getMessage(), 'warning');
+      return FALSE;
+    }
 
     switch ($entity->bundle()) {
       case 'shp_environment':
@@ -158,7 +169,6 @@ function shp_orchestration_node_delete(EntityInterface $entity) {
             ->getValue();
         }
         if (!isset($distribution) || !isset($site)) {
-          // @todo Handle errors.
           return FALSE;
         }
 
@@ -167,17 +177,18 @@ function shp_orchestration_node_delete(EntityInterface $entity) {
           $site->field_shp_short_name->value,
           $entity->id()
         );
+
+        if (!$result) {
+          return FALSE;
+        }
         break;
     }
   }
-  return;
+  return TRUE;
 }
 
 /**
- * Implements hook_form_node_form_alter().
- *
- * @param array $form
- * @param Drupal\Core\Form\FormStateInterface $form_state
+ * Implements hook_form_BASE_FORM_ID_alter().
  */
 function shp_orchestration_form_node_form_alter(&$form, FormStateInterface $form_state) {
   $bundle = $form_state->getFormObject()->getEntity()->bundle();
@@ -192,18 +203,26 @@ function shp_orchestration_form_node_form_alter(&$form, FormStateInterface $form
  * Validates distribution form.
  *
  * @param array $form
+ *   The form to be validated.
  * @param Drupal\Core\Form\FormStateInterface $form_state
+ *   The form_state representing the form to be validated.
  */
-function shp_orchestration_shp_distribution_form_validate($form, FormStateInterface $form_state) {
-  // Verify that the secret exists on openshift.
+function shp_orchestration_shp_distribution_form_validate(array $form, FormStateInterface $form_state) {
+  // Verify that the secret exists in OpenShift.
   $secret_name = $form_state->getValue('field_shp_build_secret')[0]['value'];
 
-  /** @var Drupal\shp_orchestration\OrchestrationProviderInterface $orchestration_provider_plugin */
-  $orchestration_provider_plugin = \Drupal::service('plugin.manager.orchestration_provider')->getProviderInstance();
+  try {
+    /** @var Drupal\shp_orchestration\OrchestrationProviderInterface $orchestration_provider_plugin */
+    $orchestration_provider_plugin = \Drupal::service('plugin.manager.orchestration_provider')
+      ->getProviderInstance();
 
-  $response = $orchestration_provider_plugin->getSecret($secret_name);
-  // The client will respond FALSE if the status code doesn't return a 200.
-  if (!$response) {
-    $form_state->setErrorByName('field_shp_build_secret', t('Secret: @secret_name does not exist.', ['@secret_name' => $secret_name]));
+    $response = $orchestration_provider_plugin->getSecret($secret_name);
+    // The client will respond FALSE if the status code doesn't return a 200.
+    if ($response === FALSE) {
+      $form_state->setErrorByName('field_shp_build_secret', t('Secret: @secret_name does not exist.', ['@secret_name' => $secret_name]));
+    }
+  }
+  catch (OrchestrationProviderNotConfiguredException $e) {
+    drupal_set_message($e->getMessage(), 'warning');
   }
 }
