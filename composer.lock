@@ -3876,12 +3876,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/universityofadelaide/openshift-client.git",
-                "reference": "1077edd10bae5b2c1e8d35f6972637b2efa3b3d8"
+                "reference": "85226d81ba5b5c2848ba31d486d0008e11daacbc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/universityofadelaide/openshift-client/zipball/1077edd10bae5b2c1e8d35f6972637b2efa3b3d8",
-                "reference": "1077edd10bae5b2c1e8d35f6972637b2efa3b3d8",
+                "url": "https://api.github.com/repos/universityofadelaide/openshift-client/zipball/85226d81ba5b5c2848ba31d486d0008e11daacbc",
+                "reference": "85226d81ba5b5c2848ba31d486d0008e11daacbc",
                 "shasum": ""
             },
             "require": {
@@ -3913,7 +3913,7 @@
                 }
             ],
             "description": "Simple OpenShift client for PHP.",
-            "time": "2017-07-04 03:46:16"
+            "time": "2017-07-05 04:22:18"
         },
         {
             "name": "universityofadelaide/shepherd-drupal-scaffold",
@@ -4408,7 +4408,7 @@
                 "testing",
                 "web"
             ],
-            "time": "2017-02-06 09:59:54"
+            "time": "2017-02-06T09:59:54+00:00"
         },
         {
             "name": "behat/mink-browserkit-driver",
