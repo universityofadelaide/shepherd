@@ -8,11 +8,8 @@ dependencies:
     - field.field.node.shp_site.field_shp_short_name
     - field.field.node.shp_site.field_shp_path
     - field.field.node.shp_site.field_shp_site_log
-    - field.field.node.shp_site.field_shp_users
     - field.field.node.shp_site.field_tags
     - node.type.shp_site
-  module:
-    - user
 id: node.shp_site.teaser
 targetEntityType: node
 bundle: shp_site
@@ -34,5 +31,4 @@ hidden:
   field_shp_short_name: true
   field_shp_path: true
   field_shp_site_log: true
-  field_shp_users: true
   field_tags: true

@@ -87,16 +87,6 @@ shp_custom.home-page:
     no_cache: TRUE
   requirements:
     _permission: 'shp view homepage'
-# @todo Find out if this is still required (shp_custom.permissions).
-shp_custom.permissions:
-  path: '/user/{account_id}/permissions'
-  defaults:
-    _title: 'Permissions'
-    _title_callback: '\Drupal\shp_custom\Controller\UserSitesRolesController::getPageTitle'
-    _controller: '\Drupal\shp_custom\Controller\UserSitesRolesController::index'
-  requirements:
-    _permission: 'access content'
-    account_id: ^[0-9]+
 shp_custom.settings:
   path: '/admin/config/system/shepherd'
   defaults:
@@ -104,38 +94,6 @@ shp_custom.settings:
     _title: 'Shepherd settings'
   requirements:
     _permission: 'administer account settings'
-shp_custom.user-add-form:
-  path: '/site/{node}/user/add'
-  defaults:
-    _form: '\Drupal\shp_custom\Form\UserAddForm'
-    _title: 'Add User'
-  options:
-    _auth: [ 'basic_auth', 'cookie' ]
-    no_cache: TRUE
-  requirements:
-    _permission: 'shp administer users'
-shp_custom.user-edit-form:
-  path: '/site/{node}/user/{user}/edit'
-  defaults:
-    _form: '\Drupal\shp_custom\Form\UserEditForm'
-    _title: 'Edit user'
-  options:
-    _auth: [ 'basic_auth', 'cookie' ]
-    no_cache: TRUE
-  requirements:
-    _permission: 'shp administer users'
-    user: ^[0-9]+
-shp_custom.user-delete-form:
-  path: '/site/{node}/user/{user}/delete'
-  defaults:
-    _form: '\Drupal\shp_custom\Form\UserDeleteForm'
-    _title: 'Delete User'
-  options:
-    _auth: ['basic_auth', 'cookie']
-    no_cache: TRUE
-  requirements:
-    _permission: 'shp administer users'
-    user: ^[0-9]+
 shp_custom.site-backups-list:
   path: '/site/{node}/backups'
   defaults:

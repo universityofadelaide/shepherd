@@ -1,0 +1,8 @@
+shp_custom.add_member:
+  route_name: 'entity.group_content.add_form'
+  route_parameters:
+    plugin_id: 'group_membership'
+  class: '\Drupal\shp_custom\Plugin\Menu\LocalAction\NodeToGroup'
+  title: 'Add member'
+  appears_on:
+    - 'view.shp_site_users.page_1'

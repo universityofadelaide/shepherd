@@ -1,0 +1,15 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - group.type.shp_site
+  module:
+    - user
+id: shp_site-group_membership
+label: 'Site: Group membership'
+description: 'Adds users to groups as members.'
+group_type: shp_site
+content_plugin: group_membership
+plugin_config:
+  group_cardinality: 0
+  entity_cardinality: 1
