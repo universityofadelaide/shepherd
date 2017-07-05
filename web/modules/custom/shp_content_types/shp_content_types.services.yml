@@ -1,4 +1,8 @@
 services:
+  sites_breadcrumb.breadcrumb:
+    class: Drupal\shp_content_types\Breadcrumb\SitesBreadcrumbBuilder
+    tags:
+      - { name: breadcrumb_builder, priority: 100 }
   shp_content_types.site_group_manager:
     class: Drupal\shp_content_types\Service\SiteGroupManager
     arguments: ['@entity_type.manager']
