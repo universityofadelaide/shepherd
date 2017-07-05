@@ -68,4 +68,7 @@ function shepherd_install() {
 
   // Enable the admin theme.
   \Drupal::configFactory()->getEditable('node.settings')->set('use_admin_theme', TRUE)->save(TRUE);
+
+  // Do a node access rebuild, there will be zero/one node, so no need to batch.
+  node_access_rebuild(FALSE);
 }

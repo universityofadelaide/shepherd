@@ -1,0 +1,4 @@
+services:
+  shp_content_types.site_group_manager:
+    class: Drupal\shp_content_types\Service\SiteGroupManager
+    arguments: ['@entity_type.manager']
