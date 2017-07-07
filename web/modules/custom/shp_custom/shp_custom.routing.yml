@@ -105,6 +105,9 @@ shp_custom.site-backups-list:
       node:
         type: entity:node
     no_cache: TRUE
+  requirements:
+    _permission: 'administer account settings'
+    _custom_access: '\Drupal\shp_custom\Controller\SiteLocalTaskController::checkAccess'
 shp_custom.api-site-environments:
   path: '/api/site/{node}/environments'
   defaults:
