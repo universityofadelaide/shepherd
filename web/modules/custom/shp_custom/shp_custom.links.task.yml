@@ -1,7 +1,3 @@
-shp_custom.sites.view:
-  title: 'List'
-  route_name: shp_custom.sites
-  base_route: shp_custom.sites
 shp_custom.site_users:
   title: Users
   parent_id: entity.node.canonical

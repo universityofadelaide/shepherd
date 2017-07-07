@@ -222,20 +222,7 @@ display:
             label: ''
           granularity: second
       title: Environments
-      header:
-        area:
-          id: area
-          table: views
-          field: area
-          relationship: none
-          group_type: group
-          admin_label: ''
-          empty: true
-          tokenize: false
-          content:
-            value: '<a class="c-btn button" href="[site:url]node/add/shp_environment">Add environment</a>'
-            format: full_html
-          plugin_id: text
+      header: {  }
       footer: {  }
       empty: {  }
       relationships: {  }
