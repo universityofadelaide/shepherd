@@ -97,6 +97,19 @@ composer install
 ./dsh purge
 ```
 
+### OpenShift in Docker configuration
+Minishift is really just another layer that you don't need, you can run openshift locally with just 
+a couple of tweaks before running ./dsh
+* Install mysql on your local host, or in a docker container listening on 3306 (but it wont work within openshift as shepherd can't talk to it easily).
+* Ensure that mysql is listening on all IP's
+* Grant root access to any host
+* Set the OPENSHIFT_TYPE env var to something other than 'minishift'
+* Start the oc cluster `oc cluster up` see `oc cluster up -h` for advanced config like persistent storage and config.
+* Set nginx to run on 8080, as openshift uses port 80 `docker rm -f nginx-proxy`
+`docker run -d -p 8080:80 -v /var/run/docker.sock:/tmp/docker.sock:ro --restart always --name nginx-proxy jwilder/nginx-proxy`
+* Now run the ./dsh etc commands as per normal.
+* Shepherd will appear on port 8080
+
 ## Working with Shepherd
 
 ### Installing SwaggerUI for developing with OpenShift API
