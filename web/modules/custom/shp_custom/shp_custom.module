@@ -67,7 +67,7 @@ function shp_custom_toolbar() {
     'tab' => [
       '#type' => 'link',
       '#title' => t('Shepherd'),
-      '#url' => Url::fromRoute('shp_custom.sites'),
+      '#url' => Url::fromRoute('<front>'),
       '#attributes' => [
         'title' => t('Shepherd menu'),
         'class' => ['toolbar-icon', 'toolbar-icon-system-admin-structure'],

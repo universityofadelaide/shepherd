@@ -67,7 +67,8 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
    * @param string $name
    *   Name of distribution.
    *
-   * @return mixed
+   * @return bool
+   *   Returns true if succeeded.
    */
   public function deletedDistribution($name);
 
@@ -114,7 +115,7 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
     string $source_secret = NULL,
     array $environment_variables = [],
     array $secrets = [],
-    array $cron_jobs
+    array $cron_jobs = []
   );
 
   /**
@@ -141,7 +142,8 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
    * @param array $cron_jobs
    *   An array of cron jobs associated with this environment.
 
-   * @return mixed
+   * @return bool
+   *   Returns true if succeeded.
    */
   public function updatedEnvironment(
     string $distribution_name,
@@ -153,7 +155,7 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
     string $source_repo,
     string $source_ref = 'master',
     string $source_secret = NULL,
-    array $cron_jobs
+    array $cron_jobs = []
   );
 
   /**
@@ -176,17 +178,25 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
   );
 
   /**
-   * @return mixed
+   * Handles a site being created.
+   *
+   * @return bool
+   *   Returns true if succeeded.
    */
   public function createdSite();
 
   /**
-   * @return mixed
+   * Handles a site being updated.
+   * @return bool
+   *   Returns true if succeeded.
    */
   public function updatedSite();
 
   /**
-   * @return mixed
+   * Handles a site being deleted.
+   *
+   * @return bool
+   *   Returns true if succeeded.
    */
   public function deletedSite();
 
@@ -194,9 +204,9 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
    * Retrieves the metadata on a stored secret.
    *
    * @param string $name
-   *    Secret name.
+   *   Secret name.
    * @param string $key
-   *    Optional key name to return.
+   *   Optional key name to return.
    *
    * @return array|string|bool
    *   Returns the secret array if successful, the value of the key if set, or
@@ -225,7 +235,7 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
    * @param array $data
    *   Key value array of secret data.
    *
-   * @return mixed
+   * @return array|bool
    *   Returns the secret metadata if successful.
    */
   public function updateSecret(string $name, array $data);
@@ -240,8 +250,8 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
    * @param string $environment_id
    *   Environment node id.
    *
-   * @return string Returns the generated deployment name.
-   * Returns the generated deployment name.
+   * @return string
+   *   Returns the generated deployment name.
    */
   public static function generateDeploymentName(
     string $distribution_name,
@@ -255,8 +265,9 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
    * @param string $site_id
    *   Unique id of the site, used a label for environments.
    *
-   * @return mixed
-   *   Returns a collection of environments and their statuses.
+   * @return string|bool
+   *   Returns a collection of environments and their statuses,
+   *   false if unsuccessful.
    */
   public function getSiteEnvironmentsStatus(string $site_id);
 

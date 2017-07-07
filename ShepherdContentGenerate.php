@@ -12,6 +12,7 @@ use Drupal\taxonomy\Entity\Term;
 $domain_name = getenv("OPENSHIFT_DOMAIN") ?: '192.168.99.100.nip.io';
 $openshift_url = getenv("OPENSHIFT_URL") ?: 'https://192.168.99.100:8443';
 $token = trim(getenv("TOKEN"));
+$database_host = getenv("DB_HOST") ?: 'mysql-myproject.' . $domain_name;
 $database_port = getenv("DB_PORT") ?: '31632';
 
 // Check that the auth TOKEN environment variable is available.
@@ -37,7 +38,7 @@ if (empty($token)) {
 $db_provisioner_config = \Drupal::service('config.factory')->getEditable('shp_database_provisioner.settings');
 $db_provisioner_config->set(
   'host',
-  'mysql-myproject.' . $domain_name
+  $database_host
 );
 $db_provisioner_config->set(
   'port',
@@ -45,17 +46,25 @@ $db_provisioner_config->set(
 );
 $db_provisioner_config->save();
 
-// Create orchestration provider config.
-if (!OpenShiftConfigEntity::load('openshift')) {
-  $openshift = OpenShiftConfigEntity::create([
-    'endpoint'  => $openshift_url,
-    'token'     => $token,
-    'namespace' => 'myproject',
-    'mode'      => 'dev',
-    'id'        => 'openshift',
-  ]);
-  $openshift->save();
+$openshift_config = [
+  'endpoint'  => $openshift_url,
+  'token'     => $token,
+  'namespace' => 'myproject',
+  'mode'      => 'dev',
+  'id'        => 'openshift',
+];
+
+// Configure OpenShift as orchestration provider.
+if ($openshift = OpenShiftConfigEntity::load('openshift')) {
+  // If config already exists, replace with current values.
+  foreach ($openshift_config as $key => $value) {
+    $openshift->set($key, $value);
+  }
 }
+else {
+  $openshift = OpenShiftConfigEntity::create($openshift_config);
+}
+$openshift->save();
 
 $development_env = Term::create([
   'vid'                   => 'shp_environment_types',

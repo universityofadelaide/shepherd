@@ -9,8 +9,8 @@ dependencies:
     - rest
     - serialization
     - user
-id: shp_websites
-label: Websites
+id: shp_sites
+label: Sites
 module: views
 description: 'List of sites'
 tag: ''
@@ -223,7 +223,7 @@ display:
           expose:
             label: ''
           granularity: second
-      title: Websites
+      title: Sites
       header:
         area:
           id: area
@@ -235,7 +235,7 @@ display:
           empty: true
           tokenize: false
           content:
-            value: '<a class="c-btn button" href="[site:url]node/add/shp_site">Create new site</a>'
+            value: '<a class="c-btn button" href="[site:url]node/add/shp_site">Add site</a>'
             format: full_html
           plugin_id: text
       footer: {  }
@@ -251,7 +251,8 @@ display:
         - url.query_args
         - 'user.node_grants:view'
         - user.permissions
-      tags: {  }
+      tags:
+        - 'config:field.storage.node.field_shp_site_title'
   block_1:
     display_plugin: block
     id: block_1
@@ -369,7 +370,8 @@ display:
         - 'languages:language_interface'
         - 'user.node_grants:view'
         - user.permissions
-      tags: {  }
+      tags:
+        - 'config:field.storage.node.field_shp_site_title'
   page_1:
     display_plugin: page
     id: page_1
@@ -380,7 +382,7 @@ display:
       path: websites
       menu:
         type: normal
-        title: Websites
+        title: Sites
         menu_name: main
         description: ''
         parent: ''
@@ -395,7 +397,8 @@ display:
         - url.query_args
         - 'user.node_grants:view'
         - user.permissions
-      tags: {  }
+      tags:
+        - 'config:field.storage.node.field_shp_site_title'
   rest_export_1:
     display_plugin: rest_export
     id: rest_export_1
@@ -403,7 +406,7 @@ display:
     position: 4
     display_options:
       display_extenders: {  }
-      path: /api/websites
+      path: api/websites
       style:
         type: serializer
       defaults:
@@ -425,4 +428,5 @@ display:
         - request_format
         - 'user.node_grants:view'
         - user.permissions
-      tags: {  }
+      tags:
+        - 'config:field.storage.node.field_shp_site_title'
