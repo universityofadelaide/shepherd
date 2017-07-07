@@ -6,7 +6,7 @@ dependencies:
   module:
     - group
     - user
-id: users
+id: shp_users
 label: Users
 module: views
 description: ''

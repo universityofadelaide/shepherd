@@ -10,8 +10,6 @@ shp view distributions:
   title: 'View distributions'
 shp view environments:
   title: 'View environments'
-shp view homepage:
-  title: 'View homepage'
 shp view sites:
   title: 'View sites'
 shp view users:
