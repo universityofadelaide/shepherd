@@ -101,13 +101,10 @@ shp_custom.site-backups-list:
     _title: 'Backups'
     _title_callback: '\Drupal\shp_custom\Controller\SiteBackupListController::getPageTitle'
   options:
-    _auth: [ 'basic_auth', 'cookie' ]
     parameters:
       node:
         type: entity:node
     no_cache: TRUE
-  requirements:
-    _permission: 'shp view backups'
 shp_custom.api-site-environments:
   path: '/api/site/{node}/environments'
   defaults:
