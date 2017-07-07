@@ -47,7 +47,7 @@ class SitesBreadcrumbBuilder implements BreadcrumbBuilderInterface {
    */
   public function build(RouteMatchInterface $route_match) {
     $breadcrumb = new Breadcrumb();
-    $breadcrumb->addLink(Link::createFromRoute('Sites', 'shp_custom.sites'));
+    $breadcrumb->addLink(Link::createFromRoute('Sites', '<front>'));
     $parameters = $route_match->getParameters()->all();
     $node = is_object($parameters['node']) ? $parameters['node'] : Node::load($parameters['node']);
     $node_type = $node->bundle();

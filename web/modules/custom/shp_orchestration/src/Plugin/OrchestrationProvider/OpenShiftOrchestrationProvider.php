@@ -5,6 +5,7 @@ namespace Drupal\shp_orchestration\Plugin\OrchestrationProvider;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\shp_orchestration\OrchestrationProviderBase;
 use UniversityOfAdelaide\OpenShift\Client as OpenShiftClient;
+use UniversityOfAdelaide\OpenShift\ClientException;
 
 /**
  * OpenShiftOrchestrationProvider.
@@ -78,21 +79,17 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       ],
     ];
 
-    $image_stream = $this->client->createImageStream($sanitised_name);
-    if (!$image_stream) {
-      // @todo Handle bad response.
-      return FALSE;
+    try {
+      $this->client->createImageStream($sanitised_name);
+      $this->client->createBuildConfig(
+        $sanitised_name . '-' . $source_ref,
+        $source_secret,
+        $sanitised_name . ':' . $source_ref,
+        $build_data
+      );
     }
-
-    // Kick off build of default source ref - this is purely for optimisation.
-    $build_config = $this->client->createBuildConfig(
-      $sanitised_name . '-' . $source_ref,
-      $source_secret,
-      $sanitised_name . ':' . $source_ref,
-      $build_data
-    );
-    if (!$build_config) {
-      // @todo Handle bad response.
+    catch (ClientException $e) {
+      $this->handleClientException($e);
       return FALSE;
     }
     return TRUE;
@@ -116,14 +113,16 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       ],
     ];
 
-    $build_config = $this->client->updateBuildConfig(
-      $sanitised_name . '-' . $source_ref,
-      $source_secret,
-      $sanitised_name . ':' . $source_ref,
-      $build_data
-    );
-    if (!$build_config) {
-      // @todo Handle bad response.
+    try {
+      $this->client->updateBuildConfig(
+        $sanitised_name . '-' . $source_ref,
+        $source_secret,
+        $sanitised_name . ':' . $source_ref,
+        $build_data
+      );
+    }
+    catch (ClientException $e) {
+      $this->handleClientException($e);
       return FALSE;
     }
     return TRUE;
@@ -151,7 +150,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     string $source_secret = NULL,
     array $environment_variables = [],
     array $secrets = [],
-    array $cron_jobs
+    array $cron_jobs = []
   ) {
     $sanitised_distribution_name = self::sanitise($distribution_name);
     $deployment_name = self::generateDeploymentName(
@@ -163,8 +162,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     $build_config_name = $sanitised_distribution_name . '-' . $source_ref;
 
     // Create build config if it doesn't exist.
-    $build_config = $this->client->getBuildConfig($build_config_name);
-    if (!$build_config) {
+    if (!$this->client->getBuildConfig($build_config_name)) {
       // Package config for the client.
       $build_data = [
         'git' => [
@@ -177,14 +175,16 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
         ],
       ];
 
-      $build_config = $this->client->createBuildConfig(
-        $build_config_name,
-        $source_secret,
-        $image_stream_tag,
-        $build_data
-      );
-      if (!$build_config) {
-        // @todo Handle bad response.
+      try {
+        $this->client->createBuildConfig(
+          $build_config_name,
+          $source_secret,
+          $image_stream_tag,
+          $build_data
+        );
+      }
+      catch (ClientException $e) {
+        $this->handleClientException($e);
         return FALSE;
       }
     }
@@ -213,23 +213,25 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       }
     }
 
-    // @todo Parametrise storage size.
     $public_pvc_name = $deployment_name . '-public';
-    $public_pvc_response = $this->client->createPersistentVolumeClaim(
-      $public_pvc_name,
-      'ReadWriteMany',
-      '10Gi'
-    );
-
     $private_pvc_name = $deployment_name . '-private';
-    $private_pvc_response = $this->client->createPersistentVolumeClaim(
-      $private_pvc_name,
-      'ReadWriteMany',
-      '10Gi'
-    );
+    try {
+      // @todo Parametrise storage size.
+      $this->client->createPersistentVolumeClaim(
+        $public_pvc_name,
+        'ReadWriteMany',
+        '10Gi'
+      );
 
-    if (!$public_pvc_response || !$private_pvc_response) {
-      // @todo Handle bad response.
+      $this->client->createPersistentVolumeClaim(
+        $private_pvc_name,
+        'ReadWriteMany',
+        '10Gi'
+      );
+
+    }
+    catch (ClientException $e) {
+      $this->handleClientException($e);
       return FALSE;
     }
 
@@ -271,15 +273,17 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       ],
     ];
 
-    $deployment_config = $this->client->createDeploymentConfig(
-      $deployment_name,
-      $image_stream_tag,
-      $sanitised_distribution_name,
-      $volumes,
-      $deploy_data
-    );
-    if (!$deployment_config) {
-      // @todo Handle bad response.
+    try {
+      $this->client->createDeploymentConfig(
+        $deployment_name,
+        $image_stream_tag,
+        $sanitised_distribution_name,
+        $volumes,
+        $deploy_data
+      );
+    }
+    catch (ClientException $e) {
+      $this->handleClientException($e);
       return FALSE;
     }
 
@@ -291,16 +295,18 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
           '-c',
           $args,
         ];
-        $cron_job = $this->client->createCronJob(
-          $deployment_name,
-          $image_stream['status']['dockerImageRepository'] . ':' . $source_ref,
-          $schedule,
-          $args_array,
-          $volumes,
-          $deploy_data
-        );
-        if (!$cron_job) {
-          // @todo Handle bad response.
+        try {
+          $this->client->createCronJob(
+            $deployment_name,
+            $image_stream['status']['dockerImageRepository'] . ':' . $source_ref,
+            $schedule,
+            $args_array,
+            $volumes,
+            $deploy_data
+          );
+        }
+        catch (ClientException $e) {
+          $this->handleClientException($e);
           return FALSE;
         }
       }
@@ -313,17 +319,15 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       'targetPort' => 8080,
       'deployment' => $deployment_name,
     ];
-    $service = $this->client->createService($deployment_name, $service_data);
-    if (!$service) {
-      // @todo Handle bad response.
+    try {
+      $this->client->createService($deployment_name, $service_data);
+      $this->client->createRoute($deployment_name, $deployment_name, '');
+    }
+    catch (ClientException $e) {
+      $this->handleClientException($e);
       return FALSE;
     }
 
-    $route = $this->client->createRoute($deployment_name, $deployment_name, '');
-    if (!$route) {
-      // @todo Handle bad response.
-      return FALSE;
-    }
     return TRUE;
   }
 
@@ -340,7 +344,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     string $source_repo,
     string $source_ref = 'master',
     string $source_secret = NULL,
-    array $cron_jobs
+    array $cron_jobs = []
   ) {
 
   }
@@ -359,24 +363,29 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       $environment_id
     );
 
-    // Scale the pods to zero, then delete the pod creators.
-    $this->client->updateDeploymentConfig($deployment_name, 0);
-    $this->client->updateReplicationControllers('', 'openshift.io/deployment-config.name=' . $deployment_name, 0);
+    try {
+      // Scale the pods to zero, then delete the pod creators.
+      $this->client->updateDeploymentConfig($deployment_name, 0);
+      $this->client->updateReplicationControllers('', 'openshift.io/deployment-config.name=' . $deployment_name, 0);
 
-    // Not sure if we need to delay a little here, do the cronjob and routes to artificially delay.
-    $this->client->deleteCronJob($deployment_name);
-    $this->client->deleteRoute($deployment_name);
-    $this->client->deleteService($deployment_name);
+      // Not sure if we need to delay a little here, do the cronjob and routes
+      // to artificially delay.
+      $this->client->deleteCronJob($deployment_name);
+      $this->client->deleteRoute($deployment_name);
+      $this->client->deleteService($deployment_name);
 
-    $this->client->deleteDeploymentConfig($deployment_name);
-    $this->client->deleteReplicationControllers('', 'openshift.io/deployment-config.name=' . $deployment_name);
+      $this->client->deleteDeploymentConfig($deployment_name);
+      $this->client->deleteReplicationControllers('', 'openshift.io/deployment-config.name=' . $deployment_name);
 
-    // Now the things not in the typically visible ui.
-    $this->client->deletePersistentVolumeClaim($deployment_name . '-public');
-    $this->client->deletePersistentVolumeClaim($deployment_name . '-private');
-    $this->client->deleteSecret($deployment_name);
-
-    // TODO: Check calls succeed.
+      // Now the things not in the typically visible ui.
+      $this->client->deletePersistentVolumeClaim($deployment_name . '-public');
+      $this->client->deletePersistentVolumeClaim($deployment_name . '-private');
+      $this->client->deleteSecret($deployment_name);
+    }
+    catch (ClientException $e) {
+      $this->handleClientException($e);
+      return FALSE;
+    }
   }
 
   /**
@@ -404,7 +413,13 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
    * {@inheritdoc}
    */
   public function getSecret(string $name, string $key = NULL) {
-    $secret = $this->client->getSecret($name);
+    try {
+      $secret = $this->client->getSecret($name);
+    }
+    catch (ClientException $e) {
+      $this->handleClientException($e);
+      return FALSE;
+    }
     if (is_array($secret) && array_key_exists('data', $secret)) {
       if ($key) {
         return array_key_exists($key, $secret['data']) ? base64_decode($secret['data'][$key]) : FALSE;
@@ -419,16 +434,26 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
    * {@inheritdoc}
    */
   public function createSecret(string $name, array $data) {
-    // Simply pass through to the client.
-    return $this->client->createSecret($name, $data);
+    try {
+      return $this->client->createSecret($name, $data);
+    }
+    catch (ClientException $e) {
+      $this->handleClientException($e);
+      return FALSE;
+    }
   }
 
   /**
    * {@inheritdoc}
    */
   public function updateSecret(string $name, array $data) {
-    // Simply pass through to the client.
-    return $this->client->updateSecret($name, $data);
+    try {
+      return $this->client->updateSecret($name, $data);
+    }
+    catch (ClientException $e) {
+      $this->handleClientException($e);
+      return FALSE;
+    }
   }
 
   /**
@@ -450,7 +475,27 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
    * {@inheritdoc}
    */
   public function getSiteEnvironmentsStatus(string $site_id) {
-    return $this->client->getDeploymentConfigs('site_id=' . $site_id);
+    try {
+      return $this->client->getDeploymentConfigs('site_id=' . $site_id);
+    }
+    catch (ClientException $e) {
+      return FALSE;
+    }
+  }
+
+  /**
+   * Handles OpenShift ClientExceptions.
+   *
+   * @param \UniversityOfAdelaide\OpenShift\ClientException $exception
+   *   The exception to be handled.
+   */
+  private function handleClientException(ClientException $exception) {
+    $reason = $exception->getMessage();
+    if (strstr($exception->getBody(), 'Unauthorized')) {
+      $reason = t('Client is not authorized to access requested resource.');
+    }
+    // @todo Add handlers for other reasons for failure. Add as required.
+    drupal_set_message(t("An error occurred while communicating with OpenShift.") . ' ' . $reason, 'error');
   }
 
 }
