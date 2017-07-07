@@ -45,17 +45,25 @@ $db_provisioner_config->set(
 );
 $db_provisioner_config->save();
 
-// Create orchestration provider config.
-if (!OpenShiftConfigEntity::load('openshift')) {
-  $openshift = OpenShiftConfigEntity::create([
-    'endpoint'  => $openshift_url,
-    'token'     => $token,
-    'namespace' => 'myproject',
-    'mode'      => 'dev',
-    'id'        => 'openshift',
-  ]);
-  $openshift->save();
+$openshift_config = [
+  'endpoint'  => $openshift_url,
+  'token'     => $token,
+  'namespace' => 'myproject',
+  'mode'      => 'dev',
+  'id'        => 'openshift',
+];
+
+// Configure OpenShift as orchestration provider.
+if ($openshift = OpenShiftConfigEntity::load('openshift')) {
+  // If config already exists, replace with current values.
+  foreach ($openshift_config as $key => $value) {
+    $openshift->set($key, $value);
+  }
 }
+else {
+  $openshift = OpenShiftConfigEntity::create($openshift_config);
+}
+$openshift->save();
 
 $development_env = Term::create([
   'vid'                   => 'shp_environment_types',
