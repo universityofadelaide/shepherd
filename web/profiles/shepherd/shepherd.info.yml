@@ -55,6 +55,7 @@ dependencies:
   - shp_drush_aliases
   - shp_ldap_sync
   - shp_orchestration
+  - shp_stats
   - shp_vue_view
   # University created modules
   - ua_ldap
