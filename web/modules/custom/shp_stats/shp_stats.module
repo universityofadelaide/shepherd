@@ -1,0 +1,23 @@
+<?php
+
+/**
+ * Implements hook_install().
+ */
+function shp_stats_install() {
+
+}
+
+/**
+ * Implements hook_schema().
+ */
+function shp_stats_schema() {
+
+  $schema['shp_stats'] = [
+    'description' => 'Stores aggregate data about sites for charts and statistics.',
+    'fields' => [
+      ''
+    ],
+  ];
+
+  return $schema;
+}
