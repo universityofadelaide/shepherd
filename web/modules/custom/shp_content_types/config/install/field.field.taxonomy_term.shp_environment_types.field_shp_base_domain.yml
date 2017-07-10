@@ -9,8 +9,8 @@ field_name: field_shp_base_domain
 entity_type: taxonomy_term
 bundle: shp_environment_types
 label: 'Base domain'
-description: ''
-required: true
+description: 'This is used to populate urls to non-production environments. E.g. 192.168.99.100.nip.io'
+required: false
 translatable: false
 default_value: {  }
 default_value_callback: ''

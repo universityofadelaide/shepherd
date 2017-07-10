@@ -11,6 +11,6 @@ name: Distribution
 type: shp_distribution
 description: 'A distribution specifies a specific repository for a web application. E.g. "UA D8 base site", "Admissions at Adelaide" etc.'
 help: ''
-new_revision: false
+new_revision: true
 preview_mode: 1
 display_submitted: true

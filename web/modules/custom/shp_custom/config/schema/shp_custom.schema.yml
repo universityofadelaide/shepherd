@@ -11,19 +11,3 @@ shp_custom.settings:
         path:
           type: string
           label: 'Backup path'
-    environment_domains:
-      type: mapping
-      label: 'Environments and Domains'
-      mapping:
-        prd:
-          type: string
-          label: 'adelaide.edu.au'
-        stg:
-          type: string
-          label: 'stg.adelaide.edu.au'
-        uat:
-          type: string
-          label: 'uat.adelaide.edu.au'
-        dev:
-          type: string
-          label: 'test'

@@ -36,16 +36,10 @@ class OpenShiftConfigEntityForm extends EntityForm {
       '#attributes' => ['autocomplete' => 'off'],
       '#required' => TRUE,
     ];
-    $form['mode'] = [
-      '#type' => 'select',
-      '#title' => $this->t('Environment mode'),
-      '#options' => [
-        'prd' => 'Production',
-        'dev' => 'Development',
-        'uat' => 'UAT',
-      ],
-      '#default_value' => $entity->mode,
-      '#required' => TRUE,
+    $form['verify_tls'] = [
+      '#type' => 'boolean_checkbox',
+      '#title' => $this->t('Verify TLS'),
+      '#default_value' => $entity->verify_tls,
     ];
     $form['namespace'] = [
       '#type' => 'textfield',

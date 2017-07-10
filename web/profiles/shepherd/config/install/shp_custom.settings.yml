@@ -1,12 +1,2 @@
-jenkins:
-  enabled: false
-  base_uri: null
-  token: null
-  backup_job: null
-  clone_job: null
-  decommission_job: null
-  deploy_job: null
-  restore_job: null
-  reverse_proxy_job: null
 backup_service:
   path: null

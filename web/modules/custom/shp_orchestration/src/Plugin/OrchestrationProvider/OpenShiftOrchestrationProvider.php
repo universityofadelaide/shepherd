@@ -44,7 +44,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       $this->configEntity->endpoint,
       $this->configEntity->token,
       $this->configEntity->namespace,
-      $this->configEntity->mode === 'dev'
+      $this->configEntity->verify_tls
     );
   }
 
