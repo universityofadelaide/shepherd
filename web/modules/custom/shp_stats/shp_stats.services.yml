@@ -1,0 +1,4 @@
+services:
+  shp_stats.storage:
+    class: Drupal\shp_stats\Service\Storage
+    arguments: ['@database']
