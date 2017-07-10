@@ -5,9 +5,20 @@
  */
 function shp_stats_install() {
 
-  // @todo - add a bunch of active sites to test against.
-}
+  for ($i = 0; $i < mt_rand(1, 20); $i++) {
+    $month = mt_rand(1, 12);
+    $year = mt_rand(10, 17);
 
+    $fields = [
+      'date' => date("Y-m-d H:i:s", strtotime($month . '/1/' . $year)),
+      'tag' => 'prd',
+      'count' => mt_rand(1, 20),
+    ];
+    db_insert('shp_stats_active')
+      ->fields($fields)
+      ->execute();
+  }
+}
 /**
  * Implements hook_schema().
  */
@@ -22,7 +33,8 @@ function shp_stats_schema() {
         'description' => 'Primary Key: Unique entry ID.',
       ],
       'date' => [
-        'type' => 'datetime',
+        'type' => 'varchar',
+        'mysql_type' => 'datetime',
         'not null' => TRUE,
         'description' => 'Datetime of the entry',
       ],
@@ -38,6 +50,11 @@ function shp_stats_schema() {
         'default' => 0,
         'description' => 'The number of active sites',
       ],
+    ],
+    'primary key' => ['id'],
+    'indexes' => [
+      'date' => ['date'],
+      'tag' => ['tag'],
     ],
   ];
 
