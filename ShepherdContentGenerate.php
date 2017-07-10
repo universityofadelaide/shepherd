@@ -23,17 +23,6 @@ if (empty($token)) {
   exit(1);
 }
 
-// Clobber env/domain config with dev versions.
-\Drupal::service('config.factory')->getEditable('shp_custom.settings')->set(
-  'environment_domains',
-  [
-    'prd' => $domain_name,
-    'stg' => $domain_name,
-    'uat' => $domain_name,
-    'dev' => $domain_name,
-  ]
-)->save();
-
 // Set deployment database config.
 $db_provisioner_config = \Drupal::service('config.factory')->getEditable('shp_database_provisioner.settings');
 $db_provisioner_config->set(
@@ -47,11 +36,11 @@ $db_provisioner_config->set(
 $db_provisioner_config->save();
 
 $openshift_config = [
-  'endpoint'  => $openshift_url,
-  'token'     => $token,
-  'namespace' => 'myproject',
-  'mode'      => 'dev',
-  'id'        => 'openshift',
+  'endpoint'   => $openshift_url,
+  'token'      => $token,
+  'namespace'  => 'myproject',
+  'verify_tls' => FALSE,
+  'id'         => 'openshift',
 ];
 
 // Configure OpenShift as orchestration provider.
@@ -72,6 +61,11 @@ $development_env = Term::create([
   'field_shp_base_domain' => $domain_name,
 ]);
 $development_env->save();
+$production_env = Term::create([
+  'vid'                   => 'shp_environment_types',
+  'name'                  => 'Production',
+]);
+$production_env->save();
 
 $distribution = Node::create([
   'type'                     => 'shp_distribution',
