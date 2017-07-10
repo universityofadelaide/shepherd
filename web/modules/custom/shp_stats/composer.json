@@ -1,0 +1,9 @@
+{
+  "name": "shepherd/shp_stats",
+  "description": "Provides stats about Shepherd sites.",
+  "type": "drupal-module",
+  "license": "GPL-2.0+",
+  "require": {
+    "drupal/charts": "1.*"
+  }
+}
