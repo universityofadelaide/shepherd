@@ -57,6 +57,7 @@ class Storage {
    * @see db_update()
    */
   public function update(array $entry) {
+    $count = NULL;
     try {
       $count = $this->database->update($this->tableName)
         ->fields($entry)
