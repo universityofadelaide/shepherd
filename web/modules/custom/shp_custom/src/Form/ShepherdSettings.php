@@ -30,11 +30,18 @@ class ShepherdSettings extends ConfigFormBase {
       '#tree' => TRUE,
     ];
 
-    $form['backup_service']['path'] = [
-      '#type' => 'textfield',
-      '#title' => $this->t('Path'),
-      '#description' => 'Directory path to the backup directory, no trailing slash required.',
-      '#default_value' => $config->get('backup_service.path'),
+    $form['backup_service']['backup_command'] = [
+      '#type' => 'textarea',
+      '#title' => $this->t('Backup command'),
+      '#description' => 'Commands to run to backup a site. Each command on a new line will be combined with && when run.',
+      '#default_value' => $config->get('backup_service.backup_command'),
+    ];
+
+    $form['backup_service']['restore_command'] = [
+      '#type' => 'textarea',
+      '#title' => $this->t('Restore command'),
+      '#description' => 'Commands to run to restore a site. Each command on a new line will be combined with && when run.',
+      '#default_value' => $config->get('backup_service.restore_command'),
     ];
 
     return parent::buildForm($form, $form_state);
@@ -47,10 +54,11 @@ class ShepherdSettings extends ConfigFormBase {
     $config = $this->config('shp_custom.settings');
     $config->delete();
 
-    // @todo Validate this data !
-    $config
-      ->set('backup_service.path', rtrim($form_state->getValue('backup_service')['path'], '/'));
+    $values = $form_state->getValue('backup_service');
+    $config->set('backup_service.backup_command', $values['backup_command']);
+    $config->set('backup_service.restore_command', $values['restore_command']);
     $config->save();
+
     parent::submitForm($form, $form_state);
   }
 

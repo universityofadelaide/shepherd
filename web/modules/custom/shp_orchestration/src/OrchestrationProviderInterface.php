@@ -271,4 +271,77 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
    */
   public function getSiteEnvironmentsStatus(string $site_id);
 
+
+  /**
+   * Backup an environment
+   *
+   * @param string $distribution_name
+   *   Name of the distribution.
+   * @param string $short_name
+   *   Short name of the site.
+   * @param string $environment_id
+   *   Environment node id.
+   * @param string $source_ref
+   *   Source code git ref, defaults to 'master'.
+   * @param string $commands
+   *   Commands to run to perform the backup.
+   *
+   * @return
+   */
+  public function backupEnvironment(
+    string $distribution_name,
+    string $short_name,
+    string $environment_id,
+    string $source_ref = 'master',
+    string $commands
+  );
+
+  /**
+   * Restore an environment
+   *
+   * @param string $distribution_name
+   *   Name of the distribution.
+   * @param string $short_name
+   *   Short name of the site.
+   * @param string $environment_id
+   *   Environment node id.
+   * @param string $source_ref
+   *   Source code git ref, defaults to 'master'.
+   * @param string $commands
+   *   Commands to run to perform the backup.
+   *
+   * @return
+   */
+  public function restoreEnvironment(
+    string $distribution_name,
+    string $short_name,
+    string $environment_id,
+    string $source_ref = 'master',
+    string $commands
+  );
+
+  /**
+   * Execute a job
+   *
+   * @param string $distribution_name
+   *   Name of the distribution.
+   * @param string $short_name
+   *   Short name of the site.
+   * @param string $environment_id
+   *   Environment node id.
+   * @param string $source_ref
+   *   Source code git ref, defaults to 'master'.
+   * @param string $commands
+   *   Commands to run to perform the backup.
+   *
+   * @return
+   */
+  public function executeJob(
+    string $distribution_name,
+    string $short_name,
+    string $environment_id,
+    string $source_ref = 'master',
+    string $commands
+  );
+
 }
