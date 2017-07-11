@@ -31,7 +31,7 @@ class SitesStatsController extends ControllerBase {
    */
   public function __construct(Storage $storage, ChartsSettingsService $chartSettings) {
     $this->storageService = $storage;
-    $this->chartSettings = $chartSettings;
+    $this->chartSettings = $chartSettings->getChartsSettings();
   }
 
   /**
