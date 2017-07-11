@@ -51,8 +51,28 @@ class SitesStatsController extends ControllerBase {
 
     $library = $this->chartSettings['library'];
     $options = [];
+    $options['type'] = $this->chartSettings['type'];
+    $options['title'] = $this->t('Chart title');
+    $options['yaxis_title'] = $this->t('Y-Axis');
+    $options['yaxis_min'] = '';
+    $options['yaxis_max'] = '';
+    $options['xaxis_title'] = $this->t('X-Axis');
+    //sample data format
+    $categories = ["Category 1", "Category 2", "Category 3", "Category 4"];
+    $seriesData = [
+      ["name" => "Series 1", "color" => "#0d233a", "type" => null, "data" => [250, 350, 400, 200]],
+    ];
 
-    $entries = $this->storageService->load();
+    $element = [
+      '#theme' => 'shp_stats_site_stats',
+      '#library' => $this->t($library),
+      '#categories' => $categories,
+      '#seriesData' => $seriesData,
+      '#options' => $options,
+    ];
+    return $element;
+
+    /*$entries = $this->storageService->load();
     $rows = [];
     foreach ($entries as $entry) {
       $rows[] = array_map('Drupal\Component\Utility\SafeMarkup::checkPlain', (array) $entry);
@@ -63,7 +83,7 @@ class SitesStatsController extends ControllerBase {
       '#empty' => 'No data available',
     ];
 
-    return $markup;
+    return $markup;*/
   }
 
 }
