@@ -29,6 +29,7 @@ class SitesStatsController extends ControllerBase {
   public static function create(ContainerInterface $container) {
     return new static(
       $container->get('shp_stats.storage')
+      $container->get('charts.settings')
     );
   }
 
