@@ -1,0 +1,4 @@
+shp_stats.sites_stats:
+  title: Stats
+  base_route: shp_custom.sites_view
+  route_name: shp_stats.sites_stats_view
