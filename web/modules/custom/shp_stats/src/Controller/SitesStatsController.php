@@ -67,7 +67,7 @@ class SitesStatsController extends ControllerBase {
 
     $element = [
       '#theme' => 'shp_stats_site',
-      '#library' => $library,
+      '#library' => $this->t($library),
       '#categories' => $categories,
       '#seriesData' => $seriesData,
       '#options' => $options,
