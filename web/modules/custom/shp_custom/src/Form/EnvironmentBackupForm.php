@@ -13,13 +13,6 @@ use Drupal\node\NodeInterface;
  */
 class EnvironmentBackupForm extends FormBase {
 
-  // @todo Remove this crud.
-  const MACHINE_NAMES = [
-    'dev' => 'DEV',
-    'uat' => 'UAT',
-    'prd' => 'PRD',
-  ];
-
   /**
    * {@inheritdoc}
    */

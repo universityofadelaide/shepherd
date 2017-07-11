@@ -165,6 +165,7 @@ function shp_custom_node_delete(EntityInterface $entity) {
 function shp_custom_node_access(EntityInterface $entity, $operation, AccountInterface $account) {
   if ($entity->bundle() == 'shp_environment') {
     if ($operation == 'delete') {
+      // @todo Use field_shp_environment_type term association to determine access.
       if ($entity->field_shp_machine_name->value === 'prd') {
         return AccessResult::forbidden();
       }

@@ -17,6 +17,6 @@ shp_orchestration.openshift.*:
     namespace:
       type: string
       label: 'Namespace'
-    mode:
-      type: string
-      label: 'Mode'
+    verify_tls:
+      type: boolean
+      label: 'Verify TLS'

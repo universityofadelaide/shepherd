@@ -15,7 +15,7 @@ use Drupal\Core\Config\Entity\ConfigEntityBase;
  *     "endpoint" = "endpoint",
  *     "token" = "token",
  *     "namespace" = "namespace",
- *     "mode" = "mode"
+ *     "verify_tls" = "verify_tls"
  *   },
  *   handlers = {
  *      "form" = {
@@ -51,11 +51,11 @@ class OpenShiftConfigEntity extends ConfigEntityBase {
   public $namespace;
 
   /**
-   * If provider is in development, uat or production mode.
+   * Verify OpenShift API TLS certificate.
    *
-   * @var string
+   * @var bool
    */
-  public $mode;
+  public $verify_tls;
 
   /**
    * Entity ID.
