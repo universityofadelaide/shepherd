@@ -8,6 +8,9 @@ shp_custom.settings:
       type: mapping
       label: 'Backup Service'
       mapping:
-        path:
+        backup_command:
           type: string
-          label: 'Backup path'
+          label: 'Backup command'
+        restore_command:
+          type: string
+          label: 'Restore command'

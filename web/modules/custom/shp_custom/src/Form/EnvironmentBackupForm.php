@@ -4,6 +4,7 @@ namespace Drupal\shp_custom\Form;
 
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\node\Entity\Node;
 use Drupal\node\NodeInterface;
 
 /**
@@ -39,6 +40,7 @@ class EnvironmentBackupForm extends FormBase {
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state, NodeInterface $site = NULL, NodeInterface $environment = NULL) {
+    $form_state->set('site', $site);
     $form_state->set('environment', $environment);
 
     $build = [
@@ -56,7 +58,14 @@ class EnvironmentBackupForm extends FormBase {
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $form_state->cleanValues();
-    // @todo: Shepherd: Instances are gone, need to backup some other way.
+
+    $distribution = Node::load($form_state->get('site')->field_shp_distribution->target_id);
+
+    \Drupal::service('shp_custom.backup')->createBackup(
+      $form_state->get('site'),
+      $distribution->title->value,
+      $form_state->get('environment')
+  );
   }
 
 }

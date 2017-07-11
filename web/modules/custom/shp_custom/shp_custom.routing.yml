@@ -14,24 +14,6 @@ shp_custom.distributions:
   path: '/distributions'
   requirements:
     _permission: 'shp access environment wizard'
-shp_custom.environment-clone-form:
-  path: '/site/{site}/environment/clone/{environment}'
-  defaults:
-    _form: '\Drupal\shp_custom\Form\EnvironmentCloneForm'
-    _title_callback: '\Drupal\shp_custom\Form\EnvironmentCloneForm::getPageTitle'
-    _title: 'Clone environment'
-  options:
-    _auth: [ 'basic_auth', 'cookie' ]
-    parameters:
-      site:
-        type: entity:node
-      environment:
-        type: entity:node
-    no_cache: TRUE
-  requirements:
-    _permission: 'shp access environment wizard'
-    site: ^[0-9]+
-    environment: ^[0-9]+
 shp_custom.environment-backup-form:
   path: '/site/{site}/environment/backup/{environment}'
   defaults:
