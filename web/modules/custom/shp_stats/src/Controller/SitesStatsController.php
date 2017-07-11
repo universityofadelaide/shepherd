@@ -61,11 +61,13 @@ class SitesStatsController extends ControllerBase {
     $categories = ["Category 1", "Category 2", "Category 3", "Category 4"];
     $seriesData = [
       ["name" => "Series 1", "color" => "#0d233a", "type" => null, "data" => [250, 350, 400, 200]],
+      ["name" => "Series 2", "color" => "#8bbc21", "type" => "column", "data" => [150, 450, 500, 300]],
+      ["name" => "Series 3", "color" => "#910000", "type" => "area", "data" => [0, 0, 60, 90]]
     ];
 
     $element = [
-      '#theme' => 'shp_stats_site_stats',
-      '#library' => $this->t($library),
+      '#theme' => 'shp_stats_site',
+      '#library' => $library,
       '#categories' => $categories,
       '#seriesData' => $seriesData,
       '#options' => $options,

@@ -13,8 +13,8 @@ function shp_stats_theme() {
     'options' => '',
   ];
   return [
-    'sph_stats_site' => [
-      'template' => 'site_stats',
+    'shp_stats_site' => [
+      'template' => 'shp_stats_site',
       'variables' => $vars,
     ],
   ];
