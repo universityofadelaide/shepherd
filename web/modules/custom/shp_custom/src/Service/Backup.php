@@ -4,7 +4,8 @@ namespace Drupal\shp_custom\Service;
 
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityInterface;
-use GuzzleHttp\Client;
+use Drupal\shp_orchestration\Exception\OrchestrationProviderNotConfiguredException;
+
 
 /**
  * Provides a service for accessing the backups.
@@ -18,14 +19,14 @@ class Backup {
   /**
    * Drupal\Core\Config\ConfigFactory definition.
    *
-   * @var Drupal\Core\Config\ConfigFactory
+   * @var \Drupal\Core\Config\ConfigFactory
    */
   protected $configFactory;
 
   /**
    * The job runner is used to trigger the backup process.
    *
-   * @var GuzzleHttp\Client
+   * @var \GuzzleHttp\Client
    */
   protected $jobRunner;
 
@@ -34,13 +35,10 @@ class Backup {
    *
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
    *   Config factory.
-   * @param \GuzzleHttp\Client $job_runner
-   *   Job runner.
    */
-  public function __construct(ConfigFactoryInterface $config_factory) { // }, Client $job_runner) {
+  public function __construct(ConfigFactoryInterface $config_factory) {
     $this->configFactory = $config_factory;
     $this->config = $this->configFactory->get('shp_custom.settings')->get('backup_service');
-//    $this->jobRunner = $job_runner;
   }
 
   /**
@@ -94,29 +92,77 @@ class Backup {
   }
 
   /**
-   * Create a backup for a given instance.
+   * Create a backup for a given environment.
    *
-   * @param \Drupal\Core\Entity\EntityInterface $instance
-   *   The instance to backup.
+   * @param \Drupal\Core\Entity\EntityInterface $site
+   *   The site to backup.
+   * @param string $distribution_name,
+   *   The distribution name that the environment is build from.
+   * @param \Drupal\Core\Entity\EntityInterface $environment
+   *   The environment to backup.
    *
-   * @todo Shepherd: Instances no longer exist.
+   * @return bool
    */
-  public function createBackup(EntityInterface $instance) {
-    // @todo Shepherd: Replace the JenkinsClient call with call to some other runner?
-    // $this->jobRunner->job(JenkinsClient::BACKUP_JOB, $instance);
+  public function createBackup(EntityInterface $site, string $distribution_name, EntityInterface $environment) {
+    try {
+      /** @var \Drupal\shp_orchestration\OrchestrationProviderInterface $orchestration_provider_plugin */
+      $orchestration_provider_plugin = \Drupal::service('plugin.manager.orchestration_provider')
+        ->getProviderInstance();
+    }
+    catch (OrchestrationProviderNotConfiguredException $e) {
+      drupal_set_message($e->getMessage(), 'warning');
+      return FALSE;
+    }
+
+    $config = \Drupal::configFactory()->getEditable('shp_custom.settings');
+    $backup_command = implode(" && ", explode("\n", $config->get('backup_service.backup_command')));
+
+    $result = $orchestration_provider_plugin->backupEnvironment(
+      $distribution_name,
+      $site->field_shp_short_name->value,
+      $environment->id(),
+      $environment->field_shp_git_reference->value,
+      $backup_command
+    );
+
+    return $result;
   }
 
   /**
    * Restore a backup for a given instance.
    *
-   * @param \Drupal\Core\Entity\EntityInterface $instance
-   *   The instance to restore to.
+   * @param \Drupal\Core\Entity\EntityInterface $site
+   *   The site to restore.
+   * @param string $distribution_name,
+   *   The distribution name that the environment is build from.
+   * @param \Drupal\Core\Entity\EntityInterface $environment
+   *   The environment to backup.
    *
-   * @todo Shepherd: Instances no longer exist.
+   * @return bool
    */
-  public function restore(EntityInterface $instance) {
-    // @todo Shepherd: Replace the JenkinsClient call with call to some other runner?
-    // $this->jobRunner->job(JenkinsClient::RESTORE_JOB, $instance);
+  public function restore(EntityInterface $site, string $distribution_name, EntityInterface $environment) {
+    try {
+      /** @var \Drupal\shp_orchestration\OrchestrationProviderInterface $orchestration_provider_plugin */
+      $orchestration_provider_plugin = \Drupal::service('plugin.manager.orchestration_provider')
+        ->getProviderInstance();
+    }
+    catch (OrchestrationProviderNotConfiguredException $e) {
+      drupal_set_message($e->getMessage(), 'warning');
+      return FALSE;
+    }
+
+    $config = \Drupal::configFactory()->getEditable('shp_custom.settings');
+    $backup_command = implode(" && ", explode("\n", $config->get('backup_service.restore_command')));
+
+    $result = $orchestration_provider_plugin->restoreEnvironment(
+      $distribution_name,
+      $site->field_shp_short_name->value,
+      $environment->id(),
+      $environment->field_shp_git_reference->value,
+      $backup_command
+    );
+
+    return $result;
   }
 
 }

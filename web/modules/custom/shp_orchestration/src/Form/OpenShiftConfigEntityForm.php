@@ -37,7 +37,7 @@ class OpenShiftConfigEntityForm extends EntityForm {
       '#required' => TRUE,
     ];
     $form['verify_tls'] = [
-      '#type' => 'boolean_checkbox',
+      '#type' => 'checkbox',
       '#title' => $this->t('Verify TLS'),
       '#default_value' => $entity->verify_tls,
     ];

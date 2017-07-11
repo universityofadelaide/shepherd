@@ -31,24 +31,8 @@ class SiteEnvironmentOperations extends FieldPluginBase {
     // For each row.
     $environment = $entity->id();
     $site = $entity->field_shp_site->target_id;
-    $clone_url = Url::fromRoute('shp_custom.environment-clone-form', ['site' => $site, 'environment' => $environment]);
     $backup_url = Url::fromRoute('shp_custom.environment-backup-form', ['site' => $site, 'environment' => $environment]);
     $restore_url = Url::fromRoute('shp_custom.environment-restore-form', ['site' => $site, 'environment' => $environment]);
-
-    $build['clone_environment'] = [
-      '#type' => 'link',
-      '#title' => $this->t('Clone'),
-      '#url' => $clone_url,
-      '#options' => [
-        'attributes' => [
-          'class' => [
-            'button',
-            'c-btn',
-            'c-btn--small',
-          ],
-        ],
-      ],
-    ];
 
     $build['backup_environment'] = [
       '#type' => 'link',

@@ -1,2 +1,3 @@
 backup_service:
-  path: ''
+  backup_command: "drush -r web sql-dump --structure-tables-list=cache_bootstrap,cache_config,cache_container,cache_data,cache_default,cache_discovery,cache_dynamic_page_cache,cache_entity,cache_menu,cache_render,cache_rest,cache_toolbar,cachetags | gzip > /tmp/database.sql.gz\r\nls -al /tmp"
+  restore_command: 'gzcat /tmp/database.sql | drush -r web sqlc'
