@@ -1,0 +1,30 @@
+<?php
+
+use Drupal\charts\Charts\ModuleSelector;
+
+/**
+ * Implements hook_theme().
+ */
+function shp_stats_theme() {
+  $vars = [
+    'library' => '',
+    'categories' => '',
+    'seriesData' => '',
+    'options' => '',
+  ];
+  return [
+    'sph_stats_site' => [
+      'template' => 'site_stats',
+      'variables' => $vars,
+    ],
+  ];
+}
+
+/**
+ * Implements template_preprocess_page
+ *
+ * @param $variables
+ */
+function template_preprocess_shp_stats(&$variables) {
+  $moduleSelector = new ModuleSelector($variables['library'], $variables['categories'], $variables['seriesData'], $variables['options'], [], $variables, 'xyz');
+}

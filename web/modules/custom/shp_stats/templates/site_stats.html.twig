@@ -1,0 +1,3 @@
+{% set library = 'charts_' ~ chart_type ~ '/' ~ chart_type %}
+{{ attach_library("#{ library }") }}
+<div {{ attributes }} {{ content_attributes }} style="width:100%;"></div>
