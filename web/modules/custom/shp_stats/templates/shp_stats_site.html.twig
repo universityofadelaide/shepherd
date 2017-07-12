@@ -1,6 +1,3 @@
-{{ dump(library) }}
-{% set library = 'charts_' ~ library ~ '/' ~ library %}
-{{ dump(library) }}
+{% set library = 'charts_' ~ chart_type ~ '/' ~ chart_type %}
 {{ attach_library("#{ library }") }}
-{{ dump() }}
-<div {{ attributes }} {{ content_attributes }} style="width:100%;height:400px"></div>
+<div {{ attributes }} {{ content_attributes }} style="width:100%;height: 400px"></div>

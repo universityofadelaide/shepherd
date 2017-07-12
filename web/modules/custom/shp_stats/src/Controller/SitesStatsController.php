@@ -49,10 +49,19 @@ class SitesStatsController extends ControllerBase {
    */
   public function display() {
 
+    // @todo - get all the entires out.
+    $entries = $this->storageService->load();
+
+    $days = [];
+
+    for ($i = 0; $i < 30; $i++) {
+      array_unshift($days, date('d/m/Y', strtotime('-' . $i . ' days')));
+    }
+
     $library = $this->chartSettings['library'];
     $options = [];
     $options['type'] = $this->chartSettings['type'];
-    $options['title'] = $this->t('Chart title');
+    $options['title'] = $this->t('Sites active over time (Last 30 Days)');
     $options['yaxis_title'] = $this->t('Y-Axis');
     $options['yaxis_min'] = '';
     $options['yaxis_max'] = '';
@@ -60,9 +69,7 @@ class SitesStatsController extends ControllerBase {
     //sample data format
     $categories = ["Category 1", "Category 2", "Category 3", "Category 4"];
     $seriesData = [
-      ["name" => "Series 1", "color" => "#0d233a", "type" => null, "data" => [250, 350, 400, 200]],
-      ["name" => "Series 2", "color" => "#8bbc21", "type" => "column", "data" => [150, 450, 500, 300]],
-      ["name" => "Series 3", "color" => "#910000", "type" => "area", "data" => [0, 0, 60, 90]]
+      ["name" => "Sites", "color" => "#0d233a", "type" => null, "data" => [250, 350, 400, 200]],
     ];
 
     $element = [

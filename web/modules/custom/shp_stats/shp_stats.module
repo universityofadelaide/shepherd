@@ -26,3 +26,10 @@ function shp_stats_theme() {
 function template_preprocess_shp_stats_site(&$variables) {
   $moduleSelector = new ModuleSelector($variables['library'], $variables['categories'], $variables['seriesData'], $variables['options'], [], $variables, 'xyz');
 }
+
+/**
+ * Implements hook_cron().
+ */
+function shp_stats_cron() {
+  // @todo - use some service or something to process all the sites.
+}
