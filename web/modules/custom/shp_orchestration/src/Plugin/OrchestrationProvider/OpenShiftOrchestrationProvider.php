@@ -189,89 +189,14 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       }
     }
 
-    $formatted_env_vars = [];
-    foreach ($environment_variables as $name => $value) {
-      if (is_string($value)) {
-        // Plain environment variable.
-        $formatted_env_vars[] = [
-          'name' => $name,
-          'value' => $value,
-        ];
-      }
-      elseif (is_array($value) && array_key_exists('secret', $value)) {
-        // Sourced from secret.
-        $formatted_env_vars[] = [
-          'name' => $name,
-          'valueFrom' => [
-            'secretKeyRef' => [
-              // If secret is '_default' use the deployment config secret.
-              'name' => $value['secret'] == '_default' ? $deployment_name : $value['secret'],
-              'key' => $value['secret_key'],
-            ],
-          ],
-        ];
-      }
-    }
-
-    $public_pvc_name = $deployment_name . '-public';
-    $private_pvc_name = $deployment_name . '-private';
-    try {
-      // @todo Parametrise storage size.
-      $this->client->createPersistentVolumeClaim(
-        $public_pvc_name,
-        'ReadWriteMany',
-        '10Gi'
-      );
-
-      $this->client->createPersistentVolumeClaim(
-        $private_pvc_name,
-        'ReadWriteMany',
-        '10Gi'
-      );
-
-    }
-    catch (ClientException $e) {
-      $this->handleClientException($e);
-      return FALSE;
-    }
-
-    // @todo Consider allowing parameters for volume paths. Are they set by the distro?
-    $volumes = [
-      [
-        'type' => 'pvc',
-        'name' => $public_pvc_name,
-        'path' => '/code/web/sites/default/files',
-      ],
-      [
-        'type' => 'pvc',
-        'name' => $private_pvc_name,
-        'path' => '/code/private',
-      ],
-    ];
-
-    // If a secret with the same name as the deployment exists, volume it in.
-    if ($this->client->getSecret($deployment_name)) {
-      // @todo Consider allowing parameters for secret volume path. Is there a convention?
-      $volumes[] = [
-        'type' => 'secret',
-        'name' => $deployment_name . '-secret',
-        'path' => '/etc/secret',
-        'secret' => $deployment_name,
-      ];
-    }
-
-    $deploy_data = [
-      'containerPort' => 8080,
-      'memory_limit' => '128Mi',
-      'env_vars' => $formatted_env_vars,
-      'annotations' => [
-        'shepherdUrl' => $environment_url,
-      ],
-      'labels' => [
-        'site_id' => $site_id,
-        'environment_id' => $environment_id,
-      ],
-    ];
+    $formatted_env_vars = $this->formatEnvVars($environment_variables, $deployment_name);
+    $volumes = $this->setupVolumes($deployment_name, TRUE);
+    $deploy_data = $this->formatDeployData(
+      $formatted_env_vars,
+      $environment_url,
+      $site_id,
+      $environment_id
+    );
 
     try {
       $this->client->createDeploymentConfig(
@@ -297,7 +222,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
         ];
         try {
           $this->client->createCronJob(
-            $deployment_name,
+            $deployment_name . '-' . \Drupal::service('shp_custom.random_string')->generate(5),
             $image_stream['status']['dockerImageRepository'] . ':' . $source_ref,
             $schedule,
             $args_array,
@@ -412,6 +337,98 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
   /**
    * {@inheritdoc}
    */
+  public function backupEnvironment(
+    string $distribution_name,
+    string $short_name,
+    string $environment_id,
+    string $source_ref = 'master',
+    string $commands
+  ) {
+    return $this->executeJob(
+      $distribution_name,
+      $short_name,
+      $environment_id,
+      $source_ref,
+      $commands
+    );
+
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function restoreEnvironment(
+    string $distribution_name,
+    string $short_name,
+    string $environment_id,
+    string $source_ref = 'master',
+    string $commands
+  ) {
+    return $this->executeJob(
+      $distribution_name,
+      $short_name,
+      $environment_id,
+      $source_ref,
+      $commands
+    );
+
+  }
+
+  /**
+   * {@inheritdoc}
+   *
+   * @todo - can this and cron job creation be combined?
+   */
+  public function executeJob(
+    string $distribution_name,
+    string $short_name,
+    string $environment_id,
+    string $source_ref = 'master',
+    string $commands
+  ) {
+    $sanitised_distribution_name = self::sanitise($distribution_name);
+    $deployment_name = self::generateDeploymentName(
+      $distribution_name,
+      $short_name,
+      $environment_id
+    );
+
+    // Retrieve existing deployment details to use where possible.
+    $deployment_config = $this->client->getDeploymentConfig($deployment_name);
+
+    $image_stream = $this->client->getImageStream($sanitised_distribution_name);
+    $volumes = $this->setupVolumes($deployment_name, FALSE);
+    $deploy_data = $this->formatDeployData(
+      $deployment_config['spec']['template']['spec']['containers'][0]['env'],
+      $deployment_config['spec']['metadata']['annotations']['shepherdUrl'],
+      $deployment_config['labels']['site_id'],
+      $environment_id
+    );
+
+    $args_array = [
+      '/bin/sh',
+      '-c',
+      $commands,
+    ];
+    try {
+      $this->client->createJob(
+        $deployment_name . '-' . \Drupal::service('shp_custom.random_string')->generate(5),
+        $image_stream['status']['dockerImageRepository'] . ':' . $source_ref,
+        $args_array,
+        $volumes,
+        $deploy_data
+      );
+    }
+    catch (ClientException $e) {
+      $this->handleClientException($e);
+      return FALSE;
+    }
+
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function getSecret(string $name, string $key = NULL) {
     try {
       $secret = $this->client->getSecret($name);
@@ -481,6 +498,133 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     catch (ClientException $e) {
       return FALSE;
     }
+  }
+
+  /**
+   * Format an array of environment variables ready to pass to OpenShift.
+   *
+   * @param array $environment_variables
+   *   An array of environment variables to be set for the pod.
+   * @param string $deployment_name
+   *   The deployment name.
+   *
+   * @return array
+   */
+  private function formatEnvVars(array $environment_variables, string $deployment_name) {
+    $formatted_env_vars = [];
+
+    foreach ($environment_variables as $name => $value) {
+      if (is_string($value)) {
+        // Plain environment variable.
+        $formatted_env_vars[] = [
+          'name' => $name,
+          'value' => $value,
+        ];
+      }
+      elseif (is_array($value) && array_key_exists('secret', $value)) {
+        // Sourced from secret.
+        $formatted_env_vars[] = [
+          'name' => $name,
+          'valueFrom' => [
+            'secretKeyRef' => [
+              // If secret is '_default' use the deployment config secret.
+              'name' => $value['secret'] == '_default' ? $deployment_name : $value['secret'],
+              'key' => $value['secret_key'],
+            ],
+          ],
+        ];
+      }
+    }
+
+    return $formatted_env_vars;
+  }
+
+  /**
+   * Format an array of deployment data ready to pass to OpenShift
+   * @param $formatted_env_vars
+   * @param $environment_url
+   * @param $site_id
+   * @param $environment_id
+   *
+   * @return array
+   */
+  private function formatDeployData($formatted_env_vars, $environment_url, $site_id, $environment_id) {
+    $deploy_data = [
+      'containerPort' => 8080,
+      'memory_limit' => '128Mi',
+      'env_vars' => $formatted_env_vars,
+      'annotations' => [
+        'shepherdUrl' => $environment_url,
+      ],
+      'labels' => [
+        'site_id' => $site_id,
+        'environment_id' => $environment_id,
+      ],
+    ];
+
+    return $deploy_data;
+  }
+
+  /**
+   * Format an array of volume data ready to pass to OpenShift, with optional setup.
+   *
+   * @param $deployment_name
+   * @param bool $setup
+   *
+   * @return array|bool
+   */
+  private function setupVolumes($deployment_name, $setup = FALSE) {
+    $public_pvc_name = $deployment_name . '-public';
+    $private_pvc_name = $deployment_name . '-private';
+
+    if ($setup) {
+      try {
+        // @todo Parametrise storage size.
+        $this->client->createPersistentVolumeClaim(
+          $public_pvc_name,
+          'ReadWriteMany',
+          '10Gi'
+        );
+
+        $this->client->createPersistentVolumeClaim(
+          $private_pvc_name,
+          'ReadWriteMany',
+          '10Gi'
+        );
+
+      }
+      catch (ClientException $e) {
+        $this->handleClientException($e);
+        return FALSE;
+      }
+    }
+
+    // @todo Consider allowing parameters for volume paths. Are they set by the distro?
+    $volumes = [
+      [
+        'type' => 'pvc',
+        'name' => $public_pvc_name,
+        'path' => '/code/web/sites/default/files',
+      ],
+      [
+        'type' => 'pvc',
+        'name' => $private_pvc_name,
+        'path' => '/code/private',
+      ],
+    ];
+
+    // If a secret with the same name as the deployment exists, volume it in.
+    if ($this->client->getSecret($deployment_name)) {
+      // @todo Consider allowing parameters for secret volume path. Is there a convention?
+      $volumes[] = [
+        'type' => 'secret',
+        'name' => $deployment_name . '-secret',
+        'path' => '/etc/secret',
+        'secret' => $deployment_name,
+      ];
+    }
+
+    return $volumes;
   }
 
   /**
