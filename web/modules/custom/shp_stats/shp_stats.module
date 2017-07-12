@@ -22,9 +22,7 @@ function shp_stats_theme() {
 
 /**
  * Implements template_preprocess_page
- *
- * @param $variables
  */
-function template_preprocess_shp_stats(&$variables) {
+function template_preprocess_shp_stats_site(&$variables) {
   $moduleSelector = new ModuleSelector($variables['library'], $variables['categories'], $variables['seriesData'], $variables['options'], [], $variables, 'xyz');
 }
