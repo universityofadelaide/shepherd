@@ -49,13 +49,12 @@ class SitesStatsController extends ControllerBase {
    */
   public function display() {
 
-    // @todo - get all the entires out.
     $entries = $this->storageService->load();
 
     $days = [];
-
     for ($i = 0; $i < 30; $i++) {
-      array_unshift($days, date('d/m/Y', strtotime('-' . $i . ' days')));
+      $date = date('d/m/Y', strtotime('-' . $i . ' days'));
+      array_unshift($days, $date);
     }
 
     $library = $this->chartSettings['library'];
@@ -67,9 +66,9 @@ class SitesStatsController extends ControllerBase {
     $options['yaxis_max'] = '';
     $options['xaxis_title'] = $this->t('X-Axis');
     //sample data format
-    $categories = ["Category 1", "Category 2", "Category 3", "Category 4"];
+    $categories = $days;
     $seriesData = [
-      ["name" => "Sites", "color" => "#0d233a", "type" => null, "data" => [250, 350, 400, 200]],
+      ["name" => "Sites", "color" => "#0d233a", "type" => null, "data" => [0, 0, 1, 3]],
     ];
 
     $element = [
