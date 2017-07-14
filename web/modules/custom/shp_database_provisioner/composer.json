@@ -1,0 +1,7 @@
+{
+  "name": "shepherd/shp_database_provisioner",
+  "description": "Provisions the necessary database and users on environment creation.",
+  "type": "drupal-module",
+  "keywords": ["drupal"],
+  "license": "GPL-2.0+"
+}

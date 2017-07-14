@@ -2,6 +2,7 @@
   "name": "shepherd/shp_orchestration",
   "description": "Provides functionality specific to the Shepherd distribution.",
   "type": "drupal-module",
+  "keywords": ["drupal"],
   "license": "GPL-2.0+",
   "require": {
     "universityofadelaide/openshift-client": "dev-develop"
