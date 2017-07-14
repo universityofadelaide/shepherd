@@ -1,0 +1,7 @@
+{
+  "name": "shepherd/shp_content_types",
+  "description": "Provides the various content types Shepherd utilises.",
+  "type": "drupal-module",
+  "keywords": ["drupal"],
+  "license": "GPL-2.0+"
+}

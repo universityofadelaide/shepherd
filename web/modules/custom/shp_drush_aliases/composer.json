@@ -1,0 +1,7 @@
+{
+  "name": "shepherd/shp_drush_aliases",
+  "description": "Provides functionality specific to the Shepherd.",
+  "type": "drupal-module",
+  "keywords": ["drupal"],
+  "license": "GPL-2.0+"
+}

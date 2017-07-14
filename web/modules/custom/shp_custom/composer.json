@@ -1,6 +1,7 @@
 {
-  "name": "ua-drupal-modules/shp_custom",
-  "description": "Provides functionality specific to the Shepherd",
+  "name": "shepherd/shp_custom",
+  "description": "Provides functionality specific to the Shepherd distribution.",
   "type": "drupal-module",
+  "keywords": ["drupal"],
   "license": "GPL-2.0+"
 }
