@@ -1,0 +1,11 @@
+langcode: en
+status: true
+dependencies: {  }
+_core:
+  default_config_hash: MUYdnTWI7JL4m9lAZUdQy8Wf_UdSXR5qyODaXh20qjE
+id: shp_sites
+label: Multi-site
+description: 'For creating ad-hoc site groups.'
+creator_membership: false
+creator_wizard: false
+creator_roles: {  }

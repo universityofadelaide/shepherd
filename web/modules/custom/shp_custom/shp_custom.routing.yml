@@ -1,19 +1,3 @@
-shp_custom.sites:
-  path: '/websites'
-  requirements:
-    _permission: 'shp access environment wizard'
-shp_custom.environments:
-  path: '/environments'
-  requirements:
-    _permission: 'shp access environment wizard'
-shp_custom.users:
-  path: '/users'
-  requirements:
-    _permission: 'shp access environment wizard'
-shp_custom.distributions:
-  path: '/distributions'
-  requirements:
-    _permission: 'shp access environment wizard'
 shp_custom.api-site-environments:
   path: '/api/site/{node}/environments'
   defaults:

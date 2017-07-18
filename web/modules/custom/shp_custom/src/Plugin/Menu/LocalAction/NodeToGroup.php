@@ -25,7 +25,7 @@ class NodeToGroup extends WithDestination {
         $node = Node::load($id);
 
         /** @var \Drupal\group\Entity\GroupInterface $group */
-        $group = \Drupal::service('shp_content_types.site_group_manager')->load($node);
+        $group = \Drupal::service('shp_content_types.group_manager')->load($node);
         $parameters['group'] = $group->id();
       }
     }

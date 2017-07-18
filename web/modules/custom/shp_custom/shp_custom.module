@@ -11,11 +11,8 @@ use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Menu\MenuTreeParameters;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Session\AccountInterface;
-use Drupal\group\Entity\GroupContent;
-use Drupal\Core\Render\BubbleableMetadata;
 use Drupal\node\Entity\Node;
 use Drupal\Core\Url;
-use Drupal\Core\Form\FormStateInterface;
 
 /**
  * Implements hook_help().
@@ -93,7 +90,19 @@ function shp_custom_toolbar() {
 }
 
 /**
+ * Implements hook_toolbar_alter().
+ */
+function shp_custom_toolbar_alter(&$items) {
+  // Remove 'Manage' item from toolbar if user cannot administer stuff.
+  if (!\Drupal::currentUser()->hasPermission('administer nodes')) {
+    unset($items['administration']);
+  }
+}
+
+/**
  * Generate a list of distributions for a select list.
+ *
+ * @todo No longer used, delete this.
  *
  * @return array
  *   The choices formatted as id => label.
@@ -221,4 +230,3 @@ function shp_custom_mail($key, &$message, $params) {
       $message['body'][] = Html::escape($params['message']);
   }
 }
-
