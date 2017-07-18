@@ -2,13 +2,13 @@ langcode: en
 status: true
 dependencies:
   config:
-    - group.type.shp_site
-id: shp_site-online-consultant
+    - group.type.shp_distribution
+id: shp_distribution-online-consulta
 label: 'Online consultant'
 weight: 100
 internal: false
 audience: member
-group_type: shp_site
+group_type: shp_distribution
 permissions_ui: true
 permissions:
   - 'access content overview'

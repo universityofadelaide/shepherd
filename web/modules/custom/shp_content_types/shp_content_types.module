@@ -68,12 +68,16 @@ function shp_content_types_preprocess_page_title(&$variables) {
   }
 }
 
-/*
+/**
  * Implements hook_ENTITY_TYPE_insert().
  */
 function shp_content_types_node_insert(NodeInterface $node) {
   if ($node->getType() === 'shp_site') {
-    \Drupal::service('shp_content_types.site_group_manager')->create($node);
+    \Drupal::service('shp_content_types.group_manager')->create($node);
+    \Drupal::service('shp_content_types.group_manager')->addSiteToDistributionGroup($node);
+  }
+  elseif ($node->getType() === 'shp_distribution') {
+    \Drupal::service('shp_content_types.group_manager')->create($node);
   }
 }
 
@@ -81,7 +85,7 @@ function shp_content_types_node_insert(NodeInterface $node) {
  * Implements hook_ENTITY_TYPE_delete().
  */
 function shp_content_types_node_delete(NodeInterface $node) {
-  if ($node->getType() === 'shp_site') {
-    \Drupal::service('shp_content_types.site_group_manager')->delete($node);
+  if ($node->getType() === 'shp_site' || $node->getType() === 'shp_distribution') {
+    \Drupal::service('shp_content_types.group_manager')->delete($node);
   }
 }

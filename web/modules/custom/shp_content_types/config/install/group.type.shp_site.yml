@@ -3,7 +3,7 @@ status: true
 dependencies: {  }
 id: shp_site
 label: Site
-description: ''
+description: 'A group of this type is automatically created and associated when a site is added.'
 creator_membership: false
 creator_wizard: true
 creator_roles: {  }

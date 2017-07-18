@@ -15,7 +15,3 @@ permissions:
   7: 'access shortcuts'
   8: 'shp view sites'
   9: 'shp view users'
-  10: 'shp access site wizard'
-  11: 'shp administer users'
-  12: 'shp view homepage'
-  13: 'shp access environment wizard'
