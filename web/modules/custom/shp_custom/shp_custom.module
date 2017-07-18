@@ -12,8 +12,10 @@ use Drupal\Core\Menu\MenuTreeParameters;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\group\Entity\GroupContent;
+use Drupal\Core\Render\BubbleableMetadata;
 use Drupal\node\Entity\Node;
 use Drupal\Core\Url;
+use Drupal\Core\Form\FormStateInterface;
 
 /**
  * Implements hook_help().
@@ -220,19 +222,3 @@ function shp_custom_mail($key, &$message, $params) {
   }
 }
 
-/**
- * Implements hook_cron().
- */
-function shp_custom_cron() {
-  // Only run backups at 3am.
-  if (date('G', time()) == 3) {
-    shp_custom_backup_environments();
-  }
-}
-
-/**
- * Back up all environments.
- */
-function shp_custom_backup_environments() {
-  // @todo Shepherd: Perform backups on orchestration provider.
-}

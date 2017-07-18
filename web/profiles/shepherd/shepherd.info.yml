@@ -38,6 +38,7 @@ dependencies:
   - tour
   - views
   - views_ui
+
   # Contributed modules
   - cas
   - entity_reference
@@ -48,7 +49,10 @@ dependencies:
   - key_value_field
   - paragraphs
   - r4032login
+  - token
+
   # Shepherd modules
+  - shp_backup
   - shp_content_types
   - shp_custom
   - shp_database_provisioner
@@ -56,6 +60,7 @@ dependencies:
   - shp_ldap_sync
   - shp_orchestration
   - shp_vue_view
+
   # University created modules
   - ua_ldap
 themes:

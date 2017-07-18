@@ -31,15 +31,6 @@ function shp_custom_views_data_alter(array &$data) {
     ],
   ];
 
-  $data['node_field_data']['site_environment_operations'] = [
-    'title' => t('Site Environment Operations'),
-    'field' => [
-      'title' => t('Operations'),
-      'help' => t('Show operations that can be performed on an environment.'),
-      'id' => 'site_environment_operations',
-    ],
-  ];
-
   $data['node_field_data']['site_environment_url'] = [
     'title' => t('Site Environment Url'),
     'field' => [

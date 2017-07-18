@@ -1,13 +1,19 @@
-# Configuration schema for shp_custom module
+# Configuration schema for shp_backup module
 
-shp_custom.settings:
+shp_backup.settings:
   type: mapping
-  label: 'Shepherd settings'
+  label: 'Shepherd backup settings'
   mapping:
     backup_service:
       type: mapping
       label: 'Backup Service'
       mapping:
+        root_dir:
+          type: string
+          label: 'Backup root directory'
+        backup_title:
+          type: string
+          label: 'Backup title'
         backup_command:
           type: string
           label: 'Backup command'

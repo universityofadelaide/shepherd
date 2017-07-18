@@ -4,8 +4,6 @@ shp access site wizard:
   title: 'Access site wizard'
 shp administer users:
   title: 'Administer users'
-shp view backups:
-  title: 'View backups'
 shp view distributions:
   title: 'View distributions'
 shp view environments:
