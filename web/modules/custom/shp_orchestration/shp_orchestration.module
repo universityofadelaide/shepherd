@@ -111,18 +111,13 @@ function shp_orchestration_node_update(EntityInterface $entity) {
 
     switch ($bundle) {
       case 'shp_distribution':
-        // TODO: Handle updates.
-        $name = $entity->getTitle();
-
-        $data = [
-          'build_image' => $entity->field_shp_builder_image->value,
-          'secret' => $entity->field_shp_build_secret->value,
-          'git' => [
-            'uri' => $entity->field_shp_git_repository->value,
-          ],
-        ];
-
-        $result = $orchestration_provider_plugin->updateDistribution($name, $data);
+        $result = $orchestration_provider_plugin->updatedDistribution(
+          $entity->getTitle(),
+          $entity->field_shp_builder_image->value,
+          $entity->field_shp_git_repository->value,
+          'master',
+          $entity->field_shp_build_secret->value
+        );
         if (!$result) {
           return FALSE;
         }

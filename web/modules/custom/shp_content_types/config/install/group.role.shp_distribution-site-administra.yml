@@ -1,0 +1,13 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - group.type.shp_distribution
+id: shp_distribution-site-administra
+label: 'Site administrator'
+weight: 100
+internal: false
+audience: member
+group_type: shp_distribution
+permissions_ui: true
+permissions: {  }

@@ -148,6 +148,10 @@ function shp_database_provisioner_node_insert(EntityInterface $entity) {
 
     $query = sprintf('CREATE DATABASE `%s`', $env_db_database);
     $statement = $db->prepare($query);
+    if ($statement === NULL) {
+      // @todo Handle errors.
+      return FALSE;
+    }
     $statement->execute();
 
     $query = sprintf(
@@ -157,8 +161,14 @@ function shp_database_provisioner_node_insert(EntityInterface $entity) {
       $env_db_password
     );
     $statement = $db->prepare($query);
+    if ($statement === NULL) {
+      // @todo Handle errors.
+      return FALSE;
+    }
     $statement->execute();
   }
+
+  return TRUE;
 }
 
 /**
