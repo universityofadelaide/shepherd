@@ -501,6 +501,30 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
   }
 
   /**
+   * {@inheritdoc}
+   */
+  public function getEnvironmentRoute(string $distribution_name, string $short_name, string $environment_id) {
+
+    $deployment_name = self::generateDeploymentName(
+      $distribution_name,
+      $short_name,
+      $environment_id
+    );
+
+    try {
+      $route = $this->client->getRoute($deployment_name);
+      return [
+        'path' => $route['spec']['host'],
+        'status' => $route['status']['ingress'][0],
+      ];
+    }
+    catch (ClientException $e) {
+      $this->handleClientException($e);
+      return FALSE;
+    }
+  }
+
+  /**
    * Format an array of environment variables ready to pass to OpenShift.
    *
    * @param array $environment_variables
