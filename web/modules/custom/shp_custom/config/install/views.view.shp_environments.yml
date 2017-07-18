@@ -128,7 +128,7 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
-          label: 'Domain'
+          label: Domain
           exclude: false
           alter:
             alter_text: false
@@ -186,7 +186,7 @@ display:
           plugin_id: field
       filters:
         status:
-          value: true
+          value: '1'
           table: node_field_data
           field: status
           plugin_id: boolean
@@ -224,7 +224,20 @@ display:
       title: Environments
       header: {  }
       footer: {  }
-      empty: {  }
+      empty:
+        area:
+          id: area
+          table: views
+          field: area
+          relationship: none
+          group_type: group
+          admin_label: ''
+          empty: true
+          tokenize: false
+          content:
+            value: '<h3>No environments exist.</h3>'
+            format: basic_html
+          plugin_id: text
       relationships: {  }
       arguments: {  }
       display_extenders: {  }
