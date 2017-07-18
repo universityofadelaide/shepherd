@@ -1,0 +1,97 @@
+<?php
+
+/**
+ * @file
+ * Install, update and uninstall functions for the shepherd backup module.
+ */
+
+/**
+ * Implements hook_install().
+ *
+ * Add in our custom views operations field.
+ */
+function shp_backup_install() {
+  // Load the view and add the operations field to it
+  $view = \Drupal::configFactory()->getEditable('views.view.shp_site_environments');
+
+  $shp_backup_operations = [
+    'id' => 'shp_backup_operations',
+    'table' => 'node_field_data',
+    'field' => 'shp_backup_operations',
+    'relationship' => 'none',
+    'group_type' => 'group',
+    'admin_label' => '',
+    'label' => 'Operations',
+    'exclude' => false,
+    'alter' => [
+      'alter_text' => false,
+      'text' => '',
+      'make_link' => false,
+      'path' => '',
+      'absolute' => false,
+      'external' => false,
+      'replace_spaces' => false,
+      'path_case' => 'none',
+      'trim_whitespace' => false,
+      'alt' => '',
+      'rel' => '',
+      'link_class' => '',
+      'prefix' => '',
+      'suffix' => '',
+      'target' => '',
+      'nl2br' => false,
+      'max_length' => 0,
+      'word_boundary' => true,
+      'ellipsis' => true,
+      'more_link' => false,
+      'more_link_text' => '',
+      'more_link_path' => '',
+      'strip_tags' => false,
+      'trim' => false,
+      'preserve_tags' => '',
+      'html' => false,
+    ],
+    'element_type' => '',
+    'element_class' => '',
+    'element_label_type' => '',
+    'element_label_class' => '',
+    'element_label_colon' => true,
+    'element_wrapper_type' => '',
+    'element_wrapper_class' => '',
+    'element_default_classes' => true,
+    'empty' => '',
+    'hide_empty' => false,
+    'empty_zero' => false,
+    'hide_alter_empty' => true,
+    'entity_type' => 'node',
+    'plugin_id' => 'shp_backup_operations',
+  ];
+
+  $view->set('display.default.display_options.fields.shp_backup_operations', $shp_backup_operations);
+  $view->save(TRUE);
+}
+
+/**
+ * Implements hook_uninstall().
+ *
+ * Remove all our config.
+ * Including our views field.
+ */
+function shp_backup_uninstall() {
+  $config_storage = \Drupal::service('config.storage');
+
+  $dir = dir(drupal_get_path('module', 'shp_backup') . '/config/install');
+  while (FALSE !== ($entry = $dir->read())) {
+    if (!in_array($entry, ['.', '..'])) {
+      $config_storage->delete(rtrim($entry, '.yml'));
+    }
+  }
+  $dir->close();
+
+  $view = \Drupal::configFactory()->getEditable('views.view.shp_site_environments');
+  $fields = $view->get('display.default.display_options.fields');
+  unset($fields['shp_backup_operations']);
+  $view->set('display.default.display_options.fields', $fields);
+  $view->save();
+}
+

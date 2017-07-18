@@ -1,0 +1,5 @@
+shp_backup.site_backups:
+  title: Backups
+  parent_id: entity.node.canonical
+  route_name: view.shp_site_backups.page_1
+  base_route: entity.node.canonical

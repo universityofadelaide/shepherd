@@ -1,0 +1,103 @@
+<?php
+
+
+/**
+ * @file
+ * Contains shp_backup.module.
+ */
+
+use Drupal\Core\Render\BubbleableMetadata;
+use Drupal\taxonomy\Entity\Term;
+use Drupal\node\Entity\Node;
+
+/**
+ * Implements hook_cron().
+ */
+function shp_backup_cron() {
+  // Only run backups at 3am.
+  if (date('G', time()) == 3) {
+    shp_backup_backup_environments();
+  }
+}
+
+/**
+ * Back up all environments.
+ */
+function shp_backup_backup_environments() {
+  // @todo Shepherd: Perform backups on orchestration provider.
+  // Retrieve list of all environments
+  // Load site, distribution, environment
+  // call createBackup on each
+  // As each job runs asap, does there need to be some throttling here?
+}
+
+/**
+ * Implementation of hook_token_info().
+ */
+function shp_backup_token_info() {
+  $info['types']['shepherd'] = [
+    'name' => t('Shepherd'),
+    'description' => t('Tokens related to shepherd.'),
+  ];
+
+  $info['tokens']['shepherd']['backup-path'] = [
+    'name' => t('Backup storage path'),
+    'description' => t('The shepherd default backup storage path.'),
+  ];
+
+  $info['tokens']['shepherd']['site-private-files'] = [
+    'name' => t('Private files'),
+    'description' => t('The private files directory path used by deployed Drupal pods.'),
+  ];
+
+  $info['tokens']['shepherd']['site-public-files'] = [
+    'name' => t('Public files'),
+    'description' => t('The public files directory path used by deployed Drupal pods.'),
+  ];
+
+  return $info;
+}
+
+/**
+ * Implementation of hook_tokens().
+ */
+function shp_backup_tokens($type, $tokens, array $data, array $options, BubbleableMetadata $bubbleable_metadata) {
+  if ($type != 'shepherd') {
+    return [];
+  }
+
+  $config = \Drupal::configFactory()->get('shp_backup.settings');
+
+  $replacements = [];
+
+  foreach ($tokens as $name => $original) {
+    switch ($name) {
+      case 'backup-path':
+        if (isset($data['backup'])) {
+          $site = Node::load($data['backup']->field_shp_site->target_id);
+          $backup_path = $config->get('backup_service.root_dir') . '/' . $site->id() . '/' . $data['backup']->created->value;
+          $replacements[$original] = $backup_path;
+        }
+        break;
+
+      case 'site-private-files':
+        $replacements[$original] = '/code/private/';
+        break;
+
+      case 'site-public-files':
+        $replacements[$original] = '/code/web/sites/default/files/';
+        break;
+
+      case 'environment-type':
+        if ($data['environment']) {
+          $environment_term = Term::load($data['environment']->field_shp_environment_type->target_id);
+          if ($environment_term) {
+            $replacements[$original] = $environment_term->name->value;
+          }
+        }
+    }
+  }
+
+  return $replacements;
+
+}
