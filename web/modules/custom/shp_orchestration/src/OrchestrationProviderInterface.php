@@ -271,6 +271,24 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
    */
   public function getSiteEnvironmentsStatus(string $site_id);
 
+  /**
+   * Retrieves the route for a given environment.
+   *
+   * @param string $distribution_name
+   *   Name of the distribution.
+   * @param string $short_name
+   *   Short name of the site.
+   * @param string $environment_id
+   *   Environment node id.
+   *
+   * @return array|bool
+   *   Returns collection list of routes and the environments they belong to.
+   */
+  public function getEnvironmentRoute(
+    string $distribution_name,
+    string $short_name,
+    string $environment_id
+  );
 
   /**
    * Backup an environment

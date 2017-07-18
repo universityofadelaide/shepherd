@@ -239,7 +239,20 @@ display:
             format: full_html
           plugin_id: text
       footer: {  }
-      empty: {  }
+      empty:
+        area:
+          id: area
+          table: views
+          field: area
+          relationship: none
+          group_type: group
+          admin_label: ''
+          empty: true
+          tokenize: false
+          content:
+            value: "<h3>No sites exist.</h3>\n<p>Get started by creating a distribution first, then a site.</p>"
+            format: basic_html
+          plugin_id: text
       relationships: {  }
       arguments: {  }
       display_extenders: {  }
@@ -251,8 +264,7 @@ display:
         - url.query_args
         - 'user.node_grants:view'
         - user.permissions
-      tags:
-        - 'config:field.storage.node.field_shp_site_title'
+      tags: {  }
   block_1:
     display_plugin: block
     id: block_1
@@ -370,8 +382,7 @@ display:
         - 'languages:language_interface'
         - 'user.node_grants:view'
         - user.permissions
-      tags:
-        - 'config:field.storage.node.field_shp_site_title'
+      tags: {  }
   page_1:
     display_plugin: page
     id: page_1
@@ -397,8 +408,7 @@ display:
         - url.query_args
         - 'user.node_grants:view'
         - user.permissions
-      tags:
-        - 'config:field.storage.node.field_shp_site_title'
+      tags: {  }
   rest_export_1:
     display_plugin: rest_export
     id: rest_export_1
@@ -428,5 +438,4 @@ display:
         - request_format
         - 'user.node_grants:view'
         - user.permissions
-      tags:
-        - 'config:field.storage.node.field_shp_site_title'
+      tags: {  }
