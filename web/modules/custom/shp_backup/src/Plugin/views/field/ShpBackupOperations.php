@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\shp_custom\Plugin\views\field;
+namespace Drupal\shp_backup\Plugin\views\field;
 
 use Drupal\views\Plugin\views\field\FieldPluginBase;
 use Drupal\Core\Url;
@@ -9,13 +9,13 @@ use Drupal\views\ResultRow;
 /**
  * Field handler to perform operations on site environments.
  *
- * @package Drupal\shp_custom\Plugin\views\field
+ * @package Drupal\shp_backup\Plugin\views\field
  *
  * @ingroup views_field_handlers
  *
- * @ViewsField("site_environment_operations")
+ * @ViewsField("shp_backup_operations")
  */
-class SiteEnvironmentOperations extends FieldPluginBase {
+class ShpBackupOperations extends FieldPluginBase {
 
   /**
    * {@inheritdoc}
@@ -31,8 +31,8 @@ class SiteEnvironmentOperations extends FieldPluginBase {
     // For each row.
     $environment = $entity->id();
     $site = $entity->field_shp_site->target_id;
-    $backup_url = Url::fromRoute('shp_custom.environment-backup-form', ['site' => $site, 'environment' => $environment]);
-    $restore_url = Url::fromRoute('shp_custom.environment-restore-form', ['site' => $site, 'environment' => $environment]);
+    $backup_url = Url::fromRoute('shp_backup.environment-backup-form', ['site' => $site, 'environment' => $environment]);
+    $restore_url = Url::fromRoute('shp_backup.environment-restore-form', ['site' => $site, 'environment' => $environment]);
 
     $build['backup_environment'] = [
       '#type' => 'link',

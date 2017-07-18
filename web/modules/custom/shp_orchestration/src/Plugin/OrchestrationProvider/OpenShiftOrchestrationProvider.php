@@ -400,7 +400,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     $volumes = $this->setupVolumes($deployment_name, FALSE);
     $deploy_data = $this->formatDeployData(
       $deployment_config['spec']['template']['spec']['containers'][0]['env'],
-      $deployment_config['spec']['metadata']['annotations']['shepherdUrl'],
+      $deployment_config['metadata']['annotations']['shepherdUrl'],
       $deployment_config['labels']['site_id'],
       $environment_id
     );
@@ -423,7 +423,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       $this->handleClientException($e);
       return FALSE;
     }
-
+    return TRUE;
   }
 
   /**
@@ -576,6 +576,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
   private function setupVolumes($deployment_name, $setup = FALSE) {
     $public_pvc_name = $deployment_name . '-public';
     $private_pvc_name = $deployment_name . '-private';
+    $backup_pvc_name = $deployment_name . '-backup';
 
     if ($setup) {
       try {
@@ -588,6 +589,12 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
 
         $this->client->createPersistentVolumeClaim(
           $private_pvc_name,
+          'ReadWriteMany',
+          '10Gi'
+        );
+
+        $this->client->createPersistentVolumeClaim(
+          $backup_pvc_name,
           'ReadWriteMany',
           '10Gi'
         );
@@ -610,6 +617,11 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
         'type' => 'pvc',
         'name' => $private_pvc_name,
         'path' => '/code/private',
+      ],
+      [
+        'type' => 'pvc',
+        'name' => $backup_pvc_name,
+        'path' => '/backup',
       ],
     ];
 

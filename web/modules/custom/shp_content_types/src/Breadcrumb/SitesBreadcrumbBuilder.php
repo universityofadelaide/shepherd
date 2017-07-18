@@ -20,6 +20,7 @@ class SitesBreadcrumbBuilder implements BreadcrumbBuilderInterface {
    * @var array
    */
   protected $sitesViews = [
+    'shp_site_backups' => 'Backups',
     'shp_site_environments' => 'Environments',
     'shp_site_users' => 'Users',
   ];

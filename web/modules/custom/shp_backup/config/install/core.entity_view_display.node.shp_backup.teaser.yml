@@ -1,0 +1,21 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.teaser
+    - field.field.node.shp_backup.field_shp_environment
+    - field.field.node.shp_backup.field_shp_site
+    - node.type.shp_backup
+  module:
+    - user
+id: node.shp_backup.teaser
+targetEntityType: node
+bundle: shp_backup
+mode: teaser
+content:
+  links:
+    weight: 100
+    region: content
+hidden:
+  field_shp_environment: true
+  field_shp_site: true

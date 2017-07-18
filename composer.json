@@ -22,6 +22,7 @@
         "drupal/key_value_field":                        "1.x-dev",
         "drupal/paragraphs":                             "1.*",
         "drupal/r4032login":                             "1.*@dev",
+        "drupal/token":                                  "1.*@dev",
         "ua-drupal-modules/ua_ldap":                     "dev-develop",
         "ua-drupal-modules/ua_ldap_authorisation":       "dev-develop",
         "wikimedia/composer-merge-plugin":               "^1.4"
