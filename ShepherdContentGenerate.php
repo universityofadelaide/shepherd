@@ -56,56 +56,81 @@ else {
 }
 $openshift->save();
 
-$development_env = Term::create([
-  'vid'                   => 'shp_environment_types',
-  'name'                  => 'Development',
-  'field_shp_base_domain' => $domain_name,
-]);
-$development_env->save();
-$production_env = Term::create([
-  'vid'                   => 'shp_environment_types',
-  'name'                  => 'Production',
-]);
-$production_env->save();
+if (!$development = taxonomy_term_load_multiple_by_name('Development', 'shp_environment_types')) {
+  $development_env = Term::create([
+    'vid'                   => 'shp_environment_types',
+    'name'                  => 'Development',
+    'field_shp_base_domain' => $domain_name,
+  ]);
+  $development_env->save();
 
-$distribution = Node::create([
-  'type'                     => 'shp_distribution',
-  'langcode'                 => 'en',
-  'uid'                      => '1',
-  'status'                   => 1,
-  'title'                    => 'WCMS D8',
-  'field_shp_git_repository' => [['value' => 'git@gitlab.adelaide.edu.au:web-team/ua-wcms-d8.git']],
-  'field_shp_builder_image'  => [['value' => 'uofa/s2i-shepherd-drupal']],
-  'field_shp_build_secret'   => [['value' => 'build-key']],
-]);
-$distribution->save();
+  $production_env = Term::create([
+    'vid'  => 'shp_environment_types',
+    'name' => 'Production',
+  ]);
+  $production_env->save();
+}
+else {
+  $development_env = reset($development);
+  echo "Taxonomy already setup.\n";
+}
 
-$site = Node::create([
-  'type'                    => 'shp_site',
-  'langcode'                => 'en',
-  'uid'                     => '1',
-  'status'                  => 1,
-  'title'                   => 'Test Site',
-  'field_shp_namespace'     => 'myproject',
-  'field_shp_short_name'    => 'test',
-  'field_shp_domain'        => $domain_name,
-  'field_shp_path'          => '/',
-  'field_shp_distribution'  => [['target_id' => $distribution->id()]],
-]);
-$site->save();
+$distribution = Node::load(1);
+if (!$distribution) {
+  $distribution = Node::create([
+    'type'                     => 'shp_distribution',
+    'langcode'                 => 'en',
+    'uid'                      => '1',
+    'status'                   => 1,
+    'title'                    => 'WCMS D8',
+    'field_shp_git_repository' => [['value' => 'git@gitlab.adelaide.edu.au:web-team/ua-wcms-d8.git']],
+    'field_shp_builder_image'  => [['value' => 'uofa/s2i-shepherd-drupal']],
+    'field_shp_build_secret'   => [['value' => 'build-key']],
+  ]);
+  $distribution->save();
+}
+else {
+  echo "Distribution already setup.\n";
+}
 
-$env = Node::create([
-  'type'                       => 'shp_environment',
-  'langcode'                   => 'en',
-  'uid'                        => '1',
-  'status'                     => 1,
-  'field_shp_domain'           => $site->field_shp_domain->value,
-  'field_shp_path'             => $site->field_shp_path->value,
-  'field_shp_environment_type' => [['target_id' => $development_env->id()]],
-  'field_shp_git_reference'    => 'shepherd',
-  'field_shp_site'             => [['target_id' => $site->id()]],
-]);
-$env->save();
+$site = Node::load(2);
+if (!$site) {
+  $site = Node::create([
+    'type'                   => 'shp_site',
+    'langcode'               => 'en',
+    'uid'                    => '1',
+    'status'                 => 1,
+    'title'                  => 'Test Site',
+    'field_shp_namespace'    => 'myproject',
+    'field_shp_short_name'   => 'test',
+    'field_shp_domain'       => $domain_name,
+    'field_shp_path'         => '/',
+    'field_shp_distribution' => [['target_id' => $distribution->id()]],
+  ]);
+  $site->save();
+}
+else {
+  echo "Site already setup.\n";
+}
+
+$env = Node::load(3);
+if (!$env) {
+  $env = Node::create([
+    'type'                       => 'shp_environment',
+    'langcode'                   => 'en',
+    'uid'                        => '1',
+    'status'                     => 1,
+    'field_shp_domain'           => $site->field_shp_domain->value,
+    'field_shp_path'             => $site->field_shp_path->value,
+    'field_shp_environment_type' => [['target_id' => $development_env->id()]],
+    'field_shp_git_reference'    => 'shepherd',
+    'field_shp_site'             => [['target_id' => $site->id()]],
+  ]);
+  $env->save();
+}
+else {
+  echo "Environment already setup.\n";
+}
 
 $oc_user_result = \Drupal::entityTypeManager()->getStorage('user')->loadByProperties(['name' => 'oc']);
 /** @var \Drupal\user\Entity\User $oc_user */

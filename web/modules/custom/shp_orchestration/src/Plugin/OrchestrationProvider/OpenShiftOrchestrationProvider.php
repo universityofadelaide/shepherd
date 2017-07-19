@@ -190,7 +190,10 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     }
 
     $formatted_env_vars = $this->formatEnvVars($environment_variables, $deployment_name);
-    $volumes = $this->setupVolumes($deployment_name, TRUE);
+    if (!$volumes = $this->setupVolumes($deployment_name, TRUE)) {
+      return FALSE;
+    }
+
     $deploy_data = $this->formatDeployData(
       $formatted_env_vars,
       $environment_url,
@@ -675,7 +678,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       $reason = t('Client is not authorized to access requested resource.');
     }
     // @todo Add handlers for other reasons for failure. Add as required.
-    drupal_set_message(t("An error occurred while communicating with OpenShift.") . ' ' . $reason, 'error');
+    drupal_set_message(t("An error occurred while communicating with OpenShift. %reason", ['%reason' => $reason]), 'error');
   }
 
 }
