@@ -3,7 +3,12 @@ status: true
 dependencies:
   config:
     - group.type.shp_distribution
-id: shp_distribution-site-administra
+  module:
+    - shp_roles
+third_party_settings:
+  shp_roles:
+    synced_role: shp_site_administrator
+id: shp_distribution-site_administra
 label: 'Site administrator'
 weight: 100
 internal: false

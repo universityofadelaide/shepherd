@@ -3,3 +3,5 @@ type: module
 description: 'Provides orchestration functionality specific to the Shepherd distribution.'
 core: 8.x
 package: Shepherd
+dependencies:
+  - shp_content_types

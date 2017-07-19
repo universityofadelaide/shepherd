@@ -1,0 +1,7 @@
+{
+  "name": "shepherd/shp_roles",
+  "description": "Provides an endpoint to retrieve roles relating to a user for a given site.",
+  "type": "drupal-module",
+  "keywords": ["drupal"],
+  "license": "GPL-2.0+"
+}

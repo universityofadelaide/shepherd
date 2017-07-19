@@ -3,6 +3,11 @@ status: true
 dependencies:
   config:
     - group.type.shp_site
+  module:
+    - shp_roles
+third_party_settings:
+  shp_roles:
+    synced_role: shp_contributor
 id: shp_site-contributor
 label: Contributor
 weight: 100

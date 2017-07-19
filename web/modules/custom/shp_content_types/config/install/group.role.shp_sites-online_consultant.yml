@@ -3,7 +3,12 @@ status: true
 dependencies:
   config:
     - group.type.shp_sites
-id: shp_sites-online-consultant
+  module:
+    - shp_roles
+third_party_settings:
+  shp_roles:
+    synced_role: shp_online_consultant
+id: shp_sites-online_consultant
 label: 'Online consultant'
 weight: 100
 internal: false
