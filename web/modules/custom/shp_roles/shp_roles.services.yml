@@ -1,0 +1,6 @@
+services:
+  shp_roles.user_name:
+    class: Drupal\shp_roles\ParamConverter\UserNameConverter
+    tags:
+      - { name: paramconverter }
+    arguments: ['@entity.manager']

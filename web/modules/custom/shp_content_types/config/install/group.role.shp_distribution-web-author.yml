@@ -3,6 +3,11 @@ status: true
 dependencies:
   config:
     - group.type.shp_distribution
+  module:
+    - shp_roles
+third_party_settings:
+  shp_roles:
+    synced_role: shp_web_author
 id: shp_distribution-web-author
 label: 'Web author'
 weight: 100

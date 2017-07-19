@@ -1,0 +1,13 @@
+shp_roles.site_user_roles:
+  path: '/api/site-user-roles/{username}/{site}'
+  defaults:
+    _controller: '\Drupal\shp_roles\Controller\SiteUserRoles::json'
+  methods: [GET]
+  requirements:
+    _access: 'TRUE'
+  options:
+    parameters:
+      username:
+        type: username:user
+      site:
+        type: entity:node

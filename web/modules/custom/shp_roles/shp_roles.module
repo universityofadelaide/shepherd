@@ -1,0 +1,46 @@
+<?php
+
+/**
+ * @file
+ * Contains shp_roles.module.
+ */
+
+/**
+ * Implements hook_form_alter().
+ */
+function shp_roles_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $form_state, $form_id) {
+  if ($form_id === 'group_role_edit_form') {
+    shp_roles_alter_roles_form($form, $form_state, $form_id);
+  }
+}
+
+/**
+ * Modifies forms to include a synced role third party setting.
+ *
+ * This exists because 32 char id's for config entity id's are too short to
+ * store role machine names.
+ */
+function shp_roles_alter_roles_form(&$form, \Drupal\Core\Form\FormStateInterface $form_state, $form_id) {
+  $group_role = $form_state->getFormObject()->getEntity();
+  $form['synced_role'] = [
+    '#type' => 'textfield',
+    '#title' => t('Synced Role'),
+    '#description' => t('The corresponding machine name of the role that exists in Shepherd managed sites.'),
+    '#default_value' => $group_role->getThirdPartySetting('shp_roles', 'synced_role'),
+    '#weight' => 1,
+  ];
+
+  $form['#entity_builders'][] = 'shp_roles_form_menu_add_form_builder';
+}
+
+/**
+ * Entity builder for the group role configuration entity.
+ */
+function shp_roles_form_menu_add_form_builder($entity_type, \Drupal\group\Entity\GroupRole $group_role, &$form, \Drupal\Core\Form\FormStateInterface $form_state) {
+  if ($form_state->getValue('synced_role')) {
+    $group_role->setThirdPartySetting('shp_roles', 'synced_role', $form_state->getValue('synced_role'));
+    return;
+  }
+
+  $group_role->unsetThirdPartySetting('shp_roles', 'synced_role');
+}

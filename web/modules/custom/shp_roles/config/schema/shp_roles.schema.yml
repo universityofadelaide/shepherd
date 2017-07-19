@@ -1,0 +1,7 @@
+group.role.*.third_party.shp_roles:
+  type: mapping
+  label: 'Synced role'
+  mapping:
+    synced_role:
+      type: text
+      label: 'Synced role'

@@ -2,14 +2,14 @@ langcode: en
 status: true
 dependencies:
   config:
-    - group.type.shp_sites
+    - group.type.shp_site
   module:
     - shp_roles
 third_party_settings:
   shp_roles:
-    synced_role: shp_contributor
-id: shp_sites-contributor
-label: Contributor
+    synced_role: shp_site_administrator
+id: shp_sites-site-administrator
+label: 'Site administrator'
 weight: 100
 internal: false
 audience: member
