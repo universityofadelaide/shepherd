@@ -72,12 +72,25 @@ function shp_content_types_preprocess_page_title(&$variables) {
  * Implements hook_ENTITY_TYPE_insert().
  */
 function shp_content_types_node_insert(NodeInterface $node) {
-  if ($node->getType() === 'shp_site') {
-    \Drupal::service('shp_content_types.group_manager')->create($node);
-    \Drupal::service('shp_content_types.group_manager')->addSiteToDistributionGroup($node);
-  }
-  elseif ($node->getType() === 'shp_distribution') {
-    \Drupal::service('shp_content_types.group_manager')->create($node);
+  // @todo - use switch statement here.
+  // @todo - on environment creation .. if flag is set to Production update the go-live field - if null.
+  // @todo - when environment edited .. if flag is set to production update the go-live field - if null.
+  $type = $node->getType();
+  switch ($type) {
+    case 'shp_site':
+      \Drupal::service('shp_content_types.group_manager')->create($node);
+      \Drupal::service('shp_content_types.group_manager')->addSiteToDistributionGroup($node);
+      break;
+
+    case 'shp_distribution':
+      \Drupal::service('shp_content_types.group_manager')->create($node);
+      break;
+
+    case 'shp_environment':
+      // get the parent
+      $test = $node;
+      break;
+
   }
 }
 
