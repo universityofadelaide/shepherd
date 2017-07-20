@@ -94,6 +94,29 @@ function shp_content_types_node_insert(NodeInterface $node) {
   }
 }
 
+function shp_content_types_node_update(NodeInterface $node) {
+  $type = $node->getType();
+
+  if ($type === "shp_environment") {
+    $environment_type_taxonomy_id = $node->field_shp_environment_type->getString();
+    if (isset($environment_type_taxonomy_id)) {
+      $term = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->load($environment_type_taxonomy_id);
+      if ($term->getName() === "Production") {
+        // Load the parent entity and run the check.
+        $site = Node::load($node->field_shp_site->getString());
+        $go_live_date = $site->field_shp_go_live_date->value;
+        if (isset($go_live_date)) {
+          // @todo - create a date.
+          $site->field_shp_go_live_date->setValue('');
+        }
+
+      }
+    }
+
+  }
+
+}
+
 /**
  * Implements hook_ENTITY_TYPE_delete().
  */
