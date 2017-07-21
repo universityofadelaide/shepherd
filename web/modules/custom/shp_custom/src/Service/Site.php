@@ -2,6 +2,7 @@
 
 namespace Drupal\shp_custom\Service;
 
+use Drupal\Core\Datetime\DrupalDateTime;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\node\Entity\Node;
 use Drupal\user\Entity\User;
@@ -12,6 +13,29 @@ use Drupal\user\Entity\User;
  * @package Drupal\shp_custom\Service
  */
 class Site {
+
+  /**
+   * Applies go live date if not set.
+   *
+   * @param \Drupal\node\Entity\Node $site
+   *   The site node.
+   * @param string $environment_type
+   *   Environment type name.
+   *
+   * @return bool
+   *   TRUE if applied go live date.
+   */
+  public function applyGoLiveDate(Node $site, string $environment_type) {
+    if ($environment_type === "Production") {
+      if (!isset($site->field_shp_go_live_date->value)) {
+        $date = DrupalDateTime::createFromTimestamp(time());
+        $site->field_shp_go_live_date->setValue($date->format(DATETIME_DATETIME_STORAGE_FORMAT));
+        $site->save();
+        return TRUE;
+      }
+    }
+    return FALSE;
+  }
 
   /**
    * Load all entities related to a site.
