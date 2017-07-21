@@ -28,9 +28,8 @@ class Site {
   public function applyGoLiveDate(Node $site, string $environment_type) {
     if ($environment_type === "Production") {
       if (!isset($site->field_shp_go_live_date->value)) {
-        $timezone = \Drupal::config('system.date')->get('timezone.default');
-        $date = DrupalDateTime::createFromTimestamp(time(), $timezone);
-        // @todo - this is being altered .. why ?
+        $date = DrupalDateTime::createFromTimestamp(time());
+        $date->setTimezone(new \DateTimeZone(DATETIME_STORAGE_TIMEZONE));
         $site->field_shp_go_live_date->setValue($date->format(DATETIME_DATETIME_STORAGE_FORMAT));
         $site->save();
         return TRUE;
