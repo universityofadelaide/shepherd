@@ -169,29 +169,32 @@ function shp_custom_node_update(NodeInterface $node) {
       $applied_go_live_date = \Drupal::service('shp_custom.site')
         ->applyGoLiveDate($site, $term->getName());
       if ($applied_go_live_date) {
-        // @todo - set a drupal message.
-        drupal_set_message('Site %name go live date applied.', []);
+        drupal_set_message(t('Site %name go live date applied.', [
+          '%name' => $site->name,
+        ]));
       }
-
-
-      $environment_type_taxonomy_id = $node->field_shp_environment_type->getString();
-      if (isset($environment_type_taxonomy_id)) {
-        $term = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->load($environment_type_taxonomy_id);
-        if ($term->getName() === "Production") {
-          // Load the parent entity and run the check.
-          $site = Node::load($node->field_shp_site->getString());
-          $go_live_date = $site->field_shp_go_live_date->value;
-          if (!isset($go_live_date)) {
-            $date = DrupalDateTime::createFromTimestamp(time());
-            $site->field_shp_go_live_date->setValue($date->format(DATETIME_DATETIME_STORAGE_FORMAT));
-            $site->save();
-          }
-        }
-      }
-
       break;
   }
 
+}
+
+function shp_custom_node_insert(NodeInterface $node) {
+  $type = $node->getType();
+
+  switch ($type) {
+    case 'shp_environment':
+      $term = shp_custom_load_environment_taxonomy_term($node->field_shp_environment_type->getString());
+      $site = Node::load($node->field_shp_site->getString());
+      $applied_go_live_date = \Drupal::service('shp_custom.site')
+        ->applyGoLiveDate($site, $term->getName());
+      if ($applied_go_live_date) {
+        // @todo - set a drupal message.
+        drupal_set_message(t('Site %name go live date applied.', [
+          '%name' => $site->name,
+        ]));
+      }
+      break;
+  }
 }
 
 /**
