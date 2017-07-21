@@ -170,7 +170,7 @@ function shp_custom_node_update(NodeInterface $node) {
         ->applyGoLiveDate($site, $term->getName());
       if ($applied_go_live_date) {
         drupal_set_message(t('Site %name go live date applied.', [
-          '%name' => $site->name,
+          '%name' => $site->getTitle(),
         ]));
       }
       break;
@@ -193,7 +193,7 @@ function shp_custom_node_insert(NodeInterface $node) {
       if ($applied_go_live_date) {
         // @todo - set a drupal message.
         drupal_set_message(t('Site %name go live date applied.', [
-          '%name' => $site->name,
+          '%name' => $site->getTitle(),
         ]));
       }
       break;
