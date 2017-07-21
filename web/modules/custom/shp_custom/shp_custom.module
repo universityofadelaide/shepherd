@@ -178,6 +178,9 @@ function shp_custom_node_update(NodeInterface $node) {
 
 }
 
+/**
+ * Implements hook_ENTITY_TYPE_insert().
+ */
 function shp_custom_node_insert(NodeInterface $node) {
   $type = $node->getType();
 
