@@ -73,9 +73,6 @@ function shp_content_types_preprocess_page_title(&$variables) {
  * Implements hook_ENTITY_TYPE_insert().
  */
 function shp_content_types_node_insert(NodeInterface $node) {
-  // @todo - use switch statement here.
-  // @todo - on environment creation .. if flag is set to Production update the go-live field - if null.
-  // @todo - when environment edited .. if flag is set to production update the go-live field - if null.
   $type = $node->getType();
   switch ($type) {
     case 'shp_site':
@@ -86,39 +83,7 @@ function shp_content_types_node_insert(NodeInterface $node) {
     case 'shp_distribution':
       \Drupal::service('shp_content_types.group_manager')->create($node);
       break;
-
-    case 'shp_environment':
-      // @todo - implement what is in the node_update hook
-      // @todo - move this a service.
-      break;
-
   }
-}
-
-/**
- * Implements hook_ENTITY_TYPE_update().
- */
-function shp_content_types_node_update(NodeInterface $node) {
-  $type = $node->getType();
-
-  if ($type === "shp_environment") {
-    $environment_type_taxonomy_id = $node->field_shp_environment_type->getString();
-    if (isset($environment_type_taxonomy_id)) {
-      $term = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->load($environment_type_taxonomy_id);
-      if ($term->getName() === "Production") {
-        // Load the parent entity and run the check.
-        $site = Node::load($node->field_shp_site->getString());
-        $go_live_date = $site->field_shp_go_live_date->value;
-        if (!isset($go_live_date)) {
-          $date = DrupalDateTime::createFromTimestamp(time());
-          $site->field_shp_go_live_date->setValue($date->format(DATETIME_DATETIME_STORAGE_FORMAT));
-        }
-
-      }
-    }
-
-  }
-
 }
 
 /**
