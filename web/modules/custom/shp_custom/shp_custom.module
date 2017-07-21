@@ -139,65 +139,29 @@ function shp_custom_invalidate_site_cache(NodeInterface $environment) {
 }
 
 /**
- * Retrieves the taxonomy term for environment type.
- *
- * @param string $term_id
- *   The taxonomy term id.
- *
- * @return \Drupal\Core\Entity\EntityInterface
- *   The term.
+ * Implements hook_ENTITY_TYPE_presave().
  */
-function shp_custom_load_environment_taxonomy_term(string $term_id) {
-  return \Drupal::entityTypeManager()->getStorage('taxonomy_term')->load($term_id);
+function shp_custom_node_presave(NodeInterface $node) {
+  switch ($node->getType()) {
+    case 'shp_environment':
+      \Drupal::service('shp_custom.site')->checkGoLiveApplied($node);
+      break;
+  }
 }
-
 
 /**
  * Implements hook_ENTITY_TYPE_update().
  */
 function shp_custom_node_update(NodeInterface $node) {
-  $type = $node->getType();
-
-  switch ($type) {
+  switch ($node->getType()) {
     case 'shp_environment':
       shp_custom_invalidate_site_cache($node);
       // @todo Shepherd: Add new environment to reverse proxy.
       // @todo Shepherd: Published environments should trigger re-deploy.
       // @todo Shepherd: Move state transitioning to environment?
-      $term = shp_custom_load_environment_taxonomy_term($node->field_shp_environment_type->getString());
-      $site = Node::load($node->field_shp_site->getString());
-      $applied_go_live_date = \Drupal::service('shp_custom.site')
-        ->applyGoLiveDate($site, $term->getName());
-      if ($applied_go_live_date) {
-        drupal_set_message(t('Site %name go live date applied.', [
-          '%name' => $site->getTitle(),
-        ]));
-      }
       break;
   }
 
-}
-
-/**
- * Implements hook_ENTITY_TYPE_insert().
- */
-function shp_custom_node_insert(NodeInterface $node) {
-  $type = $node->getType();
-
-  switch ($type) {
-    case 'shp_environment':
-      $term = shp_custom_load_environment_taxonomy_term($node->field_shp_environment_type->getString());
-      $site = Node::load($node->field_shp_site->getString());
-      $applied_go_live_date = \Drupal::service('shp_custom.site')
-        ->applyGoLiveDate($site, $term->getName());
-      if ($applied_go_live_date) {
-        // @todo - set a drupal message.
-        drupal_set_message(t('Site %name go live date applied.', [
-          '%name' => $site->getTitle(),
-        ]));
-      }
-      break;
-  }
 }
 
 /**

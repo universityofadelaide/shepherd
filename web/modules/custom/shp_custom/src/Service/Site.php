@@ -6,6 +6,7 @@ use Drupal\Core\Datetime\DrupalDateTime;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\node\Entity\Node;
 use Drupal\user\Entity\User;
+use Drupal\taxonomy\Entity\Term;
 
 /**
  * Class Site.
@@ -15,23 +16,26 @@ use Drupal\user\Entity\User;
 class Site {
 
   /**
-   * Applies go live date if not set.
+   * Takes an environment entity and applies a sites go live date.
    *
-   * @param \Drupal\node\Entity\Node $site
-   *   The site node.
-   * @param string $environment_type
-   *   Environment type name.
+   * @param \Drupal\node\Entity\Node $environment
+   *   The environment node entity.
    *
    * @return bool
    *   TRUE if applied go live date.
    */
-  public function applyGoLiveDate(Node $site, string $environment_type) {
-    if ($environment_type === "Production") {
+  public function checkGoLiveApplied(Node $environment) {
+
+    $term = Term::load($environment->field_shp_environment_type->getString());
+    $site = Node::load($environment->field_shp_site->getString());
+    if ($term->getName() === "Production") {
       if (!isset($site->field_shp_go_live_date->value)) {
-        $date = DrupalDateTime::createFromTimestamp(time());
-        $date->setTimezone(new \DateTimeZone(DATETIME_STORAGE_TIMEZONE));
+        $date = new DrupalDateTime('now', new \DateTimeZone(DATETIME_STORAGE_TIMEZONE));
         $site->field_shp_go_live_date->setValue($date->format(DATETIME_DATETIME_STORAGE_FORMAT));
         $site->save();
+        drupal_set_message(t('Site %name go live date applied.', [
+          '%name' => $site->getTitle(),
+        ]));
         return TRUE;
       }
     }
