@@ -13,6 +13,8 @@ use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\node\Entity\Node;
 use Drupal\Core\Url;
+use Drupal\node\NodeInterface;
+use Drupal\Core\Datetime\DrupalDateTime;
 
 /**
  * Implements hook_help().
@@ -126,10 +128,10 @@ function shp_custom_distributions() {
 /**
  * Invalidate site entity caches because environments for sites have changed.
  *
- * @param \Drupal\Core\Entity\EntityInterface $environment
- *   The environment entity whose site needs cache invalidate.
+ * @param Drupal\node\NodeInterface $environment
+ *   The environment node entity whose site needs cache invalidate.
  */
-function shp_custom_invalidate_site_cache(EntityInterface $environment) {
+function shp_custom_invalidate_site_cache(NodeInterface $environment) {
   $site_nid = $environment->field_shp_site->target_id;
   if ($site_nid) {
     \Drupal::service('cache_tags.invalidator')->invalidateTags(['node:' . $site_nid]);
@@ -138,18 +140,36 @@ function shp_custom_invalidate_site_cache(EntityInterface $environment) {
 
 /**
  * Implements hook_ENTITY_TYPE_update().
- *
- * Triggers jenkins jobs when an instance's status is changed.
  */
-function shp_custom_node_update(EntityInterface $entity) {
-  switch ($entity->bundle()) {
+function shp_custom_node_update(NodeInterface $node) {
+  $type = $node->getType();
+
+  switch ($type) {
     case 'shp_environment':
-      shp_custom_invalidate_site_cache($entity);
+      shp_custom_invalidate_site_cache($node);
       // @todo Shepherd: Add new environment to reverse proxy.
       // @todo Shepherd: Published environments should trigger re-deploy.
       // @todo Shepherd: Move state transitioning to environment?
+
+      $environment_type_taxonomy_id = $node->field_shp_environment_type->getString();
+      if (isset($environment_type_taxonomy_id)) {
+        $term = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->load($environment_type_taxonomy_id);
+        if ($term->getName() === "Production") {
+          // Load the parent entity and run the check.
+          $site = Node::load($node->field_shp_site->getString());
+          $go_live_date = $site->field_shp_go_live_date->value;
+          if (!isset($go_live_date)) {
+            $date = DrupalDateTime::createFromTimestamp(time());
+            $site->field_shp_go_live_date->setValue($date->format(DATETIME_DATETIME_STORAGE_FORMAT));
+            $site->save();
+          }
+
+        }
+      }
+
       break;
   }
+
 }
 
 /**
