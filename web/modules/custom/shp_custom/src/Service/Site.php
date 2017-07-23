@@ -3,9 +3,7 @@
 namespace Drupal\shp_custom\Service;
 
 use Drupal\Core\Datetime\DrupalDateTime;
-use Drupal\Core\Entity\EntityInterface;
 use Drupal\node\Entity\Node;
-use Drupal\user\Entity\User;
 use Drupal\taxonomy\Entity\Term;
 
 /**
