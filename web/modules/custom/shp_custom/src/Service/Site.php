@@ -28,7 +28,7 @@ class Site {
     $site = Node::load($environment->field_shp_site->getString());
     if ($term->getName() === "Production") {
       if (!isset($site->field_shp_go_live_date->value)) {
-        $date = new DrupalDateTime('now', new \DateTimeZone(DATETIME_STORAGE_TIMEZONE));
+        $date = new DrupalDateTime();
         $site->field_shp_go_live_date->setValue($date->format(DATETIME_DATETIME_STORAGE_FORMAT));
         $site->save();
         drupal_set_message(t('Site %name go live date applied.', [
