@@ -8,6 +8,7 @@
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\node\NodeInterface;
 use Drupal\node\Entity\Node;
+use Drupal\Core\Datetime\DrupalDateTime;
 
 /**
  * Implements hook_ENTITY_TYPE_presave().
@@ -72,12 +73,16 @@ function shp_content_types_preprocess_page_title(&$variables) {
  * Implements hook_ENTITY_TYPE_insert().
  */
 function shp_content_types_node_insert(NodeInterface $node) {
-  if ($node->getType() === 'shp_site') {
-    \Drupal::service('shp_content_types.group_manager')->create($node);
-    \Drupal::service('shp_content_types.group_manager')->addSiteToDistributionGroup($node);
-  }
-  elseif ($node->getType() === 'shp_distribution') {
-    \Drupal::service('shp_content_types.group_manager')->create($node);
+  $type = $node->getType();
+  switch ($type) {
+    case 'shp_site':
+      \Drupal::service('shp_content_types.group_manager')->create($node);
+      \Drupal::service('shp_content_types.group_manager')->addSiteToDistributionGroup($node);
+      break;
+
+    case 'shp_distribution':
+      \Drupal::service('shp_content_types.group_manager')->create($node);
+      break;
   }
 }
 
