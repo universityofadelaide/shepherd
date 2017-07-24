@@ -187,6 +187,7 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
 
   /**
    * Handles a site being updated.
+   *
    * @return bool
    *   Returns true if succeeded.
    */
@@ -291,7 +292,7 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
   );
 
   /**
-   * Backup an environment
+   * Backup an environment.
    *
    * @param string $distribution_name
    *   Name of the distribution.
@@ -304,18 +305,19 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
    * @param string $commands
    *   Commands to run to perform the backup.
    *
-   * @return
+   * @return bool
+   *   Returns true if succeeded.
    */
   public function backupEnvironment(
     string $distribution_name,
     string $short_name,
     string $environment_id,
     string $source_ref = 'master',
-    string $commands
+    string $commands = ''
   );
 
   /**
-   * Restore an environment
+   * Restore an environment.
    *
    * @param string $distribution_name
    *   Name of the distribution.
@@ -328,18 +330,19 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
    * @param string $commands
    *   Commands to run to perform the backup.
    *
-   * @return
+   * @return bool
+   *   Returns true if succeeded.
    */
   public function restoreEnvironment(
     string $distribution_name,
     string $short_name,
     string $environment_id,
     string $source_ref = 'master',
-    string $commands
+    string $commands = ''
   );
 
   /**
-   * Execute a job
+   * Execute a job.
    *
    * @param string $distribution_name
    *   Name of the distribution.
@@ -352,14 +355,15 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
    * @param string $commands
    *   Commands to run to perform the backup.
    *
-   * @return
+   * @return bool
+   *   Returns true if succeeded.
    */
   public function executeJob(
     string $distribution_name,
     string $short_name,
     string $environment_id,
     string $source_ref = 'master',
-    string $commands
+    string $commands = ''
   );
 
 }
