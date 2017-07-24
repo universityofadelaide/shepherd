@@ -74,7 +74,7 @@ objects:
       sourceStrategy:
         from:
           kind: DockerImage
-          name: uofa/s2i-shepherd-drupal:develop
+          name: uofa/s2i-shepherd-drupal
         pullSecret:
           name: ${OPENSHIFT_KEY}
       type: Source
