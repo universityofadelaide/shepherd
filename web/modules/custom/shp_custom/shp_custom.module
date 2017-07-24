@@ -13,6 +13,8 @@ use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\node\Entity\Node;
 use Drupal\Core\Url;
+use Drupal\node\NodeInterface;
+use Drupal\Core\Datetime\DrupalDateTime;
 
 /**
  * Implements hook_help().
@@ -110,10 +112,10 @@ function shp_custom_distributions() {
 /**
  * Invalidate site entity caches because environments for sites have changed.
  *
- * @param \Drupal\Core\Entity\EntityInterface $environment
- *   The environment entity whose site needs cache invalidate.
+ * @param Drupal\node\NodeInterface $environment
+ *   The environment node entity whose site needs cache invalidate.
  */
-function shp_custom_invalidate_site_cache(EntityInterface $environment) {
+function shp_custom_invalidate_site_cache(NodeInterface $environment) {
   $site_nid = $environment->field_shp_site->target_id;
   if ($site_nid) {
     \Drupal::service('cache_tags.invalidator')->invalidateTags(['node:' . $site_nid]);
@@ -121,19 +123,29 @@ function shp_custom_invalidate_site_cache(EntityInterface $environment) {
 }
 
 /**
- * Implements hook_ENTITY_TYPE_update().
- *
- * Triggers jenkins jobs when an instance's status is changed.
+ * Implements hook_ENTITY_TYPE_presave().
  */
-function shp_custom_node_update(EntityInterface $entity) {
-  switch ($entity->bundle()) {
+function shp_custom_node_presave(NodeInterface $node) {
+  switch ($node->getType()) {
     case 'shp_environment':
-      shp_custom_invalidate_site_cache($entity);
+      \Drupal::service('shp_custom.site')->checkGoLiveApplied($node);
+      break;
+  }
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_update().
+ */
+function shp_custom_node_update(NodeInterface $node) {
+  switch ($node->getType()) {
+    case 'shp_environment':
+      shp_custom_invalidate_site_cache($node);
       // @todo Shepherd: Add new environment to reverse proxy.
       // @todo Shepherd: Published environments should trigger re-deploy.
       // @todo Shepherd: Move state transitioning to environment?
       break;
   }
+
 }
 
 /**

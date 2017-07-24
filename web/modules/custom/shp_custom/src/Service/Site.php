@@ -2,9 +2,10 @@
 
 namespace Drupal\shp_custom\Service;
 
-use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Datetime\DrupalDateTime;
+use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\node\Entity\Node;
-use Drupal\user\Entity\User;
+use Drupal\taxonomy\Entity\Term;
 
 /**
  * Class Site.
@@ -12,6 +13,34 @@ use Drupal\user\Entity\User;
  * @package Drupal\shp_custom\Service
  */
 class Site {
+
+  use StringTranslationTrait;
+
+  /**
+   * Takes an environment entity and applies a sites go live date.
+   *
+   * @param \Drupal\node\Entity\Node $environment
+   *   The environment node entity.
+   *
+   * @return bool
+   *   TRUE if applied go live date.
+   */
+  public function checkGoLiveApplied(Node $environment) {
+    $term = Term::load($environment->field_shp_environment_type->getString());
+    $site = Node::load($environment->field_shp_site->getString());
+    if ($term->getName() === "Production") {
+      if (!isset($site->field_shp_go_live_date->value)) {
+        $date = new DrupalDateTime();
+        $site->field_shp_go_live_date->setValue($date->format(DATETIME_DATETIME_STORAGE_FORMAT));
+        $site->save();
+        drupal_set_message($this->t('Site %name go live date applied.', [
+          '%name' => $site->getTitle(),
+        ]));
+        return TRUE;
+      }
+    }
+    return FALSE;
+  }
 
   /**
    * Load all entities related to a site.
