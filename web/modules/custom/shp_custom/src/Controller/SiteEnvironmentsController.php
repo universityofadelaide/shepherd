@@ -57,8 +57,20 @@ class SiteEnvironmentsController extends ControllerBase {
     $status = $this->orchestrationProvider->getSiteEnvironmentsStatus($site_id);
     $response = [];
     foreach ($status['items'] as $deploymentConfigs) {
-      $response[] = $deploymentConfigs['status']['conditions'][0];
-
+      $deployment_status = $deploymentConfigs['status']['conditions'][0];
+      $response = [];
+      if (strtolower($deployment_status['status']) === 'false' && $deployment_status['type'] === "Available") {
+        // @todo - Determine why status is false. What information to display ?
+        $response[]['status'] = "Building";
+      }
+      elseif (strtolower($deployment_status['status']) === 'true' && $deployment_status['type'] === "Available") {
+        $response[]['status'] = "Running";
+      }
+      else {
+        // @todo - What states end up here ?
+        // Give a developer friendly message.
+        $response[]['status'] = "Status : " . $deployment_status['message'];
+      }
     }
 
     return new JsonResponse($response);

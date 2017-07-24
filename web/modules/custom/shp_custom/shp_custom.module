@@ -29,22 +29,6 @@ function shp_custom_help($route_name, RouteMatchInterface $route_match) {
 }
 
 /**
- * Implements hook_theme().
- */
-function shp_custom_theme($existing, $type, $theme, $path) {
-  return [
-    'site_environment_status' => [
-      'variables' => [
-        'running' => NULL,
-        'building' => NULL,
-        'failed' => NULL,
-        'environment' => NULL,
-      ],
-    ],
-  ];
-}
-
-/**
  * Implements hook_toolbar().
  */
 function shp_custom_toolbar() {
