@@ -48,7 +48,8 @@ class SiteEnvironmentUrl extends FieldPluginBase {
     $build = [
       '#type' => 'link',
       '#title' => $domain . $path,
-      '#url' => Url::fromUri('//' . $route['path']),
+      // Default to nothing if the route is null.
+      '#url' => isset($route['path']) ? Url::fromUri('//' . $route['path']) : '',
     ];
 
     return $build;
