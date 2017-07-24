@@ -6,7 +6,6 @@ message: |-
   This template will create a shepherd deployment
 metadata:
   annotations:
-    description: Drupal with a MySQL database.
     iconClass: icon-php
     openshift.io/display-name: Drupal + MySQL
     description: Provide a template that deploys an instance of the shepherd distribution.
@@ -71,7 +70,6 @@ objects:
           name: ${OPENSHIFT_KEY}
       sourceSecret:
         name: ${OPENSHIFT_KEY}
-      type: Git
     strategy:
       sourceStrategy:
         from:
@@ -98,7 +96,7 @@ objects:
       - ReadWriteMany
     resources:
       requests:
-        storage: 10Gi
+        storage: 5Gi
 - apiVersion: v1
   kind: PersistentVolumeClaim
   metadata:
@@ -108,7 +106,7 @@ objects:
       - ReadWriteMany
     resources:
       requests:
-        storage: 10Gi
+        storage: 5Gi
 - apiVersion: v1
   kind: DeploymentConfig
   metadata:
@@ -267,7 +265,7 @@ parameters:
   displayName: ssh key
   name: OPENSHIFT_KEY
   required: true
-  value: ''
+  value: 'build-key'
 - displayName: Database Service Name
   name: DATABASE_SERVICE_NAME
   required: true
