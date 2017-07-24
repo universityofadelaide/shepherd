@@ -64,6 +64,33 @@ function shp_orchestration_node_insert(EntityInterface $entity) {
           $cron_jobs[$job->key] = $job->value;
         }
 
+        $deployment_name = $orchestration_provider_plugin::generateDeploymentName(
+          $distribution->getTitle(),
+          $site->field_shp_short_name->value,
+          $entity->id()
+        );
+
+        // Generate an auth token and add it to the secret associated with the
+        // environment. Create the secret if it doesn't exist.
+        // @todo Replace with generated Shepherd auth token.
+        $shepherd_token = 'super-secret-token';
+        if ($env_secret = $orchestration_provider_plugin->getSecret($deployment_name)) {
+          $secret_result = $orchestration_provider_plugin->updateSecret(
+            $deployment_name,
+            array_merge($env_secret, ['SHEPHERD_TOKEN' => $shepherd_token])
+          );
+        }
+        else {
+          $secret_result = $orchestration_provider_plugin->createSecret(
+            $deployment_name,
+            ['SHEPHERD_TOKEN' => $shepherd_token]
+          );
+        }
+        if (!$secret_result) {
+          // @todo Handle errors.
+          return FALSE;
+        }
+
         // Collate environment variables and secrets.
         $env_vars = \Drupal::moduleHandler()->invokeAll('shp_env_vars', [$entity]);
         $secrets = \Drupal::moduleHandler()->invokeAll('shp_secrets', [$entity]);
@@ -220,4 +247,29 @@ function shp_orchestration_shp_distribution_form_validate(array $form, FormState
   catch (OrchestrationProviderNotConfiguredException $e) {
     drupal_set_message($e->getMessage(), 'warning');
   }
+}
+
+/**
+ * Implements hook_shp_env_vars().
+ */
+function shp_orchestration_shp_env_vars(EntityInterface $entity) {
+  $site = $entity->get('field_shp_site')
+    ->first()
+    ->get('entity')
+    ->getTarget()
+    ->getValue();
+
+  // Generate default environment variables.
+  $env_vars = [
+    'SHEPHERD_SITE_ID' => $site->id(),
+    'SHEPHERD_URL' => \Drupal::service('router.request_context')->getCompleteBaseUrl(),
+    // @todo Ensure deployment secret has SHEPHERD_TOKEN set.
+    'SHEPHERD_TOKEN_FILE' => '/etc/secret/SHEPHERD_TOKEN',
+  ];
+
+  // Append custom environment variables.
+  foreach ($entity->get('field_shp_env_vars')->getValue() as $env_var) {
+    $env_vars[$env_var['key']] = $env_var['value'];
+  }
+  return $env_vars;
 }

@@ -345,7 +345,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     string $short_name,
     string $environment_id,
     string $source_ref = 'master',
-    string $commands
+    string $commands = ''
   ) {
     return $this->executeJob(
       $distribution_name,
@@ -365,7 +365,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     string $short_name,
     string $environment_id,
     string $source_ref = 'master',
-    string $commands
+    string $commands = ''
   ) {
     return $this->executeJob(
       $distribution_name,
@@ -387,7 +387,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     string $short_name,
     string $environment_id,
     string $source_ref = 'master',
-    string $commands
+    string $commands = ''
   ) {
     $sanitised_distribution_name = self::sanitise($distribution_name);
     $deployment_name = self::generateDeploymentName(
@@ -536,6 +536,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
    *   The deployment name.
    *
    * @return array
+   *   The env var config array.
    */
   private function formatEnvVars(array $environment_variables, string $deployment_name) {
     $formatted_env_vars = [];
@@ -567,15 +568,21 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
   }
 
   /**
-   * Format an array of deployment data ready to pass to OpenShift
-   * @param $formatted_env_vars
-   * @param $environment_url
-   * @param $site_id
-   * @param $environment_id
+   * Format an array of deployment data ready to pass to OpenShift.
+   *
+   * @param array $formatted_env_vars
+   *   An array of key => value env var pairs.
+   * @param string $environment_url
+   *   The url of the environment being created.
+   * @param int $site_id
+   *   The ID of the site the environment represents.
+   * @param int $environment_id
+   *   The ID of the environment being created.
    *
    * @return array
+   *   The deployment config array.
    */
-  private function formatDeployData($formatted_env_vars, $environment_url, $site_id, $environment_id) {
+  private function formatDeployData(array $formatted_env_vars, string $environment_url, int $site_id, int $environment_id) {
     $deploy_data = [
       'containerPort' => 8080,
       'memory_limit' => '128Mi',
@@ -584,8 +591,8 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
         'shepherdUrl' => $environment_url,
       ],
       'labels' => [
-        'site_id' => $site_id,
-        'environment_id' => $environment_id,
+        'site_id' => (string) $site_id,
+        'environment_id' => (string) $environment_id,
       ],
     ];
 
@@ -593,14 +600,17 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
   }
 
   /**
-   * Format an array of volume data ready to pass to OpenShift, with optional setup.
+   * Format an array of volume data ready to pass to OpenShift.
    *
-   * @param $deployment_name
+   * @param string $deployment_name
+   *   The name of the deployment being created.
    * @param bool $setup
+   *   Whether to configure public, private and backup PVCs.
    *
    * @return array|bool
+   *   The volume config array, or false if creating PVCs was unsuccessful.
    */
-  private function setupVolumes($deployment_name, $setup = FALSE) {
+  private function setupVolumes(string $deployment_name, bool $setup = FALSE) {
     $public_pvc_name = $deployment_name . '-public';
     $private_pvc_name = $deployment_name . '-private';
     $backup_pvc_name = $deployment_name . '-backup';
