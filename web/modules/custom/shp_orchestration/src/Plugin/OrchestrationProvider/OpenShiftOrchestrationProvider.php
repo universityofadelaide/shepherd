@@ -444,8 +444,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       if ($key) {
         return array_key_exists($key, $secret['data']) ? base64_decode($secret['data'][$key]) : FALSE;
       }
-      array_walk($secret['data'], 'base64_decode');
-      return $secret['data'];
+      return array_map('base64_decode', $secret['data']);
     }
     return FALSE;
   }
