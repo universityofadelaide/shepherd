@@ -34,7 +34,7 @@ class SitesBreadcrumbBuilder implements BreadcrumbBuilderInterface {
     if (array_key_exists('node', $parameters) && !empty($parameters['node'])
       && is_object($parameters['node'])) {
       $node = $parameters['node']->getType();
-      return in_array($node, ["shp_site"]) ? TRUE : FALSE;
+      return in_array($node, ['shp_site', 'shp_environment']) ? TRUE : FALSE;
     }
     if (array_key_exists('view_id', $parameters) && !empty($parameters['view_id'])) {
       return in_array($parameters['view_id'], array_keys($this->sitesViews)) ? TRUE : FALSE;
@@ -56,6 +56,14 @@ class SitesBreadcrumbBuilder implements BreadcrumbBuilderInterface {
     switch ($node_type) {
       case 'shp_site':
         $breadcrumb->addLink(Link::createFromRoute($node->getTitle(), 'entity.node.canonical', ['node' => $node->id()]));
+        break;
+      case 'shp_environment':
+        $site = $node->get('field_shp_site')
+          ->first()
+          ->get('entity')
+          ->getTarget()
+          ->getValue();
+        $breadcrumb->addLink(Link::createFromRoute($site->getTitle(), 'entity.node.canonical', ['node' => $site->id()]));
         break;
     }
 
