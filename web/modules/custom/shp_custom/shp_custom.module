@@ -13,6 +13,7 @@ use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\node\Entity\Node;
 use Drupal\Core\Url;
+use Drupal\shp_orchestration\Exception\OrchestrationProviderNotConfiguredException;
 use Drupal\node\NodeInterface;
 use Drupal\Core\Datetime\DrupalDateTime;
 
@@ -135,14 +136,67 @@ function shp_custom_node_presave(NodeInterface $node) {
 
 /**
  * Implements hook_ENTITY_TYPE_update().
+ *
+ * Triggers things when an instance's status is changed to archive.
  */
 function shp_custom_node_update(NodeInterface $node) {
+
+  if (strpos($node->bundle(), 'shp') !== FALSE) {
+    try {
+      /** @var Drupal\shp_orchestration\OrchestrationProviderInterface $orchestration_provider_plugin */
+      $orchestration_provider_plugin = \Drupal::service('plugin.manager.orchestration_provider')
+        ->getProviderInstance();
+    }
+    catch (OrchestrationProviderNotConfiguredException $e) {
+      drupal_set_message($e->getMessage(), 'warning');
+      return FALSE;
+    }
+  }
+  else {
+    return NULL;
+  }
+
   switch ($node->getType()) {
+    case 'shp_site':
+      if ($node->moderation_state->value == 'archived') {
+        $backup = \Drupal::service('shp_backup.backup');
+        $environments = \Drupal::entityQuery('node')
+          ->condition('type', 'shp_environment')
+          ->condition('field_shp_site', $node->id())
+          ->execute();
+
+        foreach ($environments as $environment_id) {
+          $environment = Node::load($environment_id);
+          if ($environment->moderation_state->value != 'archived') {
+
+            // Create the backup node and perform a backup
+            $backup->createBackupNode($node, $environment, NULL, TRUE);
+
+            // @todo Shepherd: Need to queue to enable this part.
+            //if (!$result = $orchestration_provider_plugin->archivedEnvironment($entity->id())) {
+            //  return $result;
+            //}
+          }
+        }
+      }
+      break;
     case 'shp_environment':
-      shp_custom_invalidate_site_cache($node);
-      // @todo Shepherd: Add new environment to reverse proxy.
-      // @todo Shepherd: Published environments should trigger re-deploy.
-      // @todo Shepherd: Move state transitioning to environment?
+      if ($node->moderation_state->value == 'archived') {
+        $backup = \Drupal::service('shp_backup.backup');
+        $site = Node::load($node->field_shp_site->target_id);
+
+        // Create the backup node and perform a backup
+        $backup->createBackupNode($site, $node, NULL, TRUE);
+
+        // @todo Shepherd: Need to queue to enable this part.
+        //$result = $orchestration_provider_plugin->archivedEnvironment($entity->id());
+        shp_custom_invalidate_site_cache($node);
+      }
+      else {
+        // @todo Shepherd: Add new environment to reverse proxy.
+        // @todo Shepherd: Published environments should trigger re-deploy.
+        // @todo Shepherd: Move state transitioning to environment?
+      }
       break;
   }
 

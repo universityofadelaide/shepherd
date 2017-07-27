@@ -79,8 +79,46 @@ class Backup {
     return $backups;
   }
 
+
   /**
-   * Create a backup for a given environment.
+   * Create a backup node for a given site and environment
+   *
+   * @param NodeInterface $site
+   *   The site to create the backup node for.
+   * @param NodeInterface $environment
+   *   The environment to create the backup node for.
+   * @param string $title
+   *   The title to use for the backup node.
+   * @param bool $perform_backup
+   *   Execute a backup after creating the node?
+   *
+   * @return bool
+   */
+  public function createBackupNode(NodeInterface $site, NodeInterface $environment, $title = NULL, bool $perform_backup = FALSE) {
+    if (!isset($title)) {
+      $config = \Drupal::config('shp_backup.settings');
+      $title = $this->token->replace($config->get('backup_service.backup_title'), ['environment' => $environment]);
+    }
+    // Create a backup node with most values.
+    $backup_node = Node::create([
+      'type'                     => 'shp_backup',
+      'langcode'                 => 'en',
+      'uid'                      => \Drupal::currentUser()->id(),
+      'status'                   => 1,
+      'title'                    => $title,
+      'field_shp_backup_path'    => [['value' => '']],
+      'field_shp_site'           => [['target_id' => $site->id()]],
+      'field_shp_environment'    => [['target_id' => $environment->id()]],
+    ]);
+    $backup_node->save();
+
+    if ($perform_backup) {
+      return $this->createBackup($backup_node);
+    }
+  }
+
+  /**
+   * Create a backup for a backup node.
    *
    * @param NodeInterface $backup
    *   The environment to backup.
