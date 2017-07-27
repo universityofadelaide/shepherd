@@ -107,6 +107,7 @@ if (!$site) {
     'field_shp_path'         => '/',
     'field_shp_distribution' => [['target_id' => $distribution->id()]],
   ]);
+  $site->moderation_state->value = 'published';
   $site->save();
 }
 else {
@@ -126,6 +127,7 @@ if (!$env) {
     'field_shp_git_reference'    => 'shepherd',
     'field_shp_site'             => [['target_id' => $site->id()]],
   ]);
+  $env->moderation_state->value = 'published';
   $env->save();
 }
 else {
