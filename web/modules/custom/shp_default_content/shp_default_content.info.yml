@@ -1,8 +1,0 @@
-name: Shepherd Default Content
-type: module
-description: 'Provides default dev and test content to the Shepherd.'
-core: 8.x
-package: UA
-dependencies:
-  - shp_content_types
-  - default_content
