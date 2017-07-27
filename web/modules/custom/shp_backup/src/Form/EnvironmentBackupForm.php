@@ -122,21 +122,8 @@ class EnvironmentBackupForm extends FormBase {
     $site = $form_state->get('site');
     $environment = $form_state->get('environment');
 
-    // Create a backup node with most values.
-    $backup_node = Node::create([
-      'type'                     => 'shp_backup',
-      'langcode'                 => 'en',
-      'uid'                      => $this->current_user->id(),
-      'status'                   => 1,
-      'title'                    => $form_state->getValue('backup_title'),
-      'field_shp_backup_path'    => [['value' => '']],
-      'field_shp_site'           => [['target_id' => $site->id()]],
-      'field_shp_environment'    => [['target_id' => $environment->id()]],
-    ]);
-    $backup_node->save();
-
     // Call the backup service to start a backup and update the backup node.
-    if ($this->backup->createBackup($backup_node)) {
+    if ($this->backup->createBackupNode($site,$environment,$form_state->getValue('backup_title'), TRUE)) {
       drupal_set_message($this->t('Backup has been queued for %title', [
         '%title' => $form_state->get('environment')->getTitle(),
       ]));

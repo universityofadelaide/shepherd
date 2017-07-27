@@ -9,8 +9,6 @@ dependencies:
   module:
     - node
     - user
-_core:
-  default_config_hash: CZwx6B53Xe1Yxx_xiEGuJTyCMvlBg_6PKLX9i8rdI4E
 id: shp_site_backups
 label: 'Backup list'
 module: views

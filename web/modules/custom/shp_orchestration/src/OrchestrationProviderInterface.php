@@ -161,6 +161,8 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
   /**
    * Delete the environment in the orchestration provider.
    *
+   * @todo Shepherd: refactor to be like the archive below, or remove?
+   *
    * @param string $distribution_name
    *   Name of the distribution.
    * @param string $short_name
@@ -175,6 +177,19 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
     string $distribution_name,
     string $short_name,
     string $environment_id
+  );
+
+  /**
+   * Archive the environment in the orchestration provider.
+   *
+   * @param int $environment_id
+   *   Unique id of the environment.
+   *
+   * @return bool
+   *   Returns true if succeeded.
+   */
+  public function archivedEnvironment(
+    int $environment_id
   );
 
   /**
