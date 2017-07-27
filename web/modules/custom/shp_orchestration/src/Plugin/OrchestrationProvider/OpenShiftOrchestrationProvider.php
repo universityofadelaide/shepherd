@@ -3,6 +3,7 @@
 namespace Drupal\shp_orchestration\Plugin\OrchestrationProvider;
 
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\node\Entity\Node;
 use Drupal\shp_orchestration\OrchestrationProviderBase;
 use UniversityOfAdelaide\OpenShift\Client as OpenShiftClient;
 use UniversityOfAdelaide\OpenShift\ClientException;
@@ -224,14 +225,15 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
           $args,
         ];
         try {
-          $this->client->createCronJob(
-            $deployment_name . '-' . \Drupal::service('shp_custom.random_string')->generate(5),
-            $image_stream['status']['dockerImageRepository'] . ':' . $source_ref,
-            $schedule,
-            $args_array,
-            $volumes,
-            $deploy_data
-          );
+          // @todo - label support needs to be added to the delete, and then creation of cron jobs
+          //$this->client->createCronJob(
+          //  $deployment_name . '-' . \Drupal::service('shp_custom.random_string')->generate(5),
+          //  $image_stream['status']['dockerImageRepository'] . ':' . $source_ref,
+          //  $schedule,
+          //  $args_array,
+          //  $volumes,
+          //  $deploy_data
+          //);
         }
         catch (ClientException $e) {
           $this->handleClientException($e);
@@ -298,7 +300,49 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
 
       // Not sure if we need to delay a little here, do the cronjob and routes
       // to artificially delay.
-      $this->client->deleteCronJob($deployment_name);
+      // @todo - label support needs to be added to the delete, and then creation of cron jobs
+      //$this->client->deleteCronJob($deployment_name);
+      $this->client->deleteRoute($deployment_name);
+      $this->client->deleteService($deployment_name);
+
+      $this->client->deleteDeploymentConfig($deployment_name);
+      $this->client->deleteReplicationControllers('', 'openshift.io/deployment-config.name=' . $deployment_name);
+
+      // Now the things not in the typically visible ui.
+      $this->client->deletePersistentVolumeClaim($deployment_name . '-public');
+      $this->client->deletePersistentVolumeClaim($deployment_name . '-private');
+      $this->client->deleteSecret($deployment_name);
+    }
+    catch (ClientException $e) {
+      $this->handleClientException($e);
+      return FALSE;
+    }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function archivedEnvironment(
+    int $environment_id
+  ) {
+    $site = Node::load($environment_id->field_shp_site->target_id);
+    $distribution = Node::load($site->field_shp_distribution->target_id);
+
+    $deployment_name = self::generateDeploymentName(
+      $distribution->title->value,
+      $site->field_shp_short_name->value,
+      $environment_id
+    );
+
+    try {
+      // Scale the pods to zero, then delete the pod creators.
+      $this->client->updateDeploymentConfig($deployment_name, 0);
+      $this->client->updateReplicationControllers('', 'openshift.io/deployment-config.name=' . $deployment_name, 0);
+
+      // Not sure if we need to delay a little here, do the cronjob and routes
+      // to artificially delay.
+      // @todo - label support needs to be added to the delete, and then creation of cron jobs
+      //$this->client->deleteCronJob($deployment_name);
       $this->client->deleteRoute($deployment_name);
       $this->client->deleteService($deployment_name);
 
@@ -404,7 +448,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     $deploy_data = $this->formatDeployData(
       $deployment_config['spec']['template']['spec']['containers'][0]['env'],
       $deployment_config['metadata']['annotations']['shepherdUrl'],
-      $deployment_config['labels']['site_id'],
+      $deployment_config['metadata']['labels']['site_id'],
       $environment_id
     );
 

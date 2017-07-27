@@ -2,10 +2,10 @@ services:
   shp_backup.backup:
     class: Drupal\shp_backup\Service\Backup
     arguments: ['@config.factory', '@token']
-  shp_backup,environment_restore_form:
+  shp_backup.environment_restore_form:
     class: Drupal\shp_backup\Form\EnvironmentRestoreForm
     arguments: ['@shp_backup.backup']
-  shp_backup,environment_backup_form:
+  shp_backup.environment_backup_form:
     class: Drupal\shp_backup\Form\EnvironmentBackupForm
     arguments: ['@config.factory', '@shp_backup.backup', '@token', '@current_user']
   shp_backup.settings:
