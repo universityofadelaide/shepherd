@@ -7,7 +7,7 @@ message: |-
 metadata:
   annotations:
     iconClass: icon-php
-    openshift.io/display-name: Drupal + MySQL
+    openshift.io/display-name: Shepherd
     description: Provide a template that deploys an instance of the shepherd distribution.
     tags: php
     template.openshift.io/documentation-url: https://gitlab.adelaide.edu.au/web-team/shepherd
@@ -21,43 +21,42 @@ objects:
   kind: Service
   metadata:
     annotations:
-      description: Exposes and load balances the application pods
-      service.alpha.openshift.io/dependencies: '[{"name":"${DATABASE_SERVICE_NAME}",
-        "kind":"Service"}]'
-    name: ${NAME}-svc
+      description: Exposes and load balances the web application pods
+      service.alpha.openshift.io/dependencies: '[{"name":"shepherd-db-svc","kind":"Service"}]'
+    name: shepherd-web-svc
   spec:
     ports:
     - name: web
       port: 8080
       targetPort: 8080
     selector:
-      name: ${NAME}
+      name: shepherd-web-dc
 - apiVersion: v1
   kind: Route
   metadata:
-    name: ${NAME}-route
+    name: shepherd-web-route
   spec:
     host: ${APPLICATION_DOMAIN}
     to:
       kind: Service
-      name: ${NAME}-svc
+      name: shepherd-web-svc
 - apiVersion: v1
   kind: ImageStream
   metadata:
     annotations:
       description: Keeps track of changes in the application image
-    name: ${NAME}-imagestream
+    name: shepherd-web-imagestream
 - apiVersion: v1
   kind: BuildConfig
   metadata:
     annotations:
       description: Defines how to build the application
-    name: ${NAME}-bc
+    name: shepherd-web-bc
   spec:
     output:
       to:
         kind: ImageStreamTag
-        name: ${NAME}-imagestream:latest
+        name: shepherd-web-imagestream:latest
     postCommit: {}
     source:
       git:
@@ -67,16 +66,16 @@ objects:
       secrets:
       - destinationDir: .
         secret:
-          name: ${OPENSHIFT_KEY}
+          name: ${SOURCE_SECRET}
       sourceSecret:
-        name: ${OPENSHIFT_KEY}
+        name: ${SOURCE_SECRET}
     strategy:
       sourceStrategy:
         from:
           kind: DockerImage
           name: uofa/s2i-shepherd-drupal
         pullSecret:
-          name: ${OPENSHIFT_KEY}
+          name: ${SOURCE_SECRET}
       type: Source
     triggers:
     - type: ImageChange
@@ -90,7 +89,7 @@ objects:
 - apiVersion: v1
   kind: PersistentVolumeClaim
   metadata:
-    name: ${NAME}-private
+    name: shepherd-web-private
   spec:
     accessModes:
       - ReadWriteMany
@@ -100,7 +99,7 @@ objects:
 - apiVersion: v1
   kind: PersistentVolumeClaim
   metadata:
-    name: ${NAME}-public
+    name: shepherd-web-public
   spec:
     accessModes:
       - ReadWriteMany
@@ -112,11 +111,11 @@ objects:
   metadata:
     annotations:
       description: Defines how to deploy the application server
-    name: ${NAME}-dc
+    name: shepherd-web-dc
   spec:
     replicas: 1
     selector:
-      name: ${NAME}
+      name: shepherd-web-dc
     strategy:
       resources: {}
       rollingParams:
@@ -131,13 +130,13 @@ objects:
         annotations:
           openshift.io/container.shepherd.image.entrypoint: '["/usr/local/s2i/run"]'
         labels:
-          name: ${NAME}
-        name: ${NAME}
+          name: shepherd-web-dc
+        name: shepherd-web-dc
       spec:
         containers:
         - env:
           - name: DATABASE_HOST
-            value: ${DATABASE_SERVICE_NAME}
+            value: shepherd-db-svc
           - name: DATABASE_NAME
             value: ${DATABASE_NAME}
           - name: DATABASE_PASSWORD
@@ -146,42 +145,52 @@ objects:
             value: "3306"
           - name: DATABASE_USER
             value: ${DATABASE_USER}
+          - name: SITE_TITLE
+            value: ${SITE_TITLE}
+          - name: SITE_MAIL
+            value: ${SITE_MAIL}
+          - name: SITE_ADMIN_EMAIL
+            value: ${SITE_ADMIN_EMAIL}
+          - name: SITE_ADMIN_USERNAME
+            value: ${SITE_ADMIN_USERNAME}
+          - name: SITE_ADMIN_PASSWORD
+            value: ${SITE_ADMIN_PASSWORD}
           - name: PRIVATE_DIR
             value: /code/private
           - name: PUBLIC_DIR
             value: /code/web/sites/default/files
           image: ' '
-          name: ${NAME}
+          name: shepherd-web
           ports:
           - containerPort: 8080
           resources:
             limits:
-              memory: ${MEMORY_LIMIT}
+              memory: ${MEMORY_LIMIT_WEB}
           volumeMounts:
           - mountPath: /code/web/sites/default/files
-            name: ${NAME}-public
+            name: shepherd-web-public
           - mountPath: /code/private
-            name: ${NAME}-private
+            name: shepherd-web-private
         dnsPolicy: ClusterFirst
         restartPolicy: Always
         securityContext: {}
         terminationGracePeriodSeconds: 30
         volumes:
-        - name: ${NAME}-public
+        - name: shepherd-web-public
           persistentVolumeClaim:
-            claimName: ${NAME}-public
-        - name: ${NAME}-private
+            claimName: shepherd-web-public
+        - name: shepherd-web-private
           persistentVolumeClaim:
-            claimName: ${NAME}-private
+            claimName: shepherd-web-private
     test: false
     triggers:
     - imageChangeParams:
         automatic: true
         containerNames:
-        - ${NAME}
+        - shepherd-web
         from:
           kind: ImageStreamTag
-          name: ${NAME}-imagestream:latest
+          name: shepherd-web-imagestream:latest
       type: ImageChange
     - type: ConfigChange
 - apiVersion: v1
@@ -189,31 +198,31 @@ objects:
   metadata:
     annotations:
       description: Exposes the database server
-    name: ${DATABASE_SERVICE_NAME}
+    name: shepherd-db-svc
   spec:
     ports:
     - name: mysql
       port: 3306
       targetPort: 3306
     selector:
-      name: ${DATABASE_SERVICE_NAME}
+      name: shepherd-db
 - apiVersion: v1
   kind: DeploymentConfig
   metadata:
     annotations:
       description: Defines how to deploy the database
-    name: ${DATABASE_SERVICE_NAME}
+    name: shepherd-db
   spec:
     replicas: 1
     selector:
-      name: ${DATABASE_SERVICE_NAME}
+      name: shepherd-db
     strategy:
       type: Recreate
     template:
       metadata:
         labels:
-          name: ${DATABASE_SERVICE_NAME}
-        name: ${DATABASE_SERVICE_NAME}
+          name: shepherd-db
+        name: shepherd-db
       spec:
         containers:
         - env:
@@ -237,13 +246,13 @@ objects:
                 -D ${DATABASE_NAME} -e 'SELECT 1'
           resources:
             limits:
-              memory: ${MEMORY_MYSQL_LIMIT}
+              memory: ${MEMORY_LIMIT_MYSQL}
           volumeMounts:
           - mountPath: /var/lib/mysql/data
-            name: ${DATABASE_SERVICE_NAME}-volume-1
+            name: shepherd-db-volume
         volumes:
         - emptyDir: {}
-          name: ${DATABASE_SERVICE_NAME}-volume-1
+          name: shepherd-db-volume
     triggers:
     - imageChangeParams:
         automatic: true
@@ -256,53 +265,57 @@ objects:
       type: ImageChange
     - type: ConfigChange
 parameters:
-- description: The name assigned to all of the frontend objects defined in this template.
-  displayName: Name
-  name: NAME
-  required: true
-  value: shepherd-web
-- description: Enter the name of the pre-created passwordless secret that allows you to checkout from gitlab.
-  displayName: ssh key
-  name: OPENSHIFT_KEY
-  required: true
-  value: 'build-key'
-- displayName: Database Service Name
-  name: DATABASE_SERVICE_NAME
-  required: true
-  value: shepherd-mysql
-- description: Maximum amount of memory the Drupal container can use.
-  displayName: Memory Limit
-  name: MEMORY_LIMIT
-  required: true
-  value: 128Mi
-- description: Maximum amount of memory the MySQL container can use.
-  displayName: Memory Limit (MySQL)
-  name: MEMORY_MYSQL_LIMIT
-  required: true
-  value: 256Mi
-- description: The URL of the repository with your application source code.
-  displayName: Git Repository URL
-  name: SOURCE_REPOSITORY_URL
+- name: SOURCE_REPOSITORY_URL
+  description: The URL of the repository with your application source code.
   required: true
   value: ssh://git@gitlab.adelaide.edu.au/web-team/shepherd.git
-- description: Set this to a branch name, tag or other ref of your repository if you
-    are not using the default branch.
-  displayName: Git Reference
-  name: SOURCE_REPOSITORY_REF
+- name: SOURCE_REPOSITORY_REF
+  description: Set this to a branch name, tag or other ref of your repository if you are not using the default branch.
+  required: true
   value: develop
-- description: The exposed hostname that will route to the Drupal service, if left
-    blank a value will be defaulted.
+- name: SOURCE_SECRET
+  description: Enter the name of the pre-created passwordless secret that allows you to checkout from gitlab.
+  required: true
+  value: build-key
+- name: MEMORY_LIMIT_WEB
+  description: Maximum amount of memory the web container can use.
+  required: true
+  value: 128Mi
+- name: MEMORY_LIMIT_MYSQL
+  description: Maximum amount of memory the MySQL container can use.
+  displayName: Memory Limit (MySQL)
+  required: true
+  value: 256Mi
+- name: APPLICATION_DOMAIN
+  description: The exposed hostname that will route to the Drupal service, if left blank a value will be defaulted.
   displayName: Application Hostname
-  name: APPLICATION_DOMAIN
-- displayName: Database Name
-  name: DATABASE_NAME
+- name: DATABASE_NAME
   required: true
-  value: default
-- displayName: Database User
-  name: DATABASE_USER
+  value: shepherd
+- name: DATABASE_USER
   required: true
-  value: drupal
-- displayName: Database Password
+  value: shepherd
+- name: DATABASE_PASSWORD
   from: '[a-zA-Z0-9]{16}'
   generate: expression
-  name: DATABASE_PASSWORD
+- name: SITE_TITLE
+  description: The site title of Shepherd.
+  required: true
+  value: Shepherd
+- name: SITE_MAIL
+  description: The from address of outbound email from Shepherd.
+  required: true
+  value: shepherd@shepherd.com
+- name: SITE_ADMIN_USERNAME
+  description: The admin username.
+  required: true
+  value: admin
+- name: SITE_ADMIN_PASSWORD
+  description: The admin password.
+  required: true
+  from: '[a-zA-Z0-9]{8}'
+  generate: expression
+- name: SITE_ADMIN_EMAIL
+  description: The admin users email address.
+  required: true
+  value: shepherd@shepherd.com
