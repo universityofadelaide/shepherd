@@ -94,7 +94,7 @@ class EnvironmentBackupForm extends FormBase {
    */
   public function buildForm(array $form, FormStateInterface $form_state, NodeInterface $site = NULL, NodeInterface $environment = NULL) {
     $config = $this->config->get('shp_backup.settings');
-    $backup_title = $this->token->replace($config->get('backup_service.backup_title'), ['environment' => $environment]);
+    $backup_title = $this->token->replace($config->get('backup_title'), ['environment' => $environment]);
 
     $form_state->set('site', $site);
     $form_state->set('environment', $environment);

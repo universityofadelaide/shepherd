@@ -1,0 +1,5 @@
+shp_database_provisioner.settings:
+  title: 'Database provisioner'
+  parent: shp_custom.admin_config_shepherd
+  description: 'Automatically provision a database when a new environment is created.'
+  route_name: shp_database_provisioner.settings

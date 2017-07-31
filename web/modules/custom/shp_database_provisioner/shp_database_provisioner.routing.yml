@@ -1,0 +1,7 @@
+shp_database_provisioner.settings:
+  path: '/admin/config/shepherd/database-provisioner'
+  defaults:
+    _form: 'Drupal\shp_database_provisioner\Form\SettingsForm'
+    _title: 'Database provisioner'
+  requirements:
+    _permission: 'administer site configuration'
