@@ -75,7 +75,7 @@ function shp_backup_tokens($type, $tokens, array $data, array $options, Bubbleab
       case 'backup-path':
         if (isset($data['backup'])) {
           $site = Node::load($data['backup']->field_shp_site->target_id);
-          $backup_path = $config->get('backup_service.root_dir') . '/' . $site->id() . '/' . $data['backup']->created->value;
+          $backup_path = $config->get('root_dir') . '/' . $site->id() . '/' . $data['backup']->created->value;
           $replacements[$original] = $backup_path;
         }
         break;

@@ -97,7 +97,7 @@ class Backup {
   public function createBackupNode(NodeInterface $site, NodeInterface $environment, $title = NULL, bool $perform_backup = FALSE) {
     if (!isset($title)) {
       $config = \Drupal::config('shp_backup.settings');
-      $title = $this->token->replace($config->get('backup_service.backup_title'), ['environment' => $environment]);
+      $title = $this->token->replace($config->get('backup_title'), ['environment' => $environment]);
     }
     // Create a backup node with most values.
     $backup_node = Node::create([
@@ -145,7 +145,7 @@ class Backup {
     $backup->set('field_shp_backup_path', $this->token->replace('[shepherd:backup-path]', ['backup' => $backup]));
     $backup->save();
 
-    $backup_command = str_replace([ "\r\n", "\n", "\r" ], ' && ', trim($this->config->get('backup_service.backup_command')));
+    $backup_command = str_replace([ "\r\n", "\n", "\r" ], ' && ', trim($this->config->get('backup_command')));
     $backup_command = $this->token->replace($backup_command, ['backup' => $backup]);
 
     $result = $orchestration_provider_plugin->backupEnvironment(
@@ -184,7 +184,7 @@ class Backup {
     $distribution = Node::load($site->field_shp_distribution->target_id);
     $distribution_name = $distribution->title->value;
 
-    $restore_command = str_replace([ "\r\n", "\n", "\r" ], ' && ', trim($this->config->get('backup_service.restore_command')));
+    $restore_command = str_replace([ "\r\n", "\n", "\r" ], ' && ', trim($this->config->get('restore_command')));
     $restore_command = $this->token->replace($restore_command, ['backup' => $backup]);
 
     $result = $orchestration_provider_plugin->restoreEnvironment(
