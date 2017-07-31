@@ -47,6 +47,20 @@ class OpenShiftConfigEntityForm extends EntityForm {
       '#default_value' => $entity->namespace,
       '#required' => FALSE,
     ];
+    $form['uid'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('User ID'),
+      '#description' => $this->t("The default user id containers should run as."),
+      '#default_value' => $entity->uid,
+      '#required' => FALSE,
+    ];
+    $form['gid'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('Group ID'),
+      '#description' => $this->t("The default group id containers should run as."),
+      '#default_value' => $entity->gid,
+      '#required' => FALSE,
+    ];
 
     return $form;
   }
