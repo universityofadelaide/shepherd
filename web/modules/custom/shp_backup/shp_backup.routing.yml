@@ -35,10 +35,10 @@ shp_backup.environment-restore-form:
     site: ^[0-9]+
     environment: ^[0-9]+
 shp_backup.settings:
-  path: '/admin/config/system/shepherd'
+  path: '/admin/config/shepherd/backup'
   defaults:
-    _form: '\Drupal\shp_backup\Form\ShepherdSettings'
-    _title: 'Shepherd settings'
+    _form: '\Drupal\shp_backup\Form\SettingsForm'
+    _title: 'Backup'
   requirements:
     _permission: 'administer account settings'
 

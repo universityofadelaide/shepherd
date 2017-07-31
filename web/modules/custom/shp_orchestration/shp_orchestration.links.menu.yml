@@ -1,5 +1,5 @@
 shp_orchestration.orchestration_provider.settings:
-  title: 'Orchestration Provider Settings'
-  parent: system.admin_config_system
-  description: 'Configure a orchestration provider and select a provider to use.'
+  title: 'Orchestration provider settings'
+  parent: shp_custom.admin_config_shepherd
+  description: 'Configure an orchestration provider and select a provider to use.'
   route_name: shp_orchestration.orchestration_provider.settings
