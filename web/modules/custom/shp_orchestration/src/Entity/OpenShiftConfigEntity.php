@@ -15,7 +15,9 @@ use Drupal\Core\Config\Entity\ConfigEntityBase;
  *     "endpoint" = "endpoint",
  *     "token" = "token",
  *     "namespace" = "namespace",
- *     "verify_tls" = "verify_tls"
+ *     "verify_tls" = "verify_tls",
+ *     "uid" = "uid",
+ *     "gid" = "gid"
  *   },
  *   handlers = {
  *      "form" = {
@@ -56,6 +58,20 @@ class OpenShiftConfigEntity extends ConfigEntityBase {
    * @var bool
    */
   public $verify_tls;
+
+  /**
+   * Default uid containers should run as.
+   *
+   * @var string
+   */
+  public $uid;
+
+  /**
+   * Default gid containers should run as.
+   *
+   * @var string
+   */
+  public $gid;
 
   /**
    * Entity ID.

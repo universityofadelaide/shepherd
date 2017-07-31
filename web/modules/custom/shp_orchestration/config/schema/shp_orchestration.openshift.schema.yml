@@ -20,3 +20,9 @@ shp_orchestration.openshift.*:
     verify_tls:
       type: boolean
       label: 'Verify TLS'
+    uid:
+      type: string
+      label: 'User ID'
+    gid:
+      type: string
+      label: 'Group ID'
