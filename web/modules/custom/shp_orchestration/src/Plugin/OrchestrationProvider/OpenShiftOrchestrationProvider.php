@@ -664,19 +664,19 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
         $this->client->createPersistentVolumeClaim(
           $public_pvc_name,
           'ReadWriteMany',
-          '10Gi'
+          '5Gi'
         );
 
         $this->client->createPersistentVolumeClaim(
           $private_pvc_name,
           'ReadWriteMany',
-          '10Gi'
+          '5Gi'
         );
 
         $this->client->createPersistentVolumeClaim(
           $backup_pvc_name,
           'ReadWriteMany',
-          '10Gi'
+          '5Gi'
         );
 
       }
