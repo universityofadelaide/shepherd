@@ -203,9 +203,9 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     );
 
     // If set, add uid and gid from config to deploy data.
-    if (isset($this->configEntity->uid)) {
+    if (strlen($this->configEntity->uid) > 0) {
       $deploy_data['uid'] = $this->configEntity->uid;
-      if (isset($this->configEntity->gid)) {
+      if (strlen($this->configEntity->gid) > 0) {
         $deploy_data['gid'] = $this->configEntity->gid;
       }
     }
