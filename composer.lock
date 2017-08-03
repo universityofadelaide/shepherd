@@ -4011,12 +4011,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/universityofadelaide/openshift-client.git",
-                "reference": "ae37d3df49c92392beaf94ecd05c5bd650447d59"
+                "reference": "756aadd70585df36b446e80726bc2fa4049dacf9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/universityofadelaide/openshift-client/zipball/ae37d3df49c92392beaf94ecd05c5bd650447d59",
-                "reference": "ae37d3df49c92392beaf94ecd05c5bd650447d59",
+                "url": "https://api.github.com/repos/universityofadelaide/openshift-client/zipball/756aadd70585df36b446e80726bc2fa4049dacf9",
+                "reference": "756aadd70585df36b446e80726bc2fa4049dacf9",
                 "shasum": ""
             },
             "require": {
@@ -4048,7 +4048,7 @@
                 }
             ],
             "description": "Simple OpenShift client for PHP.",
-            "time": "2017-07-31 06:32:57"
+            "time": "2017-08-03 02:38:06"
         },
         {
             "name": "universityofadelaide/shepherd-drupal-scaffold",

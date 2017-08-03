@@ -191,7 +191,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     }
 
     $formatted_env_vars = $this->formatEnvVars($environment_variables, $deployment_name);
-    if (!$volumes = $this->setupVolumes($deployment_name, TRUE)) {
+    if (!$volumes = $this->setupVolumes($distribution_name, $deployment_name, TRUE)) {
       return FALSE;
     }
 
@@ -317,8 +317,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       $this->client->deleteReplicationControllers('', 'openshift.io/deployment-config.name=' . $deployment_name);
 
       // Now the things not in the typically visible ui.
-      $this->client->deletePersistentVolumeClaim($deployment_name . '-public');
-      $this->client->deletePersistentVolumeClaim($deployment_name . '-private');
+      $this->client->deletePersistentVolumeClaim($deployment_name . '-shared');
       $this->client->deleteSecret($deployment_name);
     }
     catch (ClientException $e) {
@@ -452,7 +451,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     $deployment_config = $this->client->getDeploymentConfig($deployment_name);
 
     $image_stream = $this->client->getImageStream($sanitised_distribution_name);
-    $volumes = $this->setupVolumes($deployment_name, FALSE);
+    $volumes = $this->setupVolumes($distribution_name, $deployment_name);
     $deploy_data = $this->formatDeployData(
       $deployment_config['spec']['template']['spec']['containers'][0]['env'],
       $deployment_config['metadata']['annotations']['shepherdUrl'],
@@ -653,34 +652,29 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
   /**
    * Format an array of volume data ready to pass to OpenShift.
    *
+   * @param string $distribution_name
+   *   The name of the distribution being deployed.
    * @param string $deployment_name
    *   The name of the deployment being created.
    * @param bool $setup
-   *   Whether to configure public, private and backup PVCs.
+   *   Whether to configure shared files and backup PVCs.
    *
    * @return array|bool
    *   The volume config array, or false if creating PVCs was unsuccessful.
    */
-  private function setupVolumes(string $deployment_name, bool $setup = FALSE) {
-    $public_pvc_name = $deployment_name . '-public';
-    $private_pvc_name = $deployment_name . '-private';
-    $backup_pvc_name = $deployment_name . '-backup';
+  private function setupVolumes(string $distribution_name, string $deployment_name, bool $setup = FALSE) {
+    $shared_pvc_name = $deployment_name . '-shared';
+    // @todo This should be dist_name-backup or similar - one backup pv per distro.
+    $backup_pvc_name = self::sanitise($distribution_name) . '-backup';
 
     if ($setup) {
       try {
         // @todo Parametrise storage size.
         $this->client->createPersistentVolumeClaim(
-          $public_pvc_name,
+          $shared_pvc_name,
           'ReadWriteMany',
           '5Gi'
         );
-
-        $this->client->createPersistentVolumeClaim(
-          $private_pvc_name,
-          'ReadWriteMany',
-          '5Gi'
-        );
-
         $this->client->createPersistentVolumeClaim(
           $backup_pvc_name,
           'ReadWriteMany',
@@ -694,17 +688,11 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       }
     }
 
-    // @todo Consider allowing parameters for volume paths. Are they set by the distro?
     $volumes = [
       [
         'type' => 'pvc',
-        'name' => $public_pvc_name,
-        'path' => '/code/web/sites/default/files',
-      ],
-      [
-        'type' => 'pvc',
-        'name' => $private_pvc_name,
-        'path' => '/code/private',
+        'name' => $shared_pvc_name,
+        'path' => '/shared',
       ],
       [
         'type' => 'pvc',
