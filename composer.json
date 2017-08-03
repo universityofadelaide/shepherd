@@ -17,6 +17,7 @@
         "cweagans/composer-patches":                     "~1.0",
         "drupal/core":                                   "8.3.*",
         "drupal/cas":                                    "1.x-dev",
+        "drupal/devel":                                  "1.*@dev",
         "drupal/entity_reference_revisions":             "dev-1.x",
         "drupal/group":                                  "^1.0@beta",
         "drupal/key_value_field":                        "1.x-dev",
