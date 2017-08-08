@@ -1,5 +1,5 @@
 shp_backup.environment-backup-form:
-  path: '/site/{site}/environment/backup/{environment}'
+  path: '/site/{site}/environment/{environment}/backup'
   defaults:
     _form: '\Drupal\shp_backup\Form\EnvironmentBackupForm'
     _title_callback: '\Drupal\shp_backup\Form\EnvironmentBackupForm::getPageTitle'
@@ -17,7 +17,7 @@ shp_backup.environment-backup-form:
     site: ^[0-9]+
     environment: ^[0-9]+
 shp_backup.environment-restore-form:
-  path: '/site/{site}/environment/restore/{environment}'
+  path: '/site/{site}/environment/{environment}/restore'
   defaults:
     _form: '\Drupal\shp_backup\Form\EnvironmentRestoreForm'
     _title_callback: '\Drupal\shp_backup\Form\EnvironmentRestoreForm::getPageTitle'

@@ -8,10 +8,10 @@
 /**
  * Implements hook_install().
  *
- * Add in our custom views operations field.
+ * Adds the custom views operations field.
  */
 function shp_backup_install() {
-  // Load the view and add the operations field to it
+  // Load the view and add the operations field to it.
   $view = \Drupal::configFactory()->getEditable('views.view.shp_site_environments');
 
   $shp_backup_operations = [
@@ -22,47 +22,47 @@ function shp_backup_install() {
     'group_type' => 'group',
     'admin_label' => '',
     'label' => 'Operations',
-    'exclude' => false,
+    'exclude' => FALSE,
     'alter' => [
-      'alter_text' => false,
+      'alter_text' => FALSE,
       'text' => '',
-      'make_link' => false,
+      'make_link' => FALSE,
       'path' => '',
-      'absolute' => false,
-      'external' => false,
-      'replace_spaces' => false,
+      'absolute' => FALSE,
+      'external' => FALSE,
+      'replace_spaces' => FALSE,
       'path_case' => 'none',
-      'trim_whitespace' => false,
+      'trim_whitespace' => FALSE,
       'alt' => '',
       'rel' => '',
       'link_class' => '',
       'prefix' => '',
       'suffix' => '',
       'target' => '',
-      'nl2br' => false,
+      'nl2br' => FALSE,
       'max_length' => 0,
-      'word_boundary' => true,
-      'ellipsis' => true,
-      'more_link' => false,
+      'word_boundary' => TRUE,
+      'ellipsis' => TRUE,
+      'more_link' => FALSE,
       'more_link_text' => '',
       'more_link_path' => '',
-      'strip_tags' => false,
-      'trim' => false,
+      'strip_tags' => FALSE,
+      'trim' => FALSE,
       'preserve_tags' => '',
-      'html' => false,
+      'html' => FALSE,
     ],
     'element_type' => '',
     'element_class' => '',
     'element_label_type' => '',
     'element_label_class' => '',
-    'element_label_colon' => true,
+    'element_label_colon' => TRUE,
     'element_wrapper_type' => '',
     'element_wrapper_class' => '',
-    'element_default_classes' => true,
+    'element_default_classes' => TRUE,
     'empty' => '',
-    'hide_empty' => false,
-    'empty_zero' => false,
-    'hide_alter_empty' => true,
+    'hide_empty' => FALSE,
+    'empty_zero' => FALSE,
+    'hide_alter_empty' => TRUE,
     'entity_type' => 'node',
     'plugin_id' => 'shp_backup_operations',
   ];
@@ -74,10 +74,10 @@ function shp_backup_install() {
 /**
  * Implements hook_uninstall().
  *
- * Remove all our config.
- * Including our views field.
+ * Remove all config, including the views field.
  */
 function shp_backup_uninstall() {
+  // @todo forum.install hook_uninstall() - see if this is a better approach.
   $config_storage = \Drupal::service('config.storage');
 
   $dir = dir(drupal_get_path('module', 'shp_backup') . '/config/install');
@@ -94,4 +94,3 @@ function shp_backup_uninstall() {
   $view->set('display.default.display_options.fields', $fields);
   $view->save();
 }
-

@@ -14,22 +14,9 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class SettingsForm extends ConfigFormBase {
 
   /**
-   * {@inheritdoc}
-   */
-  public function getFormId() {
-    return 'shp_backup_settings';
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  protected function getEditableConfigNames() {
-    return ['shp_backup.settings'];
-  }
-
-  /**
+   * Used to render the pretty tokenizer output.
+   *
    * @var \Drupal\Core\Render\Renderer
-   *   Used to render the pretty tokenizer output.
    */
   protected $renderer;
 
@@ -46,15 +33,27 @@ class SettingsForm extends ConfigFormBase {
   }
 
   /**
-   * @param \Symfony\Component\DependencyInjection\ContainerInterface $container
-   *
-   * @return static
+   * {@inheritdoc}
    */
   public static function create(ContainerInterface $container) {
     return new static(
       $container->get('config.factory'),
       $container->get('renderer')
     );
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getFormId() {
+    return 'shp_backup_settings';
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function getEditableConfigNames() {
+    return ['shp_backup.settings'];
   }
 
   /**

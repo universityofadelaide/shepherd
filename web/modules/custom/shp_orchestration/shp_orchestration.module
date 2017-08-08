@@ -1,212 +1,52 @@
 <?php
 
-use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\node\NodeInterface;
 use Drupal\shp_orchestration\Exception\OrchestrationProviderNotConfiguredException;
 
 /**
  * Implements hook_ENTITY_TYPE_insert().
  */
-function shp_orchestration_node_insert(EntityInterface $entity) {
-  /** @var Drupal\node\Entity\Node $entity */
-  $bundle = $entity->bundle();
+function shp_orchestration_node_insert(NodeInterface $node) {
+  switch ($node->bundle()) {
+    case 'shp_distribution':
+      \Drupal::service('shp_orchestration.distribution')->created($node);
+      break;
 
-  if (strpos($bundle, 'shp') !== FALSE) {
-    try {
-      /** @var Drupal\shp_orchestration\OrchestrationProviderInterface $orchestration_provider_plugin */
-      $orchestration_provider_plugin = \Drupal::service('plugin.manager.orchestration_provider')
-        ->getProviderInstance();
-    }
-    catch (OrchestrationProviderNotConfiguredException $e) {
-      drupal_set_message($e->getMessage(), 'warning');
-      return FALSE;
-    }
-
-    switch ($bundle) {
-      case 'shp_distribution':
-        $result = $orchestration_provider_plugin->createdDistribution(
-          $entity->getTitle(),
-          $entity->field_shp_builder_image->value,
-          $entity->field_shp_git_repository->value,
-          // @todo Consider fetching default source ref from config.
-          'master',
-          $entity->field_shp_build_secret->value
-        );
-
-        if (!$result) {
-          return FALSE;
-        }
-        break;
-
-      case 'shp_environment':
-
-        if (isset($entity->field_shp_site->target_id)) {
-          $site = $entity->get('field_shp_site')
-            ->first()
-            ->get('entity')
-            ->getTarget()
-            ->getValue();
-
-          if (isset($site->field_shp_distribution->target_id)) {
-            $distribution = $site->get('field_shp_distribution')
-              ->first()
-              ->get('entity')
-              ->getTarget()
-              ->getValue();
-          }
-        }
-        if (!isset($distribution) || !isset($site)) {
-          return FALSE;
-        }
-
-        $cron_jobs = [];
-        foreach ($entity->field_shp_cron_jobs as $job) {
-          $cron_jobs[$job->key] = $job->value;
-        }
-
-        $deployment_name = $orchestration_provider_plugin::generateDeploymentName(
-          $distribution->getTitle(),
-          $site->field_shp_short_name->value,
-          $entity->id()
-        );
-
-        // Generate an auth token and add it to the secret associated with the
-        // environment. Create the secret if it doesn't exist.
-        // @todo Replace with generated Shepherd auth token.
-        $shepherd_token = 'super-secret-token';
-        if ($env_secret = $orchestration_provider_plugin->getSecret($deployment_name)) {
-          $secret_result = $orchestration_provider_plugin->updateSecret(
-            $deployment_name,
-            array_merge($env_secret, ['SHEPHERD_TOKEN' => $shepherd_token])
-          );
-        }
-        else {
-          $secret_result = $orchestration_provider_plugin->createSecret(
-            $deployment_name,
-            ['SHEPHERD_TOKEN' => $shepherd_token]
-          );
-        }
-        if (!$secret_result) {
-          // @todo Handle errors.
-          return FALSE;
-        }
-
-        // Collate environment variables and secrets.
-        $env_vars = \Drupal::moduleHandler()->invokeAll('shp_env_vars', [$entity]);
-        $secrets = \Drupal::moduleHandler()->invokeAll('shp_secrets', [$entity]);
-
-        $result = $orchestration_provider_plugin->createdEnvironment(
-          $distribution->getTitle(),
-          $site->field_shp_short_name->value,
-          $site->id(),
-          $entity->id(),
-          $entity->toUrl('canonical', ['absolute' => TRUE])->toString(),
-          $distribution->field_shp_builder_image->value,
-          $distribution->field_shp_git_repository->value,
-          $entity->field_shp_git_reference->value,
-          $distribution->field_shp_build_secret->value,
-          $env_vars,
-          $secrets,
-          $cron_jobs
-        );
-
-        if (!$result) {
-          return FALSE;
-        }
-        break;
-    }
+    case 'shp_environment':
+      \Drupal::service('shp_orchestration.environment')->created($node);
+      break;
   }
-  return TRUE;
 }
 
 /**
  * Implements hook_ENTITY_TYPE_update().
  */
-function shp_orchestration_node_update(EntityInterface $entity) {
-  $bundle = $entity->bundle();
+function shp_orchestration_node_update(NodeInterface $node) {
+  switch ($node->bundle()) {
+    case 'shp_distribution':
+      \Drupal::service('shp_orchestration.distribution')->updated($node);
+      break;
 
-  if (strpos($bundle, 'shp') !== FALSE) {
-    try {
-      /** @var Drupal\shp_orchestration\OrchestrationProviderInterface $orchestration_provider_plugin */
-      $orchestration_provider_plugin = \Drupal::service('plugin.manager.orchestration_provider')
-        ->getProviderInstance();
-    }
-    catch (OrchestrationProviderNotConfiguredException $e) {
-      drupal_set_message($e->getMessage(), 'warning');
-      return FALSE;
-    }
-
-    switch ($bundle) {
-      case 'shp_distribution':
-        $result = $orchestration_provider_plugin->updatedDistribution(
-          $entity->getTitle(),
-          $entity->field_shp_builder_image->value,
-          $entity->field_shp_git_repository->value,
-          'master',
-          $entity->field_shp_build_secret->value
-        );
-        if (!$result) {
-          return FALSE;
-        }
-        break;
-
-      case 'shp_environment':
-        // TODO: Handle updates.
-        break;
-    }
+    case 'shp_environment':
+      \Drupal::service('shp_orchestration.environment')->updated($node);
+      break;
   }
-  return TRUE;
 }
 
 /**
  * Implements hook_ENTITY_TYPE_delete().
  */
-function shp_orchestration_node_delete(EntityInterface $entity) {
-  $bundle = $entity->bundle();
+function shp_orchestration_node_delete(NodeInterface $node) {
+  switch ($node->bundle()) {
+    case 'shp_distribution':
+      \Drupal::service('shp_orchestration.distribution')->deleted($node);
+      break;
 
-  if (strpos($bundle, 'shp') !== FALSE) {
-    try {
-      /** @var Drupal\shp_orchestration\OrchestrationProviderInterface $orchestration_provider_plugin */
-      $orchestration_provider_plugin = \Drupal::service('plugin.manager.orchestration_provider')
-        ->getProviderInstance();
-    }
-    catch (OrchestrationProviderNotConfiguredException $e) {
-      drupal_set_message($e->getMessage(), 'warning');
-      return FALSE;
-    }
-
-    switch ($entity->bundle()) {
-      case 'shp_environment':
-        $site = $entity->get('field_shp_site')
-          ->first()
-          ->get('entity')
-          ->getTarget()
-          ->getValue();
-
-        if (isset($site->field_shp_distribution->target_id)) {
-          $distribution = $site->get('field_shp_distribution')
-            ->first()
-            ->get('entity')
-            ->getTarget()
-            ->getValue();
-        }
-        if (!isset($distribution) || !isset($site)) {
-          return FALSE;
-        }
-
-        $result = $orchestration_provider_plugin->deletedEnvironment(
-          $distribution->title->value,
-          $site->field_shp_short_name->value,
-          $entity->id()
-        );
-
-        if (!$result) {
-          return FALSE;
-        }
-        break;
-    }
+    case 'shp_environment':
+      \Drupal::service('shp_orchestration.environment')->deleted($node);
+      break;
   }
-  return TRUE;
 }
 
 /**
@@ -252,8 +92,8 @@ function shp_orchestration_shp_distribution_form_validate(array $form, FormState
 /**
  * Implements hook_shp_env_vars().
  */
-function shp_orchestration_shp_env_vars(EntityInterface $entity) {
-  $site = $entity->get('field_shp_site')
+function shp_orchestration_shp_env_vars(NodeInterface $node) {
+  $site = $node->get('field_shp_site')
     ->first()
     ->get('entity')
     ->getTarget()
@@ -268,7 +108,7 @@ function shp_orchestration_shp_env_vars(EntityInterface $entity) {
   ];
 
   // Append custom environment variables.
-  foreach ($entity->get('field_shp_env_vars')->getValue() as $env_var) {
+  foreach ($node->get('field_shp_env_vars')->getValue() as $env_var) {
     $env_vars[$env_var['key']] = $env_var['value'];
   }
   return $env_vars;

@@ -6,7 +6,6 @@ use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Session\AccountInterface;
-use Drupal\node\Entity\Node;
 use Drupal\node\NodeInterface;
 use Drupal\shp_backup\Service\Backup;
 use Drupal\token\TokenInterface;
@@ -20,26 +19,30 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class EnvironmentBackupForm extends FormBase {
 
   /**
+   * For retrieving config.
+   *
    * @var \Drupal\Core\Config\ConfigFactory
-   *   For retrieving config.
    */
   protected $config;
 
   /**
+   * Used to start backups.
+   *
    * @var \Drupal\shp_backup\Service\Backup
-   *   Used to start backups.
    */
   protected $backup;
 
   /**
+   * Used to replace text within parameters.
+   *
    * @var \Drupal\token\Token
-   *   Used to replace text within parameters.
    */
   protected $token;
 
   /**
+   * Used to identify who is creating the backup.
+   *
    * @var \Drupal\Core\Session\AccountInterface
-   *   Used to identify who is creating the backup.
    */
   protected $current_user;
 
@@ -58,6 +61,9 @@ class EnvironmentBackupForm extends FormBase {
     $this->current_user = $current_user;
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public static function create(ContainerInterface $container) {
     return new static(
       $container->get('config.factory'),
@@ -123,7 +129,7 @@ class EnvironmentBackupForm extends FormBase {
     $environment = $form_state->get('environment');
 
     // Call the backup service to start a backup and update the backup node.
-    if ($this->backup->createBackupNode($site,$environment,$form_state->getValue('backup_title'), TRUE)) {
+    if ($this->backup->createNode($environment, $form_state->getValue('backup_title'), TRUE)) {
       drupal_set_message($this->t('Backup has been queued for %title', [
         '%title' => $form_state->get('environment')->getTitle(),
       ]));
