@@ -17,8 +17,9 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class EnvironmentRestoreForm extends FormBase {
 
   /**
+   * Used to trigger restores via the backup service.
+   *
    * @var \Drupal\shp_backup\Service\Backup
-   *   Used to trigger restores via the backup service.
    */
   protected $backup;
 
@@ -26,15 +27,14 @@ class EnvironmentRestoreForm extends FormBase {
    * EnvironmentRestoreForm constructor.
    *
    * @param \Drupal\shp_backup\Service\Backup $backup
+   *   The backup service.
    */
   public function __construct(Backup $backup) {
     $this->backup = $backup;
   }
 
   /**
-   * @param \Symfony\Component\DependencyInjection\ContainerInterface $container
-   *
-   * @return static
+   * {@inheritdoc}
    */
   public static function create(ContainerInterface $container) {
     return new static(
@@ -109,7 +109,7 @@ class EnvironmentRestoreForm extends FormBase {
     $backup = Node::load($form_state->getValue('backup'));
 
     // Set the backup to restore from.
-    if ($this->backup->restoreBackup($backup, $environment)) {
+    if ($this->backup->restore($backup, $environment)) {
       drupal_set_message($this->t('Restore has been queued for %title', [
         '%title' => $environment->getTitle(),
       ]));

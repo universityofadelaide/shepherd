@@ -6,3 +6,4 @@ package: Shepherd
 dependencies:
   - shp_content_types
   - shp_custom
+  - shp_orchestration

@@ -1,12 +1,12 @@
 <?php
 
-
 /**
  * @file
  * Contains shp_backup.module.
  */
 
 use Drupal\Core\Render\BubbleableMetadata;
+use Drupal\node\NodeInterface;
 use Drupal\taxonomy\Entity\Term;
 use Drupal\node\Entity\Node;
 
@@ -32,7 +32,7 @@ function shp_backup_backup_environments() {
 }
 
 /**
- * Implementation of hook_token_info().
+ * Implements hook_token_info().
  */
 function shp_backup_token_info() {
   $info['types']['shepherd'] = [
@@ -59,7 +59,7 @@ function shp_backup_token_info() {
 }
 
 /**
- * Implementation of hook_tokens().
+ * Implements hook_tokens().
  */
 function shp_backup_tokens($type, $tokens, array $data, array $options, BubbleableMetadata $bubbleable_metadata) {
   if ($type != 'shepherd') {
@@ -100,4 +100,15 @@ function shp_backup_tokens($type, $tokens, array $data, array $options, Bubbleab
 
   return $replacements;
 
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_insert().
+ */
+function shp_backup_node_insert(NodeInterface $node) {
+  switch ($node->bundle()) {
+    case 'shp_backup':
+      \Drupal::service('shp_backup.backup')->create($node);
+      break;
+  }
 }

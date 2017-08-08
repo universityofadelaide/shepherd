@@ -2,3 +2,12 @@ services:
   plugin.manager.orchestration_provider:
     class: Drupal\shp_orchestration\OrchestrationProviderPluginManager
     parent: default_plugin_manager
+  shp_orchestration.configuration:
+    class: Drupal\shp_orchestration\Service\Configuration
+    arguments: ['@module_handler']
+  shp_orchestration.distribution:
+    class: Drupal\shp_orchestration\Service\Distribution
+    arguments: ['@plugin.manager.orchestration_provider']
+  shp_orchestration.environment:
+    class: Drupal\shp_orchestration\Service\Environment
+    arguments: ['@plugin.manager.orchestration_provider', '@shp_orchestration.configuration']
