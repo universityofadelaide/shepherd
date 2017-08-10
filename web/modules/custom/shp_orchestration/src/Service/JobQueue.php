@@ -13,7 +13,7 @@ class JobQueue {
    *
    * @var \Drupal\Core\Queue\QueueInterface
    */
-  private $queue;
+  protected $queue;
 
   /**
    * JobQueue constructor.
