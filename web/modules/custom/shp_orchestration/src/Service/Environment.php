@@ -9,7 +9,7 @@ use Drupal\shp_orchestration\OrchestrationProviderPluginManager;
  * Class Environment.
  * @package Drupal\shp_orchestration\Service
  */
-class Environment extends EntityBase {
+class Environment extends EntityActionBase {
 
   /**
    * The Shepherd configuration service.
