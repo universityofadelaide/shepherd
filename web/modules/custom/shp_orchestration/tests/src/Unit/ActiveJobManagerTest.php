@@ -24,47 +24,48 @@ class ActiveJobManagerTest extends UnitTestCase {
   protected $state;
 
   /**
+   * A simple test job.
+   *
+   * @var \stdClass
+   */
+  protected $job;
+
+  /**
    * {@inheritdoc}
    */
   protected function setUp() {
     parent::setUp();
     $this->state = $this->getMock('Drupal\Core\State\StateInterface');
+
+    $this->job = (object) [
+      'jobId' => '123',
+      'entityId' => '456',
+      'queueWorker' => 'Environment',
+    ];
   }
 
   /**
    * Test the add method.
    */
   public function testAddJob() {
-    $job = (object) [
-      'jobId' => '123',
-      'entityId' => '456',
-      'queueWorker' => 'Environment',
-    ];
-
     $this->state->expects($this->once())
       ->method('get')
-      ->with(ActiveJobManager::STATE_KEY_PREFIX . $job->entityId)
+      ->with(ActiveJobManager::STATE_KEY_PREFIX . $this->job->entityId)
       ->will($this->returnValue(NULL));
 
     $this->state->expects($this->once())
       ->method('set')
-      ->with(ActiveJobManager::STATE_KEY_PREFIX . $job->entityId, $job);
+      ->with(ActiveJobManager::STATE_KEY_PREFIX . $this->job->entityId, $this->job);
 
     $activeJobManager = new ActiveJobManager($this->state);
 
-    $activeJobManager->add($job);
+    $activeJobManager->add($this->job);
   }
 
   /**
    * Test the add method.
    */
   public function testAddDuplicateJob() {
-    $job = (object) [
-      'jobId' => '123',
-      'entityId' => '456',
-      'queueWorker' => 'Environment',
-    ];
-
     $this->setExpectedException('Drupal\shp_orchestration\Exception\JobInProgressException');
     $this->state->expects($this->once())
       ->method('get')
@@ -72,49 +73,37 @@ class ActiveJobManagerTest extends UnitTestCase {
 
     $activeJobManager = new ActiveJobManager($this->state);
 
-    $activeJobManager->add($job);
+    $activeJobManager->add($this->job);
   }
 
   /**
    * Test the remove job method.
    */
   public function testRemoveJob() {
-    $job = (object) [
-      'jobId' => '123',
-      'entityId' => '456',
-      'queueWorker' => 'Environment',
-    ];
-
-    $this->state->set(ActiveJobManager::STATE_KEY_PREFIX . $job->entityId, $job);
+    $this->state->set(ActiveJobManager::STATE_KEY_PREFIX . $this->job->entityId, $this->job);
 
     $this->state->expects($this->once())
       ->method('delete')
-      ->with(ActiveJobManager::STATE_KEY_PREFIX . $job->entityId);
+      ->with(ActiveJobManager::STATE_KEY_PREFIX . $this->job->entityId);
 
     $activeJobManager = new ActiveJobManager($this->state);
 
-    $activeJobManager->remove($job->entityId);
+    $activeJobManager->remove($this->job->entityId);
   }
 
   /**
    * Test the get job method.
    */
   public function testGetMethod() {
-    $job = (object) [
-      'jobId' => '123',
-      'entityId' => '456',
-      'queueWorker' => 'Environment',
-    ];
-
-    $this->state->set(ActiveJobManager::STATE_KEY_PREFIX . $job->entityId, $job);
+    $this->state->set(ActiveJobManager::STATE_KEY_PREFIX . $this->job->entityId, $this->job);
 
     $this->state->expects($this->once())
       ->method('getMultiple')
-      ->with([ActiveJobManager::STATE_KEY_PREFIX . $job->entityId]);
+      ->with([ActiveJobManager::STATE_KEY_PREFIX . $this->job->entityId]);
 
     $activeJobManager = new ActiveJobManager($this->state);
 
-    $activeJobManager->get([$job->entityId]);
+    $activeJobManager->get([$this->job->entityId]);
   }
 
   /**
