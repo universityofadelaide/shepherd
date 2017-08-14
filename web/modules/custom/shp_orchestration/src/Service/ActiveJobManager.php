@@ -4,7 +4,12 @@ namespace Drupal\shp_orchestration\Service;
 
 use Drupal\Core\State\State;
 
+/**
+ * Class ActiveJobManager.
+ */
 class ActiveJobManager {
+
+  const STATE_KEY_PREFIX = 'shp_job.';
 
   /**
    * The state service.
@@ -30,7 +35,7 @@ class ActiveJobManager {
    *   The job.
    */
   public function add(\stdClass $job) {
-    $this->state->set($job->id, $job);
+    $this->state->set(static::STATE_KEY_PREFIX . $job->entityId, $job);
   }
 
   /**
@@ -40,7 +45,7 @@ class ActiveJobManager {
    *   The entity id.
    */
   public function remove(int $entityId) {
-    $this->state->delete($entityId);
+    $this->state->delete(static::STATE_KEY_PREFIX . $entityId);
   }
 
   /**
@@ -53,7 +58,8 @@ class ActiveJobManager {
    *   An array of jobs.
    */
   public function get(array $entityIds) {
-    return $this->state->getMultiple($entityIds);
+    $stateIds = $this->applyIdPrefix($entityIds);
+    return $this->state->getMultiple($stateIds);
   }
 
   /**
@@ -67,7 +73,7 @@ class ActiveJobManager {
    */
   public function isComplete(int $entityId) {
     // @todo implement timeout or just manually clear broken state?
-    if ($job = $this->get([$entityId])) {
+    if ($job = $this->get([static::STATE_KEY_PREFIX . $entityId])) {
       return \Drupal::service($job->entityType)->isComplete($job->jobId, $entityId);
     }
     return TRUE;
@@ -80,11 +86,28 @@ class ActiveJobManager {
    *   The list of job id's to check.
    */
   public function update(array $entityIds = []) {
-    foreach ($entityIds as $entityId) {
+    foreach ($this->applyIdPrefix($entityIds) as $entityId) {
       if ($this->isComplete($entityId)) {
         $this->remove($entityId);
       }
     }
+  }
+
+  /**
+   * Apply prefix to multiple keys.
+   *
+   * @param array $entityIds
+   *   An array of entity ids.
+   *
+   * @return array
+   *   An array of prefixed state api keys.
+   */
+  protected function applyIdPrefix(array $entityIds) {
+    return array_map(
+      function ($entityId) {
+        return static::STATE_KEY_PREFIX . $entityId;
+      },
+      $entityIds);
   }
 
 }
