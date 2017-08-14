@@ -99,11 +99,18 @@ class ActiveJobManagerTest extends UnitTestCase {
 
     $this->state->expects($this->once())
       ->method('getMultiple')
-      ->with([ActiveJobManager::STATE_KEY_PREFIX . $this->job->entityId]);
+      ->with([ActiveJobManager::STATE_KEY_PREFIX . $this->job->entityId])
+      ->willReturn([$this->job]);
 
     $activeJobManager = new ActiveJobManager($this->state);
 
-    $activeJobManager->get([$this->job->entityId]);
+    $output = $activeJobManager->get([$this->job->entityId]);
+
+    $this->assertEquals(
+      [$this->job],
+      $output,
+      'The get method returned the job.'
+    );
   }
 
   /**
