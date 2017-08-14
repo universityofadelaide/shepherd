@@ -5,6 +5,7 @@ namespace Drupal\shp_orchestration\Service;
 use Drupal\Core\Queue\QueueFactory;
 use Drupal\Core\Queue\QueueWorkerManagerInterface;
 use Drupal\Core\Queue\SuspendQueueException;
+use Drupal\shp_orchestration\Exception\JobInProgressException;
 
 class JobQueue {
 
@@ -22,17 +23,26 @@ class JobQueue {
    *
    * @var \Drupal\Core\Queue\QueueWorkerManagerInterface
    */
-  private $queueManager;
+  protected $queueManager;
+
+  /**
+   * Active job manager service.
+   *
+   * @var \Drupal\shp_orchestration\Service\ActiveJobManager
+   */
+  protected $activeJobManager;
 
   /**
    * JobQueue constructor.
    * @param \Drupal\Core\Queue\QueueFactory $queueFactory
    * @param \Drupal\Core\Queue\QueueWorkerManagerInterface $queueManager
+   * @param \Drupal\shp_orchestration\Service\ActiveJobManager $activeJobManager
    */
-  public function __construct(QueueFactory $queueFactory, QueueWorkerManagerInterface $queueManager) {
+  public function __construct(QueueFactory $queueFactory, QueueWorkerManagerInterface $queueManager, ActiveJobManager $activeJobManager) {
     $this->queue = $queueFactory->get(static::SHP_ORCHESTRATION_JOB_QUEUE, TRUE);
     $this->queue->createQueue();
     $this->queueManager = $queueManager;
+    $this->activeJobManager = $activeJobManager;
   }
 
   /**
@@ -47,11 +57,16 @@ class JobQueue {
       try {
         /** @var \Drupal\Core\Queue\QueueWorkerInterface $queue_worker */
         $queue_worker = $this->queueManager->createInstance($job->worker);
-        // @todo ActiveJobMananger->add($job); ?
+        $this->activeJobManager->add($job);
         $queue_worker->processItem($job->data);
         $this->queue->deleteItem($job);
       }
       catch (SuspendQueueException $e) {
+        $this->queue->releaseItem($job);
+        break;
+      }
+      catch (JobInProgressException $e) {
+        // Job already in progress, return job to the queue.
         $this->queue->releaseItem($job);
         break;
       }

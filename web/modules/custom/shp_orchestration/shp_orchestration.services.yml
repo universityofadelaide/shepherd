@@ -7,7 +7,7 @@ services:
     arguments: ['@module_handler']
   shp_orchestration.job_queue:
     class: Drupal\shp_orchestration\Service\JobQueue
-    arguments: ['@queue.database']
+    arguments: ['@queue.database', '@shp_orchestration.active_job_manager']
   shp_orchestration.active_job_manager:
     class: Drupal\shp_orchestration\Service\ActiveJobManager
     arguments: ['@state']

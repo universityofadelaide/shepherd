@@ -2,7 +2,8 @@
 
 namespace Drupal\shp_orchestration\Service;
 
-use Drupal\Core\State\State;
+use Drupal\Core\State\StateInterface;
+use Drupal\shp_orchestration\Exception\JobInProgressException;
 
 /**
  * Class ActiveJobManager.
@@ -14,17 +15,17 @@ class ActiveJobManager {
   /**
    * The state service.
    *
-   * @var \Drupal\Core\State\State
+   * @var \Drupal\Core\State\StateInterface
    */
   protected $state;
 
   /**
    * ActiveJobManager constructor.
    *
-   * @param \Drupal\Core\State\State $state
+   * @param \Drupal\Core\State\StateInterface $state
    *   The state service.
    */
-  public function __construct(State $state) {
+  public function __construct(StateInterface $state) {
     $this->state = $state;
   }
 
@@ -33,8 +34,14 @@ class ActiveJobManager {
    *
    * @param \stdClass $job
    *   The job.
+   *
+   * @throws \Drupal\shp_orchestration\Exception\JobInProgressException
+   *   There's already a job in progress for the given environment.
    */
   public function add(\stdClass $job) {
+    if ($this->state->get(static::STATE_KEY_PREFIX . $job->entityId)) {
+      throw new JobInProgressException('A job is already in progress for this environment.');
+    }
     $this->state->set(static::STATE_KEY_PREFIX . $job->entityId, $job);
   }
 
@@ -58,7 +65,7 @@ class ActiveJobManager {
    *   An array of jobs.
    */
   public function get(array $entityIds) {
-    $stateIds = $this->applyIdPrefix($entityIds);
+    $stateIds = $this->applyKeyPrefix($entityIds);
     return $this->state->getMultiple($stateIds);
   }
 
@@ -74,7 +81,8 @@ class ActiveJobManager {
   public function isComplete(int $entityId) {
     // @todo implement timeout or just manually clear broken state?
     if ($job = $this->get([static::STATE_KEY_PREFIX . $entityId])) {
-      return \Drupal::service($job->entityType)->isComplete($job->jobId, $entityId);
+      // @todo Fix this service call with a better pattern. Plugins?
+      return \Drupal::service('shp_orchestration.' . $job->entityType)->isComplete($job->jobId, $entityId);
     }
     return TRUE;
   }
@@ -86,7 +94,7 @@ class ActiveJobManager {
    *   The list of job id's to check.
    */
   public function update(array $entityIds = []) {
-    foreach ($this->applyIdPrefix($entityIds) as $entityId) {
+    foreach ($this->applyKeyPrefix($entityIds) as $entityId) {
       if ($this->isComplete($entityId)) {
         $this->remove($entityId);
       }
@@ -102,7 +110,7 @@ class ActiveJobManager {
    * @return array
    *   An array of prefixed state api keys.
    */
-  protected function applyIdPrefix(array $entityIds) {
+  protected function applyKeyPrefix(array $entityIds) {
     return array_map(
       function ($entityId) {
         return static::STATE_KEY_PREFIX . $entityId;
