@@ -2,6 +2,7 @@
 
 namespace Drupal\shp_orchestration\Service;
 
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Queue\QueueFactory;
 use Drupal\Core\Queue\QueueWorkerManagerInterface;
 use Drupal\Core\Queue\SuspendQueueException;
@@ -34,6 +35,7 @@ class JobQueue {
 
   /**
    * JobQueue constructor.
+   *
    * @param \Drupal\Core\Queue\QueueFactory $queueFactory
    * @param \Drupal\Core\Queue\QueueWorkerManagerInterface $queueManager
    * @param \Drupal\shp_orchestration\Service\ActiveJobManager $activeJobManager
@@ -56,9 +58,9 @@ class JobQueue {
       $job = $this->queue->claimItem();
       try {
         /** @var \Drupal\Core\Queue\QueueWorkerInterface $queue_worker */
-        $queue_worker = $this->queueManager->createInstance($job->worker);
+        $queue_worker = $this->queueManager->createInstance($job->queueWorker);
         $this->activeJobManager->add($job);
-        $queue_worker->processItem($job->data);
+        $queue_worker->processItem($job);
         $this->queue->deleteItem($job);
       }
       catch (SuspendQueueException $e) {
@@ -79,10 +81,16 @@ class JobQueue {
   /**
    * Add a job to the queue for processing.
    *
-   * @param \stdClass $job
-   *   The queue item.
+   * @param \Drupal\Core\Entity\EntityInterface $entity
+   *   The entity to operate on.
+   * @param string $queueWorker
+   *   The queue worker to perform processing.
    */
-  public function add(\stdClass $job) {
+  public function add(EntityInterface $entity, $queueWorker) {
+    $job = (object) [
+      'entityId' => $entity->id(),
+      'queueWorker' => $queueWorker,
+    ];
     $this->queue->createItem($job);
   }
 

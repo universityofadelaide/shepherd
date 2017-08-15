@@ -108,7 +108,8 @@ function shp_backup_tokens($type, $tokens, array $data, array $options, Bubbleab
 function shp_backup_node_insert(NodeInterface $node) {
   switch ($node->bundle()) {
     case 'shp_backup':
-      \Drupal::service('shp_backup.backup')->create($node);
+      // \Drupal::service('shp_backup.backup')->create($node);
+      \Drupal::service('shp_orchestration.job_queue')->add($node, 'shp_backup');
       break;
   }
 }
