@@ -9,13 +9,13 @@ backup_command: |
   echo "Backing up private files"
   rsync -a [shepherd:site-private-files] [shepherd:backup-path]/private/
   echo "Backing up database"
-  drush -r web sql-dump --structure-tables-list=cache_bootstrap,cache_config,cache_container,cache_data,cache_default,cache_discovery,cache_dynamic_page_cache,cache_entity,cache_menu,cache_render,cache_rest,cache_toolbar,cachetags | gzip > [shepherd:backup-path]/database.sql.gz
+  drush -r web sql-dump --structure-tables-list=cache_bootstrap,cache_config,cache_container,cache_data,cache_default,cache_discovery,cache_dynamic_page_cache,cache_entity,cache_menu,cache_render,cache_rest,cache_toolbar,cachetags > [shepherd:backup-path]/database.sql
   echo "Backup complete"
 restore_command: |
   echo "Dropping database"
   drush -y -r web sql-drop
   echo "Restoring database from backup"
-  gunzip -c [shepherd:backup-path]/database.sql.gz | drush -r web sqlc
+  drush -r web sqlc < [shepherd:backup-path]/database.sql
   echo "Restoring files"
   rsync -a --delete [shepherd:backup-path]/files/ [shepherd:site-public-files] || true
   echo "Restoring private files"
