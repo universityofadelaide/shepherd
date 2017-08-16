@@ -37,8 +37,8 @@ fi
 if [ "${OPENSHIFT_TYPE}" == "minishift" ]; then
     # Setup a new mysql server, expose it and group the services.
     if ! oc get svc | grep -q mysql; then
-        oc new-app mysql MYSQL_ROOT_PASSWORD=${SUPER_SECRET_PASSWORD} -l db=shepherd
-        oc expose dc mysql --type=LoadBalancer --name=mysql-external
+        oc new-app mariadb MYSQL_ROOT_PASSWORD=${SUPER_SECRET_PASSWORD} -l db=shepherd
+        oc expose dc mariadb --type=LoadBalancer --name=mysql-external
         oc annotate svc mysql-external "service.alpha.openshift.io/dependencies=[{\"name\": \"mysql\", \"kind\": \"Service\"}]"
     fi
 else
