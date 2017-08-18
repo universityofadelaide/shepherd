@@ -1,0 +1,5 @@
+services:
+  shp_redis_support.environment:
+    class: Drupal\shp_redis_support\EventSubscriber\DeploymentEventSubscriber
+    tags:
+      - {name: event_subscriber}
