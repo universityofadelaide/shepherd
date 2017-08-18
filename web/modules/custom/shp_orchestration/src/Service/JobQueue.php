@@ -56,7 +56,9 @@ class JobQueue {
    */
   public function process(int $numJobs = 20) {
     for ($count = 0; $count < $numJobs; $count++) {
-      $job = $this->queue->claimItem();
+      if (!$job = $this->queue->claimItem()) {
+        return;
+      }
       try {
         /** @var \Drupal\Core\Queue\QueueWorkerInterface $queue_worker */
         $queue_worker = $this->queueManager->createInstance($job->queueWorker);
