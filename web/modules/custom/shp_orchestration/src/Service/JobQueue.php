@@ -3,6 +3,7 @@
 namespace Drupal\shp_orchestration\Service;
 
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Queue\QueueDatabaseFactory;
 use Drupal\Core\Queue\QueueFactory;
 use Drupal\Core\Queue\QueueWorkerManagerInterface;
 use Drupal\Core\Queue\SuspendQueueException;
@@ -40,8 +41,8 @@ class JobQueue {
    * @param \Drupal\Core\Queue\QueueWorkerManagerInterface $queueManager
    * @param \Drupal\shp_orchestration\Service\ActiveJobManager $activeJobManager
    */
-  public function __construct(QueueFactory $queueFactory, QueueWorkerManagerInterface $queueManager, ActiveJobManager $activeJobManager) {
-    $this->queue = $queueFactory->get(static::SHP_ORCHESTRATION_JOB_QUEUE, TRUE);
+  public function __construct(QueueDatabaseFactory $queueManager, ActiveJobManager $activeJobManager) {
+    $this->queue = $queueManager->get(static::SHP_ORCHESTRATION_JOB_QUEUE, TRUE);
     $this->queue->createQueue();
     $this->queueManager = $queueManager;
     $this->activeJobManager = $activeJobManager;
