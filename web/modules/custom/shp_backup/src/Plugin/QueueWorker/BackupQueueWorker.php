@@ -16,8 +16,9 @@ class BackupQueueWorker extends BackupQueueWorkerBase {
    * {@inheritdoc}
    */
   public function processItem($job) {
-    $node = $this->nodeStorage->load($job->entityId);
-    $this->backup->create($node);
+    if ($node = $this->nodeStorage->load($job->entityId)) {
+      $this->backup->create($node);
+    }
   }
 
 }

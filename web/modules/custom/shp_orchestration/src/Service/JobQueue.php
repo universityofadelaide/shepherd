@@ -3,7 +3,6 @@
 namespace Drupal\shp_orchestration\Service;
 
 use Drupal\Core\Entity\EntityInterface;
-use Drupal\Core\Queue\QueueDatabaseFactory;
 use Drupal\Core\Queue\QueueFactory;
 use Drupal\Core\Queue\QueueWorkerManagerInterface;
 use Drupal\Core\Queue\SuspendQueueException;
@@ -13,12 +12,7 @@ class JobQueue {
 
   const SHP_ORCHESTRATION_JOB_QUEUE = 'shp_orchestration_job_queue';
 
-  /**
-   * Queue service.
-   *
-   * @var \Drupal\Core\Queue\QueueInterface
-   */
-  protected $queue;
+  protected $queueFactory;
 
   /**
    * Queue manager service.
@@ -40,10 +34,11 @@ class JobQueue {
    * @param \Drupal\Core\Queue\QueueFactory $queueFactory
    * @param \Drupal\Core\Queue\QueueWorkerManagerInterface $queueManager
    * @param \Drupal\shp_orchestration\Service\ActiveJobManager $activeJobManager
+   *
+   * @internal param \Drupal\Core\Queue\QueueFactory $queueFactory
    */
-  public function __construct(QueueDatabaseFactory $queueManager, ActiveJobManager $activeJobManager) {
-    $this->queue = $queueManager->get(static::SHP_ORCHESTRATION_JOB_QUEUE, TRUE);
-    $this->queue->createQueue();
+  public function __construct(QueueFactory $queueFactory, QueueWorkerManagerInterface $queueManager, ActiveJobManager $activeJobManager) {
+    $this->queueFactory = $queueFactory;
     $this->queueManager = $queueManager;
     $this->activeJobManager = $activeJobManager;
   }
@@ -55,24 +50,26 @@ class JobQueue {
    *   Number of queue items to process.
    */
   public function process(int $numJobs = 20) {
+    $this->queueFactory->get(static::SHP_ORCHESTRATION_JOB_QUEUE)->createQueue();
+    $queue = $this->queueFactory->get(static::SHP_ORCHESTRATION_JOB_QUEUE);
     for ($count = 0; $count < $numJobs; $count++) {
-      if (!$job = $this->queue->claimItem()) {
+      if (!$job = $queue->claimItem()) {
         return;
       }
+      $queue_worker = $this->queueManager->createInstance($job->data->queueWorker);
+
       try {
-        /** @var \Drupal\Core\Queue\QueueWorkerInterface $queue_worker */
-        $queue_worker = $this->queueManager->createInstance($job->queueWorker);
-        $this->activeJobManager->add($job);
-        $queue_worker->processItem($job);
-        $this->queue->deleteItem($job);
+        $this->activeJobManager->add($job->data);
+        $queue_worker->processItem($job->data);
+        $queue->deleteItem($job);
       }
       catch (SuspendQueueException $e) {
-        $this->queue->releaseItem($job);
+        $queue->releaseItem($job);
         break;
       }
       catch (JobInProgressException $e) {
         // Job already in progress, return job to the queue.
-        $this->queue->releaseItem($job);
+        $queue->releaseItem($job);
         break;
       }
       catch (\Exception $e) {
@@ -94,7 +91,8 @@ class JobQueue {
       'entityId' => $entity->id(),
       'queueWorker' => $queueWorker,
     ];
-    $this->queue->createItem($job);
+    $queue = $this->queueFactory->get(static::SHP_ORCHESTRATION_JOB_QUEUE);
+    $queue->createItem($job);
   }
 
 }
