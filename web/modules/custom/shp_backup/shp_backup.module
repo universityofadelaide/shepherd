@@ -81,11 +81,11 @@ function shp_backup_tokens($type, $tokens, array $data, array $options, Bubbleab
         break;
 
       case 'site-private-files':
-        $replacements[$original] = '/code/private/';
+        $replacements[$original] = '/shared/private/';
         break;
 
       case 'site-public-files':
-        $replacements[$original] = '/code/web/sites/default/files/';
+        $replacements[$original] = '/shared/public/';
         break;
 
       case 'environment-type':
@@ -100,16 +100,4 @@ function shp_backup_tokens($type, $tokens, array $data, array $options, Bubbleab
 
   return $replacements;
 
-}
-
-/**
- * Implements hook_ENTITY_TYPE_insert().
- */
-function shp_backup_node_insert(NodeInterface $node) {
-  switch ($node->bundle()) {
-    case 'shp_backup':
-      // \Drupal::service('shp_backup.backup')->create($node);
-      \Drupal::service('shp_orchestration.job_queue')->add($node, 'shp_backup');
-      break;
-  }
 }

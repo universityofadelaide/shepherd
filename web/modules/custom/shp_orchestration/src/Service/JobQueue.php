@@ -86,13 +86,14 @@ class JobQueue {
    * @param string $queueWorker
    *   The queue worker to perform processing.
    */
-  public function add(EntityInterface $entity, $queueWorker) {
+  public function add(EntityInterface $entity, $queueWorker, $environment = NULL) {
     $job = (object) [
       'entityId' => $entity->id(),
       'queueWorker' => $queueWorker,
+      'environment' => $environment,
     ];
     $queue = $this->queueFactory->get(static::SHP_ORCHESTRATION_JOB_QUEUE);
-    $queue->createItem($job);
+    return $queue->createItem($job);
   }
 
 }

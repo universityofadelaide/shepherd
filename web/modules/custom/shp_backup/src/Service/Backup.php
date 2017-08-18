@@ -85,8 +85,7 @@ class Backup {
    * @param string $title
    *   The title to use for the backup node.
    *
-   * @return int|bool
-   *   SAVED_NEW or FALSE.
+   * @return \Drupal\Core\Entity\EntityInterface|static
    */
   public function createNode(NodeInterface $environment, $title = NULL) {
     if (!isset($title)) {
@@ -106,7 +105,9 @@ class Backup {
     ]);
     // Store the path for this backup in the backup node.
     $backup->set('field_shp_backup_path', $this->token->replace('[shepherd:backup-path]', ['backup' => $backup]));
-    return $backup->save();
+    $backup->save();
+
+    return $backup;
   }
 
   /**

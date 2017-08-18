@@ -109,7 +109,7 @@ class EnvironmentRestoreForm extends FormBase {
     $backup = Node::load($form_state->getValue('backup'));
 
     // Set the backup to restore from.
-    if ($this->backup->restore($backup, $environment)) {
+    if (\Drupal::service('shp_orchestration.job_queue')->add($backup, 'shp_restore', $environment->id())) {
       drupal_set_message($this->t('Restore has been queued for %title', [
         '%title' => $environment->getTitle(),
       ]));
@@ -120,6 +120,7 @@ class EnvironmentRestoreForm extends FormBase {
           '%title' => $environment->getTitle(),
         ]), 'error');
     }
+
     $form_state->setRedirect("entity.node.canonical", ['node' => $site->id()]);
   }
 

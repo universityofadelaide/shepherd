@@ -15,8 +15,11 @@ class RestoreQueueWorker extends BackupQueueWorkerBase {
   /**
    * {@inheritdoc}
    */
-  public function processItem($data) {
-    // $this->backup->restore($data['backup'], $data['environment']);
+  public function processItem($job) {
+    if ($node = $this->nodeStorage->load($job->entityId)) {
+      $environment = $this->nodeStorage->load($job->environment);
+      $this->backup->restore($node, $environment);
+    }
   }
 
 }

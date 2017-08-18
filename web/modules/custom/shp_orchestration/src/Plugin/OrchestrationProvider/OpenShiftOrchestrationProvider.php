@@ -662,12 +662,13 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
 
     if ($setup) {
       try {
-        // @todo Parametrise storage size.
-        $this->client->createPersistentVolumeClaim(
-          $shared_pvc_name,
-          'ReadWriteMany',
-          '5Gi'
-        );
+        if (!$this->client->getPersistentVolumeClaim($shared_pvc_name)) {
+          $this->client->createPersistentVolumeClaim(
+            $shared_pvc_name,
+            'ReadWriteMany',
+            '5Gi'
+          );
+        }
         if (!$this->client->getPersistentVolumeClaim($backup_pvc_name)) {
           $this->client->createPersistentVolumeClaim(
             $backup_pvc_name,
