@@ -85,13 +85,17 @@ class JobQueue {
    *   The entity to operate on.
    * @param string $queueWorker
    *   The queue worker to perform processing.
+   * @param array $data
+   *   Extra variables a worker may require.
+   *
+   * @return string
+   *   The unique ID for the queue item.
    */
-  public function add(EntityInterface $entity, $queueWorker, $environment = NULL) {
-    $job = (object) [
+  public function add(EntityInterface $entity, $queueWorker, array $data = []) {
+    $job = array_merge($data, [
       'entityId' => $entity->id(),
       'queueWorker' => $queueWorker,
-      'environment' => $environment,
-    ];
+    ]);
     $queue = $this->queueFactory->get(static::SHP_ORCHESTRATION_JOB_QUEUE);
     return $queue->createItem($job);
   }
