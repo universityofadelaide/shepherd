@@ -1,5 +1,7 @@
 <?php
 
+namespace Drupal\shp_custom\Plugin\Menu\LocalAction;
+
 use Drupal\Core\Menu\LocalActionDefault;
 use Drupal\Core\Routing\RedirectDestinationInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
