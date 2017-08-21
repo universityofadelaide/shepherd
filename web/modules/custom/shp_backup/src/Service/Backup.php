@@ -86,6 +86,7 @@ class Backup {
    *   The title to use for the backup node.
    *
    * @return \Drupal\Core\Entity\EntityInterface|static
+   *   The backup entity.
    */
   public function createNode(NodeInterface $environment, $title = NULL) {
     if (!isset($title)) {

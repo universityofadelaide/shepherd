@@ -8,6 +8,9 @@ use Drupal\Core\Queue\QueueWorkerBase;
 use Drupal\shp_backup\Service\Backup;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
+/**
+ * Class BackupQueueWorkerBase.
+ */
 abstract class BackupQueueWorkerBase extends QueueWorkerBase implements ContainerFactoryPluginInterface {
 
   /**
