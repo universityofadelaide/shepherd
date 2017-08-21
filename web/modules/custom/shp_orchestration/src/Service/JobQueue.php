@@ -92,7 +92,7 @@ class JobQueue {
    *   The unique ID for the queue item.
    */
   public function add(EntityInterface $entity, $queueWorker, array $data = []) {
-    $job = array_merge($data, [
+    $job = (object) array_merge($data, [
       'entityId' => $entity->id(),
       'queueWorker' => $queueWorker,
     ]);
