@@ -4,11 +4,9 @@ dependencies:
   config:
     - core.entity_view_mode.node.teaser
     - field.storage.node.field_shp_environment_type
-    - node.type.shp_backup
   module:
     - content_moderation
     - node
-    - shp_backup
     - shp_custom
     - shp_vue_view
     - user

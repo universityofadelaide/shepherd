@@ -57,7 +57,7 @@ class WithSiteId extends LocalActionDefault {
    */
   public function getOptions(RouteMatchInterface $route_match) {
     $options = parent::getOptions($route_match);
-    $options['query']['dreams'] = $this->redirectDestination->get();
+    $options['query']['site'] = $this->redirectDestination->get();
     return $options;
   }
 
