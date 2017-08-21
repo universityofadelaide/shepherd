@@ -43,15 +43,15 @@ class Backup {
   /**
    * Backup constructor.
    *
-   * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
+   * @param \Drupal\Core\Config\ConfigFactoryInterface $configFactory
    *   Config factory.
    * @param \Drupal\token\TokenInterface $token
    *   Token service.
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entityTypeManager
    *   Entity type manager.
    */
-  public function __construct(ConfigFactoryInterface $config_factory, TokenInterface $token, EntityTypeManagerInterface $entityTypeManager) {
-    $this->configFactory = $config_factory;
+  public function __construct(ConfigFactoryInterface $configFactory, TokenInterface $token, EntityTypeManagerInterface $entityTypeManager) {
+    $this->configFactory = $configFactory;
     $this->config = $this->configFactory->get('shp_backup.settings');
     $this->token = $token;
     $this->entityTypeManager = $entityTypeManager;
@@ -190,6 +190,24 @@ class Backup {
     );
 
     return $result;
+  }
+
+  /**
+   * Check if a job has completed.
+   *
+   * @param string $jobId
+   *   The job id.
+   * @param int $entityId
+   *   The entity id.
+   *
+   * @return bool
+   *   True if finished, otherwise false.
+   */
+  public function isComplete($jobId, $entityId) {
+    // @todo Check backup and restore.
+
+    // Let jobs continue for now.
+    return TRUE;
   }
 
 }
