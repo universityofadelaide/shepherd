@@ -5,7 +5,7 @@ services:
     class: Drupal\shp_custom\Service\RandomString
   shp_custom.site:
     class: Drupal\shp_custom\Service\Site
-  shp_custon.environment:
+  shp_custom.environment:
     class: Drupal\shp_custom\Service\Environment
     arguments:
       - @request_stack
