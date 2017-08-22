@@ -2,7 +2,9 @@
 
 namespace Drupal\shp_custom\Service;
 
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\node\Entity\Node;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
@@ -20,13 +22,40 @@ class Environment {
   protected $requestStack;
 
   /**
+   * Current request.
+   *
+   * @var null|\Symfony\Component\HttpFoundation\Request
+   */
+  protected $currentRequest;
+
+  /**
+   * Entity Type Manager.
+   *
+   * @var EntityTypeManagerInterface
+   */
+  protected $entityTypeManager;
+
+
+  /**
+   * Node entity type.
+   *
+   * @var \Drupal\Core\Entity\EntityStorageInterface
+   */
+  protected $node;
+
+  /**
    * Environment constructor.
    *
    * @param \Symfony\Component\HttpFoundation\RequestStack $requestStack
    *    Request stack service.
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entityTypeManager
+   *    Entity Type Manager.
    */
-  public function __construct(RequestStack $requestStack) {
+  public function __construct(RequestStack $requestStack, EntityTypeManagerInterface $entityTypeManager) {
     $this->requestStack = $requestStack;
+    $this->entityTypeManager = $entityTypeManager;
+    $this->currentRequest = $this->requestStack->getCurrentRequest();
+    $this->node = $this->entityTypeManager->getStorage('node');
   }
 
   /**
@@ -38,9 +67,14 @@ class Environment {
    *   Form State.
    */
   public function alterNodeAddForm(array &$form, FormStateInterface $form_state) {
-    $test = 'here';
-    // @todo If query string autcomplete field.
-    // @todo Add states api to fields.
+
+    // If the form has a site_id query param.
+    if ($this->currentRequest->query->has('site_id')) {
+      // Get the site id.
+      $site_id = $this->currentRequest->query->get('site_id');
+      $form['field_shp_site']['widget'][0]['target_id']['#default_value'] = $this->node->load($site_id);
+    }
+
   }
 
 }
