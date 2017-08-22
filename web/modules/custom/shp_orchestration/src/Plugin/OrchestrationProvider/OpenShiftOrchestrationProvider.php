@@ -473,6 +473,19 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
   }
 
   /**
+   * Fetch the job from the provider.
+   *
+   * @param string $name
+   *   The job name.
+   *
+   * @return array|bool
+   *   The job, else false.
+   */
+  public function getJob(string $name) {
+    return $this->client->getJob($name);
+  }
+
+  /**
    * {@inheritdoc}
    */
   public function getSecret(string $name, string $key = NULL) {

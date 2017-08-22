@@ -77,6 +77,7 @@ abstract class BackupQueueWorkerBase extends QueueWorkerBase implements Containe
    */
   public function getJobName($response_body) {
     // @todo Move to more generic location.
+    // @todo Fix OpenShift specific structure leaking here.
     if (array_key_exists('metadata', $response_body) && array_key_exists('name', $response_body['metadata'])) {
       return $response_body['metadata']['name'];
     }

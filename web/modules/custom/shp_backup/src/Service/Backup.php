@@ -7,6 +7,7 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\node\Entity\Node;
 use Drupal\node\NodeInterface;
 use Drupal\shp_orchestration\Exception\OrchestrationProviderNotConfiguredException;
+use Drupal\shp_orchestration\Service\ActiveJobManager;
 use Drupal\token\TokenInterface;
 use Drupal\views\Views;
 
@@ -41,6 +42,13 @@ class Backup {
   protected $entityTypeManager;
 
   /**
+   * The active job manager service.
+   *
+   * @var \Drupal\shp_orchestration\Service\ActiveJobManager
+   */
+  protected $activeJobManager;
+
+  /**
    * Backup constructor.
    *
    * @param \Drupal\Core\Config\ConfigFactoryInterface $configFactory
@@ -49,12 +57,15 @@ class Backup {
    *   Token service.
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entityTypeManager
    *   Entity type manager.
+   * @param \Drupal\shp_orchestration\Service\ActiveJobManager $activeJobManager
+   *   Active job manager.
    */
-  public function __construct(ConfigFactoryInterface $configFactory, TokenInterface $token, EntityTypeManagerInterface $entityTypeManager) {
+  public function __construct(ConfigFactoryInterface $configFactory, TokenInterface $token, EntityTypeManagerInterface $entityTypeManager, ActiveJobManager $activeJobManager) {
     $this->configFactory = $configFactory;
     $this->config = $this->configFactory->get('shp_backup.settings');
     $this->token = $token;
     $this->entityTypeManager = $entityTypeManager;
+    $this->activeJobManager = $activeJobManager;
   }
 
   /**
@@ -200,17 +211,36 @@ class Backup {
   /**
    * Check if a job has completed.
    *
-   * @param string $jobId
-   *   The job id.
    * @param int $entityId
    *   The entity id.
    *
    * @return bool
    *   True if finished, otherwise false.
    */
-  public function isComplete($jobId, $entityId) {
+  public function isComplete($entityId) {
     // @todo Check backup and restore.
 
+    if ($job = $this->activeJobManager->get([$entityId])) {
+      try {
+        // @todo Inject the service.
+        /** @var \Drupal\shp_orchestration\OrchestrationProviderInterface $orchestration_provider_plugin */
+        $orchestration_provider_plugin = \Drupal::service('plugin.manager.orchestration_provider')
+          ->getProviderInstance();
+      }
+      catch (OrchestrationProviderNotConfiguredException $e) {
+        return FALSE;
+      }
+
+      switch ($job->data->type) {
+        case 'shp_backup':
+          // @todo Fix OpenShift specific structure leaking here.
+          $job = $orchestration_provider_plugin->getJob($job->data->name);
+          break;
+        case 'shp_restore':
+
+          break;
+      }
+    }
 
     // Let jobs continue for now.
     return TRUE;
