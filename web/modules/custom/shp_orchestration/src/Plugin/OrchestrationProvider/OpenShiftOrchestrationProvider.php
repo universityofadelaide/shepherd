@@ -3,6 +3,7 @@
 namespace Drupal\shp_orchestration\Plugin\OrchestrationProvider;
 
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Url;
 use Drupal\node\Entity\Node;
 use Drupal\shp_orchestration\Event\OrchestrationEnvironmentEvent;
 use Drupal\shp_orchestration\Event\OrchestrationEvents;
@@ -150,6 +151,8 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     string $environment_id,
     string $environment_url,
     string $builder_image,
+    string $domain,
+    string $path,
     string $source_repo,
     string $source_ref = 'master',
     string $source_secret = NULL,
@@ -270,7 +273,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     ];
     try {
       $this->client->createService($deployment_name, $service_data);
-      $this->client->createRoute($deployment_name, $deployment_name, '');
+      $this->client->createRoute($deployment_name, $deployment_name, $domain, $path);
     }
     catch (ClientException $e) {
       $this->handleClientException($e);
@@ -548,7 +551,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
   /**
    * {@inheritdoc}
    */
-  public function getEnvironmentRoute(string $distribution_name, string $short_name, string $environment_id) {
+  public function getEnvironmentUrl(string $distribution_name, string $short_name, string $environment_id) {
 
     $deployment_name = self::generateDeploymentName(
       $distribution_name,
@@ -558,13 +561,13 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
 
     try {
       $route = $this->client->getRoute($deployment_name);
-      return [
-        'path' => $route['spec']['host'],
-        'status' => $route['status']['ingress'][0],
-      ];
+      return Url::fromUri('//' . $route['spec']['host'] . (array_key_exists('path', $route['spec']) ? $route['spec']['path'] : '/'));
     }
     catch (ClientException $e) {
       $this->handleClientException($e);
+      return FALSE;
+    }
+    catch (\InvalidArgumentException $e) {
       return FALSE;
     }
   }

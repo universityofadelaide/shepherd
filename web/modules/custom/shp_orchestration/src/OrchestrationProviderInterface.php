@@ -87,6 +87,10 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
    *   Absolute url for the environment.
    * @param string $builder_image
    *   An s2i-enabled image to use to build (and run) the source code.
+   * @param string $domain
+   *   The domain associated with the environment.
+   * @param string $path
+   *   The path associated with the environment.
    * @param string $source_repo
    *   Source code git repository.
    * @param string $source_ref
@@ -110,6 +114,8 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
     string $environment_id,
     string $environment_url,
     string $builder_image,
+    string $domain,
+    string $path,
     string $source_repo,
     string $source_ref = 'master',
     string $source_secret = NULL,
@@ -288,7 +294,7 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
   public function getSiteEnvironmentsStatus(string $site_id);
 
   /**
-   * Retrieves the route for a given environment.
+   * Retrieves the url for a given environment.
    *
    * @param string $distribution_name
    *   Name of the distribution.
@@ -297,10 +303,10 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
    * @param string $environment_id
    *   Environment node id.
    *
-   * @return array|bool
-   *   Returns collection list of routes and the environments they belong to.
+   * @return \Drupal\Core\Url|bool
+   *   Returns environment url, or false.
    */
-  public function getEnvironmentRoute(
+  public function getEnvironmentUrl(
     string $distribution_name,
     string $short_name,
     string $environment_id

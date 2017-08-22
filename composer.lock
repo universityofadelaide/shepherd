@@ -875,11 +875,7 @@
                 },
                 "drupal": {
                     "version": "8.x-1.0-rc1+0-dev",
-                    "datestamp": "1494724687",
-                    "security-coverage": {
-                        "status": "not-covered",
-                        "message": "Dev releases are not covered by Drupal security advisories."
-                    }
+                    "datestamp": "1494724687"
                 }
             },
             "notification-url": "https://packages.drupal.org/8/downloads",
@@ -1120,7 +1116,7 @@
             "dist": {
                 "type": "zip",
                 "url": "https://ftp.drupal.org/files/projects/devel-8.x-1.0-alpha1.zip",
-                "reference": "8.x-1.0-alpha1",
+                "reference": null,
                 "shasum": "f05e874d4ae2515e0a86df3017a081d4cce31fef"
             },
             "require": {
@@ -1133,11 +1129,7 @@
                 },
                 "drupal": {
                     "version": "8.x-1.0-alpha1",
-                    "datestamp": "1480796583",
-                    "security-coverage": {
-                        "status": "not-covered",
-                        "message": "Alpha releases are not covered by Drupal security advisories."
-                    }
+                    "datestamp": "1480796583"
                 }
             },
             "notification-url": "https://packages.drupal.org/8/downloads",
@@ -1261,11 +1253,7 @@
                 },
                 "drupal": {
                     "version": "8.x-1.0",
-                    "datestamp": "1490096883",
-                    "security-coverage": {
-                        "status": "covered",
-                        "message": "Covered by Drupal's security advisory policy"
-                    }
+                    "datestamp": "1490096883"
                 }
             },
             "notification-url": "https://packages.drupal.org/8/downloads",
@@ -1303,7 +1291,7 @@
             "dist": {
                 "type": "zip",
                 "url": "https://ftp.drupal.org/files/projects/group-8.x-1.0-rc1.zip",
-                "reference": "8.x-1.0-rc1",
+                "reference": null,
                 "shasum": "6991939b310fbc5ac19151eb0d70e9b30f340354"
             },
             "require": {
@@ -1316,11 +1304,7 @@
                 },
                 "drupal": {
                     "version": "8.x-1.0-rc1",
-                    "datestamp": "1498033733",
-                    "security-coverage": {
-                        "status": "not-covered",
-                        "message": "RC releases are not covered by Drupal security advisories."
-                    }
+                    "datestamp": "1496752442"
                 }
             },
             "notification-url": "https://packages.drupal.org/8/downloads",
@@ -1356,12 +1340,8 @@
                     "dev-1.x": "1.x-dev"
                 },
                 "drupal": {
-                    "version": "8.x-1.0-beta1+6-dev",
-                    "datestamp": "1497866642",
-                    "security-coverage": {
-                        "status": "not-covered",
-                        "message": "Project has not opted into security advisory coverage!"
-                    }
+                    "version": "8.x-1.0-beta1+5-dev",
+                    "datestamp": "1491326283"
                 },
                 "patches_applied": {
                     "Add key / value label as setting": "https://www.drupal.org/files/issues/key_value_field-labels_as_settings-2842240-2.patch"
@@ -1417,11 +1397,7 @@
                 },
                 "drupal": {
                     "version": "8.x-1.1",
-                    "datestamp": "1487331784",
-                    "security-coverage": {
-                        "status": "covered",
-                        "message": "Covered by Drupal's security advisory policy"
-                    }
+                    "datestamp": "1487331784"
                 }
             },
             "notification-url": "https://packages.drupal.org/8/downloads",
@@ -1474,11 +1450,7 @@
                 },
                 "drupal": {
                     "version": "8.x-1.x-dev",
-                    "datestamp": "1486527783",
-                    "security-coverage": {
-                        "status": "not-covered",
-                        "message": "Dev releases are not covered by Drupal security advisories."
-                    }
+                    "datestamp": "1486245484"
                 },
                 "patches_applied": {
                     "Override return destination parameter": "https://www.drupal.org/files/issues/r4032login_2534308_7.patch"
@@ -1544,7 +1516,7 @@
             "dist": {
                 "type": "zip",
                 "url": "https://ftp.drupal.org/files/projects/token-8.x-1.0.zip",
-                "reference": "8.x-1.0",
+                "reference": null,
                 "shasum": "d24c7f1ffddbd0fc56bc92bacae1c4ff769a4442"
             },
             "require": {
@@ -1557,11 +1529,7 @@
                 },
                 "drupal": {
                     "version": "8.x-1.0",
-                    "datestamp": "1493466843",
-                    "security-coverage": {
-                        "status": "covered",
-                        "message": "Covered by Drupal's security advisory policy"
-                    }
+                    "datestamp": "1493466843"
                 }
             },
             "notification-url": "https://packages.drupal.org/8/downloads",
@@ -4050,12 +4018,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/universityofadelaide/openshift-client.git",
-                "reference": "265368c93aded65ffbcbe5de83914e25c163b35c"
+                "reference": "7e2c8c157bd4d06f3f14bdf4bada6f19e09e67d6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/universityofadelaide/openshift-client/zipball/265368c93aded65ffbcbe5de83914e25c163b35c",
-                "reference": "265368c93aded65ffbcbe5de83914e25c163b35c",
+                "url": "https://api.github.com/repos/universityofadelaide/openshift-client/zipball/7e2c8c157bd4d06f3f14bdf4bada6f19e09e67d6",
+                "reference": "7e2c8c157bd4d06f3f14bdf4bada6f19e09e67d6",
                 "shasum": ""
             },
             "require": {
@@ -4087,7 +4055,7 @@
                 }
             ],
             "description": "Simple OpenShift client for PHP.",
-            "time": "2017-08-18T10:58:39+00:00"
+            "time": "2017-08-21T05:52:45+00:00"
         },
         {
             "name": "universityofadelaide/shepherd-drupal-scaffold",
@@ -4800,11 +4768,7 @@
                 },
                 "drupal": {
                     "version": "8.x-1.0-alpha1",
-                    "datestamp": "1480796583",
-                    "security-coverage": {
-                        "status": "not-covered",
-                        "message": "Alpha releases are not covered by Drupal security advisories."
-                    }
+                    "datestamp": "1480796583"
                 }
             },
             "notification-url": "https://packages.drupal.org/8/downloads",
