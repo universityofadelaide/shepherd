@@ -42,6 +42,19 @@ class ActiveJobManager {
     if ($this->state->get(static::STATE_KEY_PREFIX . $job->entityId)) {
       throw new JobInProgressException('A job is already in progress for this environment.');
     }
+    $this->update($job);
+  }
+
+  /**
+   * Update a job in progress.
+   *
+   * Should only be used to add data to an existing job.
+   * Don't be evil! Use add() for new jobs.
+   *
+   * @param \stdClass $job
+   *   The job.
+   */
+  public function update(\stdClass $job) {
     $this->state->set(static::STATE_KEY_PREFIX . $job->entityId, $job);
   }
 
@@ -93,7 +106,7 @@ class ActiveJobManager {
    * @param array $entityIds
    *   The list of job id's to check.
    */
-  public function update(array $entityIds = []) {
+  public function updateState(array $entityIds = []) {
     foreach ($this->applyKeyPrefix($entityIds) as $entityId) {
       if ($this->isComplete($entityId)) {
         $this->remove($entityId);

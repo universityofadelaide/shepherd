@@ -320,8 +320,8 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
    * @param string $commands
    *   Commands to run to perform the backup.
    *
-   * @return bool
-   *   Returns true if succeeded.
+   * @return array|bool
+   *   Returns a response body if successful, otherwise false.
    */
   public function backupEnvironment(
     string $distribution_name,
@@ -345,8 +345,8 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
    * @param string $commands
    *   Commands to run to perform the backup.
    *
-   * @return bool
-   *   Returns true if succeeded.
+   * @return array|bool
+   *   Returns a response body if successful, otherwise false.
    */
   public function restoreEnvironment(
     string $distribution_name,
@@ -370,8 +370,8 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
    * @param string $commands
    *   Commands to run to perform the backup.
    *
-   * @return bool
-   *   Returns true if succeeded.
+   * @return array|bool
+   *   Returns a response body if successful, otherwise false.
    */
   public function executeJob(
     string $distribution_name,

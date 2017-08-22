@@ -6,6 +6,7 @@ use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Queue\QueueWorkerBase;
 use Drupal\shp_backup\Service\Backup;
+use Drupal\shp_orchestration\Service\ActiveJobManager;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -28,6 +29,13 @@ abstract class BackupQueueWorkerBase extends QueueWorkerBase implements Containe
   protected $backup;
 
   /**
+   * The active job manager service.
+   *
+   * @var \Drupal\shp_orchestration\Service\ActiveJobManager
+   */
+  protected $activeJobManager;
+
+  /**
    * Creates a new NodePublishBase object.
    *
    * @param array $configuration
@@ -40,11 +48,14 @@ abstract class BackupQueueWorkerBase extends QueueWorkerBase implements Containe
    *   The node storage.
    * @param \Drupal\shp_backup\Service\Backup $backup
    *   The backup service.
+   * @param \Drupal\shp_orchestration\Service\ActiveJobManager $activeJobManager
+   *   The active job manager service.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityStorageInterface $node_storage, Backup $backup) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityStorageInterface $node_storage, Backup $backup, ActiveJobManager $activeJobManager) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->nodeStorage = $node_storage;
     $this->backup = $backup;
+    $this->activeJobManager = $activeJobManager;
   }
 
   /**
@@ -56,17 +67,35 @@ abstract class BackupQueueWorkerBase extends QueueWorkerBase implements Containe
       $plugin_id,
       $plugin_definition,
       $container->get('entity.manager')->getStorage('node'),
-      $container->get('shp_backup.backup')
+      $container->get('shp_backup.backup'),
+      $container->get('shp_orchestration.active_job_manager')
     );
   }
 
   /**
-   * {@inheritdoc}
+   * Get the job name from the response.
    */
-  public function processItem($data) {
-    // call_user_func_array($data['method'], $data['args']); ???
-    // $this->backup->create($backup);
-    // $this->backup->restore($backup, $environment);
+  public function getJobName($response_body) {
+    // @todo Move to more generic location.
+    if (array_key_exists('metadata', $response_body) && array_key_exists('name', $response_body['metadata'])) {
+      return $response_body['metadata']['name'];
+    }
+    return FALSE;
+  }
+
+  /**
+   * Inform the active job manager that the job has a name.
+   *
+   * @param \stdClass $job
+   *   The job.
+   * @param array $response_body
+   *   The response body to extract job name from.
+   */
+  public function setJobName(\stdClass $job, array $response_body) {
+    if ($name = $this->getJobName($response_body)) {
+      $job->name = $name;
+      $this->activeJobManager->update($job);
+    }
   }
 
 }

@@ -457,7 +457,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       $commands,
     ];
     try {
-      $this->client->createJob(
+      $response_body = $this->client->createJob(
         $deployment_name . '-' . \Drupal::service('shp_custom.random_string')->generate(5),
         $image_stream['status']['dockerImageRepository'] . ':' . $source_ref,
         $args_array,
@@ -469,7 +469,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       $this->handleClientException($e);
       return FALSE;
     }
-    return TRUE;
+    return $response_body;
   }
 
   /**
