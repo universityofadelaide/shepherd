@@ -116,6 +116,9 @@ function shp_orchestration_shp_env_vars(NodeInterface $node) {
   return $env_vars;
 }
 
+/**
+ * Implements hook_cron().
+ */
 function shp_orchestration_cron() {
   \Drupal::service('shp_orchestration.job_queue')->process();
 }

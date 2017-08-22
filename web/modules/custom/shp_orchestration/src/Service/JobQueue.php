@@ -54,12 +54,10 @@ class JobQueue {
     $queue = $this->queueFactory->get(static::SHP_ORCHESTRATION_JOB_QUEUE);
 
     for ($count = 0; $count < $numJobs; $count++) {
-      // @todo Can I actually claim this job? AJM
       if (!$job = $queue->claimItem()) {
         return;
       }
       $queue_worker = $this->queueManager->createInstance($job->data->queueWorker);
-
       try {
         // Set this job "in progress".
         $this->activeJobManager->add($job->data);
