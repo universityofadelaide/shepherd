@@ -97,6 +97,7 @@ class ActiveJobManager {
       // @todo Fix this service call with a better pattern. Plugins?
       return \Drupal::service('shp_orchestration.' . $job->entityType)->isComplete($job->jobId, $entityId);
     }
+    // There is no active job for this environment.
     return TRUE;
   }
 

@@ -109,6 +109,7 @@ class EnvironmentRestoreForm extends FormBase {
     $backup = Node::load($form_state->getValue('backup'));
 
     // Set the backup to restore from.
+    // @todo Inject the service.
     if (\Drupal::service('shp_orchestration.job_queue')->add($backup, 'shp_restore', ['environment' => $environment->id()])) {
       drupal_set_message($this->t('Restore has been queued for %title', [
         '%title' => $environment->getTitle(),
