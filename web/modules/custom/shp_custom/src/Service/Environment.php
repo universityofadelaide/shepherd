@@ -66,7 +66,7 @@ class Environment {
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   Form State.
    */
-  public function alterNodeAddForm(array &$form, FormStateInterface $form_state) {
+  public function formAlter(array &$form, FormStateInterface $form_state) {
 
     // If the form has a site_id query param.
     if ($this->currentRequest->query->has('site_id')) {
