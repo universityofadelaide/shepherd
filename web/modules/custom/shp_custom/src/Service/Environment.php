@@ -77,7 +77,7 @@ class Environment {
   public function formAlter(array &$form, FormStateInterface $form_state) {
 
     // @todo - Set this permission to something more granular.
-    $access = $this->currentUser->hasPermission('administer roles');
+    $access = $this->currentUser->hasPermission('dreams');
     $this->setSiteField($form, $access);
 
   }
@@ -93,7 +93,7 @@ class Environment {
   public function setSiteField(array &$form, bool $access) {
 
     // Set the visibility of the field.
-    $form['field_shp_site'];
+    $form['field_shp_site']['#access'] = $access;
 
     // If the form has a site_id query param.
     if ($this->currentRequest->query->has('site_id')) {
