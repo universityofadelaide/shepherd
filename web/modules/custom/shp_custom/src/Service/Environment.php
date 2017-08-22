@@ -4,7 +4,7 @@ namespace Drupal\shp_custom\Service;
 
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\node\Entity\Node;
+use Drupal\Core\Session\AccountProxyInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
@@ -44,6 +44,13 @@ class Environment {
   protected $node;
 
   /**
+   * Current User.
+   *
+   * @var \Drupal\Core\Session\AccountProxyInterface
+   */
+  protected $currentUser;
+
+  /**
    * Environment constructor.
    *
    * @param \Symfony\Component\HttpFoundation\RequestStack $requestStack
@@ -51,11 +58,12 @@ class Environment {
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entityTypeManager
    *    Entity Type Manager.
    */
-  public function __construct(RequestStack $requestStack, EntityTypeManagerInterface $entityTypeManager) {
+  public function __construct(RequestStack $requestStack, EntityTypeManagerInterface $entityTypeManager, AccountProxyInterface $currentUser) {
     $this->requestStack = $requestStack;
     $this->entityTypeManager = $entityTypeManager;
     $this->currentRequest = $this->requestStack->getCurrentRequest();
     $this->node = $this->entityTypeManager->getStorage('node');
+    $this->currentUser = $currentUser;
   }
 
   /**
@@ -68,13 +76,31 @@ class Environment {
    */
   public function formAlter(array &$form, FormStateInterface $form_state) {
 
+    // @todo - Set this permission to something more granular.
+    $access = $this->currentUser->hasPermission('administer roles');
+    $this->setSiteField($form, $access);
+
+  }
+
+  /**
+   * Set site field autocomplete with the site_id entity as the default value.
+   *
+   * @param array $form
+   *    Form render array.
+   * @param bool $access
+   *    Current user has access to this field.
+   */
+  public function setSiteField(array &$form, bool $access) {
+
+    // Set the visibility of the field.
+    $form['field_shp_site'];
+
     // If the form has a site_id query param.
     if ($this->currentRequest->query->has('site_id')) {
       // Get the site id.
       $site_id = $this->currentRequest->query->get('site_id');
       $form['field_shp_site']['widget'][0]['target_id']['#default_value'] = $this->node->load($site_id);
     }
-
   }
 
 }
