@@ -19,6 +19,7 @@
         "drupal/cas":                                    "1.x-dev",
         "drupal/devel":                                  "1.*@dev",
         "drupal/entity_reference_revisions":             "dev-1.x",
+        "drupal/field_group":                            "1.*@dev",
         "drupal/group":                                  "^1.0@beta",
         "drupal/key_value_field":                        "1.x-dev",
         "drupal/paragraphs":                             "1.*",
