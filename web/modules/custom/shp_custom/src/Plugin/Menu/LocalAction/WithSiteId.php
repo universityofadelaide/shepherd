@@ -3,7 +3,6 @@
 namespace Drupal\shp_custom\Plugin\Menu\LocalAction;
 
 use Drupal\Core\Menu\LocalActionDefault;
-use Drupal\Core\Routing\RedirectDestinationInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Routing\RouteProviderInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -12,13 +11,6 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * Modifies the Local Action to add shepherd site id.
  */
 class WithSiteId extends LocalActionDefault {
-
-  /**
-   * The redirect destination.
-   *
-   * @var \Drupal\Core\Routing\RedirectDestinationInterface
-   */
-  private $redirectDestination;
 
   /**
    * Constructs a WithDestination object.
@@ -31,12 +23,9 @@ class WithSiteId extends LocalActionDefault {
    *   The plugin implementation definition.
    * @param \Drupal\Core\Routing\RouteProviderInterface $route_provider
    *   The route provider to load routes by name.
-   * @param \Drupal\Core\Routing\RedirectDestinationInterface $redirect_destination
-   *   The redirect destination.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, RouteProviderInterface $route_provider, RedirectDestinationInterface $redirect_destination) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, RouteProviderInterface $route_provider) {
     parent::__construct($configuration, $plugin_id, $plugin_definition, $route_provider);
-    $this->redirectDestination = $redirect_destination;
   }
 
   /**
@@ -47,8 +36,7 @@ class WithSiteId extends LocalActionDefault {
       $configuration,
       $plugin_id,
       $plugin_definition,
-      $container->get('router.route_provider'),
-      $container->get('redirect.destination')
+      $container->get('router.route_provider')
     );
   }
 
@@ -57,7 +45,7 @@ class WithSiteId extends LocalActionDefault {
    */
   public function getOptions(RouteMatchInterface $route_match) {
     $options = parent::getOptions($route_match);
-    $options['query']['site'] = $this->redirectDestination->get();
+    $options['query']['site_id'] = $route_match->getParameter('node');
     return $options;
   }
 
