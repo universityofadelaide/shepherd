@@ -454,7 +454,7 @@ display:
           empty: true
           tokenize: true
           content:
-            value: '<a class="c-btn button" href="/node/add/shp_environment">Add environment</a>'
+            value: ''
             format: full_html
           plugin_id: text
       footer: {  }
