@@ -3,7 +3,6 @@
 namespace Drupal\shp_custom\Plugin\views\field;
 
 use Drupal\views\Plugin\views\field\FieldPluginBase;
-use Drupal\Core\Url;
 use Drupal\views\ResultRow;
 
 /**
@@ -37,22 +36,26 @@ class SiteEnvironmentUrl extends FieldPluginBase {
     $entity = $values->_entity;
     $site = $entity->field_shp_site->first()->entity;
     $distribution = $site->field_shp_distribution->first()->entity;
-    $route = $orchestrationProvider->getEnvironmentRoute(
+    $url = $orchestrationProvider->getEnvironmentUrl(
       $distribution->getTitle(),
       $site->field_shp_short_name->value,
       $entity->id()
     );
-    $domain = $entity->field_shp_domain->value;
-    $path = $entity->field_shp_site->entity->field_shp_path->value;
 
-    $build = [
-      '#type' => 'link',
-      '#title' => $domain . $path,
-      // Default to nothing if the route is null.
-      '#url' => isset($route['path']) ? Url::fromUri('//' . $route['path']) : '',
-    ];
-
-    return $build;
+    if ($url) {
+      $field = [
+        '#type' => 'link',
+        '#title' => substr($url->toString(), 2),
+        '#url' => $url,
+      ];
+    }
+    else {
+      $field = [
+        '#type' => 'markup',
+        '#markup' => 'No url set',
+      ];
+    }
+    return $field;
   }
 
 }
