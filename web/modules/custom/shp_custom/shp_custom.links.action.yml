@@ -14,3 +14,10 @@ shp_custom.add_environment:
   title: 'Add new environment'
   appears_on:
     - 'view.shp_site_environments.page_1'
+shp_custom.add_site:
+  route_name: 'node.add'
+  route_parameters:
+    node_type: 'shp_site'
+  title: 'Create a new site'
+  appears_on:
+    - 'view.shp_sites.page_1'
