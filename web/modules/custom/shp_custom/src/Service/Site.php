@@ -3,6 +3,7 @@
 namespace Drupal\shp_custom\Service;
 
 use Drupal\Core\Datetime\DrupalDateTime;
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\node\Entity\Node;
 use Drupal\taxonomy\Entity\Term;
@@ -94,6 +95,18 @@ class Site {
       ->condition('status', NODE_PUBLISHED)
       ->execute();
     return Node::loadMultiple($results);
+  }
+
+  /**
+   * Apply alterations to node add form.
+   *
+   * @param array $form
+   *   Form render array.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   Form State.
+   */
+  public function formAlter(array &$form, FormStateInterface $form_state) {
+    // @todo - DREAMS
   }
 
 }
