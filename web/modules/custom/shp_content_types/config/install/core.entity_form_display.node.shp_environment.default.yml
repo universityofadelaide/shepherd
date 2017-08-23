@@ -28,7 +28,7 @@ third_party_settings:
         label: 'Domain and Path'
         id: domain_and_path
         classes: ''
-        open: false
+        open: true
         required_fields: false
       label: 'Domain and Path'
     group_shp_advanced:
