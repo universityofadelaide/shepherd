@@ -77,7 +77,7 @@ class Environment {
   public function formAlter(array &$form, FormStateInterface $form_state) {
 
     // @todo - Set this permission to something more granular.
-    $access = $this->currentUser->hasPermission('dreams');
+    $access = $this->currentUser->hasPermission('administer nodes');
     $this->setSiteField($form, $access);
 
   }
