@@ -4122,7 +4122,7 @@
                 }
             ],
             "description": "Simple OpenShift client for PHP.",
-            "time": "2017-08-21 05:52:45"
+            "time": "2017-08-21T05:52:45+00:00"
         },
         {
             "name": "universityofadelaide/shepherd-drupal-scaffold",
