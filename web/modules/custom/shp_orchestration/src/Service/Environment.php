@@ -97,6 +97,8 @@ class Environment extends EntityActionBase {
       $node->id(),
       $node->toUrl('canonical', ['absolute' => TRUE])->toString(),
       $distribution->field_shp_builder_image->value,
+      $node->field_shp_domain->value,
+      $node->field_shp_path->value,
       $distribution->field_shp_git_repository->value,
       $node->field_shp_git_reference->value,
       $distribution->field_shp_build_secret->value,
