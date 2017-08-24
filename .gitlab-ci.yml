@@ -8,7 +8,7 @@ shepherd:
     - ssh-add -l
     - docker pull uofa/apache2-php7-dev:shepherd
     - docker pull mariadb
-    - docker run --rm -v $(pwd):/app composer install --ignore-platform-reqs
+    - docker run --rm -v $(pwd):/app --volume $SSH_AUTH_SOCK:/ssh-auth.sock --volume /etc/passwd:/etc/passwd:ro --volume /etc/group:/etc/group:ro --user $(id -u):$(id -g) --env SSH_AUTH_SOCK=/ssh-auth.sock composer install --ignore-platform-reqs
     - ./dsh start
     - sleep 10
     - ./dsh exec $(basename ${CI_JOB_NAME} | sed 's/[-_]//g')_web_1 root 'chmod -R 777 /web/app/sites/default'
