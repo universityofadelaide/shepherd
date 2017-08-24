@@ -17,9 +17,9 @@ class BackupQueueWorker extends BackupQueueWorkerBase {
    */
   public function processItem($job) {
     // Load the node for the job.
-    if ($node = $this->nodeStorage->load($job->entityId)) {
+    if ($backup = $this->nodeStorage->load($job->backupId)) {
       // Perform the job.
-      if ($responseBody = $this->backup->create($node)) {
+      if ($responseBody = $this->backup->create($backup)) {
         // Update the job name for isComplete() check.
         $this->setJobName($job, $responseBody);
       }
