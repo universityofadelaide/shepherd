@@ -1,14 +1,23 @@
 # Shepherd Gitlab CI script
 shepherd:
   script:
-    - eval `ssh-agent`
+    - killall ssh-agent
+    - eval $(ssh-agent)
     - echo "${JENKINS_DEPLOYMENT_KEY}" > /tmp/jenkins_deployment_key
     - chmod 0600 /tmp/jenkins_deployment_key
     - ssh-add /tmp/jenkins_deployment_key
     - ssh-add -l
     - docker pull uofa/apache2-php7-dev:shepherd
     - docker pull mariadb
-    - docker run --rm -v $(pwd):/app --volume $SSH_AUTH_SOCK:/ssh-auth.sock --volume /etc/passwd:/etc/passwd:ro --volume /etc/group:/etc/group:ro --user $(id -u):$(id -g) --env SSH_AUTH_SOCK=/ssh-auth.sock composer install --ignore-platform-reqs
+    - env
+    - mkdir -p ~/.ssh && ssh-keyscan -H gitlab.adelaide.edu.au >> ~/.ssh/known_hosts && chmod 0700 ~/.ssh
+    - echo "Host *\n\tStrictHostKeyChecking no\n" > ~/.ssh/config
+    - |
+      docker run --rm -v $(pwd):/app --volume $SSH_AUTH_SOCK:/ssh-auth.sock \
+      --volume /etc/passwd:/etc/passwd:ro --volume /etc/group:/etc/group:ro \
+      --user $(id -u):$(id -g) \
+      --env HOME=/app --env COMPOSER_HOME=/app --env SSH_AUTH_SOCK=/ssh-auth.sock \
+      composer install --ignore-platform-reqs
     - ./dsh start
     - sleep 10
     - ./dsh exec $(basename ${CI_JOB_NAME} | sed 's/[-_]//g')_web_1 root 'chmod -R 777 /web/app/sites/default'
@@ -17,8 +26,6 @@ shepherd:
         export GITLAB_CI=true &&
         export SIMPLETEST_DB=\'mysql://user:password@db/drupal\' &&
         cd /code &&
-        mkdir -p ~/.ssh &&
-        ssh-keyscan -H gitlab.adelaide.edu.au >> ~/.ssh/known_hosts &&
         sudo phpdismod xdebug && robo build &&
         ./bin/phpunit --group ua --testdox -c ./app/core ./app/modules';
   after_script:
