@@ -31,7 +31,7 @@
    * @returns {string}
    */
   function replaceText(text) {
-    return (text ? text.toLowerCase().replace(regex, '-') : '');
+    return (text ? text.toLowerCase().trim().replace(regex, '-') : '');
   }
 
 })(jQuery, Drupal, this, this.document);
