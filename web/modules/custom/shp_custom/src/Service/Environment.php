@@ -75,11 +75,9 @@ class Environment {
    *   Form State.
    */
   public function formAlter(array &$form, FormStateInterface $form_state) {
-
     // @todo - Set this permission to something more granular.
     $access = $this->currentUser->hasPermission('administer nodes');
     $this->setSiteField($form, $access);
-
   }
 
   /**
@@ -91,15 +89,15 @@ class Environment {
    *    Current user has access to this field.
    */
   public function setSiteField(array &$form, bool $access) {
-
     // Set the visibility of the field.
     $form['field_shp_site']['#access'] = $access;
 
-    // If the form has a site_id query param.
-    if ($this->currentRequest->query->has('site_id')) {
-      // Get the site id.
-      $site_id = $this->currentRequest->query->get('site_id');
-      $form['field_shp_site']['widget'][0]['target_id']['#default_value'] = $this->node->load($site_id);
+    // Fetch the site node if the site_id route parameter is set.
+    $site_node = $this->currentRequest->get('site_id');
+
+    // Prefill the form with the specified site.
+    if (isset($site_node)) {
+      $form['field_shp_site']['widget'][0]['target_id']['#default_value'] = $site_node;
     }
   }
 
