@@ -12,14 +12,46 @@ dependencies:
     - field.field.node.shp_environment.field_shp_site
     - node.type.shp_environment
   module:
+    - content_moderation
+    - field_group
     - key_value_field
+third_party_settings:
+  field_group:
+    group_shp_domain_and_path:
+      children:
+        - field_shp_domain
+        - field_shp_path
+      parent_name: ''
+      weight: 2
+      format_type: details
+      format_settings:
+        label: 'Domain and Path'
+        id: domain_and_path
+        classes: ''
+        open: true
+        required_fields: false
+      label: 'Domain and Path'
+    group_shp_advanced:
+      children:
+        - field_shp_env_vars
+        - field_shp_cron_jobs
+      parent_name: ''
+      weight: 4
+      format_type: details
+      format_settings:
+        label: Advanced
+        id: advanced
+        classes: ''
+        open: false
+        required_fields: false
+      label: Advanced
 id: node.shp_environment.default
 targetEntityType: node
 bundle: shp_environment
 mode: default
 content:
   field_shp_cron_jobs:
-    weight: 26
+    weight: 6
     settings:
       key_label: Schedule
       key_size: 60
@@ -33,7 +65,7 @@ content:
     type: key_value_textfield
     region: content
   field_shp_domain:
-    weight: 1
+    weight: 21
     settings:
       size: 60
       placeholder: ''
@@ -55,13 +87,13 @@ content:
     type: key_value_textfield
     region: content
   field_shp_environment_type:
-    weight: 3
+    weight: 1
     settings: {  }
     third_party_settings: {  }
     type: options_select
     region: content
   field_shp_git_reference:
-    weight: 4
+    weight: 3
     settings:
       size: 60
       placeholder: ''
@@ -69,7 +101,7 @@ content:
     type: string_textfield
     region: content
   field_shp_path:
-    weight: 2
+    weight: 22
     settings:
       size: 60
       placeholder: ''

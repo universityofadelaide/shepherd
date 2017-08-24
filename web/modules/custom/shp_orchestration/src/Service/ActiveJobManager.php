@@ -40,6 +40,7 @@ class ActiveJobManager {
    */
   public function add(\stdClass $job) {
     if ($this->state->get(static::STATE_KEY_PREFIX . $job->entityId)) {
+      // @todo Check if the job is complete?
       throw new JobInProgressException('A job is already in progress for this environment.');
     }
     $this->update($job);

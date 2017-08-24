@@ -53,6 +53,7 @@ class JobQueue {
     $this->queueFactory->get(static::SHP_ORCHESTRATION_JOB_QUEUE)->createQueue();
     $queue = $this->queueFactory->get(static::SHP_ORCHESTRATION_JOB_QUEUE);
 
+    // @todo while claimItem() and count?
     for ($count = 0; $count < $numJobs; $count++) {
       if (!$job = $queue->claimItem()) {
         return;
@@ -84,8 +85,8 @@ class JobQueue {
   /**
    * Add a job to the queue for processing.
    *
-   * @param \Drupal\Core\Entity\EntityInterface $entity
-   *   The entity to operate on.
+   * @param int $environmentId
+   *   The id of the environment the job will act on.
    * @param string $queueWorker
    *   The queue worker to perform processing.
    * @param array $data
@@ -94,9 +95,9 @@ class JobQueue {
    * @return string
    *   The unique ID for the queue item.
    */
-  public function add(EntityInterface $entity, $queueWorker, array $data = []) {
+  public function add(int $environmentId, $queueWorker, array $data = []) {
     $job = (object) array_merge($data, [
-      'entityId' => $entity->id(),
+      'entityId' => $environmentId,
       'queueWorker' => $queueWorker,
     ]);
     $queue = $this->queueFactory->get(static::SHP_ORCHESTRATION_JOB_QUEUE);
