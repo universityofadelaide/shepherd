@@ -12,7 +12,7 @@
     }
   };
 
-  var regex = /(\s|\_)/;
+  var regex = /[^a-z0-9-]/g;
 
   /**
    * Update the short_name with the text from the title input.
@@ -31,7 +31,7 @@
    * @returns {string}
    */
   function replaceText(text) {
-    return (text ? text.replace(regex, '-').toLowerCase().trim() : '');
+    return (text ? text.toLowerCase().replace(regex, '-') : '');
   }
 
 })(jQuery, Drupal, this, this.document);
