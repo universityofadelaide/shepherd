@@ -127,11 +127,17 @@ class Site {
     // @todo - DREAMS
     // First make the short_name only visible after text has appeared in it.
     $this->applyStatesShortNameField($form);
-
+    // Attach some javascript that handles conversion to machine_name like text.
+    $form['#attached']['library'] = [
+      'shp_custom/site_form',
+    ];
   }
 
   /**
-   *  Apply #states
+   * Apply #states to the shp_short_name field.
+   *
+   * @param array $form
+   *   Form render array.
    */
   public function applyStatesShortNameField(array &$form) {
     $form['field_shp_short_name']['#states'] = [

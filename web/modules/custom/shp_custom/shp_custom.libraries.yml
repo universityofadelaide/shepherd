@@ -1,3 +1,14 @@
+site_form:
+  version: VERSION
+  js:
+    js/app/site.js:  {}
+  dependencies:
+    - core/jquery
+    - core/drupalSettings
+    - core/drupal
+    - core/drupal.form
+    - core/drupal.ajax
+
 react:
   version: VERSION
   js:
