@@ -116,6 +116,27 @@ class Site {
   }
 
   /**
+   * Load all entities that contain a value in a field.
+   *
+   * @param string $node_type
+   *   Node type. Defaults to shp_site.
+   * @param string $field
+   *   Field name.
+   * @param string $field_value
+   *   The fields value.
+   *
+   * @return mixed
+   *   Query results.
+   */
+  public function loadEntitiesByFieldValue($node_type = 'shp_site', $field, $field_value) {
+    $results = \Drupal::entityQuery('node')
+      ->condition('type', $node_type)
+      ->condition($field, $field_value)
+      ->execute();
+    return $results;
+  }
+
+  /**
    * Apply alterations to node add form.
    *
    * @param array $form
@@ -124,28 +145,29 @@ class Site {
    *   Form State.
    */
   public function formAlter(array &$form, FormStateInterface $form_state) {
-    // @todo - DREAMS
     // First make the short_name only visible after text has appeared in it.
-    $this->applyStatesShortNameField($form);
-    // Attach some javascript that handles conversion to machine_name like text.
+    $this->applyJavascriptShortNameField($form);
+    // Attach some javascript that handles updating the field like a machine_name.
     $form['#attached']['library'] = [
       'shp_custom/site_form',
     ];
   }
 
   /**
-   * Apply #states to the shp_short_name field.
+   * Apply #states and #ajax to the shp_short_name field.
    *
    * @param array $form
    *   Form render array.
    */
-  public function applyStatesShortNameField(array &$form) {
+  public function applyJavascriptShortNameField(array &$form) {
     $form['field_shp_short_name']['#states'] = [
       // Hide the field until the title field has data.
       'invisible' => [
         ':input[name="title[0][value]"]' => ['empty' => TRUE],
       ],
     ];
+    // @todo - add the #ajax here.
+    $form['field_shp_short_name']['#ajax'] = [];
   }
 
 }
