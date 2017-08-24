@@ -43,10 +43,10 @@ class WithSiteId extends LocalActionDefault {
   /**
    * {@inheritdoc}
    */
-  public function getOptions(RouteMatchInterface $route_match) {
-    $options = parent::getOptions($route_match);
-    $options['query']['site_id'] = $route_match->getParameter('node');
-    return $options;
+  public function getRouteParameters(RouteMatchInterface $route_match) {
+    $parameters = parent::getRouteParameters($route_match);
+    $parameters['site_id'] = $route_match->getParameter('node');
+    return $parameters;
   }
 
 }
