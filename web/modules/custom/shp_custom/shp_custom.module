@@ -293,5 +293,5 @@ function shp_custom_form_node_shp_environment_form_alter(&$form, FormStateInterf
  * Implements hook_form_FORM_ID_alter().
  */
 function shp_custom_form_node_shp_site_form_alter(&$form, FormStateInterface $form_state) {
-
+  Drupal::service('shp_custom.site')->formAlter($form, $form_state);
 }

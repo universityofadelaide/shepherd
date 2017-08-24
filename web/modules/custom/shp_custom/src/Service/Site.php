@@ -3,6 +3,7 @@
 namespace Drupal\shp_custom\Service;
 
 use Drupal\Core\Datetime\DrupalDateTime;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\node\Entity\Node;
@@ -16,6 +17,23 @@ use Drupal\taxonomy\Entity\Term;
 class Site {
 
   use StringTranslationTrait;
+
+  /**
+   * Entity Type Manager.
+   *
+   * @var EntityTypeManagerInterface
+   */
+  protected $entityTypeManager;
+
+  /**
+   * Site constructor.
+   *
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entityTypeManager
+   *   Entity Type Manager.
+   */
+  public function __construct(EntityTypeManagerInterface $entityTypeManager) {
+    $this->entityTypeManager = $entityTypeManager;
+  }
 
   /**
    * Takes an environment entity and applies a sites go live date.
@@ -107,14 +125,21 @@ class Site {
    */
   public function formAlter(array &$form, FormStateInterface $form_state) {
     // @todo - DREAMS
-    $test = '';
     // First make the short_name only visible after text has appeared in it.
+    $this->applyStatesShortNameField($form);
+
+  }
+
+  /**
+   *  Apply #states
+   */
+  public function applyStatesShortNameField(array &$form) {
     $form['field_shp_short_name']['#states'] = [
-      'visible' => [
-        ':input[name="title"]' => ['empty' => FALSE],
+      // Hide the field until the title field has data.
+      'invisible' => [
+        ':input[name="title[0][value]"]' => ['empty' => TRUE],
       ],
     ];
-
   }
 
 }
