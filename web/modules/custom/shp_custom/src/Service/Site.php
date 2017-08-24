@@ -107,6 +107,13 @@ class Site {
    */
   public function formAlter(array &$form, FormStateInterface $form_state) {
     // @todo - DREAMS
+    // First make the short_name only visible after text has appeared in it.
+    $form['field_shp_short_name']['states'] = [
+      'visible' => [
+        ':input[name="title"]' => ['empty' => FALSE],
+      ],
+    ];
+
   }
 
 }
