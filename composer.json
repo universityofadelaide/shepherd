@@ -30,6 +30,7 @@
         "wikimedia/composer-merge-plugin":               "^1.4"
     },
     "require-dev": {
+        "drupal/console":                       "^1.0",
         "drupal/devel_node_access":             "^1.0@alpha",
         "behat/mink":                           "1.7.x-dev",
         "behat/mink-goutte-driver":             "~1.2",
