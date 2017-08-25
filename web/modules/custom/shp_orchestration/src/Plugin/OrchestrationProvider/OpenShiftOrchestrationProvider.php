@@ -3,8 +3,12 @@
 namespace Drupal\shp_orchestration\Plugin\OrchestrationProvider;
 
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Url;
 use Drupal\node\Entity\Node;
+use Drupal\shp_orchestration\Event\OrchestrationEnvironmentEvent;
+use Drupal\shp_orchestration\Event\OrchestrationEvents;
 use Drupal\shp_orchestration\OrchestrationProviderBase;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use UniversityOfAdelaide\OpenShift\Client as OpenShiftClient;
 use UniversityOfAdelaide\OpenShift\ClientException;
 
@@ -38,8 +42,8 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
   /**
    * {@inheritdoc}
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityTypeManagerInterface $entity_type_manager) {
-    parent::__construct($configuration, $plugin_id, $plugin_definition, $entity_type_manager);
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityTypeManagerInterface $entity_type_manager, EventDispatcherInterface $event_dispatcher) {
+    parent::__construct($configuration, $plugin_id, $plugin_definition, $entity_type_manager, $event_dispatcher);
 
     $this->client = new OpenShiftClient(
       $this->configEntity->endpoint,
@@ -81,7 +85,8 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     ];
 
     try {
-      $this->client->createImageStream($sanitised_name);
+      $image_stream = $this->client->generateImageStream($sanitised_name);
+      $this->client->createImageStream($image_stream);
       $this->client->createBuildConfig(
         $sanitised_name . '-' . $source_ref,
         $source_secret,
@@ -146,6 +151,8 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     string $environment_id,
     string $environment_url,
     string $builder_image,
+    string $domain,
+    string $path,
     string $source_repo,
     string $source_ref = 'master',
     string $source_secret = NULL,
@@ -196,6 +203,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     }
 
     $deploy_data = $this->formatDeployData(
+      $deployment_name,
       $formatted_env_vars,
       $environment_url,
       $site_id,
@@ -210,19 +218,25 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       }
     }
 
+    $deployment_config = $this->client->generateDeploymentConfig(
+      $deployment_name,
+      $image_stream_tag,
+      $sanitised_distribution_name,
+      $volumes,
+      $deploy_data
+    );
+
     try {
-      $this->client->createDeploymentConfig(
-        $deployment_name,
-        $image_stream_tag,
-        $sanitised_distribution_name,
-        $volumes,
-        $deploy_data
-      );
+      $this->client->createDeploymentConfig($deployment_config);
     }
     catch (ClientException $e) {
       $this->handleClientException($e);
       return FALSE;
     }
+
+    // Allow other modules to react to the Environment creation.
+    $event = new OrchestrationEnvironmentEvent($this->client, $deployment_config);
+    $this->eventDispatcher->dispatch(OrchestrationEvents::CREATED_ENVIRONMENT, $event);
 
     $image_stream = $this->client->getImageStream($sanitised_distribution_name);
     if ($image_stream) {
@@ -259,7 +273,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     ];
     try {
       $this->client->createService($deployment_name, $service_data);
-      $this->client->createRoute($deployment_name, $deployment_name, '');
+      $this->client->createRoute($deployment_name, $deployment_name, $domain, $path);
     }
     catch (ClientException $e) {
       $this->handleClientException($e);
@@ -301,10 +315,15 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       $environment_id
     );
 
+    // Allow other modules to react to the Environment deletion.
+    $deployment_config = $this->client->getDeploymentConfig($deployment_name);
+    $event = new OrchestrationEnvironmentEvent($this->client,$deployment_config);
+    $this->eventDispatcher->dispatch(OrchestrationEvents::DELETED_ENVIRONMENT, $event);
+
     try {
       // Scale the pods to zero, then delete the pod creators.
-      $this->client->updateDeploymentConfig($deployment_name, 0);
-      $this->client->updateReplicationControllers('', 'openshift.io/deployment-config.name=' . $deployment_name, 0);
+      //$this->client->updateDeploymentConfig($deployment_name, 0);
+      //$this->client->updateReplicationControllers('', 'app=' . $deployment_name, 0);
 
       // Not sure if we need to delay a little here, do the cronjob and routes
       // to artificially delay.
@@ -314,7 +333,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       $this->client->deleteService($deployment_name);
 
       $this->client->deleteDeploymentConfig($deployment_name);
-      $this->client->deleteReplicationControllers('', 'openshift.io/deployment-config.name=' . $deployment_name);
+      //$this->client->deleteReplicationControllers('', 'app=' . $deployment_name);
 
       // Now the things not in the typically visible ui.
       $this->client->deletePersistentVolumeClaim($deployment_name . '-shared');
@@ -335,36 +354,11 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     $site = Node::load($environment_id->field_shp_site->target_id);
     $distribution = Node::load($site->field_shp_distribution->target_id);
 
-    $deployment_name = self::generateDeploymentName(
+    self::deletedEnvironment(
       $distribution->title->value,
       $site->field_shp_short_name->value,
       $environment_id
     );
-
-    try {
-      // Scale the pods to zero, then delete the pod creators.
-      $this->client->updateDeploymentConfig($deployment_name, 0);
-      $this->client->updateReplicationControllers('', 'openshift.io/deployment-config.name=' . $deployment_name, 0);
-
-      // Not sure if we need to delay a little here, do the cronjob and routes
-      // to artificially delay.
-      // @todo - label support needs to be added to the delete, and then creation of cron jobs
-      //$this->client->deleteCronJob($deployment_name);
-      $this->client->deleteRoute($deployment_name);
-      $this->client->deleteService($deployment_name);
-
-      $this->client->deleteDeploymentConfig($deployment_name);
-      $this->client->deleteReplicationControllers('', 'openshift.io/deployment-config.name=' . $deployment_name);
-
-      // Now the things not in the typically visible ui.
-      $this->client->deletePersistentVolumeClaim($deployment_name . '-public');
-      $this->client->deletePersistentVolumeClaim($deployment_name . '-private');
-      $this->client->deleteSecret($deployment_name);
-    }
-    catch (ClientException $e) {
-      $this->handleClientException($e);
-      return FALSE;
-    }
   }
 
   /**
@@ -453,6 +447,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     $image_stream = $this->client->getImageStream($sanitised_distribution_name);
     $volumes = $this->setupVolumes($distribution_name, $deployment_name);
     $deploy_data = $this->formatDeployData(
+      $deployment_name,
       $deployment_config['spec']['template']['spec']['containers'][0]['env'],
       $deployment_config['metadata']['annotations']['shepherdUrl'],
       $deployment_config['metadata']['labels']['site_id'],
@@ -556,7 +551,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
   /**
    * {@inheritdoc}
    */
-  public function getEnvironmentRoute(string $distribution_name, string $short_name, string $environment_id) {
+  public function getEnvironmentUrl(string $distribution_name, string $short_name, string $environment_id) {
 
     $deployment_name = self::generateDeploymentName(
       $distribution_name,
@@ -566,13 +561,13 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
 
     try {
       $route = $this->client->getRoute($deployment_name);
-      return [
-        'path' => $route['spec']['host'],
-        'status' => $route['status']['ingress'][0],
-      ];
+      return Url::fromUri('//' . $route['spec']['host'] . (array_key_exists('path', $route['spec']) ? $route['spec']['path'] : '/'));
     }
     catch (ClientException $e) {
       $this->handleClientException($e);
+      return FALSE;
+    }
+    catch (\InvalidArgumentException $e) {
       return FALSE;
     }
   }
@@ -632,7 +627,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
    * @return array
    *   The deployment config array.
    */
-  private function formatDeployData(array $formatted_env_vars, string $environment_url, int $site_id, int $environment_id) {
+  private function formatDeployData(string $name, array $formatted_env_vars, string $environment_url, int $site_id, int $environment_id) {
     $deploy_data = [
       'containerPort' => 8080,
       'memory_limit' => '128Mi',
@@ -643,6 +638,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       'labels' => [
         'site_id' => (string) $site_id,
         'environment_id' => (string) $environment_id,
+        'app' => $name,
       ],
     ];
 
@@ -675,11 +671,13 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
           'ReadWriteMany',
           '5Gi'
         );
-        $this->client->createPersistentVolumeClaim(
-          $backup_pvc_name,
-          'ReadWriteMany',
-          '5Gi'
-        );
+        if (!$this->client->getPersistentVolumeClaim($backup_pvc_name)) {
+          $this->client->createPersistentVolumeClaim(
+            $backup_pvc_name,
+            'ReadWriteMany',
+            '5Gi'
+          );
+        }
 
       }
       catch (ClientException $e) {
