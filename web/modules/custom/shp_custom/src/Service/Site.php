@@ -4,6 +4,7 @@ namespace Drupal\shp_custom\Service;
 
 use Drupal\Core\Ajax\AjaxResponse;
 use Drupal\Core\Ajax\HtmlCommand;
+use Drupal\Core\Ajax\InvokeCommand;
 use Drupal\Core\Datetime\DrupalDateTime;
 use Drupal\Core\DependencyInjection\DependencySerializationTrait;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -180,26 +181,33 @@ class Site {
         'message' => 'Checking short name for uniqueness',
       ],
     ];
+    $form['field_shp_short_name']['widget'][0]['value']['#prefix'] = '<div id="field-shp-short-name-ajax-response"></div>';
   }
 
   /**
-   * Ajax callback method that ensures short_name field is unqiue.
+   * Ajax callback method that ensures short_name field is unique.
    *
    * @param array $form
-   *   Form render array.
+   *    Form render array.
    * @param \Drupal\Core\Form\FormStateInterface $form_state
-   *   Form State.
+   *    Form state.
+   *
+   * @return \Drupal\Core\Ajax\AjaxResponse
+   *   Returns ajax response object with commands to update field ui.
    */
   public function checkShortNameAjax(array &$form, FormStateInterface $form_state) {
     $ajax_response = new AjaxResponse();
     $short_name_value = $form_state->getValue('field_shp_short_name')[0]['value'];
     $entity_query_results = $this->loadEntitiesByFieldValue('shp_site', 'field_shp_short_name', $short_name_value);
+    $text_response = 'Short name is unique';
     if ($entity_query_results) {
       // We have duplicates.
       $count = count($entity_query_results) + 1;
       $updated_short_name = $short_name_value . '-' . $count;
-      // $ajax_response->addCommand(new HtmlCommand(''))
+      $ajax_response->addCommand(new InvokeCommand('#edit-field-shp-short-name-0-value', 'val', [$updated_short_name]));
+      $text_response = 'Duplicates found, updated field';
     }
+    $ajax_response->addCommand(new HtmlCommand('#field-shp-short-name-ajax-response', $text_response));
     return $ajax_response;
   }
 
