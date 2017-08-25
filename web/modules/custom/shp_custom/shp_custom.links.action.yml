@@ -6,3 +6,9 @@ shp_custom.add_member:
   title: 'Add member'
   appears_on:
     - 'view.shp_site_users.page_1'
+shp_custom.add_environment:
+  route_name: 'shp_custom.add_environment'
+  class: '\Drupal\shp_custom\Plugin\Menu\LocalAction\WithSiteId'
+  title: 'Add new environment'
+  appears_on:
+    - 'view.shp_site_environments.page_1'

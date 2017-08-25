@@ -45,6 +45,7 @@ dependencies:
   - entity_reference
   - entity_reference_revisions
   - externalauth
+  - field_group
   - gnode
   - group
   - key_value_field
@@ -60,6 +61,7 @@ dependencies:
   - shp_drush_aliases
   - shp_orchestration
   - shp_roles
+  - shp_redis_support
   - shp_vue_view
 
 themes:

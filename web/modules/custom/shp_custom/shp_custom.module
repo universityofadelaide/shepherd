@@ -8,14 +8,14 @@
 use Drupal\Component\Utility\Html;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Menu\MenuTreeParameters;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Session\AccountInterface;
-use Drupal\node\Entity\Node;
 use Drupal\Core\Url;
-use Drupal\shp_orchestration\Exception\OrchestrationProviderNotConfiguredException;
+use Drupal\node\Entity\Node;
 use Drupal\node\NodeInterface;
-use Drupal\Core\Datetime\DrupalDateTime;
+use Drupal\shp_orchestration\Exception\OrchestrationProviderNotConfiguredException;
 
 /**
  * Implements hook_help().
@@ -279,4 +279,11 @@ function shp_custom_mail($key, &$message, $params) {
       $message['body'][] = t('Hello @name,', ['name' => $params['author_name']]);
       $message['body'][] = Html::escape($params['message']);
   }
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function shp_custom_form_node_shp_environment_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  \Drupal::service('shp_custom.environment')->formAlter($form, $form_state);
 }

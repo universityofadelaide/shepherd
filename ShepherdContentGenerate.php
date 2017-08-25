@@ -67,6 +67,7 @@ if (!$development = taxonomy_term_load_multiple_by_name('Development', 'shp_envi
   $production_env = Term::create([
     'vid'  => 'shp_environment_types',
     'name' => 'Production',
+    'field_shp_base_domain' => $domain_name,
   ]);
   $production_env->save();
 }
@@ -103,8 +104,8 @@ if (!$site) {
     'title'                  => 'Test Site',
     'field_shp_namespace'    => 'myproject',
     'field_shp_short_name'   => 'test',
-    'field_shp_domain'       => $domain_name,
-    'field_shp_path'         => '/',
+    'field_shp_domain'       => 'test-site.' . $domain_name,
+    'field_shp_path'         => '/test-path',
     'field_shp_distribution' => [['target_id' => $distribution->id()]],
   ]);
   $site->moderation_state->value = 'published';
