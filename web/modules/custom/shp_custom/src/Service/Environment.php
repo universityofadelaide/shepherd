@@ -3,6 +3,7 @@
 namespace Drupal\shp_custom\Service;
 
 use Drupal\Core\Ajax\AjaxResponse;
+use Drupal\Core\Ajax\InvokeCommand;
 use Drupal\Core\DependencyInjection\DependencySerializationTrait;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
@@ -48,6 +49,13 @@ class Environment {
   protected $node;
 
   /**
+   * Taxonomy term entity type.
+   *
+   * @var \Drupal\Core\Entity\EntityStorageInterface
+   */
+  protected $taxonomyTerm;
+
+  /**
    * Current User.
    *
    * @var \Drupal\Core\Session\AccountProxyInterface
@@ -67,6 +75,7 @@ class Environment {
     $this->entityTypeManager = $entityTypeManager;
     $this->currentRequest = $this->requestStack->getCurrentRequest();
     $this->node = $this->entityTypeManager->getStorage('node');
+    $this->taxonomyTerm = $this->entityTypeManager->getStorage('taxonomy_term');
     $this->currentUser = $currentUser;
   }
 
@@ -107,9 +116,7 @@ class Environment {
   }
 
   /**
-   * Apply #ajax callbacks and dreamy things to the field.
-   *
-   * @todo - write a better doc :)
+   * Apply #ajax callbacks to environment_type that updates domain and path.
    *
    * @param array $form
    *   Form render array.
@@ -139,8 +146,37 @@ class Environment {
    */
   public function setDomainPath(&$form, FormStateInterface $form_state) {
     $ajax_response = new AjaxResponse();
-    $test = $form;
+    $taxonomy_term_id = $form_state->getValue('field_shp_environment_type')[0]['target_id'];
+    $site_id = $form_state->getValue('field_shp_site')[0]['target_id'];
+
+    if ($taxonomy_term_id) {
+      $taxonomy_term = $this->loadTaxonomyTerm($taxonomy_term_id);
+      $site = $this->node->load($site_id);
+      $path_value = $site->field_shp_path->value;
+      if (strtolower($taxonomy_term->getName()) === "production") {
+        $domain_value = $site->field_shp_domain->value;
+      }
+      else {
+        // Non production environment use the domain provided.
+        $domain_value = $site->field_shp_short_name->value . '.' . $taxonomy_term->field_shp_base_domain->value;
+      }
+      $ajax_response->addCommand(new InvokeCommand('#edit-field-shp-domain-0-value', 'val', [$domain_value]));
+      $ajax_response->addCommand(new InvokeCommand('#edit-field-shp-path-0-value', 'val', [$path_value]));
+    }
     return $ajax_response;
+  }
+
+  /**
+   * Loads taxonomy terms.
+   *
+   * @param string $tid
+   *   Term id.
+   *
+   * @return \Drupal\Core\Entity\EntityInterface
+   *   Taxonomy term entity.
+   */
+  protected function loadTaxonomyTerm($tid) {
+    return $this->taxonomyTerm->load($tid);
   }
 
 }
