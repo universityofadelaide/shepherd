@@ -211,39 +211,38 @@ class Backup {
   /**
    * Check if a job has completed.
    *
-   * @param int $entityId
-   *   The entity id.
+   * @param \stdClass $job
+   *   The job.
    *
    * @return bool
    *   True if finished, otherwise false.
    */
-  public function isComplete($entityId) {
+  public function isComplete($job) {
     // @todo Check backup and restore.
-
-    if ($job = $this->activeJobManager->get([$entityId])) {
-      try {
-        // @todo Inject the service.
-        /** @var \Drupal\shp_orchestration\OrchestrationProviderInterface $orchestration_provider_plugin */
-        $orchestration_provider_plugin = \Drupal::service('plugin.manager.orchestration_provider')
-          ->getProviderInstance();
-      }
-      catch (OrchestrationProviderNotConfiguredException $e) {
-        return FALSE;
-      }
-
-      switch ($job->data->type) {
-        case 'shp_backup':
-          // @todo Fix OpenShift specific structure leaking here.
-          $job = $orchestration_provider_plugin->getJob($job->data->name);
-          break;
-        case 'shp_restore':
-
-          break;
-      }
+    $complete = FALSE;
+    try {
+      // @todo Inject the service.
+      /** @var \Drupal\shp_orchestration\OrchestrationProviderInterface $orchestration_provider_plugin */
+      $orchestration_provider_plugin = \Drupal::service('plugin.manager.orchestration_provider')
+        ->getProviderInstance();
+    }
+    catch (OrchestrationProviderNotConfiguredException $e) {
+      return FALSE;
     }
 
-    // Let jobs continue for now.
-    return TRUE;
+    switch ($job->queueWorker) {
+      case 'shp_backup':
+        // @todo Fix OpenShift specific structure leaking here.
+        $provider_job = $orchestration_provider_plugin->getJob($job->name);
+        $complete = (bool) $provider_job['status']['active'];
+        break;
+
+      case 'shp_restore':
+
+        break;
+    }
+
+    return $complete;
   }
 
 }

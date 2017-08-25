@@ -60,6 +60,8 @@ class JobQueue {
       }
       $queue_worker = $this->queueManager->createInstance($job->data->queueWorker);
       try {
+        // Check if we can free up processing for this environment.
+        $this->activeJobManager->updateState([$job->data->entityId]);
         // Set this job "in progress".
         $this->activeJobManager->add($job->data);
         // Process it...
@@ -89,16 +91,19 @@ class JobQueue {
    *   The id of the environment the job will act on.
    * @param string $queueWorker
    *   The queue worker to perform processing.
+   * @param string $completeService
+   *   The service to query for job complete status.
    * @param array $data
    *   Extra variables a worker may require.
    *
    * @return string
    *   The unique ID for the queue item.
    */
-  public function add(int $environmentId, $queueWorker, array $data = []) {
+  public function add(int $environmentId, $queueWorker, $completeService, array $data = []) {
     $job = (object) array_merge($data, [
       'entityId' => $environmentId,
       'queueWorker' => $queueWorker,
+      'completeService' => $completeService,
     ]);
     $queue = $this->queueFactory->get(static::SHP_ORCHESTRATION_JOB_QUEUE);
     return $queue->createItem($job);

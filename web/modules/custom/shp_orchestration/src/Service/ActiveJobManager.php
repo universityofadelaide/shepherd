@@ -40,7 +40,6 @@ class ActiveJobManager {
    */
   public function add(\stdClass $job) {
     if ($this->state->get(static::STATE_KEY_PREFIX . $job->entityId)) {
-      // @todo Check if the job is complete?
       throw new JobInProgressException('A job is already in progress for this environment.');
     }
     $this->update($job);
@@ -94,9 +93,11 @@ class ActiveJobManager {
    */
   public function isComplete(int $entityId) {
     // @todo implement timeout or just manually clear broken state?
-    if ($job = $this->get([static::STATE_KEY_PREFIX . $entityId])) {
+    $jobs = $this->get([$entityId]);
+    $job = reset($jobs);
+    if ($job) {
       // @todo Fix this service call with a better pattern. Plugins?
-      return \Drupal::service('shp_orchestration.' . $job->entityType)->isComplete($job->jobId, $entityId);
+      return \Drupal::service($job->completeService)->isComplete($job);
     }
     // There is no active job for this environment.
     return TRUE;
@@ -109,7 +110,7 @@ class ActiveJobManager {
    *   The list of job id's to check.
    */
   public function updateState(array $entityIds = []) {
-    foreach ($this->applyKeyPrefix($entityIds) as $entityId) {
+    foreach ($entityIds as $entityId) {
       if ($this->isComplete($entityId)) {
         $this->remove($entityId);
       }
