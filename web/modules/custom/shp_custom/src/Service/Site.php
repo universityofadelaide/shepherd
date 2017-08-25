@@ -2,7 +2,10 @@
 
 namespace Drupal\shp_custom\Service;
 
+use Drupal\Core\Ajax\AjaxResponse;
+use Drupal\Core\Ajax\HtmlCommand;
 use Drupal\Core\Datetime\DrupalDateTime;
+use Drupal\Core\DependencyInjection\DependencySerializationTrait;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
@@ -17,6 +20,7 @@ use Drupal\taxonomy\Entity\Term;
 class Site {
 
   use StringTranslationTrait;
+  use DependencySerializationTrait;
 
   /**
    * Entity Type Manager.
@@ -147,7 +151,7 @@ class Site {
   public function formAlter(array &$form, FormStateInterface $form_state) {
     // First make the short_name only visible after text has appeared in it.
     $this->applyJavascriptShortNameField($form);
-    // Attach some javascript that handles updating the field like a machine_name.
+    // Attach javascript that handles updating the field like a machine_name.
     $form['#attached']['library'] = [
       'shp_custom/site_form',
     ];
@@ -166,8 +170,37 @@ class Site {
         ':input[name="title[0][value]"]' => ['empty' => TRUE],
       ],
     ];
-    // @todo - add the #ajax here.
-    $form['field_shp_short_name']['#ajax'] = [];
+    $form['field_shp_short_name']['widget'][0]['value']['#ajax'] = [
+      // Callback requires object context so we can use the service class.
+      'callback' => [$this, 'checkShortNameAjax'],
+      'event' => 'formUpdated',
+      'wrapper' => 'edit-field-shp-short-name-wrapper',
+      'progress' => [
+        'type' => 'throbber',
+        'message' => 'Checking short name for uniqueness',
+      ],
+    ];
+  }
+
+  /**
+   * Ajax callback method that ensures short_name field is unqiue.
+   *
+   * @param array $form
+   *   Form render array.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   Form State.
+   */
+  public function checkShortNameAjax(array &$form, FormStateInterface $form_state) {
+    $ajax_response = new AjaxResponse();
+    $short_name_value = $form_state->getValue('field_shp_short_name')[0]['value'];
+    $entity_query_results = $this->loadEntitiesByFieldValue('shp_site', 'field_shp_short_name', $short_name_value);
+    if ($entity_query_results) {
+      // We have duplicates.
+      $count = count($entity_query_results) + 1;
+      $updated_short_name = $short_name_value . '-' . $count;
+      // $ajax_response->addCommand(new HtmlCommand(''))
+    }
+    return $ajax_response;
   }
 
 }

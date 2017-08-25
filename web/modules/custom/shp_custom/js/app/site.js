@@ -7,7 +7,9 @@
         var $name_field = $context.find(':input[name="title[0][value]"]');
         var $short_name_field = $context.find(':input[name="field_shp_short_name[0][value]"]');
         // This event is triggered by drupal.form library.
-        $name_field.on('formUpdated', function() { setShortName($short_name_field, this.value) });
+        $name_field.on('formUpdated', function() { setShortName($short_name_field, this.value); });
+        // Apply the same on the short_name_field as well, users can customise this field.
+        $short_name_field.on('keyup', function () { setShortName($(this), this.value); });
       }
     }
   };
@@ -22,6 +24,8 @@
   function setShortName($element, text) {
     // Before we set the text. Run our text replace over the top
     $element.val(replaceText(text));
+    // Trigger change event.
+    $element.change();
   }
 
   /**
