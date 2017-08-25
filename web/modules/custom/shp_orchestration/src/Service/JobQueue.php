@@ -65,7 +65,7 @@ class JobQueue {
         // Set this job "in progress".
         $this->activeJobManager->add($job->data);
         // Process it...
-        $job = $queue_worker->processItem($job->data);
+        $queue_worker->processItem($job->data);
         // Remove it from the queue.
         $queue->deleteItem($job);
       }
