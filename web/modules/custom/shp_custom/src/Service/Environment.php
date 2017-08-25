@@ -3,6 +3,7 @@
 namespace Drupal\shp_custom\Service;
 
 use Drupal\Core\Ajax\AjaxResponse;
+use Drupal\Core\DependencyInjection\DependencySerializationTrait;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Session\AccountProxyInterface;
@@ -14,6 +15,8 @@ use Symfony\Component\HttpFoundation\RequestStack;
  * @package Drupal\shp_custom\Service
  */
 class Environment {
+
+  use DependencySerializationTrait;
 
   /**
    * Request service.
