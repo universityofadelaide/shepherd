@@ -2,6 +2,7 @@
 
 namespace Drupal\shp_custom\Service;
 
+use Drupal\Core\Ajax\AjaxResponse;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Session\AccountProxyInterface;
@@ -78,6 +79,7 @@ class Environment {
     // @todo - Set this permission to something more granular.
     $access = $this->currentUser->hasPermission('administer nodes');
     $this->setSiteField($form, $access);
+    $this->applyJavascriptEnvironmentType($form);
   }
 
   /**
@@ -99,6 +101,43 @@ class Environment {
     if (isset($site_node)) {
       $form['field_shp_site']['widget'][0]['target_id']['#default_value'] = $site_node;
     }
+  }
+
+  /**
+   * Apply #ajax callbacks and dreamy things to the field.
+   *
+   * @todo - write a better doc :)
+   *
+   * @param array $form
+   *   Form render array.
+   */
+  public function applyJavascriptEnvironmentType(array &$form) {
+    $form['field_shp_environment_type']['widget']['#ajax'] = [
+      'callback' => [$this, 'setDomainPath'],
+      'event' => 'change',
+      'progress' => [
+        'type' => 'throbber',
+        'message' => 'Retrieving environment type information.',
+      ],
+    ];
+    $form['field_shp_environment_type']['widget']['#suffix'] = '<div id="shp_environment_type_ajax_response"></div>';
+  }
+
+  /**
+   * Ajax callback that retrieves taxonomy and sets domain and path values.
+   *
+   * @param array $form
+   *   Form render array.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   Form state.
+   *
+   * @return \Drupal\Core\Ajax\AjaxResponse
+   *   Returns ajax response with commands.
+   */
+  public function setDomainPath(&$form, FormStateInterface $form_state) {
+    $ajax_response = new AjaxResponse();
+    $test = $form;
+    return $ajax_response;
   }
 
 }
