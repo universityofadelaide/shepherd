@@ -234,7 +234,7 @@ class Backup {
       case 'shp_backup':
         // @todo Fix OpenShift specific structure leaking here.
         $provider_job = $orchestration_provider_plugin->getJob($job->name);
-        $complete = (bool) $provider_job['status']['active'];
+        $complete = !((bool) $provider_job['status']['active']);
         break;
 
       case 'shp_restore':
