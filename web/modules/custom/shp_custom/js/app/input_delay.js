@@ -23,7 +23,7 @@
         // Input has data.
         var $id = $(this);
         timer = setTimeout(function () {
-          $id.triggerHander('inputdelay');
+          $id.trigger('inputdelay');
         }, interval);
       }
     });
