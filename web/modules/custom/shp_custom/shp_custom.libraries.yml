@@ -1,14 +1,3 @@
-site_form:
-  version: VERSION
-  js:
-    js/app/site.js:  {}
-  dependencies:
-    - core/jquery
-    - core/drupalSettings
-    - core/drupal
-    - core/drupal.form
-    - core/drupal.ajax
-
 input_event_delay:
   version: VERSION
   js:
@@ -17,19 +6,3 @@ input_event_delay:
       - core/jquery
       - core/drupalSettings
       - core/drupal
-      - core/drupal.form
-      - core/drupal.ajax
-
-react:
-  version: VERSION
-  js:
-    js/contrib/react/react.min.js: {}
-    js/contrib/react/react-dom.min.js: {}
-
-site_environment_status:
-  version: VERSION
-  js:
-    js/app/site_environment_status.js: {preprocess: false}
-  dependencies:
-    - core/jquery
-    - shp_custom/react
