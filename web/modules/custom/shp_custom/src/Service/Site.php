@@ -210,7 +210,7 @@ class Site {
    *   A valid short_name.
    */
   public function createShortName($title) {
-    return preg_replace('/[^a-z0-9-]/g', '-', trim(strtolower($title))) ?? trim(strtolower($title));
+    return preg_replace('/[^a-z0-9-]/', '-', trim(strtolower($title))) ?? trim(strtolower($title));
   }
 
   /**
