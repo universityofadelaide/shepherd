@@ -169,6 +169,10 @@ class Site {
     $form['title']['widget'][0]['value']['#ajax'] = [
       'callback' => [$this, 'setShortNameAjax'],
       'event' => 'inputdelay',
+      'progress' => [
+        'type' => 'throbber',
+        'message' => 'Creating short name',
+      ],
     ];
   }
 
@@ -186,8 +190,13 @@ class Site {
   public function setShortNameAjax(array &$form, FormStateInterface $form_state) {
     $ajax_response = new AjaxResponse();
     $title_value = $form_state->getValue('title')[0]['value'];
-    $short_name = $this->createShortName($title_value);
+    // Generate and validate the short name.
+    $short_name = $this->validateShortNameUniqueness($this->createShortName($title_value));
     $ajax_response->addCommand(new InvokeCommand('#edit-field-shp-short-name-0-value', 'val', [$short_name]));
+    $ajax_response->addCommand(new HtmlCommand('#field-shp-short-name-ajax-response', 'Short name generated'));
+    // Make it green.
+    $ajax_response->addCommand(new InvokeCommand('#field-shp-short-name-ajax-response', 'css', ['color', 'green']));
+
     return $ajax_response;
   }
 
@@ -217,44 +226,25 @@ class Site {
         ':input[name="title[0][value]"]' => ['empty' => TRUE],
       ],
     ];
-    $form['field_shp_short_name']['widget'][0]['value']['#ajax'] = [
-      // Callback requires object context so we can use the service class.
-      'callback' => [$this, 'checkShortNameAjax'],
-      'event' => 'formUpdated',
-      'wrapper' => 'edit-field-shp-short-name-wrapper',
-      'progress' => [
-        'type' => 'throbber',
-        'message' => 'Checking short name for uniqueness',
-      ],
-    ];
     $form['field_shp_short_name']['widget'][0]['value']['#prefix'] = '<div id="field-shp-short-name-ajax-response"></div>';
   }
 
   /**
-   * Ajax callback method that ensures short_name field is unique.
+   * Ensure that the short_name generated is unique.
    *
-   * @param array $form
-   *    Form render array.
-   * @param \Drupal\Core\Form\FormStateInterface $form_state
-   *    Form state.
+   * @param string $short_name
+   *    Generated short name.
    *
-   * @return \Drupal\Core\Ajax\AjaxResponse
-   *   Returns ajax response object with commands to update field ui.
+   * @return string
+   *   If not unique adds a number to end of string, otherwise valid.
    */
-  public function checkShortNameAjax(array &$form, FormStateInterface $form_state) {
-    $ajax_response = new AjaxResponse();
-    $short_name_value = $form_state->getValue('field_shp_short_name')[0]['value'];
-    $entity_query_results = $this->loadEntitiesByFieldValue('shp_site', 'field_shp_short_name', $short_name_value);
-    $text_response = 'Short name is unique';
-    if ($entity_query_results) {
-      // We have duplicates.
-      $count = count($entity_query_results) + 1;
-      $updated_short_name = $short_name_value . '-' . $count;
-      $ajax_response->addCommand(new InvokeCommand('#edit-field-shp-short-name-0-value', 'val', [$updated_short_name]));
-      $text_response = 'Duplicates found, updated field';
+  protected function validateShortNameUniqueness($short_name) {
+    $results = $this->loadEntitiesByFieldValue('shp_site', 'field_shp_short_name', $short_name);
+    if ($results) {
+      $count = count($results);
+      return $short_name . '-' . $count;
     }
-    $ajax_response->addCommand(new HtmlCommand('#field-shp-short-name-ajax-response', $text_response));
-    return $ajax_response;
+    return $short_name;
   }
 
 }
