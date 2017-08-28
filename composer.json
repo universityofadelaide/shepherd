@@ -52,7 +52,10 @@
     },
     "scripts": {
         "drupal-scaffold": "DrupalComposer\\DrupalScaffold\\Plugin::scaffold",
-        "shepherd-scaffold": "UniversityOfAdelaide\\ShepherdDrupalScaffold\\Plugin::scaffold"
+        "shepherd-scaffold": "UniversityOfAdelaide\\ShepherdDrupalScaffold\\Plugin::scaffold",
+        "post-install-cmd": [
+            "@drupal-scaffold"
+        ]
     },
     "extra": {
         "installer-paths": {

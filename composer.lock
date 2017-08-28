@@ -4207,12 +4207,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/universityofadelaide/shepherd-drupal-scaffold.git",
-                "reference": "c5babf38225c302feb3a8beefa91df367eecc8a4"
+                "reference": "b532a2f1564429e31faf8f388fca493b8e63abce"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/universityofadelaide/shepherd-drupal-scaffold/zipball/c5babf38225c302feb3a8beefa91df367eecc8a4",
-                "reference": "c5babf38225c302feb3a8beefa91df367eecc8a4",
+                "url": "https://api.github.com/repos/universityofadelaide/shepherd-drupal-scaffold/zipball/b532a2f1564429e31faf8f388fca493b8e63abce",
+                "reference": "b532a2f1564429e31faf8f388fca493b8e63abce",
                 "shasum": ""
             },
             "require": {
@@ -4235,7 +4235,7 @@
                 "GPL-2.0+"
             ],
             "description": "Composer Plugin for updating the Shepherd Drupal tools.",
-            "time": "2017-08-28T02:56:40+00:00"
+            "time": "2017-08-28T03:20:07+00:00"
         },
         {
             "name": "webmozart/assert",
