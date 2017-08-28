@@ -3,13 +3,13 @@ kind: Template
 labels:
   template: shepherd
 message: |-
-  This template will create a shepherd deployment
+  This template will create a shepherd deployment.
 metadata:
   annotations:
-    iconClass: icon-php
+    iconClass: icon-drupal
     openshift.io/display-name: Shepherd
     description: Provide a template that deploys an instance of the shepherd distribution.
-    tags: php
+    tags: php,drupal
     template.openshift.io/documentation-url: https://gitlab.adelaide.edu.au/web-team/shepherd
     template.openshift.io/long-description: This template defines resources needed
       to run the Shepherd site manager.
@@ -21,7 +21,6 @@ objects:
   kind: Service
   metadata:
     annotations:
-      description: Exposes and load balances the web application pods
       service.alpha.openshift.io/dependencies: '[{"name":"shepherd-db-svc","kind":"Service"}]'
     name: shepherd-web-svc
   spec:
@@ -43,20 +42,16 @@ objects:
 - apiVersion: v1
   kind: ImageStream
   metadata:
-    annotations:
-      description: Keeps track of changes in the application image
-    name: shepherd-web-imagestream
+    name: shepherd-web-is
 - apiVersion: v1
   kind: BuildConfig
   metadata:
-    annotations:
-      description: Defines how to build the application
     name: shepherd-web-bc
   spec:
     output:
       to:
         kind: ImageStreamTag
-        name: shepherd-web-imagestream:latest
+        name: shepherd-web-is:latest
     postCommit: {}
     source:
       git:
@@ -76,6 +71,7 @@ objects:
           name: uofa/s2i-shepherd-drupal
         pullSecret:
           name: ${SOURCE_SECRET}
+        forcePull: true
       type: Source
     triggers:
     - type: ImageChange
@@ -89,17 +85,7 @@ objects:
 - apiVersion: v1
   kind: PersistentVolumeClaim
   metadata:
-    name: shepherd-web-private
-  spec:
-    accessModes:
-      - ReadWriteMany
-    resources:
-      requests:
-        storage: 5Gi
-- apiVersion: v1
-  kind: PersistentVolumeClaim
-  metadata:
-    name: shepherd-web-public
+    name: shepherd-web-shared
   spec:
     accessModes:
       - ReadWriteMany
@@ -109,15 +95,12 @@ objects:
 - apiVersion: v1
   kind: DeploymentConfig
   metadata:
-    annotations:
-      description: Defines how to deploy the application server
     name: shepherd-web-dc
   spec:
     replicas: 1
     selector:
       name: shepherd-web-dc
     strategy:
-      resources: {}
       rollingParams:
         intervalSeconds: 1
         maxSurge: 25%
@@ -136,13 +119,13 @@ objects:
         containers:
         - env:
           - name: DATABASE_HOST
-            value: shepherd-db-svc
+            value: ${DATABASE_HOST}
           - name: DATABASE_NAME
             value: ${DATABASE_NAME}
           - name: DATABASE_PASSWORD
             value: ${DATABASE_PASSWORD}
           - name: DATABASE_PORT
-            value: "3306"
+            value: ${DATABASE_PORT}
           - name: DATABASE_USER
             value: ${DATABASE_USER}
           - name: SITE_TITLE
@@ -167,21 +150,19 @@ objects:
             limits:
               memory: ${MEMORY_LIMIT_WEB}
           volumeMounts:
-          - mountPath: /code/web/sites/default/files
-            name: shepherd-web-public
-          - mountPath: /code/private
-            name: shepherd-web-private
+          - mountPath: /shared
+            name: shepherd-web-shared
         dnsPolicy: ClusterFirst
         restartPolicy: Always
-        securityContext: {}
+        securityContext:
+          runAsUser: ${UID}
+          supplementalGroups:
+            - ${GID}
         terminationGracePeriodSeconds: 30
         volumes:
-        - name: shepherd-web-public
+        - name: shepherd-web-shared
           persistentVolumeClaim:
-            claimName: shepherd-web-public
-        - name: shepherd-web-private
-          persistentVolumeClaim:
-            claimName: shepherd-web-private
+            claimName: shepherd-web-shared
     test: false
     triggers:
     - imageChangeParams:
@@ -190,7 +171,7 @@ objects:
         - shepherd-web
         from:
           kind: ImageStreamTag
-          name: shepherd-web-imagestream:latest
+          name: shepherd-web-is:latest
       type: ImageChange
     - type: ConfigChange
 - apiVersion: v1
@@ -289,6 +270,13 @@ parameters:
 - name: APPLICATION_DOMAIN
   description: The exposed hostname that will route to the Drupal service, if left blank a value will be defaulted.
   displayName: Application Hostname
+- name: DATABASE_HOST
+  description: The database host to use. Change this if you do not wish to use the MySQL service deployed as part of this application.
+  required: true
+  value: shepherd-db-svc
+- name: DATABASE_PORT
+  required: true
+  value: '3306'
 - name: DATABASE_NAME
   required: true
   value: shepherd
@@ -319,3 +307,11 @@ parameters:
   description: The admin users email address.
   required: true
   value: shepherd@shepherd.com
+- name: UID
+  description: The user ID the web container should run as.
+  required: true
+  value: 99010
+- name: GID
+  description: The group ID the web container should run as.
+  required: true
+  value: 99010
