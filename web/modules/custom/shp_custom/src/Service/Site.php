@@ -136,7 +136,7 @@ class Site {
   public function loadEntitiesByFieldValue($node_type = 'shp_site', $field, $field_value) {
     $results = \Drupal::entityQuery('node')
       ->condition('type', $node_type)
-      ->condition($field, $field_value)
+      ->condition($field, $field_value, 'CONTAINS')
       ->execute();
     return $results;
   }
