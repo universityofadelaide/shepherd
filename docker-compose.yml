@@ -1,0 +1,40 @@
+version: '2'
+services:
+  web:
+    image: uofa/apache2-php7-dev:shepherd
+    hostname: ${PROJECT}
+    environment:
+      SITE_TITLE: Drupal site
+      SITE_MAIL: site@example.com
+      SITE_ADMIN_EMAIL: admin@example.com
+      SITE_ADMIN_USERNAME: admin
+      SITE_ADMIN_PASSWORD: password
+      VIRTUAL_HOST: ${PROJECT}.${DOMAIN}
+      SSH_AUTH_SOCK: ${CONTAINER_SSH_AUTH_SOCK}
+      DATABASE_HOST: db
+      DATABASE_PORT: 3306
+      DATABASE_NAME: drupal
+      DATABASE_USER: user
+      DATABASE_PASSWORD: password
+      PRIVATE_DIR: /shared/private
+      PUBLIC_DIR: web/sites/default/files
+      HASH_SALT: random-hash
+      CONFIG_SYNC_DIRECTORY: /shared/private/random-hash/sync
+    volumes:
+      - .:/code
+      - shared:/shared
+      - ${HOST_SSH_AUTH_SOCK_DIR}:/ssh
+  db:
+    image: mariadb
+    environment:
+      MYSQL_DATABASE: drupal
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+      MYSQL_ROOT_PASSWORD: super-secret-password
+  mail:
+    image: helder/mailcatcher
+    environment:
+      - VIRTUAL_HOST=mail.${PROJECT}.${DOMAIN}
+volumes:
+  shared:
+  ssh:
