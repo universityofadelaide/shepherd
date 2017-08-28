@@ -153,10 +153,10 @@ class Site {
     $this->applyJavascriptTitleField($form);
     // First make the short_name only visible after text has appeared in it.
     $this->applyJavascriptShortNameField($form);
-    // Attach javascript that handles updating the field like a machine_name.
-    /*$form['#attached']['library'] = [
-      'shp_custom/site_form',
-    ];*/
+    // Add javascript that triggers a delayed event after input finished.
+    $form['#attached']['library'] = [
+      'shp_custom/input_event_delay',
+    ];
   }
 
   /**
@@ -168,7 +168,7 @@ class Site {
   public function applyJavascriptTitleField(array &$form) {
     $form['title']['widget'][0]['value']['#ajax'] = [
       'callback' => [$this, 'setShortNameAjax'],
-      'event' => 'keyup',
+      'event' => 'inputdelay',
     ];
   }
 
@@ -201,7 +201,7 @@ class Site {
    *   A valid short_name.
    */
   public function createShortName($title) {
-    return preg_replace('/[^a-z0-9-]/g', '-', trim(strtolower($title)));
+    return preg_replace('/[^a-z0-9-]/g', '-', trim(strtolower($title))) ?? trim(strtolower($title));
   }
 
   /**

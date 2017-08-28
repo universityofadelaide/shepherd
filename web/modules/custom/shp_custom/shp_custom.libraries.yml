@@ -9,6 +9,17 @@ site_form:
     - core/drupal.form
     - core/drupal.ajax
 
+input_event_delay:
+  version: VERSION
+  js:
+    js/app/input_delay.js: {}
+  dependencies:
+      - core/jquery
+      - core/drupalSettings
+      - core/drupal
+      - core/drupal.form
+      - core/drupal.ajax
+
 react:
   version: VERSION
   js:
