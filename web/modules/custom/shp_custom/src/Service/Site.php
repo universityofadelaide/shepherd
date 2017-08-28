@@ -150,12 +150,58 @@ class Site {
    *   Form State.
    */
   public function formAlter(array &$form, FormStateInterface $form_state) {
+    $this->applyJavascriptTitleField($form);
     // First make the short_name only visible after text has appeared in it.
     $this->applyJavascriptShortNameField($form);
     // Attach javascript that handles updating the field like a machine_name.
-    $form['#attached']['library'] = [
+    /*$form['#attached']['library'] = [
       'shp_custom/site_form',
+    ];*/
+  }
+
+  /**
+   * Apply #ajax to the title field.
+   *
+   * @param array $form
+   *   Form render array.
+   */
+  public function applyJavascriptTitleField(array &$form) {
+    $form['title']['widget'][0]['value']['#ajax'] = [
+      'callback' => [$this, 'setShortNameAjax'],
+      'event' => 'keyup',
     ];
+  }
+
+  /**
+   * Ajax callback that creates the short_name from the title input.
+   *
+   * @param array $form
+   *   Form render array.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   Form state.
+   *
+   * @return \Drupal\Core\Ajax\AjaxResponse
+   *   Returns ajax response object with commands to update field ui.
+   */
+  public function setShortNameAjax(array &$form, FormStateInterface $form_state) {
+    $ajax_response = new AjaxResponse();
+    $title_value = $form_state->getValue('title')[0]['value'];
+    $short_name = $this->createShortName($title_value);
+    $ajax_response->addCommand(new InvokeCommand('#edit-field-shp-short-name-0-value', 'val', [$short_name]));
+    return $ajax_response;
+  }
+
+  /**
+   * Create a valid short name from the title field.
+   *
+   * @param string $title
+   *   Value from the title field.
+   *
+   * @return string
+   *   A valid short_name.
+   */
+  public function createShortName($title) {
+    return preg_replace('/[^a-z0-9-]/g', '-', trim(strtolower($title)));
   }
 
   /**
