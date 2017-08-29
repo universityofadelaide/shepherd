@@ -7,6 +7,7 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\node\Entity\Node;
 use Drupal\node\NodeInterface;
 use Drupal\shp_orchestration\Exception\OrchestrationProviderNotConfiguredException;
+use Drupal\shp_orchestration\OrchestrationProviderPluginManagerInterface;
 use Drupal\shp_orchestration\Service\ActiveJobManager;
 use Drupal\token\TokenInterface;
 use Drupal\views\Views;
@@ -49,6 +50,13 @@ class Backup {
   protected $activeJobManager;
 
   /**
+   * The orchestration provider plugin manager.
+   *
+   * @var \Drupal\shp_orchestration\OrchestrationProviderInterface
+   */
+  protected $orchestrationProvider;
+
+  /**
    * Backup constructor.
    *
    * @param \Drupal\Core\Config\ConfigFactoryInterface $configFactory
@@ -59,13 +67,22 @@ class Backup {
    *   Entity type manager.
    * @param \Drupal\shp_orchestration\Service\ActiveJobManager $activeJobManager
    *   Active job manager.
+   * @param \Drupal\shp_orchestration\OrchestrationProviderPluginManagerInterface $pluginManager
+   *   The orchestration provider plugin manager.
    */
-  public function __construct(ConfigFactoryInterface $configFactory, TokenInterface $token, EntityTypeManagerInterface $entityTypeManager, ActiveJobManager $activeJobManager) {
+  public function __construct(ConfigFactoryInterface $configFactory, TokenInterface $token, EntityTypeManagerInterface $entityTypeManager, ActiveJobManager $activeJobManager, OrchestrationProviderPluginManagerInterface $pluginManager) {
     $this->configFactory = $configFactory;
     $this->config = $this->configFactory->get('shp_backup.settings');
     $this->token = $token;
     $this->entityTypeManager = $entityTypeManager;
     $this->activeJobManager = $activeJobManager;
+
+    try {
+      $this->orchestrationProvider = $pluginManager->getProviderInstance();
+    }
+    catch (OrchestrationProviderNotConfiguredException $e) {
+      drupal_set_message($e->getMessage(), 'warning');
+    }
   }
 
   /**
@@ -135,17 +152,6 @@ class Backup {
    *   True on success.
    */
   public function create(NodeInterface $backup) {
-    try {
-      // @todo Inject the service.
-      /** @var \Drupal\shp_orchestration\OrchestrationProviderInterface $orchestration_provider_plugin */
-      $orchestration_provider_plugin = \Drupal::service('plugin.manager.orchestration_provider')
-        ->getProviderInstance();
-    }
-    catch (OrchestrationProviderNotConfiguredException $e) {
-      drupal_set_message($e->getMessage(), 'warning');
-      return FALSE;
-    }
-
     $node_storage = $this->entityTypeManager->getStorage('node');
     $site = $node_storage->load($backup->field_shp_site->target_id);
     $environment = $node_storage->load($backup->field_shp_environment->target_id);
@@ -155,7 +161,7 @@ class Backup {
     $backup_command = str_replace(["\r\n", "\n", "\r"], ' && ', trim($this->config->get('backup_command')));
     $backup_command = $this->token->replace($backup_command, ['backup' => $backup]);
 
-    $result = $orchestration_provider_plugin->backupEnvironment(
+    $result = $this->orchestrationProvider->backupEnvironment(
       $distribution_name,
       $site->field_shp_short_name->value,
       $environment->id(),
@@ -178,17 +184,6 @@ class Backup {
    *   True on success
    */
   public function restore(NodeInterface $backup, NodeInterface $environment) {
-    try {
-      // @todo Inject the service.
-      /** @var \Drupal\shp_orchestration\OrchestrationProviderInterface $orchestration_provider_plugin */
-      $orchestration_provider_plugin = \Drupal::service('plugin.manager.orchestration_provider')
-        ->getProviderInstance();
-    }
-    catch (OrchestrationProviderNotConfiguredException $e) {
-      drupal_set_message($e->getMessage(), 'warning');
-      return FALSE;
-    }
-
     $node_storage = $this->entityTypeManager->getStorage('node');
     $site = $node_storage->load($backup->field_shp_site->target_id);
     $distribution = $node_storage->load($site->field_shp_distribution->target_id);
@@ -197,7 +192,7 @@ class Backup {
     $restore_command = str_replace(["\r\n", "\n", "\r"], ' && ', trim($this->config->get('restore_command')));
     $restore_command = $this->token->replace($restore_command, ['backup' => $backup]);
 
-    $result = $orchestration_provider_plugin->restoreEnvironment(
+    $result = $this->orchestrationProvider->restoreEnvironment(
       $distribution_name,
       $site->field_shp_short_name->value,
       $environment->id(),
@@ -217,23 +212,13 @@ class Backup {
    * @return bool
    *   True if finished, otherwise false.
    */
-  public function isComplete($job) {
+  public function isComplete(\stdClass $job) {
     // @todo Check backup and restore.
     $complete = FALSE;
-    try {
-      // @todo Inject the service.
-      /** @var \Drupal\shp_orchestration\OrchestrationProviderInterface $orchestration_provider_plugin */
-      $orchestration_provider_plugin = \Drupal::service('plugin.manager.orchestration_provider')
-        ->getProviderInstance();
-    }
-    catch (OrchestrationProviderNotConfiguredException $e) {
-      return FALSE;
-    }
-
     switch ($job->queueWorker) {
       case 'shp_backup':
         // @todo Fix OpenShift specific structure leaking here.
-        $provider_job = $orchestration_provider_plugin->getJob($job->name);
+        $provider_job = $this->orchestrationProvider->getJob($job->name);
         $complete = $provider_job['status']['conditions']['type'] == 'Complete'
           && $provider_job['status']['conditions']['type'] == 'True';
         // $succeeded = $provider_job['status']['succeeded']['type'] == '1';
