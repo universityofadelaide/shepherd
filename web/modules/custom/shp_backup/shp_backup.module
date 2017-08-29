@@ -5,6 +5,7 @@
  * Contains shp_backup.module.
  */
 
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Render\BubbleableMetadata;
 use Drupal\node\NodeInterface;
 use Drupal\taxonomy\Entity\Term;
@@ -110,5 +111,15 @@ function shp_backup_node_insert(NodeInterface $node) {
     case 'shp_backup':
       \Drupal::service('shp_backup.backup')->create($node);
       break;
+  }
+}
+
+function shp_backup_entity_operation_alter(array &$operations, EntityInterface $entity) {
+  // Get the current route name.
+  $route_name = \Drupal::routeMatch()->getRouteName();
+  // Operations are applied to the entity.
+  // To avoid issue, just bind them to this view.
+  if ($entity->getType() === "shp_environment" && $route_name === "view.shp_site_environments.page_1") {
+    \Drupal::service('shp_backup.backup')->operationsLinksAlter($operations, $entity);
   }
 }
