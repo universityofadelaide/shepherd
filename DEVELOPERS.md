@@ -6,7 +6,7 @@
 * PHP 7+
 * [Composer](https://getcomposer.org/)
 * [Docker](https://www.docker.com/)
-* dnsmasq 
+* dnsmasq
 * [VirtualBox](https://www.virtualbox.org/wiki/Downloads)
 * [Minishift](https://github.com/minishift/minishift/releases) - 1.0.0+
 * An ssh key for builds that is *not* password protected.
@@ -19,18 +19,19 @@ for Mac](https://www.docker.com/docker-mac)
 ## Local installation quickstart
 Ensure you have a fresh Minishift instance (`minishift delete`).
 ```bash
+composer install
 ./dsh
 robo build
 ```
 
-Login to OpenShift Web UI using the developer:developer credentials and 
+Login to OpenShift Web UI using the developer:developer credentials and
 check that MariaDB is running before executing the next command.
 
 ```bash
 robo dev:content-generate
 ```
 
-Thats it; visit the OpenShift web interface to see a build running and a 
+Thats it; visit the OpenShift web interface to see a build running and a
 deployment ready to occur when the build finishes. The URL to the web interface
 can be found in the terminal log when Minishift starts. Alternatively, execute
 the following command to open the Minishift console in a browser.
@@ -98,7 +99,7 @@ composer install
 ```
 
 ### OpenShift in Docker configuration
-Minishift is really just another layer that you don't need, you can run openshift locally with just 
+Minishift is really just another layer that you don't need, you can run openshift locally with just
 a couple of tweaks before running ./dsh
 * Install mysql on your local host, or in a docker container listening on 3306 (but it wont work within openshift as shepherd can't talk to it easily).
 * Ensure that mysql is listening on all IP's
@@ -117,8 +118,8 @@ a couple of tweaks before running ./dsh
 # run the swagger ui container
 docker run -d -p 8000:8080 swaggerapi/swagger-ui
 ```
-	
-then visit `http://swagger.test:8000` and paste 
+
+then visit `http://swagger.test:8000` and paste
 `http://home.caseyfulton.com/openshift-openapi-spec.json` into the box at the
 top and hit explore.
 
@@ -180,5 +181,3 @@ curl --insecure -H "Authorization: Bearer $(oc login -u developer -p developer >
 # From utility container (dsh shell) :
 bin/drush -r web cset shp_orchestration.openshift.openshift token ${NEW_TOKEN}
 ```
-
-
