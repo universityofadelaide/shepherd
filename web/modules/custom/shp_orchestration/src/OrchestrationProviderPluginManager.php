@@ -12,7 +12,7 @@ use Drupal\shp_orchestration\Annotation\OrchestrationProvider;
  *
  * @package Drupal\shp_orchestration
  */
-class OrchestrationProviderPluginManager extends DefaultPluginManager {
+class OrchestrationProviderPluginManager extends DefaultPluginManager implements OrchestrationProviderPluginManagerInterface {
 
   /**
    * Instance of orchestration provider.
@@ -43,10 +43,7 @@ class OrchestrationProviderPluginManager extends DefaultPluginManager {
   }
 
   /**
-   * Retrieves the stored provider from config store.
-   *
-   * @return array
-   *   Stored provider definition.
+   * {@inheritdoc}
    */
   public function getSelectedProvider() {
     $config_factory = \Drupal::service('config.factory');
@@ -56,10 +53,7 @@ class OrchestrationProviderPluginManager extends DefaultPluginManager {
   }
 
   /**
-   * Creates and returns stored provider instance.
-   *
-   * @return object
-   *   The orchestration provider plugin instance.
+   * {@inheritdoc}
    */
   public function getProviderInstance() {
     if (isset($this->providerInstance)) {
