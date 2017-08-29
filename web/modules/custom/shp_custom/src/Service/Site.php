@@ -192,10 +192,26 @@ class Site {
     $title_value = $form_state->getValue('title')[0]['value'];
     // Generate and validate the short name.
     $short_name = $this->validateShortNameUniqueness($this->createShortName($title_value));
+    $form_state->setValue('field_shp_short_name', [
+      ['value' => $short_name],
+    ]);
+    $form['field_shp_short_name']['widget'][0]['value']['#value'] = $short_name;
+
+    $form_state->setValidationComplete(FALSE);
+    $form_state->setRebuild(TRUE);
+    // Rebuild the form and get the validation errors.
+    $form_state->getFormObject()->validateForm($form, $form_state);
+    // The form state should be modified that we can then get errors.
+    $errors = $form_state->getErrors();
+    if (isset($errors['field_shp_short_name][0'])) {
+      // Convert into a string.
+      // Extract the one we care about.
+      $short_name_error = $errors["field_shp_short_name][0"]->render();
+      $short_name_error .= "<p>Please manually edit the Short name field.</p>";
+      $ajax_response->addCommand(new HtmlCommand('#field-shp-short-name-ajax-response', $short_name_error));
+      $ajax_response->addCommand(new InvokeCommand('#field-shp-short-name-ajax-response', 'css', ['color', 'red']));
+    }
     $ajax_response->addCommand(new InvokeCommand('#edit-field-shp-short-name-0-value', 'val', [$short_name]));
-    $ajax_response->addCommand(new HtmlCommand('#field-shp-short-name-ajax-response', 'Short name generated'));
-    // Make it green.
-    $ajax_response->addCommand(new InvokeCommand('#field-shp-short-name-ajax-response', 'css', ['color', 'green']));
 
     return $ajax_response;
   }
@@ -210,7 +226,9 @@ class Site {
    *   A valid short_name.
    */
   public function createShortName($title) {
-    return preg_replace('/[^a-z0-9-]/', '-', trim(strtolower($title))) ?? trim(strtolower($title));
+    // Character length is 20.
+    // @todo - break up the title into words.
+    return preg_replace('/[^a-z0-9-]/', '-', trim(strtolower($title)));
   }
 
   /**
