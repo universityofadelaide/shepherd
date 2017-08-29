@@ -115,11 +115,8 @@ function shp_backup_node_insert(NodeInterface $node) {
 }
 
 function shp_backup_entity_operation_alter(array &$operations, EntityInterface $entity) {
-  // Get the current route name.
-  $route_name = \Drupal::routeMatch()->getRouteName();
-  // Operations are applied to the entity.
-  // To avoid issue, just bind them to this view.
-  if ($entity->getType() === "shp_environment" && $route_name === "view.shp_site_environments.page_1") {
+  // Operations are applied to the shp_environment entity.
+  if ($entity->getType() === "shp_environment") {
     \Drupal::service('shp_backup.backup')->operationsLinksAlter($operations, $entity);
   }
 }
