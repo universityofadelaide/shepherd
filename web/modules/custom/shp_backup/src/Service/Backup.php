@@ -3,7 +3,10 @@
 namespace Drupal\shp_backup\Service;
 
 use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\StringTranslation\StringTranslationTrait;
+use Drupal\Core\Url;
 use Drupal\node\Entity\Node;
 use Drupal\shp_orchestration\Exception\OrchestrationProviderNotConfiguredException;
 use Drupal\node\NodeInterface;
@@ -16,6 +19,8 @@ use Drupal\views\Views;
  * @package Drupal\shp_backup
  */
 class Backup {
+
+  use StringTranslationTrait;
 
   private $config;
 
@@ -188,6 +193,32 @@ class Backup {
     );
 
     return $result;
+  }
+
+  /**
+   * Apply alterations to entity operations.
+   *
+   * @param array $operations
+   *   List of operations.
+   * @param \Drupal\Core\Entity\EntityInterface $entity
+   *   Entity to apply operations to.
+   */
+  public function operationsLinksAlter(array &$operations, EntityInterface $entity) {
+    $site = $entity->field_shp_site->target_id;
+    $environment = $entity->id();
+
+    $operations['backup'] = [
+      'title' => $this->t('Backup'),
+      'weight' => 1,
+      'url' => Url::fromRoute('shp_backup.environment-backup-form',
+        ['site' => $site, 'environment' => $environment]),
+    ];
+
+    $operations['restore'] = [
+      'title' => $this->t('Restore'),
+      'weight' => 2,
+      'url' => Url::fromRoute('shp_backup.environment-restore-form', ['site' => $site, 'environment' => $environment]),
+    ];
   }
 
 }
