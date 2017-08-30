@@ -7,6 +7,7 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\node\Entity\Node;
 use Drupal\node\NodeInterface;
 use Drupal\shp_backup\Service\Backup;
+use Drupal\shp_orchestration\Service\JobQueue;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -114,7 +115,7 @@ class EnvironmentRestoreForm extends FormBase {
       $backup,
       'shp_restore',
       'shp_backup.backup',
-      ['environment' => $environment->id()]
+      ['environmentId' => $environment->id()]
     );
     if ($status) {
       drupal_set_message($this->t('Restore has been queued for %title', [

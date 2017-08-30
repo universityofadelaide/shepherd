@@ -19,7 +19,12 @@ use Drupal\views\Views;
  */
 class Backup {
 
-  private $config;
+  /**
+   * Backup settings.
+   *
+   * @var \Drupal\Core\Config\Config|\Drupal\Core\Config\ImmutableConfig
+   */
+  protected $config;
 
   /**
    * Used to retrieve config.
@@ -181,7 +186,7 @@ class Backup {
    *   The environment to restore.
    *
    * @return bool
-   *   True on success
+   *   True on success.
    */
   public function restore(NodeInterface $backup, NodeInterface $environment) {
     $node_storage = $this->entityTypeManager->getStorage('node');
