@@ -5,6 +5,8 @@ services:
     class: Drupal\shp_custom\Service\RandomString
   shp_custom.site:
     class: Drupal\shp_custom\Service\Site
+    arguments:
+      - @entity_type.manager
   shp_custom.environment:
     class: Drupal\shp_custom\Service\Environment
     arguments:
