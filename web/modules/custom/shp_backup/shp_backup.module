@@ -115,8 +115,12 @@ function shp_backup_node_insert(NodeInterface $node) {
 }
 
 function shp_backup_entity_operation_alter(array &$operations, EntityInterface $entity) {
+  $account = \Drupal::currentUser();
   // Operations are applied to the shp_environment entity.
-  if ($entity->getType() === "shp_environment") {
+  // User must also have permission to create shp_backup entities.
+  if ($entity->getEntityTypeId() === "node"
+    && $entity->getType() === "shp_environment"
+    && $account->hasPermission('create shp_backup content')) {
     \Drupal::service('shp_backup.backup')->operationsLinksAlter($operations, $entity);
   }
 }
