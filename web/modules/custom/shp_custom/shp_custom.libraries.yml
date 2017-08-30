@@ -1,13 +1,8 @@
-react:
+input_event_delay:
   version: VERSION
   js:
-    js/contrib/react/react.min.js: {}
-    js/contrib/react/react-dom.min.js: {}
-
-site_environment_status:
-  version: VERSION
-  js:
-    js/app/site_environment_status.js: {preprocess: false}
+    js/app/input_delay.js: {}
   dependencies:
-    - core/jquery
-    - shp_custom/react
+      - core/jquery
+      - core/drupalSettings
+      - core/drupal

@@ -5,6 +5,7 @@
  * Contains shp_backup.module.
  */
 
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Render\BubbleableMetadata;
 use Drupal\taxonomy\Entity\Term;
 use Drupal\node\Entity\Node;
@@ -99,4 +100,26 @@ function shp_backup_tokens($type, $tokens, array $data, array $options, Bubbleab
 
   return $replacements;
 
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_insert().
+ */
+function shp_backup_node_insert(NodeInterface $node) {
+  switch ($node->bundle()) {
+    case 'shp_backup':
+      \Drupal::service('shp_backup.backup')->create($node);
+      break;
+  }
+}
+
+function shp_backup_entity_operation_alter(array &$operations, EntityInterface $entity) {
+  $account = \Drupal::currentUser();
+  // Operations are applied to the shp_environment entity.
+  // User must also have permission to create shp_backup entities.
+  if ($entity->getEntityTypeId() === "node"
+    && $entity->getType() === "shp_environment"
+    && $account->hasPermission('create shp_backup content')) {
+    \Drupal::service('shp_backup.backup')->operationsLinksAlter($operations, $entity);
+  }
 }

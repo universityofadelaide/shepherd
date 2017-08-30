@@ -4,7 +4,7 @@ services:
     image: uofa/apache2-php7-dev:shepherd
     hostname: ${PROJECT}
     environment:
-      SITE_TITLE: Shepherd
+      SITE_TITLE: Drupal site
       SITE_MAIL: site@example.com
       SITE_ADMIN_EMAIL: admin@example.com
       SITE_ADMIN_USERNAME: admin
