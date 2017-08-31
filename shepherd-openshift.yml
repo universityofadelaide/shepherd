@@ -249,13 +249,13 @@ parameters:
 - name: SOURCE_REPOSITORY_URL
   description: The URL of the repository with your application source code.
   required: true
-  value: ssh://git@gitlab.adelaide.edu.au/web-team/shepherd.git
+  value: git@github.com:universityofadelaide/shepherd.git
 - name: SOURCE_REPOSITORY_REF
   description: Set this to a branch name, tag or other ref of your repository if you are not using the default branch.
   required: true
   value: develop
 - name: SOURCE_SECRET
-  description: Enter the name of the pre-created passwordless secret that allows you to checkout from gitlab.
+  description: Enter the name of the pre-created passwordless secret that allows you to checkout from github.
   required: true
   value: build-key
 - name: MEMORY_LIMIT_WEB
@@ -310,8 +310,8 @@ parameters:
 - name: UID
   description: The user ID the web container should run as.
   required: true
-  value: 99010
+  value: '99010'
 - name: GID
   description: The group ID the web container should run as.
   required: true
-  value: 99010
+  value: '99010'
