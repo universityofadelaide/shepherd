@@ -11,7 +11,6 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\node\Entity\Node;
-use Drupal\taxonomy\Entity\Term;
 
 /**
  * Class Site.
@@ -31,6 +30,20 @@ class Site {
   protected $entityTypeManager;
 
   /**
+   * Node entity type.
+   *
+   * @var \Drupal\Core\Entity\EntityStorageInterface
+   */
+  protected $node;
+
+  /**
+   * Taxonomy term entity type.
+   *
+   * @var \Drupal\Core\Entity\EntityStorageInterface
+   */
+  protected $taxonomyTerm;
+
+  /**
    * Site constructor.
    *
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entityTypeManager
@@ -38,6 +51,8 @@ class Site {
    */
   public function __construct(EntityTypeManagerInterface $entityTypeManager) {
     $this->entityTypeManager = $entityTypeManager;
+    $this->taxonomyTerm = $this->entityTypeManager->getStorage('taxonomy_term');
+    $this->node = $this->entityTypeManager->getStorage('node');
   }
 
   /**
@@ -50,8 +65,8 @@ class Site {
    *   TRUE if applied go live date.
    */
   public function checkGoLiveApplied(Node $environment) {
-    $term = Term::load($environment->field_shp_environment_type->getString());
-    $site = Node::load($environment->field_shp_site->getString());
+    $term = $this->taxonomyTerm->load($environment->field_shp_environment_type->getString());
+    $site = $this->node->load($environment->field_shp_site->getString());
     if ($term->getName() === "Production") {
       if (!isset($site->field_shp_go_live_date->value)) {
         $date = new DrupalDateTime();
@@ -112,12 +127,12 @@ class Site {
    *   An array of nodes
    */
   public function loadRelatedEntitiesByField(Node $node, $reference_field, $node_type) {
-    $results = \Drupal::entityQuery('node')
+    $results = $this->node->getQuery()
       ->condition('type', $node_type)
       ->condition($reference_field, $node->id())
       ->condition('status', NODE_PUBLISHED)
       ->execute();
-    return Node::loadMultiple($results);
+    return $this->node->loadMultiple($results);
   }
 
   /**
@@ -134,7 +149,7 @@ class Site {
    *   Query results.
    */
   public function loadEntitiesByFieldValue($node_type = 'shp_site', $field, $field_value) {
-    $results = \Drupal::entityQuery('node')
+    $results = $this->node->getQuery()
       ->condition('type', $node_type)
       ->condition($field, $field_value, 'CONTAINS')
       ->execute();
