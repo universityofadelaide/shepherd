@@ -114,6 +114,9 @@ function shp_backup_node_insert(NodeInterface $node) {
   }
 }
 
+/**
+ * Implements hook_operation_alter().
+ */
 function shp_backup_entity_operation_alter(array &$operations, EntityInterface $entity) {
   $account = \Drupal::currentUser();
   // Operations are applied to the shp_environment entity.
