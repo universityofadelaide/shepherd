@@ -94,8 +94,8 @@ function shp_orchestration_shp_distribution_form_validate(array $form, FormState
 /**
  * Implements hook_shp_env_vars().
  */
-function shp_orchestration_shp_env_vars(NodeInterface $node) {
-  $site = $node->get('field_shp_site')
+function shp_orchestration_shp_env_vars(NodeInterface $environment) {
+  $site = $environment->get('field_shp_site')
     ->first()
     ->get('entity')
     ->getTarget()
@@ -107,10 +107,11 @@ function shp_orchestration_shp_env_vars(NodeInterface $node) {
     'SHEPHERD_URL' => \Drupal::service('router.request_context')->getCompleteBaseUrl(),
     // @todo Ensure deployment secret has SHEPHERD_TOKEN set.
     'SHEPHERD_TOKEN_FILE' => '/etc/secret/SHEPHERD_TOKEN',
+    'WEB_PATH' => $environment->field_shp_path->value,
   ];
 
   // Append custom environment variables.
-  foreach ($node->get('field_shp_env_vars')->getValue() as $env_var) {
+  foreach ($environment->get('field_shp_env_vars')->getValue() as $env_var) {
     $env_vars[$env_var['key']] = $env_var['value'];
   }
   return $env_vars;
