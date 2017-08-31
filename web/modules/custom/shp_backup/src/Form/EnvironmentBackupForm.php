@@ -131,13 +131,8 @@ class EnvironmentBackupForm extends FormBase {
     // Call the backup service to start a backup and update the backup node.
     if ($backup = $this->backup->createNode($environment, $form_state->getValue('backup_title'))) {
 
-      // @todo Inject the service.
-      \Drupal::service('shp_orchestration.job_queue')->add(
-        $environment->id(),
-        'shp_backup',
-        'shp_backup.backup',
-        ['backupId' => $backup->id()]
-      );
+      $this->backup->create($backup);
+
       drupal_set_message($this->t('Backup has been queued for %title', [
         '%title' => $form_state->get('environment')->getTitle(),
       ]));
