@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "8ef6fc03a65ece81e78b7ede34f69ed8",
+    "content-hash": "01d6f8e480486cd40726cbddacde4b4f",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -340,16 +340,16 @@
         },
         {
             "name": "cweagans/composer-patches",
-            "version": "1.6.1",
+            "version": "1.6.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/cweagans/composer-patches.git",
-                "reference": "b3036f23b73570ab5d869e345277786c8eb248a9"
+                "reference": "014e968ca2ce4342476b3f2f6779b274fff8ae9e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/cweagans/composer-patches/zipball/b3036f23b73570ab5d869e345277786c8eb248a9",
-                "reference": "b3036f23b73570ab5d869e345277786c8eb248a9",
+                "url": "https://api.github.com/repos/cweagans/composer-patches/zipball/014e968ca2ce4342476b3f2f6779b274fff8ae9e",
+                "reference": "014e968ca2ce4342476b3f2f6779b274fff8ae9e",
                 "shasum": ""
             },
             "require": {
@@ -380,7 +380,7 @@
                 }
             ],
             "description": "Provides a way to patch Composer packages.",
-            "time": "2017-03-19T18:18:52+00:00"
+            "time": "2017-08-30T16:41:23+00:00"
         },
         {
             "name": "dnoegel/php-xdg-base-dir",
@@ -1111,20 +1111,23 @@
         },
         {
             "name": "drupal/devel",
-            "version": "1.0.0-alpha1",
+            "version": "1.0.0",
             "source": {
                 "type": "git",
                 "url": "https://git.drupal.org/project/devel",
-                "reference": "8.x-1.0-alpha1"
+                "reference": "8.x-1.0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://ftp.drupal.org/files/projects/devel-8.x-1.0-alpha1.zip",
-                "reference": "8.x-1.0-alpha1",
-                "shasum": "f05e874d4ae2515e0a86df3017a081d4cce31fef"
+                "url": "https://ftp.drupal.org/files/projects/devel-8.x-1.0.zip",
+                "reference": "8.x-1.0",
+                "shasum": "e629b130a58d8f6c8f82cffb5a2a6240d70d6740"
             },
             "require": {
                 "drupal/core": "~8.0"
+            },
+            "suggest": {
+                "symfony/var-dumper": "Pretty print complex values better with var-dumper available"
             },
             "type": "drupal-module",
             "extra": {
@@ -1132,11 +1135,11 @@
                     "dev-1.x": "1.x-dev"
                 },
                 "drupal": {
-                    "version": "8.x-1.0-alpha1",
-                    "datestamp": "1480796583",
+                    "version": "8.x-1.0",
+                    "datestamp": "1502736865",
                     "security-coverage": {
-                        "status": "not-covered",
-                        "message": "Alpha releases are not covered by Drupal security advisories."
+                        "status": "covered",
+                        "message": "Covered by Drupal's security advisory policy"
                     }
                 }
             },
@@ -1152,20 +1155,24 @@
                     "role": "Maintainer"
                 },
                 {
-                    "name": "juampynr",
-                    "homepage": "https://www.drupal.org/user/682736"
+                    "name": "Hans Salvisberg",
+                    "homepage": "https://www.drupal.org/u/salvis",
+                    "email": "drupal@salvisberg.com",
+                    "role": "Maintainer"
                 },
                 {
-                    "name": "lussoluca",
-                    "homepage": "https://www.drupal.org/user/138068"
+                    "name": "Luca Lusso",
+                    "homepage": "https://www.drupal.org/u/lussoluca",
+                    "role": "Maintainer"
                 },
                 {
-                    "name": "moshe weitzman",
-                    "homepage": "https://www.drupal.org/user/23"
+                    "name": "Marco (willzyx)",
+                    "homepage": "https://www.drupal.org/u/willzyx",
+                    "role": "Maintainer"
                 },
                 {
-                    "name": "pcambra",
-                    "homepage": "https://www.drupal.org/user/122101"
+                    "name": "See contributors",
+                    "homepage": "https://www.drupal.org/node/3236/committers"
                 },
                 {
                     "name": "salvis",
@@ -5429,67 +5436,6 @@
             "time": "2017-07-28T17:11:54+00:00"
         },
         {
-            "name": "drupal/devel_node_access",
-            "version": "1.0.0-alpha1",
-            "require": {
-                "drupal/core": "*",
-                "drupal/devel": "self.version"
-            },
-            "type": "metapackage",
-            "extra": {
-                "branch-alias": {
-                    "dev-1.x": "1.x-dev"
-                },
-                "drupal": {
-                    "version": "8.x-1.0-alpha1",
-                    "datestamp": "1480796583",
-                    "security-coverage": {
-                        "status": "not-covered",
-                        "message": "Alpha releases are not covered by Drupal security advisories."
-                    }
-                }
-            },
-            "notification-url": "https://packages.drupal.org/8/downloads",
-            "license": [
-                "GPL-2.0+"
-            ],
-            "authors": [
-                {
-                    "name": "catch",
-                    "homepage": "https://www.drupal.org/user/35733"
-                },
-                {
-                    "name": "juampynr",
-                    "homepage": "https://www.drupal.org/user/682736"
-                },
-                {
-                    "name": "lussoluca",
-                    "homepage": "https://www.drupal.org/user/138068"
-                },
-                {
-                    "name": "moshe weitzman",
-                    "homepage": "https://www.drupal.org/user/23"
-                },
-                {
-                    "name": "pcambra",
-                    "homepage": "https://www.drupal.org/user/122101"
-                },
-                {
-                    "name": "salvis",
-                    "homepage": "https://www.drupal.org/user/82964"
-                },
-                {
-                    "name": "willzyx",
-                    "homepage": "https://www.drupal.org/user/1043862"
-                }
-            ],
-            "description": "Developer blocks and page illustrating relevant node_access records.",
-            "homepage": "https://www.drupal.org/project/devel",
-            "support": {
-                "source": "http://cgit.drupalcode.org/devel"
-            }
-        },
-        {
             "name": "fabpot/goutte",
             "version": "v3.2.1",
             "source": {
@@ -7151,7 +7097,6 @@
     "minimum-stability": "dev",
     "stability-flags": {
         "drupal/cas": 20,
-        "drupal/devel": 20,
         "drupal/entity_reference_revisions": 20,
         "drupal/field_group": 20,
         "drupal/group": 10,
@@ -7160,7 +7105,6 @@
         "drupal/token": 20,
         "ua-drupal-modules/ua_ldap": 20,
         "ua-drupal-modules/ua_ldap_authorisation": 20,
-        "drupal/devel_node_access": 15,
         "behat/mink": 20,
         "universityofadelaide/openshift-client": 20
     },
