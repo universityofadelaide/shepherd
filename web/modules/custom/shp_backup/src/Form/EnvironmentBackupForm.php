@@ -144,4 +144,5 @@ class EnvironmentBackupForm extends FormBase {
     $form_state->setRedirect("entity.node.canonical", ['node' => $site->id()]);
   }
 
+  public function openModal() {}
 }
