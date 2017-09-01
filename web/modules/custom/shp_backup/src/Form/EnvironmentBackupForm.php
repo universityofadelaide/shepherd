@@ -13,7 +13,9 @@ use Drupal\token\TokenInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Class SiteCloneForm.
+ * EnvironmentBackupForm.
+ *
+ * Triggers backups of a sites environment.
  *
  * @package Drupal\shp_backup\Form
  */
@@ -53,9 +55,13 @@ class EnvironmentBackupForm extends FormBase {
    * EnvironmentBackupForm constructor.
    *
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config
+   *   Config Factory.
    * @param \Drupal\shp_backup\Service\Backup $backup
+   *   Backup service.
    * @param \Drupal\token\TokenInterface $token
+   *   Token service.
    * @param \Drupal\Core\Session\AccountInterface $current_user
+   *   Current user.
    */
   public function __construct(ConfigFactoryInterface $config, Backup $backup, TokenInterface $token, AccountInterface $current_user) {
     $this->config = $config;
