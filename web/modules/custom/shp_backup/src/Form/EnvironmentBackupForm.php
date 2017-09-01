@@ -6,6 +6,7 @@ use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Session\AccountInterface;
+use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\node\NodeInterface;
 use Drupal\shp_backup\Service\Backup;
 use Drupal\token\TokenInterface;
@@ -17,6 +18,8 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * @package Drupal\shp_backup\Form
  */
 class EnvironmentBackupForm extends FormBase {
+
+  use StringTranslationTrait;
 
   /**
    * For retrieving config.
@@ -92,7 +95,7 @@ class EnvironmentBackupForm extends FormBase {
    *   Translated markup.
    */
   public function getPageTitle(NodeInterface $site, NodeInterface $environment) {
-    return t('Backup environment - @site_title : @environment_title', ['@site_title' => $site->getTitle(), '@environment_title' => $environment->getTitle()]);
+    return $this->t('Backup environment - @site_title : @environment_title', ['@site_title' => $site->getTitle(), '@environment_title' => $environment->getTitle()]);
   }
 
   /**
@@ -111,9 +114,12 @@ class EnvironmentBackupForm extends FormBase {
       '#default_value' => $backup_title,
     ];
 
-    $form['submit'] = [
-      '#type' => 'submit',
-      '#value' => $this->t('Backup now'),
+    $form['actions'] = [
+      '#type' => 'actions',
+      'submit' => [
+        '#type' => 'submit',
+        '#value' => $this->t('Backup now'),
+      ],
     ];
 
     return $form;
@@ -144,5 +150,4 @@ class EnvironmentBackupForm extends FormBase {
     $form_state->setRedirect("entity.node.canonical", ['node' => $site->id()]);
   }
 
-  public function openModal() {}
 }

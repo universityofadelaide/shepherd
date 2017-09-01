@@ -2,6 +2,7 @@
 
 namespace Drupal\shp_backup\Service;
 
+use Drupal\Component\Serialization\Json;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -212,12 +213,24 @@ class Backup {
       'weight' => 1,
       'url' => Url::fromRoute('shp_backup.environment-backup-form',
         ['site' => $site, 'environment' => $environment]),
+      // Render form in a modal window.
+      'attributes' => [
+        'class' => ['button', 'use-ajax'],
+        'data-dialog-type' => 'modal',
+        'data-dialog-options' => Json::encode(['width' => '50%', 'height' => '50%']),
+      ],
     ];
 
     $operations['restore'] = [
       'title' => $this->t('Restore'),
       'weight' => 2,
       'url' => Url::fromRoute('shp_backup.environment-restore-form', ['site' => $site, 'environment' => $environment]),
+      // Render form in a modal window.
+      'attributes' => [
+        'class' => ['button', 'use-ajax'],
+        'data-dialog-type' => 'modal',
+        'data-dialog-options' => Json::encode(['width' => '50%', 'height' => '50%']),
+      ],
     ];
   }
 
