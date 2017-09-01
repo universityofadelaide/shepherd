@@ -96,7 +96,10 @@ class QueuedBackup extends Backup {
       $source_environment->id(),
       'shp_restore',
       'shp_backup.backup',
-      ['environmentId' => $environment->id()]
+      [
+        'environmentId' => $environment->id(),
+        'backupId' => $backup->id(),
+      ]
     );
   }
 

@@ -2,3 +2,6 @@ services:
   shp_backup.backup:
     class: Drupal\shp_backup\Service\Backup
     arguments: ['@config.factory', '@token', '@entity_type.manager', '@shp_orchestration.active_job_manager', '@plugin.manager.orchestration_provider']
+  shp_backup.canonical:
+    class: Drupal\shp_backup\Service\Backup
+    arguments: ['@config.factory', '@token', '@entity_type.manager', '@shp_orchestration.active_job_manager', '@plugin.manager.orchestration_provider']

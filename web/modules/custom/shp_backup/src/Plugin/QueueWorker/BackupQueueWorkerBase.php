@@ -67,7 +67,7 @@ abstract class BackupQueueWorkerBase extends QueueWorkerBase implements Containe
       $plugin_id,
       $plugin_definition,
       $container->get('entity.manager')->getStorage('node'),
-      $container->get('shp_backup.backup'),
+      $container->get('shp_backup.canonical'),
       $container->get('shp_orchestration.active_job_manager')
     );
   }
