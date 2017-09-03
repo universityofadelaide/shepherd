@@ -51,6 +51,7 @@ dependencies:
   - key_value_field
   - paragraphs
   - r4032login
+  - redis
   - token
 
   # Shepherd modules
