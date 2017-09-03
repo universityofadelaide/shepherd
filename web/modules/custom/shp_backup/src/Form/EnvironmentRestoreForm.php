@@ -10,7 +10,9 @@ use Drupal\shp_backup\Service\Backup;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Class SiteCloneForm.
+ * EnvironmentRestoreForm.
+ *
+ * Triggers a restore from a saved backup to a sites environment.
  *
  * @package Drupal\shp_backup\Form
  */
@@ -86,9 +88,12 @@ class EnvironmentRestoreForm extends FormBase {
         '#options' => $backup_options,
         '#required' => TRUE,
       ],
-      'submit' => [
-        '#type' => 'submit',
-        '#value' => $this->t('Restore now'),
+      'actions' => [
+        '#type' => 'actions',
+        'submit' => [
+          '#type' => 'submit',
+          '#value' => $this->t('Restore now'),
+        ],
       ],
     ];
 
