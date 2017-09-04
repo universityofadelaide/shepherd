@@ -1,0 +1,17 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.teaser
+    - node.type.shp_route
+  module:
+    - user
+id: node.shp_route.teaser
+targetEntityType: node
+bundle: shp_route
+mode: teaser
+content:
+  links:
+    weight: 100
+    region: content
+hidden: {  }

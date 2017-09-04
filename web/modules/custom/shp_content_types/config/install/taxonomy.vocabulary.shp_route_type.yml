@@ -1,0 +1,8 @@
+langcode: en
+status: true
+dependencies: {  }
+name: 'Route type'
+vid: shp_route_type
+description: 'Types of routes'
+hierarchy: 0
+weight: 0
