@@ -7,9 +7,9 @@
 
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Render\BubbleableMetadata;
+use Drupal\node\Entity\Node;
 use Drupal\node\NodeInterface;
 use Drupal\taxonomy\Entity\Term;
-use Drupal\node\Entity\Node;
 
 /**
  * Implements hook_cron().
@@ -82,11 +82,11 @@ function shp_backup_tokens($type, $tokens, array $data, array $options, Bubbleab
         break;
 
       case 'site-private-files':
-        $replacements[$original] = '/code/private/';
+        $replacements[$original] = '/shared/private/';
         break;
 
       case 'site-public-files':
-        $replacements[$original] = '/code/web/sites/default/files/';
+        $replacements[$original] = '/shared/public/';
         break;
 
       case 'environment-type':

@@ -460,7 +460,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       $commands,
     ];
     try {
-      $this->client->createJob(
+      $response_body = $this->client->createJob(
         $deployment_name . '-' . \Drupal::service('shp_custom.random_string')->generate(5),
         $image_stream['status']['dockerImageRepository'] . ':' . $source_ref,
         $args_array,
@@ -472,7 +472,20 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       $this->handleClientException($e);
       return FALSE;
     }
-    return TRUE;
+    return $response_body;
+  }
+
+  /**
+   * Fetch the job from the provider.
+   *
+   * @param string $name
+   *   The job name.
+   *
+   * @return array|bool
+   *   The job, else false.
+   */
+  public function getJob(string $name) {
+    return $this->client->getJob($name);
   }
 
   /**
@@ -665,12 +678,13 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
 
     if ($setup) {
       try {
-        // @todo Parametrise storage size.
-        $this->client->createPersistentVolumeClaim(
-          $shared_pvc_name,
-          'ReadWriteMany',
-          '5Gi'
-        );
+        if (!$this->client->getPersistentVolumeClaim($shared_pvc_name)) {
+          $this->client->createPersistentVolumeClaim(
+            $shared_pvc_name,
+            'ReadWriteMany',
+            '5Gi'
+          );
+        }
         if (!$this->client->getPersistentVolumeClaim($backup_pvc_name)) {
           $this->client->createPersistentVolumeClaim(
             $backup_pvc_name,

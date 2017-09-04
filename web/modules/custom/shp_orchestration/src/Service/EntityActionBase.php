@@ -6,10 +6,10 @@ use Drupal\shp_orchestration\Exception\OrchestrationProviderNotConfiguredExcepti
 use Drupal\shp_orchestration\OrchestrationProviderPluginManager;
 
 /**
- * Class EntityBase
+ * Class EntityBase.
  * @package Drupal\shp_orchestration\Service
  */
-class EntityBase {
+class EntityActionBase {
   /**
    * The currently active orchestration provider plugin.
    *

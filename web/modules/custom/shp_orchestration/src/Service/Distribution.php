@@ -8,7 +8,7 @@ use Drupal\node\NodeInterface;
  * Class Distribution.
  * @package Drupal\shp_orchestration\Service
  */
-class Distribution extends EntityBase {
+class Distribution extends EntityActionBase {
 
   /**
    * Tell the active orchestration provider a distribution was created.

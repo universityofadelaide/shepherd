@@ -7,6 +7,7 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\node\Entity\Node;
 use Drupal\node\NodeInterface;
 use Drupal\shp_backup\Service\Backup;
+use Drupal\shp_orchestration\Service\JobQueue;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -114,7 +115,9 @@ class EnvironmentRestoreForm extends FormBase {
     $backup = Node::load($form_state->getValue('backup'));
 
     // Set the backup to restore from.
-    if ($this->backup->restore($backup, $environment)) {
+    $status = $this->backup->restore($backup, $environment);
+
+    if ($status) {
       drupal_set_message($this->t('Restore has been queued for %title', [
         '%title' => $environment->getTitle(),
       ]));
@@ -125,6 +128,7 @@ class EnvironmentRestoreForm extends FormBase {
           '%title' => $environment->getTitle(),
         ]), 'error');
     }
+
     $form_state->setRedirect("entity.node.canonical", ['node' => $site->id()]);
   }
 

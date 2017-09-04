@@ -5,3 +5,6 @@ shp_orchestration.settings:
     selected_provider:
       type: string
       label: 'Selected orchestration provider to use.'
+    queued_operations:
+      type: boolean
+      label: 'Enable queued operations. Ensures multiple actions are not executed concurrently for a given environment.'
