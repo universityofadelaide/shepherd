@@ -17,7 +17,6 @@ class RouteSubscriber extends RouteSubscriberBase {
     if ($route = $collection->get('view.shp_backup_list.page_1')) {
       $route->setRequirement('_custom_access', '\Drupal\shp_custom\Controller\SiteLocalTaskController::checkAccess');
     }
-
   }
 
 }

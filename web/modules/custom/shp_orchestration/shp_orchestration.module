@@ -2,7 +2,9 @@
 
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\node\NodeInterface;
+use Drupal\node\Entity\Node;
 use Drupal\shp_orchestration\Exception\OrchestrationProviderNotConfiguredException;
+use Drupal\Core\QueueInterface;
 
 /**
  * Implements hook_ENTITY_TYPE_insert().
@@ -113,4 +115,11 @@ function shp_orchestration_shp_env_vars(NodeInterface $environment) {
     $env_vars[$env_var['key']] = $env_var['value'];
   }
   return $env_vars;
+}
+
+/**
+ * Implements hook_cron().
+ */
+function shp_orchestration_cron() {
+  \Drupal::service('shp_orchestration.job_queue')->process();
 }

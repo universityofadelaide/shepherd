@@ -9,8 +9,10 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\Url;
 use Drupal\node\Entity\Node;
-use Drupal\shp_orchestration\Exception\OrchestrationProviderNotConfiguredException;
 use Drupal\node\NodeInterface;
+use Drupal\shp_orchestration\Exception\OrchestrationProviderNotConfiguredException;
+use Drupal\shp_orchestration\OrchestrationProviderPluginManagerInterface;
+use Drupal\shp_orchestration\Service\ActiveJobManager;
 use Drupal\token\TokenInterface;
 use Drupal\views\Views;
 
@@ -23,7 +25,12 @@ class Backup {
 
   use StringTranslationTrait;
 
-  private $config;
+  /**
+   * Backup settings.
+   *
+   * @var \Drupal\Core\Config\Config|\Drupal\Core\Config\ImmutableConfig
+   */
+  protected $config;
 
   /**
    * Used to retrieve config.
@@ -47,20 +54,46 @@ class Backup {
   protected $entityTypeManager;
 
   /**
+   * The active job manager service.
+   *
+   * @var \Drupal\shp_orchestration\Service\ActiveJobManager
+   */
+  protected $activeJobManager;
+
+  /**
+   * The orchestration provider plugin manager.
+   *
+   * @var \Drupal\shp_orchestration\OrchestrationProviderInterface
+   */
+  protected $orchestrationProvider;
+
+  /**
    * Backup constructor.
    *
-   * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
+   * @param \Drupal\Core\Config\ConfigFactoryInterface $configFactory
    *   Config factory.
    * @param \Drupal\token\TokenInterface $token
    *   Token service.
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entityTypeManager
    *   Entity type manager.
+   * @param \Drupal\shp_orchestration\Service\ActiveJobManager $activeJobManager
+   *   Active job manager.
+   * @param \Drupal\shp_orchestration\OrchestrationProviderPluginManagerInterface $pluginManager
+   *   The orchestration provider plugin manager.
    */
-  public function __construct(ConfigFactoryInterface $config_factory, TokenInterface $token, EntityTypeManagerInterface $entityTypeManager) {
-    $this->configFactory = $config_factory;
+  public function __construct(ConfigFactoryInterface $configFactory, TokenInterface $token, EntityTypeManagerInterface $entityTypeManager, ActiveJobManager $activeJobManager, OrchestrationProviderPluginManagerInterface $pluginManager) {
+    $this->configFactory = $configFactory;
     $this->config = $this->configFactory->get('shp_backup.settings');
     $this->token = $token;
     $this->entityTypeManager = $entityTypeManager;
+    $this->activeJobManager = $activeJobManager;
+
+    try {
+      $this->orchestrationProvider = $pluginManager->getProviderInstance();
+    }
+    catch (OrchestrationProviderNotConfiguredException $e) {
+      drupal_set_message($e->getMessage(), 'warning');
+    }
   }
 
   /**
@@ -91,11 +124,13 @@ class Backup {
    * @param string $title
    *   The title to use for the backup node.
    *
-   * @return int|bool
-   *   SAVED_NEW or FALSE.
+   * @return \Drupal\Core\Entity\EntityInterface|static
+   *   The backup entity.
    */
   public function createNode(NodeInterface $environment, $title = NULL) {
     if (!isset($title)) {
+
+      // @todo Inject the service.
       $config = \Drupal::config('shp_backup.settings');
       $title = $this->token->replace($config->get('backup_title'), ['environment' => $environment]);
     }
@@ -103,6 +138,7 @@ class Backup {
     $backup = Node::create([
       'type'                     => 'shp_backup',
       'langcode'                 => 'en',
+      // @todo Inject the service.
       'uid'                      => \Drupal::currentUser()->id(),
       'status'                   => 1,
       'title'                    => $title,
@@ -112,7 +148,9 @@ class Backup {
     ]);
     // Store the path for this backup in the backup node.
     $backup->set('field_shp_backup_path', $this->token->replace('[shepherd:backup-path]', ['backup' => $backup]));
-    return $backup->save();
+    $backup->save();
+
+    return $backup;
   }
 
   /**
@@ -125,16 +163,6 @@ class Backup {
    *   True on success.
    */
   public function create(NodeInterface $backup) {
-    try {
-      /** @var \Drupal\shp_orchestration\OrchestrationProviderInterface $orchestration_provider_plugin */
-      $orchestration_provider_plugin = \Drupal::service('plugin.manager.orchestration_provider')
-        ->getProviderInstance();
-    }
-    catch (OrchestrationProviderNotConfiguredException $e) {
-      drupal_set_message($e->getMessage(), 'warning');
-      return FALSE;
-    }
-
     $node_storage = $this->entityTypeManager->getStorage('node');
     $site = $node_storage->load($backup->field_shp_site->target_id);
     $environment = $node_storage->load($backup->field_shp_environment->target_id);
@@ -144,7 +172,7 @@ class Backup {
     $backup_command = str_replace(["\r\n", "\n", "\r"], ' && ', trim($this->config->get('backup_command')));
     $backup_command = $this->token->replace($backup_command, ['backup' => $backup]);
 
-    $result = $orchestration_provider_plugin->backupEnvironment(
+    $result = $this->orchestrationProvider->backupEnvironment(
       $distribution_name,
       $site->field_shp_short_name->value,
       $environment->id(),
@@ -164,19 +192,9 @@ class Backup {
    *   The environment to restore.
    *
    * @return bool
-   *   True on success
+   *   True on success.
    */
   public function restore(NodeInterface $backup, NodeInterface $environment) {
-    try {
-      /** @var \Drupal\shp_orchestration\OrchestrationProviderInterface $orchestration_provider_plugin */
-      $orchestration_provider_plugin = \Drupal::service('plugin.manager.orchestration_provider')
-        ->getProviderInstance();
-    }
-    catch (OrchestrationProviderNotConfiguredException $e) {
-      drupal_set_message($e->getMessage(), 'warning');
-      return FALSE;
-    }
-
     $node_storage = $this->entityTypeManager->getStorage('node');
     $site = $node_storage->load($backup->field_shp_site->target_id);
     $distribution = $node_storage->load($site->field_shp_distribution->target_id);
@@ -185,7 +203,7 @@ class Backup {
     $restore_command = str_replace(["\r\n", "\n", "\r"], ' && ', trim($this->config->get('restore_command')));
     $restore_command = $this->token->replace($restore_command, ['backup' => $backup]);
 
-    $result = $orchestration_provider_plugin->restoreEnvironment(
+    $result = $this->orchestrationProvider->restoreEnvironment(
       $distribution_name,
       $site->field_shp_short_name->value,
       $environment->id(),
@@ -194,6 +212,34 @@ class Backup {
     );
 
     return $result;
+  }
+
+  /**
+   * Check if a job has completed.
+   *
+   * @param \stdClass $job
+   *   The job.
+   *
+   * @return bool
+   *   True if finished, otherwise false.
+   */
+  public function isComplete(\stdClass $job) {
+    // @todo Check backup and restore.
+    $complete = FALSE;
+    switch ($job->queueWorker) {
+      case 'shp_backup':
+      case 'shp_restore':
+        // @todo Fix OpenShift specific structure leaking here.
+        $provider_job = $this->orchestrationProvider->getJob($job->name);
+        $complete = $provider_job['status']['conditions'][0]['type'] == 'Complete'
+          && $provider_job['status']['conditions'][0]['status'] == 'True';
+
+        // @todo Check if job successful?
+        // $succeeded = $provider_job['status']['succeeded'] == '1';
+        break;
+    }
+
+    return $complete;
   }
 
   /**
