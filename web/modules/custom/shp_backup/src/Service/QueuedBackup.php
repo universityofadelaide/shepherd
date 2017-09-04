@@ -70,7 +70,7 @@ class QueuedBackup extends Backup {
   public function create(NodeInterface $backup) {
     $node_storage = $this->entityTypeManager->getStorage('node');
     $environment = $node_storage->load($backup->field_shp_environment->target_id);
-    return \Drupal::service('shp_orchestration.job_queue')->add(
+    return $this->jobQueue->add(
       $environment->id(),
       'shp_backup',
       'shp_backup.backup',
@@ -92,7 +92,7 @@ class QueuedBackup extends Backup {
   public function restore(NodeInterface $backup, NodeInterface $environment) {
     $node_storage = $this->entityTypeManager->getStorage('node');
     $source_environment = $node_storage->load($backup->field_shp_environment->target_id);
-    return \Drupal::service('shp_orchestration.job_queue')->add(
+    return $this->jobQueue->add(
       $source_environment->id(),
       'shp_restore',
       'shp_backup.backup',
