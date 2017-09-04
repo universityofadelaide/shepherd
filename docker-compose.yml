@@ -20,6 +20,7 @@ services:
       PUBLIC_DIR: web/sites/default/files
       HASH_SALT: random-hash
       CONFIG_SYNC_DIRECTORY: /shared/private/random-hash/sync
+      REDIS_ENABLED: 1
     volumes:
       - .:/code
       - shared:/shared
@@ -35,6 +36,10 @@ services:
     image: helder/mailcatcher
     environment:
       - VIRTUAL_HOST=mail.${PROJECT}.${DOMAIN}
+  redis:
+    image: redis:alpine
+    networks:
+      default:
 volumes:
   shared:
   ssh:
