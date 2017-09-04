@@ -20,7 +20,7 @@ class ShpBackupServiceProvider extends ServiceProviderBase {
       // Overrides backup service to use a queued backup service.
       $definition = $container->getDefinition('shp_backup.backup');
       $definition->setClass('Drupal\shp_backup\Service\QueuedBackup');
-      $arguments   = $definition->getArguments();
+      $arguments = $definition->getArguments();
       $arguments[] = new Reference('shp_orchestration.job_queue');
       $definition->setArguments($arguments);
     }
