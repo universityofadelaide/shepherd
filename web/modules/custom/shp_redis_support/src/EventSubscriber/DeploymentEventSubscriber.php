@@ -36,31 +36,28 @@ class DeploymentEventSubscriber implements EventSubscriberInterface {
     if (!$image_stream) {
       $image_stream = [
         'apiVersion' => 'v1',
-        'kind'       => 'ImageStream',
-        'metadata'   => [
-          'name'        => 'redis',
-          'annotations' => [
-            'description' => 'Keeps track of changes in the application image',
-          ],
-          'labels'      => [
+        'kind' => 'ImageStream',
+        'metadata' => [
+          'name' => 'redis',
+          'labels' => [
             'app' => 'redis',
           ],
         ],
-        'spec'       => [
+        'spec' => [
           'lookupPolicy' => [
             'local' => FALSE,
           ],
-          'tags'         => [
+          'tags' => [
             [
-              'annotations'     => [
-                'openshift.io/imported-from' => 'docker.io/redis:alpine'
+              'annotations' => [
+                'openshift.io/imported-from' => 'docker.io/redis:alpine',
               ],
-              'from'            => [
+              'from' => [
                 'kind' => 'DockerImage',
                 'name' => 'docker.io/redis:alpine',
               ],
-              'importPolicy'    => [],
-              'name'            => 'alpine',
+              'importPolicy' => [],
+              'name' => 'alpine',
               'referencePolicy' => [
                 'type' => 'Source',
               ],
@@ -73,20 +70,20 @@ class DeploymentEventSubscriber implements EventSubscriberInterface {
 
     $redis_deployment_config = [
       'apiVersion' => 'v1',
-      'kind'       => 'DeploymentConfig',
-      'metadata'   => [
-        'name'   => $redis_name,
+      'kind' => 'DeploymentConfig',
+      'metadata' => [
+        'name' => $redis_name,
         'labels' => [
           'app' => $app_name,
         ],
       ],
-      'spec'       => [
+      'spec' => [
         'replicas' => 1,
         'selector' => [
-          'app'              => $app_name,
+          'app' => $app_name,
           'deploymentconfig' => $redis_name,
         ],
-        'strategy'         => [
+        'strategy' => [
           'type' => 'Rolling',
         ],
         'template' => [
@@ -94,28 +91,28 @@ class DeploymentEventSubscriber implements EventSubscriberInterface {
             'annotations' => [
               'openshift.io/generated-by' => 'shp_redis_support',
             ],
-            'labels'      => [
-              'app'              => $app_name,
+            'labels' => [
+              'app' => $app_name,
               'deploymentconfig' => $redis_name,
             ],
           ],
-          'spec'     =>
+          'spec' =>
             [
               'containers' =>
                 [
                   [
-                    'image'        => 'docker.io/redis:alpine',
-                    'name'         => $redis_name,
-                    'ports'        => [
+                    'image' => 'docker.io/redis:alpine',
+                    'name' => $redis_name,
+                    'ports' => [
                       [
                         'containerPort' => 6379,
                       ],
                     ],
-                    'resources'    => [],
+                    'resources' => [],
                     'volumeMounts' => [
                       [
                         'mountPath' => '/data',
-                        'name'      => $redis_data,
+                        'name' => $redis_data,
                       ],
                     ],
                   ],
@@ -131,16 +128,16 @@ class DeploymentEventSubscriber implements EventSubscriberInterface {
         'triggers' => [
           [
             'imageChangeParams' => [
-              'automatic'      => TRUE,
+              'automatic' => TRUE,
               'containerNames' => [
-                $redis_name
+                $redis_name,
               ],
-              'from'           => [
+              'from' => [
                 'kind' => 'ImageStreamTag',
                 'name' => 'redis:alpine',
               ],
             ],
-            'type'              => 'ImageChange',
+            'type' => 'ImageChange',
           ],
         ],
       ],
