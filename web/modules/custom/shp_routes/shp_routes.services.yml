@@ -1,0 +1,4 @@
+  shp_routes.route_subscriber:
+    class: Drupal\shp_routes\Routing\RouteSubscriber
+    tags:
+      - { name: event_subscriber }
