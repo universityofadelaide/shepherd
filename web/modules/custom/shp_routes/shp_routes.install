@@ -1,0 +1,33 @@
+<?php
+
+/**
+ * @file
+ * Shepherd routes install.
+ */
+
+use Drupal\taxonomy\Entity\Term;
+
+/**
+ * Implements hook_install().
+ */
+function shp_routes_install() {
+  // Create the default taxonomy terms for the route_type.
+  $forward = Term::create([
+    'vid' => 'shp_route_type',
+    'name' => 'forward',
+    'field_route_type' => 'forward',
+  ]);
+  $forward->save();
+  $redirect = Term::create([
+    'vid' => 'shp_route_type',
+    'name' => '301',
+    'field_route_type' => '301',
+  ]);
+  $redirect->save();
+  $redirect_match = Term::create([
+    'vid' => 'shp_route_type',
+    'name' => '301-match',
+    'field_route_type' => '301-match',
+  ]);
+  $redirect_match->save();
+}

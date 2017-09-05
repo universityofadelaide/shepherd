@@ -1,0 +1,17 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - menu_ui
+third_party_settings:
+  menu_ui:
+    available_menus:
+      - main
+    parent: 'main:'
+name: Route
+type: shp_route
+description: 'A route describes the destination, source and type of route ( forward, 301, 301-match ). An optional field is available to relate a route to an environment entity.'
+help: ''
+new_revision: true
+preview_mode: 0
+display_submitted: true

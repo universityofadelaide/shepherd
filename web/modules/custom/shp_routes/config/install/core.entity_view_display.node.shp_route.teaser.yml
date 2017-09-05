@@ -1,0 +1,25 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.teaser
+    - field.field.node.shp_route.field_shp_destination
+    - field.field.node.shp_route.field_shp_environment
+    - field.field.node.shp_route.field_shp_source
+    - field.field.node.shp_route.field_shp_type
+    - node.type.shp_route
+  module:
+    - user
+id: node.shp_route.teaser
+targetEntityType: node
+bundle: shp_route
+mode: teaser
+content:
+  links:
+    weight: 100
+    region: content
+hidden:
+  field_shp_destination: true
+  field_shp_environment: true
+  field_shp_source: true
+  field_shp_type: true
