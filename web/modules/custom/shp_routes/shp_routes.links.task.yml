@@ -1,0 +1,6 @@
+shp_routes.site_routes:
+  title: Routes
+  parent_id: entity.node.canonical
+  route_name: view.shp_routes.page_1
+  base_route: entity.node.canonical
+  weight: 5
