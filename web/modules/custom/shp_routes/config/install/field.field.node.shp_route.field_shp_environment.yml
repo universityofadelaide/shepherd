@@ -2,17 +2,17 @@ langcode: en
 status: true
 dependencies:
   config:
-    - field.storage.node.field_shp_route_environment
+    - field.storage.node.field_shp_environment
     - node.type.shp_environment
     - node.type.shp_route
-id: node.shp_route.field_shp_route_environment
-field_name: field_shp_route_environment
+id: node.shp_route.field_shp_environment
+field_name: field_shp_environment
 entity_type: node
 bundle: shp_route
 label: Environment
 description: 'Optional relation of a route to an environment.'
 required: false
-translatable: false
+translatable: true
 default_value: {  }
 default_value_callback: ''
 settings:

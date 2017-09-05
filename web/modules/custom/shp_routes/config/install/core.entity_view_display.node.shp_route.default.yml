@@ -3,7 +3,7 @@ status: true
 dependencies:
   config:
     - field.field.node.shp_route.field_shp_destination
-    - field.field.node.shp_route.field_shp_route_environment
+    - field.field.node.shp_route.field_shp_environment
     - field.field.node.shp_route.field_shp_source
     - field.field.node.shp_route.field_shp_type
     - node.type.shp_route
@@ -22,8 +22,8 @@ content:
     third_party_settings: {  }
     type: string
     region: content
-  field_shp_route_environment:
-    weight: 104
+  field_shp_environment:
+    weight: 105
     label: above
     settings:
       link: true

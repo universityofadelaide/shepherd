@@ -3,7 +3,7 @@ status: true
 dependencies:
   config:
     - field.storage.node.field_shp_destination
-    - field.storage.node.field_shp_route_environment
+    - field.storage.node.field_shp_environment
     - field.storage.node.field_shp_source
     - field.storage.node.field_shp_type
     - node.type.shp_route
@@ -202,10 +202,10 @@ display:
           separator: ', '
           field_api_classes: false
           plugin_id: field
-        field_shp_route_environment:
-          id: field_shp_route_environment
-          table: node__field_shp_route_environment
-          field: field_shp_route_environment
+        field_shp_environment:
+          id: field_shp_environment
+          table: node__field_shp_environment
+          field: field_shp_environment
           relationship: none
           group_type: group
           admin_label: ''
@@ -395,7 +395,7 @@ display:
         - user.permissions
       tags:
         - 'config:field.storage.node.field_shp_destination'
-        - 'config:field.storage.node.field_shp_route_environment'
+        - 'config:field.storage.node.field_shp_environment'
         - 'config:field.storage.node.field_shp_source'
         - 'config:field.storage.node.field_shp_type'
   page_1:
@@ -661,10 +661,10 @@ display:
           separator: ', '
           field_api_classes: false
           plugin_id: field
-        field_shp_route_environment:
-          id: field_shp_route_environment
-          table: node__field_shp_route_environment
-          field: field_shp_route_environment
+        field_shp_environment:
+          id: field_shp_environment
+          table: node__field_shp_environment
+          field: field_shp_environment
           relationship: none
           group_type: group
           admin_label: ''
@@ -736,7 +736,7 @@ display:
         - user.permissions
       tags:
         - 'config:field.storage.node.field_shp_destination'
-        - 'config:field.storage.node.field_shp_route_environment'
+        - 'config:field.storage.node.field_shp_environment'
         - 'config:field.storage.node.field_shp_source'
         - 'config:field.storage.node.field_shp_type'
   rest_export_1:
