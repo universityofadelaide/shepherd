@@ -142,6 +142,8 @@ objects:
             value: /code/private
           - name: PUBLIC_DIR
             value: /code/web/sites/default/files
+          - name: SHEPHERD_INSTALL_PROFILE
+            value: ${SHEPHERD_INSTALL_PROFILE}
           image: ' '
           name: shepherd-web
           ports:
@@ -177,8 +179,6 @@ objects:
 - apiVersion: v1
   kind: Service
   metadata:
-    annotations:
-      description: Exposes the database server
     name: shepherd-db-svc
   spec:
     ports:
@@ -190,8 +190,6 @@ objects:
 - apiVersion: v1
   kind: DeploymentConfig
   metadata:
-    annotations:
-      description: Defines how to deploy the database
     name: shepherd-db
   spec:
     replicas: 1
@@ -286,6 +284,10 @@ parameters:
 - name: DATABASE_PASSWORD
   from: '[a-zA-Z0-9]{16}'
   generate: expression
+- name: SHEPHERD_INSTALL_PROFILE
+  description: The Drupal install profile to use.
+  required: true
+  value: shepherd
 - name: SITE_TITLE
   description: The site title of Shepherd.
   required: true

@@ -95,7 +95,12 @@ function shp_orchestration_shp_distribution_form_validate(array $form, FormState
  * Implements hook_shp_env_vars().
  */
 function shp_orchestration_shp_env_vars(NodeInterface $environment) {
-  $site = $environment->get('field_shp_site')
+  $site = $environment->field_shp_site
+    ->first()
+    ->get('entity')
+    ->getTarget()
+    ->getValue();
+  $distribution = $site->field_shp_distribution
     ->first()
     ->get('entity')
     ->getTarget()
@@ -110,8 +115,15 @@ function shp_orchestration_shp_env_vars(NodeInterface $environment) {
     'WEB_PATH' => $environment->field_shp_path->value,
   ];
 
-  // Append custom environment variables.
-  foreach ($environment->get('field_shp_env_vars')->getValue() as $env_var) {
+  // Append default environment variables from distribution.
+  foreach ($distribution->field_shp_env_vars->getValue() as $env_var) {
+    $env_vars[$env_var['key']] = $env_var['value'];
+  }
+
+  // @todo Add site env vars in here, maybe?
+
+  // Append custom environment variables from environment.
+  foreach ($environment->field_shp_env_vars->getValue() as $env_var) {
     $env_vars[$env_var['key']] = $env_var['value'];
   }
   return $env_vars;
