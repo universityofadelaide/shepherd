@@ -3,6 +3,14 @@ shp_routes.add_route:
   route_parameters:
     node_type: 'shp_route'
   title: 'Add new route'
+  options:
+    attributes:
+      class:
+        - 'button'
+        - 'use-ajax'
+      data-dialog-type:
+        - 'modal'
+      data-dialog-options: '{ "width": "80%", "height": "80%" }'
   appears_on:
     - 'view.shp_routes.page_1'
     - 'view.shp_site_routes.page_1'
