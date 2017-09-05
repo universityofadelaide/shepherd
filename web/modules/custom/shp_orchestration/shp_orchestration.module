@@ -116,14 +116,14 @@ function shp_orchestration_shp_env_vars(NodeInterface $environment) {
   ];
 
   // Append default environment variables from distribution.
-  foreach ($distribution->field_shp_env_vars->value as $env_var) {
+  foreach ($distribution->field_shp_env_vars->getValue() as $env_var) {
     $env_vars[$env_var['key']] = $env_var['value'];
   }
 
   // @todo Add site env vars in here, maybe?
 
   // Append custom environment variables from environment.
-  foreach ($environment->field_shp_env_vars->value as $env_var) {
+  foreach ($environment->field_shp_env_vars->getValue() as $env_var) {
     $env_vars[$env_var['key']] = $env_var['value'];
   }
   return $env_vars;
