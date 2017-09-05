@@ -4,7 +4,7 @@ services:
     image: uofa/apache2-php7-dev:shepherd
     hostname: ${PROJECT}
     environment:
-      SITE_TITLE: Drupal site
+      SITE_TITLE: Shepherd
       SITE_MAIL: site@example.com
       SITE_ADMIN_EMAIL: admin@example.com
       SITE_ADMIN_USERNAME: admin
@@ -20,6 +20,8 @@ services:
       PUBLIC_DIR: web/sites/default/files
       HASH_SALT: random-hash
       CONFIG_SYNC_DIRECTORY: /shared/private/random-hash/sync
+      SHEPHERD_INSTALL_PROFILE: ua_shepherd
+      SHEPHERD_SITE_ID: 0
       REDIS_ENABLED: 1
     volumes:
       - .:/code
@@ -38,8 +40,6 @@ services:
       - VIRTUAL_HOST=mail.${PROJECT}.${DOMAIN}
   redis:
     image: redis:alpine
-    networks:
-      default:
 volumes:
   shared:
   ssh:
