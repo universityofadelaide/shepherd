@@ -5,3 +5,4 @@ shp_routes.add_route:
   title: 'Add new route'
   appears_on:
     - 'view.shp_routes.page_1'
+    - 'view.shp_site_routes.page_1'
