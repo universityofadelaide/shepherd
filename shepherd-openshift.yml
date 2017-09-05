@@ -22,6 +22,8 @@ objects:
   metadata:
     annotations:
       service.alpha.openshift.io/dependencies: '[{"name":"shepherd-db-svc","kind":"Service"}]'
+    labels:
+      app: shepherd
     name: shepherd-web-svc
   spec:
     ports:
@@ -44,8 +46,29 @@ objects:
   metadata:
     name: shepherd-web-is
 - apiVersion: v1
+  kind: ImageStream
+  metadata:
+    labels:
+      app: shepherd
+    name: shepherd-redis-is
+  spec:
+    lookupPolicy:
+      local: false
+    tags:
+      - annotations:
+          openshift.io/imported-from: docker.io/redis:alpine
+        from:
+          kind: DockerImage
+          name: docker.io/redis:alpine
+        importPolicy: {}
+        name: alpine
+        referencePolicy:
+          type: Source
+- apiVersion: v1
   kind: BuildConfig
   metadata:
+    labels:
+      app: shepherd
     name: shepherd-web-bc
   spec:
     output:
@@ -95,6 +118,8 @@ objects:
 - apiVersion: v1
   kind: DeploymentConfig
   metadata:
+    labels:
+      app: shepherd
     name: shepherd-web-dc
   spec:
     replicas: 1
@@ -144,7 +169,7 @@ objects:
             value: /code/web/sites/default/files
           - name: SHEPHERD_INSTALL_PROFILE
             value: ${SHEPHERD_INSTALL_PROFILE}
-          image: ' '
+          image: shepherd-web-is:latest
           name: shepherd-web
           ports:
           - containerPort: 8080
@@ -186,22 +211,24 @@ objects:
       port: 3306
       targetPort: 3306
     selector:
-      name: shepherd-db
+      name: shepherd-db-dc
 - apiVersion: v1
   kind: DeploymentConfig
   metadata:
-    name: shepherd-db
+    labels:
+      app: shepherd
+    name: shepherd-db-dc
   spec:
     replicas: 1
     selector:
-      name: shepherd-db
+      name: shepherd-db-dc
     strategy:
       type: Recreate
     template:
       metadata:
         labels:
-          name: shepherd-db
-        name: shepherd-db
+          name: shepherd-db-dc
+        name: shepherd-db-dc
       spec:
         containers:
         - env:
@@ -211,8 +238,8 @@ objects:
             value: ${DATABASE_PASSWORD}
           - name: MYSQL_USER
             value: ${DATABASE_USER}
-          image: ''
-          name: mysql
+          image: openshift/mariadb:latest
+          name: shepherd-db
           ports:
           - containerPort: 3306
           readinessProbe:
@@ -233,6 +260,7 @@ objects:
         - emptyDir: {}
           name: shepherd-db-volume
     triggers:
+    - type: ConfigChange
     - imageChangeParams:
         automatic: true
         containerNames:
@@ -242,7 +270,47 @@ objects:
           name: mariadb:latest
           namespace: openshift
       type: ImageChange
-    - type: ConfigChange
+- apiVersion: v1
+  kind: DeploymentConfig
+  metadata:
+    labels:
+      app: shepherd
+    name: shepherd-redis-dc
+  spec:
+    replicas: 1
+    selector:
+      name: shepherd-redis-dc
+    strategy:
+      type: Rolling
+    template:
+      metadata:
+        labels:
+          name: shepherd-redis-dc
+        name: shepherd-redis-dc
+      spec:
+        containers:
+          - image: docker.io/redis:alpine
+            imagePullPolicy: Always
+            name: shepherd-redis
+            ports:
+              - containerPort: 6379
+            resources: {}
+            volumeMounts:
+              - mountPath: /data
+                name: shepherd-redis-volume
+        volumes:
+          - emptyDir: {}
+            name: shepherd-redis-volume
+    triggers:
+      - type: ConfigChange
+      - imageChangeParams:
+          automatic: true
+          containerNames:
+            - shepherd-redis
+          from:
+            kind: ImageStreamTag
+            name: redis:alpine
+        type: ImageChange
 parameters:
 - name: SOURCE_REPOSITORY_URL
   description: The URL of the repository with your application source code.
