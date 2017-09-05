@@ -1,0 +1,7 @@
+{
+  "name": "shepherd/shp_routes",
+  "description": "Provides ability to create custom routes to environments and external paths.",
+  "type": "drupal-module",
+  "keywords": ["drupal"],
+  "license": "GPL-2.0+"
+}

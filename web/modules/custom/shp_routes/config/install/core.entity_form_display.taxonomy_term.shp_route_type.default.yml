@@ -1,0 +1,29 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.taxonomy_term.shp_route_type.field_route_type
+    - taxonomy.vocabulary.shp_route_type
+id: taxonomy_term.shp_route_type.default
+targetEntityType: taxonomy_term
+bundle: shp_route_type
+mode: default
+content:
+  field_route_type:
+    weight: 1
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: string_textfield
+    region: content
+  name:
+    type: string_textfield
+    weight: 0
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+hidden:
+  description: true
