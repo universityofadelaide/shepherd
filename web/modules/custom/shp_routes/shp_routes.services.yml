@@ -1,0 +1,9 @@
+services:
+  shp_routes.route_subscriber:
+    class: Drupal\shp_routes\Routing\RouteSubscriber
+    tags:
+      - { name: event_subscriber }
+  routes_local_task_breadcrumb.breadcrumb:
+    class: Drupal\shp_routes\Breadcrumb\RoutesLocalTaskBreadcrumbBuilder
+    tags:
+      - { name: breadcrumb_builder, priority: 100 }
