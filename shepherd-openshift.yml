@@ -10,11 +10,11 @@ metadata:
     openshift.io/display-name: Shepherd
     description: Provide a template that deploys an instance of the shepherd distribution.
     tags: php,drupal
-    template.openshift.io/documentation-url: 'https://gitlab.adelaide.edu.au/web-team/shepherd'
+    template.openshift.io/documentation-url: 'https://github.com/universityofadelaide/shepherd'
     template.openshift.io/long-description: This template defines resources needed
       to run the Shepherd site manager.
     template.openshift.io/provider-display-name: University of Adelaide
-    template.openshift.io/support-url: 'https://www.adelaide.edu.au'
+    template.openshift.io/support-url: 'https://github.com/universityofadelaide/shepherd/issues'
   name: shepherd
 objects:
 - apiVersion: v1
