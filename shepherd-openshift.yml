@@ -10,11 +10,11 @@ metadata:
     openshift.io/display-name: Shepherd
     description: Provide a template that deploys an instance of the shepherd distribution.
     tags: php,drupal
-    template.openshift.io/documentation-url: https://gitlab.adelaide.edu.au/web-team/shepherd
+    template.openshift.io/documentation-url: 'https://gitlab.adelaide.edu.au/web-team/shepherd'
     template.openshift.io/long-description: This template defines resources needed
       to run the Shepherd site manager.
     template.openshift.io/provider-display-name: University of Adelaide
-    template.openshift.io/support-url: https://www.adelaide.edu.au
+    template.openshift.io/support-url: 'https://www.adelaide.edu.au'
   name: shepherd
 objects:
 - apiVersion: v1
@@ -56,10 +56,10 @@ objects:
       local: false
     tags:
       - annotations:
-          openshift.io/imported-from: docker.io/redis:alpine
+          openshift.io/imported-from: 'redis:alpine'
         from:
           kind: DockerImage
-          name: docker.io/redis:alpine
+          name: 'redis:alpine'
         importPolicy: {}
         name: alpine
         referencePolicy:
@@ -74,7 +74,7 @@ objects:
     output:
       to:
         kind: ImageStreamTag
-        name: shepherd-web-is:latest
+        name: 'shepherd-web-is:latest'
     postCommit: {}
     source:
       git:
@@ -169,7 +169,7 @@ objects:
             value: /code/web/sites/default/files
           - name: SHEPHERD_INSTALL_PROFILE
             value: ${SHEPHERD_INSTALL_PROFILE}
-          image: shepherd-web-is:latest
+          image: 'shepherd-web-is:latest'
           name: shepherd-web
           ports:
           - containerPort: 8080
@@ -198,7 +198,7 @@ objects:
         - shepherd-web
         from:
           kind: ImageStreamTag
-          name: shepherd-web-is:latest
+          name: 'shepherd-web-is:latest'
       type: ImageChange
     - type: ConfigChange
 - apiVersion: v1
@@ -238,7 +238,7 @@ objects:
             value: ${DATABASE_PASSWORD}
           - name: MYSQL_USER
             value: ${DATABASE_USER}
-          image: openshift/mariadb:latest
+          image: 'openshift/mariadb:latest'
           name: shepherd-db
           ports:
           - containerPort: 3306
@@ -260,16 +260,16 @@ objects:
         - emptyDir: {}
           name: shepherd-db-volume
     triggers:
-    - type: ConfigChange
     - imageChangeParams:
         automatic: true
         containerNames:
-        - mysql
+        - shepherd-db
         from:
           kind: ImageStreamTag
-          name: mariadb:latest
+          name: 'mariadb:latest'
           namespace: openshift
       type: ImageChange
+    - type: ConfigChange
 - apiVersion: v1
   kind: DeploymentConfig
   metadata:
@@ -289,7 +289,7 @@ objects:
         name: shepherd-redis-dc
       spec:
         containers:
-          - image: docker.io/redis:alpine
+          - image: 'redis:alpine'
             imagePullPolicy: Always
             name: shepherd-redis
             ports:
@@ -309,13 +309,13 @@ objects:
             - shepherd-redis
           from:
             kind: ImageStreamTag
-            name: redis:alpine
+            name: 'shepherd-redis-is:alpine'
         type: ImageChange
 parameters:
 - name: SOURCE_REPOSITORY_URL
   description: The URL of the repository with your application source code.
   required: true
-  value: git@github.com:universityofadelaide/shepherd.git
+  value: 'git@github.com:universityofadelaide/shepherd.git'
 - name: SOURCE_REPOSITORY_REF
   description: Set this to a branch name, tag or other ref of your repository if you are not using the default branch.
   required: true
