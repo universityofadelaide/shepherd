@@ -16,7 +16,9 @@
 <script>
   // We can assume that the drupalSettings are here.
   let poller;
-  let pollTiming = drupalSettings.vue_table.update_cycle;
+  const POLL_UPDATE_CYCLE = drupalSettings.vue_table.update_cycle;
+  let pollTiming = POLL_UPDATE_CYCLE;
+  let reconnectPollerTimer = null;
   let field_options = drupalSettings.vue_table.field_options;
   let field_apis = [];
   let previous_state = [];
@@ -49,6 +51,9 @@
     });
   }
 
+  // @todo - Create error handler
+  // @todo - move from interval to timer
+
     export default {
       data() {
         return {
@@ -70,14 +75,13 @@
          * Performs an ajax request
          */
         poll() {
+          // We need a
           // We have X number of urls to hit. Map over and get an array of promise objects.
           let requests = field_apis.map((v, i) => {
             return Axios.get(field_apis[i].url);
           });
-
           // @todo - set the show property to show a spinner
           // but only if the current value is unknown.
-
           // When they are all done, we can unpack them.
           Axios.all(requests)
             .then((results) => {
@@ -131,14 +135,7 @@
               clearInterval(poller);
               poller = null;
               console.info('Disconnecting polling, no new state changes detected. Trying again in 15 minutes');
-              let context = this;
-              setInterval(() => {
-                console.info('Restarting polling');
-                pollTiming = drupalSettings.vue_table.update_cycle;
-                disconnect_count = 0;
-                poller = setInterval(() => { context.poll(); }, pollTiming);
-              }, 900000);
-
+              this.reconnectPollingTimer();
             }
           }
           previous_state = data;
@@ -151,6 +148,23 @@
           pollTiming =  ( pollTiming * 2 ); // Double out the time.
           clearInterval(poller);
           poller = setInterval(() => { this.poll(); }, pollTiming);
+        },
+        /**
+         * Reconnect polling timer.
+         */
+        reconnectPollingTimer() {
+          let context = this;
+          // Clear any previous timer id.
+          if (reconnectPollerTimer) {
+            clearTimeout(reconnectPollerTimer);
+            reconnectPollerTimer = null;
+          }
+          reconnectPollerTimer = setTimeout(() => {
+            console.info('Restarting polling');
+            pollTiming = POLL_UPDATE_CYCLE;
+            disconnect_count = 0;
+            poller = setInterval(() => { context.poll(); }, pollTiming);
+          }, 900000);
         }
       }
     }
