@@ -4270,20 +4270,20 @@
         },
         {
             "name": "universityofadelaide/shepherd-drupal-scaffold",
-            "version": "1.0.2",
+            "version": "1.0.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/universityofadelaide/shepherd-drupal-scaffold.git",
-                "reference": "017dcaa9fd0a46915536aeab0d4319fc3ba308d4"
+                "reference": "a2ec8303d7acf16dc1d09254364fef492af0dd8d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/universityofadelaide/shepherd-drupal-scaffold/zipball/017dcaa9fd0a46915536aeab0d4319fc3ba308d4",
-                "reference": "017dcaa9fd0a46915536aeab0d4319fc3ba308d4",
+                "url": "https://api.github.com/repos/universityofadelaide/shepherd-drupal-scaffold/zipball/a2ec8303d7acf16dc1d09254364fef492af0dd8d",
+                "reference": "a2ec8303d7acf16dc1d09254364fef492af0dd8d",
                 "shasum": ""
             },
             "require": {
-                "composer-plugin-api": "^1.0.0",
+                "composer-plugin-api": "^1.1",
                 "drupal-composer/drupal-scaffold": "^2.2",
                 "php": ">=5.4.5",
                 "symfony/filesystem": "~2.8|~3.0"
@@ -4302,7 +4302,7 @@
                 "GPL-2.0+"
             ],
             "description": "Composer Plugin for updating the Shepherd Drupal tools.",
-            "time": "2017-09-05T02:44:54+00:00"
+            "time": "2017-09-06T03:28:02+00:00"
         },
         {
             "name": "webmozart/assert",
