@@ -919,7 +919,7 @@
                 "issues": "http://drupal.org/project/issues/cas",
                 "irc": "irc://irc.freenode.org/drupal-contribute"
             },
-            "time": "2017-09-03 22:56:25"
+            "time": "2017-09-03T22:56:25+00:00"
         },
         {
             "name": "drupal/core",
@@ -1246,7 +1246,7 @@
             "support": {
                 "source": "http://cgit.drupalcode.org/entity_reference_revisions"
             },
-            "time": "2017-08-16 12:09:25"
+            "time": "2017-08-16T12:09:25+00:00"
         },
         {
             "name": "drupal/externalauth",
@@ -1456,7 +1456,7 @@
             "support": {
                 "source": "http://cgit.drupalcode.org/key_value_field"
             },
-            "time": "2017-06-19 09:59:57"
+            "time": "2017-06-19T09:59:57+00:00"
         },
         {
             "name": "drupal/paragraphs",
@@ -1605,7 +1605,7 @@
             "support": {
                 "source": "http://cgit.drupalcode.org/r4032login"
             },
-            "time": "2017-02-08 04:20:19"
+            "time": "2017-02-08T04:20:19+00:00"
         },
         {
             "name": "drupal/redis",
@@ -4203,7 +4203,7 @@
                 "GPL-2.0+"
             ],
             "description": "Provides configuration and services to interact with LDAP.",
-            "time": "2017-08-23 02:58:31"
+            "time": "2017-08-23T02:58:31+00:00"
         },
         {
             "name": "ua-drupal-modules/ua_ldap_authorisation",
@@ -4221,7 +4221,7 @@
             "keywords": [
                 "Drupal"
             ],
-            "time": "2017-08-23 03:14:58"
+            "time": "2017-08-23T03:14:58+00:00"
         },
         {
             "name": "universityofadelaide/openshift-client",
@@ -4266,20 +4266,20 @@
                 }
             ],
             "description": "Simple OpenShift client for PHP.",
-            "time": "2017-08-21 05:52:45"
+            "time": "2017-08-21T05:52:45+00:00"
         },
         {
             "name": "universityofadelaide/shepherd-drupal-scaffold",
-            "version": "1.0.4",
+            "version": "1.0.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/universityofadelaide/shepherd-drupal-scaffold.git",
-                "reference": "fbf51ce776dae31701159d1d9d7a046399d80419"
+                "reference": "7ecb68d1334126117915a18dbc01381d6dd0edd7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/universityofadelaide/shepherd-drupal-scaffold/zipball/fbf51ce776dae31701159d1d9d7a046399d80419",
-                "reference": "fbf51ce776dae31701159d1d9d7a046399d80419",
+                "url": "https://api.github.com/repos/universityofadelaide/shepherd-drupal-scaffold/zipball/7ecb68d1334126117915a18dbc01381d6dd0edd7",
+                "reference": "7ecb68d1334126117915a18dbc01381d6dd0edd7",
                 "shasum": ""
             },
             "require": {
@@ -4302,7 +4302,7 @@
                 "GPL-2.0+"
             ],
             "description": "Composer Plugin for updating the Shepherd Drupal tools.",
-            "time": "2017-09-06T04:47:08+00:00"
+            "time": "2017-09-06T05:31:01+00:00"
         },
         {
             "name": "webmozart/assert",
@@ -4826,7 +4826,7 @@
                 "testing",
                 "web"
             ],
-            "time": "2017-02-06 09:59:54"
+            "time": "2017-02-06T09:59:54+00:00"
         },
         {
             "name": "behat/mink-browserkit-driver",

@@ -1,6 +1,7 @@
 apiVersion: v1
 kind: Template
 labels:
+  app: shepherd
   template: shepherd
 message: |-
   This template will create a shepherd deployment.
@@ -10,18 +11,20 @@ metadata:
     openshift.io/display-name: Shepherd
     description: Provide a template that deploys an instance of the shepherd distribution.
     tags: php,drupal
-    template.openshift.io/documentation-url: https://gitlab.adelaide.edu.au/web-team/shepherd
+    template.openshift.io/documentation-url: 'https://github.com/universityofadelaide/shepherd'
     template.openshift.io/long-description: This template defines resources needed
       to run the Shepherd site manager.
     template.openshift.io/provider-display-name: University of Adelaide
-    template.openshift.io/support-url: https://www.adelaide.edu.au
+    template.openshift.io/support-url: 'https://github.com/universityofadelaide/shepherd/issues'
   name: shepherd
 objects:
 - apiVersion: v1
   kind: Service
   metadata:
     annotations:
-      service.alpha.openshift.io/dependencies: '[{"name":"shepherd-db-svc","kind":"Service"}]'
+      service.alpha.openshift.io/dependencies: '[{"name":"shepherd-db-svc","kind":"Service"},{"name":"shepherd-redis-svc","kind":"Service"}]'
+    labels:
+      app: shepherd
     name: shepherd-web-svc
   spec:
     ports:
@@ -33,6 +36,8 @@ objects:
 - apiVersion: v1
   kind: Route
   metadata:
+    labels:
+      app: shepherd
     name: shepherd-web-route
   spec:
     host: ${APPLICATION_DOMAIN}
@@ -42,16 +47,39 @@ objects:
 - apiVersion: v1
   kind: ImageStream
   metadata:
+    labels:
+      app: shepherd
     name: shepherd-web-is
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    labels:
+      app: shepherd
+    name: shepherd-redis-is
+  spec:
+    lookupPolicy:
+      local: false
+    tags:
+      - annotations:
+          openshift.io/imported-from: 'redis:alpine'
+        from:
+          kind: DockerImage
+          name: 'redis:alpine'
+        importPolicy: {}
+        name: alpine
+        referencePolicy:
+          type: Source
 - apiVersion: v1
   kind: BuildConfig
   metadata:
+    labels:
+      app: shepherd
     name: shepherd-web-bc
   spec:
     output:
       to:
         kind: ImageStreamTag
-        name: shepherd-web-is:latest
+        name: 'shepherd-web-is:latest'
     postCommit: {}
     source:
       git:
@@ -85,6 +113,8 @@ objects:
 - apiVersion: v1
   kind: PersistentVolumeClaim
   metadata:
+    labels:
+      app: shepherd
     name: shepherd-web-shared
   spec:
     accessModes:
@@ -95,6 +125,8 @@ objects:
 - apiVersion: v1
   kind: DeploymentConfig
   metadata:
+    labels:
+      app: shepherd
     name: shepherd-web-dc
   spec:
     replicas: 1
@@ -128,23 +160,17 @@ objects:
             value: ${DATABASE_PORT}
           - name: DATABASE_USER
             value: ${DATABASE_USER}
-          - name: SITE_TITLE
-            value: ${SITE_TITLE}
-          - name: SITE_MAIL
-            value: ${SITE_MAIL}
-          - name: SITE_ADMIN_EMAIL
-            value: ${SITE_ADMIN_EMAIL}
-          - name: SITE_ADMIN_USERNAME
-            value: ${SITE_ADMIN_USERNAME}
-          - name: SITE_ADMIN_PASSWORD
-            value: ${SITE_ADMIN_PASSWORD}
           - name: PRIVATE_DIR
             value: /code/private
           - name: PUBLIC_DIR
             value: /code/web/sites/default/files
+          - name: REDIS_ENABLED
+            value: '1'
+          - name: REDIS_HOST
+            value: ${REDIS_HOST}
           - name: SHEPHERD_INSTALL_PROFILE
             value: ${SHEPHERD_INSTALL_PROFILE}
-          image: ' '
+          image: 'shepherd-web-is:latest'
           name: shepherd-web
           ports:
           - containerPort: 8080
@@ -173,12 +199,14 @@ objects:
         - shepherd-web
         from:
           kind: ImageStreamTag
-          name: shepherd-web-is:latest
+          name: 'shepherd-web-is:latest'
       type: ImageChange
     - type: ConfigChange
 - apiVersion: v1
   kind: Service
   metadata:
+    labels:
+      app: shepherd
     name: shepherd-db-svc
   spec:
     ports:
@@ -186,22 +214,24 @@ objects:
       port: 3306
       targetPort: 3306
     selector:
-      name: shepherd-db
+      name: shepherd-db-dc
 - apiVersion: v1
   kind: DeploymentConfig
   metadata:
-    name: shepherd-db
+    labels:
+      app: shepherd
+    name: shepherd-db-dc
   spec:
     replicas: 1
     selector:
-      name: shepherd-db
+      name: shepherd-db-dc
     strategy:
       type: Recreate
     template:
       metadata:
         labels:
-          name: shepherd-db
-        name: shepherd-db
+          name: shepherd-db-dc
+        name: shepherd-db-dc
       spec:
         containers:
         - env:
@@ -211,8 +241,8 @@ objects:
             value: ${DATABASE_PASSWORD}
           - name: MYSQL_USER
             value: ${DATABASE_USER}
-          image: ''
-          name: mysql
+          image: 'openshift/mariadb:latest'
+          name: shepherd-db
           ports:
           - containerPort: 3306
           readinessProbe:
@@ -236,18 +266,72 @@ objects:
     - imageChangeParams:
         automatic: true
         containerNames:
-        - mysql
+        - shepherd-db
         from:
           kind: ImageStreamTag
-          name: mariadb:latest
+          name: 'mariadb:latest'
           namespace: openshift
       type: ImageChange
     - type: ConfigChange
+- apiVersion: v1
+  kind: Service
+  metadata:
+    labels:
+      app: shepherd
+    name: shepherd-redis-svc
+  spec:
+    ports:
+    - name: redis
+      port: 6379
+      targetPort: 6379
+    selector:
+      name: shepherd-redis-dc
+- apiVersion: v1
+  kind: DeploymentConfig
+  metadata:
+    labels:
+      app: shepherd
+    name: shepherd-redis-dc
+  spec:
+    replicas: 1
+    selector:
+      name: shepherd-redis-dc
+    strategy:
+      type: Rolling
+    template:
+      metadata:
+        labels:
+          name: shepherd-redis-dc
+        name: shepherd-redis-dc
+      spec:
+        containers:
+          - image: 'redis:alpine'
+            imagePullPolicy: Always
+            name: shepherd-redis
+            ports:
+              - containerPort: 6379
+            resources: {}
+            volumeMounts:
+              - mountPath: /data
+                name: shepherd-redis-volume
+        volumes:
+          - emptyDir: {}
+            name: shepherd-redis-volume
+    triggers:
+      - type: ConfigChange
+      - imageChangeParams:
+          automatic: true
+          containerNames:
+            - shepherd-redis
+          from:
+            kind: ImageStreamTag
+            name: 'shepherd-redis-is:alpine'
+        type: ImageChange
 parameters:
 - name: SOURCE_REPOSITORY_URL
   description: The URL of the repository with your application source code.
   required: true
-  value: git@github.com:universityofadelaide/shepherd.git
+  value: 'git@github.com:universityofadelaide/shepherd.git'
 - name: SOURCE_REPOSITORY_REF
   description: Set this to a branch name, tag or other ref of your repository if you are not using the default branch.
   required: true
@@ -284,31 +368,18 @@ parameters:
 - name: DATABASE_PASSWORD
   from: '[a-zA-Z0-9]{16}'
   generate: expression
+- name: REDIS_ENABLED
+  description: Set to '1' for enabled, or '0' for disabled.
+  required: true
+  value: '1'
+- name: REDIS_HOST
+  description: The host to use as a redis cache.
+  required: true
+  value: 'shepherd-redis-svc'
 - name: SHEPHERD_INSTALL_PROFILE
   description: The Drupal install profile to use.
   required: true
   value: shepherd
-- name: SITE_TITLE
-  description: The site title of Shepherd.
-  required: true
-  value: Shepherd
-- name: SITE_MAIL
-  description: The from address of outbound email from Shepherd.
-  required: true
-  value: shepherd@shepherd.com
-- name: SITE_ADMIN_USERNAME
-  description: The admin username.
-  required: true
-  value: admin
-- name: SITE_ADMIN_PASSWORD
-  description: The admin password.
-  required: true
-  from: '[a-zA-Z0-9]{8}'
-  generate: expression
-- name: SITE_ADMIN_EMAIL
-  description: The admin users email address.
-  required: true
-  value: shepherd@shepherd.com
 - name: UID
   description: The user ID the web container should run as.
   required: true
