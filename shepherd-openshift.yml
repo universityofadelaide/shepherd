@@ -22,7 +22,7 @@ objects:
   kind: Service
   metadata:
     annotations:
-      service.alpha.openshift.io/dependencies: '[{"name":"shepherd-db-svc","kind":"Service"}]'
+      service.alpha.openshift.io/dependencies: '[{"name":"shepherd-db-svc","kind":"Service"},{"name":"shepherd-redis-svc","kind":"Service"}]'
     labels:
       app: shepherd
     name: shepherd-web-svc
@@ -160,20 +160,14 @@ objects:
             value: ${DATABASE_PORT}
           - name: DATABASE_USER
             value: ${DATABASE_USER}
-          - name: SITE_TITLE
-            value: ${SITE_TITLE}
-          - name: SITE_MAIL
-            value: ${SITE_MAIL}
-          - name: SITE_ADMIN_EMAIL
-            value: ${SITE_ADMIN_EMAIL}
-          - name: SITE_ADMIN_USERNAME
-            value: ${SITE_ADMIN_USERNAME}
-          - name: SITE_ADMIN_PASSWORD
-            value: ${SITE_ADMIN_PASSWORD}
           - name: PRIVATE_DIR
             value: /code/private
           - name: PUBLIC_DIR
             value: /code/web/sites/default/files
+          - name: REDIS_ENABLED
+            value: '1'
+          - name: REDIS_HOST
+            value: ${REDIS_HOST}
           - name: SHEPHERD_INSTALL_PROFILE
             value: ${SHEPHERD_INSTALL_PROFILE}
           image: 'shepherd-web-is:latest'
@@ -280,6 +274,19 @@ objects:
       type: ImageChange
     - type: ConfigChange
 - apiVersion: v1
+  kind: Service
+  metadata:
+    labels:
+      app: shepherd
+    name: shepherd-redis-svc
+  spec:
+    ports:
+    - name: redis
+      port: 6379
+      targetPort: 6379
+    selector:
+      name: shepherd-redis-dc
+- apiVersion: v1
   kind: DeploymentConfig
   metadata:
     labels:
@@ -361,31 +368,18 @@ parameters:
 - name: DATABASE_PASSWORD
   from: '[a-zA-Z0-9]{16}'
   generate: expression
+- name: REDIS_ENABLED
+  description: Set to '1' for enabled, or '0' for disabled.
+  required: true
+  value: '1'
+- name: REDIS_HOST
+  description: The host to use as a redis cache.
+  required: true
+  value: 'shepherd-redis-svc'
 - name: SHEPHERD_INSTALL_PROFILE
   description: The Drupal install profile to use.
   required: true
   value: shepherd
-- name: SITE_TITLE
-  description: The site title of Shepherd.
-  required: true
-  value: Shepherd
-- name: SITE_MAIL
-  description: The from address of outbound email from Shepherd.
-  required: true
-  value: shepherd@shepherd.com
-- name: SITE_ADMIN_USERNAME
-  description: The admin username.
-  required: true
-  value: admin
-- name: SITE_ADMIN_PASSWORD
-  description: The admin password.
-  required: true
-  from: '[a-zA-Z0-9]{8}'
-  generate: expression
-- name: SITE_ADMIN_EMAIL
-  description: The admin users email address.
-  required: true
-  value: shepherd@shepherd.com
 - name: UID
   description: The user ID the web container should run as.
   required: true
