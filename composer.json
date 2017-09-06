@@ -51,11 +51,7 @@
         "bin-dir": "bin/"
     },
     "scripts": {
-        "drupal-scaffold": "DrupalComposer\\DrupalScaffold\\Plugin::scaffold",
-        "shepherd-scaffold": "UniversityOfAdelaide\\ShepherdDrupalScaffold\\Plugin::scaffold",
-        "post-install-cmd": [
-            "@drupal-scaffold"
-        ]
+        "shepherd-scaffold": "UniversityOfAdelaide\\ShepherdDrupalScaffold\\Plugin::scaffold"
     },
     "extra": {
         "installer-paths": {
@@ -65,6 +61,12 @@
             "web/themes/contrib/{$name}":   ["type:drupal-theme"],
             "web/libraries/{$name}":        ["type:drupal-library"],
             "web/drush/commands/{$name}":   ["type:drupal-drush"]
+        },
+        "drupal-scaffold": {
+            "initial": {
+                "sites/default/default.services.yml": "sites/default/services.yml",
+                "sites/default/default.settings.php": "sites/default/settings.php"
+            }
         },
         "merge-plugin": {
             "require": [
