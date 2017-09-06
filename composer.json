@@ -52,10 +52,7 @@
     },
     "scripts": {
         "drupal-scaffold": "DrupalComposer\\DrupalScaffold\\Plugin::scaffold",
-        "shepherd-scaffold": "UniversityOfAdelaide\\ShepherdDrupalScaffold\\Plugin::scaffold",
-        "post-install-cmd": [
-            "@drupal-scaffold"
-        ]
+        "shepherd-scaffold": "UniversityOfAdelaide\\ShepherdDrupalScaffold\\Plugin::scaffold"
     },
     "extra": {
         "installer-paths": {
@@ -66,6 +63,12 @@
             "web/libraries/{$name}":        ["type:drupal-library"],
             "web/drush/commands/{$name}":   ["type:drupal-drush"]
         },
+        "drupal-scaffold": {
+            "initial": {
+                "sites/default/default.services.yml": "sites/default/services.yml",
+                "sites/default/default.settings.php": "sites/default/settings.php"
+            }
+        },
         "merge-plugin": {
             "require": [
                 "web/modules/custom/shp_orchestration/composer.json"
@@ -74,7 +77,7 @@
         "patches": {
             "drupal/core": {
                 "Switch to a memory cache backend during installation": "https://www.drupal.org/files/issues/2488350-2-58.patch",
-                "Twig debug output does not display all suggestions": "https://www.drupal.org/files/issues/2118743-119-twig-debug-info.patch",
+                "Twig debug output does not display all suggestions": "https://www.drupal.org/files/issues/2118743-139-twig-debug-info.patch",
                 "Allow profiles to provide a base profile": "https://www.drupal.org/files/issues/1356276-356.patch"
             },
             "drupal/key_value_field": {
