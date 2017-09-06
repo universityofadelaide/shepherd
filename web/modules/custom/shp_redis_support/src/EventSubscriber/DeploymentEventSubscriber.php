@@ -50,11 +50,11 @@ class DeploymentEventSubscriber implements EventSubscriberInterface {
           'tags' => [
             [
               'annotations' => [
-                'openshift.io/imported-from' => 'docker.io/redis:alpine',
+                'openshift.io/imported-from' => 'redis:alpine',
               ],
               'from' => [
                 'kind' => 'DockerImage',
-                'name' => 'docker.io/redis:alpine',
+                'name' => 'redis:alpine',
               ],
               'importPolicy' => [],
               'name' => 'alpine',
