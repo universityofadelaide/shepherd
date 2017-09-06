@@ -39,8 +39,9 @@
   /**
    * Recurse downwards for specified property in an Array|Object.
    *
-   * @param data Object
-   * @param prop The property to search for.
+   * @param {Object} data - The object
+   * @param {string} prop - The property to search for.
+   * @returns {string} - The string 
    */
   function findProp (data, prop) {
     return data.map((v) => {
@@ -51,8 +52,30 @@
     });
   }
 
-  // @todo - Create error handler
-  // @todo - move from interval to timer
+  /**
+   * Triggers a modal window in Drupal.
+   * 
+   * @param {string} text - Message.
+   */
+  function triggerDrupalModal(text) {
+
+  }
+
+  /**
+   * Parses the returned data from the ajax requests.
+   * 
+   * @param {Object} results - Object containing results from request.
+   */
+  function parseResults(results) {
+    return results.map((v, i) => {
+      if (typeof v.data === "string") {
+        return v.data[field_apis[i].prop];
+      }
+      // Assume we have and object to deal with
+      // use a utility method to recursively find the value we want.
+      return findProp(v.data, field_apis[i].prop);
+    });
+  }
 
     export default {
       data() {
@@ -72,37 +95,47 @@
       },
       methods: {
         /**
-         * Performs an ajax request
+         * Performs ajax request(s) for all field(s).
          */
         poll() {
-          // We need a
           // We have X number of urls to hit. Map over and get an array of promise objects.
           let requests = field_apis.map((v, i) => {
-            return Axios.get(field_apis[i].url);
+            return Axios.get({
+              url: field_apis[i].url
+              });
           });
           // @todo - set the show property to show a spinner
           // but only if the current value is unknown.
           // When they are all done, we can unpack them.
           Axios.all(requests)
             .then((results) => {
-                let data = results.map((v, i) => {
-
-                  if (typeof v.data === "string") {
-                    return v.data[field_apis[i].prop];
-                  }
-                  // Assume we have and object to deal with
-                  // use a utility method to recursively find the value we want.
-                  return findProp(v.data, field_apis[i].prop);
-
-                });
+                let data = parseResults(results);
                 // Call update, which will handle updating the model.
                 this.update(data);
+          })
+          /**
+           * Catch errors with the multiple concurrent requests.
+           */
+          .catch((error) => {
+            /** @type {string} - Message to send to dialog */
+            let msg;
+            if (error.response) {
+              msg = `Error :
+              The server responed with :  ${error.response.status}
+              Message : ${error.response.data}
+              `;
+            } else if (error.request) {
+              msg = `Error : ${error.request}`;
+            } else {
+              msg = `Error : ${error.message}`;
+            }
+            triggerDrupalModal(msg);
           });
         },
         /**
          * Updates the view
          *
-         * @param data
+         * @param {Object} data - The current state.
          */
         update(data) {
           this.checkPreviousState(data);
@@ -122,7 +155,7 @@
          * If previous state is equal to current state, increment the disconnect counter and throttle the timer.
          * Once limit is reached, disconnect polling for 15 minutes.
          *
-         * @param data
+         * @param {Object} data - Current state.
          */
         checkPreviousState(data) {
           // Use underscores comparison method for objects/multidimensional arrays.
