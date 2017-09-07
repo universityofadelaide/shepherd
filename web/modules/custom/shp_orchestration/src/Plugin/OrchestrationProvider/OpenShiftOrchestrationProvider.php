@@ -264,15 +264,10 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       }
     }
 
-    // Create a service.
     // @todo - make port a var and great .. so great .. yuge!
-    $service_data = [
-      'port' => 8080,
-      'targetPort' => 8080,
-      'deployment' => $deployment_name,
-    ];
+    $port = 8080;
     try {
-      $this->client->createService($deployment_name, $service_data);
+      $this->client->createService($deployment_name, $deployment_name, $port, $port);
       $this->client->createRoute($deployment_name, $deployment_name, $domain, $path);
     }
     catch (ClientException $e) {

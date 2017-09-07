@@ -31,6 +31,7 @@ class DeploymentEventSubscriber implements EventSubscriberInterface {
     $app_name = $deployment_config['metadata']['name'];
     $redis_name = $app_name . '-redis';
     $redis_data = $redis_name . '-data';
+    $redis_port = 6739;
 
     $image_stream = $client->getImageStream('redis');
     if (!$image_stream) {
@@ -105,7 +106,7 @@ class DeploymentEventSubscriber implements EventSubscriberInterface {
                     'name' => $redis_name,
                     'ports' => [
                       [
-                        'containerPort' => 6379,
+                        'containerPort' => $redis_port,
                       ],
                     ],
                     'resources' => [],
@@ -144,13 +145,7 @@ class DeploymentEventSubscriber implements EventSubscriberInterface {
     ];
 
     $client->createDeploymentConfig($redis_deployment_config);
-
-    $service_data = [
-      'port' => 6739,
-      'targetPort' => 6739,
-      'deployment' => $redis_name,
-    ];
-    $client->createService($redis_name, $service_data);
+    $client->createService($redis_name, $redis_name, $redis_port, $redis_port);
   }
 
   /**
