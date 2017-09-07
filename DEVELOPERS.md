@@ -158,6 +158,10 @@ composer clear-cache
 composer update
 ```
 
+To update packages using `composer update`, you will first need run 
+`composer install` - otherwise wikimedia/composer-merge-plugin will fail to
+discover the openshift client dependency.
+
 ## Troubleshooting
 - Shepherd assumes dnsmasq is set to the `test` domain by default.
 - mysql host is `db`, database is `drupal`, user is `user` and password is `password`
