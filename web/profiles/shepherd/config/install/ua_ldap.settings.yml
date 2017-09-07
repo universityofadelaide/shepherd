@@ -1,9 +1,11 @@
-enabled: false
-hostname: 'ldap-uat.adelaide.edu.au'
-port: 389
-username: 'cn=wcms_taskid,ou=roles,dc=adelaide,dc=edu,dc=au'
-password: '***REMOVED***'
-base_dn: 'dc=adelaide,dc=edu,dc=au'
-sites_ou: 'ou=wcms_access,ou=groups'
-users_ou: 'ou=people'
-use_ssl: false
+attributes:
+  enabled: true
+server:
+  hostname: 'ldap.adelaide.edu.au'
+  port: 389
+  username: ''
+  password: ''
+  base_dn: 'dc=adelaide,dc=edu,dc=au'
+  sites_ou: 'ou=wcms_access2,ou=groups'
+  users_ou: 'ou=people'
+  use_ssl: false
