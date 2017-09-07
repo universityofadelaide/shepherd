@@ -11,9 +11,4 @@ dependencies:
   - cas
 
   # UA shepherd integrations
-  - shp_ldap_sync
   - shp_routes
-
-  # Other UA modules required
-  - ua_ldap
-  - ua_ldap_authorisation

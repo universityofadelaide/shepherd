@@ -1,5 +1,0 @@
-shp_ldap_sync.settings:
-  title: 'Shepherd LDAP'
-  description: 'Configure Shepherd LDAP settings.'
-  parent: system.admin_config_system
-  route_name: shp_ldap_sync.settings
