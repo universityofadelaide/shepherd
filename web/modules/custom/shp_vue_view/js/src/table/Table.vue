@@ -96,8 +96,7 @@
         poll() {
           // We have X number of urls to hit. Map over and get an array of promise objects.
           let requests = field_apis.map((v, i) => {
-            return Axios.get({
-              url: field_apis[i].url,
+            return Axios.get(field_apis[i].url, {
               // Set the timeout.
               timeout: AJAX_REQUEST_TIMEOUT
             });
