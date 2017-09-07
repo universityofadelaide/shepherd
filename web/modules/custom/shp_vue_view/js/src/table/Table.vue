@@ -15,17 +15,22 @@
 
 <script>
   // We can assume that the drupalSettings are here.
-  let poller;
+  // 10 second response timeout.
+  const AJAX_REQUEST_TIMEOUT = 10000;
+  const UNCHANGED_STATE_DISCONNECT = 5;
+  const FAILED_REQUEST_DISCONNECT = 3;
   const POLL_UPDATE_CYCLE = drupalSettings.vue_table.update_cycle;
+
+  let poller;
   let pollTiming = POLL_UPDATE_CYCLE;
   let reconnectPollerTimer = null;
   let field_options = drupalSettings.vue_table.field_options;
   let field_apis = [];
   let previous_state = [];
-  const UNCHANGED_STATE_DISCONNECT = 5;
   // Store the number of unchanged calls.
   // Once this reaches the number defined, we hang up on the ajax calls.
   let disconnect_count = 0;
+
   Object.keys(field_options).forEach( (value, key) => {
     if (field_options[value].active && field_options[value].url_endpoint.length > 0) {
       field_apis.push({
@@ -41,7 +46,7 @@
    *
    * @param {Object} data - The object
    * @param {string} prop - The property to search for.
-   * @returns {string} - The string 
+   * @returns {string} - The string
    */
   function findProp (data, prop) {
     return data.map((v) => {
@@ -53,17 +58,8 @@
   }
 
   /**
-   * Triggers a modal window in Drupal.
-   * 
-   * @param {string} text - Message.
-   */
-  function triggerDrupalModal(text) {
-
-  }
-
-  /**
    * Parses the returned data from the ajax requests.
-   * 
+   *
    * @param {Object} results - Object containing results from request.
    */
   function parseResults(results) {
@@ -101,8 +97,10 @@
           // We have X number of urls to hit. Map over and get an array of promise objects.
           let requests = field_apis.map((v, i) => {
             return Axios.get({
-              url: field_apis[i].url
-              });
+              url: field_apis[i].url,
+              // Set the timeout.
+              timeout: AJAX_REQUEST_TIMEOUT
+            });
           });
           // @todo - set the show property to show a spinner
           // but only if the current value is unknown.
@@ -129,7 +127,14 @@
             } else {
               msg = `Error : ${error.message}`;
             }
-            triggerDrupalModal(msg);
+            // Log out error.
+            console.error(msg);
+            disconnect_count++;
+            // Terminate the connect if we reach a limit.
+            if (disconnect_count >= FAILED_REQUEST_DISCONNECT) {
+              this.disconnectPollingTimer('Maximum failed requests reached.');
+              this.reconnectPollingTimer();
+            }
           });
         },
         /**
@@ -165,9 +170,7 @@
             this.throttlePoll();
             disconnect_count++;
             if (disconnect_count >= UNCHANGED_STATE_DISCONNECT) {
-              clearInterval(poller);
-              poller = null;
-              console.info('Disconnecting polling, no new state changes detected. Trying again in 15 minutes');
+              this.disconnectPollingTimer('No new state changes detected.');
               this.reconnectPollingTimer();
             }
           }
@@ -181,6 +184,16 @@
           pollTiming =  ( pollTiming * 2 ); // Double out the time.
           clearInterval(poller);
           poller = setInterval(() => { this.poll(); }, pollTiming);
+        },
+        /**
+         * Disconnect the polling interval.
+         *
+         * @param {string} msg - Log message giving reason for disconnection.
+         */
+        disconnectPollingTimer(msg) {
+          clearInterval(poller);
+          poller = null;
+          console.info('Disconnecting polling : ' + msg);
         },
         /**
          * Reconnect polling timer.
