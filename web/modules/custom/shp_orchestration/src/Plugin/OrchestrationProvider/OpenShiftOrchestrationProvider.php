@@ -5,10 +5,7 @@ namespace Drupal\shp_orchestration\Plugin\OrchestrationProvider;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Url;
 use Drupal\node\Entity\Node;
-use Drupal\shp_orchestration\Event\OrchestrationEnvironmentEvent;
-use Drupal\shp_orchestration\Event\OrchestrationEvents;
 use Drupal\shp_orchestration\OrchestrationProviderBase;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use UniversityOfAdelaide\OpenShift\Client as OpenShiftClient;
 use UniversityOfAdelaide\OpenShift\ClientException;
 
@@ -42,8 +39,8 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
   /**
    * {@inheritdoc}
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityTypeManagerInterface $entity_type_manager, EventDispatcherInterface $event_dispatcher) {
-    parent::__construct($configuration, $plugin_id, $plugin_definition, $entity_type_manager, $event_dispatcher);
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityTypeManagerInterface $entity_type_manager) {
+    parent::__construct($configuration, $plugin_id, $plugin_definition, $entity_type_manager);
 
     $this->client = new OpenShiftClient(
       $this->configEntity->endpoint,
@@ -234,10 +231,6 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       return FALSE;
     }
 
-    // Allow other modules to react to the Environment creation.
-    $event = new OrchestrationEnvironmentEvent($this->client, $deployment_config);
-    $this->eventDispatcher->dispatch(OrchestrationEvents::CREATED_ENVIRONMENT, $event);
-
     $image_stream = $this->client->getImageStream($sanitised_distribution_name);
     if ($image_stream) {
       foreach ($cron_jobs as $schedule => $args) {
@@ -310,11 +303,6 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       $environment_id
     );
 
-    // Allow other modules to react to the Environment deletion.
-    $deployment_config = $this->client->getDeploymentConfig($deployment_name);
-    $event = new OrchestrationEnvironmentEvent($this->client,$deployment_config);
-    $this->eventDispatcher->dispatch(OrchestrationEvents::DELETED_ENVIRONMENT, $event);
-
     try {
       // Scale the pods to zero, then delete the pod creators.
       //$this->client->updateDeploymentConfig($deployment_name, 0);
@@ -375,6 +363,141 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
    */
   public function deletedSite() {
     // TODO: Implement deleteSite() method.
+  }
+
+  /**
+   * Create a redis deployment on openshift
+   * @todo move this and the delete below into the shp_redis_support module.
+   * Can we extend this class in the redis module or something?
+   *
+   * @param $deployment_name
+   */
+  public function createRedisDeployment($deployment_name) {
+    $redis_name = $deployment_name . '-redis';
+    $redis_data = $deployment_name . '-data';
+    $redis_port = 6379;
+
+    $image_stream = $this->client->getImageStream('redis');
+    if (!$image_stream) {
+      $image_stream = [
+        'apiVersion' => 'v1',
+        'kind' => 'ImageStream',
+        'metadata' => [
+          'name' => 'redis',
+          'labels' => [
+            'app' => 'redis',
+          ],
+        ],
+        'spec' => [
+          'lookupPolicy' => [
+            'local' => FALSE,
+          ],
+          'tags' => [
+            [
+              'annotations' => [
+                'openshift.io/imported-from' => 'docker.io/redis:alpine',
+              ],
+              'from' => [
+                'kind' => 'DockerImage',
+                'name' => 'docker.io/redis:alpine',
+              ],
+              'importPolicy' => [],
+              'name' => 'alpine',
+              'referencePolicy' => [
+                'type' => 'Source',
+              ],
+            ],
+          ],
+        ],
+      ];
+      $this->client->createImageStream($image_stream);
+    }
+
+    $redis_deployment_config = [
+      'apiVersion' => 'v1',
+      'kind' => 'DeploymentConfig',
+      'metadata' => [
+        'name' => $redis_name,
+        'labels' => [
+          'app' => $deployment_name,
+        ],
+      ],
+      'spec' => [
+        'replicas' => 1,
+        'selector' => [
+          'app' => $deployment_name,
+          'deploymentconfig' => $redis_name,
+        ],
+        'strategy' => [
+          'type' => 'Rolling',
+        ],
+        'template' => [
+          'metadata' => [
+            'annotations' => [
+              'openshift.io/generated-by' => 'shp_redis_support',
+            ],
+            'labels' => [
+              'app' => $deployment_name,
+              'deploymentconfig' => $redis_name,
+            ],
+          ],
+          'spec' =>
+            [
+              'containers' =>
+                [
+                  [
+                    'image' => 'docker.io/redis:alpine',
+                    'name' => $redis_name,
+                    'ports' => [
+                      [
+                        'containerPort' => $redis_port,
+                      ],
+                    ],
+                    'resources' => [],
+                    'volumeMounts' => [
+                      [
+                        'mountPath' => '/data',
+                        'name' => $redis_data,
+                      ],
+                    ],
+                  ],
+                ],
+              'volumes' => [
+                [
+                  'emptyDir' => [],
+                  'name' => $redis_data,
+                ],
+              ],
+            ],
+        ],
+        'triggers' => [
+          [
+            'imageChangeParams' => [
+              'automatic' => TRUE,
+              'containerNames' => [
+                $redis_name,
+              ],
+              'from' => [
+                'kind' => 'ImageStreamTag',
+                'name' => 'redis:alpine',
+              ],
+            ],
+            'type' => 'ImageChange',
+          ],
+        ],
+      ],
+    ];
+
+    $this->client->createDeploymentConfig($redis_deployment_config);
+    $this->client->createService($redis_name, $redis_name, $redis_port, $redis_port);
+
+  }
+
+  public function deleteRedisDeployment($deployment_name) {
+    $redis_name = $deployment_name . '-redis';
+
+    $this->client->deleteService($redis_name);
+    $this->client->deleteDeploymentConfig($redis_name);
   }
 
   /**

@@ -12,10 +12,18 @@ class DeploymentEventSubscriber implements EventSubscriberInterface {
    * {@inheritdoc}
    */
   public static function getSubscribedEvents() {
+    $events[OrchestrationEvents::SETUP_ENVIRONMENT][]   = array('setupRedisDeployment');
     $events[OrchestrationEvents::CREATED_ENVIRONMENT][] = array('createRedisDeployment');
     $events[OrchestrationEvents::DELETED_ENVIRONMENT][] = array('deleteRedisDeployment');
 
     return $events;
+  }
+
+  public function setupRedisDeployment(OrchestrationEnvironmentEvent $event) {
+    $event->setEnvironmentVariables([
+      'REDIS_ENABLED' => '1',
+      'REDIS_HOST' => $event->getDeploymentName() . '-redis',
+    ]);
   }
 
   /**
@@ -25,127 +33,9 @@ class DeploymentEventSubscriber implements EventSubscriberInterface {
    *
    */
   public function createRedisDeployment(OrchestrationEnvironmentEvent $event) {
-    $client = $event->getClient();
-    $deployment_config = $event->getDeploymentConfig();
-
-    $app_name = $deployment_config['metadata']['name'];
-    $redis_name = $app_name . '-redis';
-    $redis_data = $redis_name . '-data';
-    $redis_port = 6739;
-
-    $image_stream = $client->getImageStream('redis');
-    if (!$image_stream) {
-      $image_stream = [
-        'apiVersion' => 'v1',
-        'kind' => 'ImageStream',
-        'metadata' => [
-          'name' => 'redis',
-          'labels' => [
-            'app' => 'redis',
-          ],
-        ],
-        'spec' => [
-          'lookupPolicy' => [
-            'local' => FALSE,
-          ],
-          'tags' => [
-            [
-              'annotations' => [
-                'openshift.io/imported-from' => 'docker.io/redis:alpine',
-              ],
-              'from' => [
-                'kind' => 'DockerImage',
-                'name' => 'docker.io/redis:alpine',
-              ],
-              'importPolicy' => [],
-              'name' => 'alpine',
-              'referencePolicy' => [
-                'type' => 'Source',
-              ],
-            ],
-          ],
-        ],
-      ];
-      $client->createImageStream($image_stream);
-    }
-
-    $redis_deployment_config = [
-      'apiVersion' => 'v1',
-      'kind' => 'DeploymentConfig',
-      'metadata' => [
-        'name' => $redis_name,
-        'labels' => [
-          'app' => $app_name,
-        ],
-      ],
-      'spec' => [
-        'replicas' => 1,
-        'selector' => [
-          'app' => $app_name,
-          'deploymentconfig' => $redis_name,
-        ],
-        'strategy' => [
-          'type' => 'Rolling',
-        ],
-        'template' => [
-          'metadata' => [
-            'annotations' => [
-              'openshift.io/generated-by' => 'shp_redis_support',
-            ],
-            'labels' => [
-              'app' => $app_name,
-              'deploymentconfig' => $redis_name,
-            ],
-          ],
-          'spec' =>
-            [
-              'containers' =>
-                [
-                  [
-                    'image' => 'docker.io/redis:alpine',
-                    'name' => $redis_name,
-                    'ports' => [
-                      [
-                        'containerPort' => $redis_port,
-                      ],
-                    ],
-                    'resources' => [],
-                    'volumeMounts' => [
-                      [
-                        'mountPath' => '/data',
-                        'name' => $redis_data,
-                      ],
-                    ],
-                  ],
-                ],
-              'volumes' => [
-                [
-                  'emptyDir' => [],
-                  'name' => $redis_data,
-                ],
-              ],
-            ],
-        ],
-        'triggers' => [
-          [
-            'imageChangeParams' => [
-              'automatic' => TRUE,
-              'containerNames' => [
-                $redis_name,
-              ],
-              'from' => [
-                'kind' => 'ImageStreamTag',
-                'name' => 'redis:alpine',
-              ],
-            ],
-            'type' => 'ImageChange',
-          ],
-        ],
-      ],
-    ];
-
-    $client->createDeploymentConfig($redis_deployment_config);
-    $client->createService($redis_name, $redis_name, $redis_port, $redis_port);
+    $deployment_name = $event->getDeploymentName();
+    $orchestration_provider = $event->getOrchestrationProvider();
+    $orchestration_provider->createRedisDeployment($deployment_name);
   }
 
   /**
@@ -155,19 +45,9 @@ class DeploymentEventSubscriber implements EventSubscriberInterface {
    *
    */
   public function deleteRedisDeployment(OrchestrationEnvironmentEvent $event) {
-    $client = $event->getClient();
-    $deployment_config = $event->getDeploymentConfig();
-
-    $app_name = $deployment_config['metadata']['name'];
-    $redis_name = $app_name . '-redis';
-
-    //$client->updateDeploymentConfig($redis_name, 0);
-    //$client->updateReplicationControllers('', 'app=' . $redis_name, 0);
-
-    $client->deleteService($redis_name);
-
-    $client->deleteDeploymentConfig($redis_name);
-    //$client->deleteReplicationControllers('', 'app=' . $redis_name);
+    $deployment_name = $event->getDeploymentName();
+    $orchestration_provider = $event->getOrchestrationProvider();
+    $orchestration_provider->deleteRedisDeployment($deployment_name);
   }
 
 }
