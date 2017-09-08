@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "cae6496f9e78cd1cbaca9239216e3143",
+    "content-hash": "2913949e1fb5db50bed96d57d5f088de",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -4188,42 +4188,6 @@
             "time": "2017-07-04T13:19:31+00:00"
         },
         {
-            "name": "ua-drupal-modules/ua_ldap",
-            "version": "dev-develop",
-            "source": {
-                "type": "git",
-                "url": "git@gitlab.adelaide.edu.au:drupal-modules/ua_ldap.git",
-                "reference": "36f6a95063aebc0b3af6d9de58955f772034a805"
-            },
-            "require": {
-                "zendframework/zend-ldap": "^2.5.1"
-            },
-            "type": "drupal-module",
-            "license": [
-                "GPL-2.0+"
-            ],
-            "description": "Provides configuration and services to interact with LDAP.",
-            "time": "2017-08-23T02:58:31+00:00"
-        },
-        {
-            "name": "ua-drupal-modules/ua_ldap_authorisation",
-            "version": "dev-develop",
-            "source": {
-                "type": "git",
-                "url": "git@gitlab.adelaide.edu.au:drupal-modules/ua_ldap_authorisation.git",
-                "reference": "cf46affc5a4ff423a8ffd2ea15bf9b22c9d62942"
-            },
-            "type": "drupal-module",
-            "license": [
-                "GPL-2.0+"
-            ],
-            "description": "Synchronises controlled roles for a user with LDAP, which is administered through UA Site Manager.",
-            "keywords": [
-                "Drupal"
-            ],
-            "time": "2017-08-23T03:14:58+00:00"
-        },
-        {
             "name": "universityofadelaide/openshift-client",
             "version": "dev-develop",
             "source": {
@@ -4605,59 +4569,6 @@
                 "zf2"
             ],
             "time": "2017-04-01T15:03:14+00:00"
-        },
-        {
-            "name": "zendframework/zend-ldap",
-            "version": "2.8.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/zendframework/zend-ldap.git",
-                "reference": "a9284a7440e17ce0ba697670bb4db1baf2340acd"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/zendframework/zend-ldap/zipball/a9284a7440e17ce0ba697670bb4db1baf2340acd",
-                "reference": "a9284a7440e17ce0ba697670bb4db1baf2340acd",
-                "shasum": ""
-            },
-            "require": {
-                "ext-ldap": "*",
-                "php": "^5.5 || ^7.0"
-            },
-            "require-dev": {
-                "php-mock/php-mock-phpunit": "~0.3",
-                "phpunit/phpunit": "^4.6",
-                "zendframework/zend-coding-standard": "~1.0.0",
-                "zendframework/zend-config": "^2.5",
-                "zendframework/zend-eventmanager": "^2.6.3 || ^3.0.1",
-                "zendframework/zend-stdlib": "^2.7 || ^3.0"
-            },
-            "suggest": {
-                "zendframework/zend-eventmanager": "Zend\\EventManager component"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "2.8-dev",
-                    "dev-develop": "2.9-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Zend\\Ldap\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "BSD-3-Clause"
-            ],
-            "description": "provides support for LDAP operations including but not limited to binding, searching and modifying entries in an LDAP directory",
-            "homepage": "https://github.com/zendframework/zend-ldap",
-            "keywords": [
-                "ldap",
-                "zf2"
-            ],
-            "time": "2017-03-06T20:39:12+00:00"
         },
         {
             "name": "zendframework/zend-stdlib",
@@ -7164,8 +7075,6 @@
         "drupal/r4032login": 20,
         "drupal/redis": 20,
         "drupal/token": 20,
-        "ua-drupal-modules/ua_ldap": 20,
-        "ua-drupal-modules/ua_ldap_authorisation": 20,
         "behat/mink": 20,
         "universityofadelaide/openshift-client": 20
     },
