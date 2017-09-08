@@ -638,7 +638,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
   private function formatDeployData(string $name, array $formatted_env_vars, string $environment_url, int $site_id, int $environment_id) {
     $deploy_data = [
       'containerPort' => 8080,
-      'memory_limit' => '128Mi',
+      'memory_limit' => '512Mi',
       'env_vars' => $formatted_env_vars,
       'annotations' => [
         'shepherdUrl' => $environment_url,

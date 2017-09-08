@@ -343,12 +343,12 @@ parameters:
 - name: MEMORY_LIMIT_WEB
   description: Maximum amount of memory the web container can use.
   required: true
-  value: 128Mi
+  value: 1024Mi
 - name: MEMORY_LIMIT_MYSQL
   description: Maximum amount of memory the MySQL container can use.
   displayName: Memory Limit (MySQL)
   required: true
-  value: 256Mi
+  value: 1024Mi
 - name: APPLICATION_DOMAIN
   description: The exposed hostname that will route to the Drupal service, if left blank a value will be defaulted.
   displayName: Application Hostname
