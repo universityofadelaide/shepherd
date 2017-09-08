@@ -63,7 +63,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
    *   sanitised title.
    */
   private static function sanitise($text) {
-    return strtolower(preg_replace('/\s+/', '-', $text));
+    return strtolower(preg_replace('/[\/\s]+/', '-', $text));
   }
 
   /**
@@ -161,13 +161,14 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     array $cron_jobs = []
   ) {
     $sanitised_distribution_name = self::sanitise($distribution_name);
+    $sanitised_source_ref = self::sanitise($source_ref);
     $deployment_name = self::generateDeploymentName(
       $distribution_name,
       $short_name,
       $environment_id
     );
-    $image_stream_tag = $sanitised_distribution_name . ':' . $source_ref;
-    $build_config_name = $sanitised_distribution_name . '-' . $source_ref;
+    $image_stream_tag = $sanitised_distribution_name . ':' . $sanitised_source_ref;
+    $build_config_name = $sanitised_distribution_name . '-' . $sanitised_source_ref;
 
     // Create build config if it doesn't exist.
     if (!$this->client->getBuildConfig($build_config_name)) {
