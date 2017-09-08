@@ -919,7 +919,7 @@
                 "issues": "http://drupal.org/project/issues/cas",
                 "irc": "irc://irc.freenode.org/drupal-contribute"
             },
-            "time": "2017-09-03 22:56:25"
+            "time": "2017-09-03T22:56:25+00:00"
         },
         {
             "name": "drupal/core",
@@ -1246,7 +1246,7 @@
             "support": {
                 "source": "http://cgit.drupalcode.org/entity_reference_revisions"
             },
-            "time": "2017-08-16 12:09:25"
+            "time": "2017-08-16T12:09:25+00:00"
         },
         {
             "name": "drupal/externalauth",
@@ -1456,7 +1456,7 @@
             "support": {
                 "source": "http://cgit.drupalcode.org/key_value_field"
             },
-            "time": "2017-06-19 09:59:57"
+            "time": "2017-06-19T09:59:57+00:00"
         },
         {
             "name": "drupal/paragraphs",
@@ -1605,7 +1605,7 @@
             "support": {
                 "source": "http://cgit.drupalcode.org/r4032login"
             },
-            "time": "2017-02-08 04:20:19"
+            "time": "2017-02-08T04:20:19+00:00"
         },
         {
             "name": "drupal/redis",
@@ -4230,7 +4230,7 @@
                 }
             ],
             "description": "Simple OpenShift client for PHP.",
-            "time": "2017-09-07 02:18:53"
+            "time": "2017-09-07T02:18:53+00:00"
         },
         {
             "name": "universityofadelaide/shepherd-drupal-scaffold",
@@ -4737,7 +4737,7 @@
                 "testing",
                 "web"
             ],
-            "time": "2017-02-06 09:59:54"
+            "time": "2017-02-06T09:59:54+00:00"
         },
         {
             "name": "behat/mink-browserkit-driver",
