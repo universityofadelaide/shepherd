@@ -647,6 +647,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
         'site_id' => (string) $site_id,
         'environment_id' => (string) $environment_id,
         'app' => $name,
+        'deploymentconfig' => $name,
       ],
     ];
 
