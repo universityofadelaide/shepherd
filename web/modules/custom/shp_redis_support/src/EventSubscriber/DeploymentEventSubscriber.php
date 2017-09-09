@@ -33,9 +33,11 @@ class DeploymentEventSubscriber implements EventSubscriberInterface {
    *
    */
   public function createRedisDeployment(OrchestrationEnvironmentEvent $event) {
-    $deployment_name = $event->getDeploymentName();
     $orchestration_provider = $event->getOrchestrationProvider();
-    $orchestration_provider->createRedisDeployment($deployment_name);
+    if ($orchestration_provider->getPluginId() == 'openshift_with_redis') {
+      $deployment_name = $event->getDeploymentName();
+      $orchestration_provider->createRedisDeployment($deployment_name);
+    }
   }
 
   /**
@@ -45,9 +47,11 @@ class DeploymentEventSubscriber implements EventSubscriberInterface {
    *
    */
   public function deleteRedisDeployment(OrchestrationEnvironmentEvent $event) {
-    $deployment_name = $event->getDeploymentName();
     $orchestration_provider = $event->getOrchestrationProvider();
-    $orchestration_provider->deleteRedisDeployment($deployment_name);
+    if ($orchestration_provider->getPluginId() == 'openshift_with_redis') {
+      $deployment_name = $event->getDeploymentName();
+      $orchestration_provider->deleteRedisDeployment($deployment_name);
+    }
   }
 
 }
