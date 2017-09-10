@@ -54,19 +54,6 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
   }
 
   /**
-   * Converts a string into a format acceptable for OpenShift.
-   *
-   * @param string $text
-   *   The title to be sanitised.
-   *
-   * @return string
-   *   sanitised title.
-   */
-  private static function sanitise($text) {
-    return strtolower(preg_replace('/[\/\s]+/', '-', $text));
-  }
-
-  /**
    * {@inheritdoc}
    */
   public function createdDistribution(string $name, string $builder_image, string $source_repo, string $source_ref = 'master', string $source_secret = NULL) {
