@@ -75,4 +75,17 @@ abstract class OrchestrationProviderBase extends PluginBase implements Container
     return $this->configEntity;
   }
 
+  /**
+   * Converts a string into a format acceptable for orchestration providers.
+   *
+   * @param string $text
+   *   The title to be sanitised.
+   *
+   * @return string
+   *   sanitised title.
+   */
+  static function sanitise($text) {
+    return strtolower(preg_replace('/[\/\s]+/', '-', $text));
+  }
+
 }
