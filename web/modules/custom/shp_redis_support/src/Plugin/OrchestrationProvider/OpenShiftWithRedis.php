@@ -142,7 +142,6 @@ class OpenShiftWithRedis extends OpenShiftOrchestrationProvider {
 
     $this->client->createDeploymentConfig($redis_deployment_config);
     $this->client->createService($redis_name, $redis_name, $redis_port, $redis_port);
-
   }
 
   public function deleteRedisDeployment($deployment_name) {

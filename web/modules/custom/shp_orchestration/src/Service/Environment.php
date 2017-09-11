@@ -94,7 +94,7 @@ class Environment extends EntityActionBase {
 
     // Allow other modules to react to the Environment creation.
     $eventDispatcher = \Drupal::service('event_dispatcher');
-    $event = new OrchestrationEnvironmentEvent($this->orchestrationProviderPlugin, $deployment_name, NULL);
+    $event = new OrchestrationEnvironmentEvent($this->orchestrationProviderPlugin, $deployment_name);
     $eventDispatcher->dispatch(OrchestrationEvents::SETUP_ENVIRONMENT, $event);
     if ($event_env_vars = $event->getEnvironmentVariables()) {
       $env_vars = array_merge($env_vars, $event_env_vars);
@@ -118,7 +118,7 @@ class Environment extends EntityActionBase {
     );
 
     // Allow other modules to react to the Environment creation.
-    $event = new OrchestrationEnvironmentEvent($this->orchestrationProviderPlugin, $deployment_name, $environment);
+    $event = new OrchestrationEnvironmentEvent($this->orchestrationProviderPlugin, $deployment_name);
     $eventDispatcher->dispatch(OrchestrationEvents::CREATED_ENVIRONMENT, $event);
 
     return $environment;
@@ -159,7 +159,7 @@ class Environment extends EntityActionBase {
       return FALSE;
     }
 
-    $deployment_name = $this->orchestrationProviderPlugin::generateDeploymentName(
+    $deployment_name = $this->orchestrationProviderPlugin->generateDeploymentName(
       $distribution->getTitle(),
       $site->field_shp_short_name->value,
       $node->id()
@@ -173,7 +173,7 @@ class Environment extends EntityActionBase {
 
     // Allow other modules to react to the Environment deletion.
     $eventDispatcher = \Drupal::service('event_dispatcher');
-    $event = new OrchestrationEnvironmentEvent($this->orchestrationProviderPlugin, $deployment_name,NULL);
+    $event = new OrchestrationEnvironmentEvent($this->orchestrationProviderPlugin, $deployment_name);
     $eventDispatcher->dispatch(OrchestrationEvents::DELETED_ENVIRONMENT, $event);
 
     return $result;

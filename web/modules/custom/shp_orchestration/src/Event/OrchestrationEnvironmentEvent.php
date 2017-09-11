@@ -9,7 +9,7 @@ class OrchestrationEnvironmentEvent extends Event {
   /**
    * The orchestration provider object
    *
-   * @var object
+   * @var \Drupal\shp_orchestration\OrchestrationProviderInterface
    */
   protected $orchestrationProvider;
 
@@ -21,13 +21,6 @@ class OrchestrationEnvironmentEvent extends Event {
   protected $deploymentName;
 
   /**
-   * The deployed environment
-   *
-   * @var string
-   */
-  protected $environment;
-
-  /**
    * Storage to pass env vars around
    */
   protected $environmentVariables;
@@ -35,20 +28,15 @@ class OrchestrationEnvironmentEvent extends Event {
   /**
    * Constructs a Orchestration deployment event object.
    *
-   * @param $orchestrationProvider
-   *   The orchestration provider
-   * @param $deploymentName
+   * @param \Drupal\shp_orchestration\OrchestrationProviderInterface $orchestrationProvider
+   *   The orchestration provider instance.
+   * @param string $deploymentName
    *   The deployment name.
-   * @param $environment
-   *   The environment that was created.
    *
-   * @internal param $ @var \UniversityOfAdelaide\OpenShift\Client $client
-   *   The openshift client.
    */
-  public function __construct($orchestrationProvider, $deploymentName, $environment) {
+  public function __construct($orchestrationProvider, $deploymentName) {
     $this->orchestrationProvider = $orchestrationProvider;
     $this->deploymentName = $deploymentName;
-    $this->environment = $environment;
   }
 
   public function getOrchestrationProvider() {
@@ -63,16 +51,6 @@ class OrchestrationEnvironmentEvent extends Event {
    */
   public function getDeploymentName() {
     return $this->deploymentName;
-  }
-
-  /**
-   * Get the deployed environment
-   *
-   * @return array
-   *   The environment.
-   */
-  public function getEnvironment() {
-    return $this->environment;
   }
 
   /**
