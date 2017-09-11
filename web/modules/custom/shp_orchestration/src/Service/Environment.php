@@ -9,7 +9,6 @@ use Drupal\shp_orchestration\Event\OrchestrationEvents;
 
 /**
  * Class Environment.
- * @package Drupal\shp_orchestration\Service
  */
 class Environment extends EntityActionBase {
 

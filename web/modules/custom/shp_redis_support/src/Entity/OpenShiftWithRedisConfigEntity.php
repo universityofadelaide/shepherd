@@ -31,5 +31,4 @@ use Drupal\shp_orchestration\Entity\OpenShiftConfigEntity;
  */
 class OpenShiftWithRedisConfigEntity extends OpenShiftConfigEntity {
 
-
 }

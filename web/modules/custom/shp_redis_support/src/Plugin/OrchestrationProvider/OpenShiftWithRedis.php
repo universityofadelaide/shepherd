@@ -5,7 +5,7 @@ namespace Drupal\shp_redis_support\Plugin\OrchestrationProvider;
 use Drupal\shp_orchestration\Plugin\OrchestrationProvider\OpenShiftOrchestrationProvider;
 
 /**
- * OpenShiftOrchestrationProvider.
+ * Class OpenShiftWithRedis.
  *
  * @OrchestrationProvider(
  *   id = "openshift_with_redis",
@@ -18,13 +18,15 @@ use Drupal\shp_orchestration\Plugin\OrchestrationProvider\OpenShiftOrchestration
 class OpenShiftWithRedis extends OpenShiftOrchestrationProvider {
 
   /**
-   * Create a redis deployment on openshift
+   * Create a redis deployment on OpenShift.
+   *
    * @todo move this and the delete below into the shp_redis_support module.
    * Can we extend this class in the redis module or something?
    *
-   * @param $deployment_name
+   * @param string $deployment_name
+   *   The deployment name.
    */
-  public function createRedisDeployment($deployment_name) {
+  public function createRedisDeployment(string $deployment_name) {
     $redis_name = $deployment_name . '-redis';
     $redis_data = $deployment_name . '-data';
     $redis_port = 6379;
@@ -144,9 +146,14 @@ class OpenShiftWithRedis extends OpenShiftOrchestrationProvider {
     $this->client->createService($redis_name, $redis_name, $redis_port, $redis_port);
   }
 
-  public function deleteRedisDeployment($deployment_name) {
+  /**
+   * Delete the redis deployment.
+   *
+   * @param string $deployment_name
+   *   The deployment name.
+   */
+  public function deleteRedisDeployment(string $deployment_name) {
     $redis_name = $deployment_name . '-redis';
-
     $this->client->deleteService($redis_name);
     $this->client->deleteDeploymentConfig($redis_name);
   }
