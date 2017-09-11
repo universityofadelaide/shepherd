@@ -20,6 +20,7 @@
   const UNCHANGED_STATE_DISCONNECT = 5;
   const FAILED_REQUEST_DISCONNECT = 3;
   const POLL_UPDATE_CYCLE = drupalSettings.vue_table.update_cycle;
+  const POLL_RECONNECT_TIMEOUT = 900000;
 
   let poller;
   let pollTiming = POLL_UPDATE_CYCLE;
@@ -209,7 +210,7 @@
             pollTiming = POLL_UPDATE_CYCLE;
             disconnect_count = 0;
             poller = setInterval(() => { context.poll(); }, pollTiming);
-          }, 900000);
+          }, POLL_RECONNECT_TIMEOUT);
         }
       }
     }
