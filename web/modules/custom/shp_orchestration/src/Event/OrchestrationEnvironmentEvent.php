@@ -2,26 +2,32 @@
 
 namespace Drupal\shp_orchestration\Event;
 
+use Drupal\shp_orchestration\OrchestrationProviderInterface;
 use Symfony\Component\EventDispatcher\Event;
 
+/**
+ * Class OrchestrationEnvironmentEvent.
+ */
 class OrchestrationEnvironmentEvent extends Event {
 
   /**
-   * The orchestration provider object
+   * The orchestration provider object.
    *
    * @var \Drupal\shp_orchestration\OrchestrationProviderInterface
    */
   protected $orchestrationProvider;
 
   /**
-   * The deployment name
+   * The deployment name.
    *
    * @var string
    */
   protected $deploymentName;
 
   /**
-   * Storage to pass env vars around
+   * Storage to pass env vars around.
+   *
+   * @var array
    */
   protected $environmentVariables;
 
@@ -32,19 +38,24 @@ class OrchestrationEnvironmentEvent extends Event {
    *   The orchestration provider instance.
    * @param string $deploymentName
    *   The deployment name.
-   *
    */
-  public function __construct($orchestrationProvider, $deploymentName) {
+  public function __construct(OrchestrationProviderInterface $orchestrationProvider, string $deploymentName) {
     $this->orchestrationProvider = $orchestrationProvider;
     $this->deploymentName = $deploymentName;
   }
 
+  /**
+   * Get the orchestration provider.
+   *
+   * @return \Drupal\shp_orchestration\OrchestrationProviderInterface
+   *   The orchestration provider.
+   */
   public function getOrchestrationProvider() {
     return $this->orchestrationProvider;
   }
 
   /**
-   * Get the deployment name
+   * Get the deployment name.
    *
    * @return string
    *   The deployment name.
@@ -54,21 +65,23 @@ class OrchestrationEnvironmentEvent extends Event {
   }
 
   /**
-   * Set the environment variables
+   * Set the environment variables.
    *
    * @param array $environment_variables
    *   Environment variable settings to update.
-   *
-   * @return array
    */
   public function setEnvironmentVariables(array $environment_variables) {
-    return $this->environmentVariables = $environment_variables;
+    $this->environmentVariables = $environment_variables;
   }
 
   /**
-   * Get the environment variables
+   * Get the environment variables.
+   *
+   * @return array
+   *   An array of environment variables.
    */
   public function getEnvironmentVariables() {
     return $this->environmentVariables;
   }
+
 }
