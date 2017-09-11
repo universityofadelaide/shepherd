@@ -15,3 +15,9 @@ Example command line to process the template and set the install profile to a cu
 ```bash
 oc process -f shepherd-openshift.yml -p SHEPHERD_INSTALL_PROFILE=ua_shepherd | oc create -f -
 ```
+
+### Delete shepherd instances and storage
+```bash
+oc delete all -l app=shepherd
+oc delete pvc shepherd-web-shared
+```

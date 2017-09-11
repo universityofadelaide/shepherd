@@ -331,7 +331,7 @@ parameters:
 - name: SOURCE_REPOSITORY_URL
   description: The URL of the repository with your application source code.
   required: true
-  value: 'git@github.com:universityofadelaide/shepherd.git'
+  value: 'https://github.com/universityofadelaide/shepherd.git'
 - name: SOURCE_REPOSITORY_REF
   description: Set this to a branch name, tag or other ref of your repository if you are not using the default branch.
   required: true
