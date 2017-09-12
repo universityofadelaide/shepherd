@@ -6,9 +6,9 @@
   "scripts": {
     "webpack": "webpack --hide-modules",
     "dev": "webpack --hide-modules --watch",
-    "production": "export NODE_ENV=production && node_modules/.bin/webpack"
+    "production": "export NODE_ENV=production && webpack"
   },
-  "author": "",
+  "author": "Chris Barton <c.barton@adelaide.edu.au>",
   "license": "MIT",
   "devDependencies": {
     "axios": "^0.16.2",
