@@ -17,7 +17,7 @@
   // We can assume that the drupalSettings are here.
   // 10 second response timeout.
   const AJAX_REQUEST_TIMEOUT = 10000;
-  const UNCHANGED_STATE_DISCONNECT = 5;
+  const UNCHANGED_STATE_DISCONNECT = 15;
   const FAILED_REQUEST_DISCONNECT = 3;
   const POLL_UPDATE_CYCLE = drupalSettings.vue_table.update_cycle;
   const POLL_RECONNECT_TIMEOUT = 900000;
