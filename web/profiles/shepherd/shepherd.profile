@@ -1,7 +1,8 @@
 <?php
+
 /**
  * @file
- * Enables modules and site configuration for a University of Adelaide site installation.
+ * Enables modules and site configuration for a Shepherd site installation.
  */
 
 use Drupal\contact\Entity\ContactForm;
