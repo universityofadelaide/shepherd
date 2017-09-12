@@ -1,0 +1,28 @@
+shp_redis_support.openshift_with_redis.*:
+  type: config_entity
+  label: 'OpenShift with Redis configuration'
+  mapping:
+    id:
+      type: string
+      label: 'Config entity id'
+    endpoint:
+      label: 'Endpoint'
+      type: string
+    token:
+      label: 'Token'
+      type: string
+    uuid:
+      type: string
+      label: 'UUID'
+    namespace:
+      type: string
+      label: 'Namespace'
+    verify_tls:
+      type: boolean
+      label: 'Verify TLS'
+    uid:
+      type: string
+      label: 'User ID'
+    gid:
+      type: string
+      label: 'Group ID'

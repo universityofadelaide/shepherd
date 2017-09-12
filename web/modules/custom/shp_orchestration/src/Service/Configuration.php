@@ -27,7 +27,7 @@ class Configuration {
   /**
    * Collate all the environment variables.
    *
-   * @param \Drupal\Core\Entity\NodeInterface $node
+   * @param NodeInterface $node
    *   An environment node.
    * @return array
    */
@@ -38,7 +38,7 @@ class Configuration {
   /**
    * Collate all the secrets.
    *
-   * @param \Drupal\Core\Entity\NodeInterface $node
+   * @param NodeInterface $node
    * @return array
    */
   public function getSecrets(NodeInterface $node) {
