@@ -154,8 +154,12 @@ class OpenShiftWithRedis extends OpenShiftOrchestrationProvider {
    */
   public function deleteRedisDeployment(string $deployment_name) {
     $redis_name = $deployment_name . '-redis';
-    $this->client->deleteService($redis_name);
-    $this->client->deleteDeploymentConfig($redis_name);
+    if ($this->client->getService($redis_name)) {
+      $this->client->deleteService($redis_name);
+    }
+    if ($this->client->getDeploymentConfig($redis_name)) {
+      $this->client->deleteDeploymentConfig($redis_name);
+    }
   }
 
 }
