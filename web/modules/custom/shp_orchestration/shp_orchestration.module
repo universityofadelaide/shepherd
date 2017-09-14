@@ -100,7 +100,7 @@ function shp_orchestration_shp_env_vars(NodeInterface $environment) {
     ->get('entity')
     ->getTarget()
     ->getValue();
-  $distribution = $site->field_shp_distribution
+  $distribution = $site->field_shp_project
     ->first()
     ->get('entity')
     ->getTarget()

@@ -323,7 +323,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     int $environment_id
   ) {
     $site = Node::load($environment_id->field_shp_site->target_id);
-    $distribution = Node::load($site->field_shp_distribution->target_id);
+    $distribution = Node::load($site->field_shp_project->target_id);
 
     self::deletedEnvironment(
       $distribution->title->value,

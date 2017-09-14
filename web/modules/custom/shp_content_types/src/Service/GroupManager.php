@@ -127,7 +127,7 @@ class GroupManager {
    *   The site to be added to its associated distribution group.
    */
   public function addSiteToDistributionGroup(NodeInterface $node) {
-    $distributions = $node->field_shp_distribution->referencedEntities();
+    $distributions = $node->field_shp_project->referencedEntities();
     foreach ($distributions as $distribution) {
       $group = $this->load($distribution);
       $group->addContent($node, 'group_node:' . $node->getType());

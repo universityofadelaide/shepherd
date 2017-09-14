@@ -43,8 +43,8 @@ class Environment extends EntityActionBase {
         ->getTarget()
         ->getValue();
 
-      if (isset($site->field_shp_distribution->target_id)) {
-        $distribution = $site->get('field_shp_distribution')
+      if (isset($site->field_shp_project->target_id)) {
+        $distribution = $site->get('field_shp_project')
           ->first()
           ->get('entity')
           ->getTarget()
@@ -147,8 +147,8 @@ class Environment extends EntityActionBase {
       ->getTarget()
       ->getValue();
 
-    if (isset($site->field_shp_distribution->target_id)) {
-      $distribution = $site->get('field_shp_distribution')
+    if (isset($site->field_shp_project->target_id)) {
+      $distribution = $site->get('field_shp_project')
         ->first()
         ->get('entity')
         ->getTarget()

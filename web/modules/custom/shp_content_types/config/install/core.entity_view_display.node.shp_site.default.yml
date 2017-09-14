@@ -2,7 +2,7 @@ langcode: en
 status: true
 dependencies:
   config:
-    - field.field.node.shp_site.field_shp_distribution
+    - field.field.node.shp_site.field_shp_project
     - field.field.node.shp_site.field_shp_domain
     - field.field.node.shp_site.field_shp_go_live_date
     - field.field.node.shp_site.field_shp_path
@@ -23,7 +23,7 @@ content:
     region: content
     settings: {  }
     third_party_settings: {  }
-  field_shp_distribution:
+  field_shp_project:
     weight: 3
     label: above
     settings:

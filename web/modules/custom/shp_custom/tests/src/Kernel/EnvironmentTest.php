@@ -79,7 +79,7 @@ class EnvironmentTest extends KernelTestBase {
       'field_shp_short_name'   => 'test',
       'field_shp_domain'       => $domain_name,
       'field_shp_path'         => '/',
-      'field_shp_distribution' => [['target_id' => $distribution->id()]],
+      'field_shp_project' => [['target_id' => $distribution->id()]],
     ]);
     $site->moderation_state->value = 'published';
     $site->save();
