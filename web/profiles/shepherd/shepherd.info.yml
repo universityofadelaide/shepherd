@@ -44,7 +44,6 @@ dependencies:
   # Contributed modules
   - entity_reference
   - entity_reference_revisions
-  - externalauth
   - field_group
   - gnode
   - group

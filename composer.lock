@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "2913949e1fb5db50bed96d57d5f088de",
+    "content-hash": "53bc0e31e2742a78621d2ed4e035c722",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -860,68 +860,6 @@
             "time": "2017-05-05T21:26:28+00:00"
         },
         {
-            "name": "drupal/cas",
-            "version": "dev-1.x",
-            "source": {
-                "type": "git",
-                "url": "https://git.drupal.org/project/cas",
-                "reference": "2997d97cfe688dfe9eb62c6a507e3c19a3898b4a"
-            },
-            "require": {
-                "drupal/core": "~8.0",
-                "drupal/externalauth": "*"
-            },
-            "type": "drupal-module",
-            "extra": {
-                "branch-alias": {
-                    "dev-1.x": "1.x-dev",
-                    "dev-8.x-1.x": "8.1.x-dev"
-                },
-                "drupal": {
-                    "version": "8.x-1.0-rc1+2-dev",
-                    "datestamp": "1504468744",
-                    "security-coverage": {
-                        "status": "not-covered",
-                        "message": "Dev releases are not covered by Drupal security advisories."
-                    }
-                }
-            },
-            "notification-url": "https://packages.drupal.org/8/downloads",
-            "license": [
-                "GPL-2.0+"
-            ],
-            "authors": [
-                {
-                    "name": "David Metzler",
-                    "homepage": "https://www.drupal.org/u/metzlerd",
-                    "role": "Maintainer"
-                },
-                {
-                    "name": "Brian Osborne",
-                    "homepage": "https://www.drupal.org/u/bkosborne",
-                    "role": "Maintainer"
-                },
-                {
-                    "name": "Tim Yale",
-                    "homepage": "https://www.drupal.org/u/yalet",
-                    "role": "Maintainer"
-                },
-                {
-                    "name": "See other contributors",
-                    "homepage": "https://www.drupal.org/node/78967/committers",
-                    "role": "contributor"
-                }
-            ],
-            "description": "Provides CAS authentication for Drupal.",
-            "homepage": "http://drupal.org/project/cas",
-            "support": {
-                "source": "http://cgit.drupalcode.org/cas",
-                "issues": "http://drupal.org/project/issues/cas",
-                "irc": "irc://irc.freenode.org/drupal-contribute"
-            },
-            "time": "2017-09-03T22:56:25+00:00"
-        },
-        {
             "name": "drupal/core",
             "version": "8.3.7",
             "source": {
@@ -1249,61 +1187,6 @@
             "time": "2017-08-16T12:09:25+00:00"
         },
         {
-            "name": "drupal/externalauth",
-            "version": "1.0.0",
-            "source": {
-                "type": "git",
-                "url": "https://git.drupal.org/project/externalauth",
-                "reference": "8.x-1.0"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://ftp.drupal.org/files/projects/externalauth-8.x-1.0.zip",
-                "reference": "8.x-1.0",
-                "shasum": "f1298e1d34f5e1c4ebc130c2b90443b5167e405b"
-            },
-            "require": {
-                "drupal/core": "~8.0"
-            },
-            "type": "drupal-module",
-            "extra": {
-                "branch-alias": {
-                    "dev-1.x": "1.x-dev"
-                },
-                "drupal": {
-                    "version": "8.x-1.0",
-                    "datestamp": "1490096883",
-                    "security-coverage": {
-                        "status": "covered",
-                        "message": "Covered by Drupal's security advisory policy"
-                    }
-                }
-            },
-            "notification-url": "https://packages.drupal.org/8/downloads",
-            "license": [
-                "GPL-2.0+"
-            ],
-            "authors": [
-                {
-                    "name": "rgristroph",
-                    "homepage": "https://www.drupal.org/user/516442"
-                },
-                {
-                    "name": "snufkin",
-                    "homepage": "https://www.drupal.org/user/58645"
-                },
-                {
-                    "name": "svendecabooter",
-                    "homepage": "https://www.drupal.org/user/35369"
-                }
-            ],
-            "description": "Helper module to authenticate users using an external site / service and storing identification details",
-            "homepage": "https://www.drupal.org/project/externalauth",
-            "support": {
-                "source": "http://cgit.drupalcode.org/externalauth"
-            }
-        },
-        {
             "name": "drupal/field_group",
             "version": "1.0.0-rc6",
             "source": {
@@ -1609,20 +1492,23 @@
         },
         {
             "name": "drupal/redis",
-            "version": "1.0.0-beta1",
+            "version": "1.0.0-rc2",
             "source": {
                 "type": "git",
                 "url": "https://git.drupal.org/project/redis",
-                "reference": "8.x-1.0-beta1"
+                "reference": "8.x-1.0-rc2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://ftp.drupal.org/files/projects/redis-8.x-1.0-beta1.zip",
-                "reference": "8.x-1.0-beta1",
-                "shasum": "c52dfdc675e95f04266e4ddd7c603c23f217e1f8"
+                "url": "https://ftp.drupal.org/files/projects/redis-8.x-1.0-rc2.zip",
+                "reference": "8.x-1.0-rc2",
+                "shasum": "7eeaa7078e9df6f4bbea1ca90dbc43aa044da346"
             },
             "require": {
                 "drupal/core": "~8.0"
+            },
+            "suggest": {
+                "predis/predis": "^1.1.1"
             },
             "type": "drupal-module",
             "extra": {
@@ -1630,11 +1516,11 @@
                     "dev-1.x": "1.x-dev"
                 },
                 "drupal": {
-                    "version": "8.x-1.0-beta1",
-                    "datestamp": "1486574104",
+                    "version": "8.x-1.0-rc2",
+                    "datestamp": "1505390043",
                     "security-coverage": {
                         "status": "not-covered",
-                        "message": "Beta releases are not covered by Drupal security advisories."
+                        "message": "RC releases are not covered by Drupal security advisories."
                     }
                 }
             },
@@ -7067,7 +6953,6 @@
     "aliases": [],
     "minimum-stability": "dev",
     "stability-flags": {
-        "drupal/cas": 20,
         "drupal/entity_reference_revisions": 20,
         "drupal/field_group": 20,
         "drupal/group": 10,

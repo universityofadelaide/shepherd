@@ -1,9 +1,9 @@
-#!/bin/bash -x
+#!/bin/bash
 #
 # This script automates the creation and updating of a subtree split
 # in a second repository.
 #
-set -euo pipefail
+set -eu
 IFS=$'\n\t'
 
 source_repository=git@github.com:universityofadelaide/shepherd.git
@@ -16,7 +16,7 @@ destination_repository=git@github.com:universityofadelaide/shepherd-modules.git
 destination_branch=develop
 
 temp_repo=$(mktemp -d)
-temp_branch=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w ${1:-8} | head -n 1 || true)
+temp_branch=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w ${1:-8} | head -n 1)
 
 # Checkout the old repository, make it safe and checkout a branch
 git clone ${source_repository} ${temp_repo}
