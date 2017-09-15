@@ -3,15 +3,15 @@ status: true
 dependencies:
   config:
     - core.entity_view_mode.node.teaser
-    - field.field.node.shp_distribution.field_shp_builder_image
-    - field.field.node.shp_distribution.field_shp_git_repository
-    - field.field.node.shp_distribution.field_shp_build_secret
-    - node.type.shp_distribution
+    - field.field.node.shp_project.field_shp_builder_image
+    - field.field.node.shp_project.field_shp_git_repository
+    - field.field.node.shp_project.field_shp_build_secret
+    - node.type.shp_project
   module:
     - user
-id: node.shp_distribution.teaser
+id: node.shp_project.teaser
 targetEntityType: node
-bundle: shp_distribution
+bundle: shp_project
 mode: teaser
 content:
   links:

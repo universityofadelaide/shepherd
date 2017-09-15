@@ -2,15 +2,15 @@ langcode: en
 status: true
 dependencies:
   config:
-    - group.type.shp_distribution
+    - group.type.shp_project
     - node.type.shp_environment
   module:
     - gnode
     - node
 id: group_content_type_6278ab03b9021
-label: 'Distribution: Group node (Environment)'
+label: 'Project: Group node (Environment)'
 description: 'Adds <em class="placeholder">Environment</em> content to groups both publicly and privately.'
-group_type: shp_distribution
+group_type: shp_project
 content_plugin: 'group_node:shp_environment'
 plugin_config:
   group_cardinality: 0

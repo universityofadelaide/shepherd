@@ -11,8 +11,8 @@ services:
   shp_orchestration.active_job_manager:
     class: Drupal\shp_orchestration\Service\ActiveJobManager
     arguments: ['@state']
-  shp_orchestration.distribution:
-    class: Drupal\shp_orchestration\Service\Distribution
+  shp_orchestration.project:
+    class: Drupal\shp_orchestration\Service\Project
     arguments: ['@plugin.manager.orchestration_provider']
   shp_orchestration.environment:
     class: Drupal\shp_orchestration\Service\Environment

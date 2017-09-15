@@ -35,9 +35,9 @@ class SiteEnvironmentUrl extends FieldPluginBase {
     $orchestrationProvider = \Drupal::service('plugin.manager.orchestration_provider')->getProviderInstance();
     $entity = $values->_entity;
     $site = $entity->field_shp_site->first()->entity;
-    $distribution = $site->field_shp_project->first()->entity;
+    $project = $site->field_shp_project->first()->entity;
     $url = $orchestrationProvider->getEnvironmentUrl(
-      $distribution->getTitle(),
+      $project->getTitle(),
       $site->field_shp_short_name->value,
       $entity->id()
     );

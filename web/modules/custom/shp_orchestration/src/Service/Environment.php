@@ -44,14 +44,14 @@ class Environment extends EntityActionBase {
         ->getValue();
 
       if (isset($site->field_shp_project->target_id)) {
-        $distribution = $site->get('field_shp_project')
+        $project = $site->get('field_shp_project')
           ->first()
           ->get('entity')
           ->getTarget()
           ->getValue();
       }
     }
-    if (!isset($distribution) || !isset($site)) {
+    if (!isset($project) || !isset($site)) {
       return FALSE;
     }
 
@@ -61,7 +61,7 @@ class Environment extends EntityActionBase {
     }
 
     $deployment_name = $this->orchestrationProviderPlugin::generateDeploymentName(
-      $distribution->getTitle(),
+      $project->getTitle(),
       $site->field_shp_short_name->value,
       $node->id()
     );
@@ -100,17 +100,17 @@ class Environment extends EntityActionBase {
     }
 
     $environment = $this->orchestrationProviderPlugin->createdEnvironment(
-      $distribution->getTitle(),
+      $project->getTitle(),
       $site->field_shp_short_name->value,
       $site->id(),
       $node->id(),
       $node->toUrl('canonical', ['absolute' => TRUE])->toString(),
-      $distribution->field_shp_builder_image->value,
+      $project->field_shp_builder_image->value,
       $node->field_shp_domain->value,
       $node->field_shp_path->value,
-      $distribution->field_shp_git_repository->value,
+      $project->field_shp_git_repository->value,
       $node->field_shp_git_reference->value,
-      $distribution->field_shp_build_secret->value,
+      $project->field_shp_build_secret->value,
       $env_vars,
       $secrets,
       $cron_jobs
@@ -148,24 +148,24 @@ class Environment extends EntityActionBase {
       ->getValue();
 
     if (isset($site->field_shp_project->target_id)) {
-      $distribution = $site->get('field_shp_project')
+      $project = $site->get('field_shp_project')
         ->first()
         ->get('entity')
         ->getTarget()
         ->getValue();
     }
-    if (!isset($distribution) || !isset($site)) {
+    if (!isset($project) || !isset($site)) {
       return FALSE;
     }
 
     $deployment_name = $this->orchestrationProviderPlugin->generateDeploymentName(
-      $distribution->getTitle(),
+      $project->getTitle(),
       $site->field_shp_short_name->value,
       $node->id()
     );
 
     $result = $this->orchestrationProviderPlugin->deletedEnvironment(
-      $distribution->title->value,
+      $project->title->value,
       $site->field_shp_short_name->value,
       $node->id()
     );

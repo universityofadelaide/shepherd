@@ -27,7 +27,7 @@ function shp_backup_cron() {
 function shp_backup_backup_environments() {
   // @todo Shepherd: Perform backups on orchestration provider.
   // Retrieve list of all environments
-  // Load site, distribution, environment
+  // Load site, project, environment
   // call createBackup on each
   // As each job runs asap, does there need to be some throttling here?
 }

@@ -2,17 +2,17 @@ langcode: en
 status: true
 dependencies:
   config:
-    - field.field.node.shp_distribution.field_shp_build_secret
-    - field.field.node.shp_distribution.field_shp_builder_image
-    - field.field.node.shp_distribution.field_shp_env_vars
-    - field.field.node.shp_distribution.field_shp_git_repository
-    - node.type.shp_distribution
+    - field.field.node.shp_project.field_shp_build_secret
+    - field.field.node.shp_project.field_shp_builder_image
+    - field.field.node.shp_project.field_shp_env_vars
+    - field.field.node.shp_project.field_shp_git_repository
+    - node.type.shp_project
   module:
     - key_value_field
     - user
-id: node.shp_distribution.default
+id: node.shp_project.default
 targetEntityType: node
-bundle: shp_distribution
+bundle: shp_project
 mode: default
 content:
   field_shp_build_secret:

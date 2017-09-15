@@ -3,13 +3,13 @@ status: true
 dependencies:
   config:
     - field.storage.node.field_shp_env_vars
-    - node.type.shp_distribution
+    - node.type.shp_project
   module:
     - key_value_field
-id: node.shp_distribution.field_shp_env_vars
+id: node.shp_project.field_shp_env_vars
 field_name: field_shp_env_vars
 entity_type: node
-bundle: shp_distribution
+bundle: shp_project
 label: 'Default environment variables'
 description: ''
 required: false

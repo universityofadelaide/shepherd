@@ -167,13 +167,13 @@ class Backup {
     $site = $node_storage->load($backup->field_shp_site->target_id);
     $environment = $node_storage->load($backup->field_shp_environment->target_id);
     $project = $node_storage->load($site->field_shp_project->target_id);
-    $distribution_name = $project->title->value;
+    $project_name = $project->title->value;
 
     $backup_command = str_replace(["\r\n", "\n", "\r"], ' && ', trim($this->config->get('backup_command')));
     $backup_command = $this->token->replace($backup_command, ['backup' => $backup]);
 
     $result = $this->orchestrationProvider->backupEnvironment(
-      $distribution_name,
+      $project_name,
       $site->field_shp_short_name->value,
       $environment->id(),
       $environment->field_shp_git_reference->value,
@@ -197,14 +197,14 @@ class Backup {
   public function restore(NodeInterface $backup, NodeInterface $environment) {
     $node_storage = $this->entityTypeManager->getStorage('node');
     $site = $node_storage->load($backup->field_shp_site->target_id);
-    $distribution = $node_storage->load($site->field_shp_project->target_id);
-    $distribution_name = $distribution->title->value;
+    $project = $node_storage->load($site->field_shp_project->target_id);
+    $project_name = $project->title->value;
 
     $restore_command = str_replace(["\r\n", "\n", "\r"], ' && ', trim($this->config->get('restore_command')));
     $restore_command = $this->token->replace($restore_command, ['backup' => $backup]);
 
     $result = $this->orchestrationProvider->restoreEnvironment(
-      $distribution_name,
+      $project_name,
       $site->field_shp_short_name->value,
       $environment->id(),
       $environment->field_shp_git_reference->value,

@@ -3,11 +3,11 @@ status: true
 dependencies:
   config:
     - field.storage.node.field_shp_git_repository
-    - node.type.shp_distribution
-id: node.shp_distribution.field_shp_git_repository
+    - node.type.shp_project
+id: node.shp_project.field_shp_git_repository
 field_name: field_shp_git_repository
 entity_type: node
-bundle: shp_distribution
+bundle: shp_project
 label: 'Git repository'
 description: ''
 required: true

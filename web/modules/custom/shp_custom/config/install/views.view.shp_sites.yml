@@ -260,7 +260,7 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
-          label: Distribution
+          label: Project
           exclude: false
           alter:
             alter_text: false
@@ -407,7 +407,7 @@ display:
           empty: true
           tokenize: false
           content:
-            value: "<h3>No sites exist.</h3>\n<p>Get started by creating a distribution first, then a site.</p>"
+            value: "<h3>No sites exist.</h3>\n<p>Get started by creating a project first, then a site.</p>"
             format: basic_html
           plugin_id: text
       relationships: {  }

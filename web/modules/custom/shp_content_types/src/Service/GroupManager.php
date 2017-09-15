@@ -80,10 +80,10 @@ class GroupManager {
   /**
    * Load the sync'd group associated with the given node.
    *
-   * Each shp_site and shp_distribution node has a single group associated with
+   * Each shp_site and shp_project node has a single group associated with
    * it that has a group type the same as the node. These special groups are a
    * convenience that allow administrators to assign users access to sites
-   * or distributions (and their associated sites).
+   * or projects (and their associated sites).
    *
    * @param \Drupal\node\NodeInterface $node
    *   Fetch the group associated with this node.
@@ -121,15 +121,15 @@ class GroupManager {
   }
 
   /**
-   * Adds a site to the group associated with its distribution.
+   * Adds a site to the group associated with its project.
    *
    * @param \Drupal\node\NodeInterface $node
-   *   The site to be added to its associated distribution group.
+   *   The site to be added to its associated project group.
    */
-  public function addSiteToDistributionGroup(NodeInterface $node) {
-    $distributions = $node->field_shp_project->referencedEntities();
-    foreach ($distributions as $distribution) {
-      $group = $this->load($distribution);
+  public function addSiteToProjectGroup(NodeInterface $node) {
+    $projects = $node->field_shp_project->referencedEntities();
+    foreach ($projects as $project) {
+      $group = $this->load($project);
       $group->addContent($node, 'group_node:' . $node->getType());
     }
   }
