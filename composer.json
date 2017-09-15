@@ -14,7 +14,6 @@
         "universityofadelaide/shepherd-drupal-scaffold": "~1.0",
         "drush/drush":                                   "8.*",
         "drupal/core":                                   "8.3.*",
-        "drupal/cas":                                    "1.x-dev",
         "drupal/devel":                                  "~1.0",
         "drupal/entity_reference_revisions":             "dev-1.x",
         "drupal/field_group":                            "1.*@dev",
@@ -71,7 +70,7 @@
         },
         "merge-plugin": {
             "require": [
-                "web/modules/custom/shp_orchestration/composer.json"
+                "web/modules/custom/shepherd/shp_orchestration/composer.json"
             ]
         },
         "patches": {
