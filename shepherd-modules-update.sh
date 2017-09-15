@@ -7,7 +7,7 @@ set -eu
 IFS=$'\n\t'
 
 source_repository=git@github.com:universityofadelaide/shepherd.git
-source_branch=develop
+source_branch=feature/webops-244-provision-users-from-ldap
 source_dir=web/modules/custom/shepherd
 
 # This is typically the name you will be releasing the sub modules as.
@@ -26,7 +26,7 @@ git remote remove origin
 git checkout -b ${temp_branch}
 
 # Create the split, check it out and then push the temp branch up
-sha1=$(splitsh-lite --prefix=${source_dir}:${destination_dir_name} --quiet)
+sha1=$(splitsh-lite --prefix=${source_dir} --quiet)
 git reset --hard ${sha1}
 git remote add remote ${destination_repository}
 git push -f -u remote ${temp_branch}:${destination_branch}
