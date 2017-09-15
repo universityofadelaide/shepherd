@@ -645,7 +645,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
    */
   private function setupVolumes(string $project_name, string $deployment_name, bool $setup = FALSE) {
     $shared_pvc_name = $deployment_name . '-shared';
-    // @todo This should be dist_name-backup or similar - one backup pv per distro.
+    // @todo This should be project_name-backup or similar - one backup pv per project.
     $backup_pvc_name = self::sanitise($project_name) . '-backup';
 
     if ($setup) {

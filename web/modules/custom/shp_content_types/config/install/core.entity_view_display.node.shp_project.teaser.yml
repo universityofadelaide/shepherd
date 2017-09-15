@@ -19,6 +19,5 @@ content:
     region: content
 hidden:
   field_shp_builder_image: true
-  field_shp_dist_summary: true
   field_shp_git_repository: true
   field_shp_build_secret: true

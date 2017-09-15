@@ -164,6 +164,6 @@ if (!$oc_user) {
   $oc_user->save();
 }
 
-/** @var \Drupal\group\Entity\GroupInterface $dist_group */
-$dist_group = \Drupal::service('shp_content_types.group_manager')->load($project);
-$dist_group->addMember($oc_user, ['group_roles' => ['shp_project-online-consulta']]);
+/** @var \Drupal\group\Entity\GroupInterface $project_group */
+$project_group = \Drupal::service('shp_content_types.group_manager')->load($project);
+$project_group->addMember($oc_user, ['group_roles' => ['shp_project-online-consulta']]);
