@@ -3,7 +3,7 @@ status: true
 dependencies:
   config:
     - core.entity_view_mode.node.teaser
-    - field.field.node.shp_site.field_shp_distribution
+    - field.field.node.shp_site.field_shp_project
     - field.field.node.shp_site.field_shp_domain
     - field.field.node.shp_site.field_shp_short_name
     - field.field.node.shp_site.field_shp_path
@@ -26,7 +26,7 @@ content:
     region: content
 hidden:
   field_shp_authoriser_id: true
-  field_shp_distribution: true
+  field_shp_project: true
   field_shp_domain: true
   field_shp_short_name: true
   field_shp_path: true

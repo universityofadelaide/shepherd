@@ -2,14 +2,14 @@ langcode: en
 status: true
 dependencies:
   config:
-    - field.storage.node.field_shp_distribution
-    - node.type.shp_distribution
+    - field.storage.node.field_shp_project
+    - node.type.shp_project
     - node.type.shp_site
-id: node.shp_site.field_shp_distribution
-field_name: field_shp_distribution
+id: node.shp_site.field_shp_project
+field_name: field_shp_project
 entity_type: node
 bundle: shp_site
-label: Distribution
+label: Project
 description: ''
 required: true
 translatable: false
@@ -19,7 +19,7 @@ settings:
   handler: 'default:node'
   handler_settings:
     target_bundles:
-      shp_distribution: shp_distribution
+      shp_project: shp_project
     sort:
       field: _none
 field_type: entity_reference

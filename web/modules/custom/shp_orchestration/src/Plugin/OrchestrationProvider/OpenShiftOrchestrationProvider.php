@@ -53,7 +53,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
   /**
    * {@inheritdoc}
    */
-  public function createdDistribution(string $name, string $builder_image, string $source_repo, string $source_ref = 'master', string $source_secret = NULL) {
+  public function createdProject(string $name, string $builder_image, string $source_repo, string $source_ref = 'master', string $source_secret = NULL) {
     $sanitised_name = self::sanitise($name);
 
     // Package config for the client.
@@ -88,7 +88,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
   /**
    * {@inheritdoc}
    */
-  public function updatedDistribution(string $name, string $builder_image, string $source_repo, string $source_ref = 'master', string $source_secret = NULL) {
+  public function updatedProject(string $name, string $builder_image, string $source_repo, string $source_ref = 'master', string $source_secret = NULL) {
     $sanitised_name = self::sanitise($name);
 
     // Package config for the client.
@@ -121,15 +121,15 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
   /**
    * {@inheritdoc}
    */
-  public function deletedDistribution($name) {
-    // @todo Implement deletedDistribution() method.
+  public function deletedProject($name) {
+    // @todo Implement deletedProject() method.
   }
 
   /**
    * {@inheritdoc}
    */
   public function createdEnvironment(
-    string $distribution_name,
+    string $project_name,
     string $short_name,
     string $site_id,
     string $environment_id,
@@ -144,15 +144,15 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     array $secrets = [],
     array $cron_jobs = []
   ) {
-    $sanitised_distribution_name = self::sanitise($distribution_name);
+    $sanitised_project_name = self::sanitise($project_name);
     $sanitised_source_ref = self::sanitise($source_ref);
     $deployment_name = self::generateDeploymentName(
-      $distribution_name,
+      $project_name,
       $short_name,
       $environment_id
     );
-    $image_stream_tag = $sanitised_distribution_name . ':' . $sanitised_source_ref;
-    $build_config_name = $sanitised_distribution_name . '-' . $sanitised_source_ref;
+    $image_stream_tag = $sanitised_project_name . ':' . $sanitised_source_ref;
+    $build_config_name = $sanitised_project_name . '-' . $sanitised_source_ref;
 
     // Create build config if it doesn't exist.
     if (!$this->client->getBuildConfig($build_config_name)) {
@@ -183,7 +183,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     }
 
     $formatted_env_vars = $this->formatEnvVars($environment_variables, $deployment_name);
-    if (!$volumes = $this->setupVolumes($distribution_name, $deployment_name, TRUE)) {
+    if (!$volumes = $this->setupVolumes($project_name, $deployment_name, TRUE)) {
       return FALSE;
     }
 
@@ -206,7 +206,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     $deployment_config = $this->client->generateDeploymentConfig(
       $deployment_name,
       $image_stream_tag,
-      $sanitised_distribution_name,
+      $sanitised_project_name,
       $volumes,
       $deploy_data
     );
@@ -219,7 +219,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       return FALSE;
     }
 
-    $image_stream = $this->client->getImageStream($sanitised_distribution_name);
+    $image_stream = $this->client->getImageStream($sanitised_project_name);
     if ($image_stream) {
       foreach ($cron_jobs as $schedule => $args) {
         $args_array = [
@@ -263,7 +263,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
    * {@inheritdoc}
    */
   public function updatedEnvironment(
-    string $distribution_name,
+    string $project_name,
     string $short_name,
     string $site_id,
     string $environment_id,
@@ -281,12 +281,12 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
    * {@inheritdoc}
    */
   public function deletedEnvironment(
-    string $distribution_name,
+    string $project_name,
     string $short_name,
     string $environment_id
   ) {
     $deployment_name = self::generateDeploymentName(
-      $distribution_name,
+      $project_name,
       $short_name,
       $environment_id
     );
@@ -323,10 +323,10 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     int $environment_id
   ) {
     $site = Node::load($environment_id->field_shp_site->target_id);
-    $distribution = Node::load($site->field_shp_distribution->target_id);
+    $project = Node::load($site->field_shp_project->target_id);
 
     self::deletedEnvironment(
-      $distribution->title->value,
+      $project->title->value,
       $site->field_shp_short_name->value,
       $environment_id
     );
@@ -357,14 +357,14 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
    * {@inheritdoc}
    */
   public function backupEnvironment(
-    string $distribution_name,
+    string $project_name,
     string $short_name,
     string $environment_id,
     string $source_ref = 'master',
     string $commands = ''
   ) {
     return $this->executeJob(
-      $distribution_name,
+      $project_name,
       $short_name,
       $environment_id,
       $source_ref,
@@ -377,14 +377,14 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
    * {@inheritdoc}
    */
   public function restoreEnvironment(
-    string $distribution_name,
+    string $project_name,
     string $short_name,
     string $environment_id,
     string $source_ref = 'master',
     string $commands = ''
   ) {
     return $this->executeJob(
-      $distribution_name,
+      $project_name,
       $short_name,
       $environment_id,
       $source_ref,
@@ -399,15 +399,15 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
    * @todo - can this and cron job creation be combined?
    */
   public function executeJob(
-    string $distribution_name,
+    string $project_name,
     string $short_name,
     string $environment_id,
     string $source_ref = 'master',
     string $commands = ''
   ) {
-    $sanitised_distribution_name = self::sanitise($distribution_name);
+    $sanitised_project_name = self::sanitise($project_name);
     $deployment_name = self::generateDeploymentName(
-      $distribution_name,
+      $project_name,
       $short_name,
       $environment_id
     );
@@ -415,8 +415,8 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     // Retrieve existing deployment details to use where possible.
     $deployment_config = $this->client->getDeploymentConfig($deployment_name);
 
-    $image_stream = $this->client->getImageStream($sanitised_distribution_name);
-    $volumes = $this->setupVolumes($distribution_name, $deployment_name);
+    $image_stream = $this->client->getImageStream($sanitised_project_name);
+    $volumes = $this->setupVolumes($project_name, $deployment_name);
     $deploy_data = $this->formatDeployData(
       $deployment_name,
       $deployment_config['spec']['template']['spec']['containers'][0]['env'],
@@ -509,12 +509,12 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
    * {@inheritdoc}
    */
   public static function generateDeploymentName(
-    string $distribution_name,
+    string $project_name,
     string $short_name,
     string $environment_id
   ) {
     return implode('-', [
-      self::sanitise($distribution_name),
+      self::sanitise($project_name),
       self::sanitise($short_name),
       $environment_id,
     ]);
@@ -535,10 +535,10 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
   /**
    * {@inheritdoc}
    */
-  public function getEnvironmentUrl(string $distribution_name, string $short_name, string $environment_id) {
+  public function getEnvironmentUrl(string $project_name, string $short_name, string $environment_id) {
 
     $deployment_name = self::generateDeploymentName(
-      $distribution_name,
+      $project_name,
       $short_name,
       $environment_id
     );
@@ -633,8 +633,8 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
   /**
    * Format an array of volume data ready to pass to OpenShift.
    *
-   * @param string $distribution_name
-   *   The name of the distribution being deployed.
+   * @param string $project_name
+   *   The name of the project being deployed.
    * @param string $deployment_name
    *   The name of the deployment being created.
    * @param bool $setup
@@ -643,10 +643,10 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
    * @return array|bool
    *   The volume config array, or false if creating PVCs was unsuccessful.
    */
-  private function setupVolumes(string $distribution_name, string $deployment_name, bool $setup = FALSE) {
+  private function setupVolumes(string $project_name, string $deployment_name, bool $setup = FALSE) {
     $shared_pvc_name = $deployment_name . '-shared';
-    // @todo This should be dist_name-backup or similar - one backup pv per distro.
-    $backup_pvc_name = self::sanitise($distribution_name) . '-backup';
+    // @todo This should be project_name-backup or similar - one backup pv per project.
+    $backup_pvc_name = self::sanitise($project_name) . '-backup';
 
     if ($setup) {
       try {

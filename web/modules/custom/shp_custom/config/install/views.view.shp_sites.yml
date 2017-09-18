@@ -2,7 +2,7 @@ langcode: en
 status: true
 dependencies:
   config:
-    - field.storage.node.field_shp_distribution
+    - field.storage.node.field_shp_project
     - field.storage.node.field_tags
     - node.type.shp_site
     - system.menu.main
@@ -253,14 +253,14 @@ display:
           separator: ', '
           field_api_classes: false
           plugin_id: field
-        field_shp_distribution:
-          id: field_shp_distribution
-          table: node__field_shp_distribution
-          field: field_shp_distribution
+        field_shp_project:
+          id: field_shp_project
+          table: node__field_shp_project
+          field: field_shp_project
           relationship: none
           group_type: group
           admin_label: ''
-          label: Distribution
+          label: Project
           exclude: false
           alter:
             alter_text: false
@@ -407,7 +407,7 @@ display:
           empty: true
           tokenize: false
           content:
-            value: "<h3>No sites exist.</h3>\n<p>Get started by creating a distribution first, then a site.</p>"
+            value: "<h3>No sites exist.</h3>\n<p>Get started by creating a project first, then a site.</p>"
             format: basic_html
           plugin_id: text
       relationships: {  }
@@ -424,7 +424,7 @@ display:
         - 'user.node_grants:view'
         - user.permissions
       tags:
-        - 'config:field.storage.node.field_shp_distribution'
+        - 'config:field.storage.node.field_shp_project'
         - 'config:field.storage.node.field_tags'
   block_1:
     display_plugin: block
@@ -548,7 +548,7 @@ display:
         - 'user.node_grants:view'
         - user.permissions
       tags:
-        - 'config:field.storage.node.field_shp_distribution'
+        - 'config:field.storage.node.field_shp_project'
         - 'config:field.storage.node.field_tags'
   page_1:
     display_plugin: page
@@ -740,7 +740,7 @@ display:
         - 'user.node_grants:view'
         - user.permissions
       tags:
-        - 'config:field.storage.node.field_shp_distribution'
+        - 'config:field.storage.node.field_shp_project'
         - 'config:field.storage.node.field_tags'
   rest_export_1:
     display_plugin: rest_export
@@ -774,5 +774,5 @@ display:
         - 'user.node_grants:view'
         - user.permissions
       tags:
-        - 'config:field.storage.node.field_shp_distribution'
+        - 'config:field.storage.node.field_shp_project'
         - 'config:field.storage.node.field_tags'

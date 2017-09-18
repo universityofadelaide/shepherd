@@ -2,13 +2,13 @@ langcode: en
 status: true
 dependencies:
   config:
-    - group.type.shp_distribution
+    - group.type.shp_project
   module:
     - user
-id: group_content_type_38ec14e586f92
-label: 'Distribution: Group membership'
+id: shp_project-group_membership
+label: 'Project: Group membership'
 description: 'Adds users to groups as members.'
-group_type: shp_distribution
+group_type: shp_project
 content_plugin: group_membership
 plugin_config:
   group_cardinality: 0
