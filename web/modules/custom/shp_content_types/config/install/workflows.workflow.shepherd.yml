@@ -8,16 +8,23 @@ dependencies:
     - content_moderation
 id: environment
 label: 'Shepherd workflow'
+type: content_moderation
 states:
   draft:
     label: Draft
     weight: -1
+    published: false
+    default_revision: false
   published:
     label: Active
     weight: 0
+    published: true
+    default_revision: true
   archived:
     label: Archived
     weight: 1
+    published: false
+    default_revision: false
 transitions:
   keep_active:
     label: 'keep active'
@@ -37,18 +44,7 @@ transitions:
       - published
     to: archived
     weight: -8
-type: content_moderation
 type_settings:
-  states:
-    archived:
-      published: false
-      default_revision: false
-    draft:
-      published: false
-      default_revision: false
-    published:
-      published: true
-      default_revision: true
   entity_types:
     node:
       - shp_environment
