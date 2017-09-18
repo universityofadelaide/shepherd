@@ -13,7 +13,7 @@
         "drupal-composer/drupal-scaffold":               "^2.2",
         "universityofadelaide/shepherd-drupal-scaffold": "~1.0",
         "drush/drush":                                   "dev-master",
-        "drupal/core":                                   "8.4.0-rc1",
+        "drupal/core":                                   "8.4.x-dev",
         "drupal/cas":                                    "1.x-dev",
         "drupal/devel":                                  "~1.0",
         "drupal/entity_reference_revisions":             "dev-1.x",
