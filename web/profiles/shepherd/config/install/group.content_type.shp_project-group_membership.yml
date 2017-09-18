@@ -5,7 +5,7 @@ dependencies:
     - group.type.shp_project
   module:
     - user
-id: group_content_type_38ec14e586f92
+id: shp_project-group_membership
 label: 'Project: Group membership'
 description: 'Adds users to groups as members.'
 group_type: shp_project

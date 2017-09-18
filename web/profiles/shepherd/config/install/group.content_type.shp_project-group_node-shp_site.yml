@@ -7,7 +7,7 @@ dependencies:
   module:
     - gnode
     - node
-id: group_content_type_e8bb6a4f0fadc
+id: shp_project-group_node-shp_site
 label: 'Project: Group node (Site)'
 description: 'Adds <em class="placeholder">Site</em> content to groups both publicly and privately.'
 group_type: shp_project

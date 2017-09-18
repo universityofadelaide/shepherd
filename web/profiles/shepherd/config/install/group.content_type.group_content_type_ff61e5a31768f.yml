@@ -7,7 +7,7 @@ dependencies:
   module:
     - gnode
     - node
-id: group_content_type_6278ab03b9021
+id: group_content_type_ff61e5a31768f
 label: 'Project: Group node (Environment)'
 description: 'Adds <em class="placeholder">Environment</em> content to groups both publicly and privately.'
 group_type: shp_project

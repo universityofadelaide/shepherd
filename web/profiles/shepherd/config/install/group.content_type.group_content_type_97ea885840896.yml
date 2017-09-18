@@ -7,12 +7,12 @@ dependencies:
   module:
     - gnode
     - node
-id: group_content_type_d21fe1b918129
+id: group_content_type_97ea885840896
 label: 'Project: Group node (Project)'
 description: 'Adds <em class="placeholder">Project</em> content to groups both publicly and privately.'
 group_type: shp_project
 content_plugin: 'group_node:shp_project'
 plugin_config:
-  group_cardinality: 1
+  group_cardinality: 0
   entity_cardinality: 1
   use_creation_wizard: false
