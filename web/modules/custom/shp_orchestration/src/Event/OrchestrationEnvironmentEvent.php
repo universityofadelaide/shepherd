@@ -2,55 +2,86 @@
 
 namespace Drupal\shp_orchestration\Event;
 
+use Drupal\shp_orchestration\OrchestrationProviderInterface;
 use Symfony\Component\EventDispatcher\Event;
 
+/**
+ * Class OrchestrationEnvironmentEvent.
+ */
 class OrchestrationEnvironmentEvent extends Event {
 
   /**
-   * The openshift client.
+   * The orchestration provider object.
    *
-   * @var \UniversityOfAdelaide\OpenShift\Client
+   * @var \Drupal\shp_orchestration\OrchestrationProviderInterface
    */
-  protected $client;
+  protected $orchestrationProvider;
 
   /**
-   * DeploymentConfig.
+   * The deployment name.
+   *
+   * @var string
+   */
+  protected $deploymentName;
+
+  /**
+   * Storage to pass env vars around.
    *
    * @var array
    */
-  protected $deploymentConfig;
+  protected $environmentVariables;
 
   /**
    * Constructs a Orchestration deployment event object.
    *
-   * @param @var \UniversityOfAdelaide\OpenShift\Client $client
-   *   The openshift client.
-   * @param array $deploymentConfig
-   *   The deployment config about to be executed.
+   * @param \Drupal\shp_orchestration\OrchestrationProviderInterface $orchestrationProvider
+   *   The orchestration provider instance.
+   * @param string $deploymentName
+   *   The deployment name.
    */
-  public function __construct($client, $deploymentConfig) {
-    $this->client = $client;
-    $this->deploymentConfig = $deploymentConfig;
+  public function __construct(OrchestrationProviderInterface $orchestrationProvider, string $deploymentName) {
+    $this->orchestrationProvider = $orchestrationProvider;
+    $this->deploymentName = $deploymentName;
   }
 
   /**
-   * Get the orchestration client.
+   * Get the orchestration provider.
    *
+   * @return \Drupal\shp_orchestration\OrchestrationProviderInterface
+   *   The orchestration provider.
    */
-  public function getClient() {
-    return $this->client;
+  public function getOrchestrationProvider() {
+    return $this->orchestrationProvider;
   }
 
   /**
-   * Get the deployment config
+   * Get the deployment name.
+   *
+   * @return string
+   *   The deployment name.
+   */
+  public function getDeploymentName() {
+    return $this->deploymentName;
+  }
+
+  /**
+   * Set the environment variables.
+   *
+   * @param array $environment_variables
+   *   Environment variable settings to update.
+   */
+  public function setEnvironmentVariables(array $environment_variables) {
+    $this->environmentVariables = $environment_variables;
+  }
+
+  /**
+   * Get the environment variables.
    *
    * @return array
-   *   The deployment config.
+   *   An array of environment variables.
    */
-  public function getDeploymentConfig() {
-    return $this->deploymentConfig;
+  public function getEnvironmentVariables() {
+    return $this->environmentVariables;
   }
-
-
 
 }

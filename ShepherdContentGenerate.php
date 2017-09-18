@@ -7,6 +7,7 @@
 
 use Drupal\node\Entity\Node;
 use Drupal\shp_orchestration\Entity\OpenShiftConfigEntity;
+use Drupal\shp_redis_support\Entity\OpenShiftWithRedisConfigEntity;
 use Drupal\taxonomy\Entity\Term;
 use Drupal\user\Entity\User;
 
@@ -53,6 +54,21 @@ if ($openshift = OpenShiftConfigEntity::load('openshift')) {
 }
 else {
   $openshift = OpenShiftConfigEntity::create($openshift_config);
+}
+$openshift->save();
+
+// Update settings to create a redis enabled version of the endpoint.
+$openshift_config['id'] = 'openshift_with_redis';
+
+// Configure OpenShift as orchestration provider.
+if ($openshift = OpenShiftWithRedisConfigEntity::load('openshift_with_redis')) {
+  // If config already exists, replace with current values.
+  foreach ($openshift_config as $key => $value) {
+    $openshift->set($key, $value);
+  }
+}
+else {
+  $openshift = OpenShiftWithRedisConfigEntity::create($openshift_config);
 }
 $openshift->save();
 

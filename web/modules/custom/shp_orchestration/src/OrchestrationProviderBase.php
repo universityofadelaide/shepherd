@@ -7,7 +7,6 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\shp_orchestration\Exception\OrchestrationProviderNotConfiguredException;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * A base class to implement an orchestration provider plugin.
@@ -21,8 +20,6 @@ abstract class OrchestrationProviderBase extends PluginBase implements Container
 
   protected $configEntity;
 
-  protected $eventDispatcher;
-
   /**
    * OrchestrationProviderBase constructor.
    *
@@ -34,12 +31,10 @@ abstract class OrchestrationProviderBase extends PluginBase implements Container
    *   Plugin definition.
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
    *   Entity Type Manager service.
-   * @param \Symfony\Component\EventDispatcher\EventDispatcherInterface $event_dispatcher
-   *   Event dispatcher service
    *
    * @throws \Drupal\shp_orchestration\Exception\OrchestrationProviderNotConfiguredException
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityTypeManagerInterface $entity_type_manager, EventDispatcherInterface $event_dispatcher) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityTypeManagerInterface $entity_type_manager) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->entityTypeManager = $entity_type_manager;
     $config_entity_id = $plugin_definition['config_entity_id'];
@@ -51,8 +46,6 @@ abstract class OrchestrationProviderBase extends PluginBase implements Container
         not be reflected in backend until this is completed.'
       );
     }
-
-    $this->eventDispatcher = $event_dispatcher;
   }
 
   /**
@@ -63,8 +56,7 @@ abstract class OrchestrationProviderBase extends PluginBase implements Container
       $configuration,
       $plugin_id,
       $plugin_definition,
-      $container->get('entity_type.manager'),
-      $container->get('event_dispatcher')
+      $container->get('entity_type.manager')
     );
   }
 

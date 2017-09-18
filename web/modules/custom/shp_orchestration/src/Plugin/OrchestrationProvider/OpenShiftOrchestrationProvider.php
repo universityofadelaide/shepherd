@@ -5,10 +5,7 @@ namespace Drupal\shp_orchestration\Plugin\OrchestrationProvider;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Url;
 use Drupal\node\Entity\Node;
-use Drupal\shp_orchestration\Event\OrchestrationEnvironmentEvent;
-use Drupal\shp_orchestration\Event\OrchestrationEvents;
 use Drupal\shp_orchestration\OrchestrationProviderBase;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use UniversityOfAdelaide\OpenShift\Client as OpenShiftClient;
 use UniversityOfAdelaide\OpenShift\ClientException;
 
@@ -42,8 +39,8 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
   /**
    * {@inheritdoc}
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityTypeManagerInterface $entity_type_manager, EventDispatcherInterface $event_dispatcher) {
-    parent::__construct($configuration, $plugin_id, $plugin_definition, $entity_type_manager, $event_dispatcher);
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityTypeManagerInterface $entity_type_manager) {
+    parent::__construct($configuration, $plugin_id, $plugin_definition, $entity_type_manager);
 
     $this->client = new OpenShiftClient(
       $this->configEntity->endpoint,
@@ -222,10 +219,6 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       return FALSE;
     }
 
-    // Allow other modules to react to the Environment creation.
-    $event = new OrchestrationEnvironmentEvent($this->client, $deployment_config);
-    $this->eventDispatcher->dispatch(OrchestrationEvents::CREATED_ENVIRONMENT, $event);
-
     $image_stream = $this->client->getImageStream($sanitised_distribution_name);
     if ($image_stream) {
       foreach ($cron_jobs as $schedule => $args) {
@@ -255,7 +248,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     // @todo - make port a var and great .. so great .. yuge!
     $port = 8080;
     try {
-      $this->client->createService($deployment_name, $deployment_name, $port, $port);
+      $this->client->createService($deployment_name, $deployment_name, $port, $port, $deployment_name);
       $this->client->createRoute($deployment_name, $deployment_name, $domain, $path);
     }
     catch (ClientException $e) {
@@ -297,11 +290,6 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       $short_name,
       $environment_id
     );
-
-    // Allow other modules to react to the Environment deletion.
-    $deployment_config = $this->client->getDeploymentConfig($deployment_name);
-    $event = new OrchestrationEnvironmentEvent($this->client,$deployment_config);
-    $this->eventDispatcher->dispatch(OrchestrationEvents::DELETED_ENVIRONMENT, $event);
 
     try {
       // Scale the pods to zero, then delete the pod creators.
