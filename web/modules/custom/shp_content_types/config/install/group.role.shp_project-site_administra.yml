@@ -1,0 +1,18 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - group.type.shp_project
+  module:
+    - shp_roles
+third_party_settings:
+  shp_roles:
+    synced_role: shp_site_administrator
+id: shp_project-site_administra
+label: 'Site administrator'
+weight: 100
+internal: false
+audience: member
+group_type: shp_project
+permissions_ui: true
+permissions: {  }

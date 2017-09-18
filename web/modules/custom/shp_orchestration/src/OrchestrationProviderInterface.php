@@ -12,10 +12,10 @@ use Drupal\Component\Plugin\PluginInspectionInterface;
 interface OrchestrationProviderInterface extends PluginInspectionInterface {
 
   /**
-   * Creates artifacts in orchestration provider based on Shepherd distribution.
+   * Creates artifacts in orchestration provider based on Shepherd project.
    *
    * @param string $name
-   *   Name of the distribution.
+   *   Name of the project.
    * @param string $builder_image
    *   An s2i-enabled image to use to build (and run) the source code.
    * @param string $source_repo
@@ -28,7 +28,7 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
    * @return bool
    *   Returns true if succeeded.
    */
-  public function createdDistribution(
+  public function createdProject(
     string $name,
     string $builder_image,
     string $source_repo,
@@ -37,10 +37,10 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
   );
 
   /**
-   * Updates artifacts in orchestration provider based on Shepherd distribution.
+   * Updates artifacts in orchestration provider based on Shepherd project.
    *
    * @param string $name
-   *   Name of the distribution.
+   *   Name of the project.
    * @param string $builder_image
    *   An s2i-enabled image to use to build (and run) the source code.
    * @param string $source_repo
@@ -53,7 +53,7 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
    * @return bool
    *   Returns true if succeeded.
    */
-  public function updatedDistribution(
+  public function updatedProject(
     string $name,
     string $builder_image,
     string $source_repo,
@@ -62,21 +62,21 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
   );
 
   /**
-   * Deletes an existing distribution.
+   * Deletes an existing project.
    *
    * @param string $name
-   *   Name of distribution.
+   *   Name of project.
    *
    * @return bool
    *   Returns true if succeeded.
    */
-  public function deletedDistribution($name);
+  public function deletedProject($name);
 
   /**
    * Creates an environment in the selected orchestration provider.
    *
-   * @param string $distribution_name
-   *   Name of the distribution.
+   * @param string $project_name
+   *   Name of the project.
    * @param string $short_name
    *   Short name of the site.
    * @param string $site_id
@@ -108,7 +108,7 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
    *   Returns true if succeeded.
    */
   public function createdEnvironment(
-    string $distribution_name,
+    string $project_name,
     string $short_name,
     string $site_id,
     string $environment_id,
@@ -127,8 +127,8 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
   /**
    * Updates the environment in the selected orchestration provider.
    *
-   * @param string $distribution_name
-   *   Name of the distribution.
+   * @param string $project_name
+   *   Name of the project.
    * @param string $short_name
    *   Short name of the site.
    * @param string $site_id
@@ -152,7 +152,7 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
    *   Returns true if succeeded.
    */
   public function updatedEnvironment(
-    string $distribution_name,
+    string $project_name,
     string $short_name,
     string $site_id,
     string $environment_id,
@@ -169,8 +169,8 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
    *
    * @todo Shepherd: refactor to be like the archive below, or remove?
    *
-   * @param string $distribution_name
-   *   Name of the distribution.
+   * @param string $project_name
+   *   Name of the project.
    * @param string $short_name
    *   Short name of the site.
    * @param string $environment_id
@@ -180,7 +180,7 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
    *   Returns true if succeeded.
    */
   public function deletedEnvironment(
-    string $distribution_name,
+    string $project_name,
     string $short_name,
     string $environment_id
   );
@@ -265,8 +265,8 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
   /**
    * Generates a deployment name from Shepherd entities.
    *
-   * @param string $distribution_name
-   *   Name of the distribution.
+   * @param string $project_name
+   *   Name of the project.
    * @param string $short_name
    *   Short name of the site.
    * @param string $environment_id
@@ -276,7 +276,7 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
    *   Returns the generated deployment name.
    */
   public static function generateDeploymentName(
-    string $distribution_name,
+    string $project_name,
     string $short_name,
     string $environment_id
   );
@@ -296,8 +296,8 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
   /**
    * Retrieves the url for a given environment.
    *
-   * @param string $distribution_name
-   *   Name of the distribution.
+   * @param string $project_name
+   *   Name of the project.
    * @param string $short_name
    *   Short name of the site.
    * @param string $environment_id
@@ -307,7 +307,7 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
    *   Returns environment url, or false.
    */
   public function getEnvironmentUrl(
-    string $distribution_name,
+    string $project_name,
     string $short_name,
     string $environment_id
   );
@@ -315,8 +315,8 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
   /**
    * Backup an environment.
    *
-   * @param string $distribution_name
-   *   Name of the distribution.
+   * @param string $project_name
+   *   Name of the project.
    * @param string $short_name
    *   Short name of the site.
    * @param string $environment_id
@@ -330,7 +330,7 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
    *   Returns a response body if successful, otherwise false.
    */
   public function backupEnvironment(
-    string $distribution_name,
+    string $project_name,
     string $short_name,
     string $environment_id,
     string $source_ref = 'master',
@@ -340,8 +340,8 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
   /**
    * Restore an environment.
    *
-   * @param string $distribution_name
-   *   Name of the distribution.
+   * @param string $project_name
+   *   Name of the project.
    * @param string $short_name
    *   Short name of the site.
    * @param string $environment_id
@@ -355,7 +355,7 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
    *   Returns a response body if successful, otherwise false.
    */
   public function restoreEnvironment(
-    string $distribution_name,
+    string $project_name,
     string $short_name,
     string $environment_id,
     string $source_ref = 'master',
@@ -365,8 +365,8 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
   /**
    * Execute a job.
    *
-   * @param string $distribution_name
-   *   Name of the distribution.
+   * @param string $project_name
+   *   Name of the project.
    * @param string $short_name
    *   Short name of the site.
    * @param string $environment_id
@@ -380,7 +380,7 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
    *   Returns a response body if successful, otherwise false.
    */
   public function executeJob(
-    string $distribution_name,
+    string $project_name,
     string $short_name,
     string $environment_id,
     string $source_ref = 'master',

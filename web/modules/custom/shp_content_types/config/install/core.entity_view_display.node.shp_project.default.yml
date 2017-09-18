@@ -1,0 +1,51 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.shp_project.field_shp_build_secret
+    - field.field.node.shp_project.field_shp_builder_image
+    - field.field.node.shp_project.field_shp_env_vars
+    - field.field.node.shp_project.field_shp_git_repository
+    - node.type.shp_project
+  module:
+    - key_value_field
+    - user
+id: node.shp_project.default
+targetEntityType: node
+bundle: shp_project
+mode: default
+content:
+  field_shp_build_secret:
+    weight: 2
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    type: string
+    region: content
+  field_shp_builder_image:
+    weight: 1
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    type: string
+    region: content
+  field_shp_env_vars:
+    weight: 3
+    label: above
+    settings:
+      value_only: false
+    third_party_settings: {  }
+    type: key_value
+    region: content
+  field_shp_git_repository:
+    weight: 0
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    type: string
+    region: content
+hidden:
+  links: true

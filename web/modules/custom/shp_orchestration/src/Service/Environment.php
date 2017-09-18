@@ -4,10 +4,11 @@ namespace Drupal\shp_orchestration\Service;
 
 use Drupal\node\NodeInterface;
 use Drupal\shp_orchestration\OrchestrationProviderPluginManager;
+use Drupal\shp_orchestration\Event\OrchestrationEnvironmentEvent;
+use Drupal\shp_orchestration\Event\OrchestrationEvents;
 
 /**
  * Class Environment.
- * @package Drupal\shp_orchestration\Service
  */
 class Environment extends EntityActionBase {
 
@@ -42,15 +43,15 @@ class Environment extends EntityActionBase {
         ->getTarget()
         ->getValue();
 
-      if (isset($site->field_shp_distribution->target_id)) {
-        $distribution = $site->get('field_shp_distribution')
+      if (isset($site->field_shp_project->target_id)) {
+        $project = $site->get('field_shp_project')
           ->first()
           ->get('entity')
           ->getTarget()
           ->getValue();
       }
     }
-    if (!isset($distribution) || !isset($site)) {
+    if (!isset($project) || !isset($site)) {
       return FALSE;
     }
 
@@ -60,7 +61,7 @@ class Environment extends EntityActionBase {
     }
 
     $deployment_name = $this->orchestrationProviderPlugin::generateDeploymentName(
-      $distribution->getTitle(),
+      $project->getTitle(),
       $site->field_shp_short_name->value,
       $node->id()
     );
@@ -90,22 +91,36 @@ class Environment extends EntityActionBase {
     $env_vars = $this->configuration->getEnvironmentVariables($node);
     $secrets = $this->configuration->getSecrets($node);
 
-    return $this->orchestrationProviderPlugin->createdEnvironment(
-      $distribution->getTitle(),
+    // Allow other modules to react to the Environment creation.
+    $eventDispatcher = \Drupal::service('event_dispatcher');
+    $event = new OrchestrationEnvironmentEvent($this->orchestrationProviderPlugin, $deployment_name);
+    $eventDispatcher->dispatch(OrchestrationEvents::SETUP_ENVIRONMENT, $event);
+    if ($event_env_vars = $event->getEnvironmentVariables()) {
+      $env_vars = array_merge($env_vars, $event_env_vars);
+    }
+
+    $environment = $this->orchestrationProviderPlugin->createdEnvironment(
+      $project->getTitle(),
       $site->field_shp_short_name->value,
       $site->id(),
       $node->id(),
       $node->toUrl('canonical', ['absolute' => TRUE])->toString(),
-      $distribution->field_shp_builder_image->value,
+      $project->field_shp_builder_image->value,
       $node->field_shp_domain->value,
       $node->field_shp_path->value,
-      $distribution->field_shp_git_repository->value,
+      $project->field_shp_git_repository->value,
       $node->field_shp_git_reference->value,
-      $distribution->field_shp_build_secret->value,
+      $project->field_shp_build_secret->value,
       $env_vars,
       $secrets,
       $cron_jobs
     );
+
+    // Allow other modules to react to the Environment creation.
+    $event = new OrchestrationEnvironmentEvent($this->orchestrationProviderPlugin, $deployment_name);
+    $eventDispatcher->dispatch(OrchestrationEvents::CREATED_ENVIRONMENT, $event);
+
+    return $environment;
   }
 
   /**
@@ -132,22 +147,35 @@ class Environment extends EntityActionBase {
       ->getTarget()
       ->getValue();
 
-    if (isset($site->field_shp_distribution->target_id)) {
-      $distribution = $site->get('field_shp_distribution')
+    if (isset($site->field_shp_project->target_id)) {
+      $project = $site->get('field_shp_project')
         ->first()
         ->get('entity')
         ->getTarget()
         ->getValue();
     }
-    if (!isset($distribution) || !isset($site)) {
+    if (!isset($project) || !isset($site)) {
       return FALSE;
     }
 
-    return $this->orchestrationProviderPlugin->deletedEnvironment(
-      $distribution->title->value,
+    $deployment_name = $this->orchestrationProviderPlugin->generateDeploymentName(
+      $project->getTitle(),
       $site->field_shp_short_name->value,
       $node->id()
     );
+
+    $result = $this->orchestrationProviderPlugin->deletedEnvironment(
+      $project->title->value,
+      $site->field_shp_short_name->value,
+      $node->id()
+    );
+
+    // Allow other modules to react to the Environment deletion.
+    $eventDispatcher = \Drupal::service('event_dispatcher');
+    $event = new OrchestrationEnvironmentEvent($this->orchestrationProviderPlugin, $deployment_name);
+    $eventDispatcher->dispatch(OrchestrationEvents::DELETED_ENVIRONMENT, $event);
+
+    return $result;
   }
 
 }

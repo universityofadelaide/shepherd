@@ -87,16 +87,16 @@ function shp_custom_toolbar_alter(&$items) {
 }
 
 /**
- * Generate a list of distributions for a select list.
+ * Generate a list of projects for a select list.
  *
  * @todo No longer used, delete this.
  *
  * @return array
  *   The choices formatted as id => label.
  */
-function shp_custom_distributions() {
+function shp_custom_projects() {
   $ids = \Drupal::entityQuery('node')
-    ->condition('type', 'shp_distribution')
+    ->condition('type', 'shp_project')
     ->sort('title', 'ASC')
     ->execute();
 
