@@ -11,8 +11,8 @@ use Drupal\Core\QueueInterface;
  */
 function shp_orchestration_node_insert(NodeInterface $node) {
   switch ($node->bundle()) {
-    case 'shp_distribution':
-      \Drupal::service('shp_orchestration.distribution')->created($node);
+    case 'shp_project':
+      \Drupal::service('shp_orchestration.project')->created($node);
       break;
 
     case 'shp_environment':
@@ -26,8 +26,8 @@ function shp_orchestration_node_insert(NodeInterface $node) {
  */
 function shp_orchestration_node_update(NodeInterface $node) {
   switch ($node->bundle()) {
-    case 'shp_distribution':
-      \Drupal::service('shp_orchestration.distribution')->updated($node);
+    case 'shp_project':
+      \Drupal::service('shp_orchestration.project')->updated($node);
       break;
 
     case 'shp_environment':
@@ -41,8 +41,8 @@ function shp_orchestration_node_update(NodeInterface $node) {
  */
 function shp_orchestration_node_delete(NodeInterface $node) {
   switch ($node->bundle()) {
-    case 'shp_distribution':
-      \Drupal::service('shp_orchestration.distribution')->deleted($node);
+    case 'shp_project':
+      \Drupal::service('shp_orchestration.project')->deleted($node);
       break;
 
     case 'shp_environment':
@@ -57,21 +57,21 @@ function shp_orchestration_node_delete(NodeInterface $node) {
 function shp_orchestration_form_node_form_alter(&$form, FormStateInterface $form_state) {
   $bundle = $form_state->getFormObject()->getEntity()->bundle();
 
-  if ($bundle === 'shp_distribution') {
+  if ($bundle === 'shp_project') {
     // Add the validator.
-    $form['#validate'][] = 'shp_orchestration_shp_distribution_form_validate';
+    $form['#validate'][] = 'shp_orchestration_shp_project_form_validate';
   }
 }
 
 /**
- * Validates distribution form.
+ * Validates project form.
  *
  * @param array $form
  *   The form to be validated.
  * @param Drupal\Core\Form\FormStateInterface $form_state
  *   The form_state representing the form to be validated.
  */
-function shp_orchestration_shp_distribution_form_validate(array $form, FormStateInterface $form_state) {
+function shp_orchestration_shp_project_form_validate(array $form, FormStateInterface $form_state) {
   // Verify that the secret exists in OpenShift.
   $secret_name = $form_state->getValue('field_shp_build_secret')[0]['value'];
 
@@ -100,7 +100,7 @@ function shp_orchestration_shp_env_vars(NodeInterface $environment) {
     ->get('entity')
     ->getTarget()
     ->getValue();
-  $distribution = $site->field_shp_distribution
+  $project = $site->field_shp_project
     ->first()
     ->get('entity')
     ->getTarget()
@@ -115,8 +115,8 @@ function shp_orchestration_shp_env_vars(NodeInterface $environment) {
     'WEB_PATH' => $environment->field_shp_path->value,
   ];
 
-  // Append default environment variables from distribution.
-  foreach ($distribution->field_shp_env_vars->getValue() as $env_var) {
+  // Append default environment variables from project.
+  foreach ($project->field_shp_env_vars->getValue() as $env_var) {
     $env_vars[$env_var['key']] = $env_var['value'];
   }
 

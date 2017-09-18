@@ -2,18 +2,18 @@ langcode: en
 status: true
 dependencies:
   config:
-    - group.type.shp_distribution
+    - group.type.shp_project
   module:
     - shp_roles
 third_party_settings:
   shp_roles:
     synced_role: shp_administrator
-id: shp_distribution-admin
+id: shp_project-admin
 label: Admin
 weight: 100
 internal: false
 audience: member
-group_type: shp_distribution
+group_type: shp_project
 permissions_ui: true
 permissions:
   - 'access content overview'

@@ -1,9 +1,0 @@
-langcode: en
-status: true
-dependencies: {  }
-id: shp_distribution
-label: Distribution
-description: 'A group of this type is automatically created and associated when a distribution is added. When a site is created based on a distribution, it is also automatically added to this group.'
-creator_membership: false
-creator_wizard: false
-creator_roles: {  }

@@ -56,8 +56,8 @@ class EnvironmentTest extends KernelTestBase {
     ]);
     $prd_env->save();
 
-    $distribution = Node::create([
-      'type'                     => 'shp_distribution',
+    $project = Node::create([
+      'type'                     => 'shp_project',
       'langcode'                 => 'en',
       'uid'                      => '1',
       'status'                   => 1,
@@ -67,7 +67,7 @@ class EnvironmentTest extends KernelTestBase {
       'field_shp_build_secret'   => [['value' => 'build-key']],
     ]);
 
-    $distribution->save();
+    $project->save();
 
     $site = Node::create([
       'type'                   => 'shp_site',
@@ -79,7 +79,7 @@ class EnvironmentTest extends KernelTestBase {
       'field_shp_short_name'   => 'test',
       'field_shp_domain'       => $domain_name,
       'field_shp_path'         => '/',
-      'field_shp_distribution' => [['target_id' => $distribution->id()]],
+      'field_shp_project' => [['target_id' => $project->id()]],
     ]);
     $site->moderation_state->value = 'published';
     $site->save();

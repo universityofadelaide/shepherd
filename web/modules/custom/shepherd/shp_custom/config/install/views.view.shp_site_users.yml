@@ -518,7 +518,7 @@ display:
           required: true
           group_content_plugins:
             'group_node:shp_site': 'group_node:shp_site'
-            'group_node:shp_distribution': '0'
+            'group_node:shp_project': '0'
             'group_node:shp_environment': '0'
             group_membership: '0'
           entity_type: group
@@ -533,7 +533,7 @@ display:
           required: true
           group_content_plugins:
             'group_node:shp_site': 'group_node:shp_site'
-            'group_node:shp_distribution': '0'
+            'group_node:shp_project': '0'
             'group_node:shp_environment': '0'
           entity_type: group_content
           plugin_id: group_content_to_entity

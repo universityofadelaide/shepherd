@@ -92,10 +92,10 @@ else {
   echo "Taxonomy already setup.\n";
 }
 
-$distribution = Node::load(1);
-if (!$distribution) {
-  $distribution = Node::create([
-    'type'                     => 'shp_distribution',
+$project = Node::load(1);
+if (!$project) {
+  $project = Node::create([
+    'type'                     => 'shp_project',
     'langcode'                 => 'en',
     'uid'                      => '1',
     'status'                   => 1,
@@ -105,10 +105,10 @@ if (!$distribution) {
     'field_shp_build_secret'   => [['value' => 'build-key']],
     'field_shp_env_vars'       => [['key' => 'SHEPHERD_INSTALL_PROFILE', 'value' => 'ua']],
   ]);
-  $distribution->save();
+  $project->save();
 }
 else {
-  echo "Distribution already setup.\n";
+  echo "Project already setup.\n";
 }
 
 $site = Node::load(2);
@@ -123,7 +123,7 @@ if (!$site) {
     'field_shp_short_name'   => 'test',
     'field_shp_domain'       => 'test-site.' . $domain_name,
     'field_shp_path'         => '/test-path',
-    'field_shp_distribution' => [['target_id' => $distribution->id()]],
+    'field_shp_project' => [['target_id' => $project->id()]],
   ]);
   $site->moderation_state->value = 'published';
   $site->save();
@@ -164,6 +164,6 @@ if (!$oc_user) {
   $oc_user->save();
 }
 
-/** @var \Drupal\group\Entity\GroupInterface $dist_group */
-$dist_group = \Drupal::service('shp_content_types.group_manager')->load($distribution);
-$dist_group->addMember($oc_user, ['group_roles' => ['shp_distribution-online-consulta']]);
+/** @var \Drupal\group\Entity\GroupInterface $project_group */
+$project_group = \Drupal::service('shp_content_types.group_manager')->load($project);
+$project_group->addMember($oc_user, ['group_roles' => ['shp_project-online-consulta']]);

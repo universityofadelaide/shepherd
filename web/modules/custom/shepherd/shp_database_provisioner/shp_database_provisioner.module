@@ -23,8 +23,8 @@ function shp_database_provisioner_node_insert(EntityInterface $entity) {
         ->getTarget()
         ->getValue();
 
-      if (isset($site->field_shp_distribution->target_id)) {
-        $distribution = $site->get('field_shp_distribution')
+      if (isset($site->field_shp_project->target_id)) {
+        $project = $site->get('field_shp_project')
           ->first()
           ->get('entity')
           ->getTarget()
@@ -41,7 +41,7 @@ function shp_database_provisioner_node_insert(EntityInterface $entity) {
     }
 
     $deployment_name = $orchestration_provider_plugin::generateDeploymentName(
-      $distribution->getTitle(),
+      $project->getTitle(),
       $site->field_shp_short_name->value,
       $entity->id()
     );

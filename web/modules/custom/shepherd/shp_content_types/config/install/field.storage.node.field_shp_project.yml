@@ -3,8 +3,8 @@ status: true
 dependencies:
   module:
     - node
-id: node.field_shp_distribution
-field_name: field_shp_distribution
+id: node.field_shp_project
+field_name: field_shp_project
 entity_type: node
 type: entity_reference
 settings:

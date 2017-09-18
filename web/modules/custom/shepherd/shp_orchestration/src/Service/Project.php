@@ -5,19 +5,19 @@ namespace Drupal\shp_orchestration\Service;
 use Drupal\node\NodeInterface;
 
 /**
- * Class Distribution.
+ * Class Project.
  * @package Drupal\shp_orchestration\Service
  */
-class Distribution extends EntityActionBase {
+class Project extends EntityActionBase {
 
   /**
-   * Tell the active orchestration provider a distribution was created.
+   * Tell the active orchestration provider a project was created.
    *
    * @param \Drupal\node\NodeInterface $node
    * @return bool
    */
   public function created(NodeInterface $node) {
-    return $this->orchestrationProviderPlugin->createdDistribution(
+    return $this->orchestrationProviderPlugin->createdProject(
       $node->getTitle(),
       $node->field_shp_builder_image->value,
       $node->field_shp_git_repository->value,
@@ -28,13 +28,13 @@ class Distribution extends EntityActionBase {
   }
 
   /**
-   * Tell the active orchestration provider a distribution was updated.
+   * Tell the active orchestration provider a project was updated.
    *
    * @param \Drupal\node\NodeInterface $node
    * @return bool
    */
   public function updated(NodeInterface $node) {
-    return $this->orchestrationProviderPlugin->updatedDistribution(
+    return $this->orchestrationProviderPlugin->updatedProject(
       $node->getTitle(),
       $node->field_shp_builder_image->value,
       $node->field_shp_git_repository->value,
@@ -44,7 +44,7 @@ class Distribution extends EntityActionBase {
   }
 
   /**
-   * Tell the active orchestration provider a distribution was deleted.
+   * Tell the active orchestration provider a project was deleted.
    *
    * @param \Drupal\node\NodeInterface $node
    * @return bool

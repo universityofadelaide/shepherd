@@ -1,6 +1,6 @@
 {
   "name": "shepherd/shp_orchestration",
-  "description": "Provides functionality specific to the Shepherd distribution.",
+  "description": "Provides functionality specific to the Shepherd project.",
   "type": "drupal-module",
   "keywords": ["drupal"],
   "license": "GPL-2.0+",

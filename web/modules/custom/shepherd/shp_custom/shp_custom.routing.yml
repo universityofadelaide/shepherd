@@ -5,14 +5,14 @@ shp_custom.api_site_environments:
   methods: [GET]
   requirements:
     _permission: 'shp access environment'
-shp_custom.add_distribution:
-  path: '/distributions/add'
+shp_custom.add_project:
+  path: '/projects/add'
   defaults:
     _controller: '\Drupal\node\Controller\NodeController::add'
     _title_callback: '\Drupal\node\Controller\NodeController::addPageTitle'
-    node_type: shp_distribution
+    node_type: shp_project
   requirements:
-    _node_add_access: 'node:shp_distribution'
+    _node_add_access: 'node:shp_project'
   options:
     _node_operation_route: TRUE
     parameters:

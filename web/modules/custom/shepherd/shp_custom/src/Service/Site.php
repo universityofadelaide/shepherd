@@ -103,7 +103,7 @@ class Site {
     $nodes = [
       'shp_site' => [$site->id() => $site],
       'shp_environment' => $this->loadRelatedEntitiesByField($site, 'field_shp_site', 'shp_environment'),
-      'shp_distribution' => $keyedArray($site->field_shp_distribution->referencedEntities()),
+      'shp_project' => $keyedArray($site->field_shp_project->referencedEntities()),
     ];
 
     foreach ($nodes['shp_environment'] as $environment) {
