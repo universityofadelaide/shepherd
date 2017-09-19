@@ -44,7 +44,10 @@
     "minimum-stability": "dev",
     "prefer-stable": true,
     "config": {
-        "bin-dir": "bin/"
+        "bin-dir": "bin/",
+        "platform": {
+            "php": "7.0.8"
+        }
     },
     "scripts": {
         "drupal-scaffold": "DrupalComposer\\DrupalScaffold\\Plugin::scaffold",
