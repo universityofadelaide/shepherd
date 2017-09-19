@@ -13,17 +13,19 @@ use Drupal\user\Entity\User;
 
 $domain_name = getenv("OPENSHIFT_DOMAIN") ?: '192.168.99.100.nip.io';
 $openshift_url = getenv("OPENSHIFT_URL") ?: 'https://192.168.99.100:8443';
-$token = trim(getenv("TOKEN"));
-
-$example_repository = getenv("EXAMPLE_REPOSITORY");
 
 $database_host = getenv("DB_HOST") ?: 'mysql-myproject.' . $domain_name;
 $database_port = getenv("DB_PORT") ?: '31632';
 
-// Check that the auth TOKEN environment variable is available.
-if (empty($token)) {
-  echo "To generate default configuration for development, export your auth TOKEN from your host.\n";
+// Check that required variables are actually set.
+$token = trim(getenv("TOKEN"));
+$example_repository = getenv("EXAMPLE_REPOSITORY");
+if (empty($token) || empty($example_repository)) {
+  echo "To generate default configuration for development, the TOKEN and EXAMPLE_REPOSITORY\n";
+  echo "variables are required to be set. Export your auth TOKEN from your host and provide\n";
+  echo "a repository to clone and build with.\n";
   echo "export TOKEN=some-token\n";
+  echo "export EXAMPLE_REPOSITORY=some-repo-spec\n";
   echo "You can then safely re-run `robo dev:content-generate`\n";
   exit(1);
 }
