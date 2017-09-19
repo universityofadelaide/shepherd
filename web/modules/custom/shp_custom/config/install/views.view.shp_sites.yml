@@ -6,7 +6,7 @@ dependencies:
     - field.storage.node.field_tags
     - node.type.shp_site
     - system.menu.main
-    - taxonomy.vocabulary.shp_environment_types
+    - taxonomy.vocabulary.tags
   module:
     - node
     - rest
@@ -349,14 +349,17 @@ display:
           group: 1
           exposed: true
           expose:
+            operator_id: field_tags_target_id_op
+            label: 'Tags (field_tags)'
+            description: null
             use_operator: false
             operator: field_tags_target_id_op
             identifier: field_tags_target_id
-            label: 'Tags (field_tags)'
-            description: null
+            required: false
             remember: false
             multiple: false
-            required: false
+            remember_roles:
+              authenticated: authenticated
             reduce: false
           is_grouped: false
           group_info:
@@ -373,7 +376,7 @@ display:
           reduce_duplicates: false
           type: select
           limit: true
-          vid: shp_environment_types
+          vid: tags
           hierarchy: true
           error_message: true
           plugin_id: taxonomy_index_tid
@@ -718,7 +721,7 @@ display:
           reduce_duplicates: false
           type: select
           limit: true
-          vid: shp_environment_types
+          vid: tags
           hierarchy: true
           error_message: true
           plugin_id: taxonomy_index_tid
