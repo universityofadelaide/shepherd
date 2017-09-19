@@ -13,14 +13,19 @@ use Drupal\user\Entity\User;
 
 $domain_name = getenv("OPENSHIFT_DOMAIN") ?: '192.168.99.100.nip.io';
 $openshift_url = getenv("OPENSHIFT_URL") ?: 'https://192.168.99.100:8443';
-$token = trim(getenv("TOKEN"));
+
 $database_host = getenv("DB_HOST") ?: 'mysql-myproject.' . $domain_name;
 $database_port = getenv("DB_PORT") ?: '31632';
 
-// Check that the auth TOKEN environment variable is available.
-if (empty($token)) {
-  echo "To generate default configuration for development, export your auth TOKEN from your host.\n";
+// Check that required variables are actually set.
+$token = trim(getenv("TOKEN"));
+$example_repository = getenv("EXAMPLE_REPOSITORY");
+if (empty($token) || empty($example_repository)) {
+  echo "To generate default configuration for development, the TOKEN and EXAMPLE_REPOSITORY\n";
+  echo "variables are required to be set. Export your auth TOKEN from your host and provide\n";
+  echo "a repository to clone and build with.\n";
   echo "export TOKEN=some-token\n";
+  echo "export EXAMPLE_REPOSITORY=some-repo-spec\n";
   echo "You can then safely re-run `robo dev:content-generate`\n";
   exit(1);
 }
@@ -99,11 +104,11 @@ if (!$project) {
     'langcode'                 => 'en',
     'uid'                      => '1',
     'status'                   => 1,
-    'title'                    => 'WCMS D8',
-    'field_shp_git_repository' => [['value' => 'git@gitlab.adelaide.edu.au:web-team/ua-wcms-d8.git']],
+    'title'                    => 'Example',
+    'field_shp_git_repository' => [['value' => $example_repository]],
     'field_shp_builder_image'  => [['value' => 'uofa/s2i-shepherd-drupal']],
     'field_shp_build_secret'   => [['value' => 'build-key']],
-    'field_shp_env_vars'       => [['key' => 'SHEPHERD_INSTALL_PROFILE', 'value' => 'ua']],
+    'field_shp_env_vars'       => [['key' => 'SHEPHERD_INSTALL_PROFILE', 'value' => 'standard']],
   ]);
   $project->save();
 }
@@ -142,7 +147,7 @@ if (!$env) {
     'field_shp_domain'           => $site->field_shp_domain->value,
     'field_shp_path'             => $site->field_shp_path->value,
     'field_shp_environment_type' => [['target_id' => $development_env->id()]],
-    'field_shp_git_reference'    => 'shepherd',
+    'field_shp_git_reference'    => 'master',
     'field_shp_site'             => [['target_id' => $site->id()]],
   ]);
   $env->moderation_state->value = 'published';

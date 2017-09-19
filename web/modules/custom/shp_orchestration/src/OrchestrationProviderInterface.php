@@ -58,7 +58,7 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
     string $builder_image,
     string $source_repo,
     string $source_ref = 'master',
-    string $source_secret = NULL
+    string $source_secret = ''
   );
 
   /**
