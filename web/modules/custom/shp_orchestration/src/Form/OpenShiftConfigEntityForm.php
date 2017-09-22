@@ -19,10 +19,10 @@ class OpenShiftConfigEntityForm extends EntityForm {
     $form = parent::form($form, $form_state);
     $entity = $this->entity;
 
-    $form['id'] = array(
+    $form['id'] = [
       '#type' => 'value',
-      '#value' => 'openshift',
-    );
+      '#value' => $entity->getEntityTypeId(),
+    ];
     $form['endpoint'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Endpoint'),
