@@ -76,7 +76,7 @@ if [ "${OPENSHIFT_TYPE}" == "minishift" ]; then
     DB_HOST="mysql-myproject.${OPENSHIFT_DOMAIN}"
     DB_PORT=$(oc get service mysql-external --no-headers | sed 's/.*:\([0-9]*\).*/\1/')
 else
-    OPENSHIFT_IP=$(oc status | grep https | sed 's/.*https:\/\/\([0-9a-z\.]*\).*/\1/')
+    OPENSHIFT_IP=$(oc status | grep 'server https' | sed 's/.*https:\/\/\([0-9a-z\.]*\).*/\1/')
     OPENSHIFT_DOMAIN="${OPENSHIFT_IP}.nip.io"
     OPENSHIFT_URL="https://172.17.0.1:8443"
     DB_HOST=172.17.0.1
