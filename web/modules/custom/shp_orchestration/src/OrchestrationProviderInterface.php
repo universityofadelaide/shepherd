@@ -147,7 +147,7 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
    *   The secret to use when pulling and building the source git repository.
    * @param array $cron_jobs
    *   An array of cron jobs associated with this environment.
-
+   *
    * @return bool
    *   Returns true if succeeded.
    */

@@ -42,8 +42,7 @@ abstract class OrchestrationProviderBase extends PluginBase implements Container
     $this->configEntity = $entity_manager->load($config_entity_id);
     if (!is_object($this->configEntity)) {
       throw new OrchestrationProviderNotConfiguredException(
-        'Orchestration provider is not configured. Changes made in Shepherd will
-        not be reflected in backend until this is completed.'
+        'Orchestration provider is not configured. Changes made in Shepherd will not be reflected in backend until this is completed.'
       );
     }
   }
@@ -84,7 +83,7 @@ abstract class OrchestrationProviderBase extends PluginBase implements Container
    * @return string
    *   sanitised title.
    */
-  static function sanitise($text) {
+  public static function sanitise($text) {
     return strtolower(preg_replace('/[\/\s]+/', '-', $text));
   }
 

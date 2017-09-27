@@ -138,6 +138,7 @@ class ActiveJobManagerDouble extends ActiveJobManager {
    * {@inheritdoc}
    */
   public function applyKeyPrefix(array $entityIds) {
+    // Overridden to change the method visibility.
     return parent::applyKeyPrefix($entityIds);
   }
 

@@ -2,6 +2,9 @@
 
 namespace Drupal\shp_orchestration\Event;
 
+/**
+ * Class OrchestrationEvents.
+ */
 final class OrchestrationEvents {
 
   // Define event types that we will trigger on.

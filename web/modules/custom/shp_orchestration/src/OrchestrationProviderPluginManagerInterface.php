@@ -2,12 +2,14 @@
 
 namespace Drupal\shp_orchestration;
 
+use Drupal\Component\Plugin\PluginManagerInterface;
+
 /**
  * Class OrchestrationProviderPluginManager.
  *
  * @package Drupal\shp_orchestration
  */
-interface OrchestrationProviderPluginManagerInterface {
+interface OrchestrationProviderPluginManagerInterface extends PluginManagerInterface {
 
   /**
    * Retrieves the stored provider from config store.

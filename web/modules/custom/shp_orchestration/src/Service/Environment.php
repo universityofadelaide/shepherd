@@ -3,9 +3,9 @@
 namespace Drupal\shp_orchestration\Service;
 
 use Drupal\node\NodeInterface;
-use Drupal\shp_orchestration\OrchestrationProviderPluginManager;
 use Drupal\shp_orchestration\Event\OrchestrationEnvironmentEvent;
 use Drupal\shp_orchestration\Event\OrchestrationEvents;
+use Drupal\shp_orchestration\OrchestrationProviderPluginManager;
 
 /**
  * Class Environment.
