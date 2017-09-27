@@ -1,2 +1,3 @@
 selected_provider: 'openshift_orchestration_provider'
+enabled: true
 queued_operations: true

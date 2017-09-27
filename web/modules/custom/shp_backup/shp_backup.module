@@ -107,6 +107,10 @@ function shp_backup_tokens($type, $tokens, array $data, array $options, Bubbleab
  * Implements hook_ENTITY_TYPE_insert().
  */
 function shp_backup_node_insert(NodeInterface $node) {
+  if (!shp_orchestration_enabled()) {
+    return;
+  }
+
   switch ($node->bundle()) {
     case 'shp_backup':
       \Drupal::service('shp_backup.backup')->create($node);
