@@ -6,7 +6,6 @@ use Drupal\node\NodeInterface;
 
 /**
  * Class Project.
- * @package Drupal\shp_orchestration\Service
  */
 class Project extends EntityActionBase {
 
@@ -14,6 +13,7 @@ class Project extends EntityActionBase {
    * Tell the active orchestration provider a project was created.
    *
    * @param \Drupal\node\NodeInterface $node
+   *
    * @return bool
    */
   public function created(NodeInterface $node) {
@@ -31,6 +31,7 @@ class Project extends EntityActionBase {
    * Tell the active orchestration provider a project was updated.
    *
    * @param \Drupal\node\NodeInterface $node
+   *
    * @return bool
    */
   public function updated(NodeInterface $node) {
@@ -47,6 +48,7 @@ class Project extends EntityActionBase {
    * Tell the active orchestration provider a project was deleted.
    *
    * @param \Drupal\node\NodeInterface $node
+   *
    * @return bool
    */
   public function deleted(NodeInterface $node) {

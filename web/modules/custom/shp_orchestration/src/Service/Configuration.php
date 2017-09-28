@@ -27,9 +27,11 @@ class Configuration {
   /**
    * Collate all the environment variables.
    *
-   * @param NodeInterface $node
+   * @param \Drupal\node\NodeInterface $node
    *   An environment node.
+   *
    * @return array
+   *   Env vars.
    */
   public function getEnvironmentVariables(NodeInterface $node) {
     return $this->moduleHandler->invokeAll('shp_env_vars', [$node]);
@@ -38,8 +40,11 @@ class Configuration {
   /**
    * Collate all the secrets.
    *
-   * @param NodeInterface $node
+   * @param \Drupal\node\NodeInterface $node
+   *   The environment node.
+   *
    * @return array
+   *   An array of secrets.
    */
   public function getSecrets(NodeInterface $node) {
     return $this->moduleHandler->invokeAll('shp_secrets', [$node]);

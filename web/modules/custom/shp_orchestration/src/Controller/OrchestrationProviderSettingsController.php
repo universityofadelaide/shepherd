@@ -2,12 +2,12 @@
 
 namespace Drupal\shp_orchestration\Controller;
 
+use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Entity\EntityFormBuilderInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\shp_orchestration\OrchestrationProviderPluginManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Drupal\Core\Config\ConfigFactoryInterface;
-use Drupal\Component\Plugin\PluginManagerInterface;
 
 /**
  * Class OrchestrationProviderSettingsController.
@@ -33,7 +33,7 @@ class OrchestrationProviderSettingsController extends ControllerBase {
    *
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
    *   Config factory.
-   * @param \Drupal\Component\Plugin\PluginManagerInterface $orchestration_provider_manager
+   * @param \Drupal\shp_orchestration\OrchestrationProviderPluginManagerInterface $orchestration_provider_manager
    *   Orchestration Provider Manager.
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
    *   Entity Type Manager.
@@ -41,7 +41,7 @@ class OrchestrationProviderSettingsController extends ControllerBase {
    *   Entity Form Builder.
    */
   public function __construct(ConfigFactoryInterface $config_factory,
-                              PluginManagerInterface $orchestration_provider_manager,
+                              OrchestrationProviderPluginManagerInterface $orchestration_provider_manager,
                               EntityTypeManagerInterface $entity_type_manager,
                               EntityFormBuilderInterface $entity_form_builder) {
 

@@ -1,10 +1,13 @@
 <?php
 
+/**
+ * @file
+ * Contains shp_orchestration.module.
+ */
+
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\node\NodeInterface;
-use Drupal\node\Entity\Node;
 use Drupal\shp_orchestration\Exception\OrchestrationProviderNotConfiguredException;
-use Drupal\Core\QueueInterface;
 
 /**
  * Implements hook_ENTITY_TYPE_insert().
@@ -95,11 +98,13 @@ function shp_orchestration_shp_project_form_validate(array $form, FormStateInter
  * Implements hook_shp_env_vars().
  */
 function shp_orchestration_shp_env_vars(NodeInterface $environment) {
+  /** @var Drupal\Node\NodeInterface $site */
   $site = $environment->field_shp_site
     ->first()
     ->get('entity')
     ->getTarget()
     ->getValue();
+  /** @var Drupal\Node\NodeInterface $project */
   $project = $site->field_shp_project
     ->first()
     ->get('entity')
