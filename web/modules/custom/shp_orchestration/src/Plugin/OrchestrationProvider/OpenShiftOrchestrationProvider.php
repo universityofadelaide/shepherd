@@ -30,13 +30,6 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
   protected $client;
 
   /**
-   * Default git ref.
-   *
-   * @var string
-   */
-  public $defaultGitRef = 'master';
-
-  /**
    * {@inheritdoc}
    */
   public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityTypeManagerInterface $entity_type_manager) {
