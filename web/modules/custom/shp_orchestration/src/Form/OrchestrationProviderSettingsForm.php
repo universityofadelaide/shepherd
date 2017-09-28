@@ -82,11 +82,6 @@ class OrchestrationProviderSettingsForm extends ConfigFormBase {
       '#title' => $this->t('Advanced'),
       '#open' => FALSE,
     ];
-    $form['advanced']['enabled'] = [
-      '#type' => 'checkbox',
-      '#title' => $this->t('Enable orchestration. Allows disabling all communication with the selected orchestration provider.'),
-      '#default_value' => $config->get('enabled'),
-    ];
     $form['advanced']['queued_operations'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Enable queued operations. Ensures multiple actions are not executed concurrently for a given environment.'),
@@ -107,7 +102,6 @@ class OrchestrationProviderSettingsForm extends ConfigFormBase {
     // Save state.
     $config = $this->config('shp_orchestration.settings');
     $config->set('selected_provider', $form_state->getValue('provider'));
-    $config->set('enabled', $form_state->getValue('enabled'));
     $config->set('queued_operations', $form_state->getValue('queued_operations'));
     $config->save();
     parent::submitForm($form, $form_state);

@@ -9,7 +9,7 @@ use Drupal\shp_orchestration\OrchestrationProviderBase;
  *
  * @OrchestrationProvider(
  *   id = "dummy_orchestration_provider",
- *   name = "Dummy",
+ *   name = "None",
  *   description = @Translation("Dummy provider to disable orchestration tasks"),
  * )
  */
