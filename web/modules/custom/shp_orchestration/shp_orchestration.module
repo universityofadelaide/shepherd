@@ -10,23 +10,9 @@ use Drupal\node\NodeInterface;
 use Drupal\shp_orchestration\Exception\OrchestrationProviderNotConfiguredException;
 
 /**
- * Is orchestration enabled?
- *
- * @return bool
- *   TRUE if enabled.
- */
-function shp_orchestration_enabled() {
-  return \Drupal::config('shp_orchestration.settings')->get('enabled');
-}
-
-/**
  * Implements hook_ENTITY_TYPE_insert().
  */
 function shp_orchestration_node_insert(NodeInterface $node) {
-  if (!shp_orchestration_enabled()) {
-    return;
-  }
-
   switch ($node->bundle()) {
     case 'shp_project':
       \Drupal::service('shp_orchestration.project')->created($node);
@@ -42,10 +28,6 @@ function shp_orchestration_node_insert(NodeInterface $node) {
  * Implements hook_ENTITY_TYPE_update().
  */
 function shp_orchestration_node_update(NodeInterface $node) {
-  if (!shp_orchestration_enabled()) {
-    return;
-  }
-
   switch ($node->bundle()) {
     case 'shp_project':
       \Drupal::service('shp_orchestration.project')->updated($node);
@@ -61,10 +43,6 @@ function shp_orchestration_node_update(NodeInterface $node) {
  * Implements hook_ENTITY_TYPE_delete().
  */
 function shp_orchestration_node_delete(NodeInterface $node) {
-  if (!shp_orchestration_enabled()) {
-    return;
-  }
-
   switch ($node->bundle()) {
     case 'shp_project':
       \Drupal::service('shp_orchestration.project')->deleted($node);
