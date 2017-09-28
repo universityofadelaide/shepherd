@@ -287,7 +287,7 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
    * @param string $site_id
    *   Unique id of the site, used a label for environments.
    *
-   * @return string|bool
+   * @return array|bool
    *   Returns a collection of environments and their statuses,
    *   false if unsuccessful.
    */

@@ -68,16 +68,24 @@ class OrchestrationProviderSettingsForm extends ConfigFormBase {
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
-
     $config = $this->config('shp_orchestration.settings');
-    $selected_provider = $config->get('selected_provider');
     $plugins = $this->orchestrationProviderManager->getDefinitions();
 
     $form['provider'] = [
       '#type' => 'select',
       '#title' => $this->t('Select an orchestration provider'),
       '#required' => TRUE,
-      '#default_value' => $selected_provider,
+      '#default_value' => $config->get('selected_provider'),
+    ];
+    $form['advanced'] = [
+      '#type' => 'details',
+      '#title' => $this->t('Advanced'),
+      '#open' => FALSE,
+    ];
+    $form['advanced']['queued_operations'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Enable queued operations. Ensures multiple actions are not executed concurrently for a given environment.'),
+      '#default_value' => $config->get('queued_operations'),
     ];
 
     foreach ($plugins as $id => $plugin) {
@@ -93,8 +101,8 @@ class OrchestrationProviderSettingsForm extends ConfigFormBase {
   public function submitForm(array &$form, FormStateInterface $form_state) {
     // Save state.
     $config = $this->config('shp_orchestration.settings');
-    $provider = $form_state->getValue('provider');
-    $config->set('selected_provider', $provider);
+    $config->set('selected_provider', $form_state->getValue('provider'));
+    $config->set('queued_operations', $form_state->getValue('queued_operations'));
     $config->save();
     parent::submitForm($form, $form_state);
   }

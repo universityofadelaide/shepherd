@@ -69,7 +69,7 @@ class SiteEnvironmentsController extends ControllerBase {
       else {
         // @todo - What states end up here ?
         // Give a developer friendly message.
-        $response[]['status'] = "Status : " . $deployment_status['message'];
+        $response[]['status'] = $deployment_status['message'];
       }
     }
 
