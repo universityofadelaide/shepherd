@@ -144,6 +144,8 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     array $secrets = [],
     array $cron_jobs = []
   ) {
+    // @todo Refactor this. _The complexity is too damn high!_
+
     $sanitised_project_name = self::sanitise($project_name);
     $sanitised_source_ref = self::sanitise($source_ref);
     $deployment_name = self::generateDeploymentName(
@@ -292,6 +294,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     );
 
     try {
+      // @todo are we doing this?
       // Scale the pods to zero, then delete the pod creators.
       //$this->client->updateDeploymentConfig($deployment_name, 0);
       //$this->client->updateReplicationControllers('', 'app=' . $deployment_name, 0);
@@ -304,6 +307,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       $this->client->deleteService($deployment_name);
 
       $this->client->deleteDeploymentConfig($deployment_name);
+      // @todo remove this?
       //$this->client->deleteReplicationControllers('', 'app=' . $deployment_name);
 
       // Now the things not in the typically visible ui.
@@ -314,6 +318,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       $this->handleClientException($e);
       return FALSE;
     }
+    return TRUE;
   }
 
   /**
@@ -599,6 +604,8 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
   /**
    * Format an array of deployment data ready to pass to OpenShift.
    *
+   * @param string $name
+   *   The name of the deployment config.
    * @param array $formatted_env_vars
    *   An array of key => value env var pairs.
    * @param string $environment_url

@@ -7,7 +7,6 @@ use Drupal\shp_orchestration\OrchestrationProviderPluginManager;
 
 /**
  * Class EntityBase.
- * @package Drupal\shp_orchestration\Service
  */
 class EntityActionBase {
   /**
@@ -21,6 +20,7 @@ class EntityActionBase {
    * EntityBase constructor.
    *
    * @param \Drupal\shp_orchestration\OrchestrationProviderPluginManager $orchestrationProviderPluginManager
+   *   The orchestration provider manager.
    */
   public function __construct(OrchestrationProviderPluginManager $orchestrationProviderPluginManager) {
     try {
