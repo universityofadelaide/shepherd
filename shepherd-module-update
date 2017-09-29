@@ -6,8 +6,10 @@
 set -eu
 IFS=$'\n\t'
 
+command -v splitsh-lite >/dev/null 2>&1 || { echo "$0 requires splitsh-lite but it's not installed.  Aborting." >&2; exit 1; }
+
 source_repository=git@github.com:universityofadelaide/shepherd.git
-source_branch=feature/webops-244-provision-users-from-ldap
+source_branch=develop
 source_dir=web/modules/custom/shepherd
 
 # This is typically the name you will be releasing the sub modules as.
@@ -29,7 +31,7 @@ git checkout -b ${temp_branch}
 sha1=$(splitsh-lite --prefix=${source_dir} --quiet)
 git reset --hard ${sha1}
 git remote add remote ${destination_repository}
-git push -f -u remote ${temp_branch}:${destination_branch}
+git push -u remote ${temp_branch}:${destination_branch}
 
 # Cleanup
 cd /tmp
