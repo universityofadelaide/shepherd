@@ -9,6 +9,7 @@ use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\node\NodeInterface;
 use Drupal\node\Entity\Node;
 use Drupal\Core\Datetime\DrupalDateTime;
+use Drupal\Core\Form\FormStateInterface;
 
 /**
  * Implements hook_ENTITY_TYPE_presave().
@@ -93,4 +94,20 @@ function shp_content_types_node_delete(NodeInterface $node) {
   if ($node->getType() === 'shp_site' || $node->getType() === 'shp_project') {
     \Drupal::service('shp_content_types.group_manager')->delete($node);
   }
+}
+
+/**
+ * Implements hook_form_alter().
+ */
+function shp_content_types_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  $form['field_shp_liveness_probe_params']['#states'] = [
+    'invisible' => [
+      ':input[name="field_shp_liveness_probe_type"]' => ['value' => '_none'],
+    ],
+  ];
+  $form['field_shp_readiness_probe_params']['#states'] = [
+    'invisible' => [
+      ':input[name="field_shp_readiness_probe_type"]' => ['value' => '_none'],
+    ],
+  ];
 }
