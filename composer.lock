@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "31942a65611daadcf0f25edea9a06d7c",
+    "content-hash": "2469a40e25b1d0d9ba017d0bb02dd6e0",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -1455,6 +1455,59 @@
             "time": "2017-06-19T09:59:57+00:00"
         },
         {
+            "name": "drupal/log_stdout",
+            "version": "1.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://git.drupal.org/project/log_stdout",
+                "reference": "8.x-1.1"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://ftp.drupal.org/files/projects/log_stdout-8.x-1.1.zip",
+                "reference": "8.x-1.1",
+                "shasum": "1493cd20b0a523a9dfa10bbe1510573a7c26fe44"
+            },
+            "require": {
+                "drupal/core": "~8.0"
+            },
+            "type": "drupal-module",
+            "extra": {
+                "branch-alias": {
+                    "dev-1.x": "1.x-dev"
+                },
+                "drupal": {
+                    "version": "8.x-1.1",
+                    "datestamp": "1502196543",
+                    "security-coverage": {
+                        "status": "covered",
+                        "message": "Covered by Drupal's security advisory policy"
+                    }
+                }
+            },
+            "notification-url": "https://packages.drupal.org/8/downloads",
+            "license": [
+                "GPL-2.0+"
+            ],
+            "authors": [
+                {
+                    "name": "mrhanlon",
+                    "homepage": "https://www.drupal.org/user/764624"
+                },
+                {
+                    "name": "singularo",
+                    "homepage": "https://www.drupal.org/user/143"
+                }
+            ],
+            "description": "This module provides an hook for Drupal Watchdog that directs log messages to php://stdout or php://stderr for better log handling with Docker.",
+            "homepage": "https://www.drupal.org/project/log_stdout",
+            "support": {
+                "source": "http://cgit.drupalcode.org/log_stdout",
+                "issues": "https://www.drupal.org/project/issues/log_stdout",
+                "irc": "irc://irc.freenode.org/drupal-support"
+            }
+        },
+        {
             "name": "drupal/paragraphs",
             "version": "1.2.0",
             "source": {
@@ -1488,7 +1541,7 @@
                 },
                 "drupal": {
                     "version": "8.x-1.2",
-                    "datestamp": "1505802867",
+                    "datestamp": "1505802544",
                     "security-coverage": {
                         "status": "covered",
                         "message": "Covered by Drupal's security advisory policy"
@@ -2377,16 +2430,16 @@
         },
         {
             "name": "paragonie/random_compat",
-            "version": "v2.0.10",
+            "version": "v2.0.11",
             "source": {
                 "type": "git",
                 "url": "https://github.com/paragonie/random_compat.git",
-                "reference": "634bae8e911eefa89c1abfbf1b66da679ac8f54d"
+                "reference": "5da4d3c796c275c55f057af5a643ae297d96b4d8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/paragonie/random_compat/zipball/634bae8e911eefa89c1abfbf1b66da679ac8f54d",
-                "reference": "634bae8e911eefa89c1abfbf1b66da679ac8f54d",
+                "url": "https://api.github.com/repos/paragonie/random_compat/zipball/5da4d3c796c275c55f057af5a643ae297d96b4d8",
+                "reference": "5da4d3c796c275c55f057af5a643ae297d96b4d8",
                 "shasum": ""
             },
             "require": {
@@ -2421,7 +2474,7 @@
                 "pseudorandom",
                 "random"
             ],
-            "time": "2017-03-13T16:27:32+00:00"
+            "time": "2017-09-27T21:40:39+00:00"
         },
         {
             "name": "pear/console_table",
@@ -4124,16 +4177,16 @@
         },
         {
             "name": "twig/twig",
-            "version": "v1.34.4",
+            "version": "v1.35.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/twigphp/Twig.git",
-                "reference": "f878bab48edb66ad9c6ed626bf817f60c6c096ee"
+                "reference": "daa657073e55b0a78cce8fdd22682fddecc6385f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/twigphp/Twig/zipball/f878bab48edb66ad9c6ed626bf817f60c6c096ee",
-                "reference": "f878bab48edb66ad9c6ed626bf817f60c6c096ee",
+                "url": "https://api.github.com/repos/twigphp/Twig/zipball/daa657073e55b0a78cce8fdd22682fddecc6385f",
+                "reference": "daa657073e55b0a78cce8fdd22682fddecc6385f",
                 "shasum": ""
             },
             "require": {
@@ -4147,7 +4200,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.34-dev"
+                    "dev-master": "1.35-dev"
                 }
             },
             "autoload": {
@@ -4185,7 +4238,40 @@
             "keywords": [
                 "templating"
             ],
-            "time": "2017-07-04T13:19:31+00:00"
+            "time": "2017-09-27T18:06:46+00:00"
+        },
+        {
+            "name": "ua-drupal-modules/ua_ldap",
+            "version": "dev-develop",
+            "source": {
+                "type": "git",
+                "url": "git@gitlab.adelaide.edu.au:drupal-modules/ua_ldap.git",
+                "reference": "36f6a95063aebc0b3af6d9de58955f772034a805"
+            },
+            "require": {
+                "zendframework/zend-ldap": "^2.5.1"
+            },
+            "type": "drupal-module",
+            "license": [
+                "GPL-2.0+"
+            ],
+            "description": "Provides configuration and services to interact with LDAP.",
+            "time": "2017-08-23T02:58:31+00:00"
+        },
+        {
+            "name": "ua-drupal-modules/ua_shp_ldap",
+            "version": "dev-develop",
+            "source": {
+                "type": "git",
+                "url": "git@gitlab.adelaide.edu.au:drupal-modules/ua_shp_ldap.git",
+                "reference": "6714967b33e630b8b1ca70a72adf1c958c0e2e7d"
+            },
+            "type": "drupal-module",
+            "license": [
+                "GPL-2.0+"
+            ],
+            "description": "Provides user integration with LDAP for Shepherd.",
+            "time": "2017-09-28T00:45:31+00:00"
         },
         {
             "name": "universityofadelaide/openshift-client",
@@ -4234,16 +4320,16 @@
         },
         {
             "name": "universityofadelaide/shepherd-drupal-scaffold",
-            "version": "1.0.6",
+            "version": "1.0.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/universityofadelaide/shepherd-drupal-scaffold.git",
-                "reference": "f7f3d48dd132434b6867389affc17b50eadae7d8"
+                "reference": "5a10e522a6e27dc93838a228180586708649032c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/universityofadelaide/shepherd-drupal-scaffold/zipball/f7f3d48dd132434b6867389affc17b50eadae7d8",
-                "reference": "f7f3d48dd132434b6867389affc17b50eadae7d8",
+                "url": "https://api.github.com/repos/universityofadelaide/shepherd-drupal-scaffold/zipball/5a10e522a6e27dc93838a228180586708649032c",
+                "reference": "5a10e522a6e27dc93838a228180586708649032c",
                 "shasum": ""
             },
             "require": {
@@ -4266,7 +4352,7 @@
                 "GPL-2.0+"
             ],
             "description": "Composer Plugin for updating the Shepherd Drupal tools.",
-            "time": "2017-09-08T00:26:09+00:00"
+            "time": "2017-09-29T01:51:47+00:00"
         },
         {
             "name": "webmozart/assert",
@@ -4569,6 +4655,59 @@
                 "zf2"
             ],
             "time": "2017-04-01T15:03:14+00:00"
+        },
+        {
+            "name": "zendframework/zend-ldap",
+            "version": "2.8.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/zendframework/zend-ldap.git",
+                "reference": "a9284a7440e17ce0ba697670bb4db1baf2340acd"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/zendframework/zend-ldap/zipball/a9284a7440e17ce0ba697670bb4db1baf2340acd",
+                "reference": "a9284a7440e17ce0ba697670bb4db1baf2340acd",
+                "shasum": ""
+            },
+            "require": {
+                "ext-ldap": "*",
+                "php": "^5.5 || ^7.0"
+            },
+            "require-dev": {
+                "php-mock/php-mock-phpunit": "~0.3",
+                "phpunit/phpunit": "^4.6",
+                "zendframework/zend-coding-standard": "~1.0.0",
+                "zendframework/zend-config": "^2.5",
+                "zendframework/zend-eventmanager": "^2.6.3 || ^3.0.1",
+                "zendframework/zend-stdlib": "^2.7 || ^3.0"
+            },
+            "suggest": {
+                "zendframework/zend-eventmanager": "Zend\\EventManager component"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.8-dev",
+                    "dev-develop": "2.9-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Zend\\Ldap\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "description": "provides support for LDAP operations including but not limited to binding, searching and modifying entries in an LDAP directory",
+            "homepage": "https://github.com/zendframework/zend-ldap",
+            "keywords": [
+                "ldap",
+                "zf2"
+            ],
+            "time": "2017-03-06T20:39:12+00:00"
         },
         {
             "name": "zendframework/zend-stdlib",
@@ -7072,9 +7211,12 @@
         "drupal/field_group": 20,
         "drupal/group": 10,
         "drupal/key_value_field": 20,
+        "drupal/log_stdout": 20,
         "drupal/r4032login": 20,
         "drupal/redis": 20,
         "drupal/token": 20,
+        "ua-drupal-modules/ua_ldap": 20,
+        "ua-drupal-modules/ua_shp_ldap": 20,
         "behat/mink": 20,
         "universityofadelaide/openshift-client": 20
     },
