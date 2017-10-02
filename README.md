@@ -17,4 +17,6 @@ interaction with the OpenShift cluster.
 
 [Installation](INSTALL.md)
 
-[Developer documentation](DEVELOPERS.md)
+[Development setup documentation](DEVELOPERMENT_SETUP.md)
+
+[Development repository documentation](DEVELOPMENT_REPOSITORY.md)
