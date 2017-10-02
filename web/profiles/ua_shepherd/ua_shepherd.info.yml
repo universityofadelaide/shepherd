@@ -12,3 +12,5 @@ dependencies:
 
   # UA shepherd integrations
   - shp_routes
+  - ua_ldap
+  - ua_shp_ldap
