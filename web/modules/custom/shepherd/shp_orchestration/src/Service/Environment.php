@@ -37,6 +37,7 @@ class Environment extends EntityActionBase {
    */
   public function created(NodeInterface $node) {
     if (isset($node->field_shp_site->target_id)) {
+      /** @var NodeInterface $site */
       $site = $node->get('field_shp_site')
         ->first()
         ->get('entity')
@@ -44,7 +45,7 @@ class Environment extends EntityActionBase {
         ->getValue();
 
       if (isset($site->field_shp_project->target_id)) {
-        /** @var $project NodeInterface */
+        /** @var NodeInterface $project */
         $project = $site->get('field_shp_project')
           ->first()
           ->get('entity')
@@ -152,6 +153,7 @@ class Environment extends EntityActionBase {
    * @return bool
    */
   public function deleted(NodeInterface $node) {
+    /** @var NodeInterface $site */
     $site = $node->get('field_shp_site')
       ->first()
       ->get('entity')
@@ -159,6 +161,7 @@ class Environment extends EntityActionBase {
       ->getValue();
 
     if (isset($site->field_shp_project->target_id)) {
+      /** @var NodeInterface $project */
       $project = $site->get('field_shp_project')
         ->first()
         ->get('entity')
