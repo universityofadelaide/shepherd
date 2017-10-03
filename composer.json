@@ -74,7 +74,7 @@
         },
         "merge-plugin": {
             "require": [
-                "web/modules/custom/shp_orchestration/composer.json"
+                "web/modules/custom/shepherd/shp_orchestration/composer.json"
             ]
         },
         "patches": {
