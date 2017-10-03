@@ -135,8 +135,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     string $source_secret = NULL,
     array $environment_variables = [],
     array $secrets = [],
-    array $readiness_probe = [],
-    array $liveness_probe = [],
+    array $probes = [],
     array $cron_jobs = []
   ) {
     // @todo Refactor this. _The complexity is too damn high!_
@@ -208,7 +207,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       $deploy_data
     );
 
-    $this->client->addProbeConfig($deployment_config, $readiness_probe, $liveness_probe);
+    $this->client->addProbeConfig($deployment_config, $probes);
 
     try {
       $this->client->createDeploymentConfig($deployment_config);
@@ -275,8 +274,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     string $source_secret = NULL,
     array $environment_variables = [],
     array $secrets = [],
-    array $readiness_probe = [],
-    array $liveness_probe = [],
+    array $probes = [],
     array $cron_jobs = []
   ) {
 

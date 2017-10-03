@@ -101,10 +101,8 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
    *   An array of key => value environment variables to set.
    * @param array $secrets
    *   An array of secrets to attach to the deployment.
-   * @param array $readiness_probe
-   *   Details of the readiness probe to use for this deployment.
-   * @param array $liveness_probe
-   *   Details of the liveness probe to use for this deployment.
+   * @param array $probes
+   *   Details of the liveness/readiness probe to use for this deployment.
    * @param array $cron_jobs
    *   An array of cron jobs associated with this environment.
    *
@@ -125,8 +123,7 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
     string $source_secret = NULL,
     array $environment_variables = [],
     array $secrets = [],
-    array $readiness_probe = [],
-    array $liveness_probe = [],
+    array $probes = [],
     array $cron_jobs = []
   );
 
@@ -159,10 +156,8 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
    *   An array of key => value environment variables to set.
    * @param array $secrets
    *   An array of secrets to attach to the deployment.
-   * @param array $readiness_probe
-   *   Details of the readiness probe to use for this deployment.
-   * @param array $liveness_probe
-   *   Details of the liveness probe to use for this deployment.
+   * @param array $probes
+   *   Details of the liveness/readiness probe to use for this deployment.
    * @param array $cron_jobs
    *   An array of cron jobs associated with this environment.
    *
@@ -183,8 +178,7 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
     string $source_secret = NULL,
     array $environment_variables = [],
     array $secrets = [],
-    array $readiness_probe = [],
-    array $liveness_probe = [],
+    array $probes = [],
     array $cron_jobs = []
   );
 

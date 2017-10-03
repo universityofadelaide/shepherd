@@ -56,9 +56,9 @@ class Environment extends EntityActionBase {
       return FALSE;
     }
 
-    $probe = [];
+    $probes = [];
     foreach (['liveness', 'readiness'] as $type) {
-      $probe[$type] = [
+      $probes[$type] = [
         'type'       => $project->get('field_shp_' . $type . '_probe_type')->value,
         'port'       => $project->get('field_shp_' . $type . '_probe_port')->value,
         'parameters' => $project->get('field_shp_' . $type . '_probe_params')->value,
@@ -123,8 +123,7 @@ class Environment extends EntityActionBase {
       $project->field_shp_build_secret->value,
       $env_vars,
       $secrets,
-      $probe['readiness'],
-      $probe['liveness'],
+      $probes,
       $cron_jobs
     );
 
