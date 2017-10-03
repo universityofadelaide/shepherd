@@ -44,6 +44,7 @@ class Environment extends EntityActionBase {
         ->getValue();
 
       if (isset($site->field_shp_project->target_id)) {
+        /** @var $project NodeInterface */
         $project = $site->get('field_shp_project')
           ->first()
           ->get('entity')
@@ -53,6 +54,15 @@ class Environment extends EntityActionBase {
     }
     if (!isset($project) || !isset($site)) {
       return FALSE;
+    }
+
+    $probe = [];
+    foreach (['liveness', 'readiness'] as $type) {
+      $probe[$type] = [
+        'type'       => $project->get('field_shp_' . $type . '_probe_type')->value,
+        'port'       => $project->get('field_shp_' . $type . '_probe_port')->value,
+        'parameters' => $project->get('field_shp_' . $type . '_probe_params')->value,
+      ];
     }
 
     $cron_jobs = [];
@@ -113,6 +123,8 @@ class Environment extends EntityActionBase {
       $project->field_shp_build_secret->value,
       $env_vars,
       $secrets,
+      $probe['readiness'],
+      $probe['liveness'],
       $cron_jobs
     );
 

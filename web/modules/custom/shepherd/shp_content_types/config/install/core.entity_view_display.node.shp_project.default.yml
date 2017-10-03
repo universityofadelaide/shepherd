@@ -7,8 +7,10 @@ dependencies:
     - field.field.node.shp_project.field_shp_env_vars
     - field.field.node.shp_project.field_shp_git_repository
     - field.field.node.shp_project.field_shp_liveness_probe_params
+    - field.field.node.shp_project.field_shp_liveness_probe_port
     - field.field.node.shp_project.field_shp_liveness_probe_type
     - field.field.node.shp_project.field_shp_readiness_probe_params
+    - field.field.node.shp_project.field_shp_readiness_probe_port
     - field.field.node.shp_project.field_shp_readiness_probe_type
     - node.type.shp_project
   module:
@@ -59,6 +61,15 @@ content:
     third_party_settings: {  }
     type: basic_string
     region: content
+  field_shp_liveness_probe_port:
+    weight: 10
+    label: above
+    settings:
+      thousand_separator: ''
+      prefix_suffix: true
+    third_party_settings: {  }
+    type: number_integer
+    region: content
   field_shp_liveness_probe_type:
     weight: 6
     label: above
@@ -72,6 +83,15 @@ content:
     settings: {  }
     third_party_settings: {  }
     type: basic_string
+    region: content
+  field_shp_readiness_probe_port:
+    weight: 11
+    label: above
+    settings:
+      thousand_separator: ''
+      prefix_suffix: true
+    third_party_settings: {  }
+    type: number_integer
     region: content
   field_shp_readiness_probe_type:
     weight: 7

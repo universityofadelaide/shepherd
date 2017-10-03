@@ -16,6 +16,9 @@ settings:
     -
       value: tcpSocket
       label: 'TCP Socket'
+    -
+      value: httpGet
+      label: 'HTTP Get'
   allowed_values_function: ''
 module: options
 locked: false

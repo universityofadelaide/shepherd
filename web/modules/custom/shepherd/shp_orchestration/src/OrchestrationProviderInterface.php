@@ -101,6 +101,10 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
    *   An array of key => value environment variables to set.
    * @param array $secrets
    *   An array of secrets to attach to the deployment.
+   * @param array $readiness_probe
+   *   Details of the readiness probe to use for this deployment.
+   * @param array $liveness_probe
+   *   Details of the liveness probe to use for this deployment.
    * @param array $cron_jobs
    *   An array of cron jobs associated with this environment.
    *
@@ -121,6 +125,8 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
     string $source_secret = NULL,
     array $environment_variables = [],
     array $secrets = [],
+    array $readiness_probe = [],
+    array $liveness_probe = [],
     array $cron_jobs = []
   );
 
@@ -139,12 +145,24 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
    *   Absolute url for the environment.
    * @param string $builder_image
    *   An s2i-enabled image to use to build (and run) the source code.
+   * @param string $domain
+   *   The domain associated with the environment.
+   * @param string $path
+   *   The path associated with the environment.
    * @param string $source_repo
    *   Source code git repository.
    * @param string $source_ref
    *   Source code git ref, defaults to 'master'.
    * @param string|null $source_secret
    *   The secret to use when pulling and building the source git repository.
+   * @param array $environment_variables
+   *   An array of key => value environment variables to set.
+   * @param array $secrets
+   *   An array of secrets to attach to the deployment.
+   * @param array $readiness_probe
+   *   Details of the readiness probe to use for this deployment.
+   * @param array $liveness_probe
+   *   Details of the liveness probe to use for this deployment.
    * @param array $cron_jobs
    *   An array of cron jobs associated with this environment.
    *
@@ -158,9 +176,15 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
     string $environment_id,
     string $environment_url,
     string $builder_image,
+    string $domain,
+    string $path,
     string $source_repo,
     string $source_ref = 'master',
     string $source_secret = NULL,
+    array $environment_variables = [],
+    array $secrets = [],
+    array $readiness_probe = [],
+    array $liveness_probe = [],
     array $cron_jobs = []
   );
 
