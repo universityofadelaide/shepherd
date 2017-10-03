@@ -1,6 +1,6 @@
 {
   "name": "drupal/shepherd",
-  "description": "University of Adelaide Shepherd site management system..",
+  "description": "University of Adelaide Shepherd site management system.",
   "type": "drupal-module",
   "authors": [
     {
@@ -16,7 +16,7 @@
     {
       "name": "Simon Lindsay",
       "homepage": "https://www.drupal.org/u/singularo",
-      "role": "Contributor"
+      "role": "Maintainer"
     },
     {
       "name": "Casey Fulton",

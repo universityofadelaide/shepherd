@@ -2,14 +2,13 @@
 
 ## Repository details
 
-The shepherd project is based on the Drupal scaffold system, and tries
-to use best practises where possible. It pulls together a couple of 
-techniques from the Drupal world including:
+The Shepherd repository uses Composers project functionality to provide the base repository layout.
+There are some Composer plugins to make the create-project functionality work with Drupal:
 
 * [Composer template for Drupal projects](https://github.com/drupal-composer/drupal-project)
 * [Drupal scaffold](https://github.com/drupal-composer/drupal-scaffold)
 
-Of which Shepherd has its own specific versions:
+Shepherd also has its own Composer plugins to further extend the create-project functionality:
 
 * [Composer template for Shepherd Drupal projects](https://github.com/universityofadelaide/shepherd-drupal-project)
 * [Shepherd Drupal scaffold](https://github.com/universityofadelaide/shepherd-drupal-scaffold)
@@ -19,19 +18,36 @@ are also made available separately for use by other projects:
 
 * [Advantages of monolithic version control](https://danluu.com/monorepo/)
 * [The Symfony Monolith Repository](https://www.youtube.com/watch?v=4w3-f6Xhvu8)
-* [Git subtree splitter](https://github.com/splitsh/lite)
+* [Git subtree splitter](https://github.com/splitsh/lite) - This is required
+  to run the shepherd-module-update script.
 * [Shepherd modules](https://github.com/universityofadelaide/shepherd-modules)
 
 
 ### Development with Shepherd
 
-As Shepherd is a monorepo, development is fairly straightforward, the only
-additional thing that needs to be done is that the shepherd-module-update
-script needs to be run.  
+As Shepherd is a monorepo, development is done using the git flow branching model
+[A successful Git branching model](http://nvie.com/posts/a-successful-git-branching-model)
+with the [git-flow](https://github.com/nvie/gitflow) Git extension.
 
-This script automatically performs the required magic to update the Shepherd modules
-repository automatically from the Shepherd repo.
+### Working on the Shepherd modules
 
+Development should proceed as normal, typically with:
+* ```
+  git flow feature start my-fantastic-feature
+  git commit
+  git flow feature publish
+  ```
+* Submit pull request through github UI
+* Merge into develop
+* Update the shepherd-modules repo. 
+  ```
+  ./shepherd-module-update
+  ```
+
+Note: Only people with sufficient access can perform the last two steps.
+
+Pull requests should be submitted against the main Shepherd repository, not 
+against the drupal-modules repository.  
 
 ## Prerequisites
 
