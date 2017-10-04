@@ -6,6 +6,7 @@
  */
 
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\shp_orchestration\OrchestrationProviderPluginManagerInterface;
 
 /**
  * Implements hook_ENTITY_TYPE_insert().

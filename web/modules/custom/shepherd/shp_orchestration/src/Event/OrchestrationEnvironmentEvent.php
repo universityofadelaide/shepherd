@@ -25,6 +25,13 @@ class OrchestrationEnvironmentEvent extends Event {
   protected $deploymentName;
 
   /**
+   * Objects related to an environment
+   */
+  protected $site;
+  protected $environment;
+  protected $project;
+
+  /**
    * Storage to pass env vars around.
    *
    * @var array
@@ -38,10 +45,20 @@ class OrchestrationEnvironmentEvent extends Event {
    *   The orchestration provider instance.
    * @param string $deploymentName
    *   The deployment name.
+   * @param object $site
+   *   The site this environment is for.
+   * @param object $environment
+   *   The environment record.
+   * @param object $project
+   *   The project for this environment.
    */
-  public function __construct(OrchestrationProviderInterface $orchestrationProvider, string $deploymentName) {
+  public function __construct(OrchestrationProviderInterface $orchestrationProvider, string $deploymentName, $site = NULL, $environment = NULL, $project = NULL) {
     $this->orchestrationProvider = $orchestrationProvider;
     $this->deploymentName = $deploymentName;
+
+    $this->site = $site;
+    $this->environment = $environment;
+    $this->project = $project;
   }
 
   /**
@@ -84,4 +101,15 @@ class OrchestrationEnvironmentEvent extends Event {
     return $this->environmentVariables;
   }
 
+  public function getSite() {
+    return $this->site;
+  }
+
+  public function getEnvironment() {
+    return $this->environment;
+  }
+
+  public function getProject() {
+    return $this->project;
+  }
 }
