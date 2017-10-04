@@ -29,15 +29,16 @@ class DeploymentEventSubscriber implements EventSubscriberInterface {
     $site = $event->getSite();
     $environment = $event->getEnvironment();
 
-    $public_filename = file_create_url($project->field_shp_sql_dump->entity->getFileUri());
+    if (!empty($project->field_shp_sql_dump->target_id)) {
+      $public_filename = file_create_url($project->field_shp_sql_dump->entity->getFileUri());
 
-    $orchestration_provider->executeJob(
-      $project->title->value,
-      $site->field_shp_short_name->value,
-      $environment->id(),
-      $environment->field_shp_git_reference->value,
-      "wget $public_filename -O /tmp/dump.sql; drush -r web sqlq --file=/tmp/dump.sql; drush -r web cr; rm /tmp/dump.sql"
-    );
+      $orchestration_provider->executeJob(
+        $project->title->value,
+        $site->field_shp_short_name->value,
+        $environment->id(),
+        $environment->field_shp_git_reference->value,
+        "wget $public_filename -O /tmp/dump.sql; drush -r web sqlq --file=/tmp/dump.sql; drush -r web cr; rm /tmp/dump.sql"
+      );
+    }
   }
-
 }
