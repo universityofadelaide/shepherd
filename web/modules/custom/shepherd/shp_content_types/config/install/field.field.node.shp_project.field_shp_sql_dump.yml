@@ -1,0 +1,26 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_shp_sql_dump
+    - node.type.shp_project
+  module:
+    - file
+id: node.shp_project.field_shp_sql_dump
+field_name: field_shp_sql_dump
+entity_type: node
+bundle: shp_project
+label: 'SQL Dump'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  file_directory: '[date:custom:Y]-[date:custom:m]'
+  file_extensions: 'sql sql.gz'
+  max_filesize: ''
+  description_field: false
+  handler: 'default:file'
+  handler_settings: {  }
+field_type: file

@@ -6,8 +6,10 @@ dependencies:
     - field.field.node.shp_project.field_shp_builder_image
     - field.field.node.shp_project.field_shp_env_vars
     - field.field.node.shp_project.field_shp_git_repository
+    - field.field.node.shp_project.field_shp_sql_dump
     - node.type.shp_project
   module:
+    - file
     - key_value_field
     - user
 id: node.shp_project.default
@@ -46,6 +48,13 @@ content:
       link_to_entity: false
     third_party_settings: {  }
     type: string
+    region: content
+  field_shp_sql_dump:
+    weight: 4
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    type: file_default
     region: content
 hidden:
   links: true
