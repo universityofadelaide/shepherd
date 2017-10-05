@@ -2,6 +2,7 @@
 
 namespace Drupal\shp_orchestration\Event;
 
+use Drupal\node\Entity\Node;
 use Drupal\shp_orchestration\OrchestrationProviderInterface;
 use Symfony\Component\EventDispatcher\Event;
 
@@ -45,14 +46,14 @@ class OrchestrationEnvironmentEvent extends Event {
    *   The orchestration provider instance.
    * @param string $deploymentName
    *   The deployment name.
-   * @param object $site
+   * @param \Drupal\node\Entity\Node $site
    *   The site this environment is for.
-   * @param object $environment
+   * @param \Drupal\node\Entity\Node $environment
    *   The environment record.
-   * @param object $project
+   * @param \Drupal\node\Entity\Node $project
    *   The project for this environment.
    */
-  public function __construct(OrchestrationProviderInterface $orchestrationProvider, string $deploymentName, $site = NULL, $environment = NULL, $project = NULL) {
+  public function __construct(OrchestrationProviderInterface $orchestrationProvider, string $deploymentName, Node $site = NULL, Node $environment = NULL, Node $project = NULL) {
     $this->orchestrationProvider = $orchestrationProvider;
     $this->deploymentName = $deploymentName;
 

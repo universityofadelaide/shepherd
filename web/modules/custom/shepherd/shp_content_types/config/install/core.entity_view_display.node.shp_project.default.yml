@@ -6,7 +6,7 @@ dependencies:
     - field.field.node.shp_project.field_shp_builder_image
     - field.field.node.shp_project.field_shp_env_vars
     - field.field.node.shp_project.field_shp_git_repository
-    - field.field.node.shp_project.field_shp_sql_dump
+    - field.field.node.shp_project.field_shp_default_sql
     - node.type.shp_project
   module:
     - file
@@ -49,7 +49,7 @@ content:
     third_party_settings: {  }
     type: string
     region: content
-  field_shp_sql_dump:
+  field_shp_default_sql:
     weight: 4
     label: above
     settings: {  }

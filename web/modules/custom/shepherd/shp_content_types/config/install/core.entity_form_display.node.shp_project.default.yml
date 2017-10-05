@@ -6,7 +6,7 @@ dependencies:
     - field.field.node.shp_project.field_shp_builder_image
     - field.field.node.shp_project.field_shp_env_vars
     - field.field.node.shp_project.field_shp_git_repository
-    - field.field.node.shp_project.field_shp_sql_dump
+    - field.field.node.shp_project.field_shp_default_sql
     - node.type.shp_project
   module:
     - content_moderation
@@ -55,7 +55,7 @@ content:
       placeholder: ''
     third_party_settings: {  }
     region: content
-  field_shp_sql_dump:
+  field_shp_default_sql:
     weight: 26
     settings:
       progress_indicator: throbber

@@ -2,9 +2,9 @@
 
 namespace Drupal\shp_database_provisioner\EventSubscriber;
 
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Drupal\shp_orchestration\Event\OrchestrationEvents;
 use Drupal\shp_orchestration\Event\OrchestrationEnvironmentEvent;
+use Drupal\shp_orchestration\Event\OrchestrationEvents;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class DeploymentEventSubscriber implements EventSubscriberInterface {
 
@@ -18,7 +18,8 @@ class DeploymentEventSubscriber implements EventSubscriberInterface {
   }
 
   /**
-   * Populate the database for an environment after its been created.
+   * Populate the database for an environment after its been created
+   * using the project default sql dump.
    *
    * @param \Drupal\shp_orchestration\Event\OrchestrationEnvironmentEvent $event
    */
@@ -29,8 +30,8 @@ class DeploymentEventSubscriber implements EventSubscriberInterface {
     $site = $event->getSite();
     $environment = $event->getEnvironment();
 
-    if (!empty($project->field_shp_sql_dump->target_id)) {
-      $public_filename = file_create_url($project->field_shp_sql_dump->entity->getFileUri());
+    if (!empty($project->field_shp_default_sql->target_id)) {
+      $public_filename = file_create_url($project->field_shp_default_sql->entity->getFileUri());
 
       $orchestration_provider->executeJob(
         $project->title->value,

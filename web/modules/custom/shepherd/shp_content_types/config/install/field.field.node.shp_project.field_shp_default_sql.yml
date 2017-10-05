@@ -2,12 +2,12 @@ langcode: en
 status: true
 dependencies:
   config:
-    - field.storage.node.field_shp_sql_dump
+    - field.storage.node.field_shp_default_sql
     - node.type.shp_project
   module:
     - file
-id: node.shp_project.field_shp_sql_dump
-field_name: field_shp_sql_dump
+id: node.shp_project.field_shp_default_sql
+field_name: field_shp_default_sql
 entity_type: node
 bundle: shp_project
 label: 'SQL Dump'
@@ -17,7 +17,7 @@ translatable: false
 default_value: {  }
 default_value_callback: ''
 settings:
-  file_directory: '[date:custom:Y]-[date:custom:m]'
+  file_directory: 'sql/[date:custom:Y]-[date:custom:m]'
   file_extensions: 'txt'
   max_filesize: ''
   description_field: false
