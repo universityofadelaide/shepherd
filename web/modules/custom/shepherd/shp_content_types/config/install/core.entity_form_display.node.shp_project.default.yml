@@ -6,9 +6,11 @@ dependencies:
     - field.field.node.shp_project.field_shp_builder_image
     - field.field.node.shp_project.field_shp_env_vars
     - field.field.node.shp_project.field_shp_git_repository
+    - field.field.node.shp_project.field_shp_default_sql
     - node.type.shp_project
   module:
     - content_moderation
+    - file
     - key_value_field
 id: node.shp_project.default
 targetEntityType: node
@@ -52,6 +54,13 @@ content:
       size: 60
       placeholder: ''
     third_party_settings: {  }
+    region: content
+  field_shp_default_sql:
+    weight: 26
+    settings:
+      progress_indicator: throbber
+    third_party_settings: {  }
+    type: file_generic
     region: content
   title:
     type: string_textfield
