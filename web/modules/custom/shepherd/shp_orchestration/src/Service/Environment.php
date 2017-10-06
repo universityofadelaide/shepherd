@@ -129,7 +129,7 @@ class Environment extends EntityActionBase {
     );
 
     // Allow other modules to react to the Environment creation.
-    $event = new OrchestrationEnvironmentEvent($this->orchestrationProviderPlugin, $deployment_name);
+    $event = new OrchestrationEnvironmentEvent($this->orchestrationProviderPlugin, $deployment_name, $site, $node, $project);
     $eventDispatcher->dispatch(OrchestrationEvents::CREATED_ENVIRONMENT, $event);
 
     return $environment;

@@ -12,8 +12,10 @@ dependencies:
     - field.field.node.shp_project.field_shp_readiness_probe_params
     - field.field.node.shp_project.field_shp_readiness_probe_port
     - field.field.node.shp_project.field_shp_readiness_probe_type
+    - field.field.node.shp_project.field_shp_default_sql
     - node.type.shp_project
   module:
+    - file
     - key_value_field
     - options
     - user
@@ -99,6 +101,12 @@ content:
     settings: {  }
     third_party_settings: {  }
     type: list_default
+  field_shp_default_sql:
+    weight: 4
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    type: file_default
     region: content
 hidden:
   links: true
