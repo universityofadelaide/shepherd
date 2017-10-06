@@ -7,11 +7,48 @@ dependencies:
     - field.field.node.shp_project.field_shp_env_vars
     - field.field.node.shp_project.field_shp_git_repository
     - field.field.node.shp_project.field_shp_default_sql
+    - field.field.node.shp_project.field_shp_liveness_probe_params
+    - field.field.node.shp_project.field_shp_liveness_probe_port
+    - field.field.node.shp_project.field_shp_liveness_probe_type
+    - field.field.node.shp_project.field_shp_readiness_probe_params
+    - field.field.node.shp_project.field_shp_readiness_probe_port
+    - field.field.node.shp_project.field_shp_readiness_probe_type
     - node.type.shp_project
   module:
     - content_moderation
+    - field_group
     - file
     - key_value_field
+third_party_settings:
+  field_group:
+    group_liveness_probe:
+      children:
+        - field_shp_liveness_probe_type
+        - field_shp_liveness_probe_params
+        - field_shp_liveness_probe_port
+      parent_name: ''
+      weight: 7
+      format_type: fieldset
+      format_settings:
+        id: ''
+        classes: ''
+        description: ''
+        required_fields: true
+      label: 'Liveness probe'
+    group_shp_readiness_probe:
+      children:
+        - field_shp_readiness_probe_type
+        - field_shp_readiness_probe_params
+        - field_shp_readiness_probe_port
+      parent_name: ''
+      weight: 20
+      format_type: fieldset
+      format_settings:
+        id: ''
+        classes: ''
+        description: ''
+        required_fields: true
+      label: 'Readiness probe'
 id: node.shp_project.default
 targetEntityType: node
 bundle: shp_project
@@ -55,6 +92,47 @@ content:
       placeholder: ''
     third_party_settings: {  }
     region: content
+  field_shp_liveness_probe_params:
+    weight: 8
+    settings:
+      rows: 5
+      placeholder: ''
+    third_party_settings: {  }
+    type: string_textarea
+    region: content
+  field_shp_liveness_probe_port:
+    weight: 9
+    settings:
+      placeholder: ''
+    third_party_settings: {  }
+    type: number
+    region: content
+  field_shp_liveness_probe_type:
+    weight: 7
+    settings: {  }
+    third_party_settings: {  }
+    type: options_select
+    region: content
+  field_shp_readiness_probe_params:
+    weight: 6
+    settings:
+      rows: 5
+      placeholder: ''
+    third_party_settings: {  }
+    type: string_textarea
+    region: content
+  field_shp_readiness_probe_port:
+    weight: 7
+    settings:
+      placeholder: ''
+    third_party_settings: {  }
+    type: number
+    region: content
+  field_shp_readiness_probe_type:
+    weight: 5
+    settings: {  }
+    third_party_settings: {  }
+    type: options_select
   field_shp_default_sql:
     weight: 26
     settings:

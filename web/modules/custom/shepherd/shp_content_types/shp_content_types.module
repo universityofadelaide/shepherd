@@ -9,6 +9,7 @@ use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\node\NodeInterface;
 use Drupal\node\Entity\Node;
 use Drupal\Core\Datetime\DrupalDateTime;
+use Drupal\Core\Form\FormStateInterface;
 
 /**
  * Implements hook_ENTITY_TYPE_presave().
@@ -92,5 +93,45 @@ function shp_content_types_node_insert(NodeInterface $node) {
 function shp_content_types_node_delete(NodeInterface $node) {
   if ($node->getType() === 'shp_site' || $node->getType() === 'shp_project') {
     \Drupal::service('shp_content_types.group_manager')->delete($node);
+  }
+}
+
+/**
+ * Implements hook_form_alter().
+ */
+function shp_content_types_form_node_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  // Match the node add and node edit forms
+  if (stristr($form_id, 'node_shp_project')) {
+    // Switch which fields are shown based on the Liveness probe type
+    $form['field_shp_liveness_probe_params']['#states'] = [
+      'invisible' => [
+        ':input[name="field_shp_liveness_probe_type"]' => [
+          ['value' => '_none'], ['value' => 'tcpSocket'],
+        ],
+      ],
+    ];
+    $form['field_shp_liveness_probe_port']['#states'] = [
+      'invisible' => [
+        ':input[name="field_shp_liveness_probe_type"]' => [
+          ['value' => '_none'], ['value' => 'exec'],
+        ],
+      ],
+    ];
+
+    // Switch which fields are shown based on the Readiness probe type
+    $form['field_shp_readiness_probe_params']['#states'] = [
+      'invisible' => [
+        ':input[name="field_shp_readiness_probe_type"]' => [
+          ['value' => '_none'], ['value' => 'tcpSocket']
+        ],
+      ],
+    ];
+    $form['field_shp_readiness_probe_port']['#states'] = [
+      'invisible' => [
+        ':input[name="field_shp_readiness_probe_type"]' => [
+          ['value' => '_none'], ['value' => 'exec'],
+        ]
+      ],
+    ];
   }
 }

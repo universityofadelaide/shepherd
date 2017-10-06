@@ -7,6 +7,10 @@ dependencies:
     - field.field.node.shp_project.field_shp_builder_image
     - field.field.node.shp_project.field_shp_env_vars
     - field.field.node.shp_project.field_shp_git_repository
+    - field.field.node.shp_project.field_shp_liveness_probe_params
+    - field.field.node.shp_project.field_shp_liveness_probe_type
+    - field.field.node.shp_project.field_shp_readiness_probe_params
+    - field.field.node.shp_project.field_shp_readiness_probe_type
     - node.type.shp_project
   module:
     - user
@@ -23,3 +27,7 @@ hidden:
   field_shp_builder_image: true
   field_shp_env_vars: true
   field_shp_git_repository: true
+  field_shp_liveness_probe_params: true
+  field_shp_liveness_probe_type: true
+  field_shp_readiness_probe_params: true
+  field_shp_readiness_probe_type: true

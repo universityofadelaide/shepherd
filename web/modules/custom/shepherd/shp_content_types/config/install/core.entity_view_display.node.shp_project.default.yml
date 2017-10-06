@@ -6,11 +6,18 @@ dependencies:
     - field.field.node.shp_project.field_shp_builder_image
     - field.field.node.shp_project.field_shp_env_vars
     - field.field.node.shp_project.field_shp_git_repository
+    - field.field.node.shp_project.field_shp_liveness_probe_params
+    - field.field.node.shp_project.field_shp_liveness_probe_port
+    - field.field.node.shp_project.field_shp_liveness_probe_type
+    - field.field.node.shp_project.field_shp_readiness_probe_params
+    - field.field.node.shp_project.field_shp_readiness_probe_port
+    - field.field.node.shp_project.field_shp_readiness_probe_type
     - field.field.node.shp_project.field_shp_default_sql
     - node.type.shp_project
   module:
     - file
     - key_value_field
+    - options
     - user
 id: node.shp_project.default
 targetEntityType: node
@@ -49,6 +56,51 @@ content:
     third_party_settings: {  }
     type: string
     region: content
+  field_shp_liveness_probe_params:
+    weight: 8
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    type: basic_string
+    region: content
+  field_shp_liveness_probe_port:
+    weight: 10
+    label: above
+    settings:
+      thousand_separator: ''
+      prefix_suffix: true
+    third_party_settings: {  }
+    type: number_integer
+    region: content
+  field_shp_liveness_probe_type:
+    weight: 6
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    type: list_default
+    region: content
+  field_shp_readiness_probe_params:
+    weight: 9
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    type: basic_string
+    region: content
+  field_shp_readiness_probe_port:
+    weight: 11
+    label: above
+    settings:
+      thousand_separator: ''
+      prefix_suffix: true
+    third_party_settings: {  }
+    type: number_integer
+    region: content
+  field_shp_readiness_probe_type:
+    weight: 7
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    type: list_default
   field_shp_default_sql:
     weight: 4
     label: above
