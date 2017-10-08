@@ -36,23 +36,8 @@ class Environment extends EntityActionBase {
    * @return bool
    */
   public function created(NodeInterface $node) {
-    if (isset($node->field_shp_site->target_id)) {
-      /** @var \Drupal\node\NodeInterface $site */
-      $site = $node->get('field_shp_site')
-        ->first()
-        ->get('entity')
-        ->getTarget()
-        ->getValue();
-
-      if (isset($site->field_shp_project->target_id)) {
-        /** @var \Drupal\node\NodeInterface $project */
-        $project = $site->get('field_shp_project')
-          ->first()
-          ->get('entity')
-          ->getTarget()
-          ->getValue();
-      }
-    }
+    $site = $this->getSiteFromEnvironment($node);
+    $project = $this->getProjectFromSite($site);
     if (!isset($project) || !isset($site)) {
       return FALSE;
     }
@@ -153,21 +138,8 @@ class Environment extends EntityActionBase {
    * @return bool
    */
   public function deleted(NodeInterface $node) {
-    /** @var \Drupal\node\NodeInterface $site */
-    $site = $node->get('field_shp_site')
-      ->first()
-      ->get('entity')
-      ->getTarget()
-      ->getValue();
-
-    if (isset($site->field_shp_project->target_id)) {
-      /** @var \Drupal\node\NodeInterface $project */
-      $project = $site->get('field_shp_project')
-        ->first()
-        ->get('entity')
-        ->getTarget()
-        ->getValue();
-    }
+    $site = $this->getSiteFromEnvironment($node);
+    $project = $this->getProjectFromSite($site);
     if (!isset($project) || !isset($site)) {
       return FALSE;
     }
@@ -192,4 +164,59 @@ class Environment extends EntityActionBase {
     return $result;
   }
 
+  /**
+   * @param \Drupal\node\NodeInterface $node
+   *
+   * @return bool
+   */
+  public function promote(NodeInterface $node) {
+    $site = $this->getSiteFromEnvironment($node);
+    $project = $this->getProjectFromSite($site);
+    if (!isset($project) || !isset($site)) {
+      return FALSE;
+    }
+
+    $result = $this->orchestrationProviderPlugin->promotedEnvironment(
+      $project->title->value,
+      $site->field_shp_short_name->value,
+      $node->id()
+    );
+
+    return $result;
+  }
+
+  /**
+   * @param \Drupal\node\NodeInterface $environment
+   *
+   * @return \Drupal\node\NodeInterface|bool
+   */
+  protected function getSiteFromEnvironment(NodeInterface $environment) {
+    if (isset($environment->field_shp_site->target_id)) {
+      return $environment->get('field_shp_site')
+        ->first()
+        ->get('entity')
+        ->getTarget()
+        ->getValue();
+    }
+
+    return FALSE;
+  }
+
+  /**
+   * @param \Drupal\node\NodeInterface $site
+   *
+   * @return \Drupal\node\NodeInterface|bool
+   */
+  protected function getProjectFromSite(NodeInterface $site) {
+    if (isset($site->field_shp_project->target_id)) {
+      /** @var \Drupal\node\NodeInterface $project */
+      return $site->get('field_shp_project')
+        ->first()
+        ->get('entity')
+        ->getTarget()
+        ->getValue();
+    }
+
+    return FALSE;
+  }
 }

@@ -320,6 +320,20 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     );
   }
 
+  public function promotedEnvironment(
+    string $project_name,
+    string $short_name,
+    string $environment_id
+  ) {
+    $deployment_name = self::generateDeploymentName(
+      $project_name,
+      $short_name,
+      $environment_id
+    );
+
+    $this->client->updateService($deployment_name, $deployment_name);
+  }
+
   /**
    * {@inheritdoc}
    */

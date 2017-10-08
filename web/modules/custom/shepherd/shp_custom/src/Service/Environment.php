@@ -2,13 +2,18 @@
 
 namespace Drupal\shp_custom\Service;
 
+use Drupal\Component\Serialization\Json;
 use Drupal\Core\Ajax\AjaxResponse;
 use Drupal\Core\Ajax\InvokeCommand;
 use Drupal\Core\DependencyInjection\DependencySerializationTrait;
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Session\AccountProxyInterface;
+use Drupal\Core\Url;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Drupal\Core\StringTranslation\StringTranslationTrait;
+
 
 /**
  * Environment service. Provides methods to handle Environment entities.
@@ -17,6 +22,7 @@ use Symfony\Component\HttpFoundation\RequestStack;
  */
 class Environment {
 
+  use StringTranslationTrait;
   use DependencySerializationTrait;
 
   /**
@@ -178,5 +184,34 @@ class Environment {
   protected function loadTaxonomyTerm($tid) {
     return $this->taxonomyTerm->load($tid);
   }
+
+
+  /**
+   * Apply alterations to entity operations.
+   *
+   * @param array $operations
+   *   List of operations.
+   * @param \Drupal\Core\Entity\EntityInterface $entity
+   *   Entity to apply operations to.
+   */
+  public function operationsLinksAlter(array &$operations, EntityInterface $entity) {
+    $site = $entity->field_shp_site->target_id;
+    $environment = $entity->id();
+
+    $operations['promote'] = [
+      'title' => $this->t('Promote'),
+      'weight' => 1,
+      'url' => Url::fromRoute('shp_custom.environment-promote-form',
+        ['site' => $site, 'environment' => $environment]),
+      // Render form in a modal window.
+      'attributes' => [
+        'class' => ['button', 'use-ajax'],
+        'data-dialog-type' => 'modal',
+        'data-dialog-options' => Json::encode(['width' => '50%', 'height' => '50%']),
+      ],
+    ];
+
+  }
+
 
 }
