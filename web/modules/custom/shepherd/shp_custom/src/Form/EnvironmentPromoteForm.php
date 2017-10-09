@@ -29,14 +29,14 @@ class EnvironmentPromoteForm extends FormBase {
   protected $config;
 
   /**
-   * Used to identify who is creating the backup.
+   * Used to identify who is performing the operation.
    *
    * @var \Drupal\Core\Session\AccountInterface
    */
   protected $current_user;
 
   /**
-   * EnvironmentBackupForm constructor.
+   * EnvironmentPromoteForm constructor.
    *
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config
    *   Config Factory.
@@ -77,7 +77,7 @@ class EnvironmentPromoteForm extends FormBase {
    *   Translated markup.
    */
   public function getPageTitle(NodeInterface $site, NodeInterface $environment) {
-    return $this->t('Promote environment - @site_title : @environment_title', ['@site_title' => $site->getTitle(), '@environment_title' => $environment->getTitle()]);
+    return $this->t('Promote environment for @site_title',['@site_title' => $site->getTitle()]);
   }
 
   /**
@@ -87,11 +87,25 @@ class EnvironmentPromoteForm extends FormBase {
     $form_state->set('site', $site);
     $form_state->set('environment', $environment);
 
+    $form['promotion'] = [
+      '#type' => 'processed_text',
+      '#title' => $this->t('Changes to be made'),
+      '#description' => $this->t('This promotion will make all production traffic for this site at the url below'),
+    ];
+    $form['production_service'] = [
+      '#type' => 'item',
+      '#title' => $this->t('@production_service', ['@production_service' => $site->field_shp_domain->value]),
+      '#description' => $this->t('Will now be handled by'),
+    ];
+    $form['environment_service'] = [
+      '#type' => 'item',
+      '#title' => $this->t('@environment_service', ['@environment_service' => $environment->getTitle()]),
+    ];
+
     $form['exclusive'] = [
-      '#title' => $this->t('Make this environment the exclusive destination for traffic?'),
+      '#title' => $this->t('Make this environment the exclusive destination?'),
       '#type' => 'checkbox',
-      '#options' => ['exclusive' => TRUE, 'additional' => FALSE],
-      '#default_value' => TRUE,
+      '#default_value' => FALSE,
     ];
 
     $form['actions'] = [
@@ -113,8 +127,9 @@ class EnvironmentPromoteForm extends FormBase {
 
     $site = $form_state->get('site');
     $environment = $form_state->get('environment');
+    $exclusive = $form_state->getValue('exclusive');
 
-    if ($result = \Drupal::service('shp_orchestration.environment')->promote($environment)) {
+    if ($result = \Drupal::service('shp_orchestration.environment')->promote($site, $environment, $exclusive)) {
 
       drupal_set_message($this->t('Promoted %environment for %site successfully', [
         '%environment' => $environment->getTitle(),

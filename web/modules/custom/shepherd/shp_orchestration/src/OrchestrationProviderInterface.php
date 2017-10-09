@@ -219,10 +219,22 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
   /**
    * Handles a site being created.
    *
-   * @return bool
-   *   Returns true if succeeded.
+   * @param string $project_name
+   *   The project that is being deployed on the site
+   * @param string $short_name
+   *   The short name of the site
+   * @param int $site_id
+   *   The site id
+   * @param string $domain_name
+   *   The domain name of the site
+   * @param string $path
+   *   The path of the site
+   *
+   * @return bool Returns true if succeeded.
+   * Returns true if succeeded.
+   * @internal param string $site_name The name of the site being added*   The name of the site being added
    */
-  public function createdSite();
+  public function createdSite(string $project_name, string $short_name, int $site_id, string $domain_name, string $path);
 
   /**
    * Handles a site being updated.
@@ -287,8 +299,8 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
    *   Name of the project.
    * @param string $short_name
    *   Short name of the site.
-   * @param string $environment_id
-   *   Environment node id.
+   * @param int $id
+   *   Id of the name to be generated
    *
    * @return string
    *   Returns the generated deployment name.
@@ -296,7 +308,7 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
   public static function generateDeploymentName(
     string $project_name,
     string $short_name,
-    string $environment_id
+    int $id
   );
 
   /**

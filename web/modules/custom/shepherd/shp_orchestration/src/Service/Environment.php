@@ -6,11 +6,14 @@ use Drupal\node\NodeInterface;
 use Drupal\shp_orchestration\Event\OrchestrationEnvironmentEvent;
 use Drupal\shp_orchestration\Event\OrchestrationEvents;
 use Drupal\shp_orchestration\OrchestrationProviderPluginManager;
+use Drupal\shp_orchestration\OrchestrationProviderTrait;
 
 /**
  * Class Environment.
  */
 class Environment extends EntityActionBase {
+
+  use OrchestrationProviderTrait;
 
   /**
    * The Shepherd configuration service.
@@ -21,6 +24,7 @@ class Environment extends EntityActionBase {
 
   /**
    * Shepherd constructor.
+   *
    * @param \Drupal\shp_orchestration\OrchestrationProviderPluginManager $orchestrationProviderPluginManager
    * @param \Drupal\shp_orchestration\Service\Configuration $configuration
    */
@@ -33,6 +37,7 @@ class Environment extends EntityActionBase {
    * Tell the active orchestration provider an environment was created.
    *
    * @param \Drupal\node\NodeInterface $node
+   *
    * @return bool
    */
   public function created(NodeInterface $node) {
@@ -124,6 +129,7 @@ class Environment extends EntityActionBase {
    * Tell the active orchestration provider an environment was updated.
    *
    * @param \Drupal\node\NodeInterface $node
+   *
    * @return bool
    */
   public function updated(NodeInterface $node) {
@@ -135,6 +141,7 @@ class Environment extends EntityActionBase {
    * Tell the active orchestration provider an environment was deleted.
    *
    * @param \Drupal\node\NodeInterface $node
+   *
    * @return bool
    */
   public function deleted(NodeInterface $node) {
@@ -165,12 +172,13 @@ class Environment extends EntityActionBase {
   }
 
   /**
-   * @param \Drupal\node\NodeInterface $node
+   * @param \Drupal\node\NodeInterface $site
+   * @param \Drupal\node\NodeInterface $environment
+   * @param bool $exclusive
    *
    * @return bool
    */
-  public function promote(NodeInterface $node) {
-    $site = $this->getSiteFromEnvironment($node);
+  public function promote(NodeInterface $site, NodeInterface $environment, bool $exclusive) {
     $project = $this->getProjectFromSite($site);
     if (!isset($project) || !isset($site)) {
       return FALSE;
@@ -179,8 +187,14 @@ class Environment extends EntityActionBase {
     $result = $this->orchestrationProviderPlugin->promotedEnvironment(
       $project->title->value,
       $site->field_shp_short_name->value,
-      $node->id()
+      $site->id(),
+      $environment->id()
     );
+
+    if ($exclusive) {
+      // query the list of environments that are connected and disconnect
+      // any that aren't the one specified.
+    }
 
     return $result;
   }
@@ -202,21 +216,4 @@ class Environment extends EntityActionBase {
     return FALSE;
   }
 
-  /**
-   * @param \Drupal\node\NodeInterface $site
-   *
-   * @return \Drupal\node\NodeInterface|bool
-   */
-  protected function getProjectFromSite(NodeInterface $site) {
-    if (isset($site->field_shp_project->target_id)) {
-      /** @var \Drupal\node\NodeInterface $project */
-      return $site->get('field_shp_project')
-        ->first()
-        ->get('entity')
-        ->getTarget()
-        ->getValue();
-    }
-
-    return FALSE;
-  }
 }

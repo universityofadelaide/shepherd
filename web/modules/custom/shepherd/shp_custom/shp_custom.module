@@ -303,7 +303,8 @@ function shp_custom_entity_operation_alter(array &$operations, EntityInterface $
   // Operations are applied to the shp_environment entity.
   // User must also have permission to create shp_backup entities.
   if ($entity->getEntityTypeId() === "node"
-    && $entity->getType() === "shp_environment") {
+    && $entity->getType() === "shp_environment"
+    && $account->hasPermission('create shp_backup content')) {
     \Drupal::service('shp_custom.environment')->operationsLinksAlter($operations, $entity);
   }
 }

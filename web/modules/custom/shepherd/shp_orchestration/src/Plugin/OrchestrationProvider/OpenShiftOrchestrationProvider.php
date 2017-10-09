@@ -323,22 +323,49 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
   public function promotedEnvironment(
     string $project_name,
     string $short_name,
-    string $environment_id
+    int $site_id,
+    int $environment_id
   ) {
-    $deployment_name = self::generateDeploymentName(
+    $site_deployment_name = self::generateDeploymentName(
+      $project_name,
+      $short_name,
+      $site_id
+    );
+
+    $environment_deployment_name = self::generateDeploymentName(
       $project_name,
       $short_name,
       $environment_id
     );
 
-    $this->client->updateService($deployment_name, $deployment_name);
+    return $this->client->updateService($site_deployment_name, $environment_deployment_name);
   }
 
   /**
    * {@inheritdoc}
    */
-  public function createdSite() {
-    // TODO: Implement createSite() method.
+  public function createdSite(
+    string $project_name,
+    string $short_name,
+    int $site_id,
+    string $domain,
+    string $path
+  ) {
+    $deployment_name = self::generateDeploymentName(
+      $project_name,
+      $short_name,
+      $site_id
+    );
+    // @todo - make port a var and great .. so great .. yuge!
+    $port = 8080;
+    try {
+      $this->client->createService($deployment_name, $deployment_name, $port, $port, $deployment_name);
+      $this->client->createRoute($deployment_name, $deployment_name, $domain, $path);
+    }
+    catch (ClientException $e) {
+      $this->handleClientException($e);
+      return FALSE;
+    }
   }
 
   /**
@@ -513,12 +540,12 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
   public static function generateDeploymentName(
     string $project_name,
     string $short_name,
-    string $environment_id
+    int $id
   ) {
     return implode('-', [
       self::sanitise($project_name),
       self::sanitise($short_name),
-      $environment_id,
+      $id,
     ]);
   }
 
