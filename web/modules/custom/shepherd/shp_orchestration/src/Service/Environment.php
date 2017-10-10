@@ -2,11 +2,13 @@
 
 namespace Drupal\shp_orchestration\Service;
 
+use Drupal\node\Entity\Node;
 use Drupal\node\NodeInterface;
 use Drupal\shp_orchestration\Event\OrchestrationEnvironmentEvent;
 use Drupal\shp_orchestration\Event\OrchestrationEvents;
 use Drupal\shp_orchestration\OrchestrationProviderPluginManager;
 use Drupal\shp_orchestration\OrchestrationProviderTrait;
+use Drupal\taxonomy\Entity\Term;
 
 /**
  * Class Environment.
@@ -191,10 +193,36 @@ class Environment extends EntityActionBase {
       $environment->id()
     );
 
-    if ($exclusive) {
-      // query the list of environments that are connected and disconnect
-      // any that aren't the one specified.
+    // @todo everything is exclusive for now, implement non-exclusive?
+
+    // Load a non protected term
+    // @todo handle multiples? this is quite horrid.
+    $ids = \Drupal::entityQuery('taxonomy_term')
+      ->condition('vid', 'shp_environment_types')
+      ->condition('field_shp_protect', FALSE)
+      ->execute();
+    $demoted_term = reset(Term::loadMultiple($ids));
+
+    // Load the taxonomy term that has protect enabled.
+    $ids = \Drupal::entityQuery('taxonomy_term')
+      ->condition('vid', 'shp_environment_types')
+      ->condition('field_shp_protect', TRUE)
+      ->execute();
+    $promoted_term = reset(Term::loadMultiple($ids));
+
+    // Demote all current prod environments
+    $old_promoted = \Drupal::entityQuery('node')
+      ->condition('field_shp_environment_type', $promoted_term->id())
+      ->execute();
+    foreach ($old_promoted as $nid) {
+      $node = Node::load($nid);
+      $node->field_shp_environment_type = [['target_id' => $demoted_term->id()]];
+      $node->save();
     }
+
+    // Finally Update the environment that was promoted.
+    $environment->field_shp_environment_type = [['target_id' => $promoted_term->id()]];
+    $environment->save();
 
     return $result;
   }

@@ -102,11 +102,12 @@ class EnvironmentPromoteForm extends FormBase {
       '#title' => $this->t('@environment_service', ['@environment_service' => $environment->getTitle()]),
     ];
 
-    $form['exclusive'] = [
-      '#title' => $this->t('Make this environment the exclusive destination?'),
-      '#type' => 'checkbox',
-      '#default_value' => FALSE,
-    ];
+    // @todo everything is exclusive for now, implement non-exclusive?
+    //$form['exclusive'] = [
+    //  '#title' => $this->t('Make this environment the exclusive destination?'),
+    //  '#type' => 'checkbox',
+    //  '#default_value' => FALSE,
+    //];
 
     $form['actions'] = [
       '#type' => 'actions',
@@ -127,7 +128,7 @@ class EnvironmentPromoteForm extends FormBase {
 
     $site = $form_state->get('site');
     $environment = $form_state->get('environment');
-    $exclusive = $form_state->getValue('exclusive');
+    $exclusive = TRUE; // $form_state->getValue('exclusive');
 
     if ($result = \Drupal::service('shp_orchestration.environment')->promote($site, $environment, $exclusive)) {
       drupal_set_message($this->t('Promoted %environment for %site successfully', [

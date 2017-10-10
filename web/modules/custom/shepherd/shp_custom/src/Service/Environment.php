@@ -10,9 +10,10 @@ use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Session\AccountProxyInterface;
-use Drupal\Core\Url;
-use Symfony\Component\HttpFoundation\RequestStack;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
+use Drupal\Core\Url;
+use Drupal\taxonomy\Entity\Term;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 
 /**
@@ -191,19 +192,25 @@ class Environment {
   public function operationsLinksAlter(array &$operations, EntityInterface $entity) {
     $site = $entity->field_shp_site->target_id;
     $environment = $entity->id();
+    $environment_term = Term::load($entity->field_shp_environment_type->target_id);
 
-    $operations['promote'] = [
-      'title' => $this->t('Promote'),
-      'weight' => 1,
-      'url' => Url::fromRoute('shp_custom.environment-promote-form',
-        ['site' => $site, 'environment' => $environment]),
-      // Render form in a modal window.
-      'attributes' => [
-        'class' => ['button', 'use-ajax'],
-        'data-dialog-type' => 'modal',
-        'data-dialog-options' => Json::encode(['width' => '50%', 'height' => '50%']),
-      ],
-    ];
+    // If its not a protected environment, it can be promoted.
+    if (!$environment_term->field_shp_protect->value) {
+      $operations['promote'] = [
+        'title'      => $this->t('Promote'),
+        'weight'     => 1,
+        'url'        => Url::fromRoute('shp_custom.environment-promote-form',
+          ['site' => $site, 'environment' => $environment]),
+        // Render form in a modal window.
+        'attributes' => [
+          'class'               => ['button', 'use-ajax'],
+          'data-dialog-type'    => 'modal',
+          'data-dialog-options' => Json::encode(['width'  => '50%',
+                                                 'height' => '50%'
+          ]),
+        ],
+      ];
+    }
 
   }
 
