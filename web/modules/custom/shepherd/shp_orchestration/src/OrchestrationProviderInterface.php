@@ -247,10 +247,17 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
   /**
    * Handles a site being deleted.
    *
+   * @param string $project_name
+   *   The project that is being deployed on the site
+   * @param string $short_name
+   *   The short name of the site
+   * @param int $site_id
+   *   The site id
+   *
    * @return bool
    *   Returns true if succeeded.
    */
-  public function deletedSite();
+  public function deletedSite(string $project_name, string $short_name, int $site_id);
 
   /**
    * Retrieves the metadata on a stored secret.

@@ -378,8 +378,19 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
   /**
    * {@inheritdoc}
    */
-  public function deletedSite() {
-    // TODO: Implement deleteSite() method.
+  public function deletedSite(
+    string $project_name,
+    string $short_name,
+    int $site_id
+  ) {
+    $deployment_name = self::generateDeploymentName(
+      $project_name,
+      $short_name,
+      $site_id
+    );
+
+    $this->client->deleteService($deployment_name);
+    $this->client->deleteRoute($deployment_name);
   }
 
   /**

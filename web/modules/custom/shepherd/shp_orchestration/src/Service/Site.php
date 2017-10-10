@@ -45,13 +45,17 @@ class Site extends EntityActionBase {
   /**
    * Tell the active orchestration provider a project was deleted.
    *
-   * @param \Drupal\node\NodeInterface $node
+   * @param \Drupal\node\NodeInterface $site
    *
    * @return bool
    */
-  public function deleted(NodeInterface $node) {
-    // @todo implement me.
-    return TRUE;
+  public function deleted(NodeInterface $site) {
+    $project = $this->getProjectFromSite($site);
+    return $this->orchestrationProviderPlugin->deletedSite(
+      $project->getTitle(),
+      $site->field_shp_short_name->value,
+      $site->id()
+    );
   }
 
 }
