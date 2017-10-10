@@ -16,6 +16,7 @@ use Drupal\Core\Url;
 use Drupal\node\Entity\Node;
 use Drupal\node\NodeInterface;
 use Drupal\shp_orchestration\Exception\OrchestrationProviderNotConfiguredException;
+use Drupal\taxonomy\Entity\Term;
 
 /**
  * Implements hook_help().
@@ -124,17 +125,6 @@ function shp_custom_invalidate_site_cache(NodeInterface $environment) {
 }
 
 /**
- * Implements hook_ENTITY_TYPE_presave().
- */
-function shp_custom_node_presave(NodeInterface $node) {
-  switch ($node->getType()) {
-    case 'shp_environment':
-      \Drupal::service('shp_custom.site')->checkGoLiveApplied($node);
-      break;
-  }
-}
-
-/**
  * Implements hook_ENTITY_TYPE_update().
  *
  * Triggers things when an instance's status is changed to archive.
@@ -223,12 +213,13 @@ function shp_custom_node_delete(EntityInterface $entity) {
  *
  * Prevent production environments from being deleted.
  */
-function shp_custom_node_access(EntityInterface $entity, $operation, AccountInterface $account) {
-  if ($entity->bundle() == 'shp_environment') {
-    if ($operation == 'delete') {
-      // @todo Use field_shp_environment_type term association to determine access.
-      if ($entity->field_shp_machine_name->value === 'prd') {
-        return AccessResult::forbidden();
+function shp_custom_node_access(NodeInterface $node, $op, AccountInterface $account) {
+  if ($node->bundle() == 'shp_environment') {
+    if ($op == 'delete') {
+      if ($environment_term = Term::load($node->field_shp_environment_type->target_id)) {
+        if ($environment_term->field_shp_protect->value) {
+          return AccessResult::forbidden();
+        }
       }
     }
   }

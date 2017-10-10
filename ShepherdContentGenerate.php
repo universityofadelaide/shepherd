@@ -89,6 +89,8 @@ if (!$development = taxonomy_term_load_multiple_by_name('Development', 'shp_envi
     'vid'  => 'shp_environment_types',
     'name' => 'Production',
     'field_shp_base_domain' => $domain_name,
+    'field_shp_protect' => TRUE,
+    'field_shp_update_go_live' => TRUE,
   ]);
   $production_env->save();
 }

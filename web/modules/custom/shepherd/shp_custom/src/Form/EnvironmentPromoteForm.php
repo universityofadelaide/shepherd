@@ -130,11 +130,11 @@ class EnvironmentPromoteForm extends FormBase {
     $exclusive = $form_state->getValue('exclusive');
 
     if ($result = \Drupal::service('shp_orchestration.environment')->promote($site, $environment, $exclusive)) {
-
       drupal_set_message($this->t('Promoted %environment for %site successfully', [
         '%environment' => $environment->getTitle(),
         '%site' => $site->getTitle(),
       ]));
+      \Drupal::service('shp_custom.site')->checkGoLiveApplied($environment);
     }
     else {
       drupal_set_message($this->t('Failed to promote %environment for %site',

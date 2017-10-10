@@ -65,9 +65,9 @@ class Site {
    *   TRUE if applied go live date.
    */
   public function checkGoLiveApplied(Node $environment) {
-    $term = $this->taxonomyTerm->load($environment->field_shp_environment_type->getString());
+    $term = $this->taxonomyTerm->load($environment->field_shp_environment_type->target_id);
     $site = $this->node->load($environment->field_shp_site->getString());
-    if ($term->getName() === "Production") {
+    if ($term->field_shp_update_go_live->value) {
       if (!isset($site->field_shp_go_live_date->value)) {
         $date = new DrupalDateTime();
         $site->field_shp_go_live_date->setValue($date->format(DATETIME_DATETIME_STORAGE_FORMAT));
