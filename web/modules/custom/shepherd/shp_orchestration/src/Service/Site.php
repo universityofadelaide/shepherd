@@ -6,7 +6,7 @@ use Drupal\node\NodeInterface;
 use Drupal\shp_orchestration\OrchestrationProviderTrait;
 
 /**
- * Class Project.
+ * Class Site.
  */
 class Site extends EntityActionBase {
 
