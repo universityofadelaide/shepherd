@@ -28,7 +28,7 @@ class RoboFile extends RoboFileBase {
    * {@inheritdoc}
    */
   protected function getDrupalProfile() {
-    return "ua_shepherd";
+    return "shepherd";
   }
 
   /**
