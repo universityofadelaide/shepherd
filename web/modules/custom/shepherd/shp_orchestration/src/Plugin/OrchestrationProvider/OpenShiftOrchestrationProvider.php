@@ -133,13 +133,13 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     string $source_repo,
     string $source_ref = 'master',
     string $source_secret = NULL,
+    bool $update_on_image_change = FALSE,
     array $environment_variables = [],
     array $secrets = [],
     array $probes = [],
     array $cron_jobs = []
   ) {
     // @todo Refactor this. _The complexity is too damn high!_
-    // @todo add shepherd ui and support for passing in $update_on_image_change
 
     $sanitised_project_name = self::sanitise($project_name);
     $sanitised_source_ref = self::sanitise($source_ref);
@@ -187,7 +187,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       $deployment_name,
       $image_stream_tag,
       $sanitised_project_name,
-      FALSE,
+      $update_on_image_change,
       $volumes,
       $deploy_data
     );
@@ -228,6 +228,17 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       }
     }
 
+    if (!$update_on_image_change) {
+      // We need to check if the image is already 'built', or we get an error.
+      $build_status = $this->client->getBuilds($build_config_name);
+      if ($build_status['items'][0]['status']['phase'] === 'Complete') {
+        $this->client->instantiateDeploymentConfig($deployment_name);
+      }
+      else {
+        drupal_set_message(t('Build not yet complete, manual triggering of deployment will be required.'));
+      }
+    }
+
     // @todo - make port a var and great .. so great .. yuge!
     $port = 8080;
     try {
@@ -238,8 +249,6 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       $this->handleClientException($e);
       return FALSE;
     }
-
-    $this->client->instantiateDeploymentConfig($deployment_name);
 
     return TRUE;
   }

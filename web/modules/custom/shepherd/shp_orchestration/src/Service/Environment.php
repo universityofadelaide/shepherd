@@ -114,6 +114,7 @@ class Environment extends EntityActionBase {
       $project->field_shp_git_repository->value,
       $node->field_shp_git_reference->value,
       $project->field_shp_build_secret->value,
+      $node->field_shp_update_on_image_change->value,
       $env_vars,
       $secrets,
       $probes,
