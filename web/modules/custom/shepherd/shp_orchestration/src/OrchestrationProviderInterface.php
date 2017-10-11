@@ -217,6 +217,31 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
   );
 
   /**
+   * Updates the environment in the selected orchestration provider.
+   *
+   * @param string $project_name
+   *   Name of the project.
+   * @param string $short_name
+   *   Short name of the site.
+   * @param int $site_id
+   *   Unique id of the site.
+   * @param int $environment_id
+   *   Unique id of the environment.
+   * @param string $source_ref
+   *   Source code git ref, defaults to 'master'.
+   *
+   * @return bool
+   *   Returns true if succeeded.
+   */
+  public function promotedEnvironment(
+    string $project_name,
+    string $short_name,
+    int $site_id,
+    int $environment_id,
+    string $source_ref = 'master'
+  );
+
+  /**
    * Handles a site being created.
    *
    * @param string $project_name

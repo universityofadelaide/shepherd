@@ -180,7 +180,7 @@ class Environment extends EntityActionBase {
    *
    * @return bool
    */
-  public function promote(NodeInterface $site, NodeInterface $environment, bool $exclusive) {
+  public function promoted(NodeInterface $site, NodeInterface $environment, bool $exclusive) {
     $project = $this->getProjectFromSite($site);
     if (!isset($project) || !isset($site)) {
       return FALSE;
@@ -190,7 +190,8 @@ class Environment extends EntityActionBase {
       $project->title->value,
       $site->field_shp_short_name->value,
       $site->id(),
-      $environment->id()
+      $environment->id(),
+      $environment->field_shp_git_reference->value
     );
 
     // @todo everything is exclusive for now, implement non-exclusive?

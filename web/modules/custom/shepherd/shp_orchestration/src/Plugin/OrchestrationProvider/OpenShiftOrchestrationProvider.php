@@ -139,6 +139,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     array $cron_jobs = []
   ) {
     // @todo Refactor this. _The complexity is too damn high!_
+    // @todo add shepherd ui and support for passing in $update_on_image_change
 
     $sanitised_project_name = self::sanitise($project_name);
     $sanitised_source_ref = self::sanitise($source_ref);
@@ -181,10 +182,12 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       $environment_id
     );
 
+    // @todo $update_on_image_change should be passed in as a parameter
     $deployment_config = $this->client->generateDeploymentConfig(
       $deployment_name,
       $image_stream_tag,
       $sanitised_project_name,
+      FALSE,
       $volumes,
       $deploy_data
     );
@@ -235,6 +238,8 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       $this->handleClientException($e);
       return FALSE;
     }
+
+    $this->client->instantiateDeploymentConfig($deployment_name);
 
     return TRUE;
   }
@@ -320,11 +325,15 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     );
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function promotedEnvironment(
     string $project_name,
     string $short_name,
     int $site_id,
-    int $environment_id
+    int $environment_id,
+    string $source_ref = 'master'
   ) {
     $site_deployment_name = self::generateDeploymentName(
       $project_name,
@@ -338,7 +347,17 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       $environment_id
     );
 
-    return $this->client->updateService($site_deployment_name, $environment_deployment_name);
+    if ($result = $this->client->updateService($site_deployment_name, $environment_deployment_name)) {
+      self::executeJob(
+        $project_name,
+        $short_name,
+        $environment_id,
+        $source_ref,
+        "drush -r web cr"
+      );
+    }
+
+    return $result;
   }
 
   /**

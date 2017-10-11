@@ -130,7 +130,7 @@ class EnvironmentPromoteForm extends FormBase {
     $environment = $form_state->get('environment');
     $exclusive = TRUE; // $form_state->getValue('exclusive');
 
-    if ($result = \Drupal::service('shp_orchestration.environment')->promote($site, $environment, $exclusive)) {
+    if ($result = \Drupal::service('shp_orchestration.environment')->promoted($site, $environment, $exclusive)) {
       drupal_set_message($this->t('Promoted %environment for %site successfully', [
         '%environment' => $environment->getTitle(),
         '%site' => $site->getTitle(),
