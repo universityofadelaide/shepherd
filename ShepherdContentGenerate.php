@@ -77,6 +77,10 @@ else {
 }
 $openshift->save();
 
+$orchestration_config = \Drupal::service('config.factory')->getEditable('shp_orchestration.settings');
+$orchestration_config->set('selected_provider', 'openshift_with_redis');
+$orchestration_config->save();
+
 if (!$development = taxonomy_term_load_multiple_by_name('Development', 'shp_environment_types')) {
   $development_env = Term::create([
     'vid'                   => 'shp_environment_types',
@@ -151,6 +155,7 @@ if (!$env) {
     'field_shp_environment_type' => [['target_id' => $development_env->id()]],
     'field_shp_git_reference'    => 'master',
     'field_shp_site'             => [['target_id' => $site->id()]],
+    'field_shp_update_on_image_change' => TRUE,
   ]);
   $env->moderation_state->value = 'published';
   $env->save();
