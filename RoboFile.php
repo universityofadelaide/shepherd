@@ -27,13 +27,6 @@ class RoboFile extends RoboFileBase {
   /**
    * {@inheritdoc}
    */
-  protected function getDrupalProfile() {
-    return "shepherd";
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public function build() {
     parent::build();
     $this->say("To provide default content for shepherd, use robo dev:content-generate");

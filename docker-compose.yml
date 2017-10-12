@@ -20,7 +20,7 @@ services:
       PUBLIC_DIR: web/sites/default/files
       HASH_SALT: random-hash
       CONFIG_SYNC_DIRECTORY: /shared/private/random-hash/sync
-      SHEPHERD_INSTALL_PROFILE: ua_shepherd
+      SHEPHERD_INSTALL_PROFILE: shepherd
       SHEPHERD_SITE_ID: 0
       REDIS_ENABLED: 1
     volumes:
