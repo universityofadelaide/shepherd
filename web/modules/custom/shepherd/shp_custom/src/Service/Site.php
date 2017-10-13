@@ -64,7 +64,7 @@ class Site {
    * @return bool
    *   TRUE if applied go live date.
    */
-  public function checkGoLiveApplied(Node $environment) {
+  public function setGoLiveDate(Node $environment) {
     $term = $this->taxonomyTerm->load($environment->field_shp_environment_type->target_id);
     $site = $this->node->load($environment->field_shp_site->getString());
     if ($term->field_shp_update_go_live->value) {

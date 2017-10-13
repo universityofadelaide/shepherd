@@ -135,7 +135,7 @@ class EnvironmentPromoteForm extends FormBase {
         '%environment' => $environment->getTitle(),
         '%site' => $site->getTitle(),
       ]));
-      \Drupal::service('shp_custom.site')->checkGoLiveApplied($environment);
+      \Drupal::service('shp_custom.site')->setGoLiveDate($environment);
     }
     else {
       drupal_set_message($this->t('Failed to promote %environment for %site',

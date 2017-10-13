@@ -214,8 +214,8 @@ function shp_custom_node_delete(EntityInterface $entity) {
  * Prevent production environments from being deleted.
  */
 function shp_custom_node_access(NodeInterface $node, $op, AccountInterface $account) {
-  if ($node->bundle() == 'shp_environment') {
-    if ($op == 'delete') {
+  if ($node->bundle() === 'shp_environment') {
+    if ($op === 'delete') {
       if ($environment_term = Term::load($node->field_shp_environment_type->target_id)) {
         if ($environment_term->field_shp_protect->value) {
           return AccessResult::forbidden();

@@ -205,8 +205,9 @@ class Environment {
         'attributes' => [
           'class'               => ['button', 'use-ajax'],
           'data-dialog-type'    => 'modal',
-          'data-dialog-options' => Json::encode(['width'  => '50%',
-                                                 'height' => '50%'
+          'data-dialog-options' => Json::encode([
+            'width'  => '50%',
+            'height' => '50%'
           ]),
         ],
       ];

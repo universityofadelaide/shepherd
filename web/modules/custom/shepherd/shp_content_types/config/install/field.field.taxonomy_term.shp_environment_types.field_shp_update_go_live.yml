@@ -9,7 +9,7 @@ field_name: field_shp_update_go_live
 entity_type: taxonomy_term
 bundle: shp_environment_types
 label: 'Update go live'
-description: ''
+description: 'Set the initial go-live date for a site, when an environment receives this tag, if it has not already been set.'
 required: false
 translatable: false
 default_value:
