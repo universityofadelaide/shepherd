@@ -356,7 +356,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       $environment_id
     );
 
-    if ($result = $this->client->updateService($site_deployment_name, $environment_deployment_name)) {
+    if ($result = $this->client->updateService($environment_deployment_name, $site_deployment_name)) {
       self::executeJob(
         $project_name,
         $short_name,
