@@ -10,8 +10,8 @@ id: node.shp_project.field_shp_liveness_probe_type
 field_name: field_shp_liveness_probe_type
 entity_type: node
 bundle: shp_project
-label: 'Liveness probe type'
-description: ''
+label: 'Type'
+description: 'A liveness probe checks if the container in which it is configured is still running.'
 required: false
 translatable: false
 default_value: {  }
