@@ -1,5 +1,4 @@
-Shepherd
-========
+# Shepherd
 
 Shepherd is a web based administration tool for web sites using the 
 [OpenShift](https://www.openshift.com/) Container Platform.

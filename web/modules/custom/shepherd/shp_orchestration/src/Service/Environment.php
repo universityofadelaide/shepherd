@@ -37,6 +37,7 @@ class Environment extends EntityActionBase {
    */
   public function created(NodeInterface $node) {
     if (isset($node->field_shp_site->target_id)) {
+      /** @var \Drupal\node\NodeInterface $site */
       $site = $node->get('field_shp_site')
         ->first()
         ->get('entity')
@@ -44,6 +45,7 @@ class Environment extends EntityActionBase {
         ->getValue();
 
       if (isset($site->field_shp_project->target_id)) {
+        /** @var \Drupal\node\NodeInterface $project */
         $project = $site->get('field_shp_project')
           ->first()
           ->get('entity')
@@ -53,6 +55,15 @@ class Environment extends EntityActionBase {
     }
     if (!isset($project) || !isset($site)) {
       return FALSE;
+    }
+
+    $probes = [];
+    foreach (['liveness', 'readiness'] as $type) {
+      $probes[$type] = [
+        'type'       => $project->get('field_shp_' . $type . '_probe_type')->value,
+        'port'       => $project->get('field_shp_' . $type . '_probe_port')->value,
+        'parameters' => $project->get('field_shp_' . $type . '_probe_params')->value,
+      ];
     }
 
     $cron_jobs = [];
@@ -113,11 +124,12 @@ class Environment extends EntityActionBase {
       $project->field_shp_build_secret->value,
       $env_vars,
       $secrets,
+      $probes,
       $cron_jobs
     );
 
     // Allow other modules to react to the Environment creation.
-    $event = new OrchestrationEnvironmentEvent($this->orchestrationProviderPlugin, $deployment_name);
+    $event = new OrchestrationEnvironmentEvent($this->orchestrationProviderPlugin, $deployment_name, $site, $node, $project);
     $eventDispatcher->dispatch(OrchestrationEvents::CREATED_ENVIRONMENT, $event);
 
     return $environment;
@@ -141,6 +153,7 @@ class Environment extends EntityActionBase {
    * @return bool
    */
   public function deleted(NodeInterface $node) {
+    /** @var \Drupal\node\NodeInterface $site */
     $site = $node->get('field_shp_site')
       ->first()
       ->get('entity')
@@ -148,6 +161,7 @@ class Environment extends EntityActionBase {
       ->getValue();
 
     if (isset($site->field_shp_project->target_id)) {
+      /** @var \Drupal\node\NodeInterface $project */
       $project = $site->get('field_shp_project')
         ->first()
         ->get('entity')
