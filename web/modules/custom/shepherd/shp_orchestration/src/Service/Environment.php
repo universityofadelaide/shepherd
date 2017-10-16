@@ -4,18 +4,17 @@ namespace Drupal\shp_orchestration\Service;
 
 use Drupal\node\Entity\Node;
 use Drupal\node\NodeInterface;
+use Drupal\shp_custom\Service\Environment as EnvironmentEntity;
+use Drupal\shp_custom\Service\Site as SiteEntity;
 use Drupal\shp_orchestration\Event\OrchestrationEnvironmentEvent;
 use Drupal\shp_orchestration\Event\OrchestrationEvents;
 use Drupal\shp_orchestration\OrchestrationProviderPluginManager;
-use Drupal\shp_orchestration\OrchestrationProviderTrait;
 use Drupal\taxonomy\Entity\Term;
 
 /**
  * Class Environment.
  */
 class Environment extends EntityActionBase {
-
-  use OrchestrationProviderTrait;
 
   /**
    * The Shepherd configuration service.
@@ -25,14 +24,33 @@ class Environment extends EntityActionBase {
   protected $configuration;
 
   /**
+   * @var \Drupal\shp_orchestration\OrchestrationProviderPluginManager
+   */
+  private $orchestrationProviderPluginManager;
+
+  /**
+   * @var \Drupal\shp_custom\Service\Environment|\Drupal\shp_orchestration\Service\Environment
+   */
+  private $environmentEntity;
+
+  /**
+   * @var \Drupal\shp_custom\Service\Site
+   */
+  private $siteEntity;
+
+  /**
    * Shepherd constructor.
    *
    * @param \Drupal\shp_orchestration\OrchestrationProviderPluginManager $orchestrationProviderPluginManager
    * @param \Drupal\shp_orchestration\Service\Configuration $configuration
+   * @param \Drupal\shp_custom\Service\Environment $environment
+   * @param \Drupal\shp_custom\Service\Site $site
    */
-  public function __construct(OrchestrationProviderPluginManager $orchestrationProviderPluginManager, Configuration $configuration) {
+  public function __construct(OrchestrationProviderPluginManager $orchestrationProviderPluginManager, Configuration $configuration, EnvironmentEntity $environment, SiteEntity $site) {
     parent::__construct($orchestrationProviderPluginManager);
     $this->configuration = $configuration;
+    $this->environmentEntity = $environment;
+    $this->siteEntity = $site;
   }
 
   /**
@@ -43,8 +61,8 @@ class Environment extends EntityActionBase {
    * @return bool
    */
   public function created(NodeInterface $node) {
-    $site = $this->getSiteFromEnvironment($node);
-    $project = $this->getProjectFromSite($site);
+    $site = $this->environmentEntity->getSite($node);
+    $project = $this->siteEntity->getProject($site);
     if (!isset($project) || !isset($site)) {
       return FALSE;
     }
@@ -148,8 +166,8 @@ class Environment extends EntityActionBase {
    * @return bool
    */
   public function deleted(NodeInterface $node) {
-    $site = $this->getSiteFromEnvironment($node);
-    $project = $this->getProjectFromSite($site);
+    $site = $this->environmentEntity->getSite($node);
+    $project = $this->siteEntity->getProject($site);
     if (!isset($project) || !isset($site)) {
       return FALSE;
     }
@@ -182,7 +200,7 @@ class Environment extends EntityActionBase {
    * @return bool
    */
   public function promoted(NodeInterface $site, NodeInterface $environment, bool $exclusive) {
-    $project = $this->getProjectFromSite($site);
+    $project = $this->siteEntity->getProject($site);
     if (!isset($project) || !isset($site)) {
       return FALSE;
     }
@@ -227,23 +245,6 @@ class Environment extends EntityActionBase {
     $environment->save();
 
     return $result;
-  }
-
-  /**
-   * @param \Drupal\node\NodeInterface $environment
-   *
-   * @return \Drupal\node\NodeInterface|bool
-   */
-  protected function getSiteFromEnvironment(NodeInterface $environment) {
-    if (isset($environment->field_shp_site->target_id)) {
-      return $environment->get('field_shp_site')
-        ->first()
-        ->get('entity')
-        ->getTarget()
-        ->getValue();
-    }
-
-    return FALSE;
   }
 
 }

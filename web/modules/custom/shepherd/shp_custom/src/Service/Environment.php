@@ -12,6 +12,7 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\Url;
+use Drupal\node\NodeInterface;
 use Drupal\taxonomy\Entity\Term;
 use Symfony\Component\HttpFoundation\RequestStack;
 
@@ -215,5 +216,21 @@ class Environment {
 
   }
 
+  /**
+   * @param \Drupal\node\NodeInterface $environment
+   *
+   * @return \Drupal\node\NodeInterface|bool
+   */
+  public function getSite(NodeInterface $environment) {
+    if (isset($environment->field_shp_site->target_id)) {
+      return $environment->get('field_shp_site')
+        ->first()
+        ->get('entity')
+        ->getTarget()
+        ->getValue();
+    }
+
+    return FALSE;
+  }
 
 }

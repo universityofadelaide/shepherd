@@ -60,7 +60,6 @@ shp_custom.environment-promote-form:
     _title_callback: '\Drupal\shp_custom\Form\EnvironmentPromoteForm::getPageTitle'
     _title: 'Promote'
   options:
-    _auth: [ 'basic_auth', 'cookie' ]
     parameters:
       site:
         type: entity:node

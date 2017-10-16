@@ -11,6 +11,7 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\node\Entity\Node;
+use Drupal\node\NodeInterface;
 
 /**
  * Class Site.
@@ -281,6 +282,24 @@ class Site {
       return $short_name . '-' . $count;
     }
     return $short_name;
+  }
+
+  /**
+   * @param \Drupal\node\NodeInterface $site
+   *
+   * @return \Drupal\node\NodeInterface|bool
+   */
+   public function getProject(NodeInterface $site) {
+    if (isset($site->field_shp_project->target_id)) {
+      /** @var \Drupal\node\NodeInterface $project */
+      return $site->get('field_shp_project')
+        ->first()
+        ->get('entity')
+        ->getTarget()
+        ->getValue();
+    }
+
+    return FALSE;
   }
 
 }
