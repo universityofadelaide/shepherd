@@ -4,7 +4,7 @@ services:
     parent: default_plugin_manager
   shp_orchestration.configuration:
     class: Drupal\shp_orchestration\Service\Configuration
-    arguments: ['@module_handler']
+    arguments: ['@module_handler', '@shp_custom.environment', '@shp_custom.site']
   shp_orchestration.job_queue:
     class: Drupal\shp_orchestration\Service\JobQueue
     arguments: ['@queue', '@plugin.manager.queue_worker', '@shp_orchestration.active_job_manager']

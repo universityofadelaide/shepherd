@@ -338,7 +338,7 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
    * @param string $short_name
    *   Short name of the site.
    * @param int $id
-   *   Id of the name to be generated
+   *   Id of the name to be generated.
    *
    * @return string
    *   Returns the generated deployment name.
