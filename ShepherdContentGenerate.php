@@ -132,8 +132,8 @@ if (!$site) {
     'title'                  => 'Test Site',
     'field_shp_namespace'    => 'myproject',
     'field_shp_short_name'   => 'test',
-    'field_shp_domain'       => 'test-site.' . $domain_name,
-    'field_shp_path'         => '/test-path',
+    'field_shp_domain'       => 'test-live.' . $domain_name,
+    'field_shp_path'         => '/',
     'field_shp_project' => [['target_id' => $project->id()]],
   ]);
   $site->moderation_state->value = 'published';
@@ -150,7 +150,7 @@ if (!$env) {
     'langcode'                   => 'en',
     'uid'                        => '1',
     'status'                     => 1,
-    'field_shp_domain'           => $site->field_shp_domain->value,
+    'field_shp_domain'           => 'test-development.' . $domain_name,
     'field_shp_path'             => $site->field_shp_path->value,
     'field_shp_environment_type' => [['target_id' => $development_env->id()]],
     'field_shp_git_reference'    => 'master',
