@@ -1,0 +1,32 @@
+{
+  "name": "drupal/shepherd",
+  "description": "University of Adelaide Shepherd site management system.",
+  "type": "drupal-module",
+  "authors": [
+    {
+      "name": "Michael Priest",
+      "homepage": "https://www.drupal.org/u/pingers",
+      "role": "Maintainer"
+    },
+    {
+      "name": "Chris Barton",
+      "homepage": "https://www.drupal.org/u/bart88",
+      "role": "Maintainer"
+    },
+    {
+      "name": "Simon Lindsay",
+      "homepage": "https://www.drupal.org/u/singularo",
+      "role": "Maintainer"
+    },
+    {
+      "name": "Casey Fulton",
+      "homepage": "https://www.drupal.org/u/caseyfw",
+      "role": "Contributor"
+    }
+  ],
+  "support": {
+    "issues": "https://github.com/universityofadelaide/shepherd/issues"
+  },
+  "license": "GPL-2.0+",
+  "minimum-stability": "dev"
+}

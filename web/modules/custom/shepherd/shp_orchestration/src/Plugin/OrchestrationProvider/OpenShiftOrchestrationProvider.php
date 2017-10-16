@@ -135,6 +135,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     string $source_secret = NULL,
     array $environment_variables = [],
     array $secrets = [],
+    array $probes = [],
     array $cron_jobs = []
   ) {
     // @todo Refactor this. _The complexity is too damn high!_
@@ -151,17 +152,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
 
     // Create build config if it doesn't exist.
     if (!$this->client->getBuildConfig($build_config_name)) {
-      // Package config for the client.
-      $build_data = [
-        'git' => [
-          'ref' => $source_ref,
-          'uri' => $source_repo,
-        ],
-        'source' => [
-          'type' => 'DockerImage',
-          'name' => $builder_image,
-        ],
-      ];
+      $build_data = $this->formatBuildData($source_ref, $source_repo, $builder_image);
 
       try {
         $this->client->createBuildConfig(
@@ -190,14 +181,6 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       $environment_id
     );
 
-    // If set, add uid and gid from config to deploy data.
-    if (strlen($this->configEntity->uid) > 0) {
-      $deploy_data['uid'] = $this->configEntity->uid;
-      if (strlen($this->configEntity->gid) > 0) {
-        $deploy_data['gid'] = $this->configEntity->gid;
-      }
-    }
-
     $deployment_config = $this->client->generateDeploymentConfig(
       $deployment_name,
       $image_stream_tag,
@@ -205,6 +188,8 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       $volumes,
       $deploy_data
     );
+
+    $this->client->addProbeConfig($deployment_config, $probes);
 
     try {
       $this->client->createDeploymentConfig($deployment_config);
@@ -264,9 +249,14 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     string $environment_id,
     string $environment_url,
     string $builder_image,
+    string $domain,
+    string $path,
     string $source_repo,
     string $source_ref = 'master',
     string $source_secret = NULL,
+    array $environment_variables = [],
+    array $secrets = [],
+    array $probes = [],
     array $cron_jobs = []
   ) {
 
@@ -534,7 +524,6 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
    * {@inheritdoc}
    */
   public function getEnvironmentUrl(string $project_name, string $short_name, string $environment_id) {
-
     $deployment_name = self::generateDeploymentName(
       $project_name,
       $short_name,
@@ -556,6 +545,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
 
   /**
    * Format an array of environment variables ready to pass to OpenShift.
+   * @todo - move this into the client?
    *
    * @param array $environment_variables
    *   An array of environment variables to be set for the pod.
@@ -596,6 +586,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
 
   /**
    * Format an array of deployment data ready to pass to OpenShift.
+   * @todo - move this into the client?
    *
    * @param string $name
    *   The name of the deployment config.
@@ -627,11 +618,47 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       ],
     ];
 
+    // If set, add uid and gid from config to deploy data.
+    if (strlen($this->configEntity->uid) > 0) {
+      $deploy_data['uid'] = $this->configEntity->uid;
+      if (strlen($this->configEntity->gid) > 0) {
+        $deploy_data['gid'] = $this->configEntity->gid;
+      }
+    }
+
     return $deploy_data;
   }
 
   /**
+   * Format an array of build data ready to pass to OpenShift.
+   * @todo - move this into the client?
+   *
+   * @param string $source_ref
+   *   The source tag/branch/commit.
+   * @param string $source_repo
+   *   The source repository.
+   * @param string $builder_image
+   *   The builder image.
+   *
+   * @return array
+   */
+  private function formatBuildData(string $source_ref, string $source_repo, string $builder_image) {
+    // Package config for the client.
+    return [
+      'git' => [
+        'ref' => $source_ref,
+        'uri' => $source_repo,
+      ],
+      'source' => [
+        'type' => 'DockerImage',
+        'name' => $builder_image,
+      ],
+    ];
+  }
+
+  /**
    * Format an array of volume data ready to pass to OpenShift.
+   * @todo - move this into the client?
    *
    * @param string $project_name
    *   The name of the project being deployed.
