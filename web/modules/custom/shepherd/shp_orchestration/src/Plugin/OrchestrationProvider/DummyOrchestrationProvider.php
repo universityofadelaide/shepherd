@@ -205,7 +205,7 @@ class DummyOrchestrationProvider extends OrchestrationProviderBase {
   public static function generateDeploymentName(
     string $project_name,
     string $short_name,
-    string $environment_id
+    int $id
   ) {
     return 'deployment_name';
   }

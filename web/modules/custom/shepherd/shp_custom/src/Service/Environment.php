@@ -2,13 +2,20 @@
 
 namespace Drupal\shp_custom\Service;
 
+use Drupal\Component\Serialization\Json;
 use Drupal\Core\Ajax\AjaxResponse;
 use Drupal\Core\Ajax\InvokeCommand;
 use Drupal\Core\DependencyInjection\DependencySerializationTrait;
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Session\AccountProxyInterface;
+use Drupal\Core\StringTranslation\StringTranslationTrait;
+use Drupal\Core\Url;
+use Drupal\node\NodeInterface;
+use Drupal\taxonomy\Entity\Term;
 use Symfony\Component\HttpFoundation\RequestStack;
+
 
 /**
  * Environment service. Provides methods to handle Environment entities.
@@ -17,6 +24,7 @@ use Symfony\Component\HttpFoundation\RequestStack;
  */
 class Environment {
 
+  use StringTranslationTrait;
   use DependencySerializationTrait;
 
   /**
@@ -153,13 +161,7 @@ class Environment {
       $taxonomy_term = $this->loadTaxonomyTerm($taxonomy_term_id);
       $site = $this->node->load($site_id);
       $path_value = $site->field_shp_path->value;
-      if (strtolower($taxonomy_term->getName()) === "production") {
-        $domain_value = $site->field_shp_domain->value;
-      }
-      else {
-        // Non production environment use the domain provided.
-        $domain_value = $site->field_shp_short_name->value . '.' . $taxonomy_term->field_shp_base_domain->value;
-      }
+      $domain_value = $site->field_shp_short_name->value . '.' . $taxonomy_term->field_shp_base_domain->value;
       $ajax_response->addCommand(new InvokeCommand('#edit-field-shp-domain-0-value', 'val', [$domain_value]));
       $ajax_response->addCommand(new InvokeCommand('#edit-field-shp-path-0-value', 'val', [$path_value]));
     }
@@ -177,6 +179,58 @@ class Environment {
    */
   protected function loadTaxonomyTerm($tid) {
     return $this->taxonomyTerm->load($tid);
+  }
+
+
+  /**
+   * Apply alterations to entity operations.
+   *
+   * @param array $operations
+   *   List of operations.
+   * @param \Drupal\Core\Entity\EntityInterface $entity
+   *   Entity to apply operations to.
+   */
+  public function operationsLinksAlter(array &$operations, EntityInterface $entity) {
+    $site = $entity->field_shp_site->target_id;
+    $environment = $entity->id();
+    $environment_term = Term::load($entity->field_shp_environment_type->target_id);
+
+    // If its not a protected environment, it can be promoted.
+    if (!$environment_term->field_shp_protect->value) {
+      $operations['promote'] = [
+        'title'      => $this->t('Promote'),
+        'weight'     => 1,
+        'url'        => Url::fromRoute('shp_custom.environment-promote-form',
+          ['site' => $site, 'environment' => $environment]),
+        // Render form in a modal window.
+        'attributes' => [
+          'class'               => ['button', 'use-ajax'],
+          'data-dialog-type'    => 'modal',
+          'data-dialog-options' => Json::encode([
+            'width'  => '50%',
+            'height' => '50%'
+          ]),
+        ],
+      ];
+    }
+
+  }
+
+  /**
+   * @param \Drupal\node\NodeInterface $environment
+   *
+   * @return \Drupal\node\NodeInterface|bool
+   */
+  public function getSite(NodeInterface $environment) {
+    if (isset($environment->field_shp_site->target_id)) {
+      return $environment->get('field_shp_site')
+        ->first()
+        ->get('entity')
+        ->getTarget()
+        ->getValue();
+    }
+
+    return FALSE;
   }
 
 }

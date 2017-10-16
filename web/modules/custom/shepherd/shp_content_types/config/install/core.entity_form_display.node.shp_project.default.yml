@@ -4,9 +4,9 @@ dependencies:
   config:
     - field.field.node.shp_project.field_shp_build_secret
     - field.field.node.shp_project.field_shp_builder_image
+    - field.field.node.shp_project.field_shp_default_sql
     - field.field.node.shp_project.field_shp_env_vars
     - field.field.node.shp_project.field_shp_git_repository
-    - field.field.node.shp_project.field_shp_default_sql
     - field.field.node.shp_project.field_shp_liveness_probe_params
     - field.field.node.shp_project.field_shp_liveness_probe_port
     - field.field.node.shp_project.field_shp_liveness_probe_type
@@ -21,31 +21,46 @@ dependencies:
     - key_value_field
 third_party_settings:
   field_group:
-    group_liveness_probe:
+    group_shp_probes:
+      children:
+        - group_shp_liveness
+        - group_shp_readiness
+      parent_name: ''
+      weight: 5
+      format_type: tabs
+      format_settings:
+        label: Probes
+        direction: vertical
+        id: ''
+        classes: ''
+      label: Probes
+    group_shp_liveness:
       children:
         - field_shp_liveness_probe_type
         - field_shp_liveness_probe_params
         - field_shp_liveness_probe_port
-      parent_name: ''
-      weight: 7
-      format_type: fieldset
+      parent_name: group_shp_probes
+      weight: 9
+      format_type: tab
       format_settings:
         id: ''
         classes: ''
+        formatter: open
         description: ''
         required_fields: true
       label: 'Liveness probe'
-    group_shp_readiness_probe:
+    group_shp_readiness:
       children:
         - field_shp_readiness_probe_type
         - field_shp_readiness_probe_params
         - field_shp_readiness_probe_port
-      parent_name: ''
-      weight: 20
-      format_type: fieldset
+      parent_name: group_shp_probes
+      weight: 10
+      format_type: tab
       format_settings:
         id: ''
         classes: ''
+        formatter: closed
         description: ''
         required_fields: true
       label: 'Readiness probe'
@@ -55,14 +70,6 @@ bundle: shp_project
 mode: default
 content:
   field_shp_build_secret:
-    weight: 3
-    settings:
-      size: 60
-      placeholder: ''
-    third_party_settings: {  }
-    type: string_textfield
-    region: content
-  field_shp_builder_image:
     weight: 2
     settings:
       size: 60
@@ -70,8 +77,23 @@ content:
     third_party_settings: {  }
     type: string_textfield
     region: content
-  field_shp_env_vars:
+  field_shp_builder_image:
+    weight: 3
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: string_textfield
+    region: content
+  field_shp_default_sql:
     weight: 4
+    settings:
+      progress_indicator: throbber
+    third_party_settings: {  }
+    type: file_generic
+    region: content
+  field_shp_env_vars:
+    weight: 6
     settings:
       key_size: 60
       key_label: Key
@@ -133,12 +155,6 @@ content:
     settings: {  }
     third_party_settings: {  }
     type: options_select
-  field_shp_default_sql:
-    weight: 26
-    settings:
-      progress_indicator: throbber
-    third_party_settings: {  }
-    type: file_generic
     region: content
   title:
     type: string_textfield

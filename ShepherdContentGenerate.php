@@ -77,6 +77,10 @@ else {
 }
 $openshift->save();
 
+$orchestration_config = \Drupal::service('config.factory')->getEditable('shp_orchestration.settings');
+$orchestration_config->set('selected_provider', 'openshift_with_redis');
+$orchestration_config->save();
+
 if (!$development = taxonomy_term_load_multiple_by_name('Development', 'shp_environment_types')) {
   $development_env = Term::create([
     'vid'                   => 'shp_environment_types',
@@ -89,6 +93,8 @@ if (!$development = taxonomy_term_load_multiple_by_name('Development', 'shp_envi
     'vid'  => 'shp_environment_types',
     'name' => 'Production',
     'field_shp_base_domain' => $domain_name,
+    'field_shp_protect' => TRUE,
+    'field_shp_update_go_live' => TRUE,
   ]);
   $production_env->save();
 }
@@ -126,8 +132,8 @@ if (!$site) {
     'title'                  => 'Test Site',
     'field_shp_namespace'    => 'myproject',
     'field_shp_short_name'   => 'test',
-    'field_shp_domain'       => 'test-site.' . $domain_name,
-    'field_shp_path'         => '/test-path',
+    'field_shp_domain'       => 'test-live.' . $domain_name,
+    'field_shp_path'         => '/',
     'field_shp_project' => [['target_id' => $project->id()]],
   ]);
   $site->moderation_state->value = 'published';
@@ -144,11 +150,12 @@ if (!$env) {
     'langcode'                   => 'en',
     'uid'                        => '1',
     'status'                     => 1,
-    'field_shp_domain'           => $site->field_shp_domain->value,
+    'field_shp_domain'           => 'test-development.' . $domain_name,
     'field_shp_path'             => $site->field_shp_path->value,
     'field_shp_environment_type' => [['target_id' => $development_env->id()]],
     'field_shp_git_reference'    => 'master',
     'field_shp_site'             => [['target_id' => $site->id()]],
+    'field_shp_update_on_image_change' => TRUE,
   ]);
   $env->moderation_state->value = 'published';
   $env->save();
