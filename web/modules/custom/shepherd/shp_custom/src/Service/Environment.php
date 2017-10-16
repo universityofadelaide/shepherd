@@ -161,13 +161,7 @@ class Environment {
       $taxonomy_term = $this->loadTaxonomyTerm($taxonomy_term_id);
       $site = $this->node->load($site_id);
       $path_value = $site->field_shp_path->value;
-      if ($taxonomy_term->field_shp_protect->value) {
-        $domain_value = $site->field_shp_domain->value;
-      }
-      else {
-        // Non production environment use the domain provided.
-        $domain_value = $site->field_shp_short_name->value . '.' . $taxonomy_term->field_shp_base_domain->value;
-      }
+      $domain_value = $site->field_shp_short_name->value . '.' . $taxonomy_term->field_shp_base_domain->value;
       $ajax_response->addCommand(new InvokeCommand('#edit-field-shp-domain-0-value', 'val', [$domain_value]));
       $ajax_response->addCommand(new InvokeCommand('#edit-field-shp-path-0-value', 'val', [$path_value]));
     }
