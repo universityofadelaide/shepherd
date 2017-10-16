@@ -1,0 +1,22 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.taxonomy_term.field_shp_update_go_live
+    - taxonomy.vocabulary.shp_environment_types
+id: taxonomy_term.shp_environment_types.field_shp_update_go_live
+field_name: field_shp_update_go_live
+entity_type: taxonomy_term
+bundle: shp_environment_types
+label: 'Update go live'
+description: 'Set the initial go-live date for a site, when an environment receives this tag, if it has not already been set.'
+required: false
+translatable: false
+default_value:
+  -
+    value: 0
+default_value_callback: ''
+settings:
+  on_label: 'On'
+  off_label: 'Off'
+field_type: boolean

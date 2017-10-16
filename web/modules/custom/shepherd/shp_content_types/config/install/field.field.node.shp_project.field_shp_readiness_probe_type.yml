@@ -10,8 +10,8 @@ id: node.shp_project.field_shp_readiness_probe_type
 field_name: field_shp_readiness_probe_type
 entity_type: node
 bundle: shp_project
-label: 'Readiness probe type'
-description: ''
+label: 'Type'
+description: 'A readiness probe determines if a container is ready to service requests.'
 required: false
 translatable: false
 default_value: {  }

@@ -97,6 +97,13 @@ Virtualbox, but KVM is fine. On macOS the default is xhyve which is fine,
 though you may wish to use Virtualbox if you're running Docker Toolbox.
 
 ```bash
+# Increase memory from the default 2048M.
+minishift config set memory 4096
+# Increase cpus to more than the default 2, if you have spare cores.
+minishift config set cpus 4
+```
+
+```bash
 # On Linux, change default vm-driver to Virtualbox.
 minishift config set vm-driver virtualbox
 ```

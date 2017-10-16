@@ -95,7 +95,7 @@ class EnvironmentBackupForm extends FormBase {
    * @param \Drupal\node\NodeInterface $site
    *   Site node.
    * @param \Drupal\node\NodeInterface $environment
-   *   Evnironment node.
+   *   Environment node.
    *
    * @return \Drupal\Core\StringTranslation\TranslatableMarkup
    *   Translated markup.

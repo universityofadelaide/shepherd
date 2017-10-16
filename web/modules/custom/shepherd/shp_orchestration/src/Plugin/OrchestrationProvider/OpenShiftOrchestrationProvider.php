@@ -133,6 +133,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     string $source_repo,
     string $source_ref = 'master',
     string $source_secret = NULL,
+    bool $update_on_image_change = FALSE,
     array $environment_variables = [],
     array $secrets = [],
     array $probes = [],
@@ -181,10 +182,12 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       $environment_id
     );
 
+    // @todo $update_on_image_change should be passed in as a parameter
     $deployment_config = $this->client->generateDeploymentConfig(
       $deployment_name,
       $image_stream_tag,
       $sanitised_project_name,
+      $update_on_image_change,
       $volumes,
       $deploy_data
     );
@@ -222,6 +225,17 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
           $this->handleClientException($e);
           return FALSE;
         }
+      }
+    }
+
+    if (!$update_on_image_change) {
+      // We need to check if the image is already 'built', or we get an error.
+      $build_status = $this->client->getBuilds($build_config_name);
+      if ($build_status['items'][0]['status']['phase'] === 'Complete') {
+        $this->client->instantiateDeploymentConfig($deployment_name);
+      }
+      else {
+        drupal_set_message(t('Build not yet complete, manual triggering of deployment will be required.'));
       }
     }
 
@@ -323,8 +337,65 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
   /**
    * {@inheritdoc}
    */
-  public function createdSite() {
-    // TODO: Implement createSite() method.
+  public function promotedEnvironment(
+    string $project_name,
+    string $short_name,
+    int $site_id,
+    int $environment_id,
+    string $source_ref = 'master',
+    bool $clear_cache = TRUE
+  ) {
+    $site_deployment_name = self::generateDeploymentName(
+      $project_name,
+      $short_name,
+      $site_id
+    );
+
+    $environment_deployment_name = self::generateDeploymentName(
+      $project_name,
+      $short_name,
+      $environment_id
+    );
+
+    $result = $this->client->updateService($site_deployment_name, $environment_deployment_name);
+    if ($result && $clear_cache) {
+      self::executeJob(
+        $project_name,
+        $short_name,
+        $environment_id,
+        $source_ref,
+        "drush -r web cr"
+      );
+    }
+
+    return $result;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function createdSite(
+    string $project_name,
+    string $short_name,
+    int $site_id,
+    string $domain,
+    string $path
+  ) {
+    $deployment_name = self::generateDeploymentName(
+      $project_name,
+      $short_name,
+      $site_id
+    );
+    // @todo - make port a var and great .. so great .. yuge!
+    $port = 8080;
+    try {
+      $this->client->createService($deployment_name, $deployment_name, $port, $port, $deployment_name);
+      $this->client->createRoute($deployment_name, $deployment_name, $domain, $path);
+    }
+    catch (ClientException $e) {
+      $this->handleClientException($e);
+      return FALSE;
+    }
   }
 
   /**
@@ -337,8 +408,19 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
   /**
    * {@inheritdoc}
    */
-  public function deletedSite() {
-    // TODO: Implement deleteSite() method.
+  public function deletedSite(
+    string $project_name,
+    string $short_name,
+    int $site_id
+  ) {
+    $deployment_name = self::generateDeploymentName(
+      $project_name,
+      $short_name,
+      $site_id
+    );
+
+    $this->client->deleteService($deployment_name);
+    $this->client->deleteRoute($deployment_name);
   }
 
   /**
@@ -499,12 +581,12 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
   public static function generateDeploymentName(
     string $project_name,
     string $short_name,
-    string $environment_id
+    int $id
   ) {
     return implode('-', [
       self::sanitise($project_name),
       self::sanitise($short_name),
-      $environment_id,
+      $id,
     ]);
   }
 
