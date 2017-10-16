@@ -13,7 +13,7 @@ You can now click Add to project in the OpenShift ui to deploy Shepherd directly
 ### Deploy Shepherd from the command line.
 Example command line to process the template and set the install profile to a custom value. 
 ```bash
-oc process -f shepherd-openshift.yml -p SHEPHERD_INSTALL_PROFILE=ua_shepherd | oc create -f -
+oc process -f shepherd-openshift.yml -p SHEPHERD_INSTALL_PROFILE=shepherd | oc create -f -
 ```
 
 ### Delete shepherd instances and storage
