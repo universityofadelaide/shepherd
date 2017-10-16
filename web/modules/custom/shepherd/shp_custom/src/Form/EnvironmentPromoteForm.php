@@ -77,7 +77,7 @@ class EnvironmentPromoteForm extends FormBase {
    *   Translated markup.
    */
   public function getPageTitle(NodeInterface $site, NodeInterface $environment) {
-    return $this->t('Promote environment for @site_title',['@site_title' => $site->getTitle()]);
+    return $this->t('Promote environment to production');
   }
 
   /**
@@ -87,19 +87,30 @@ class EnvironmentPromoteForm extends FormBase {
     $form_state->set('site', $site);
     $form_state->set('environment', $environment);
 
-    $form['promotion'] = [
-      '#type' => 'processed_text',
-      '#title' => $this->t('Changes to be made'),
-      '#description' => $this->t('This promotion will make all production traffic for this site at the url below'),
+    // @todo Lookup existing prod and list on this form.
+
+    $form['site'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('Site'),
+      '#value' => $site->getTitle(),
+      '#disabled' => TRUE,
     ];
-    $form['production_service'] = [
-      '#type' => 'item',
-      '#title' => $this->t('@production_service', ['@production_service' => $site->field_shp_domain->value]),
-      '#description' => $this->t('Will now be handled by'),
+    $form['production_url'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('Production url'),
+      '#value' => $site->field_shp_domain->value,
+      '#disabled' => TRUE,
     ];
-    $form['environment_service'] = [
+    $form['promote_environment'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('Environment to promote'),
+      '#value' => $environment->getTitle(),
+      '#disabled' => TRUE,
+    ];
+    $form['warning'] = [
       '#type' => 'item',
-      '#title' => $this->t('@environment_service', ['@environment_service' => $environment->getTitle()]),
+      '#title' => $this->t('Warning'),
+      '#description' => $this->t('Please ensure the new environment is production ready and you have been authorised to make the change.'),
     ];
 
     // @todo everything is exclusive for now, implement non-exclusive?
