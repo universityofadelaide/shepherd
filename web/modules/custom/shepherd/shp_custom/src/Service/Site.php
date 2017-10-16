@@ -11,6 +11,7 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\node\Entity\Node;
+use Drupal\node\NodeInterface;
 
 /**
  * Class Site.
@@ -64,10 +65,10 @@ class Site {
    * @return bool
    *   TRUE if applied go live date.
    */
-  public function checkGoLiveApplied(Node $environment) {
-    $term = $this->taxonomyTerm->load($environment->field_shp_environment_type->getString());
+  public function setGoLiveDate(Node $environment) {
+    $term = $this->taxonomyTerm->load($environment->field_shp_environment_type->target_id);
     $site = $this->node->load($environment->field_shp_site->getString());
-    if ($term->getName() === "Production") {
+    if ($term->field_shp_update_go_live->value) {
       if (!isset($site->field_shp_go_live_date->value)) {
         $date = new DrupalDateTime();
         $site->field_shp_go_live_date->setValue($date->format(DATETIME_DATETIME_STORAGE_FORMAT));
@@ -281,6 +282,24 @@ class Site {
       return $short_name . '-' . $count;
     }
     return $short_name;
+  }
+
+  /**
+   * @param \Drupal\node\NodeInterface $site
+   *
+   * @return \Drupal\node\NodeInterface|bool
+   */
+   public function getProject(NodeInterface $site) {
+    if (isset($site->field_shp_project->target_id)) {
+      /** @var \Drupal\node\NodeInterface $project */
+      return $site->get('field_shp_project')
+        ->first()
+        ->get('entity')
+        ->getTarget()
+        ->getValue();
+    }
+
+    return FALSE;
   }
 
 }

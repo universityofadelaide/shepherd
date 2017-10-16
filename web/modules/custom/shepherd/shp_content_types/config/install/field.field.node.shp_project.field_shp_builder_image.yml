@@ -9,10 +9,12 @@ field_name: field_shp_builder_image
 entity_type: node
 bundle: shp_project
 label: 'Builder image'
-description: ''
+description: 'The builder image used as a base to construct the deployed image.'
 required: true
 translatable: false
-default_value: {  }
+default_value:
+  -
+    value: 'uofa/s2i-shepherd-drupal'
 default_value_callback: ''
 settings: {  }
 field_type: string
