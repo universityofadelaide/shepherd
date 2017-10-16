@@ -143,6 +143,12 @@ class Environment extends EntityActionBase {
     $event = new OrchestrationEnvironmentEvent($this->orchestrationProviderPlugin, $deployment_name, $site, $node, $project);
     $eventDispatcher->dispatch(OrchestrationEvents::CREATED_ENVIRONMENT, $event);
 
+    // If this is a production environment, promote it immediately.
+    $environment_term = Term::load($node->field_shp_environment_type->target_id);
+    if ($environment_term->field_shp_protect->value == TRUE) {
+      $this->promoted($site, $node, TRUE, FALSE);
+    }
+
     return $environment;
   }
 
@@ -196,10 +202,11 @@ class Environment extends EntityActionBase {
    * @param \Drupal\node\NodeInterface $site
    * @param \Drupal\node\NodeInterface $environment
    * @param bool $exclusive
+   * @param bool $clear_cache
    *
    * @return bool
    */
-  public function promoted(NodeInterface $site, NodeInterface $environment, bool $exclusive) {
+  public function promoted(NodeInterface $site, NodeInterface $environment, bool $exclusive, bool $clear_cache = TRUE) {
     $project = $this->siteEntity->getProject($site);
     if (!isset($project) || !isset($site)) {
       return FALSE;
@@ -210,7 +217,8 @@ class Environment extends EntityActionBase {
       $site->field_shp_short_name->value,
       $site->id(),
       $environment->id(),
-      $environment->field_shp_git_reference->value
+      $environment->field_shp_git_reference->value,
+      $clear_cache
     );
 
     // @todo everything is exclusive for now, implement non-exclusive?
@@ -233,6 +241,7 @@ class Environment extends EntityActionBase {
     // Demote all current prod environments
     $old_promoted = \Drupal::entityQuery('node')
       ->condition('field_shp_environment_type', $promoted_term->id())
+      ->condition('nid', $environment->id(), '<>')
       ->execute();
     foreach ($old_promoted as $nid) {
       $node = Node::load($nid);
@@ -240,9 +249,11 @@ class Environment extends EntityActionBase {
       $node->save();
     }
 
-    // Finally Update the environment that was promoted.
-    $environment->field_shp_environment_type = [['target_id' => $promoted_term->id()]];
-    $environment->save();
+    // Finally Update the environment that was promoted if we need to
+    if ($environment->field_shp_environment_type->target_id != $promoted_term->id()) {
+      $environment->field_shp_environment_type = [['target_id' => $promoted_term->id()]];
+      $environment->save();
+    }
 
     return $result;
   }

@@ -232,6 +232,8 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
    *   Unique id of the environment.
    * @param string $source_ref
    *   Source code git ref, defaults to 'master'.
+   * @param bool $clear_cache
+   *   Execute a cache clear job after promotion?
    *
    * @return bool
    *   Returns true if succeeded.
@@ -241,7 +243,8 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
     string $short_name,
     int $site_id,
     int $environment_id,
-    string $source_ref = 'master'
+    string $source_ref = 'master',
+    bool $clear_cache = TRUE
   );
 
   /**

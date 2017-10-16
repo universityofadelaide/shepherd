@@ -342,7 +342,8 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     string $short_name,
     int $site_id,
     int $environment_id,
-    string $source_ref = 'master'
+    string $source_ref = 'master',
+    bool $clear_cache = TRUE
   ) {
     $site_deployment_name = self::generateDeploymentName(
       $project_name,
@@ -356,7 +357,8 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       $environment_id
     );
 
-    if ($result = $this->client->updateService($site_deployment_name, $environment_deployment_name)) {
+    $result = $this->client->updateService($site_deployment_name, $environment_deployment_name);
+    if ($result && $clear_cache) {
       self::executeJob(
         $project_name,
         $short_name,
