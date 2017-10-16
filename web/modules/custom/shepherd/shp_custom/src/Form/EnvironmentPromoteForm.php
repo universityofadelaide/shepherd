@@ -5,8 +5,10 @@ namespace Drupal\shp_custom\Form;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Link;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
+use Drupal\Core\Url;
 use Drupal\node\NodeInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -90,22 +92,23 @@ class EnvironmentPromoteForm extends FormBase {
     // @todo Lookup existing prod and list on this form.
 
     $form['site'] = [
-      '#type' => 'textfield',
+      '#type' => 'item',
       '#title' => $this->t('Site'),
-      '#value' => $site->getTitle(),
-      '#disabled' => TRUE,
+      '#markup' => $site->getTitle(),
     ];
     $form['production_url'] = [
-      '#type' => 'textfield',
+      '#type' => 'item',
       '#title' => $this->t('Production url'),
-      '#value' => $site->field_shp_domain->value,
-      '#disabled' => TRUE,
+      'url' => Link::fromTextAndUrl(
+        $site->field_shp_domain->value,
+        Url::fromUri('//' . $site->field_shp_domain->value))->toRenderable(),
     ];
     $form['promote_environment'] = [
-      '#type' => 'textfield',
+      '#type' => 'item',
       '#title' => $this->t('Environment to promote'),
-      '#value' => $environment->getTitle(),
-      '#disabled' => TRUE,
+      'url' => Link::fromTextAndUrl(
+        $environment->getTitle(),
+        Url::fromUri('//' . $environment->getTitle()))->toRenderable(),
     ];
     $form['warning'] = [
       '#type' => 'item',
