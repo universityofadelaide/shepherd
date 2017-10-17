@@ -12,26 +12,10 @@ class DeploymentEventSubscriber implements EventSubscriberInterface {
    * {@inheritdoc}
    */
   public static function getSubscribedEvents() {
-    $events[OrchestrationEvents::SETUP_ENVIRONMENT][] = array('setupRedisDeployment');
     $events[OrchestrationEvents::CREATED_ENVIRONMENT][] = array('createRedisDeployment');
     $events[OrchestrationEvents::DELETED_ENVIRONMENT][] = array('deleteRedisDeployment');
 
     return $events;
-  }
-
-  /**
-   * Add redis variables before environment deployment.
-   *
-   * @param \Drupal\shp_orchestration\Event\OrchestrationEnvironmentEvent $event
-   */
-  public function setupRedisDeployment(OrchestrationEnvironmentEvent $event) {
-    $orchestration_provider = $event->getOrchestrationProvider();
-    if ($orchestration_provider->getPluginId() === 'openshift_with_redis') {
-      $event->setEnvironmentVariables([
-        'REDIS_ENABLED' => '1',
-        'REDIS_HOST'    => $event->getDeploymentName() . '-redis',
-      ]);
-    }
   }
 
   /**

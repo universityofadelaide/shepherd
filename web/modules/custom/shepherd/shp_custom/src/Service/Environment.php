@@ -16,7 +16,6 @@ use Drupal\node\NodeInterface;
 use Drupal\taxonomy\Entity\Term;
 use Symfony\Component\HttpFoundation\RequestStack;
 
-
 /**
  * Environment service. Provides methods to handle Environment entities.
  *
@@ -71,20 +70,30 @@ class Environment {
   protected $currentUser;
 
   /**
+   * @var \Drupal\shp_custom\Service\Site
+   */
+  private $site;
+
+  /**
    * Environment constructor.
    *
    * @param \Symfony\Component\HttpFoundation\RequestStack $requestStack
-   *    Request stack service.
+   *   Request stack service.
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entityTypeManager
-   *    Entity Type Manager.
+   *   Entity Type Manager.
+   * @param \Drupal\Core\Session\AccountProxyInterface $currentUser
+   *   Current Drupal user.
+   * @param \Drupal\shp_custom\Service\Site $site
+   *   Site service.
    */
-  public function __construct(RequestStack $requestStack, EntityTypeManagerInterface $entityTypeManager, AccountProxyInterface $currentUser) {
+  public function __construct(RequestStack $requestStack, EntityTypeManagerInterface $entityTypeManager, AccountProxyInterface $currentUser, Site $site) {
     $this->requestStack = $requestStack;
     $this->entityTypeManager = $entityTypeManager;
     $this->currentRequest = $this->requestStack->getCurrentRequest();
     $this->node = $this->entityTypeManager->getStorage('node');
     $this->taxonomyTerm = $this->entityTypeManager->getStorage('taxonomy_term');
     $this->currentUser = $currentUser;
+    $this->site = $site;
   }
 
   /**
@@ -99,16 +108,32 @@ class Environment {
     // @todo - Set this permission to something more granular.
     $access = $this->currentUser->hasPermission('administer nodes');
     $this->setSiteField($form, $access);
+    $this->setBranchField($form, $form_state);
     $this->applyJavascriptEnvironmentType($form);
+  }
+
+  /**
+   * Set the default git branch from the project.
+   *
+   * @param array $form
+   *   Form render array.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   Form state.
+   */
+  public function setBranchField(array &$form, FormStateInterface $form_state) {
+    if ($site = $form['field_shp_site']['widget'][0]['target_id']['#default_value']) {
+      $project = $this->site->getProject($site);
+      $form['field_shp_git_reference']['widget'][0]['value']['#default_value'] = $project->field_shp_git_default_ref->value;
+    }
   }
 
   /**
    * Set site field autocomplete with the site_id entity as the default value.
    *
    * @param array $form
-   *    Form render array.
+   *   Form render array.
    * @param bool $access
-   *    Current user has access to this field.
+   *   Current user has access to this field.
    */
   public function setSiteField(array &$form, bool $access) {
     // Set the visibility of the field.

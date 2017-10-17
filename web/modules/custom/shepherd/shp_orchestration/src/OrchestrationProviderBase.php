@@ -75,7 +75,24 @@ abstract class OrchestrationProviderBase extends PluginBase implements Container
   }
 
   /**
+   * {@inheritdoc}
+   */
+  public static function generateDeploymentName(
+    string $project_name,
+    string $short_name,
+    int $id
+  ) {
+    return implode('-', [
+      self::sanitise($project_name),
+      self::sanitise($short_name),
+      $id,
+    ]);
+  }
+
+  /**
    * Converts a string into a format acceptable for orchestration providers.
+   *
+   * Lowercase a-z0-9 with dashes.
    *
    * @param string $text
    *   The title to be sanitised.

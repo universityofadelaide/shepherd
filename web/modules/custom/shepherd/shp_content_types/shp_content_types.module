@@ -39,6 +39,7 @@ function shp_content_types_entity_bundle_field_info_alter(&$fields, EntityTypeIn
   }
   elseif ($bundle === 'shp_environment') {
     if (isset($fields['field_shp_domain'])) {
+      $fields['field_shp_domain']->addConstraint('ComboUniqueField', ['fields' => ['field_shp_path']]);
       $fields['field_shp_domain']->addConstraint('Domain', []);
     }
     if (isset($fields['field_shp_env_vars'])) {

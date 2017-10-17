@@ -13,6 +13,7 @@ use Drupal\node\NodeInterface;
 use Drupal\shp_orchestration\Exception\OrchestrationProviderNotConfiguredException;
 use Drupal\shp_orchestration\OrchestrationProviderPluginManagerInterface;
 use Drupal\shp_orchestration\Service\ActiveJobManager;
+use Drupal\taxonomy\Entity\Term;
 use Drupal\token\TokenInterface;
 use Drupal\views\Views;
 
@@ -267,17 +268,27 @@ class Backup {
       ],
     ];
 
-    $operations['restore'] = [
-      'title' => $this->t('Restore'),
-      'weight' => 2,
-      'url' => Url::fromRoute('shp_backup.environment-restore-form', ['site' => $site, 'environment' => $environment]),
-      // Render form in a modal window.
-      'attributes' => [
-        'class' => ['button', 'use-ajax'],
-        'data-dialog-type' => 'modal',
-        'data-dialog-options' => Json::encode(['width' => '50%', 'height' => '50%']),
-      ],
-    ];
+    if ($environment_term = Term::load($entity->field_shp_environment_type->target_id)) {
+      if (!$environment_term->field_shp_protect->value) {
+        $operations['restore'] = [
+          'title'      => $this->t('Restore'),
+          'weight'     => 2,
+          'url'        => Url::fromRoute('shp_backup.environment-restore-form', [
+            'site'        => $site,
+            'environment' => $environment
+          ]),
+          // Render form in a modal window.
+          'attributes' => [
+            'class'               => ['button', 'use-ajax'],
+            'data-dialog-type'    => 'modal',
+            'data-dialog-options' => Json::encode([
+              'width'  => '50%',
+              'height' => '50%'
+            ]),
+          ],
+        ];
+      }
+    }
   }
 
 }

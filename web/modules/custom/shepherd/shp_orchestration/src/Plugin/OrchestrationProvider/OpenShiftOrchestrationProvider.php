@@ -578,21 +578,6 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
   /**
    * {@inheritdoc}
    */
-  public static function generateDeploymentName(
-    string $project_name,
-    string $short_name,
-    int $id
-  ) {
-    return implode('-', [
-      self::sanitise($project_name),
-      self::sanitise($short_name),
-      $id,
-    ]);
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public function getSiteEnvironmentsStatus(string $site_id) {
     try {
       return $this->client->getDeploymentConfigs('site_id=' . $site_id);

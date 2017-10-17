@@ -7,9 +7,9 @@ dependencies:
     - shp_roles
 third_party_settings:
   shp_roles:
-    synced_role: shp_administrator
-id: shp_sites-admin
-label: Admin
+    synced_role: administrator
+id: shp_sites-administrator
+label: Administrator
 weight: 100
 internal: false
 audience: member
