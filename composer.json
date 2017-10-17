@@ -20,6 +20,7 @@
         "drupal/field_group":                            "1.*@dev",
         "drupal/group":                                  "^1.0@beta",
         "drupal/key_value_field":                        "1.x-dev",
+        "drupal/log_stdout":                             "1.*@dev",
         "drupal/paragraphs":                             "1.*",
         "drupal/r4032login":                             "1.*@dev",
         "drupal/redis":                                  "1.*@dev",

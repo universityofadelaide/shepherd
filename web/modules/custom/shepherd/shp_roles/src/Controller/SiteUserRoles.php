@@ -80,7 +80,8 @@ class SiteUserRoles implements ContainerInjectionInterface {
     }
 
     // Collapse the roles.
-    asort(array_unique($roles));
+    $roles = array_unique($roles);
+    asort($roles);
 
     // Dream.
     return new JsonResponse($roles);

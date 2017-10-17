@@ -2,10 +2,14 @@
 
 namespace Drupal\shp_orchestration\Service;
 
+use Drupal\node\Entity\Node;
 use Drupal\node\NodeInterface;
+use Drupal\shp_custom\Service\Environment as EnvironmentEntity;
+use Drupal\shp_custom\Service\Site as SiteEntity;
 use Drupal\shp_orchestration\Event\OrchestrationEnvironmentEvent;
 use Drupal\shp_orchestration\Event\OrchestrationEvents;
 use Drupal\shp_orchestration\OrchestrationProviderPluginManager;
+use Drupal\taxonomy\Entity\Term;
 
 /**
  * Class Environment.
@@ -20,39 +24,45 @@ class Environment extends EntityActionBase {
   protected $configuration;
 
   /**
+   * @var \Drupal\shp_orchestration\OrchestrationProviderPluginManager
+   */
+  private $orchestrationProviderPluginManager;
+
+  /**
+   * @var \Drupal\shp_custom\Service\Environment|\Drupal\shp_orchestration\Service\Environment
+   */
+  private $environmentEntity;
+
+  /**
+   * @var \Drupal\shp_custom\Service\Site
+   */
+  private $siteEntity;
+
+  /**
    * Shepherd constructor.
+   *
    * @param \Drupal\shp_orchestration\OrchestrationProviderPluginManager $orchestrationProviderPluginManager
    * @param \Drupal\shp_orchestration\Service\Configuration $configuration
+   * @param \Drupal\shp_custom\Service\Environment $environment
+   * @param \Drupal\shp_custom\Service\Site $site
    */
-  public function __construct(OrchestrationProviderPluginManager $orchestrationProviderPluginManager, Configuration $configuration) {
+  public function __construct(OrchestrationProviderPluginManager $orchestrationProviderPluginManager, Configuration $configuration, EnvironmentEntity $environment, SiteEntity $site) {
     parent::__construct($orchestrationProviderPluginManager);
     $this->configuration = $configuration;
+    $this->environmentEntity = $environment;
+    $this->siteEntity = $site;
   }
 
   /**
    * Tell the active orchestration provider an environment was created.
    *
    * @param \Drupal\node\NodeInterface $node
+   *
    * @return bool
    */
   public function created(NodeInterface $node) {
-    if (isset($node->field_shp_site->target_id)) {
-      /** @var \Drupal\node\NodeInterface $site */
-      $site = $node->get('field_shp_site')
-        ->first()
-        ->get('entity')
-        ->getTarget()
-        ->getValue();
-
-      if (isset($site->field_shp_project->target_id)) {
-        /** @var \Drupal\node\NodeInterface $project */
-        $project = $site->get('field_shp_project')
-          ->first()
-          ->get('entity')
-          ->getTarget()
-          ->getValue();
-      }
-    }
+    $site = $this->environmentEntity->getSite($node);
+    $project = $this->siteEntity->getProject($site);
     if (!isset($project) || !isset($site)) {
       return FALSE;
     }
@@ -122,6 +132,7 @@ class Environment extends EntityActionBase {
       $project->field_shp_git_repository->value,
       $node->field_shp_git_reference->value,
       $project->field_shp_build_secret->value,
+      $node->field_shp_update_on_image_change->value,
       $env_vars,
       $secrets,
       $probes,
@@ -132,6 +143,12 @@ class Environment extends EntityActionBase {
     $event = new OrchestrationEnvironmentEvent($this->orchestrationProviderPlugin, $deployment_name, $site, $node, $project);
     $eventDispatcher->dispatch(OrchestrationEvents::CREATED_ENVIRONMENT, $event);
 
+    // If this is a production environment, promote it immediately.
+    $environment_term = Term::load($node->field_shp_environment_type->target_id);
+    if ($environment_term->field_shp_protect->value == TRUE) {
+      $this->promoted($site, $node, TRUE, FALSE);
+    }
+
     return $environment;
   }
 
@@ -139,6 +156,7 @@ class Environment extends EntityActionBase {
    * Tell the active orchestration provider an environment was updated.
    *
    * @param \Drupal\node\NodeInterface $node
+   *
    * @return bool
    */
   public function updated(NodeInterface $node) {
@@ -150,24 +168,12 @@ class Environment extends EntityActionBase {
    * Tell the active orchestration provider an environment was deleted.
    *
    * @param \Drupal\node\NodeInterface $node
+   *
    * @return bool
    */
   public function deleted(NodeInterface $node) {
-    /** @var \Drupal\node\NodeInterface $site */
-    $site = $node->get('field_shp_site')
-      ->first()
-      ->get('entity')
-      ->getTarget()
-      ->getValue();
-
-    if (isset($site->field_shp_project->target_id)) {
-      /** @var \Drupal\node\NodeInterface $project */
-      $project = $site->get('field_shp_project')
-        ->first()
-        ->get('entity')
-        ->getTarget()
-        ->getValue();
-    }
+    $site = $this->environmentEntity->getSite($node);
+    $project = $this->siteEntity->getProject($site);
     if (!isset($project) || !isset($site)) {
       return FALSE;
     }
@@ -188,6 +194,66 @@ class Environment extends EntityActionBase {
     $eventDispatcher = \Drupal::service('event_dispatcher');
     $event = new OrchestrationEnvironmentEvent($this->orchestrationProviderPlugin, $deployment_name);
     $eventDispatcher->dispatch(OrchestrationEvents::DELETED_ENVIRONMENT, $event);
+
+    return $result;
+  }
+
+  /**
+   * @param \Drupal\node\NodeInterface $site
+   * @param \Drupal\node\NodeInterface $environment
+   * @param bool $exclusive
+   * @param bool $clear_cache
+   *
+   * @return bool
+   */
+  public function promoted(NodeInterface $site, NodeInterface $environment, bool $exclusive, bool $clear_cache = TRUE) {
+    $project = $this->siteEntity->getProject($site);
+    if (!isset($project) || !isset($site)) {
+      return FALSE;
+    }
+
+    $result = $this->orchestrationProviderPlugin->promotedEnvironment(
+      $project->title->value,
+      $site->field_shp_short_name->value,
+      $site->id(),
+      $environment->id(),
+      $environment->field_shp_git_reference->value,
+      $clear_cache
+    );
+
+    // @todo everything is exclusive for now, implement non-exclusive?
+
+    // Load a non protected term
+    // @todo handle multiples? this is quite horrid.
+    $ids = \Drupal::entityQuery('taxonomy_term')
+      ->condition('vid', 'shp_environment_types')
+      ->condition('field_shp_protect', FALSE)
+      ->execute();
+    $demoted_term = reset(Term::loadMultiple($ids));
+
+    // Load the taxonomy term that has protect enabled.
+    $ids = \Drupal::entityQuery('taxonomy_term')
+      ->condition('vid', 'shp_environment_types')
+      ->condition('field_shp_protect', TRUE)
+      ->execute();
+    $promoted_term = reset(Term::loadMultiple($ids));
+
+    // Demote all current prod environments
+    $old_promoted = \Drupal::entityQuery('node')
+      ->condition('field_shp_environment_type', $promoted_term->id())
+      ->condition('nid', $environment->id(), '<>')
+      ->execute();
+    foreach ($old_promoted as $nid) {
+      $node = Node::load($nid);
+      $node->field_shp_environment_type = [['target_id' => $demoted_term->id()]];
+      $node->save();
+    }
+
+    // Finally Update the environment that was promoted if we need to
+    if ($environment->field_shp_environment_type->target_id != $promoted_term->id()) {
+      $environment->field_shp_environment_type = [['target_id' => $promoted_term->id()]];
+      $environment->save();
+    }
 
     return $result;
   }
