@@ -114,7 +114,10 @@ if (!$project) {
     'field_shp_git_repository' => [['value' => $example_repository]],
     'field_shp_builder_image'  => [['value' => 'uofa/s2i-shepherd-drupal']],
     'field_shp_build_secret'   => [['value' => 'build-key']],
-    'field_shp_env_vars'       => [['key' => 'SHEPHERD_INSTALL_PROFILE', 'value' => 'standard']],
+    'field_shp_env_vars'       => [
+      ['key' => 'SHEPHERD_INSTALL_PROFILE', 'value' => 'standard'],
+      ['key' => 'REDIS_ENABLED', 'value' => '0'],
+    ],
   ]);
   $project->save();
 }
@@ -134,7 +137,7 @@ if (!$site) {
     'field_shp_short_name'   => 'test',
     'field_shp_domain'       => 'test-live.' . $domain_name,
     'field_shp_path'         => '/',
-    'field_shp_project' => [['target_id' => $project->id()]],
+    'field_shp_project'      => [['target_id' => $project->id()]],
   ]);
   $site->moderation_state->value = 'published';
   $site->save();
