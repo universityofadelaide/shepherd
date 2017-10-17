@@ -3,8 +3,8 @@ status: true
 dependencies:
   module:
     - node
-id: node.field_shp_git_default_branch
-field_name: field_shp_git_default_branch
+id: node.field_shp_git_default_ref
+field_name: field_shp_git_default_ref
 entity_type: node
 type: string
 settings:

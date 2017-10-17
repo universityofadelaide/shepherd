@@ -6,7 +6,7 @@ dependencies:
     - field.field.node.shp_project.field_shp_builder_image
     - field.field.node.shp_project.field_shp_default_sql
     - field.field.node.shp_project.field_shp_env_vars
-    - field.field.node.shp_project.field_shp_git_default_branch
+    - field.field.node.shp_project.field_shp_git_default_ref
     - field.field.node.shp_project.field_shp_git_repository
     - field.field.node.shp_project.field_shp_liveness_probe_params
     - field.field.node.shp_project.field_shp_liveness_probe_port
@@ -92,7 +92,7 @@ content:
     third_party_settings: {  }
     type: key_value_textfield
     region: content
-  field_shp_git_default_branch:
+  field_shp_git_default_ref:
     weight: 2
     settings:
       size: 60
