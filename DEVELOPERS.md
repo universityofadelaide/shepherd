@@ -21,6 +21,8 @@ are also made available separately for use by other projects:
 * [Git subtree splitter](https://github.com/splitsh/lite) - This is required
   to run the shepherd-module-update script.
 * [Shepherd modules](https://github.com/universityofadelaide/shepherd-modules)
+* To use shepherd as an upstream repository for your own local deployment, see
+  [Using this repository as an upstream](#Using this repository as an upstream)
 
 
 ### Development with Shepherd
@@ -166,6 +168,47 @@ a couple of tweaks before running ./dsh
 `docker run -d -p 8080:80 -v /var/run/docker.sock:/tmp/docker.sock:ro --restart always --name nginx-proxy jwilder/nginx-proxy`
 * Now run the ./dsh etc commands as per normal.
 * Shepherd will appear on port 8080
+
+## Using this repository as an upstream
+
+Changes that are not UA specific should be done as Pull requests on the public repo
+to minimise/avoid conflicts.
+
+### Setup the repository
+https://help.github.com/articles/configuring-a-remote-for-a-fork/
+
+Basically setup a new repository on your own infrastructure, then add in the shepherd remote with:
+```
+git remote add shepherd https://github.com/universityofadelaide/shepherd.git
+```
+
+You should end up with something like:
+
+origin	git@gitlab.adelaide.edu.au:web-team/ua-shepherd.git (fetch)
+origin	git@gitlab.adelaide.edu.au:web-team/ua-shepherd.git (push)
+shepherd	https://github.com/universityofadelaide/shepherd.git (fetch)
+shepherd	https://github.com/universityofadelaide/shepherd.git (push)
+
+### Merge in changes from public shepherd repo
+https://help.github.com/articles/syncing-a-fork/
+
+git fetch shepherd -p
+git merge shepherd/develop
+
+As soon as you start adding things to your composer.json, then the composer.lock file
+will start to give merge conflicts, and you will probably need to do:
+
+```
+git checkout --theirs composer.lock
+```
+
+Then you can finalise the merge and you're all caught up.
+
+```
+git commit -m"Merging changes in from upstream public repository."
+```
+
+
 
 ## Working with Shepherd
 
