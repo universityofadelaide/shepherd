@@ -128,16 +128,17 @@ else {
 $site = Node::load(2);
 if (!$site) {
   $site = Node::create([
-    'type'                   => 'shp_site',
-    'langcode'               => 'en',
-    'uid'                    => '1',
-    'status'                 => 1,
-    'title'                  => 'Test Site',
-    'field_shp_namespace'    => 'myproject',
-    'field_shp_short_name'   => 'test',
-    'field_shp_domain'       => 'test-live.' . $domain_name,
-    'field_shp_path'         => '/',
-    'field_shp_project'      => [['target_id' => $project->id()]],
+    'type'                      => 'shp_site',
+    'langcode'                  => 'en',
+    'uid'                       => '1',
+    'status'                    => 1,
+    'title'                     => 'Test Site',
+    'field_shp_namespace'       => 'myproject',
+    'field_shp_short_name'      => 'test',
+    'field_shp_domain'          => 'test-live.' . $domain_name,
+    'field_shp_git_default_ref' => 'master',
+    'field_shp_path'            => '/',
+    'field_shp_project'         => [['target_id' => $project->id()]],
   ]);
   $site->moderation_state->value = 'published';
   $site->save();
