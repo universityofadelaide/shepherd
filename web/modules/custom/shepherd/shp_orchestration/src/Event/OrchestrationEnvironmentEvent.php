@@ -26,7 +26,7 @@ class OrchestrationEnvironmentEvent extends Event {
   protected $deploymentName;
 
   /**
-   * Objects related to an environment
+   * Objects related to an environment.
    */
   protected $site;
   protected $environment;
@@ -56,7 +56,6 @@ class OrchestrationEnvironmentEvent extends Event {
   public function __construct(OrchestrationProviderInterface $orchestrationProvider, string $deploymentName, Node $site = NULL, Node $environment = NULL, Node $project = NULL) {
     $this->orchestrationProvider = $orchestrationProvider;
     $this->deploymentName = $deploymentName;
-
     $this->site = $site;
     $this->environment = $environment;
     $this->project = $project;

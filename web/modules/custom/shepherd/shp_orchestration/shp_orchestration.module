@@ -132,17 +132,6 @@ function shp_orchestration_shp_env_vars(NodeInterface $environment) {
     'WEB_PATH' => $environment->field_shp_path->value,
   ];
 
-  // Append default environment variables from project.
-  foreach ($project->field_shp_env_vars->getValue() as $env_var) {
-    $env_vars[$env_var['key']] = $env_var['value'];
-  }
-
-  // @todo Add site env vars in here, maybe?
-
-  // Append custom environment variables from environment.
-  foreach ($environment->field_shp_env_vars->getValue() as $env_var) {
-    $env_vars[$env_var['key']] = $env_var['value'];
-  }
   return $env_vars;
 }
 

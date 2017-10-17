@@ -114,7 +114,10 @@ if (!$project) {
     'field_shp_git_repository' => [['value' => $example_repository]],
     'field_shp_builder_image'  => [['value' => 'uofa/s2i-shepherd-drupal']],
     'field_shp_build_secret'   => [['value' => 'build-key']],
-    'field_shp_env_vars'       => [['key' => 'SHEPHERD_INSTALL_PROFILE', 'value' => 'standard']],
+    'field_shp_env_vars'       => [
+      ['key' => 'SHEPHERD_INSTALL_PROFILE', 'value' => 'standard'],
+      ['key' => 'REDIS_ENABLED', 'value' => '0'],
+    ],
   ]);
   $project->save();
 }
