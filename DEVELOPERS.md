@@ -41,15 +41,15 @@ Development should proceed as normal, typically with:
   ```
 * Submit pull request through github UI
 * Merge into develop
-* Update the shepherd-modules repo. 
+* Update the shepherd-modules repo.
   ```
   ./shepherd-module-update
   ```
 
 Note: Only people with sufficient access can perform the last two steps.
 
-Pull requests should be submitted against the main Shepherd repository, not 
-against the drupal-modules repository.  
+Pull requests should be submitted against the main Shepherd repository, not
+against the drupal-modules repository.
 
 ## Prerequisites
 
@@ -208,8 +208,6 @@ Then you can finalise the merge and you're all caught up.
 git commit -m"Merging changes in from upstream public repository."
 ```
 
-
-
 ## Working with Shepherd
 
 ### Installing SwaggerUI for developing with OpenShift API
@@ -257,7 +255,7 @@ composer clear-cache
 composer update
 ```
 
-To update packages using `composer update`, you will first need run 
+To update packages using `composer update`, you will first need run
 `composer install` - otherwise wikimedia/composer-merge-plugin will fail to
 discover the openshift client dependency.
 
