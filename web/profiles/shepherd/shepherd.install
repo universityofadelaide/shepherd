@@ -56,9 +56,10 @@ function shepherd_install() {
    * Note that we have chosen to use the Environment variable simply as the
    * initial default here, rather than write it out in $config in settings.php.
    * https://www.drupal.org/node/2662646 has some useful information, but the
-   * main problem with overriding in settings.php is that the ui and config
-   * system then doesn't know what is going on, and you can try setting it there
-   * but it doesn't actually make any changes.
+   * main problem with overriding in settings.php is that the config system
+   * and file system API's become out of sync. Only the file system API
+   * understands the $settings.php override and using config API doesn't
+   * return the value defined in settings.php config.
    */
   \Drupal::configFactory()->getEditable('system.file')->set('path.temporary', getenv('TMP_DIR') ?: '/shared/tmp')->save(TRUE);
 
