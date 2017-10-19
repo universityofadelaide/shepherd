@@ -1,0 +1,26 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_shp_default_sql
+    - node.type.shp_project
+  module:
+    - file
+id: node.shp_project.field_shp_default_sql
+field_name: field_shp_default_sql
+entity_type: node
+bundle: shp_project
+label: 'Default SQL'
+description: 'SQL provided will be imported to your applications database before your app is built. This avoids running your applications installer each time you provision a new environment.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  file_directory: 'sql/[date:custom:Y]-[date:custom:m]'
+  file_extensions: 'txt'
+  max_filesize: ''
+  description_field: false
+  handler: 'default:file'
+  handler_settings: {  }
+field_type: file

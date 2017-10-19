@@ -1,0 +1,42 @@
+shp_backup.environment-backup-form:
+  path: '/site/{site}/environment/{environment}/backup'
+  defaults:
+    _form: '\Drupal\shp_backup\Form\EnvironmentBackupForm'
+    _title_callback: '\Drupal\shp_backup\Form\EnvironmentBackupForm::getPageTitle'
+    _title: 'Backup environment'
+  options:
+    parameters:
+      site:
+        type: entity:node
+      environment:
+        type: entity:node
+    no_cache: TRUE
+  requirements:
+    _permission: 'shp access environment wizard'
+    site: ^[0-9]+
+    environment: ^[0-9]+
+shp_backup.environment-restore-form:
+  path: '/site/{site}/environment/{environment}/restore'
+  defaults:
+    _form: '\Drupal\shp_backup\Form\EnvironmentRestoreForm'
+    _title_callback: '\Drupal\shp_backup\Form\EnvironmentRestoreForm::getPageTitle'
+    _title: 'Restore backup'
+  options:
+    parameters:
+      site:
+        type: entity:node
+      environment:
+        type: entity:node
+    no_cache: TRUE
+  requirements:
+    _permission: 'shp access environment wizard'
+    site: ^[0-9]+
+    environment: ^[0-9]+
+shp_backup.settings:
+  path: '/admin/config/shepherd/backup'
+  defaults:
+    _form: '\Drupal\shp_backup\Form\SettingsForm'
+    _title: 'Backup'
+  requirements:
+    _permission: 'administer account settings'
+

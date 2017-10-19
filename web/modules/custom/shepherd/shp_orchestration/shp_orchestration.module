@@ -1,0 +1,143 @@
+<?php
+
+/**
+ * @file
+ * Contains shp_orchestration.module.
+ */
+
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\node\NodeInterface;
+use Drupal\shp_orchestration\Exception\OrchestrationProviderNotConfiguredException;
+
+/**
+ * Implements hook_ENTITY_TYPE_insert().
+ */
+function shp_orchestration_node_insert(NodeInterface $node) {
+  switch ($node->bundle()) {
+    case 'shp_site':
+      \Drupal::service('shp_orchestration.site')->created($node);
+      break;
+
+    case 'shp_project':
+      \Drupal::service('shp_orchestration.project')->created($node);
+      break;
+
+    case 'shp_environment':
+      \Drupal::service('shp_orchestration.environment')->created($node);
+      break;
+  }
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_update().
+ */
+function shp_orchestration_node_update(NodeInterface $node) {
+  switch ($node->bundle()) {
+    case 'shp_site':
+      \Drupal::service('shp_orchestration.site')->updated($node);
+      break;
+
+    case 'shp_project':
+      \Drupal::service('shp_orchestration.project')->updated($node);
+      break;
+
+    case 'shp_environment':
+      \Drupal::service('shp_orchestration.environment')->updated($node);
+      break;
+  }
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_delete().
+ */
+function shp_orchestration_node_delete(NodeInterface $node) {
+  switch ($node->bundle()) {
+    case 'shp_site':
+      \Drupal::service('shp_orchestration.site')->deleted($node);
+      break;
+
+    case 'shp_project':
+      \Drupal::service('shp_orchestration.project')->deleted($node);
+      break;
+
+    case 'shp_environment':
+      \Drupal::service('shp_orchestration.environment')->deleted($node);
+      break;
+  }
+}
+
+/**
+ * Implements hook_form_BASE_FORM_ID_alter().
+ */
+function shp_orchestration_form_node_form_alter(&$form, FormStateInterface $form_state) {
+  $bundle = $form_state->getFormObject()->getEntity()->bundle();
+
+  if ($bundle === 'shp_project') {
+    // Add the validator.
+    $form['#validate'][] = 'shp_orchestration_shp_project_form_validate';
+  }
+}
+
+/**
+ * Validates project form.
+ *
+ * @param array $form
+ *   The form to be validated.
+ * @param Drupal\Core\Form\FormStateInterface $form_state
+ *   The form_state representing the form to be validated.
+ */
+function shp_orchestration_shp_project_form_validate(array $form, FormStateInterface $form_state) {
+  // Verify that the secret exists in OpenShift.
+  $secret_name = $form_state->getValue('field_shp_build_secret')[0]['value'];
+
+  try {
+    /** @var Drupal\shp_orchestration\OrchestrationProviderInterface $orchestration_provider_plugin */
+    $orchestration_provider_plugin = \Drupal::service('plugin.manager.orchestration_provider')
+      ->getProviderInstance();
+
+    $response = $orchestration_provider_plugin->getSecret($secret_name);
+    // The client will respond FALSE if the status code doesn't return a 200.
+    if ($response === FALSE) {
+      $form_state->setErrorByName('field_shp_build_secret', t('Secret: @secret_name does not exist.', ['@secret_name' => $secret_name]));
+    }
+  }
+  catch (OrchestrationProviderNotConfiguredException $e) {
+    drupal_set_message($e->getMessage(), 'warning');
+  }
+}
+
+/**
+ * Implements hook_shp_env_vars().
+ */
+function shp_orchestration_shp_env_vars(NodeInterface $environment) {
+  /** @var Drupal\Node\NodeInterface $site */
+  $site = $environment->field_shp_site
+    ->first()
+    ->get('entity')
+    ->getTarget()
+    ->getValue();
+  /** @var Drupal\Node\NodeInterface $project */
+  $project = $site->field_shp_project
+    ->first()
+    ->get('entity')
+    ->getTarget()
+    ->getValue();
+
+  // Generate default environment variables.
+  $env_vars = [
+    'SHEPHERD_SITE_ID' => $site->id(),
+    'SHEPHERD_URL' => \Drupal::service('router.request_context')->getCompleteBaseUrl(),
+    // @todo Ensure deployment secret has SHEPHERD_TOKEN set.
+    'SHEPHERD_TOKEN_FILE' => '/etc/secret/SHEPHERD_TOKEN',
+    'WEB_PATH' => $environment->field_shp_path->value,
+  ];
+
+  return $env_vars;
+}
+
+/**
+ * Implements hook_cron().
+ */
+function shp_orchestration_cron() {
+  \Drupal::service('shp_orchestration.job_queue')->process();
+}

@@ -12,14 +12,15 @@
         "cweagans/composer-patches":                     "~1.0",
         "drupal-composer/drupal-scaffold":               "^2.2",
         "universityofadelaide/shepherd-drupal-scaffold": "~1.0",
-        "drush/drush":                                   "dev-master",
-        "drupal/core":                                   "8.4.x-dev",
+        "drush/drush":                                   "8.*",
+        "drupal/core":                                   "8.4.*",
         "drupal/cas":                                    "1.x-dev",
         "drupal/devel":                                  "~1.0",
         "drupal/entity_reference_revisions":             "dev-1.x",
         "drupal/field_group":                            "1.*@dev",
         "drupal/group":                                  "^1.0@beta",
         "drupal/key_value_field":                        "1.x-dev",
+        "drupal/log_stdout":                             "1.*@dev",
         "drupal/paragraphs":                             "1.*",
         "drupal/r4032login":                             "1.*@dev",
         "drupal/redis":                                  "1.*@dev",
@@ -44,7 +45,10 @@
     "minimum-stability": "dev",
     "prefer-stable": true,
     "config": {
-        "bin-dir": "bin/"
+        "bin-dir": "bin/",
+        "platform": {
+            "php": "7.0.8"
+        }
     },
     "scripts": {
         "drupal-scaffold": "DrupalComposer\\DrupalScaffold\\Plugin::scaffold",
@@ -71,7 +75,7 @@
         },
         "merge-plugin": {
             "require": [
-                "web/modules/custom/shp_orchestration/composer.json"
+                "web/modules/custom/shepherd/shp_orchestration/composer.json"
             ]
         },
         "patches": {

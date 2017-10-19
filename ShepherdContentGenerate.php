@@ -13,14 +13,19 @@ use Drupal\user\Entity\User;
 
 $domain_name = getenv("OPENSHIFT_DOMAIN") ?: '192.168.99.100.nip.io';
 $openshift_url = getenv("OPENSHIFT_URL") ?: 'https://192.168.99.100:8443';
-$token = trim(getenv("TOKEN"));
+
 $database_host = getenv("DB_HOST") ?: 'mysql-myproject.' . $domain_name;
 $database_port = getenv("DB_PORT") ?: '31632';
 
-// Check that the auth TOKEN environment variable is available.
-if (empty($token)) {
-  echo "To generate default configuration for development, export your auth TOKEN from your host.\n";
+// Check that required variables are actually set.
+$token = trim(getenv("TOKEN"));
+$example_repository = getenv("EXAMPLE_REPOSITORY");
+if (empty($token) || empty($example_repository)) {
+  echo "To generate default configuration for development, the TOKEN and EXAMPLE_REPOSITORY\n";
+  echo "variables are required to be set. Export your auth TOKEN from your host and provide\n";
+  echo "a repository to clone and build with.\n";
   echo "export TOKEN=some-token\n";
+  echo "export EXAMPLE_REPOSITORY=some-repo-spec\n";
   echo "You can then safely re-run `robo dev:content-generate`\n";
   exit(1);
 }
@@ -72,6 +77,10 @@ else {
 }
 $openshift->save();
 
+$orchestration_config = \Drupal::service('config.factory')->getEditable('shp_orchestration.settings');
+$orchestration_config->set('selected_provider', 'openshift_with_redis');
+$orchestration_config->save();
+
 if (!$development = taxonomy_term_load_multiple_by_name('Development', 'shp_environment_types')) {
   $development_env = Term::create([
     'vid'                   => 'shp_environment_types',
@@ -84,6 +93,8 @@ if (!$development = taxonomy_term_load_multiple_by_name('Development', 'shp_envi
     'vid'  => 'shp_environment_types',
     'name' => 'Production',
     'field_shp_base_domain' => $domain_name,
+    'field_shp_protect' => TRUE,
+    'field_shp_update_go_live' => TRUE,
   ]);
   $production_env->save();
 }
@@ -92,38 +103,42 @@ else {
   echo "Taxonomy already setup.\n";
 }
 
-$distribution = Node::load(1);
-if (!$distribution) {
-  $distribution = Node::create([
-    'type'                     => 'shp_distribution',
+$project = Node::load(1);
+if (!$project) {
+  $project = Node::create([
+    'type'                     => 'shp_project',
     'langcode'                 => 'en',
     'uid'                      => '1',
     'status'                   => 1,
-    'title'                    => 'WCMS D8',
-    'field_shp_git_repository' => [['value' => 'git@gitlab.adelaide.edu.au:web-team/ua-wcms-d8.git']],
+    'title'                    => 'Example',
+    'field_shp_git_repository' => [['value' => $example_repository]],
     'field_shp_builder_image'  => [['value' => 'uofa/s2i-shepherd-drupal']],
     'field_shp_build_secret'   => [['value' => 'build-key']],
-    'field_shp_env_vars'       => [['key' => 'SHEPHERD_INSTALL_PROFILE', 'value' => 'ua']],
+    'field_shp_env_vars'       => [
+      ['key' => 'SHEPHERD_INSTALL_PROFILE', 'value' => 'standard'],
+      ['key' => 'REDIS_ENABLED', 'value' => '0'],
+    ],
   ]);
-  $distribution->save();
+  $project->save();
 }
 else {
-  echo "Distribution already setup.\n";
+  echo "Project already setup.\n";
 }
 
 $site = Node::load(2);
 if (!$site) {
   $site = Node::create([
-    'type'                   => 'shp_site',
-    'langcode'               => 'en',
-    'uid'                    => '1',
-    'status'                 => 1,
-    'title'                  => 'Test Site',
-    'field_shp_namespace'    => 'myproject',
-    'field_shp_short_name'   => 'test',
-    'field_shp_domain'       => 'test-site.' . $domain_name,
-    'field_shp_path'         => '/test-path',
-    'field_shp_distribution' => [['target_id' => $distribution->id()]],
+    'type'                      => 'shp_site',
+    'langcode'                  => 'en',
+    'uid'                       => '1',
+    'status'                    => 1,
+    'title'                     => 'Test Site',
+    'field_shp_namespace'       => 'myproject',
+    'field_shp_short_name'      => 'test',
+    'field_shp_domain'          => 'test-live.' . $domain_name,
+    'field_shp_git_default_ref' => 'master',
+    'field_shp_path'            => '/',
+    'field_shp_project'         => [['target_id' => $project->id()]],
   ]);
   $site->moderation_state->value = 'published';
   $site->save();
@@ -139,11 +154,12 @@ if (!$env) {
     'langcode'                   => 'en',
     'uid'                        => '1',
     'status'                     => 1,
-    'field_shp_domain'           => $site->field_shp_domain->value,
+    'field_shp_domain'           => 'test-development.' . $domain_name,
     'field_shp_path'             => $site->field_shp_path->value,
     'field_shp_environment_type' => [['target_id' => $development_env->id()]],
-    'field_shp_git_reference'    => 'shepherd',
+    'field_shp_git_reference'    => 'master',
     'field_shp_site'             => [['target_id' => $site->id()]],
+    'field_shp_update_on_image_change' => TRUE,
   ]);
   $env->moderation_state->value = 'published';
   $env->save();
@@ -164,6 +180,6 @@ if (!$oc_user) {
   $oc_user->save();
 }
 
-/** @var \Drupal\group\Entity\GroupInterface $dist_group */
-$dist_group = \Drupal::service('shp_content_types.group_manager')->load($distribution);
-$dist_group->addMember($oc_user, ['group_roles' => ['shp_distribution-online-consulta']]);
+/** @var \Drupal\group\Entity\GroupInterface $project_group */
+$project_group = \Drupal::service('shp_content_types.group_manager')->load($project);
+$project_group->addMember($oc_user, ['group_roles' => ['shp_project-online-consulta']]);

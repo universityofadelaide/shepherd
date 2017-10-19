@@ -1,0 +1,129 @@
+<?php
+
+/**
+ * @file
+ * Contains shp_backup.module.
+ */
+
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Render\BubbleableMetadata;
+use Drupal\node\Entity\Node;
+use Drupal\node\NodeInterface;
+use Drupal\taxonomy\Entity\Term;
+
+/**
+ * Implements hook_cron().
+ */
+function shp_backup_cron() {
+  // Only run backups at 3am.
+  if (date('G', time()) == 3) {
+    shp_backup_backup_environments();
+  }
+}
+
+/**
+ * Back up all environments.
+ */
+function shp_backup_backup_environments() {
+  // @todo Shepherd: Perform backups on orchestration provider.
+  // Retrieve list of all environments
+  // Load site, project, environment
+  // call createBackup on each
+  // As each job runs asap, does there need to be some throttling here?
+}
+
+/**
+ * Implements hook_token_info().
+ */
+function shp_backup_token_info() {
+  $info['types']['shepherd'] = [
+    'name' => t('Shepherd'),
+    'description' => t('Tokens related to shepherd.'),
+  ];
+
+  $info['tokens']['shepherd']['backup-path'] = [
+    'name' => t('Backup storage path'),
+    'description' => t('The shepherd default backup storage path.'),
+  ];
+
+  $info['tokens']['shepherd']['site-private-files'] = [
+    'name' => t('Private files'),
+    'description' => t('The private files directory path used by deployed Drupal pods.'),
+  ];
+
+  $info['tokens']['shepherd']['site-public-files'] = [
+    'name' => t('Public files'),
+    'description' => t('The public files directory path used by deployed Drupal pods.'),
+  ];
+
+  return $info;
+}
+
+/**
+ * Implements hook_tokens().
+ */
+function shp_backup_tokens($type, $tokens, array $data, array $options, BubbleableMetadata $bubbleable_metadata) {
+  if ($type != 'shepherd') {
+    return [];
+  }
+
+  $config = \Drupal::configFactory()->get('shp_backup.settings');
+
+  $replacements = [];
+
+  foreach ($tokens as $name => $original) {
+    switch ($name) {
+      case 'backup-path':
+        if (isset($data['backup'])) {
+          $site = Node::load($data['backup']->field_shp_site->target_id);
+          $backup_path = $config->get('root_dir') . '/' . $site->id() . '/' . $data['backup']->created->value;
+          $replacements[$original] = $backup_path;
+        }
+        break;
+
+      case 'site-private-files':
+        $replacements[$original] = '/shared/private/';
+        break;
+
+      case 'site-public-files':
+        $replacements[$original] = '/shared/public/';
+        break;
+
+      case 'environment-type':
+        if ($data['environment']) {
+          $environment_term = Term::load($data['environment']->field_shp_environment_type->target_id);
+          if ($environment_term) {
+            $replacements[$original] = $environment_term->name->value;
+          }
+        }
+    }
+  }
+
+  return $replacements;
+
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_insert().
+ */
+function shp_backup_node_insert(NodeInterface $node) {
+  switch ($node->bundle()) {
+    case 'shp_backup':
+      \Drupal::service('shp_backup.backup')->create($node);
+      break;
+  }
+}
+
+/**
+ * Implements hook_operation_alter().
+ */
+function shp_backup_entity_operation_alter(array &$operations, EntityInterface $entity) {
+  $account = \Drupal::currentUser();
+  // Operations are applied to the shp_environment entity.
+  // User must also have permission to create shp_backup entities.
+  if ($entity->getEntityTypeId() === "node"
+    && $entity->getType() === "shp_environment"
+    && $account->hasPermission('create shp_backup content')) {
+    \Drupal::service('shp_backup.backup')->operationsLinksAlter($operations, $entity);
+  }
+}

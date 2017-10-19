@@ -1,0 +1,5 @@
+services:
+  shp_database_provisioner.environment:
+    class: Drupal\shp_database_provisioner\EventSubscriber\DeploymentEventSubscriber
+    tags:
+      - { name: event_subscriber }

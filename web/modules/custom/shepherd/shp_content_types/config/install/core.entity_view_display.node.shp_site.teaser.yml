@@ -1,0 +1,34 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.teaser
+    - field.field.node.shp_site.field_shp_project
+    - field.field.node.shp_site.field_shp_domain
+    - field.field.node.shp_site.field_shp_short_name
+    - field.field.node.shp_site.field_shp_path
+    - field.field.node.shp_site.field_shp_site_log
+    - field.field.node.shp_site.field_tags
+    - node.type.shp_site
+id: node.shp_site.teaser
+targetEntityType: node
+bundle: shp_site
+mode: teaser
+content:
+  field_drush_aliases:
+    weight: 100
+    region: content
+  links:
+    weight: 100
+    region: content
+  users:
+    weight: 10
+    region: content
+hidden:
+  field_shp_authoriser_id: true
+  field_shp_project: true
+  field_shp_domain: true
+  field_shp_short_name: true
+  field_shp_path: true
+  field_shp_site_log: true
+  field_tags: true
