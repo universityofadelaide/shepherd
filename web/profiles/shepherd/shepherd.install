@@ -52,6 +52,16 @@ function shepherd_install() {
   // Enable the admin theme.
   \Drupal::configFactory()->getEditable('node.settings')->set('use_admin_theme', TRUE)->save(TRUE);
 
+  /*
+   * Note that we have chosen to use the Environment variable simply as the
+   * initial default here, rather than write it out in $config in settings.php.
+   * https://www.drupal.org/node/2662646 has some useful information, but the
+   * main problem with overriding in settings.php is that the ui and config
+   * system then doesn't know what is going on, and you can try setting it there
+   * but it doesn't actually make any changes.
+   */
+  \Drupal::configFactory()->getEditable('system.file')->set('path.temporary', getenv('TMP_DIR') ?: '/shared/tmp')->save(TRUE);
+
   // Do a node access rebuild, there will be zero/one node, so no need to batch.
   node_access_rebuild(FALSE);
 }
