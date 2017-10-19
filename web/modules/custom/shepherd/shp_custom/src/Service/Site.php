@@ -167,12 +167,6 @@ class Site {
    */
   public function formAlter(array &$form, FormStateInterface $form_state) {
     $this->applyJavascriptTitleField($form);
-    // First make the short_name only visible after text has appeared in it.
-    $this->applyJavascriptShortNameField($form);
-    // Add javascript that triggers a delayed event after input finished.
-    $form['#attached']['library'] = [
-      'shp_custom/input_event_delay',
-    ];
   }
 
   /**
@@ -182,95 +176,22 @@ class Site {
    *   Form render array.
    */
   public function applyJavascriptTitleField(array &$form) {
-    $form['title']['widget'][0]['value']['#ajax'] = [
-      'callback' => [$this, 'setShortNameAjax'],
-      'event' => 'inputdelay',
-      'progress' => [
-        'type' => 'throbber',
-        'message' => 'Creating short name',
-      ],
+    // #machine_name needs an id to attach to.
+    $form['title']['widget'][0]['value']['#id'] = 'edit-title';
+    $form['field_shp_short_name']['widget'][0]['value']['#type'] = 'machine_name';
+    $form['field_shp_short_name']['widget'][0]['value']['#machine_name'] = [
+      'exists' => ['Drupal\shp_custom\Service\Site', 'validateShortNameUniqueness'],
+      'source' => ['title', 'widget', '0', 'value'],
+      'replace_pattern' => '[^a-z0-9-]+',
+      'replace' => '-',
     ];
-  }
-
-  /**
-   * Ajax callback that creates the short_name from the title input.
-   *
-   * @param array $form
-   *   Form render array.
-   * @param \Drupal\Core\Form\FormStateInterface $form_state
-   *   Form state.
-   *
-   * @return \Drupal\Core\Ajax\AjaxResponse
-   *   Returns ajax response object with commands to update field ui.
-   */
-  public function setShortNameAjax(array &$form, FormStateInterface $form_state) {
-    $ajax_response = new AjaxResponse();
-    $title_value = $form_state->getValue('title')[0]['value'];
-    // Generate and validate the short name.
-    $short_name = $this->validateShortNameUniqueness($this->createShortName($title_value));
-    $form_state->setValue('field_shp_short_name', [
-      ['value' => $short_name],
-    ]);
-    $form['field_shp_short_name']['widget'][0]['value']['#value'] = $short_name;
-    $form_state->setValidationComplete(FALSE);
-    $form_state->setRebuild(TRUE);
-    // Rebuild the form and get the validation errors.
-    $form_state->getFormObject()->validateForm($form, $form_state);
-    // The form state should be modified that we can then get errors.
-    $errors = $form_state->getErrors();
-    if ($errors) {
-      $fields = ['field_shp_short_name][0][value', 'field_shp_short_name][0'];
-      foreach ($errors as $field => $error) {
-        if (in_array($field, $fields)) {
-          // Convert into a string.
-          // Extract the one we care about.
-          $short_name_error = $error->render();
-          $ajax_response->addCommand(new HtmlCommand('#field-shp-short-name-ajax-response', $short_name_error));
-          $ajax_response->addCommand(new InvokeCommand('#field-shp-short-name-ajax-response', 'css', ['color', 'red']));
-        }
-      }
-      // Flush the errors.
-      $form_state->clearErrors();
-    }
-    $ajax_response->addCommand(new InvokeCommand('#edit-field-shp-short-name-0-value', 'val', [$short_name]));
-
-    return $ajax_response;
-  }
-
-  /**
-   * Create a valid short name from the title field.
-   *
-   * @param string $title
-   *   Value from the title field.
-   *
-   * @return string
-   *   A valid short_name.
-   */
-  public function createShortName($title) {
-    return preg_replace('/[^a-z0-9-]/', '-', trim(strtolower($title)));
-  }
-
-  /**
-   * Apply #states and #ajax to the shp_short_name field.
-   *
-   * @param array $form
-   *   Form render array.
-   */
-  public function applyJavascriptShortNameField(array &$form) {
-    $form['field_shp_short_name']['#states'] = [
-      // Hide the field until the title field has data.
-      'invisible' => [
-        ':input[name="title[0][value]"]' => ['empty' => TRUE],
-      ],
-    ];
-    $form['field_shp_short_name']['widget'][0]['value']['#prefix'] = '<div id="field-shp-short-name-ajax-response"></div>';
   }
 
   /**
    * Ensure that the short_name generated is unique.
    *
    * @param string $short_name
-   *    Generated short name.
+   *   Generated short name.
    *
    * @return string
    *   If not unique adds a number to end of string, otherwise valid.
@@ -285,11 +206,15 @@ class Site {
   }
 
   /**
+   * Loads the project related to a site.
+   *
    * @param \Drupal\node\NodeInterface $site
+   *   Site node.
    *
    * @return \Drupal\node\NodeInterface|bool
+   *   Project node.
    */
-   public function getProject(NodeInterface $site) {
+  public function getProject(NodeInterface $site) {
     if (isset($site->field_shp_project->target_id)) {
       /** @var \Drupal\node\NodeInterface $project */
       return $site->get('field_shp_project')
