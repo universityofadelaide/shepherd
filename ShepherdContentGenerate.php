@@ -118,6 +118,10 @@ if (!$project) {
       ['key' => 'SHEPHERD_INSTALL_PROFILE', 'value' => 'standard'],
       ['key' => 'REDIS_ENABLED', 'value' => '0'],
     ],
+    'field_shp_readiness_probe_type' => [['value' => 'tcpSocket']],
+    'field_shp_readiness_probe_port' => [['value' => '8080']],
+    'field_shp_liveness_probe_type' => [['value' => 'tcpSocket']],
+    'field_shp_liveness_probe_port' => [['value' => '8080']],
   ]);
   $project->save();
 }
