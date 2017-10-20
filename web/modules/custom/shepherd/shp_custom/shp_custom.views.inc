@@ -49,4 +49,13 @@ function shp_custom_views_data_alter(array &$data) {
     ],
   ];
 
+  $data['node_field_data']['site_environment_terminal'] = [
+    'title' => t('Site Environment Terminal'),
+    'field' => [
+      'title' => t('Environment Terminal'),
+      'help' => t('Show environment terminal link.'),
+      'id' => 'site_environment_terminal',
+    ],
+  ];
+
 }
