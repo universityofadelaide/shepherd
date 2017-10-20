@@ -117,7 +117,6 @@ class VueTable extends StylePluginBase {
       }
     }
 
-
     $fields = $this->view->getHandlers('field');
     // This renders the view to the object.
     $this->renderFields($this->view->result);

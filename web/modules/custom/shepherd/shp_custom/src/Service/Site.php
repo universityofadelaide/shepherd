@@ -26,7 +26,7 @@ class Site {
   /**
    * Entity Type Manager.
    *
-   * @var EntityTypeManagerInterface
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
   protected $entityTypeManager;
 
@@ -106,10 +106,6 @@ class Site {
       'shp_environment' => $this->loadRelatedEntitiesByField($site, 'field_shp_site', 'shp_environment'),
       'shp_project' => $keyedArray($site->field_shp_project->referencedEntities()),
     ];
-
-    foreach ($nodes['shp_environment'] as $environment) {
-      // @todo Shepherd: Platforms are gone, what to do here?
-    }
 
     return $nodes;
   }

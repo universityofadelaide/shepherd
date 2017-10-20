@@ -16,7 +16,7 @@ use Drupal\taxonomy\Entity\Term;
 class EnvironmentTest extends KernelTestBase {
 
   /**
-   * {@inheritdoc]
+   * {@inheritdoc}
    */
   public static $modules = [
     'system',
@@ -35,6 +35,7 @@ class EnvironmentTest extends KernelTestBase {
   protected function setUp() {
     parent::setUp();
 
+    // @todo Fix missing $table parameter.
     $this->installSchema(['node', 'field', 'field_group', 'shp_content_types', 'shp_custom']);
 
     $user = $this->createUser();

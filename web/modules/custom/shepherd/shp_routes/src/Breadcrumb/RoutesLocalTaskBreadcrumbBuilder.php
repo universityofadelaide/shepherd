@@ -5,8 +5,7 @@ namespace Drupal\shp_routes\Breadcrumb;
 use Drupal\shp_content_types\Breadcrumb\SitesBreadcrumbBuilder;
 
 /**
- * Class RoutesLocalTaskBreadcrumbBuilder
- * @package Drupal\shp_routes\Breadcrumb
+ * Class RoutesLocalTaskBreadcrumbBuilder.
  */
 class RoutesLocalTaskBreadcrumbBuilder extends SitesBreadcrumbBuilder {
 

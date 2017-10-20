@@ -29,7 +29,7 @@ class Environment {
   /**
    * Request service.
    *
-   * @var RequestStack
+   * @var \Symfony\Component\HttpFoundation\RequestStack
    */
   protected $requestStack;
 
@@ -43,7 +43,7 @@ class Environment {
   /**
    * Entity Type Manager.
    *
-   * @var EntityTypeManagerInterface
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
   protected $entityTypeManager;
 
@@ -177,7 +177,7 @@ class Environment {
    * @return \Drupal\Core\Ajax\AjaxResponse
    *   Returns ajax response with commands.
    */
-  public function setDomainPath(&$form, FormStateInterface $form_state) {
+  public function setDomainPath(array &$form, FormStateInterface $form_state) {
     $ajax_response = new AjaxResponse();
     $taxonomy_term_id = $form_state->getValue('field_shp_environment_type')[0]['target_id'];
     $site_id = $form_state->getValue('field_shp_site')[0]['target_id'];
