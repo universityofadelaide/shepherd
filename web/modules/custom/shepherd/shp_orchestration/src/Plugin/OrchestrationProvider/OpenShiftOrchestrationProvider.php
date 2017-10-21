@@ -631,7 +631,6 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       // Return the link to the first pod.
       $pod_name = $pods['items'][0]['metadata']['name'];
       $endpoint = $this->configEntity->endpoint;
-      $endpoint = 'https://127.0.0.1:8443';
       $namespace = $this->configEntity->namespace;
 
       $link = Url::fromUri($endpoint . '/console/project/' . $namespace . '/browse/pods/' . $pod_name,[
