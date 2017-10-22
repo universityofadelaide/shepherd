@@ -106,7 +106,27 @@ class DummyOrchestrationProvider extends OrchestrationProviderBase {
   /**
    * {@inheritdoc}
    */
-  public function createdSite() {
+  public function promotedEnvironment(
+    string $project_name,
+    string $short_name,
+    int $site_id,
+    int $environment_id,
+    string $source_ref = 'master',
+    bool $clear_cache = TRUE
+  ) {
+    return TRUE;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function createdSite(
+    string $project_name,
+    string $short_name,
+    int $site_id,
+    string $domain,
+    string $path
+  ) {
     return TRUE;
   }
 
@@ -120,7 +140,11 @@ class DummyOrchestrationProvider extends OrchestrationProviderBase {
   /**
    * {@inheritdoc}
    */
-  public function deletedSite() {
+  public function deletedSite(
+    string $project_name,
+    string $short_name,
+    int $site_id
+  ) {
     return TRUE;
   }
 
@@ -233,6 +257,13 @@ class DummyOrchestrationProvider extends OrchestrationProviderBase {
    * {@inheritdoc}
    */
   public function getEnvironmentUrl(string $project_name, string $short_name, string $environment_id) {
+    return [];
+  }
+
+  /**
+   * @inheritdoc}
+   */
+  public function getTerminalUrl(string $project_name, string $short_name, string $environment_id) {
     return [];
   }
 

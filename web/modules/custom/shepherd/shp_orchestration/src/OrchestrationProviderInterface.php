@@ -474,4 +474,14 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
     string $commands = ''
   );
 
+  /**
+   * Get a job.
+   *
+   * @param string $name
+   *   Name of the job to retrieve.
+   */
+  public function getJob(
+    string $name
+  );
+
 }
