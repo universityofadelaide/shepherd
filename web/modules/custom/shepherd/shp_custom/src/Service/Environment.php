@@ -239,10 +239,12 @@ class Environment {
       ];
     }
 
+    // @todo - External dependency, warning. Weeeoooooweeeooo.
+    // Get an instance of the orchestration provider for use later
     $orchestrationProvider = \Drupal::service('plugin.manager.orchestration_provider')
       ->getProviderInstance();
-    $site = $entity->field_shp_site->first()->entity;
-    $project = $site->field_shp_project->first()->entity;
+    $site = $entity->field_shp_site->entity;
+    $project = $site->field_shp_project->entity;
 
     $terminal = $orchestrationProvider->getTerminalUrl(
       $project->getTitle(),

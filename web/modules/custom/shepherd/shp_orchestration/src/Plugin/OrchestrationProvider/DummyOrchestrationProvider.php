@@ -58,8 +58,10 @@ class DummyOrchestrationProvider extends OrchestrationProviderBase {
     string $source_repo,
     string $source_ref = 'master',
     string $source_secret = NULL,
+    bool $update_on_image_change = FALSE,
     array $environment_variables = [],
     array $secrets = [],
+    array $probes = [],
     array $cron_jobs = []
   ) {
     return TRUE;
@@ -75,9 +77,14 @@ class DummyOrchestrationProvider extends OrchestrationProviderBase {
     string $environment_id,
     string $environment_url,
     string $builder_image,
+    string $domain,
+    string $path,
     string $source_repo,
     string $source_ref = 'master',
     string $source_secret = NULL,
+    array $environment_variables = [],
+    array $secrets = [],
+    array $probes = [],
     array $cron_jobs = []
   ) {
     return TRUE;
@@ -176,8 +183,6 @@ class DummyOrchestrationProvider extends OrchestrationProviderBase {
 
   /**
    * {@inheritdoc}
-   *
-   * @todo - can this and cron job creation be combined?
    */
   public function executeJob(
     string $project_name,
@@ -261,7 +266,7 @@ class DummyOrchestrationProvider extends OrchestrationProviderBase {
   }
 
   /**
-   * @inheritdoc}
+   * {@inheritdoc}
    */
   public function getTerminalUrl(string $project_name, string $short_name, string $environment_id) {
     return [];
