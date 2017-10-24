@@ -6,10 +6,8 @@ use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\node\Entity\Node;
 
-
 /**
- * Class SiteLocalTaskController
- * @package Drupal\shp_custom\Controller
+ * Class SiteLocalTaskController.
  */
 class SiteLocalTaskController extends ControllerBase {
 
@@ -17,10 +15,10 @@ class SiteLocalTaskController extends ControllerBase {
    * Checks access on routes to display local tasks.
    *
    * @param string|object $node
-   *    Node id to check access on.
+   *   Node id to check access on.
    *
    * @return \Drupal\Core\Access\AccessResult
-   *    If true access is allowed.
+   *   If true access is allowed.
    */
   public function checkAccess($node) {
     if (!is_object($node)) {

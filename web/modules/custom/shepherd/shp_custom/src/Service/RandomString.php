@@ -14,9 +14,9 @@ class RandomString {
    *
    * @param int $length
    *   The length of the string to return.
+   *
    * @return string
    *   The generated string.
-   *
    */
   public function generate($length = 20) {
     $count = range(0, $length);

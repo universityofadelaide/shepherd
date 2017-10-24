@@ -5,8 +5,7 @@ namespace Drupal\shp_drush_aliases\Service;
 use Drupal\node\Entity\Node;
 
 /**
- * Class SiteAliases
- * @package Drupal\shp_drush_aliases\Service
+ * Class SiteAliases.
  */
 class SiteAliases {
 
@@ -36,6 +35,7 @@ class SiteAliases {
    * Preprocess entities for use in the site aliases template.
    *
    * @param $entities
+   *
    * @return array
    */
   public function preprocessEntities($entities) {

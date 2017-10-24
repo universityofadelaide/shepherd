@@ -4,7 +4,6 @@ namespace Drupal\shp_custom\Plugin\views\field;
 
 use Drupal\views\Plugin\views\field\FieldPluginBase;
 use Drupal\views\ResultRow;
-use Drupal\Core\Form\FormStateInterface;
 
 /**
  * Field handler to add the status of the environment as a whole.
@@ -35,10 +34,6 @@ class SiteEnvironmentStatus extends FieldPluginBase {
    * {@inheritdoc}
    */
   public function render(ResultRow $values) {
-    $entity = $values->_entity;
-    // Need to get the site_id.
-    $environment = $entity->id();
-
     $build['environment_status'] = [
       '#plain_text' => 'Unknown',
     ];

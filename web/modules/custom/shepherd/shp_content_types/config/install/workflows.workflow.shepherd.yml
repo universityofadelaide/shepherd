@@ -8,47 +8,43 @@ dependencies:
     - content_moderation
 id: environment
 label: 'Shepherd workflow'
-states:
-  draft:
-    label: Draft
-    weight: -1
-  published:
-    label: Active
-    weight: 0
-  archived:
-    label: Archived
-    weight: 1
-transitions:
-  keep_active:
-    label: 'keep active'
-    from:
-      - published
-    to: published
-    weight: -9
-  published:
-    label: 'deploy'
-    from:
-      - draft
-    to: published
-    weight: -10
-  published_archive:
-    label: archive
-    from:
-      - published
-    to: archived
-    weight: -8
 type: content_moderation
 type_settings:
   states:
-    archived:
-      published: false
-      default_revision: false
     draft:
+      label: Draft
+      weight: -1
       published: false
       default_revision: false
     published:
+      label: Active
+      weight: 0
       published: true
       default_revision: true
+    archived:
+      label: Archived
+      weight: 1
+      published: false
+      default_revision: false
+  transitions:
+    keep_active:
+      label: 'keep active'
+      from:
+        - published
+      to: published
+      weight: -9
+    published:
+      label: 'deploy'
+      from:
+        - draft
+      to: published
+      weight: -10
+    published_archive:
+      label: archive
+      from:
+        - published
+      to: archived
+      weight: -8
   entity_types:
     node:
       - shp_environment

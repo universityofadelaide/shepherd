@@ -6,10 +6,9 @@
  */
 
 use Drupal\Core\Entity\EntityTypeInterface;
-use Drupal\node\NodeInterface;
-use Drupal\node\Entity\Node;
-use Drupal\Core\Datetime\DrupalDateTime;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\node\Entity\Node;
+use Drupal\node\NodeInterface;
 
 /**
  * Implements hook_ENTITY_TYPE_presave().

@@ -9,8 +9,7 @@ use Drupal\Core\Link;
 use Drupal\node\Entity\Node;
 
 /**
- * Class SitesBreadcrumbBuilder
- * @package Drupal\shp_content_types\Breadcrumb
+ * Class SitesBreadcrumbBuilder.
  */
 class SitesBreadcrumbBuilder implements BreadcrumbBuilderInterface {
 
@@ -57,6 +56,7 @@ class SitesBreadcrumbBuilder implements BreadcrumbBuilderInterface {
       case 'shp_site':
         $breadcrumb->addLink(Link::createFromRoute($node->getTitle(), 'entity.node.canonical', ['node' => $node->id()]));
         break;
+
       case 'shp_environment':
         $site = $node->get('field_shp_site')
           ->first()

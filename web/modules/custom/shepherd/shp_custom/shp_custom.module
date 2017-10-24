@@ -159,7 +159,7 @@ function shp_custom_node_update(NodeInterface $node) {
           $environment = Node::load($environment_id);
           if ($environment->moderation_state->value != 'archived') {
 
-            // Create the backup node and perform a backup
+            // Create the backup node and perform a backup.
             $backup->createBackupNode($node, $environment, NULL, TRUE);
 
             // @todo Shepherd: Need to queue to enable this part.
@@ -170,6 +170,7 @@ function shp_custom_node_update(NodeInterface $node) {
         }
       }
       break;
+
     case 'shp_environment':
       if ($node->moderation_state->value == 'archived') {
         $backup = \Drupal::service('shp_backup.backup');
@@ -189,7 +190,6 @@ function shp_custom_node_update(NodeInterface $node) {
       }
       break;
   }
-
 }
 
 /**
