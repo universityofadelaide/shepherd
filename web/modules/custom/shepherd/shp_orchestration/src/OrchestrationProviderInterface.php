@@ -381,6 +381,25 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
   );
 
   /**
+   * Retrieves the direct terminal access url for a given environment.
+   *
+   * @param string $project_name
+   *   Name of the project.
+   * @param string $short_name
+   *   Short name of the site.
+   * @param string $environment_id
+   *   Environment node id.
+   *
+   * @return \Drupal\Core\Url|bool
+   *   Returns environment url, or false.
+   */
+  public function getTerminalUrl(
+    string $project_name,
+    string $short_name,
+    string $environment_id
+  );
+
+  /**
    * Backup an environment.
    *
    * @param string $project_name
@@ -453,6 +472,16 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
     string $environment_id,
     string $source_ref = 'master',
     string $commands = ''
+  );
+
+  /**
+   * Get a job.
+   *
+   * @param string $name
+   *   Name of the job to retrieve.
+   */
+  public function getJob(
+    string $name
   );
 
 }

@@ -3,6 +3,7 @@
 namespace Drupal\shp_orchestration\Plugin\OrchestrationProvider;
 
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Link;
 use Drupal\Core\Url;
 use Drupal\node\Entity\Node;
 use Drupal\shp_orchestration\OrchestrationProviderBase;
@@ -600,6 +601,46 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     try {
       $route = $this->client->getRoute($deployment_name);
       return Url::fromUri('//' . $route['spec']['host'] . (array_key_exists('path', $route['spec']) ? $route['spec']['path'] : '/'));
+    }
+    catch (ClientException $e) {
+      $this->handleClientException($e);
+      return FALSE;
+    }
+    catch (\InvalidArgumentException $e) {
+      return FALSE;
+    }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getTerminalUrl(string $project_name, string $short_name, string $environment_id) {
+    $deployment_name = self::generateDeploymentName(
+      $project_name,
+      $short_name,
+      $environment_id
+    );
+
+    try {
+      $pods = $this->client->getPod('', 'app=' . $deployment_name . ',environment_id=' . $environment_id);
+      // If there are no running pods, return now.
+      if (!count($pods['items'])) {
+        return FALSE;
+      }
+
+      // Return the link to the first pod.
+      $pod_name = $pods['items'][0]['metadata']['name'];
+      $endpoint = $this->configEntity->endpoint;
+      $namespace = $this->configEntity->namespace;
+
+      $link = Url::fromUri($endpoint . '/console/project/' . $namespace . '/browse/pods/' . $pod_name,[
+        'query' => [
+          'tab' => 'terminal',
+          ],
+        ]
+      );
+
+      return $link;
     }
     catch (ClientException $e) {
       $this->handleClientException($e);

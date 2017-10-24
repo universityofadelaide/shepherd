@@ -58,8 +58,10 @@ class DummyOrchestrationProvider extends OrchestrationProviderBase {
     string $source_repo,
     string $source_ref = 'master',
     string $source_secret = NULL,
+    bool $update_on_image_change = FALSE,
     array $environment_variables = [],
     array $secrets = [],
+    array $probes = [],
     array $cron_jobs = []
   ) {
     return TRUE;
@@ -75,9 +77,14 @@ class DummyOrchestrationProvider extends OrchestrationProviderBase {
     string $environment_id,
     string $environment_url,
     string $builder_image,
+    string $domain,
+    string $path,
     string $source_repo,
     string $source_ref = 'master',
     string $source_secret = NULL,
+    array $environment_variables = [],
+    array $secrets = [],
+    array $probes = [],
     array $cron_jobs = []
   ) {
     return TRUE;
@@ -106,7 +113,27 @@ class DummyOrchestrationProvider extends OrchestrationProviderBase {
   /**
    * {@inheritdoc}
    */
-  public function createdSite() {
+  public function promotedEnvironment(
+    string $project_name,
+    string $short_name,
+    int $site_id,
+    int $environment_id,
+    string $source_ref = 'master',
+    bool $clear_cache = TRUE
+  ) {
+    return TRUE;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function createdSite(
+    string $project_name,
+    string $short_name,
+    int $site_id,
+    string $domain,
+    string $path
+  ) {
     return TRUE;
   }
 
@@ -120,7 +147,11 @@ class DummyOrchestrationProvider extends OrchestrationProviderBase {
   /**
    * {@inheritdoc}
    */
-  public function deletedSite() {
+  public function deletedSite(
+    string $project_name,
+    string $short_name,
+    int $site_id
+  ) {
     return TRUE;
   }
 
@@ -152,8 +183,6 @@ class DummyOrchestrationProvider extends OrchestrationProviderBase {
 
   /**
    * {@inheritdoc}
-   *
-   * @todo - can this and cron job creation be combined?
    */
   public function executeJob(
     string $project_name,
@@ -233,6 +262,13 @@ class DummyOrchestrationProvider extends OrchestrationProviderBase {
    * {@inheritdoc}
    */
   public function getEnvironmentUrl(string $project_name, string $short_name, string $environment_id) {
+    return [];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getTerminalUrl(string $project_name, string $short_name, string $environment_id) {
     return [];
   }
 
