@@ -212,15 +212,14 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
           $args,
         ];
         try {
-          // @todo - label support needs to be added to the delete, and then creation of cron jobs
-          //$this->client->createCronJob(
-          //  $deployment_name . '-' . \Drupal::service('shp_custom.random_string')->generate(5),
-          //  $image_stream['status']['dockerImageRepository'] . ':' . $source_ref,
-          //  $schedule,
-          //  $args_array,
-          //  $volumes,
-          //  $deploy_data
-          //);
+          $this->client->createCronJob(
+            $deployment_name . '-' . \Drupal::service('shp_custom.random_string')->generate(5),
+            $image_stream['status']['dockerImageRepository'] . ':' . $source_ref,
+            $schedule,
+            $args_array,
+            $volumes,
+            $deploy_data
+          );
         }
         catch (ClientException $e) {
           $this->handleClientException($e);
@@ -297,10 +296,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       //$this->client->updateDeploymentConfig($deployment_name, 0);
       //$this->client->updateReplicationControllers('', 'app=' . $deployment_name, 0);
 
-      // Not sure if we need to delay a little here, do the cronjob and routes
-      // to artificially delay.
-      // @todo - label support needs to be added to the delete, and then creation of cron jobs
-      //$this->client->deleteCronJob($deployment_name);
+      $this->client->deleteCronJob('', $deployment_name);
       $this->client->deleteRoute($deployment_name);
       $this->client->deleteService($deployment_name);
 
