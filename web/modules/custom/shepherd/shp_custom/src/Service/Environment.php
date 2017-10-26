@@ -13,6 +13,7 @@ use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\Url;
 use Drupal\node\NodeInterface;
+use Drupal\shp_orchestration\OrchestrationProviderPluginManagerInterface;
 use Drupal\taxonomy\Entity\Term;
 use Symfony\Component\HttpFoundation\RequestStack;
 
@@ -70,9 +71,18 @@ class Environment {
   protected $currentUser;
 
   /**
+   * Site service.
+   *
    * @var \Drupal\shp_custom\Service\Site
    */
   private $site;
+
+  /**
+   * Orchestration provider plugin manager.
+   *
+   * @var \Drupal\shp_orchestration\OrchestrationProviderPluginManagerInterface
+   */
+  protected $orchestrationProvider;
 
   /**
    * Environment constructor.
@@ -86,7 +96,11 @@ class Environment {
    * @param \Drupal\shp_custom\Service\Site $site
    *   Site service.
    */
-  public function __construct(RequestStack $requestStack, EntityTypeManagerInterface $entityTypeManager, AccountProxyInterface $currentUser, Site $site) {
+  public function __construct(RequestStack $requestStack,
+                              EntityTypeManagerInterface $entityTypeManager,
+                              AccountProxyInterface $currentUser,
+                              Site $site,
+                              OrchestrationProviderPluginManagerInterface $orchestrationProviderPluginManager) {
     $this->requestStack = $requestStack;
     $this->entityTypeManager = $entityTypeManager;
     $this->currentRequest = $this->requestStack->getCurrentRequest();
@@ -94,6 +108,7 @@ class Environment {
     $this->taxonomyTerm = $this->entityTypeManager->getStorage('taxonomy_term');
     $this->currentUser = $currentUser;
     $this->site = $site;
+    $this->orchestrationProvider = $orchestrationProviderPluginManager->getProviderInstance();
   }
 
   /**
@@ -206,7 +221,6 @@ class Environment {
     return $this->taxonomyTerm->load($tid);
   }
 
-
   /**
    * Apply alterations to entity operations.
    *
@@ -233,20 +247,16 @@ class Environment {
           'data-dialog-type'    => 'modal',
           'data-dialog-options' => Json::encode([
             'width'  => '50%',
-            'height' => '50%'
+            'height' => '50%',
           ]),
         ],
       ];
     }
 
-    // @todo - External dependency, warning. Weeeoooooweeeooo.
-    // Get an instance of the orchestration provider for use later
-    $orchestrationProvider = \Drupal::service('plugin.manager.orchestration_provider')
-      ->getProviderInstance();
     $site = $entity->field_shp_site->entity;
     $project = $site->field_shp_project->entity;
 
-    $terminal = $orchestrationProvider->getTerminalUrl(
+    $terminal = $this->orchestrationProvider->getTerminalUrl(
       $project->getTitle(),
       $site->field_shp_short_name->value,
       $entity->id()
