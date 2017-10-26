@@ -161,9 +161,11 @@ objects:
           - name: DATABASE_USER
             value: ${DATABASE_USER}
           - name: PRIVATE_DIR
-            value: /code/private
+            value: /shared/private
           - name: PUBLIC_DIR
-            value: /code/web/sites/default/files
+            value: /shared/public
+          - name: TMP_DIR
+            value: /shared/tmp
           - name: REDIS_ENABLED
             value: '1'
           - name: REDIS_HOST
