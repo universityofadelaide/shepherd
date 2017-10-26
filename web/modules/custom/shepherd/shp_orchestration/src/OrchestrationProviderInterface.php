@@ -400,6 +400,25 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
   );
 
   /**
+   * Retrieves the direct log access url for a given environment.
+   *
+   * @param string $project_name
+   *   Name of the project.
+   * @param string $short_name
+   *   Short name of the site.
+   * @param string $environment_id
+   *   Environment node id.
+   *
+   * @return \Drupal\Core\Url|bool
+   *   Returns environment url, or false.
+   */
+  public function getLogUrl(
+    string $project_name,
+    string $short_name,
+    string $environment_id
+  );
+
+  /**
    * Backup an environment.
    *
    * @param string $project_name
