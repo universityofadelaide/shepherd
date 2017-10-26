@@ -262,11 +262,25 @@ class Environment {
       $entity->id()
     );
 
+    $logs = $this->orchestrationProvider->getLogUrl(
+      $project->getTitle(),
+      $site->field_shp_short_name->value,
+      $entity->id()
+    );
+
     if ($terminal) {
       $operations['terminal'] = [
         'title'      => $this->t('Terminal'),
         'weight'     => 9,
         'url'        => $terminal,
+      ];
+    }
+
+    if ($logs) {
+      $operations['logs'] = [
+        'title' => $this->t('Logs'),
+        'weight' => 10,
+        'url' => $logs,
       ];
     }
   }
