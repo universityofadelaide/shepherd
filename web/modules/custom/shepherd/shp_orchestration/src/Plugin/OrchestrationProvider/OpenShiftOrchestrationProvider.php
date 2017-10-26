@@ -660,7 +660,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       }
       // Return the link to the first pod.
       $pod_name = $pods['items'][0]['metadata']['name'];
-      return $this->generateOpenShiftPodUrl($pod_name, 'log');
+      return $this->generateOpenShiftPodUrl($pod_name, 'logs');
 
     }
     catch (ClientException $e) {

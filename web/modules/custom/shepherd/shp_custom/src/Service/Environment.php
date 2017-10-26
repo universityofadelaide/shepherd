@@ -279,7 +279,7 @@ class Environment {
     if ($logs) {
       $operations['logs'] = [
         'title' => $this->t('Logs'),
-        'weight' => 10,
+        'weight' => 4,
         'url' => $logs,
       ];
     }
