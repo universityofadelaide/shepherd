@@ -230,7 +230,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
 
     if (!$update_on_image_change) {
       // We need to check if the image is already 'built', or we get an error.
-      $build_status = $this->client->getBuilds($build_config_name);
+      $build_status = $this->client->getBuilds('', 'buildconfig=' . $build_config_name);
       if ($build_status['items'][0]['status']['phase'] === 'Complete') {
         $this->client->instantiateDeploymentConfig($deployment_name);
       }
@@ -296,7 +296,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       //$this->client->updateDeploymentConfig($deployment_name, 0);
       //$this->client->updateReplicationControllers('', 'app=' . $deployment_name, 0);
 
-      $this->client->deleteCronJob('', $deployment_name);
+      $this->client->deleteCronJob('', 'app=' . $deployment_name);
       $this->client->deleteRoute($deployment_name);
       $this->client->deleteService($deployment_name);
 
