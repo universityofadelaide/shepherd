@@ -632,7 +632,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       $pod_name = $pods['items'][0]['metadata']['name'];
       return $this->generateOpenShiftPodUrl($pod_name, 'terminal');
 
-    }q
+    }
     catch (ClientException $e) {
       $this->handleClientException($e);
       return FALSE;
