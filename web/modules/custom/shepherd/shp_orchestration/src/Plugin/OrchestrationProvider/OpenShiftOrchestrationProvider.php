@@ -843,8 +843,13 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
   private function handleClientException(ClientException $exception) {
     $reason = $exception->getMessage();
     if (strstr($exception->getBody(), 'Unauthorized')) {
-      $reason = t('Client is not authorized to access requested resource.');
+      $reason = $this->t('Client is not authorized to access requested resource.');
     }
+
+    \Drupal::logger('shp_orchestration')->error('An error occurred while communicating with OpenShift. %reason', [
+      '%reason' => $reason,
+    ]);
+
     // @todo Add handlers for other reasons for failure. Add as required.
     drupal_set_message(t("An error occurred while communicating with OpenShift. %reason", ['%reason' => $reason]), 'error');
   }
