@@ -44,6 +44,15 @@ echo $TOKEN
 
 #### Configuring the Database Provisioner
 
+Ensure that the provisioner is enabled. 
+
+`/admin/config/shepherd/database-provisioner`
+
+The following fields are required : 
+- `Host` 
+- `Port`
+- `User` - Requires a privileged user that has permissions to `CREATE DATABASE` and `GRANT`
+- `Secret` - This is the name of the secret which contains the privileged user password is stored. This should be setup as a secret in OpenShift. 
 
 ### Delete shepherd instances and storage
 ```bash
