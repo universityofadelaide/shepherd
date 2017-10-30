@@ -691,6 +691,11 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       'query' => [
         'tab' => $view,
       ],
+    ],
+    [
+      'attributes' => [
+        'target' => '_blank',
+      ],
     ]
     );
 
