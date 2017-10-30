@@ -190,10 +190,9 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       $sanitised_project_name,
       $update_on_image_change,
       $volumes,
-      $deploy_data
+      $deploy_data,
+      $probes
     );
-
-    $this->client->addProbeConfig($deployment_config, $probes);
 
     try {
       $this->client->createDeploymentConfig($deployment_config);
