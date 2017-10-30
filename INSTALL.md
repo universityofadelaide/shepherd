@@ -31,7 +31,11 @@ Ensure the orchestration provider is enabled and queued operations is selected.
 `/admin/config/shepherd/orchestration/provider-settings`
 
 - `endpoint` - set to the url of the OpenShift instance you deployed Shepherd to.
-- `token` - Auth token for OpenShift. To generate:
+- `namespace` - This is the name of the project setup in OpenShift, all operations will be performed within this project.
+- `token` - Auth token for OpenShift. This is required to authenticate requests between the Shepherd OpenShift Client and the OpenShift API.
+   This token is generated via a [Service Account](https://docs.openshift.com/container-platform/3.5/dev_guide/service_accounts.html) created in OpenShift. 
+   The below example assumes that a service account called `shepherd` has already been created, an API token will created automatically. 
+   To access our token:
 ```bash
 # First get the service account
 SERVICE_ACCOUNT = $(oc describe serviceaccount shepherd | grep Token | awk '{ print $2 }')
@@ -40,7 +44,6 @@ TOKEN = $(oc describe secret ${SERVICE_ACCOUNT} | grep "token:" | awk '{ print $
 # Copy this into the token textarea.
 echo $TOKEN
 ```
-- `namespace` - This is the name of the project setup in OpenShift, all operations will be performed within this project.
 
 #### Configuring the Database Provisioner
 
