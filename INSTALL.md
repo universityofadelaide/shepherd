@@ -66,7 +66,13 @@ oc create secret generic privileged-db-password --from-literal=DATABASE_PASSWORD
 
 ### Configuring environment types
 
+When environments are created you declare a type of environment the entity belongs to. An environment type is a taxonomy that describes it's name,
+base domain (The base domain is used to populate urls) and delete protection (protects entitys grouped with this environment type from deletion). 
+This grouping will logically define your environment(s) when you deploy on a site : e.g dev, uat, prd. You can define the environment types as per your 
+organisations workflow. In this instance we will create 3 environment types : `Development`, `UAT` and `Production`.
 
+To create the environment types: 
+`/admin/structure/taxonomy/manage/shp_environment_types/overview` click the add term button. 
 
 ### Delete shepherd instances and storage
 ```bash
