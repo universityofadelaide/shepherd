@@ -69,11 +69,13 @@ class Environment extends EntityActionBase {
 
     $probes = [];
     foreach (['liveness', 'readiness'] as $type) {
-      $probes[$type] = [
-        'type'       => $project->get('field_shp_' . $type . '_probe_type')->value,
-        'port'       => $project->get('field_shp_' . $type . '_probe_port')->value,
-        'parameters' => $project->get('field_shp_' . $type . '_probe_params')->value,
-      ];
+      if ($project->get('field_shp_' . $type . '_probe_type')->value !== NULL) {
+        $probes[$type] = [
+          'type'       => $project->get('field_shp_' . $type . '_probe_type')->value,
+          'port'       => $project->get('field_shp_' . $type . '_probe_port')->value,
+          'parameters' => $project->get('field_shp_' . $type . '_probe_params')->value,
+        ];
+      }
     }
 
     $cron_jobs = [];
