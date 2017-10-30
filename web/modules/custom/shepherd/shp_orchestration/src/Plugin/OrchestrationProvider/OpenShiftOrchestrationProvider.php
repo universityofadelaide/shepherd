@@ -63,8 +63,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     ];
 
     try {
-      $image_stream = $this->client->generateImageStream($sanitised_name);
-      $this->client->createImageStream($image_stream);
+      $this->client->createImageStream($sanitised_name);
       $this->client->createBuildConfig(
         $sanitised_name . '-' . $source_ref,
         $source_secret,
