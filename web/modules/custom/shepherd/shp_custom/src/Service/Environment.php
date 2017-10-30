@@ -13,7 +13,6 @@ use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\Url;
 use Drupal\node\NodeInterface;
-use Drupal\shp_orchestration\OrchestrationProviderPluginManagerInterface;
 use Drupal\taxonomy\Entity\Term;
 use Symfony\Component\HttpFoundation\RequestStack;
 
@@ -99,8 +98,7 @@ class Environment {
   public function __construct(RequestStack $requestStack,
                               EntityTypeManagerInterface $entityTypeManager,
                               AccountProxyInterface $currentUser,
-                              Site $site,
-                              OrchestrationProviderPluginManagerInterface $orchestrationProviderPluginManager) {
+                              Site $site) {
     $this->requestStack = $requestStack;
     $this->entityTypeManager = $entityTypeManager;
     $this->currentRequest = $this->requestStack->getCurrentRequest();
@@ -108,7 +106,9 @@ class Environment {
     $this->taxonomyTerm = $this->entityTypeManager->getStorage('taxonomy_term');
     $this->currentUser = $currentUser;
     $this->site = $site;
-    $this->orchestrationProvider = $orchestrationProviderPluginManager->getProviderInstance();
+    // @todo - too many cross dependancies on this service, causing install failures. Fix.
+    // Pull statically for now.
+    $this->orchestrationProvider = \Drupal::service('plugin.manager.orchestration_provider')->getProviderInstance();
   }
 
   /**
@@ -286,9 +286,13 @@ class Environment {
   }
 
   /**
+   * Retrieve the related Site of an Environment entity.
+   *
    * @param \Drupal\node\NodeInterface $environment
+   *   Environment entity.
    *
    * @return \Drupal\node\NodeInterface|bool
+   *   The site entity or FALSE.
    */
   public function getSite(NodeInterface $environment) {
     if (isset($environment->field_shp_site->target_id)) {
