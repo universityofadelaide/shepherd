@@ -55,7 +55,7 @@ The following fields are required :
 - `Host` 
 - `Port`
 - `User` - Requires a privileged user that has permissions to `CREATE DATABASE` and `GRANT`
-- `Secret` - This is the name of the secret which contains the privileged user password is stored. This should be setup as a secret in OpenShift. 
+- `Secret` - This is the name of the secret which contains the privileged user password is stored. [This should be setup as a secret](https://docs.openshift.com/container-platform/3.5/dev_guide/secrets.html) in OpenShift. 
 
 ### Delete shepherd instances and storage
 ```bash
