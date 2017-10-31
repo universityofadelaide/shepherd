@@ -151,18 +151,23 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     );
     $image_stream_tag = $sanitised_project_name . ':' . $sanitised_source_ref;
     $build_config_name = $sanitised_project_name . '-' . $sanitised_source_ref;
+    $volume_data = $this->generateVolumeData($deployment_name);
 
     // Create build config if it doesn't exist.
     if (!$this->client->getBuildConfig($build_config_name)) {
       $build_data = $this->formatBuildData($source_ref, $source_repo, $builder_image);
 
+      $build_config = $this->client->generateBuildConfig(
+        $build_config_name,
+        $source_secret,
+        $image_stream_tag,
+        $build_data
+      );
+
+      // @todo Add in env vars to build config?
+
       try {
-        $this->client->createBuildConfig(
-          $build_config_name,
-          $source_secret,
-          $image_stream_tag,
-          $build_data
-        );
+        $this->client->createBuildConfig($build_config);
       }
       catch (ClientException $e) {
         $this->handleClientException($e);
@@ -778,27 +783,24 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
    *   The volume config array, or false if creating PVCs was unsuccessful.
    */
   private function setupVolumes(string $project_name, string $deployment_name, bool $setup = FALSE) {
-    $shared_pvc_name = $deployment_name . '-shared';
-    // @todo This should be project_name-backup or similar - one backup pv per project.
-    $backup_pvc_name = self::sanitise($project_name) . '-backup';
+    $volumes = $this->generateVolumeData($project_name, $deployment_name);
 
     if ($setup) {
       try {
-        if (!$this->client->getPersistentVolumeClaim($shared_pvc_name)) {
+        if (!$this->client->getPersistentVolumeClaim($volumes['shared']['name'])) {
           $this->client->createPersistentVolumeClaim(
-            $shared_pvc_name,
+            $volumes['shared']['name'],
             'ReadWriteMany',
             '5Gi'
           );
         }
-        if (!$this->client->getPersistentVolumeClaim($backup_pvc_name)) {
+        if (!$this->client->getPersistentVolumeClaim($volumes['backup']['name'])) {
           $this->client->createPersistentVolumeClaim(
-            $backup_pvc_name,
+            $volumes['backup']['name'],
             'ReadWriteMany',
             '5Gi'
           );
         }
-
       }
       catch (ClientException $e) {
         $this->handleClientException($e);
@@ -806,13 +808,32 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       }
     }
 
+    return $volumes;
+  }
+
+  /**
+   * Generates the volume data for deployment configuration.
+   *
+   * @param string $project_name
+   *   The name of the project.
+   * @param string $deployment_name
+   *   The name of the deployment.
+   *
+   * @return array
+   *   Volume data.
+   */
+  protected function generateVolumeData(string $project_name, string $deployment_name) {
+    $shared_pvc_name = $deployment_name . '-shared';
+    // @todo This should be project_name-backup or similar - one backup pv per project.
+    $backup_pvc_name = self::sanitise($project_name) . '-backup';
+
     $volumes = [
-      [
+      'shared' => [
         'type' => 'pvc',
         'name' => $shared_pvc_name,
         'path' => '/shared',
       ],
-      [
+      'backup' => [
         'type' => 'pvc',
         'name' => $backup_pvc_name,
         'path' => '/backup',
@@ -822,7 +843,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     // If a secret with the same name as the deployment exists, volume it in.
     if ($this->client->getSecret($deployment_name)) {
       // @todo Consider allowing parameters for secret volume path. Is there a convention?
-      $volumes[] = [
+      $volumes['secret'] = [
         'type' => 'secret',
         'name' => $deployment_name . '-secret',
         'path' => '/etc/secret',
