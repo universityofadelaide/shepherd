@@ -63,7 +63,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     ];
 
     try {
-      $image_stream = $this->client->generateImageStream($sanitised_name);
+      $image_stream = $this->client->generateImageStreamConfig($sanitised_name);
       $this->client->createImageStream($image_stream);
       $this->client->createBuildConfig(
         $sanitised_name . '-' . $source_ref,
@@ -190,10 +190,9 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       $sanitised_project_name,
       $update_on_image_change,
       $volumes,
-      $deploy_data
+      $deploy_data,
+      $probes
     );
-
-    $this->client->addProbeConfig($deployment_config, $probes);
 
     try {
       $this->client->createDeploymentConfig($deployment_config);
@@ -839,8 +838,13 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
   private function handleClientException(ClientException $exception) {
     $reason = $exception->getMessage();
     if (strstr($exception->getBody(), 'Unauthorized')) {
-      $reason = t('Client is not authorized to access requested resource.');
+      $reason = $this->t('Client is not authorized to access requested resource.');
     }
+
+    \Drupal::logger('shp_orchestration')->error('An error occurred while communicating with OpenShift. %reason', [
+      '%reason' => $reason,
+    ]);
+
     // @todo Add handlers for other reasons for failure. Add as required.
     drupal_set_message(t("An error occurred while communicating with OpenShift. %reason", ['%reason' => $reason]), 'error');
   }

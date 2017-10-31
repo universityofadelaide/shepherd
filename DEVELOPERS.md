@@ -282,3 +282,11 @@ curl --insecure -H "Authorization: Bearer $(oc login -u developer -p developer >
 # From utility container (dsh shell) :
 bin/drush -r web cset shp_orchestration.openshift.openshift token ${NEW_TOKEN}
 ```
+
+## Working with Minishift
+
+Purging all the example generated content on OpenShift. This removes everything with the example namespace that was generated with 
+the robo dev:content-generate command.
+```bash
+name=example; for type in is bc dc svc pvc route pods job cronjob secrets; do for item in $(oc get "${type}" | grep ${name} | awk '{ print $1 }'); do oc delete ${type} ${item}; done; done
+```
