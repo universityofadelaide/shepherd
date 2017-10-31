@@ -63,7 +63,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     ];
 
     try {
-      $image_stream = $this->client->generateImageStream($sanitised_name);
+      $image_stream = $this->client->generateImageStreamConfig($sanitised_name);
       $this->client->createImageStream($image_stream);
       $this->client->createBuildConfig(
         $sanitised_name . '-' . $source_ref,
@@ -190,10 +190,9 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       $sanitised_project_name,
       $update_on_image_change,
       $volumes,
-      $deploy_data
+      $deploy_data,
+      $probes
     );
-
-    $this->client->addProbeConfig($deployment_config, $probes);
 
     try {
       $this->client->createDeploymentConfig($deployment_config);

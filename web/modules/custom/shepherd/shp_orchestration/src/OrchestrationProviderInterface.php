@@ -251,19 +251,18 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
    * Handles a site being created.
    *
    * @param string $project_name
-   *   The project that is being deployed on the site
+   *   The project that is being deployed on the site.
    * @param string $short_name
-   *   The short name of the site
+   *   The short name of the site.
    * @param int $site_id
-   *   The site id
+   *   The site id.
    * @param string $domain_name
-   *   The domain name of the site
+   *   The domain name of the site.
    * @param string $path
-   *   The path of the site
+   *   The path of the site.
    *
-   * @return bool Returns true if succeeded.
-   * Returns true if succeeded.
-   * @internal param string $site_name The name of the site being added*   The name of the site being added
+   * @return bool
+   *   Returns true if succeeded.
    */
   public function createdSite(string $project_name, string $short_name, int $site_id, string $domain_name, string $path);
 
@@ -279,11 +278,11 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
    * Handles a site being deleted.
    *
    * @param string $project_name
-   *   The project that is being deployed on the site
+   *   The project that is being deployed on the site.
    * @param string $short_name
-   *   The short name of the site
+   *   The short name of the site.
    * @param int $site_id
-   *   The site id
+   *   The site id.
    *
    * @return bool
    *   Returns true if succeeded.
@@ -299,8 +298,7 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
    *   Optional key name to return.
    *
    * @return array|string|bool
-   *   Returns the secret array if successful, the value of the key if set, or
-   *   false.
+   *   Returns the secret array if successful, the value of the key, or false.
    */
   public function getSecret(string $name, string $key = NULL);
 
