@@ -914,7 +914,7 @@
                 "issues": "http://drupal.org/project/issues/cas",
                 "irc": "irc://irc.freenode.org/drupal-contribute"
             },
-            "time": "2017-09-03 22:56:25"
+            "time": "2017-09-03T22:56:25+00:00"
         },
         {
             "name": "drupal/core",
@@ -1243,7 +1243,7 @@
             "support": {
                 "source": "http://cgit.drupalcode.org/entity_reference_revisions"
             },
-            "time": "2017-08-16 12:09:25"
+            "time": "2017-08-16T12:09:25+00:00"
         },
         {
             "name": "drupal/externalauth",
@@ -1403,7 +1403,7 @@
             "support": {
                 "source": "http://cgit.drupalcode.org/group"
             },
-            "time": "2017-10-20 11:50:51"
+            "time": "2017-10-20T11:50:51+00:00"
         },
         {
             "name": "drupal/key_value_field",
@@ -1448,7 +1448,7 @@
             "support": {
                 "source": "http://cgit.drupalcode.org/key_value_field"
             },
-            "time": "2017-06-19 09:59:57"
+            "time": "2017-06-19T09:59:57+00:00"
         },
         {
             "name": "drupal/log_stdout",
@@ -1651,7 +1651,7 @@
             "support": {
                 "source": "http://cgit.drupalcode.org/r4032login"
             },
-            "time": "2017-02-08 04:20:19"
+            "time": "2017-02-08T04:20:19+00:00"
         },
         {
             "name": "drupal/redis",
@@ -4060,12 +4060,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/universityofadelaide/openshift-client.git",
-                "reference": "0896df862a912688e8b29039460f88fb40d13c89"
+                "reference": "4f6abce757d62120fbf859b1bdb7dbc3c5408ce9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/universityofadelaide/openshift-client/zipball/0896df862a912688e8b29039460f88fb40d13c89",
-                "reference": "0896df862a912688e8b29039460f88fb40d13c89",
+                "url": "https://api.github.com/repos/universityofadelaide/openshift-client/zipball/4f6abce757d62120fbf859b1bdb7dbc3c5408ce9",
+                "reference": "4f6abce757d62120fbf859b1bdb7dbc3c5408ce9",
                 "shasum": ""
             },
             "require": {
@@ -4097,7 +4097,7 @@
                 }
             ],
             "description": "Simple OpenShift client for PHP.",
-            "time": "2017-10-16 04:08:42"
+            "time": "2017-10-31T00:58:49+00:00"
         },
         {
             "name": "universityofadelaide/shepherd-drupal-scaffold",
@@ -4604,7 +4604,7 @@
                 "testing",
                 "web"
             ],
-            "time": "2017-02-06 09:59:54"
+            "time": "2017-02-06T09:59:54+00:00"
         },
         {
             "name": "behat/mink-browserkit-driver",
