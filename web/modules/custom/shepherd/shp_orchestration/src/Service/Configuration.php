@@ -110,7 +110,7 @@ class Configuration {
    */
   public function extractEnvironmentVariables(NodeInterface $node) {
     $env_vars = [];
-    if ($node) {
+    if ($node->hasField('field_shp_env_vars')) {
       foreach ($node->field_shp_env_vars->getValue() as $env_var) {
         $env_vars[$env_var['key']] = $env_var['value'];
       }
