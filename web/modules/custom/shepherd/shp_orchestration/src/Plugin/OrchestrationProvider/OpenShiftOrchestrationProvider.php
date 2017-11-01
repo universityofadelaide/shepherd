@@ -151,11 +151,11 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     );
     $image_stream_tag = $sanitised_project_name . ':' . $sanitised_source_ref;
     $build_config_name = $sanitised_project_name . '-' . $sanitised_source_ref;
-    $volume_data = $this->generateVolumeData($deployment_name);
+    $formatted_env_vars = $this->formatEnvVars($environment_variables, $deployment_name);
 
     // Create build config if it doesn't exist.
     if (!$this->client->getBuildConfig($build_config_name)) {
-      $build_data = $this->formatBuildData($source_ref, $source_repo, $builder_image);
+      $build_data = $this->formatBuildData($source_ref, $source_repo, $builder_image, $formatted_env_vars);
 
       $build_config = $this->client->generateBuildConfig(
         $build_config_name,
@@ -163,8 +163,6 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
         $image_stream_tag,
         $build_data
       );
-
-      // @todo Add in env vars to build config?
 
       try {
         $this->client->createBuildConfig($build_config);
@@ -175,7 +173,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       }
     }
 
-    $formatted_env_vars = $this->formatEnvVars($environment_variables, $deployment_name);
+
     if (!$volumes = $this->setupVolumes($project_name, $deployment_name, TRUE)) {
       return FALSE;
     }
@@ -743,6 +741,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
 
   /**
    * Format an array of build data ready to pass to OpenShift.
+   *
    * @todo - move this into the client?
    *
    * @param string $source_ref
@@ -751,10 +750,13 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
    *   The source repository.
    * @param string $builder_image
    *   The builder image.
+   * @param array $formatted_env_vars
+   *   Environment variables.
    *
    * @return array
+   *   Build data.
    */
-  private function formatBuildData(string $source_ref, string $source_repo, string $builder_image) {
+  private function formatBuildData(string $source_ref, string $source_repo, string $builder_image, array $formatted_env_vars = []) {
     // Package config for the client.
     return [
       'git' => [
@@ -765,6 +767,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
         'type' => 'DockerImage',
         'name' => $builder_image,
       ],
+      'env_vars' => $formatted_env_vars,
     ];
   }
 
