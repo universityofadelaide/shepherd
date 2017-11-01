@@ -3,7 +3,6 @@
 namespace Drupal\shp_orchestration\Plugin\OrchestrationProvider;
 
 use Drupal\Core\Entity\EntityTypeManagerInterface;
-use Drupal\Core\Link;
 use Drupal\Core\Url;
 use Drupal\node\Entity\Node;
 use Drupal\shp_orchestration\OrchestrationProviderBase;
@@ -47,30 +46,18 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
   /**
    * {@inheritdoc}
    */
-  public function createdProject(string $name, string $builder_image, string $source_repo, string $source_ref = 'master', string $source_secret = NULL) {
-    $sanitised_name = self::sanitise($name);
+  public function createdProject(string $name, string $builder_image, string $source_repo, string $source_ref = 'master', string $source_secret = NULL, array $environment_variables = []) {
+    $sanitised_project_name = self::sanitise($name);
+    $sanitised_source_ref = self::sanitise($source_ref);
+    $image_stream_tag = $sanitised_project_name . ':' . $sanitised_source_ref;
+    $build_config_name = $sanitised_project_name . '-' . $sanitised_source_ref;
 
-    // Package config for the client.
-    $build_data = [
-      'git' => [
-        'ref' => $source_ref,
-        'uri' => $source_repo,
-      ],
-      'source' => [
-        'type' => 'DockerImage',
-        'name' => $builder_image,
-      ],
-    ];
+    $formatted_env_vars = $this->formatEnvVars($environment_variables);
 
     try {
-      $image_stream = $this->client->generateImageStreamConfig($sanitised_name);
+      $image_stream = $this->client->generateImageStreamConfig($sanitised_project_name);
       $this->client->createImageStream($image_stream);
-      $this->client->createBuildConfig(
-        $sanitised_name . '-' . $source_ref,
-        $source_secret,
-        $sanitised_name . ':' . $source_ref,
-        $build_data
-      );
+      $this->createBuildConfig($build_config_name, $source_ref, $source_repo, $builder_image, $source_secret, $image_stream_tag, $formatted_env_vars);
     }
     catch (ClientException $e) {
       $this->handleClientException($e);
@@ -82,7 +69,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
   /**
    * {@inheritdoc}
    */
-  public function updatedProject(string $name, string $builder_image, string $source_repo, string $source_ref = 'master', string $source_secret = NULL) {
+  public function updatedProject(string $name, string $builder_image, string $source_repo, string $source_ref = 'master', string $source_secret = NULL, array $environment_variables = []) {
     $sanitised_name = self::sanitise($name);
 
     // Package config for the client.
@@ -120,6 +107,43 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
   }
 
   /**
+   * Create a build config in OpenShift.
+   *
+   * @param $build_config_name
+   * @param $source_ref
+   * @param $source_repo
+   * @param $builder_image
+   * @param $formatted_env_vars
+   * @param $source_secret
+   * @param $image_stream_tag
+   *
+   * @return bool
+   *   Created or already exists = TRUE. Fail = FALSE.
+   */
+  protected function createBuildConfig(string $build_config_name, string $source_ref, string $source_repo, string $builder_image, string $source_secret, string $image_stream_tag, array $formatted_env_vars) {
+    // Create build config if it doesn't exist.
+    if (!$this->client->getBuildConfig($build_config_name)) {
+      $build_data = $this->formatBuildData($source_ref, $source_repo, $builder_image, $formatted_env_vars);
+
+      $build_config = $this->client->generateBuildConfig(
+        $build_config_name,
+        $source_secret,
+        $image_stream_tag,
+        $build_data
+      );
+
+      try {
+        $this->client->createBuildConfig($build_config);
+      }
+      catch (ClientException $e) {
+        $this->handleClientException($e);
+        return FALSE;
+      }
+    }
+    return TRUE;
+  }
+
+  /**
    * {@inheritdoc}
    */
   public function createdEnvironment(
@@ -153,26 +177,8 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     $build_config_name = $sanitised_project_name . '-' . $sanitised_source_ref;
     $formatted_env_vars = $this->formatEnvVars($environment_variables, $deployment_name);
 
-    // Create build config if it doesn't exist.
-    if (!$this->client->getBuildConfig($build_config_name)) {
-      $build_data = $this->formatBuildData($source_ref, $source_repo, $builder_image, $formatted_env_vars);
-
-      $build_config = $this->client->generateBuildConfig(
-        $build_config_name,
-        $source_secret,
-        $image_stream_tag,
-        $build_data
-      );
-
-      try {
-        $this->client->createBuildConfig($build_config);
-      }
-      catch (ClientException $e) {
-        $this->handleClientException($e);
-        return FALSE;
-      }
-    }
-
+    // Tell, don't ask (to create a build config).
+    $this->createBuildConfig($build_config_name, $source_ref, $source_repo, $builder_image, $source_secret, $image_stream_tag, $formatted_env_vars);
 
     if (!$volumes = $this->setupVolumes($project_name, $deployment_name, TRUE)) {
       return FALSE;
@@ -665,7 +671,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
    * @return array
    *   The env var config array.
    */
-  private function formatEnvVars(array $environment_variables, string $deployment_name) {
+  private function formatEnvVars(array $environment_variables, string $deployment_name = '') {
     $formatted_env_vars = [];
 
     foreach ($environment_variables as $name => $value) {

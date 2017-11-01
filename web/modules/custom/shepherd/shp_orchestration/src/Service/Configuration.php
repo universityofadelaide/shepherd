@@ -70,22 +70,51 @@ class Configuration {
    *   Env vars.
    */
   public function getEnvironmentVariables(NodeInterface $node) {
-    $env_vars = $this->moduleHandler->invokeAll('shp_env_vars', [$node]);
-
     // Get the project via the site.
     $site = $this->environment->getSite($node);
     $project = $this->site->getProject($site);
 
+    $env_vars = $this->moduleHandler->invokeAll('shp_env_vars', [$node]);
+
     // Merge default environment variables from project.
-    foreach ($project->field_shp_env_vars->getValue() as $env_var) {
-      $env_vars[$env_var['key']] = $env_var['value'];
-    }
+    $env_vars = array_merge($env_vars, $this->getProjectEnvironmentVariables($project));
 
     // Append custom environment variables from environment.
-    foreach ($node->field_shp_env_vars->getValue() as $env_var) {
-      $env_vars[$env_var['key']] = $env_var['value'];
-    }
+    $env_vars = array_merge($env_vars, $this->extractEnvironmentVariables($node));
 
+    return $env_vars;
+  }
+
+  /**
+   * Retrieves all the environment variables for a project.
+   *
+   * @param \Drupal\node\NodeInterface $node
+   *   A project node.
+   *
+   * @return array
+   *   An array of environment variables.
+   */
+  public function getProjectEnvironmentVariables(NodeInterface $node) {
+    $env_vars = $this->extractEnvironmentVariables($node);
+    return $env_vars;
+  }
+
+  /**
+   * Extracts the environment variables from the field_shp_env_vars field.
+   *
+   * @param \Drupal\node\NodeInterface $node
+   *   A node.
+   *
+   * @return array
+   *   Environment variables.
+   */
+  public function extractEnvironmentVariables(NodeInterface $node) {
+    $env_vars = [];
+    if ($node) {
+      foreach ($node->field_shp_env_vars->getValue() as $env_var) {
+        $env_vars[$env_var['key']] = $env_var['value'];
+      }
+    }
     return $env_vars;
   }
 
