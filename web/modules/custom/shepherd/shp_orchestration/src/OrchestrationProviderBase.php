@@ -5,6 +5,7 @@ namespace Drupal\shp_orchestration;
 use Drupal\Component\Plugin\PluginBase;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
+use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\shp_orchestration\Exception\OrchestrationProviderNotConfiguredException;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -19,6 +20,8 @@ abstract class OrchestrationProviderBase extends PluginBase implements Container
   protected $entityTypeManager;
 
   protected $configEntity;
+
+  use StringTranslationTrait;
 
   /**
    * OrchestrationProviderBase constructor.
