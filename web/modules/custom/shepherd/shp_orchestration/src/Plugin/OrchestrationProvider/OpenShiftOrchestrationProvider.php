@@ -3,7 +3,6 @@
 namespace Drupal\shp_orchestration\Plugin\OrchestrationProvider;
 
 use Drupal\Core\Entity\EntityTypeManagerInterface;
-use Drupal\Core\Link;
 use Drupal\Core\Url;
 use Drupal\node\Entity\Node;
 use Drupal\shp_orchestration\OrchestrationProviderBase;
@@ -47,30 +46,18 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
   /**
    * {@inheritdoc}
    */
-  public function createdProject(string $name, string $builder_image, string $source_repo, string $source_ref = 'master', string $source_secret = NULL) {
-    $sanitised_name = self::sanitise($name);
+  public function createdProject(string $name, string $builder_image, string $source_repo, string $source_ref = 'master', string $source_secret = NULL, array $environment_variables = []) {
+    $sanitised_project_name = self::sanitise($name);
+    $sanitised_source_ref = self::sanitise($source_ref);
+    $image_stream_tag = $sanitised_project_name . ':' . $sanitised_source_ref;
+    $build_config_name = $sanitised_project_name . '-' . $sanitised_source_ref;
 
-    // Package config for the client.
-    $build_data = [
-      'git' => [
-        'ref' => $source_ref,
-        'uri' => $source_repo,
-      ],
-      'source' => [
-        'type' => 'DockerImage',
-        'name' => $builder_image,
-      ],
-    ];
+    $formatted_env_vars = $this->formatEnvVars($environment_variables);
 
     try {
-      $image_stream = $this->client->generateImageStream($sanitised_name);
+      $image_stream = $this->client->generateImageStreamConfig($sanitised_project_name);
       $this->client->createImageStream($image_stream);
-      $this->client->createBuildConfig(
-        $sanitised_name . '-' . $source_ref,
-        $source_secret,
-        $sanitised_name . ':' . $source_ref,
-        $build_data
-      );
+      $this->createBuildConfig($build_config_name, $source_ref, $source_repo, $builder_image, $source_secret, $image_stream_tag, $formatted_env_vars);
     }
     catch (ClientException $e) {
       $this->handleClientException($e);
@@ -82,7 +69,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
   /**
    * {@inheritdoc}
    */
-  public function updatedProject(string $name, string $builder_image, string $source_repo, string $source_ref = 'master', string $source_secret = NULL) {
+  public function updatedProject(string $name, string $builder_image, string $source_repo, string $source_ref = 'master', string $source_secret = NULL, array $environment_variables = []) {
     $sanitised_name = self::sanitise($name);
 
     // Package config for the client.
@@ -120,6 +107,43 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
   }
 
   /**
+   * Create a build config in OpenShift.
+   *
+   * @param $build_config_name
+   * @param $source_ref
+   * @param $source_repo
+   * @param $builder_image
+   * @param $formatted_env_vars
+   * @param $source_secret
+   * @param $image_stream_tag
+   *
+   * @return bool
+   *   Created or already exists = TRUE. Fail = FALSE.
+   */
+  protected function createBuildConfig(string $build_config_name, string $source_ref, string $source_repo, string $builder_image, string $source_secret, string $image_stream_tag, array $formatted_env_vars) {
+    // Create build config if it doesn't exist.
+    if (!$this->client->getBuildConfig($build_config_name)) {
+      $build_data = $this->formatBuildData($source_ref, $source_repo, $builder_image, $formatted_env_vars);
+
+      $build_config = $this->client->generateBuildConfig(
+        $build_config_name,
+        $source_secret,
+        $image_stream_tag,
+        $build_data
+      );
+
+      try {
+        $this->client->createBuildConfig($build_config);
+      }
+      catch (ClientException $e) {
+        $this->handleClientException($e);
+        return FALSE;
+      }
+    }
+    return TRUE;
+  }
+
+  /**
    * {@inheritdoc}
    */
   public function createdEnvironment(
@@ -151,26 +175,11 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     );
     $image_stream_tag = $sanitised_project_name . ':' . $sanitised_source_ref;
     $build_config_name = $sanitised_project_name . '-' . $sanitised_source_ref;
-
-    // Create build config if it doesn't exist.
-    if (!$this->client->getBuildConfig($build_config_name)) {
-      $build_data = $this->formatBuildData($source_ref, $source_repo, $builder_image);
-
-      try {
-        $this->client->createBuildConfig(
-          $build_config_name,
-          $source_secret,
-          $image_stream_tag,
-          $build_data
-        );
-      }
-      catch (ClientException $e) {
-        $this->handleClientException($e);
-        return FALSE;
-      }
-    }
-
     $formatted_env_vars = $this->formatEnvVars($environment_variables, $deployment_name);
+
+    // Tell, don't ask (to create a build config).
+    $this->createBuildConfig($build_config_name, $source_ref, $source_repo, $builder_image, $source_secret, $image_stream_tag, $formatted_env_vars);
+
     if (!$volumes = $this->setupVolumes($project_name, $deployment_name, TRUE)) {
       return FALSE;
     }
@@ -190,10 +199,9 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       $sanitised_project_name,
       $update_on_image_change,
       $volumes,
-      $deploy_data
+      $deploy_data,
+      $probes
     );
-
-    $this->client->addProbeConfig($deployment_config, $probes);
 
     try {
       $this->client->createDeploymentConfig($deployment_config);
@@ -714,7 +722,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
    * @return array
    *   The env var config array.
    */
-  private function formatEnvVars(array $environment_variables, string $deployment_name) {
+  private function formatEnvVars(array $environment_variables, string $deployment_name = '') {
     $formatted_env_vars = [];
 
     foreach ($environment_variables as $name => $value) {
@@ -790,6 +798,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
 
   /**
    * Format an array of build data ready to pass to OpenShift.
+   *
    * @todo - move this into the client?
    *
    * @param string $source_ref
@@ -798,10 +807,13 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
    *   The source repository.
    * @param string $builder_image
    *   The builder image.
+   * @param array $formatted_env_vars
+   *   Environment variables.
    *
    * @return array
+   *   Build data.
    */
-  private function formatBuildData(string $source_ref, string $source_repo, string $builder_image) {
+  private function formatBuildData(string $source_ref, string $source_repo, string $builder_image, array $formatted_env_vars = []) {
     // Package config for the client.
     return [
       'git' => [
@@ -812,6 +824,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
         'type' => 'DockerImage',
         'name' => $builder_image,
       ],
+      'env_vars' => $formatted_env_vars,
     ];
   }
 
@@ -830,27 +843,24 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
    *   The volume config array, or false if creating PVCs was unsuccessful.
    */
   private function setupVolumes(string $project_name, string $deployment_name, bool $setup = FALSE) {
-    $shared_pvc_name = $deployment_name . '-shared';
-    // @todo This should be project_name-backup or similar - one backup pv per project.
-    $backup_pvc_name = self::sanitise($project_name) . '-backup';
+    $volumes = $this->generateVolumeData($project_name, $deployment_name);
 
     if ($setup) {
       try {
-        if (!$this->client->getPersistentVolumeClaim($shared_pvc_name)) {
+        if (!$this->client->getPersistentVolumeClaim($volumes['shared']['name'])) {
           $this->client->createPersistentVolumeClaim(
-            $shared_pvc_name,
+            $volumes['shared']['name'],
             'ReadWriteMany',
             '5Gi'
           );
         }
-        if (!$this->client->getPersistentVolumeClaim($backup_pvc_name)) {
+        if (!$this->client->getPersistentVolumeClaim($volumes['backup']['name'])) {
           $this->client->createPersistentVolumeClaim(
-            $backup_pvc_name,
+            $volumes['backup']['name'],
             'ReadWriteMany',
             '5Gi'
           );
         }
-
       }
       catch (ClientException $e) {
         $this->handleClientException($e);
@@ -858,13 +868,32 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       }
     }
 
+    return $volumes;
+  }
+
+  /**
+   * Generates the volume data for deployment configuration.
+   *
+   * @param string $project_name
+   *   The name of the project.
+   * @param string $deployment_name
+   *   The name of the deployment.
+   *
+   * @return array
+   *   Volume data.
+   */
+  protected function generateVolumeData(string $project_name, string $deployment_name) {
+    $shared_pvc_name = $deployment_name . '-shared';
+    // @todo This should be project_name-backup or similar - one backup pv per project.
+    $backup_pvc_name = self::sanitise($project_name) . '-backup';
+
     $volumes = [
-      [
+      'shared' => [
         'type' => 'pvc',
         'name' => $shared_pvc_name,
         'path' => '/shared',
       ],
-      [
+      'backup' => [
         'type' => 'pvc',
         'name' => $backup_pvc_name,
         'path' => '/backup',
@@ -874,7 +903,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     // If a secret with the same name as the deployment exists, volume it in.
     if ($this->client->getSecret($deployment_name)) {
       // @todo Consider allowing parameters for secret volume path. Is there a convention?
-      $volumes[] = [
+      $volumes['secret'] = [
         'type' => 'secret',
         'name' => $deployment_name . '-secret',
         'path' => '/etc/secret',
@@ -894,8 +923,13 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
   private function handleClientException(ClientException $exception) {
     $reason = $exception->getMessage();
     if (strstr($exception->getBody(), 'Unauthorized')) {
-      $reason = t('Client is not authorized to access requested resource.');
+      $reason = $this->t('Client is not authorized to access requested resource.');
     }
+
+    \Drupal::logger('shp_orchestration')->error('An error occurred while communicating with OpenShift. %reason', [
+      '%reason' => $reason,
+    ]);
+
     // @todo Add handlers for other reasons for failure. Add as required.
     drupal_set_message(t("An error occurred while communicating with OpenShift. %reason", ['%reason' => $reason]), 'error');
   }
