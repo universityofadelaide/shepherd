@@ -10,27 +10,6 @@
  */
 function shp_custom_views_data_alter(array &$data) {
 
-  $data['paragraph__field_shp_role']['site_user_role_operations'] = [
-    'title' => t('Site User Role Operations'),
-    'field' => [
-      'title' => t('Operations'),
-      'help' => t('Perform operations on an assigned user to a site'),
-      'id' => 'site_user_role_operations',
-    ],
-    'relationship' => [
-      'group' => t('Paragraph'),
-    ],
-  ];
-
-  $data['node_field_data']['site_environments'] = [
-    'title' => t('Site Environments'),
-    'field' => [
-      'title' => t('Environments'),
-      'help' => t('Show environments for a site.'),
-      'id' => 'site_environments',
-    ],
-  ];
-
   $data['node_field_data']['site_environment_url'] = [
     'title' => t('Site Environment Url'),
     'field' => [
