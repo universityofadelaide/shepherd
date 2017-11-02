@@ -70,9 +70,18 @@ class Environment {
   protected $currentUser;
 
   /**
+   * Site service.
+   *
    * @var \Drupal\shp_custom\Service\Site
    */
   private $site;
+
+  /**
+   * Orchestration provider plugin manager.
+   *
+   * @var \Drupal\shp_orchestration\OrchestrationProviderPluginManagerInterface
+   */
+  protected $orchestrationProvider;
 
   /**
    * Environment constructor.
@@ -86,7 +95,10 @@ class Environment {
    * @param \Drupal\shp_custom\Service\Site $site
    *   Site service.
    */
-  public function __construct(RequestStack $requestStack, EntityTypeManagerInterface $entityTypeManager, AccountProxyInterface $currentUser, Site $site) {
+  public function __construct(RequestStack $requestStack,
+                              EntityTypeManagerInterface $entityTypeManager,
+                              AccountProxyInterface $currentUser,
+                              Site $site) {
     $this->requestStack = $requestStack;
     $this->entityTypeManager = $entityTypeManager;
     $this->currentRequest = $this->requestStack->getCurrentRequest();
@@ -94,6 +106,9 @@ class Environment {
     $this->taxonomyTerm = $this->entityTypeManager->getStorage('taxonomy_term');
     $this->currentUser = $currentUser;
     $this->site = $site;
+    // @todo - too many cross dependencies on this service, causing install failures. Fix.
+    // Pull statically for now.
+    $this->orchestrationProvider = \Drupal::service('plugin.manager.orchestration_provider')->getProviderInstance();
   }
 
   /**
@@ -206,7 +221,6 @@ class Environment {
     return $this->taxonomyTerm->load($tid);
   }
 
-
   /**
    * Apply alterations to entity operations.
    *
@@ -233,20 +247,22 @@ class Environment {
           'data-dialog-type'    => 'modal',
           'data-dialog-options' => Json::encode([
             'width'  => '50%',
-            'height' => '50%'
+            'height' => '50%',
           ]),
         ],
       ];
     }
 
-    // @todo - External dependency, warning. Weeeoooooweeeooo.
-    // Get an instance of the orchestration provider for use later
-    $orchestrationProvider = \Drupal::service('plugin.manager.orchestration_provider')
-      ->getProviderInstance();
     $site = $entity->field_shp_site->entity;
     $project = $site->field_shp_project->entity;
 
-    $terminal = $orchestrationProvider->getTerminalUrl(
+    $terminal = $this->orchestrationProvider->getTerminalUrl(
+      $project->getTitle(),
+      $site->field_shp_short_name->value,
+      $entity->id()
+    );
+
+    $logs = $this->orchestrationProvider->getLogUrl(
       $project->getTitle(),
       $site->field_shp_short_name->value,
       $entity->id()
@@ -259,12 +275,24 @@ class Environment {
         'url'        => $terminal,
       ];
     }
+
+    if ($logs) {
+      $operations['logs'] = [
+        'title'     => $this->t('Logs'),
+        'weight'    => 4,
+        'url'       => $logs,
+      ];
+    }
   }
 
   /**
+   * Retrieve the related Site of an Environment entity.
+   *
    * @param \Drupal\node\NodeInterface $environment
+   *   Environment entity.
    *
    * @return \Drupal\node\NodeInterface|bool
+   *   The site entity or FALSE.
    */
   public function getSite(NodeInterface $environment) {
     if (isset($environment->field_shp_site->target_id)) {

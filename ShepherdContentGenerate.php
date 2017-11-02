@@ -117,6 +117,9 @@ if (!$project) {
     'field_shp_env_vars'       => [
       ['key' => 'SHEPHERD_INSTALL_PROFILE', 'value' => 'standard'],
       ['key' => 'REDIS_ENABLED', 'value' => '0'],
+      ['key' => 'PUBLIC_DIR', 'value' => '/shared/public'],
+      ['key' => 'PRIVATE_DIR', 'value' => '/shared/private'],
+      ['key' => 'TMP_DIR', 'value' => '/shared/tmp'],
     ],
     'field_shp_readiness_probe_type' => [['value' => 'tcpSocket']],
     'field_shp_readiness_probe_port' => [['value' => '8080']],

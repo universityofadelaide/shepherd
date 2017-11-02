@@ -50,7 +50,6 @@ dependencies:
   - group
   - key_value_field
   - log_stdout
-  - paragraphs
   - r4032login
   - redis
   - token

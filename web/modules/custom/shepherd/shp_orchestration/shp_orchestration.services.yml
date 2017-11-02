@@ -16,7 +16,7 @@ services:
     arguments: ['@plugin.manager.orchestration_provider', '@shp_custom.site']
   shp_orchestration.project:
     class: Drupal\shp_orchestration\Service\Project
-    arguments: ['@plugin.manager.orchestration_provider']
+    arguments: ['@plugin.manager.orchestration_provider', '@shp_orchestration.configuration']
   shp_orchestration.environment:
     class: Drupal\shp_orchestration\Service\Environment
     arguments: ['@plugin.manager.orchestration_provider', '@shp_orchestration.configuration', '@shp_custom.environment', '@shp_custom.site']

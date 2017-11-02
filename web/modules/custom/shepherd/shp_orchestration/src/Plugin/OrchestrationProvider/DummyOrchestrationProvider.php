@@ -272,4 +272,11 @@ class DummyOrchestrationProvider extends OrchestrationProviderBase {
     return [];
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  public function getLogUrl(string $project_name, string $short_name, string $environment_id) {
+    return [];
+  }
+
 }
