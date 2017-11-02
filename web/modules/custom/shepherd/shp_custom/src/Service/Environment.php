@@ -106,7 +106,7 @@ class Environment {
     $this->taxonomyTerm = $this->entityTypeManager->getStorage('taxonomy_term');
     $this->currentUser = $currentUser;
     $this->site = $site;
-    // @todo - too many cross dependancies on this service, causing install failures. Fix.
+    // @todo - too many cross dependencies on this service, causing install failures. Fix.
     // Pull statically for now.
     $this->orchestrationProvider = \Drupal::service('plugin.manager.orchestration_provider')->getProviderInstance();
   }
