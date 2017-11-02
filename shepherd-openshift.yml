@@ -100,6 +100,13 @@ objects:
         pullSecret:
           name: ${SOURCE_SECRET}
         forcePull: true
+        env:
+          - name: PRIVATE_DIR
+            value: /shared/private
+          - name: PUBLIC_DIR
+            value: /shared/public
+          - name: TMP_DIR
+            value: /shared/tmp
       type: Source
     triggers:
     - type: ImageChange
