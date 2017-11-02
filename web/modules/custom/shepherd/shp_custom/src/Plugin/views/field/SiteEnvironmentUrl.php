@@ -22,8 +22,7 @@ class SiteEnvironmentUrl extends FieldPluginBase {
   /**
    * {@inheritdoc}
    */
-  public function query() {
-  }
+  public function query() {}
 
   /**
    * {@inheritdoc}

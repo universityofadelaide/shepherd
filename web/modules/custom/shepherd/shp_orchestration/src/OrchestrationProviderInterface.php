@@ -24,6 +24,8 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
    *   Source code git ref, defaults to 'master'.
    * @param string|null $source_secret
    *   The secret to use when pulling and building the source git repository.
+   * @param array $environment_variables
+   *   Environment variables.
    *
    * @return bool
    *   Returns true if succeeded.
@@ -33,7 +35,8 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
     string $builder_image,
     string $source_repo,
     string $source_ref = 'master',
-    string $source_secret = NULL
+    string $source_secret = NULL,
+    array $environment_variables = []
   );
 
   /**
@@ -49,6 +52,8 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
    *   Source code git ref, defaults to 'master'.
    * @param string|null $source_secret
    *   The secret to use when pulling and building the source git repository.
+   * @param array $environment_variables
+   *   Environment variables.
    *
    * @return bool
    *   Returns true if succeeded.
@@ -58,7 +63,8 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
     string $builder_image,
     string $source_repo,
     string $source_ref = 'master',
-    string $source_secret = ''
+    string $source_secret = '',
+    array $environment_variables = []
   );
 
   /**
@@ -392,6 +398,25 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
    *   Returns environment url, or false.
    */
   public function getTerminalUrl(
+    string $project_name,
+    string $short_name,
+    string $environment_id
+  );
+
+  /**
+   * Retrieves the direct log access url for a given environment.
+   *
+   * @param string $project_name
+   *   Name of the project.
+   * @param string $short_name
+   *   Short name of the site.
+   * @param string $environment_id
+   *   Environment node id.
+   *
+   * @return \Drupal\Core\Url|bool
+   *   Returns environment url, or false.
+   */
+  public function getLogUrl(
     string $project_name,
     string $short_name,
     string $environment_id

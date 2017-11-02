@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "f9ffe5b4eb0b0b91b09a11cdc20c5612",
+    "content-hash": "cbd809dc2341810b7f25415c1f5fa315",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -918,16 +918,16 @@
         },
         {
             "name": "drupal/core",
-            "version": "8.4.0",
+            "version": "8.4.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/drupal/core.git",
-                "reference": "d4be8e12d9e8b4db82ece760c632213247f56fa7"
+                "reference": "dbdd31c4e1a21d2188622107c0b856f5c1b0e56e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/drupal/core/zipball/d4be8e12d9e8b4db82ece760c632213247f56fa7",
-                "reference": "d4be8e12d9e8b4db82ece760c632213247f56fa7",
+                "url": "https://api.github.com/repos/drupal/core/zipball/dbdd31c4e1a21d2188622107c0b856f5c1b0e56e",
+                "reference": "dbdd31c4e1a21d2188622107c0b856f5c1b0e56e",
                 "shasum": ""
             },
             "require": {
@@ -990,6 +990,7 @@
                 "drupal/core-annotation": "self.version",
                 "drupal/core-assertion": "self.version",
                 "drupal/core-bridge": "self.version",
+                "drupal/core-class-finder": "self.version",
                 "drupal/core-datetime": "self.version",
                 "drupal/core-dependency-injection": "self.version",
                 "drupal/core-diff": "self.version",
@@ -1084,7 +1085,7 @@
                 "patches_applied": {
                     "Switch to a memory cache backend during installation": "https://www.drupal.org/files/issues/2488350-2-58.patch",
                     "Twig debug output does not display all suggestions": "https://www.drupal.org/files/issues/2118743-139-twig-debug-info.patch",
-                    "Allow profiles to provide a base profile": "https://www.drupal.org/files/issues/1356276-356.patch"
+                    "Allow profiles to provide a base profile": "https://www.drupal.org/files/issues/drupal-n1356276-397-8.5.x.patch"
                 }
             },
             "autoload": {
@@ -1108,7 +1109,7 @@
                 "GPL-2.0+"
             ],
             "description": "Drupal is an open source content management platform powering millions of websites and applications.",
-            "time": "2017-10-04T19:25:32+00:00"
+            "time": "2017-11-01T18:38:24+00:00"
         },
         {
             "name": "drupal/devel",
@@ -1501,79 +1502,6 @@
                 "source": "http://cgit.drupalcode.org/log_stdout",
                 "issues": "https://www.drupal.org/project/issues/log_stdout",
                 "irc": "irc://irc.freenode.org/drupal-support"
-            }
-        },
-        {
-            "name": "drupal/paragraphs",
-            "version": "1.2.0",
-            "source": {
-                "type": "git",
-                "url": "https://git.drupal.org/project/paragraphs",
-                "reference": "8.x-1.2"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://ftp.drupal.org/files/projects/paragraphs-8.x-1.2.zip",
-                "reference": "8.x-1.2",
-                "shasum": "6efc9d4351d4b21a55e7a6428c78495aaca662ef"
-            },
-            "require": {
-                "drupal/core": "~8",
-                "drupal/entity_reference_revisions": "~1.3"
-            },
-            "require-dev": {
-                "drupal/block_field": "~1.0",
-                "drupal/diff": "~1.0",
-                "drupal/field_group": "~1.0",
-                "drupal/inline_entity_form": "~1.0",
-                "drupal/replicate": "~1.0",
-                "drupal/search_api": "*",
-                "drupal/search_api_db": "*"
-            },
-            "type": "drupal-module",
-            "extra": {
-                "branch-alias": {
-                    "dev-1.x": "1.x-dev"
-                },
-                "drupal": {
-                    "version": "8.x-1.2",
-                    "datestamp": "1505802867",
-                    "security-coverage": {
-                        "status": "covered",
-                        "message": "Covered by Drupal's security advisory policy"
-                    }
-                }
-            },
-            "notification-url": "https://packages.drupal.org/8/downloads",
-            "license": [
-                "GPL-2.0"
-            ],
-            "authors": [
-                {
-                    "name": "Berdir",
-                    "homepage": "https://www.drupal.org/user/214652"
-                },
-                {
-                    "name": "Frans",
-                    "homepage": "https://www.drupal.org/user/514222"
-                },
-                {
-                    "name": "Primsi",
-                    "homepage": "https://www.drupal.org/user/282629"
-                },
-                {
-                    "name": "jeroen.b",
-                    "homepage": "https://www.drupal.org/user/1853532"
-                },
-                {
-                    "name": "miro_dietiker",
-                    "homepage": "https://www.drupal.org/user/227761"
-                }
-            ],
-            "description": "Enables the creation of Paragraphs entities.",
-            "homepage": "https://www.drupal.org/project/paragraphs",
-            "support": {
-                "source": "http://cgit.drupalcode.org/paragraphs"
             }
         },
         {
@@ -4060,12 +3988,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/universityofadelaide/openshift-client.git",
-                "reference": "4f6abce757d62120fbf859b1bdb7dbc3c5408ce9"
+                "reference": "b93d65abb4356204129fbf9e29e9f1c5d9f17dee"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/universityofadelaide/openshift-client/zipball/4f6abce757d62120fbf859b1bdb7dbc3c5408ce9",
-                "reference": "4f6abce757d62120fbf859b1bdb7dbc3c5408ce9",
+                "url": "https://api.github.com/repos/universityofadelaide/openshift-client/zipball/b93d65abb4356204129fbf9e29e9f1c5d9f17dee",
+                "reference": "b93d65abb4356204129fbf9e29e9f1c5d9f17dee",
                 "shasum": ""
             },
             "require": {
@@ -4097,7 +4025,7 @@
                 }
             ],
             "description": "Simple OpenShift client for PHP.",
-            "time": "2017-10-31T00:58:49+00:00"
+            "time": "2017-11-01T23:30:34+00:00"
         },
         {
             "name": "universityofadelaide/shepherd-drupal-scaffold",
@@ -4947,14 +4875,8 @@
             "version": "8.2.12",
             "source": {
                 "type": "git",
-                "url": "https://github.com/klausi/coder.git",
+                "url": "https://git.drupal.org/project/coder.git",
                 "reference": "984c54a7b1e8f27ff1c32348df69712afd86b17f"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/klausi/coder/zipball/984c54a7b1e8f27ff1c32348df69712afd86b17f",
-                "reference": "984c54a7b1e8f27ff1c32348df69712afd86b17f",
-                "shasum": ""
             },
             "require": {
                 "ext-mbstring": "*",
