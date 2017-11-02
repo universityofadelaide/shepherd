@@ -638,17 +638,8 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
 
       // Return the link to the first pod.
       $pod_name = $pods['items'][0]['metadata']['name'];
-      $endpoint = $this->configEntity->endpoint;
-      $namespace = $this->configEntity->namespace;
+      return $this->generateOpenShiftPodUrl($pod_name, 'terminal');
 
-      $link = Url::fromUri($endpoint . '/console/project/' . $namespace . '/browse/pods/' . $pod_name,[
-        'query' => [
-          'tab' => 'terminal',
-          ],
-        ]
-      );
-
-      return $link;
     }
     catch (ClientException $e) {
       $this->handleClientException($e);
@@ -657,6 +648,66 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     catch (\InvalidArgumentException $e) {
       return FALSE;
     }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getLogUrl(string $project_name, string $short_name, string $environment_id) {
+    $deployment_name = self::generateDeploymentName(
+      $project_name,
+      $short_name,
+      $environment_id
+    );
+
+    try {
+      $pods = $this->client->getPod('', 'app=' . $deployment_name . ',environment_id=' . $environment_id);
+      // If there are no running pods, return now.
+      if (!count($pods['items'])) {
+        return FALSE;
+      }
+      // Return the link to the first pod.
+      $pod_name = $pods['items'][0]['metadata']['name'];
+      return $this->generateOpenShiftPodUrl($pod_name, 'logs');
+
+    }
+    catch (ClientException $e) {
+      $this->handleClientException($e);
+      return FALSE;
+    }
+    catch (\InvalidArgumentException $e) {
+      return FALSE;
+    }
+  }
+
+  /**
+   * Generates a url to a specific pod and view in OpenShift.
+   *
+   * @param string $pod_name
+   *   Pod name.
+   * @param string $view
+   *   View/tab to display.
+   *
+   * @return string
+   *   Url.
+   */
+  private function generateOpenShiftPodUrl(string $pod_name, string $view) {
+
+    $endpoint = $this->configEntity->endpoint;
+    $namespace = $this->configEntity->namespace;
+    $link = Url::fromUri($endpoint . '/console/project/' . $namespace . '/browse/pods/' . $pod_name, [
+      'query' => [
+        'tab' => $view,
+      ],
+    ],
+    [
+      'attributes' => [
+        'target' => '_blank',
+      ],
+    ]
+    );
+
+    return $link;
   }
 
   /**
