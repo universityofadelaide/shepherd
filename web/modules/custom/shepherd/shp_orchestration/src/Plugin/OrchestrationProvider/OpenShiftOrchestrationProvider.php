@@ -239,7 +239,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     if (!$update_on_image_change) {
       // We need to check if the image is already 'built', or we get an error.
       $build_status = $this->client->getBuilds('', 'buildconfig=' . $build_config_name);
-      if ($build_status['items'][0]['status']['phase'] === 'Complete') {
+      if (count($build_status['items']) && $build_status['items'][0]['status']['phase'] === 'Complete') {
         $this->client->instantiateDeploymentConfig($deployment_name);
       }
       else {
