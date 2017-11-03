@@ -108,7 +108,7 @@ class Environment {
     $this->site = $site;
     // @todo - too many cross dependencies on this service, causing install failures. Fix.
     // Pull statically for now.
-    $this->orchestrationProvider = \Drupal::service('plugin.manager.orchestration_provider')->getProviderInstance();
+
   }
 
   /**
@@ -230,6 +230,7 @@ class Environment {
    *   Entity to apply operations to.
    */
   public function operationsLinksAlter(array &$operations, EntityInterface $entity) {
+    $orchestrationProvider = \Drupal::service('plugin.manager.orchestration_provider')->getProviderInstance();
     $site = $entity->field_shp_site->target_id;
     $environment = $entity->id();
     $environment_term = Term::load($entity->field_shp_environment_type->target_id);
@@ -256,13 +257,13 @@ class Environment {
     $site = $entity->field_shp_site->entity;
     $project = $site->field_shp_project->entity;
 
-    $terminal = $this->orchestrationProvider->getTerminalUrl(
+    $terminal = $orchestrationProvider->getTerminalUrl(
       $project->getTitle(),
       $site->field_shp_short_name->value,
       $entity->id()
     );
 
-    $logs = $this->orchestrationProvider->getLogUrl(
+    $logs = $orchestrationProvider->getLogUrl(
       $project->getTitle(),
       $site->field_shp_short_name->value,
       $entity->id()
