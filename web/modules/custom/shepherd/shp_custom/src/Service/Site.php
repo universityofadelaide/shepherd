@@ -190,7 +190,7 @@ class Site {
    *   Generated short name.
    *
    * @return bool
-   *   If not unique adds a number to end of string, otherwise valid.
+   *   True if unique, false if not.
    */
   public function validateShortNameUniqueness($short_name) {
     $results = $this->loadEntitiesByFieldValue('shp_site', 'field_shp_short_name', $short_name);
