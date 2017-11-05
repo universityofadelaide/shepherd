@@ -193,7 +193,7 @@ class Site {
    *   If not unique adds a number to end of string, otherwise valid.
    */
   public function validateShortNameUniqueness($short_name) {
-    $results = \Drupal::service('shp_custom.site')->loadEntitiesByFieldValue('shp_site', 'field_shp_short_name', $short_name);
+    $results = $this->loadEntitiesByFieldValue('shp_site', 'field_shp_short_name', $short_name);
     if ($results) {
       $count = count($results);
       return $short_name . '-' . $count;
