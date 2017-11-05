@@ -184,6 +184,24 @@ class Site {
   }
 
   /**
+   * Ensure that the short_name generated is unique.
+   *
+   * @param string $short_name
+   *   Generated short name.
+   *
+   * @return string
+   *   If not unique adds a number to end of string, otherwise valid.
+   */
+  public function validateShortNameUniqueness($short_name) {
+    $results = \Drupal::service('shp_custom.site')->loadEntitiesByFieldValue('shp_site', 'field_shp_short_name', $short_name);
+    if ($results) {
+      $count = count($results);
+      return $short_name . '-' . $count;
+    }
+    return $short_name;
+  }
+
+  /**
    * Loads the project related to a site.
    *
    * @param \Drupal\node\NodeInterface $site
