@@ -148,7 +148,7 @@ class Site {
   public function loadEntitiesByFieldValue($node_type, $field, $field_value) {
     $results = $this->node->getQuery()
       ->condition('type', $node_type)
-      ->condition($field, $field_value, 'CONTAINS')
+      ->condition($field, $field_value)
       ->execute();
     return $results;
   }
@@ -189,16 +189,12 @@ class Site {
    * @param string $short_name
    *   Generated short name.
    *
-   * @return string
+   * @return bool
    *   If not unique adds a number to end of string, otherwise valid.
    */
   public function validateShortNameUniqueness($short_name) {
     $results = $this->loadEntitiesByFieldValue('shp_site', 'field_shp_short_name', $short_name);
-    if ($results) {
-      $count = count($results);
-      return $short_name . '-' . $count;
-    }
-    return $short_name;
+    return !count($results);
   }
 
   /**
