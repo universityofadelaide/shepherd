@@ -3,6 +3,7 @@
 namespace Drupal\shp_custom\Controller;
 
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Url;
 
 /**
  * Class SiteEnvironmentFormController
@@ -17,10 +18,9 @@ class SiteEnvironmentFormController {
    */
   public static function setRedirect(FormStateInterface $form_state) {
     $site_id = \Drupal::routeMatch()->getRawParameters()->get('site_id');
-    $route_name = \Drupal::routeMatch()->getRouteName();
-    $form_state->setRedirect($route_name, [
-      'site_id' => $site_id,
-    ]);
+    $form_state->setRedirectUrl(Url::fromRoute('view.shp_site_environments.page_1', [
+      'node' => $site_id,
+    ]));
   }
 
 }
