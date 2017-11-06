@@ -2,6 +2,7 @@ shp_custom.add_project:
   route_name: 'shp_custom.add_project'
   route_parameters:
     node_type: 'shp_project'
+  class: '\Drupal\group\Plugin\Menu\LocalAction\WithDestination'
   title: 'Add a new project'
   appears_on:
     - 'view.shp_projects.page_1'
@@ -23,6 +24,7 @@ shp_custom.add_site:
   route_name: 'shp_custom.add_site'
   route_parameters:
     node_type: 'shp_site'
+  class: '\Drupal\group\Plugin\Menu\LocalAction\WithDestination'
   title: 'Add a new site'
   appears_on:
     - 'view.shp_sites.page_1'
