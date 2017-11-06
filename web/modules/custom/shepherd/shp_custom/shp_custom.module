@@ -277,7 +277,7 @@ function shp_custom_mail($key, &$message, $params) {
  * Implements hook_form_FORM_ID_alter().
  */
 function shp_custom_form_node_shp_environment_form_alter(&$form, FormStateInterface $form_state, $form_id) {
-  SiteEnvironmentFormController::setRedirect($form_state);
+  $form['#submit'][] = 'SiteEnvironmentFormController::setRedirect';
   \Drupal::service('shp_custom.environment')->formAlter($form, $form_state);
 }
 
