@@ -15,6 +15,7 @@ use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Url;
 use Drupal\node\Entity\Node;
 use Drupal\node\NodeInterface;
+use Drupal\shp_custom\Controller\SiteEnvironmentFormController;
 use Drupal\shp_orchestration\Exception\OrchestrationProviderNotConfiguredException;
 use Drupal\taxonomy\Entity\Term;
 
@@ -276,6 +277,7 @@ function shp_custom_mail($key, &$message, $params) {
  * Implements hook_form_FORM_ID_alter().
  */
 function shp_custom_form_node_shp_environment_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  SiteEnvironmentFormController::setRedirect($form_state);
   \Drupal::service('shp_custom.environment')->formAlter($form, $form_state);
 }
 
