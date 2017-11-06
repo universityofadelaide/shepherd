@@ -299,3 +299,26 @@ function shp_custom_entity_operation_alter(array &$operations, EntityInterface $
     \Drupal::service('shp_custom.environment')->operationsLinksAlter($operations, $entity);
   }
 }
+
+/**
+ * Ensure that the short_name generated is unique.
+ *
+ * @param string $short_name
+ *   Generated short name.
+ *
+ * @return string
+ *   If not unique adds a number to end of string, otherwise valid.
+ */
+function shp_custom_generate_unique_short_name($short_name) {
+  return \Drupal::service('shp_custom.site')->validateShortNameUniqueness($short_name);
+}
+
+/**
+ * Callback for setting the domain and path on add environment form.
+ *
+ * @param array $form
+ * @param \Drupal\Core\Form\FormStateInterface $form_state
+ */
+function shp_custom_set_domain_path(array &$form, FormStateInterface $form_state, $request) {
+  return \Drupal::service('shp_custom.environment')->setDomainPath($form, $form_state, $request);
+}

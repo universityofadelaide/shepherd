@@ -171,7 +171,7 @@ class Environment {
    */
   public function applyJavascriptEnvironmentType(array &$form) {
     $form['field_shp_environment_type']['widget']['#ajax'] = [
-      'callback' => [$this, 'setDomainPath'],
+      'callback' => 'shp_custom_set_domain_path',
       'event' => 'change',
       'progress' => [
         'type' => 'throbber',

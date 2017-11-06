@@ -136,7 +136,7 @@ class Site {
    * Load all entities that contain a value in a field.
    *
    * @param string $node_type
-   *   Node type. Defaults to shp_site.
+   *   Node type.
    * @param string $field
    *   Field name.
    * @param string $field_value
@@ -145,10 +145,10 @@ class Site {
    * @return mixed
    *   Query results.
    */
-  public function loadEntitiesByFieldValue($node_type = 'shp_site', $field, $field_value) {
+  public function loadEntitiesByFieldValue($node_type, $field, $field_value) {
     $results = $this->node->getQuery()
       ->condition('type', $node_type)
-      ->condition($field, $field_value, 'CONTAINS')
+      ->condition($field, $field_value)
       ->execute();
     return $results;
   }
@@ -176,7 +176,7 @@ class Site {
     $form['title']['widget'][0]['value']['#id'] = 'edit-title';
     $form['field_shp_short_name']['widget'][0]['value']['#type'] = 'machine_name';
     $form['field_shp_short_name']['widget'][0]['value']['#machine_name'] = [
-      'exists' => ['Drupal\shp_custom\Service\Site', 'validateShortNameUniqueness'],
+      'exists' => ['shp_custom_generate_unique_short_name'],
       'source' => ['title', 'widget', '0', 'value'],
       'replace_pattern' => '[^a-z0-9-]+',
       'replace' => '-',
@@ -189,16 +189,12 @@ class Site {
    * @param string $short_name
    *   Generated short name.
    *
-   * @return string
-   *   If not unique adds a number to end of string, otherwise valid.
+   * @return bool
+   *   True if unique, false if not.
    */
   public function validateShortNameUniqueness($short_name) {
     $results = $this->loadEntitiesByFieldValue('shp_site', 'field_shp_short_name', $short_name);
-    if ($results) {
-      $count = count($results);
-      return $short_name . '-' . $count;
-    }
-    return $short_name;
+    return !count($results);
   }
 
   /**
