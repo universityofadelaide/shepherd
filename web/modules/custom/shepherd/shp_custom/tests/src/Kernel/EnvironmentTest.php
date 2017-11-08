@@ -37,7 +37,7 @@ class EnvironmentTest extends KernelTestBase {
     parent::setUp();
 
     // @todo Fix missing $table parameter.
-    $this->installSchema(['node', 'field', 'field_group', 'group', 'shp_content_types', 'shp_custom']);
+    // $this->installSchema(['node', 'field', 'field_group', 'group', 'shp_content_types', 'shp_custom']);
 
     $user = $this->createUser();
     $container = \Drupal::getContainer();
