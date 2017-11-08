@@ -25,6 +25,7 @@ class EnvironmentTest extends KernelTestBase {
     'views',
     'field',
     'field_group',
+    'group',
     'shp_content_types',
     'shp_custom',
   ];
