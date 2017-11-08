@@ -29,4 +29,4 @@ install:
 
 script:
     - cd $TRAVIS_BUILD_DIR/web
-    - phpunit --group shp --testdox -c ./app/core ./app/modules
+    - phpunit --group shp --testdox -c ./core ./modules
