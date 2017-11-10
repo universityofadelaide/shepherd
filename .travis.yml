@@ -28,5 +28,5 @@ install:
     - composer install
 
 script:
-    - ./vendor/phpunit/phpunit/phpunit --group shp --testdox -c ./web/core ./web/modules
-    - ./vendor/phpunit/phpunit/phpunit --group shp -c ./web/core ./web/modules
+    - ./vendor/phpunit/phpunit/phpunit --group shepherd --testdox -c ./web/core ./web/modules
+    - ./vendor/phpunit/phpunit/phpunit --group shepherd -c ./web/core ./web/modules
