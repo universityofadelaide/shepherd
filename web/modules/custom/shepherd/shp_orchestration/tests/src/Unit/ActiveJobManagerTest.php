@@ -7,7 +7,7 @@ use Drupal\shp_orchestration\Service\ActiveJobManager;
 use Drupal\Tests\UnitTestCase;
 
 /**
- * Tests the HeadingIdFilter class.
+ * Tests the ActiveJobManagerService class.
  *
  * @group ua
  * @group shepherd
