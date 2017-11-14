@@ -1,5 +1,7 @@
 # Shepherd
 
+[![Build Status](https://travis-ci.org/universityofadelaide/shepherd.svg?branch=feature%2Fget-ci-phpunit-working)](https://travis-ci.org/universityofadelaide/shepherd)
+
 Shepherd is a web based administration tool for web sites using the 
 [OpenShift](https://www.openshift.com/) Container Platform.
 
