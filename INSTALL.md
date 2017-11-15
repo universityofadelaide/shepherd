@@ -38,9 +38,9 @@ Ensure the orchestration provider is enabled and queued operations is selected.
    To access our token:
 ```bash
 # First get the service account
-SERVICE_ACCOUNT = $(oc describe serviceaccount shepherd | grep Token | awk '{ print $2 }')
+SERVICE_ACCOUNT=$(oc describe serviceaccount shepherd | grep Token | awk '{ print $2 }')
 # Retrieve the token 
-TOKEN = $(oc describe secret ${SERVICE_ACCOUNT} | grep "token:" | awk '{ print $2 }')
+TOKEN=$(oc describe secret ${SERVICE_ACCOUNT} | grep "token:" | awk '{ print $2 }')
 # Copy this into the token textarea.
 echo $TOKEN
 ```
