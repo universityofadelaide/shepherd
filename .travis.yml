@@ -28,5 +28,4 @@ install:
     - composer install
 
 script:
-    - cd $TRAVIS_BUILD_DIR/web
-    - phpunit --group shp --testdox -c ./core ./modules
+    - ./vendor/phpunit/phpunit/phpunit --group shepherd -c ./web/core ./web/modules
