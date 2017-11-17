@@ -34,6 +34,8 @@ Once Shepherd has been deployed there are a few manual configuration steps that 
 
 #### Configuring the Orchestration Provider
 
+Shepherd communicates to OpenShift via the [OpenShift Client](https://github.com/universityofadelaide/openshift-client) which uses the REST Api endpoints provided by OpenShift.
+
 `/admin/config/shepherd/orchestration`
 
 Ensure the orchestration provider is enabled and queued operations is selected.
@@ -56,6 +58,10 @@ echo $TOKEN
 ```
 
 #### Configuring the Database Provisioner
+
+Drupal requires a database to run and Shepherd triggers the provisioning of a database. Depending on your deployment requirements you may
+decide to run a database inside or outside of openshift. The database needs to be accessible by OpenShift and Shepherd.
+[Deploying MariaDB in OpenShift](#Deploying MariaDB in OpenShift ). 
 
 Ensure that the provisioner is enabled.
 
@@ -88,4 +94,35 @@ To create the environment types:
 ```bash
 oc delete all -l app=shepherd
 oc delete pvc shepherd-web-shared
+```
+
+### Deploying MariaDB in OpenShift 
+
+This is an example of deploying a MariaDB service in OpenShift for use with Shepherd.
+
+From the ui do the following : 
+- Select Add to Project
+- Select Browse Catalog
+- Select either MariaDB (Persistent) or MariaDB (Ephemeral)(Without persistance).
+- Select create (in this example we just use the defaults).
+
+Ok we now have a MariaDB service with a running pod. Now we need to make this accessible externally outside of OpenShift
+so Shepherd can communicate with it. 
+
+With the `oc` command tool do the following:
+
+```
+# Expose mariadb with a LoadBalancer service.
+oc expose dc mariadb --type=LoadBalancer --name=mariadb-external
+# Add an annotation to tie the services together
+oc annotate svc mariadb-external "service.alpha.openshift.io/dependencies=[{\"name\": \"mariadb\", \"kind\": \"Service\"}]"
+``` 
+This will create an external service that will be provided with an external ip and port number. To view this:
+
+```
+oc get svc mariadb-external
+# Your output will look something like this :
+NAME             CLUSTER-IP      EXTERNAL-IP                   PORT(S)          AGE
+mariadb-external   172.30.26.100   172.29.100.67              3306:30012/TCP   3h
+# External address is : 172.29.100.67:30012
 ```
