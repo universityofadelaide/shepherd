@@ -396,8 +396,8 @@ objects:
               - name: shepherd-web-shared
                 persistentVolumeClaim:
                   claimName: shepherd-web-shared
-      schedule: '*/1 * * * *'
-      suspend: false
+    schedule: '*/1 * * * *'
+    suspend: false
 parameters:
 - name: SOURCE_REPOSITORY_URL
   description: The URL of the repository with your application source code.
