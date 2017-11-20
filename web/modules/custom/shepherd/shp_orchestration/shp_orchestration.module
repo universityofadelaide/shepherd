@@ -139,5 +139,6 @@ function shp_orchestration_shp_env_vars(NodeInterface $environment) {
  * Implements hook_cron().
  */
 function shp_orchestration_cron() {
+  // @todo - refactor this to a drush command.
   \Drupal::service('shp_orchestration.job_queue')->process();
 }
