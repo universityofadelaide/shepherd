@@ -378,7 +378,7 @@ objects:
                   value: /shared/private
                 - name: TMP_DIR
                   value: /shared/tmp
-                image: 172.30.64.37:5000/wcms-test/wcms:shepherd
+                image: 'shepherd-web-is:latest'
                 imagePullPolicy: Never
                 name: shepherd-cron-queue-dc
                 resources:
@@ -386,8 +386,8 @@ objects:
                     memory: 512Mi
                 terminationMessagePath: /dev/termination-log
                 volumeMounts:
-                - mountPath: /shared
-                  name: shepherd-web-shared
+                  - mountPath: /shared
+                    name: shepherd-web-shared
               dnsPolicy: ClusterFirst
               restartPolicy: Never
               securityContext: {}
