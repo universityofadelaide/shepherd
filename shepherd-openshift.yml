@@ -336,6 +336,68 @@ objects:
             kind: ImageStreamTag
             name: 'shepherd-redis-is:alpine'
         type: ImageChange
+- apiVersion: batch/v2alpha1
+  kind: CronJob
+  metadata:
+    labels:
+      app: shepherd
+      template: shepherd
+      name: shepherd-cron-queue-dc
+    name: shepherd-cron-queue-dc
+  spec:
+    concurrencyPolicy: Forbid
+    jobTemplate:
+        spec:
+          template:
+            spec:
+              containers:
+              - args:
+                - /bin/sh
+                - -c
+                # todo - make this run something simple.
+                # - cd /code; drush -r web cron || true
+                - date; echo Hello from the Openshift cluster
+                env:
+                - name: DATABASE_HOST
+                  value: ${DATABASE_HOST}
+                - name: DATABASE_PORT
+                  value: ${DATABASE_PORT}
+                - name: DATABASE_NAME
+                  value: ${DATABASE_NAME}
+                - name: DATABASE_USER
+                  value: ${DATABASE_USER}
+                - name: REDIS_ENABLED
+                  value: "1"
+                - name: REDIS_HOST
+                  value: ${REDIS_HOST}
+                - name: SHEPHERD_INSTALL_PROFILE
+                  value: ${SHEPHERD_INSTALL_PROFILE}
+                - name: PUBLIC_DIR
+                  value: /shared/public
+                - name: PRIVATE_DIR
+                  value: /shared/private
+                - name: TMP_DIR
+                  value: /shared/tmp
+                image: 172.30.64.37:5000/wcms-test/wcms:shepherd
+                imagePullPolicy: Never
+                name: shepherd-cron-queue-dc
+                resources:
+                  limits:
+                    memory: 512Mi
+                terminationMessagePath: /dev/termination-log
+                volumeMounts:
+                - mountPath: /shared
+                  name: shepherd-web-shared
+              dnsPolicy: ClusterFirst
+              restartPolicy: Never
+              securityContext: {}
+              terminationGracePeriodSeconds: 30
+              volumes:
+              - name: shepherd-web-shared
+                persistentVolumeClaim:
+                  claimName: shepherd-web-shared
+      schedule: '*/1 * * * *'
+      suspend: false
 parameters:
 - name: SOURCE_REPOSITORY_URL
   description: The URL of the repository with your application source code.
