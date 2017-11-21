@@ -26,7 +26,7 @@ OC_DOCKER_REGISTRY_IP=$(oc get is | tail -n1 | awk '{print $2}' | awk -F '/' '{p
 Example command line to process the template and set the install profile to a custom value. 
 ```bash
 oc process -f shepherd-openshift.yml -p SHEPHERD_INSTALL_PROFILE=shepherd \
--p SHEPHERD_WEB_IMAGESTREAM=$OC_DOCKER_REGISTRY_IP'/{PROJECT_NAME}/shepherd-web-is:latest' | oc create -f -
+-p SHEPHERD_WEB_IMAGESTREAM="${OC_DOCKER_REGISTRY_IP}/{PROJECT_NAME}/shepherd-web-is:latest" | oc create -f -
 ```
 
 ### Configuring Shepherd
