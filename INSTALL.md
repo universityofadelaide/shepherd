@@ -4,11 +4,30 @@ This guide assumes a working knowledge of the `oc` command line tool.
 
 ## Production
 
+### Creating a project 
+Before deploying Shepherd to OpenShift, we must create a project. 
+
+```
+# login with user credientals that have permissions to create new projects
+oc login 
+oc new-project shepherd-openshift
+```
+
+### Creating a secret 
+The `shepherd-openshift.yml` configuration file will construct the nessiary objects for running Shepherd. Before you can run the script a SSH-Auth secret called `build-key` needs to be created so Shepherd can be cloned from github. This can be done via the UI `/console/project/{project-name}/create-secret` and clicking on the create secret button OR via `oc` command line tool :
+
+```bash
+oc create secret 
+```
+
+[Read more about creating secrets](https://docs.openshift.com/container-platform/latest/dev_guide/secrets.html)
+
+
 ### Deploy Shepherd directly via the OpenShift UI.
 Login as admin and Import the Shepherd OpenShift deployment template globally
 ```bash
 oc login -u system:admin
-oc create -f shepherd-openshift.yaml -n openshift
+oc create -f shepherd-openshift.yml -n openshift
 ```
 You can now click Add to project in the OpenShift ui to deploy Shepherd directly.
 
