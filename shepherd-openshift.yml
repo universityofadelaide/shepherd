@@ -354,7 +354,7 @@ objects:
               - args:
                 - /bin/sh
                 - -c
-                - cd /code; drush cache-clear && drush -r web shp-p || true
+                - cd /code; drush cache-clear drush && drush -r web shp-p || true
                 env:
                 - name: DATABASE_HOST
                   value: ${DATABASE_HOST}
