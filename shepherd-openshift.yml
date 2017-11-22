@@ -354,9 +354,7 @@ objects:
               - args:
                 - /bin/sh
                 - -c
-                # todo - make this run something simple.
-                # - cd /code; drush -r web cron || true
-                - date; echo Hello from the Openshift cluster
+                - cd /code; drush cache-clear && drush -r web shp-p || true
                 env:
                 - name: DATABASE_HOST
                   value: ${DATABASE_HOST}
@@ -378,8 +376,8 @@ objects:
                   value: /shared/private
                 - name: TMP_DIR
                   value: /shared/tmp
-                image: 'shepherd-web-is:latest'
-                imagePullPolicy: Never
+                image: ${SHEPHERD_WEB_IMAGESTREAM}
+                imagePullPolicy: Always
                 name: shepherd-cron-queue-dc
                 resources:
                   limits:
@@ -389,7 +387,7 @@ objects:
                   - mountPath: /shared
                     name: shepherd-web-shared
               dnsPolicy: ClusterFirst
-              restartPolicy: Never
+              restartPolicy: OnFailure
               securityContext: {}
               terminationGracePeriodSeconds: 30
               volumes:
@@ -459,3 +457,5 @@ parameters:
   description: The group ID the web container should run as.
   required: true
   value: '99010'
+- name: SHEPHERD_WEB_IMAGESTREAM
+  description: The image stream path to the web image. Needed for cronjobs

@@ -19,8 +19,9 @@ To set up the cronjob we need to get the docker registry ip address. You need sy
 
 ```bash
 # login as the system user 
-oc login -u system:admin
-OC_DOCKER_REGISTRY_IP=$(oc get is | tail -n1 | awk '{print $2}' | awk -F '/' '{print $1}') 
+oc login -u system:admin && oc project openshift
+OC_DOCKER_REGISTRY_IP=$(oc get is | tail -n1 | awk '{print $2}' | awk -F '/' '{print $1}')
+oc logout 
 ```
 
 Example command line to process the template and set the install profile to a custom value. 
