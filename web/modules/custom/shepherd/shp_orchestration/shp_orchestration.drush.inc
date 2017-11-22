@@ -9,6 +9,7 @@
  * Implements hook_drush_command().
  */
 function shp_orchestration_drush_command() {
+  $commands = [];
   $commands['shepherd-process-job-queue'] = [
     'description' => 'Process any jobs in the job queue',
     'aliases' => ['shp-p'],
@@ -17,6 +18,7 @@ function shp_orchestration_drush_command() {
       'drush shp-p' => 'Process any jobs in the job queue',
     ],
   ];
+  return $commands;
 }
 
 /**
