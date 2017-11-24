@@ -14,10 +14,10 @@ oc new-project shepherd-openshift
 ```
 
 ### Creating a secret 
-The `shepherd-openshift.yml` configuration file will construct the nessiary objects for running Shepherd. Before you can run the script a SSH-Auth secret called `build-key` needs to be created so Shepherd can be cloned from github. This can be done via the UI `/console/project/{project-name}/create-secret` and clicking on the create secret button OR via `oc` command line tool :
+The `shepherd-openshift.yml` configuration file will construct the necessary objects for running Shepherd. Before you can run the script a SSH-Auth secret called `build-key` needs to be created so Shepherd can be cloned from GitHub. This can be done via the UI `/console/project/{project-name}/create-secret` and clicking on the create secret button OR via `oc` command line tool :
 
 ```bash
-oc create secret 
+oc create secret generic build-key --from-file=ssh-privatekey={key_file}
 ```
 
 [Read more about creating secrets](https://docs.openshift.com/container-platform/latest/dev_guide/secrets.html)
@@ -38,7 +38,7 @@ oc process -f shepherd-openshift.yml -p SHEPHERD_INSTALL_PROFILE=shepherd | oc c
 ```
 
 #### Create a Service Account for Shepherd
-Before we configure Shepherd to use OpenShift, we need to create a [Service Account](https://docs.openshift.com/container-platform/3.5/dev_guide/service_accounts.html)
+Before we configure Shepherd to use OpenShift, we need to create a [Service Account](https://docs.openshift.com/container-platform/latest/dev_guide/service_accounts.html)
 that will allow us to to communicate to OpenShift.
 
 ```bash
@@ -47,11 +47,11 @@ oc create serviceaccount shepherd
 oc policy add-role-to-user admin system:serviceaccount:{MY_PROJECT_NAME}:shepherd
 ```
 
-### Configuring Shepherd
+### Configure Shepherd
 
 Once Shepherd has been deployed there are a few manual configuration steps that are required.
 
-#### Configuring the Orchestration Provider
+#### Configure the Orchestration Provider
 
 Shepherd communicates to OpenShift via the [OpenShift Client](https://github.com/universityofadelaide/openshift-client) which uses the REST Api endpoints provided by OpenShift.
 
@@ -64,7 +64,7 @@ Ensure the orchestration provider is enabled and queued operations is selected.
 - `endpoint` - set to the url of the OpenShift instance you deployed Shepherd to.
 - `namespace` - This is the name of the project setup in OpenShift, all operations will be performed within this project.
 - `token` - Auth token for OpenShift. This is required to authenticate requests between the Shepherd OpenShift Client and the OpenShift API.
-   This token is generated via a [Service Account](https://docs.openshift.com/container-platform/3.5/dev_guide/service_accounts.html) created in OpenShift.
+   This token is generated via a [Service Account](https://docs.openshift.com/container-platform/latest/dev_guide/service_accounts.html) created in OpenShift.
    The below example assumes that a service account called `shepherd` has already been created, an API token will created automatically.
    To access our token:
 ```bash
@@ -76,7 +76,7 @@ TOKEN=$(oc describe secret ${SERVICE_ACCOUNT} | grep "token:" | awk '{ print $2 
 echo $TOKEN
 ```
 
-#### Configuring the Database Provisioner
+#### Configure the Database Provisioner
 
 Drupal requires a database to run and Shepherd triggers the provisioning of a database. Depending on your deployment requirements you may
 decide to run a database inside or outside of openshift. The database needs to be accessible by OpenShift and Shepherd.
@@ -97,9 +97,9 @@ Secrets can be created using the `oc` tool:
 oc create secret generic privileged-db-password --from-literal=DATABASE_PASSWORD=SUPERSECRETPWD
 # The name of your password is privileged-db-password and the key is DATABASE_PASSWORD.
 ```
-[Read more about secrets](https://docs.openshift.com/container-platform/3.5/dev_guide/secrets.html).
+[Read more about secrets](https://docs.openshift.com/container-platform/latest/dev_guide/secrets.html).
 
-### Configuring environment types
+### Configure environment types
 
 When environments are created you declare a type of environment the entity belongs to. An environment type is a taxonomy that describes it's name,
 base domain (The base domain is used to populate urls) and delete protection (protects entitys grouped with this environment type from deletion).
@@ -117,7 +117,7 @@ oc delete pvc shepherd-web-shared
 
 ### Deploying MariaDB in OpenShift 
 
-This is an example of deploying a MariaDB service in OpenShift for use with Shepherd.
+This is an example of deploying a MariaDB service in OpenShift for use with Shepherd. Alternatives
 
 From the ui do the following : 
 - Select Add to Project
