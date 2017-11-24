@@ -117,16 +117,17 @@ oc delete pvc shepherd-web-shared
 
 ### Deploying MariaDB in OpenShift 
 
-This is an example of deploying a MariaDB service in OpenShift for use with Shepherd. Alternatives
+This is an example of deploying a MariaDB service in OpenShift for use with Shepherd. Alternatives to running a single MariaDB database instance in OpenShift include connecting to a MariaDB Galera cluster or some other MySQL compatible master/slave configuration. 
+However, this is the quickest option to get up and running.  
 
-From the ui do the following : 
-- Select Add to Project
-- Select Browse Catalog
-- Select either MariaDB (Persistent) or MariaDB (Ephemeral)(Without persistance).
+From the UI do the following : 
+- Select `Add to Project`
+- Select `Browse Catalog`
+- Select either `MariaDB (Persistent)` or `MariaDB (Ephemeral)`(Without persistance).
 - Select create (in this example we just use the defaults).
 
-Ok we now have a MariaDB service with a running pod. Now we need to make this accessible externally outside of OpenShift
-so Shepherd can communicate with it. 
+We now have a MariaDB service with a running pod. we need to make this accessible externally outside of OpenShift
+so Shepherd can communicate with it so that Shepherd can manage databases via a service of type `LoadBalancer`.
 
 With the `oc` command tool do the following:
 
@@ -136,7 +137,7 @@ oc expose dc mariadb --type=LoadBalancer --name=mariadb-external
 # Add an annotation to tie the services together
 oc annotate svc mariadb-external "service.alpha.openshift.io/dependencies=[{\"name\": \"mariadb\", \"kind\": \"Service\"}]"
 ``` 
-This will create an external service that will be provided with an external ip and port number. To view this:
+This will create an externally exposed service that will be provided with an external ip and port number. To view this:
 
 ```
 oc get svc mariadb-external
