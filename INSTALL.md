@@ -33,22 +33,6 @@ You can now click Add to project in the OpenShift ui to deploy Shepherd directly
 
 ### Deploy Shepherd from the command line.
 
-#### Getting the Docker Registry ip address
-To set up the cronjob we need to get the docker registry ip address. You need system admin access.
-
-```bash
-# login as the system user 
-oc login -u system:admin && oc project openshift
-OC_DOCKER_REGISTRY_IP=$(oc get is | tail -n1 | awk '{print $2}' | awk -F '/' '{print $1}')
-oc logout 
-```
-
-Example command line to process the template and set the install profile to a custom value. 
-```bash
-oc process -f shepherd-openshift.yml -p SHEPHERD_INSTALL_PROFILE=shepherd \
--p SHEPHERD_WEB_IMAGESTREAM="${OC_DOCKER_REGISTRY_IP}/{PROJECT_NAME}/shepherd-web-is:latest" | oc create -f -
-```
-
 #### Create a Service Account for Shepherd
 Before we configure Shepherd to use OpenShift, we need to create a [Service Account](https://docs.openshift.com/container-platform/latest/dev_guide/service_accounts.html)
 that will allow us to to communicate to OpenShift.
