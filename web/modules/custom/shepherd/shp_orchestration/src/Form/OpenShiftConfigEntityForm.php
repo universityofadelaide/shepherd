@@ -5,6 +5,8 @@ namespace Drupal\shp_orchestration\Form;
 use Drupal\Core\Entity\EntityForm;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
+use UniversityOfAdelaide\OpenShift\Client;
+use UniversityOfAdelaide\OpenShift\ClientException;
 
 /**
  * {@inheritdoc}
@@ -68,6 +70,41 @@ class OpenShiftConfigEntityForm extends EntityForm {
   /**
    * {@inheritdoc}
    */
+  public function validateForm(array &$form, FormStateInterface $form_state) {
+
+    $client_response = $this->validateClientConfiguration(
+      $form['endpoint']['#value'],
+      $form['token']['#value'],
+      $form['namespace']['#value'],
+      $form['verify_tls']['#checked']
+    );
+
+    if (isset($client_response['error']) && $client_response['error']) {
+      switch ($client_response['code']) {
+        case 0 && strpos($client_response['message'], 'SSL'):
+          // SSL Certificate issue.
+          $field_name = 'verify_tls';
+          break;
+
+        case 401:
+          // Token is invalid.
+          $field_name = 'token';
+          break;
+
+        case 403:
+          // Cannot access namespace with token.
+          $field_name = 'namespace';
+          break;
+      }
+      $form_state->setErrorByName($field_name, $client_response['code'] . ':' . $client_response['message']);
+    }
+
+    parent::validateForm($form, $form_state);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function save(array $form, FormStateInterface $form_state) {
     $entity = $this->entity;
     $status = $entity->save();
@@ -77,6 +114,45 @@ class OpenShiftConfigEntityForm extends EntityForm {
     else {
       drupal_set_message($this->t('OpenShift configuration has been saved'));
     }
+  }
+
+  /**
+   * Validates the configuration against the openshift client.
+   *
+   * @param string $endpoint
+   *   The hostname.
+   * @param string $token
+   *   A generated auth token.
+   * @param string $namespace
+   *   Namespace/project on which to operate methods on.
+   * @param bool $verify_tls
+   *   Verify tls certificates.
+   *
+   * @return array
+   *   Resource list if valid otherwise an array with error code and message.
+   */
+  protected function validateClientConfiguration($endpoint, $token, $namespace, $verify_tls) {
+    $client = new Client(
+      $endpoint,
+      $token,
+      $namespace,
+      $verify_tls
+    );
+
+    try {
+      // Make a request to the API resource list.
+      $response = $client->request('GET', '/oapi/v1/namespaces/' . $namespace);
+    }
+    catch (ClientException $e) {
+      $body = $e->getBody();
+      $response = [
+        'error' => TRUE,
+        'code' => $e->getCode(),
+        'message' => $body ? $body : $e->getMessage(),
+      ];
+    }
+
+    return $response;
   }
 
 }
