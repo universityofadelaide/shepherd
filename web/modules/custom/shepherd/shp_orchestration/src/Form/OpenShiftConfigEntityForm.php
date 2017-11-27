@@ -80,22 +80,7 @@ class OpenShiftConfigEntityForm extends EntityForm {
     );
 
     if (isset($client_response['error']) && $client_response['error']) {
-      switch ($client_response['code']) {
-        case 0 && strpos($client_response['message'], 'SSL'):
-          // SSL Certificate issue.
-          $field_name = 'verify_tls';
-          break;
-
-        case 401:
-          // Token is invalid.
-          $field_name = 'token';
-          break;
-
-        case 403:
-          // Cannot access namespace with token.
-          $field_name = 'namespace';
-          break;
-      }
+      $field_name = $this->getErrorFieldName($client_response);
       $form_state->setErrorByName($field_name, $client_response['code'] . ':' . $client_response['message']);
     }
 
@@ -153,6 +138,36 @@ class OpenShiftConfigEntityForm extends EntityForm {
     }
 
     return $response;
+  }
+
+  /**
+   * Determines field to display the error message on based on the response.
+   *
+   * @param array $client_response
+   *   Response from the client.
+   *
+   * @return string
+   *   Field name to attach error message to.
+   */
+  protected function getErrorFieldName(array $client_response): string {
+    $field_name = '';
+    switch ($client_response['code']) {
+      case 0 && strpos($client_response['message'], 'SSL'):
+        // SSL Certificate issue.
+        $field_name = 'verify_tls';
+        break;
+
+      case 401:
+        // Token is invalid.
+        $field_name = 'token';
+        break;
+
+      case 403:
+        // Cannot access namespace with token.
+        $field_name = 'namespace';
+        break;
+    }
+    return $field_name;
   }
 
 }
