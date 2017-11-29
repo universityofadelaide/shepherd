@@ -585,27 +585,20 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
    */
   public function getSiteEnvironmentsStatus(string $site_id) {
     try {
-      $deploymentConfigs = $this->client->getDeploymentConfigs('site_id=' . $site_id);
-      $environments_status = [];
-      foreach ($deploymentConfigs['items'] as $deploymentConfigItem) {
-        // Search through the conditions for a key of type 'available'
-        // This defines if the deployment config is effectively running or not.
-        foreach ($deploymentConfigItem['status']['conditions'] as $condition) {
-          if (strtolower($condition['type']) === 'available') {
-            $environments_status[] = [
-              'running' => $condition['status'],
-              'time' => $condition['lastUpdateTime'],
-              'available_pods' => $deploymentConfigItem['status']['availableReplicas'],
-            ];
-          }
-        }
-      }
-      return $environments_status;
+      $deployment_configs = $this->client->getDeploymentConfigs('site_id=' . $site_id);
     }
     catch (ClientException $e) {
       $this->handleClientException($e);
       return FALSE;
     }
+    $environments_status = [];
+    foreach ($deployment_configs['items'] as $deployment_config) {
+      // Search through the conditions for a key of type 'available'
+      // This defines if the deployment config is effectively running or not.
+      $environments_status[] = $this->extractDeploymentConfigStatus($deployment_config);
+    }
+
+    return $environments_status;
   }
 
   /**
@@ -620,15 +613,38 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     );
 
     try {
-      $deploymentConfig = $this->client->getDeploymentConfig($deployment_name);
-      $test = '';
-      // process this and maybe extract the method out somehow.
-      return $deploymentConfig;
+      $deployment_config = $this->client->getDeploymentConfig($deployment_name);
     }
     catch (ClientException $e) {
       $this->handleClientException($e);
       return FALSE;
     }
+
+    return $this->extractDeploymentConfigStatus($deployment_config);
+  }
+
+  /**
+   * Pull the status from a deployment config.
+   *
+   * @param array $deployment_config
+   *   Deployment config.
+   *
+   * @return array
+   *   Extracted array that contains the status, time and number of pods.
+   */
+  private function extractDeploymentConfigStatus(array $deployment_config) {
+    $environment_status = [];
+    foreach ($deployment_config['status']['conditions'] as $condition) {
+      if (strtolower($condition['type']) === 'available') {
+        $environment_status = [
+          'running' => ($condition['status'] === "True") ? TRUE : FALSE,
+          'time' => $condition['lastUpdateTime'],
+          'available_pods' => $deployment_config['status']['availableReplicas'],
+        ];
+        break;
+      }
+    }
+    return $environment_status;
   }
 
   /**
