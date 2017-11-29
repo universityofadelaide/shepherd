@@ -585,9 +585,25 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
    */
   public function getSiteEnvironmentsStatus(string $site_id) {
     try {
-      return $this->client->getDeploymentConfigs('site_id=' . $site_id);
+      $deploymentConfigs = $this->client->getDeploymentConfigs('site_id=' . $site_id);
+      $environments_status = [];
+      foreach ($deploymentConfigs['items'] as $deploymentConfigItem) {
+        // Search through the conditions for a key of type 'available'
+        // This defines if the deployment config is effectively running or not.
+        foreach ($deploymentConfigItem['status']['conditions'] as $condition) {
+          if (strtolower($condition['type']) === 'available') {
+            $environments_status[] = [
+              'running' => $condition['status'],
+              'time' => $condition['lastUpdateTime'],
+              'available_pods' => $deploymentConfigItem['status']['availableReplicas'],
+            ];
+          }
+        }
+      }
+      return $environments_status;
     }
     catch (ClientException $e) {
+      $this->handleClientException($e);
       return FALSE;
     }
   }
