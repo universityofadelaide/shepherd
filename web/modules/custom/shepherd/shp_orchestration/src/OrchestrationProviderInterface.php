@@ -366,6 +366,25 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
   public function getSiteEnvironmentsStatus(string $site_id);
 
   /**
+   * Get the status of a given environment.
+   *
+   * @param string $project_name
+   *   Name of the project.
+   * @param string $short_name
+   *   Short name of the site.
+   * @param string $environment_id
+   *   Environment node id.
+   *
+   * @return array|bool
+   *   Returns the given environment status, or false.
+   */
+  public function getEnvironmentStatus(
+    string $project_name,
+    string $short_name,
+    string $environment_id
+  );
+
+  /**
    * Retrieves the url for a given environment.
    *
    * @param string $project_name
