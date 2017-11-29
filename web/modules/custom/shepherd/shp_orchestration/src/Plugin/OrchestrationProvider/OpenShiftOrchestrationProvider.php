@@ -611,6 +611,29 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
   /**
    * {@inheritdoc}
    */
+  public function getEnvironmentStatus(string $project_name, string $short_name, string $environment_id) {
+
+    $deployment_name = self::generateDeploymentName(
+      $project_name,
+      $short_name,
+      $environment_id
+    );
+
+    try {
+      $deploymentConfig = $this->client->getDeploymentConfig($deployment_name);
+      $test = '';
+      // process this and maybe extract the method out somehow.
+      return $deploymentConfig;
+    }
+    catch (ClientException $e) {
+      $this->handleClientException($e);
+      return FALSE;
+    }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function getEnvironmentUrl(string $project_name, string $short_name, string $environment_id) {
     $deployment_name = self::generateDeploymentName(
       $project_name,
