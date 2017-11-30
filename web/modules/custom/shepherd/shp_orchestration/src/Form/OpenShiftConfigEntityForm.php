@@ -152,7 +152,8 @@ class OpenShiftConfigEntityForm extends EntityForm {
   protected function getErrorFieldName(array $client_response): string {
     $field_name = '';
     switch ($client_response['code']) {
-      case 0 && strpos($client_response['message'], 'SSL') >= 0:
+      // Some curl errors return a non http code - 0.
+      case FALSE:
         // SSL Certificate issue.
         $field_name = 'verify_tls';
         break;
