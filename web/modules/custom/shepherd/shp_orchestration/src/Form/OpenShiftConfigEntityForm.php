@@ -72,6 +72,8 @@ class OpenShiftConfigEntityForm extends EntityForm {
    */
   public function validateForm(array &$form, FormStateInterface $form_state) {
 
+    parent::validateForm($form, $form_state);
+
     $client_response = $this->validateClientConfiguration(
       $form['endpoint']['#value'],
       $form['token']['#value'],
@@ -83,8 +85,6 @@ class OpenShiftConfigEntityForm extends EntityForm {
       $field_name = $this->getErrorFieldName($client_response);
       $form_state->setErrorByName($field_name, $client_response['code'] . ':' . $client_response['message']);
     }
-
-    parent::validateForm($form, $form_state);
   }
 
   /**
