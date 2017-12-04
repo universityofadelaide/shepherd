@@ -107,7 +107,7 @@ To create the environment types:
 
 ### Configure cron jobs for Shepherd 
 
-The next step is to configure cron jobs in OpenShift, once database and orchestration providers have been configured. These cron jobs will process the shepherd job queue and run drupal cron. The cron jobs are defined in the 
+The next step is to configure cron jobs in OpenShift, once database and orchestration providers have been configured. These cron jobs will process the Shepherd job queue and run Drupal cron. The cron jobs are defined in the 
 `shepherd-openshift-cronjob.yml` configuration. First you should get the following parameters so they can be passed to the template :
 
 - DATABASE_PASSWORD
@@ -133,7 +133,7 @@ oc process -f shepherd-openshift-cronjob.yml -p DATABASE_PASWORD=my-db-password 
  -p SHEPHERD_WEB_IMAGESTREAM=${SHEPHERD_WEB_IMAGESTREAM} | oc create -f -
 ```
 
-### Delete shepherd instances and storage
+### Delete Shepherd instances and storage
 ```bash
 oc delete all -l app=shepherd
 oc delete pvc shepherd-web-shared
