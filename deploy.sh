@@ -19,6 +19,7 @@ if ! oc get projects | grep -q ${OPENSHIFT_PROJECT_NAME}; then
 fi
 
 # Setup a new mysql server, expose it and group the services.
+# This is for development environments only. Don't use this in production!
 if ! oc get svc | grep -q mysql; then
   oc new-app mariadb MYSQL_ROOT_PASSWORD=${SUPER_SECRET_PASSWORD} -l db=shepherd
   oc expose dc mariadb --type=LoadBalancer --name=mysql-external
