@@ -113,6 +113,7 @@ The next step is to configure cron jobs in OpenShift, once database and orchestr
 - DATABASE_PASSWORD
 - SHEPHERD_WEB_IMAGESTREAM 
 
+The image stream provides a source for the built images, so that you can launch pods to serve the Shepherd application.
 To obtain the `SHEPHERD_WEB_IMAGESTREAM` first retrieve the internal docker registry ip address:
 You require need system admin access.
 
