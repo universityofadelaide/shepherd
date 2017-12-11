@@ -397,3 +397,5 @@ parameters:
   description: The group ID the web container should run as.
   required: true
   value: '99010'
+- name: SHEPHERD_WEB_IMAGESTREAM
+  description: The image stream path to the web image. Needed for cronjobs

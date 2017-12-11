@@ -2,15 +2,13 @@
 
 namespace Drupal\shp_custom\Plugin\Menu\LocalAction;
 
-use Drupal\Core\Menu\LocalActionDefault;
 use Drupal\Core\Routing\RouteMatchInterface;
-use Drupal\Core\Routing\RouteProviderInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Drupal\group\Plugin\Menu\LocalAction\WithDestination;
 
 /**
  * Modifies the Local Action to add shepherd site id.
  */
-class WithSiteId extends LocalActionDefault {
+class WithSiteId extends WithDestination {
 
   /**
    * {@inheritdoc}

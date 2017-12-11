@@ -6,3 +6,4 @@ package: UA
 dependencies:
   - shp_content_types
   - shp_vue_view
+  - group

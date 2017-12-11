@@ -1,0 +1,31 @@
+language: php
+
+env:
+    global:
+        - SIMPLETEST_DB="mysql://root:@127.0.0.1/drupal"
+php:
+    - 7.0
+    - 7.1
+
+cache:
+    - "$HOME/.composer/cache"
+
+matrix:
+    fast_finish: true
+
+mysql:
+    database: drupal
+    username: root
+    encoding: utf8
+
+before_install:
+    - phpenv config-rm xdebug.ini || true
+    - mysql -e 'CREATE DATABASE IF NOT EXISTS drupal CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci' -uroot
+    - sed -i '1i export PATH="$HOME/.composer/vendor/bin:$PATH"' $HOME/.bashrc
+    - source $HOME/.bashrc
+
+install:
+    - composer install
+
+script:
+    - ./vendor/phpunit/phpunit/phpunit --group shepherd -c ./web/core ./web/modules
