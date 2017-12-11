@@ -32,10 +32,6 @@ oc create -f shepherd-openshift.yml -n openshift
 You can now click Add to project in the OpenShift ui to deploy Shepherd directly.
 
 ### Deploy Shepherd from the command line.
-Example command line to process the template and set the install profile to a custom value.
-```bash
-oc process -f shepherd-openshift.yml -p SHEPHERD_INSTALL_PROFILE=shepherd | oc create -f -
-```
 
 #### Create a Service Account for Shepherd
 Before we configure Shepherd to use OpenShift, we need to create a [Service Account](https://docs.openshift.com/container-platform/latest/dev_guide/service_accounts.html)
@@ -109,7 +105,36 @@ organisations workflow. In this instance we will create 3 environment types : `D
 To create the environment types:
 `/admin/structure/taxonomy/manage/shp_environment_types/overview` click the add term button.
 
-### Delete shepherd instances and storage
+### Configure cron jobs for Shepherd 
+
+The next step is to configure cron jobs in OpenShift, once database and orchestration providers have been configured. These cron jobs will process the Shepherd job queue and run Drupal cron. The cron jobs are defined in the 
+`shepherd-openshift-cronjob.yml` configuration. First you should get the following parameters so they can be passed to the template :
+
+- DATABASE_PASSWORD
+- SHEPHERD_WEB_IMAGESTREAM 
+
+The image stream provides a source for the built images, so that you can launch pods to serve the Shepherd application.
+To obtain the `SHEPHERD_WEB_IMAGESTREAM` first retrieve the internal docker registry ip address:
+You require need system admin access.
+
+```bash
+# login as the system user 
+oc login -u system:admin && oc project openshift
+OC_DOCKER_REGISTRY_IP=$(oc get is | tail -n1 | awk '{print $2}' | awk -F '/' '{print $1}')
+# logout as system user
+oc logout 
+# create the variable to use.
+SHEPHERD_WEB_IMAGESTREAM="${OC_DOCKER_REGISTRY_IP}/{PROJECT_NAME}/shepherd-web-is:latest"
+```
+
+Process and create the cron jobs:
+
+```bash
+oc process -f shepherd-openshift-cronjob.yml -p DATABASE_PASWORD=my-db-password \
+ -p SHEPHERD_WEB_IMAGESTREAM=${SHEPHERD_WEB_IMAGESTREAM} | oc create -f -
+```
+
+### Delete Shepherd instances and storage
 ```bash
 oc delete all -l app=shepherd
 oc delete pvc shepherd-web-shared
