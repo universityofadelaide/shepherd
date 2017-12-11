@@ -1,0 +1,161 @@
+apiVersion: v1
+kind: Template
+objects:
+- apiVersion: batch/v2alpha1
+  kind: CronJob
+  metadata:
+    labels:
+      app: shepherd
+      template: shepherd
+      name: shepherd-cron-queue-dc
+    name: shepherd-cron-queue-dc
+  spec:
+    concurrencyPolicy: Forbid
+    schedule: '*/1 * * * *'
+    suspend: false
+    failedJobHistoryLimit: 5
+    successfulJobHistoryLimit: 5
+    jobTemplate:
+      spec:
+        template:
+          spec:
+            containers:
+            - args:
+              - /bin/sh
+              - -c
+              - cd /code; drush -r web shp-p || true
+              env:
+              - name: DATABASE_HOST
+                value: ${DATABASE_HOST}
+              - name: DATABASE_PORT
+                value: ${DATABASE_PORT}
+              - name: DATABASE_NAME
+                value: ${DATABASE_NAME}
+              - name: DATABASE_USER
+                value: ${DATABASE_USER}
+              - name: DATABASE_PASSWORD
+                value: ${DATABASE_PASSWORD}
+              - name: SHEPHERD_INSTALL_PROFILE
+                value: ${SHEPHERD_INSTALL_PROFILE}
+              - name: REDIS_ENABLED
+                value: '1'
+              - name: REDIS_HOST
+                value: ${REDIS_HOST}
+              - name: PUBLIC_DIR
+                value: /shared/public
+              - name: PRIVATE_DIR
+                value: /shared/private
+              - name: TMP_DIR
+                value: /shared/tmp
+              image: ${SHEPHERD_WEB_IMAGESTREAM}
+              imagePullPolicy: Always
+              name: shepherd-cron-queue-dc
+              resources:
+                limits:
+                  memory: 512Mi
+              terminationMessagePath: /dev/termination-log
+              volumeMounts:
+                - mountPath: /shared
+                  name: shepherd-web-shared
+            dnsPolicy: ClusterFirst
+            restartPolicy: OnFailure
+            securityContext: {}
+            terminationGracePeriodSeconds: 30
+            volumes:
+            - name: shepherd-web-shared
+              persistentVolumeClaim:
+                claimName: shepherd-web-shared
+ apiVersion: batch/v2alpha1
+  kind: CronJob
+  metadata:
+    labels:
+      app: shepherd
+      template: shepherd
+      name: shepherd-cron-system-dc
+    name: shepherd-cron-system-dc
+  spec:
+    concurrencyPolicy: Forbid
+    schedule: '*/30 * * * *'
+    suspend: false
+    failedJobHistoryLimit: 5
+    successfulJobHistoryLimit: 5
+    jobTemplate:
+      spec:
+        template:
+          spec:
+            containers:
+            - args:
+              - /bin/sh
+              - -c
+              - cd /code; drush -r web cron || true
+              env:
+              - name: DATABASE_HOST
+                value: ${DATABASE_HOST}
+              - name: DATABASE_PORT
+                value: ${DATABASE_PORT}
+              - name: DATABASE_NAME
+                value: ${DATABASE_NAME}
+              - name: DATABASE_USER
+                value: ${DATABASE_USER}
+              - name: DATABASE_PASSWORD
+                value: ${DATABASE_PASSWORD}
+              - name: SHEPHERD_INSTALL_PROFILE
+                value: ${SHEPHERD_INSTALL_PROFILE}
+              - name: REDIS_ENABLED
+                value: '1'
+              - name: REDIS_HOST
+                value: ${REDIS_HOST}
+              - name: PUBLIC_DIR
+                value: /shared/public
+              - name: PRIVATE_DIR
+                value: /shared/private
+              - name: TMP_DIR
+                value: /shared/tmp
+              image: ${SHEPHERD_WEB_IMAGESTREAM}
+              imagePullPolicy: Always
+              name: shepherd-cron-system-dc
+              resources:
+                limits:
+                  memory: 512Mi
+              terminationMessagePath: /dev/termination-log
+              volumeMounts:
+                - mountPath: /shared
+                  name: shepherd-web-shared
+            dnsPolicy: ClusterFirst
+            restartPolicy: OnFailure
+            securityContext: {}
+            terminationGracePeriodSeconds: 30
+            volumes:
+            - name: shepherd-web-shared
+              persistentVolumeClaim:
+                claimName: shepherd-web-shared
+parameters:
+  - name: DATABASE_HOST
+    description: The database host to use. Change this if you do not wish to use the MySQL service deployed as part of this application.
+    required: true
+    value: shepherd-db-svc
+  - name: DATABASE_PORT
+    required: true
+    value: '3306'
+  - name: DATABASE_NAME
+    required: true
+    value: shepherd
+  - name: DATABASE_USER
+    required: true
+    value: shepherd
+  - name: DATABASE_PASSWORD
+    required: true
+  - name: SHEPHERD_INSTALL_PROFILE
+    description: The Drupal install profile to use.
+    required: true
+    value: shepherd
+  - name: REDIS_ENABLED
+    description: Set to '1' for enabled, or '0' for disabled.
+    required: true
+    value: '1'
+  - name: REDIS_HOST
+    description: The host to use as a redis cache.
+    required: true
+    value: 'shepherd-redis-svc'
+  - name: SHEPHERD_WEB_IMAGESTREAM
+    description: The image stream path to the web image. Needed for cronjobs
