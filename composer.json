@@ -81,7 +81,7 @@
             "drupal/core": {
                 "Switch to a memory cache backend during installation": "https://www.drupal.org/files/issues/2488350-2-58.patch",
                 "Twig debug output does not display all suggestions": "https://www.drupal.org/files/issues/2118743-139-twig-debug-info.patch",
-                "Allow profiles to provide a base profile": "https://www.drupal.org/files/issues/drupal-n1356276-397-8.5.x.patch"
+                "Allow profiles to provide a base profile": "https://www.drupal.org/files/issues/1356276-408--8.4.3.patch"
             },
             "drupal/key_value_field": {
                 "Add key / value label as setting": "https://www.drupal.org/files/issues/key_value_field-labels_as_settings-2842240-2.patch"
