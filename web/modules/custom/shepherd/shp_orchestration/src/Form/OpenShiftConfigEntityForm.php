@@ -31,17 +31,17 @@ class OpenShiftConfigEntityForm extends EntityForm {
       '#default_value' => $entity->endpoint,
       '#required' => TRUE,
     ];
+    $form['verify_tls'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Verify TLS'),
+      '#default_value' => $entity->verify_tls,
+    ];
     $form['token'] = [
       '#type' => 'textarea',
       '#title' => $this->t('Token'),
       '#default_value' => $entity->token,
       '#attributes' => ['autocomplete' => 'off'],
       '#required' => TRUE,
-    ];
-    $form['verify_tls'] = [
-      '#type' => 'checkbox',
-      '#title' => $this->t('Verify TLS'),
-      '#default_value' => $entity->verify_tls,
     ];
     $form['namespace'] = [
       '#type' => 'textfield',
@@ -83,7 +83,11 @@ class OpenShiftConfigEntityForm extends EntityForm {
 
     if (isset($client_response['error']) && $client_response['error']) {
       $field_name = $this->getErrorFieldName($client_response);
-      $form_state->setErrorByName($field_name, $client_response['code'] . ':' . $client_response['message']);
+      $form_state->setErrorByName($field_name,
+        $this->t('Error: %response_code - %message', [
+          '%response_code' => $client_response['code'],
+          '%message' => !empty($client_response['message']) ? $client_response['message'] : "Can't connect, check that OpenShift is accessible.",
+        ]));
     }
   }
 
@@ -154,8 +158,8 @@ class OpenShiftConfigEntityForm extends EntityForm {
     switch ($client_response['code']) {
       // Some curl errors return a non http code - 0.
       case FALSE:
-        // SSL Certificate issue.
-        $field_name = 'verify_tls';
+        // Not available at the endpoint or SSL Certificate issue.
+        $field_name = 'endpoint';
         break;
 
       case 401:
