@@ -24,16 +24,22 @@ class Environment extends EntityActionBase {
   protected $configuration;
 
   /**
+   * Orchestration Provider Manager.
+   *
    * @var \Drupal\shp_orchestration\OrchestrationProviderPluginManager
    */
   private $orchestrationProviderPluginManager;
 
   /**
+   * Environment service.
+   *
    * @var \Drupal\shp_custom\Service\Environment|\Drupal\shp_orchestration\Service\Environment
    */
   private $environmentEntity;
 
   /**
+   * Site service.
+   *
    * @var \Drupal\shp_custom\Service\Site
    */
   private $siteEntity;
@@ -42,9 +48,13 @@ class Environment extends EntityActionBase {
    * Shepherd constructor.
    *
    * @param \Drupal\shp_orchestration\OrchestrationProviderPluginManager $orchestrationProviderPluginManager
+   *   Orchestration provider manager.
    * @param \Drupal\shp_orchestration\Service\Configuration $configuration
+   *   Configuration service.
    * @param \Drupal\shp_custom\Service\Environment $environment
+   *   Environment service.
    * @param \Drupal\shp_custom\Service\Site $site
+   *   Site service.
    */
   public function __construct(OrchestrationProviderPluginManager $orchestrationProviderPluginManager, Configuration $configuration, EnvironmentEntity $environment, SiteEntity $site) {
     parent::__construct($orchestrationProviderPluginManager);
@@ -56,7 +66,10 @@ class Environment extends EntityActionBase {
   /**
    * Tell the active orchestration provider an environment was created.
    *
+   * @todo - Extract some of the logic out of this method, too large.
+   *
    * @param \Drupal\node\NodeInterface $node
+   *   Node entity.
    *
    * @return bool
    */
@@ -158,6 +171,7 @@ class Environment extends EntityActionBase {
    * Tell the active orchestration provider an environment was updated.
    *
    * @param \Drupal\node\NodeInterface $node
+   *   Node entity.
    *
    * @return bool
    */
@@ -170,6 +184,7 @@ class Environment extends EntityActionBase {
    * Tell the active orchestration provider an environment was deleted.
    *
    * @param \Drupal\node\NodeInterface $node
+   *   Node entity.
    *
    * @return bool
    */
@@ -201,10 +216,16 @@ class Environment extends EntityActionBase {
   }
 
   /**
+   * Tell the active orchestration provider an environment was promoted.
+   *
    * @param \Drupal\node\NodeInterface $site
+   *   Site entity.
    * @param \Drupal\node\NodeInterface $environment
+   *   Environment entity.
    * @param bool $exclusive
+   *   Exclusive.
    * @param bool $clear_cache
+   *   Clear cache.
    *
    * @return bool
    */
@@ -225,7 +246,7 @@ class Environment extends EntityActionBase {
 
     // @todo everything is exclusive for now, implement non-exclusive?
 
-    // Load a non protected term
+    // Load a non protected term.
     // @todo handle multiples? this is quite horrid.
     $ids = \Drupal::entityQuery('taxonomy_term')
       ->condition('vid', 'shp_environment_types')
@@ -240,7 +261,7 @@ class Environment extends EntityActionBase {
       ->execute();
     $promoted_term = reset(Term::loadMultiple($ids));
 
-    // Demote all current prod environments
+    // Demote all current prod environments.
     $old_promoted = \Drupal::entityQuery('node')
       ->condition('field_shp_environment_type', $promoted_term->id())
       ->condition('nid', $environment->id(), '<>')
@@ -251,7 +272,7 @@ class Environment extends EntityActionBase {
       $node->save();
     }
 
-    // Finally Update the environment that was promoted if we need to
+    // Finally Update the environment that was promoted if we need to.
     if ($environment->field_shp_environment_type->target_id != $promoted_term->id()) {
       $environment->field_shp_environment_type = [['target_id' => $promoted_term->id()]];
       $environment->save();
