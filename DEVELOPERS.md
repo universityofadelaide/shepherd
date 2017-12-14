@@ -19,7 +19,7 @@ are also made available separately for use by other projects:
 * [Advantages of monolithic version control](https://danluu.com/monorepo/)
 * [The Symfony Monolith Repository](https://www.youtube.com/watch?v=4w3-f6Xhvu8)
 * [Git subtree splitter](https://github.com/splitsh/lite) - This is required
-  to run the shepherd-module-update script.
+  to run the shepherd-module-update.sh script.
 * [Shepherd modules](https://github.com/universityofadelaide/shepherd-modules)
 * To use shepherd as an upstream repository for your own local deployment, see
   [Using this repository as an upstream](#Using this repository as an upstream)
@@ -43,7 +43,7 @@ Development should proceed as normal, typically with:
 * Merge into develop
 * Update the shepherd-modules repo.
   ```
-  ./shepherd-module-update
+  ./shepherd-module-update.sh
   ```
 
 Note: Only people with sufficient access can perform the last two steps.
