@@ -283,6 +283,14 @@ class Environment {
         'url'       => $logs,
       ];
     }
+
+    // Process copied from getDefaultOperations()
+    $destination = $this->currentRequest->getRequestUri();
+    foreach ($operations as $key => $operation) {
+      if (!isset($operations[$key]['query'])) {
+        $operations[$key]['query'] = ['destination' => $destination];
+      }
+    }
   }
 
   /**
