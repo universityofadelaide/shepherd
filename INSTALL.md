@@ -40,7 +40,7 @@ that will allow us to to communicate to OpenShift.
 ```bash
 # Ensure that you are logged into OpenShift and using the project you deployed Shepherd on.
 oc create serviceaccount shepherd
-oc policy add-role-to-user admin system:serviceaccount:{MY_PROJECT_NAME}:shepherd
+oc policy add-role-to-user admin system:serviceaccount:$(oc project -q):shepherd
 ```
 
 ### Configure Shepherd
@@ -124,7 +124,7 @@ OC_DOCKER_REGISTRY_IP=$(oc get is | tail -n1 | awk '{print $2}' | awk -F '/' '{p
 # logout as system user
 oc logout 
 # create the variable to use.
-SHEPHERD_WEB_IMAGESTREAM="${OC_DOCKER_REGISTRY_IP}/{PROJECT_NAME}/shepherd-web-is:latest"
+SHEPHERD_WEB_IMAGESTREAM="${OC_DOCKER_REGISTRY_IP}/$(oc project -q)/shepherd-web-is:latest"
 ```
 
 Process and create the cron jobs:
