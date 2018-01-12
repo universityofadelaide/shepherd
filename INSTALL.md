@@ -110,28 +110,19 @@ To create the environment types:
 The next step is to configure cron jobs in OpenShift, once database and orchestration providers have been configured. These cron jobs will process the Shepherd job queue and run Drupal cron. The cron jobs are defined in the 
 `shepherd-openshift-cronjob.yml` configuration. First you should get the following parameters so they can be passed to the template :
 
-- DATABASE_PASSWORD
 - SHEPHERD_WEB_IMAGESTREAM 
 
 The image stream provides a source for the built images, so that you can launch pods to serve the Shepherd application.
 To obtain the `SHEPHERD_WEB_IMAGESTREAM` first retrieve the internal docker registry ip address:
-You require need system admin access.
 
 ```bash
-# login as the system user 
-oc login -u system:admin && oc project openshift
-OC_DOCKER_REGISTRY_IP=$(oc get is | tail -n1 | awk '{print $2}' | awk -F '/' '{print $1}')
-# logout as system user
-oc logout 
-# create the variable to use.
-SHEPHERD_WEB_IMAGESTREAM="${OC_DOCKER_REGISTRY_IP}/$(oc project -q)/shepherd-web-is:latest"
+SHEPHERD_WEB_IMAGESTREAM="$(oc get is | tail -n1 | awk '{print $2}' | awk -F '/' '{print $1}')/$(oc project -q)/shepherd-web-is:latest"
 ```
 
 Process and create the cron jobs:
 
 ```bash
-oc process -f shepherd-openshift-cronjob.yml -p DATABASE_PASWORD=my-db-password \
- -p SHEPHERD_WEB_IMAGESTREAM=${SHEPHERD_WEB_IMAGESTREAM} | oc create -f -
+oc process -f shepherd-openshift-cronjob.yml -p SHEPHERD_WEB_IMAGESTREAM=${SHEPHERD_WEB_IMAGESTREAM} | oc create -f -
 ```
 
 ### Delete Shepherd instances and storage
