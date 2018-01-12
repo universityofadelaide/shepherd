@@ -33,8 +33,8 @@ objects:
                 value: ${DATABASE_NAME}
               - name: DATABASE_USER
                 value: ${DATABASE_USER}
-              - name: DATABASE_PASSWORD
-                value: ${DATABASE_PASSWORD}
+              - name: DATABASE_PASSWORD_FILE
+                value: ${DATABASE_PASSWORD_FILE}
               - name: SHEPHERD_INSTALL_PROFILE
                 value: ${SHEPHERD_INSTALL_PROFILE}
               - name: REDIS_ENABLED
@@ -57,15 +57,21 @@ objects:
               volumeMounts:
                 - mountPath: /shared
                   name: shepherd-web-shared
+                - name: volume-niek8
+                  readOnly: true
+                  mountPath: /etc/secret
             dnsPolicy: ClusterFirst
             restartPolicy: OnFailure
-            securityContext: {}
             terminationGracePeriodSeconds: 30
             volumes:
-            - name: shepherd-web-shared
-              persistentVolumeClaim:
-                claimName: shepherd-web-shared
- apiVersion: batch/v2alpha1
+              - name: shepherd-web-shared
+                persistentVolumeClaim:
+                  claimName: shepherd-web-shared
+              - name: volume-niek8
+                secret:
+                  secretName: shepherd-db-password
+                  defaultMode: 420
+- apiVersion: batch/v2alpha1
   kind: CronJob
   metadata:
     labels:
@@ -97,8 +103,8 @@ objects:
                 value: ${DATABASE_NAME}
               - name: DATABASE_USER
                 value: ${DATABASE_USER}
-              - name: DATABASE_PASSWORD
-                value: ${DATABASE_PASSWORD}
+              - name: DATABASE_PASSWORD_FILE
+                value: ${DATABASE_PASSWORD_FILE}
               - name: SHEPHERD_INSTALL_PROFILE
                 value: ${SHEPHERD_INSTALL_PROFILE}
               - name: REDIS_ENABLED
@@ -121,14 +127,20 @@ objects:
               volumeMounts:
                 - mountPath: /shared
                   name: shepherd-web-shared
+                - name: volume-niek8
+                  readOnly: true
+                  mountPath: /etc/secret
             dnsPolicy: ClusterFirst
             restartPolicy: OnFailure
-            securityContext: {}
             terminationGracePeriodSeconds: 30
             volumes:
-            - name: shepherd-web-shared
-              persistentVolumeClaim:
-                claimName: shepherd-web-shared
+              - name: shepherd-web-shared
+                persistentVolumeClaim:
+                  claimName: shepherd-web-shared
+              - name: volume-niek8
+                secret:
+                  secretName: shepherd-db-password
+                  defaultMode: 420
 parameters:
   - name: DATABASE_HOST
     description: The database host to use. Change this if you do not wish to use the MySQL service deployed as part of this application.
@@ -143,12 +155,9 @@ parameters:
   - name: DATABASE_USER
     required: true
     value: shepherd
-  - name: DATABASE_PASSWORD
+  - name: DATABASE_PASSWORD_FILE
     required: true
-  - name: SHEPHERD_INSTALL_PROFILE
-    description: The Drupal install profile to use.
-    required: true
-    value: shepherd
+    value: /etc/secret/DATABASE_PASSWORD
   - name: REDIS_ENABLED
     description: Set to '1' for enabled, or '0' for disabled.
     required: true
@@ -157,5 +166,9 @@ parameters:
     description: The host to use as a redis cache.
     required: true
     value: 'shepherd-redis-svc'
+  - name: SHEPHERD_INSTALL_PROFILE
+    description: The Drupal install profile to use.
+    required: true
+    value: shepherd
   - name: SHEPHERD_WEB_IMAGESTREAM
     description: The image stream path to the web image. Needed for cronjobs
