@@ -154,7 +154,7 @@ oc process -f ua-shepherd-openshift-cronjob.yml -p SHEPHERD_WEB_IMAGESTREAM=${SH
 PRD
 
 ```bash
-oc process -f ua-shepherd-openshift.yml -p SHEPHERD_WEB_IMAGESTREAM=${SHEPHERD_WEB_IMAGESTREAM} -p DATABASE_HOST=mariadb-web-prd2.adelaide.edu.au | oc create -f -
+oc process -f ua-shepherd-openshift-cronjob.yml -p SHEPHERD_WEB_IMAGESTREAM=${SHEPHERD_WEB_IMAGESTREAM} -p DATABASE_HOST=mariadb-web-prd2.adelaide.edu.au | oc create -f -
 ```
 
 ### Configure the environment types
