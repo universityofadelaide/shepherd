@@ -6,7 +6,7 @@ objects:
   metadata:
     labels:
       app: shepherd
-      template: shepherd
+      template: shepherd-cronjob
       name: shepherd-cron-queue-dc
     name: shepherd-cron-queue-dc
   spec:
