@@ -157,6 +157,20 @@ PRD
 oc process -f ua-shepherd-openshift-cronjob.yml -p SHEPHERD_WEB_IMAGESTREAM=${SHEPHERD_WEB_IMAGESTREAM} -p DATABASE_HOST=mariadb-web-prd2.adelaide.edu.au | oc create -f -
 ```
 
+#### OpenShift < 3.6.1
+
+You will need to run a job cleaner if cronjobs do not respect the failedJobHistoryLimit and successfulJobHistoryLimit settings.
+
+https://github.com/willemvd/openshift-scheduledjobs-cleanup is an image to do just this.
+
+Run the following to use it:
+
+```bash
+oc create serviceaccount scheduled-jobs-cleanup
+oc policy add-role-to-user edit system:serviceaccount:$(oc project -q):scheduled-jobs-cleanup
+oc process -f ua-shepherd-openshift-cronjob-cleaner.yml | oc create -f -
+```
+
 ### Configure the environment types
 
 - Visit /admin/structure/taxonomy/manage/shp_environment_types/overview and configure:
