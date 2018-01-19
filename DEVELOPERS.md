@@ -163,6 +163,9 @@ a couple of tweaks before running ./dsh
 * Ensure that mysql is listening on all IP's
 * Grant root access to any host
 * Set the OPENSHIFT_TYPE env var to something other than 'minishift'
+  `export OPENSHIFT_TYPE=docker`
+* Set the domain for accessing shepherd to {docker0 IPv4 address}.nip.io
+  `export DOMAIN=172.17.0.1.nip.io`
 * Start the oc cluster `oc cluster up` see `oc cluster up -h` for advanced config like persistent storage and config.
 * Set nginx to run on 8080, as openshift uses port 80 `docker rm -f nginx-proxy`
 `docker run -d -p 8080:80 -v /var/run/docker.sock:/tmp/docker.sock:ro --restart always --name nginx-proxy jwilder/nginx-proxy`
