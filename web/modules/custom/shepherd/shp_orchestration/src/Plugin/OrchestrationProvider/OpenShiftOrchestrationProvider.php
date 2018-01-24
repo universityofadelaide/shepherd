@@ -364,6 +364,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
 
     $result = $this->client->updateService($site_deployment_name, $environment_deployment_name);
     if ($result && $clear_cache) {
+      // @todo - Remove drush call, it relates to a project type rather than all projects.
       self::executeJob(
         $project_name,
         $short_name,
@@ -491,7 +492,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     $deployment_config = $this->client->getDeploymentConfig($deployment_name);
 
     $image_stream = $this->client->getImageStream($sanitised_project_name);
-    $volumes = $this->setupVolumes($project_name, $deployment_name);
+    $volumes = $this->generateVolumeData($project_name, $deployment_name);
     $deploy_data = $this->formatDeployData(
       $deployment_name,
       $deployment_config['spec']['template']['spec']['containers'][0]['env'],
@@ -880,43 +881,43 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
   }
 
   /**
-   * Format an array of volume data ready to pass to OpenShift.
+   * Attempt to create PVC's for the deployment in OpenShift.
+   *
+   * PVC's that already exist will not be created/updated.
+   *
    * @todo - move this into the client?
+   * @todo - make storage size configurable
    *
    * @param string $project_name
    *   The name of the project being deployed.
    * @param string $deployment_name
    *   The name of the deployment being created.
-   * @param bool $setup
-   *   Whether to configure shared files and backup PVCs.
    *
    * @return array|bool
    *   The volume config array, or false if creating PVCs was unsuccessful.
    */
-  private function setupVolumes(string $project_name, string $deployment_name, bool $setup = FALSE) {
+  protected function setupVolumes(string $project_name, string $deployment_name) {
     $volumes = $this->generateVolumeData($project_name, $deployment_name);
 
-    if ($setup) {
-      try {
-        if (!$this->client->getPersistentVolumeClaim($volumes['shared']['name'])) {
-          $this->client->createPersistentVolumeClaim(
-            $volumes['shared']['name'],
-            'ReadWriteMany',
-            '5Gi'
-          );
-        }
-        if (!$this->client->getPersistentVolumeClaim($volumes['backup']['name'])) {
-          $this->client->createPersistentVolumeClaim(
-            $volumes['backup']['name'],
-            'ReadWriteMany',
-            '5Gi'
-          );
-        }
+    try {
+      if (!$this->client->getPersistentVolumeClaim($volumes['shared']['name'])) {
+        $this->client->createPersistentVolumeClaim(
+          $volumes['shared']['name'],
+          'ReadWriteMany',
+          '5Gi'
+        );
       }
-      catch (ClientException $e) {
-        $this->handleClientException($e);
-        return FALSE;
+      if (!$this->client->getPersistentVolumeClaim($volumes['backup']['name'])) {
+        $this->client->createPersistentVolumeClaim(
+          $volumes['backup']['name'],
+          'ReadWriteMany',
+          '5Gi'
+        );
       }
+    }
+    catch (ClientException $e) {
+      $this->handleClientException($e);
+      return FALSE;
     }
 
     return $volumes;
@@ -926,7 +927,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
    * Generates the volume data for deployment configuration.
    *
    * @param string $project_name
-   *   The name of the project.
+   *   The name of the project in OpenShift.
    * @param string $deployment_name
    *   The name of the deployment.
    *
