@@ -191,10 +191,7 @@ objects:
             name: shepherd-web-shared
         dnsPolicy: ClusterFirst
         restartPolicy: Always
-        securityContext:
-          runAsUser: ${UID}
-          supplementalGroups:
-            - ${GID}
+        securityContext: {}
         terminationGracePeriodSeconds: 30
         volumes:
         - name: shepherd-web-shared
@@ -389,11 +386,5 @@ parameters:
   description: The Drupal install profile to use.
   required: true
   value: shepherd
-- name: UID
-  description: The user ID the web container should run as.
-  required: true
-  value: '99010'
-- name: GID
-  description: The group ID the web container should run as.
-  required: true
-  value: '99010'
+- name: SHEPHERD_WEB_IMAGESTREAM
+  description: The image stream path to the web image. Needed for cronjobs

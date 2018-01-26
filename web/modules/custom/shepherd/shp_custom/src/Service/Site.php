@@ -2,9 +2,6 @@
 
 namespace Drupal\shp_custom\Service;
 
-use Drupal\Core\Ajax\AjaxResponse;
-use Drupal\Core\Ajax\HtmlCommand;
-use Drupal\Core\Ajax\InvokeCommand;
 use Drupal\Core\Datetime\DrupalDateTime;
 use Drupal\Core\DependencyInjection\DependencySerializationTrait;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -70,7 +67,7 @@ class Site {
     $site = $this->node->load($environment->field_shp_site->getString());
     if ($term->field_shp_update_go_live->value) {
       if (!isset($site->field_shp_go_live_date->value)) {
-        $date = new DrupalDateTime();
+        $date = new DrupalDateTime('now', 'UTC');
         $site->field_shp_go_live_date->setValue($date->format(DATETIME_DATETIME_STORAGE_FORMAT));
         $site->save();
         drupal_set_message($this->t('Site %name go live date applied.', [

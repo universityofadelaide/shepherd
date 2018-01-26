@@ -1,4 +1,4 @@
-# Tgnore files controlled by Composer/drupal-scaffold
+# Ignore files controlled by Composer/drupal-scaffold
 /web/.csslintrc
 /web/.editorconfig
 /web/.eslintignore

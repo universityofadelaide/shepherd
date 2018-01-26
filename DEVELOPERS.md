@@ -19,7 +19,7 @@ are also made available separately for use by other projects:
 * [Advantages of monolithic version control](https://danluu.com/monorepo/)
 * [The Symfony Monolith Repository](https://www.youtube.com/watch?v=4w3-f6Xhvu8)
 * [Git subtree splitter](https://github.com/splitsh/lite) - This is required
-  to run the shepherd-module-update script.
+  to run the shepherd-module-update.sh script.
 * [Shepherd modules](https://github.com/universityofadelaide/shepherd-modules)
 * To use shepherd as an upstream repository for your own local deployment, see
   [Using this repository as an upstream](#Using this repository as an upstream)
@@ -43,7 +43,7 @@ Development should proceed as normal, typically with:
 * Merge into develop
 * Update the shepherd-modules repo.
   ```
-  ./shepherd-module-update
+  ./shepherd-module-update.sh
   ```
 
 Note: Only people with sufficient access can perform the last two steps.
@@ -163,6 +163,9 @@ a couple of tweaks before running ./dsh
 * Ensure that mysql is listening on all IP's
 * Grant root access to any host
 * Set the OPENSHIFT_TYPE env var to something other than 'minishift'
+  `export OPENSHIFT_TYPE=docker`
+* Set the domain for accessing shepherd to {docker0 IPv4 address}.nip.io
+  `export DOMAIN=172.17.0.1.nip.io`
 * Start the oc cluster `oc cluster up` see `oc cluster up -h` for advanced config like persistent storage and config.
 * Set nginx to run on 8080, as openshift uses port 80 `docker rm -f nginx-proxy`
 `docker run -d -p 8080:80 -v /var/run/docker.sock:/tmp/docker.sock:ro --restart always --name nginx-proxy jwilder/nginx-proxy`
