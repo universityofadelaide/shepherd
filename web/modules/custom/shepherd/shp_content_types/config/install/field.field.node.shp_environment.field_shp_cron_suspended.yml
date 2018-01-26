@@ -1,0 +1,22 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_shp_cron_suspended
+    - node.type.shp_environment
+id: node.shp_environment.field_shp_cron_suspended
+field_name: field_shp_cron_suspended
+entity_type: node
+bundle: shp_environment
+label: 'Cron suspended'
+description: ''
+required: false
+translatable: false
+default_value:
+  -
+    value: 0
+default_value_callback: ''
+settings:
+  on_label: 'On'
+  off_label: 'Off'
+field_type: boolean

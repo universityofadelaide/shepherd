@@ -2,6 +2,7 @@ langcode: en
 status: true
 dependencies:
   config:
+    - field.field.node.shp_environment.field_shp_cron_suspended
     - field.field.node.shp_environment.field_shp_cron_jobs
     - field.field.node.shp_environment.field_shp_deployment_name
     - field.field.node.shp_environment.field_shp_domain
@@ -35,6 +36,7 @@ third_party_settings:
     group_shp_advanced:
       children:
         - field_shp_env_vars
+        - field_shp_cron_suspended
         - field_shp_cron_jobs
         - field_shp_update_on_image_change
       parent_name: ''
@@ -52,8 +54,15 @@ targetEntityType: node
 bundle: shp_environment
 mode: default
 content:
-  field_shp_cron_jobs:
+  field_shp_cron_suspended:
     weight: 6
+    settings:
+      display_label: true
+    third_party_settings: {  }
+    type: boolean_checkbox
+    region: content
+  field_shp_cron_jobs:
+    weight: 7
     settings:
       key_label: Schedule
       key_size: 60
@@ -120,12 +129,25 @@ content:
     type: entity_reference_autocomplete
     region: content
   field_shp_update_on_image_change:
-    weight: 7
+    weight: 8
     settings:
       display_label: true
     third_party_settings: {  }
     type: boolean_checkbox
     region: content
+  moderation_state:
+    type: moderation_state_default
+    weight: 100
+    settings: {  }
+    region: content
+    third_party_settings: {  }
+  status:
+    type: boolean_checkbox
+    settings:
+      display_label: true
+    weight: 120
+    region: content
+    third_party_settings: {  }
 hidden:
   created: true
   field_shp_deployment_name: true

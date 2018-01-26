@@ -80,21 +80,8 @@ class Environment extends EntityActionBase {
       return FALSE;
     }
 
-    $probes = [];
-    foreach (['liveness', 'readiness'] as $type) {
-      if ($project->get('field_shp_' . $type . '_probe_type')->value !== NULL) {
-        $probes[$type] = [
-          'type'       => $project->get('field_shp_' . $type . '_probe_type')->value,
-          'port'       => $project->get('field_shp_' . $type . '_probe_port')->value,
-          'parameters' => $project->get('field_shp_' . $type . '_probe_params')->value,
-        ];
-      }
-    }
-
-    $cron_jobs = [];
-    foreach ($node->field_shp_cron_jobs as $job) {
-      $cron_jobs[$job->key] = $job->value;
-    }
+    $probes = self::buildProbes($project);
+    $cron_jobs = self::buildCronJobs($node);
 
     $deployment_name = $this->orchestrationProviderPlugin::generateDeploymentName(
       $project->getTitle(),
@@ -148,6 +135,7 @@ class Environment extends EntityActionBase {
       $node->field_shp_git_reference->value,
       $project->field_shp_build_secret->value,
       $node->field_shp_update_on_image_change->value,
+      $node->field_shp_cron_suspended->value,
       $env_vars,
       $secrets,
       $probes,
@@ -176,8 +164,58 @@ class Environment extends EntityActionBase {
    * @return bool
    */
   public function updated(NodeInterface $node) {
-    // @todo implement me.
-    return TRUE;
+    $site = $this->environmentEntity->getSite($node);
+    $project = $this->siteEntity->getProject($site);
+    if (!isset($project) || !isset($site)) {
+      return FALSE;
+    }
+
+    $probes = self::buildProbes($project);
+    $cron_jobs = self::buildCronJobs($node);
+
+    $deployment_name = $this->orchestrationProviderPlugin::generateDeploymentName(
+      $project->getTitle(),
+      $site->field_shp_short_name->value,
+      $node->id()
+    );
+
+    // Get environment variables and secrets.
+    $env_vars = $this->configuration->getEnvironmentVariables($node);
+    $secrets = $this->configuration->getSecrets($node);
+
+    // Allow other modules to react to the Environment creation.
+    $eventDispatcher = \Drupal::service('event_dispatcher');
+    $event = new OrchestrationEnvironmentEvent($this->orchestrationProviderPlugin, $deployment_name);
+    $eventDispatcher->dispatch(OrchestrationEvents::SETUP_ENVIRONMENT, $event);
+    if ($event_env_vars = $event->getEnvironmentVariables()) {
+      $env_vars = array_merge($env_vars, $event_env_vars);
+    }
+
+    $environment = $this->orchestrationProviderPlugin->updatedEnvironment(
+      $project->getTitle(),
+      $site->field_shp_short_name->value,
+      $site->id(),
+      $node->id(),
+      $node->toUrl('canonical', ['absolute' => TRUE])->toString(),
+      $project->field_shp_builder_image->value,
+      $node->field_shp_domain->value,
+      $node->field_shp_path->value,
+      $project->field_shp_git_repository->value,
+      $node->field_shp_git_reference->value,
+      $project->field_shp_build_secret->value,
+      $node->field_shp_update_on_image_change->value,
+      $node->field_shp_cron_suspended->value,
+      $env_vars,
+      $secrets,
+      $probes,
+      $cron_jobs
+    );
+
+    // Allow other modules to react to the Environment update.
+    $event = new OrchestrationEnvironmentEvent($this->orchestrationProviderPlugin, $deployment_name, $site, $node, $project);
+    $eventDispatcher->dispatch(OrchestrationEvents::UPDATED_ENVIRONMENT, $event);
+
+    return $environment;
   }
 
   /**
@@ -281,4 +319,41 @@ class Environment extends EntityActionBase {
     return $result;
   }
 
+  /**
+   * @param \Drupal\node\NodeInterface $project
+   *   Project entity.
+   *
+   * @return array
+   */
+  private function buildProbes($project) {
+    $probes = [];
+
+    foreach (['liveness', 'readiness'] as $type) {
+      if ($project->get('field_shp_' . $type . '_probe_type')->value !== NULL) {
+        $probes[$type] = [
+          'type'       => $project->get('field_shp_' . $type . '_probe_type')->value,
+          'port'       => $project->get('field_shp_' . $type . '_probe_port')->value,
+          'parameters' => $project->get('field_shp_' . $type . '_probe_params')->value,
+        ];
+      }
+    }
+
+    return $probes;
+  }
+
+  /**
+   * @param \Drupal\node\NodeInterface $node
+   *   Node entity.
+   *
+   * @return array
+   */
+  private function buildCronJobs($node) {
+    $cron_jobs = [];
+
+    foreach ($node->field_shp_cron_jobs as $job) {
+      $cron_jobs[$job->key] = $job->value;
+    }
+
+    return $cron_jobs;
+  }
 }
