@@ -24,13 +24,6 @@ class Environment extends EntityActionBase {
   protected $configuration;
 
   /**
-   * Orchestration Provider Manager.
-   *
-   * @var \Drupal\shp_orchestration\OrchestrationProviderPluginManager
-   */
-  private $orchestrationProviderPluginManager;
-
-  /**
    * Environment service.
    *
    * @var \Drupal\shp_custom\Service\Environment|\Drupal\shp_orchestration\Service\Environment
@@ -80,8 +73,8 @@ class Environment extends EntityActionBase {
       return FALSE;
     }
 
-    $probes = self::buildProbes($project);
-    $cron_jobs = self::buildCronJobs($node);
+    $probes = $this->buildProbes($project);
+    $cron_jobs = $this->buildCronJobs($node);
 
     $deployment_name = $this->orchestrationProviderPlugin::generateDeploymentName(
       $project->getTitle(),
@@ -170,8 +163,8 @@ class Environment extends EntityActionBase {
       return FALSE;
     }
 
-    $probes = self::buildProbes($project);
-    $cron_jobs = self::buildCronJobs($node);
+    $probes = $this->buildProbes($project);
+    $cron_jobs = $this->buildCronJobs($node);
 
     $deployment_name = $this->orchestrationProviderPlugin::generateDeploymentName(
       $project->getTitle(),
@@ -320,12 +313,15 @@ class Environment extends EntityActionBase {
   }
 
   /**
+   * Constructs the probes configuration.
+   *
    * @param \Drupal\node\NodeInterface $project
    *   Project entity.
    *
    * @return array
+   *   Probes configuration
    */
-  private function buildProbes($project) {
+  protected function buildProbes(NodeInterface $project) {
     $probes = [];
 
     foreach (['liveness', 'readiness'] as $type) {
@@ -342,12 +338,15 @@ class Environment extends EntityActionBase {
   }
 
   /**
+   * Constructs config by extracting the properties from field_shp_cron_jobs.
+   *
    * @param \Drupal\node\NodeInterface $node
    *   Node entity.
    *
    * @return array
+   *   Cron job array with extracted field properties.
    */
-  private function buildCronJobs($node) {
+  protected function buildCronJobs(NodeInterface $node) {
     $cron_jobs = [];
 
     foreach ($node->field_shp_cron_jobs as $job) {
