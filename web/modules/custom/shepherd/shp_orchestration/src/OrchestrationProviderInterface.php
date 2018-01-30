@@ -335,23 +335,15 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
   public function updateSecret(string $name, array $data);
 
   /**
-   * Generates a deployment name from Shepherd entities.
+   * Generates a deployment name from Shepherd node id.
    *
-   * @param string $project_name
-   *   Name of the project.
-   * @param string $short_name
-   *   Short name of the site.
    * @param int $id
    *   Id of the name to be generated.
    *
    * @return string
    *   Returns the generated deployment name.
    */
-  public static function generateDeploymentName(
-    string $project_name,
-    string $short_name,
-    int $id
-  );
+  public static function generateDeploymentName(int $id);
 
   /**
    * Get the status of a collection of environments related to a site.

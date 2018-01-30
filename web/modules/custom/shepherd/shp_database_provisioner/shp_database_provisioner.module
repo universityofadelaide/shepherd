@@ -41,8 +41,6 @@ function shp_database_provisioner_node_insert(EntityInterface $entity) {
     }
 
     $deployment_name = $orchestration_provider_plugin::generateDeploymentName(
-      $project->getTitle(),
-      $site->field_shp_short_name->value,
       $entity->id()
     );
 
