@@ -337,13 +337,13 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
   /**
    * Generates a deployment name from Shepherd node id.
    *
-   * @param int $id
+   * @param string $id
    *   Id of the name to be generated.
    *
    * @return string
    *   Returns the generated deployment name.
    */
-  public static function generateDeploymentName(int $id);
+  public static function generateDeploymentName(string $id);
 
   /**
    * Get the status of a collection of environments related to a site.
