@@ -158,6 +158,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     string $source_repo,
     string $source_ref = 'master',
     string $source_secret = NULL,
+    string $storage_class = '',
     bool $update_on_image_change = FALSE,
     array $environment_variables = [],
     array $secrets = [],
@@ -180,7 +181,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     // Tell, don't ask (to create a build config).
     $this->createBuildConfig($build_config_name, $source_ref, $source_repo, $builder_image, $source_secret, $image_stream_tag, $formatted_env_vars);
 
-    if (!$volumes = $this->setupVolumes($project_name, $deployment_name, TRUE)) {
+    if (!$volumes = $this->setupVolumes($project_name, $deployment_name, $storage_class)) {
       return FALSE;
     }
 
@@ -892,11 +893,13 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
    *   The name of the project being deployed.
    * @param string $deployment_name
    *   The name of the deployment being created.
+   * @param string $storage_class
+   *   Optional storage class name.
    *
    * @return array|bool
    *   The volume config array, or false if creating PVCs was unsuccessful.
    */
-  protected function setupVolumes(string $project_name, string $deployment_name) {
+  protected function setupVolumes(string $project_name, string $deployment_name, $storage_class = '') {
     $volumes = $this->generateVolumeData($project_name, $deployment_name);
 
     try {
@@ -904,14 +907,16 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
         $this->client->createPersistentVolumeClaim(
           $volumes['shared']['name'],
           'ReadWriteMany',
-          '5Gi'
+          '5Gi',
+          $storage_class
         );
       }
       if (!$this->client->getPersistentVolumeClaim($volumes['backup']['name'])) {
         $this->client->createPersistentVolumeClaim(
           $volumes['backup']['name'],
           'ReadWriteMany',
-          '5Gi'
+          '5Gi',
+          $storage_class
         );
       }
     }
