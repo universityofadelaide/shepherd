@@ -80,16 +80,8 @@ abstract class OrchestrationProviderBase extends PluginBase implements Container
   /**
    * {@inheritdoc}
    */
-  public static function generateDeploymentName(
-    string $project_name,
-    string $short_name,
-    int $id
-  ) {
-    return implode('-', [
-      self::sanitise($project_name),
-      self::sanitise($short_name),
-      $id,
-    ]);
+  public static function generateDeploymentName(string $id) {
+    return 'env-' . $id;
   }
 
   /**
