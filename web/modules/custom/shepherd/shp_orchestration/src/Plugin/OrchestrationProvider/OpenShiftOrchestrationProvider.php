@@ -209,7 +209,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     }
 
     $image_stream = $this->client->getImageStream($sanitised_project_name);
-    self::createCronJobs(
+    $this->createCronJobs(
       $deployment_name,
       $source_ref,
       $cron_suspended,
@@ -272,7 +272,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     $deployment_name = self::generateDeploymentName($environment_id);
     $formatted_env_vars = $this->formatEnvVars($environment_variables, $deployment_name);
 
-    if (!$volumes = self::setupVolumes($project_name, $deployment_name)) {
+    if (!$volumes = $this->setupVolumes($project_name, $deployment_name)) {
       return FALSE;
     }
 
@@ -288,7 +288,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     $this->client->deleteCronJob('', 'app=' . $deployment_name);
 
     $image_stream = $this->client->getImageStream($sanitised_project_name);
-    self::createCronJobs(
+    $this->createCronJobs(
       $deployment_name,
       $source_ref,
       $cron_suspended,
@@ -345,7 +345,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     $site = Node::load($environment_id->field_shp_site->target_id);
     $project = Node::load($site->field_shp_project->target_id);
 
-    self::deletedEnvironment(
+    $this->deletedEnvironment(
       $project->title->value,
       $site->field_shp_short_name->value,
       $environment_id
@@ -370,7 +370,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     $result = $this->client->updateService($site_deployment_name, $environment_deployment_name);
     if ($result && $clear_cache) {
       // @todo - Remove drush call, it relates to a project type rather than all projects.
-      self::executeJob(
+      $this->executeJob(
         $project_name,
         $short_name,
         $environment_id,
