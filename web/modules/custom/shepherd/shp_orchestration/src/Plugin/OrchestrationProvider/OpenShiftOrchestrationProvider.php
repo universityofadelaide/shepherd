@@ -629,7 +629,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     foreach ($deployment_config['status']['conditions'] as $condition) {
       if (strtolower($condition['type']) === 'available') {
         $environment_status = [
-          'running' => ($condition['status'] === 'True') ? TRUE : FALSE,
+          'running' => $condition['status'] === 'True',
           'time' => $condition['lastUpdateTime'],
           'available_pods' => $deployment_config['status']['availableReplicas'],
         ];
