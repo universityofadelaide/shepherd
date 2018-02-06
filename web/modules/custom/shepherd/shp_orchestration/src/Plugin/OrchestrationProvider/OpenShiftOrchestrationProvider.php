@@ -269,11 +269,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     // @todo Refactor this too. Not DRY enough.
 
     $sanitised_project_name = self::sanitise($project_name);
-    $deployment_name = self::generateDeploymentName(
-      $project_name,
-      $short_name,
-      $environment_id
-    );
+    $deployment_name = self::generateDeploymentName($environment_id);
     $formatted_env_vars = $this->formatEnvVars($environment_variables, $deployment_name);
 
     if (!$volumes = self::setupVolumes($project_name, $deployment_name)) {

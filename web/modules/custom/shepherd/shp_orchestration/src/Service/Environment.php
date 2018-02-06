@@ -168,11 +168,7 @@ class Environment extends EntityActionBase {
     $probes = $this->buildProbes($project);
     $cron_jobs = $this->buildCronJobs($node);
 
-    $deployment_name = $this->orchestrationProviderPlugin::generateDeploymentName(
-      $project->getTitle(),
-      $site->field_shp_short_name->value,
-      $node->id()
-    );
+    $deployment_name = $this->orchestrationProviderPlugin::generateDeploymentName($node->id());
 
     // Get environment variables and secrets.
     $env_vars = $this->configuration->getEnvironmentVariables($node);
@@ -228,11 +224,7 @@ class Environment extends EntityActionBase {
       return FALSE;
     }
 
-    $deployment_name = $this->orchestrationProviderPlugin->generateDeploymentName(
-      $project->getTitle(),
-      $site->field_shp_short_name->value,
-      $node->id()
-    );
+    $deployment_name = $this->orchestrationProviderPlugin->generateDeploymentName($node->id());
 
     $result = $this->orchestrationProviderPlugin->deletedEnvironment(
       $project->title->value,
