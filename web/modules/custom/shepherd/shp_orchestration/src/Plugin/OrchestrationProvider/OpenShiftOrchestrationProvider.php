@@ -404,6 +404,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       $this->handleClientException($e);
       return FALSE;
     }
+    return TRUE;
   }
 
   /**
@@ -623,12 +624,12 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
    * @return array
    *   Extracted array that contains the status, time and number of pods.
    */
-  private function extractDeploymentConfigStatus(array $deployment_config) {
+  protected function extractDeploymentConfigStatus(array $deployment_config) {
     $environment_status = [];
     foreach ($deployment_config['status']['conditions'] as $condition) {
       if (strtolower($condition['type']) === 'available') {
         $environment_status = [
-          'running' => ($condition['status'] === "True") ? TRUE : FALSE,
+          'running' => ($condition['status'] === 'True') ? TRUE : FALSE,
           'time' => $condition['lastUpdateTime'],
           'available_pods' => $deployment_config['status']['availableReplicas'],
         ];
@@ -721,23 +722,18 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
    * @return string
    *   Url.
    */
-  private function generateOpenShiftPodUrl(string $pod_name, string $view) {
-
+  protected function generateOpenShiftPodUrl(string $pod_name, string $view) {
     $endpoint = $this->configEntity->endpoint;
     $namespace = $this->configEntity->namespace;
-    $link = Url::fromUri($endpoint . '/console/project/' . $namespace . '/browse/pods/' . $pod_name, [
+
+    return Url::fromUri($endpoint . '/console/project/' . $namespace . '/browse/pods/' . $pod_name, [
       'query' => [
         'tab' => $view,
       ],
-    ],
-    [
       'attributes' => [
         'target' => '_blank',
       ],
-    ]
-    );
-
-    return $link;
+    ]);
   }
 
   /**
@@ -752,7 +748,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
    * @return array
    *   The env var config array.
    */
-  private function formatEnvVars(array $environment_variables, string $deployment_name = '') {
+  protected function formatEnvVars(array $environment_variables, string $deployment_name = '') {
     $formatted_env_vars = [];
 
     foreach ($environment_variables as $name => $value) {
@@ -799,7 +795,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
    * @return array
    *   The deployment config array.
    */
-  private function formatDeployData(string $name, array $formatted_env_vars, string $environment_url, int $site_id, int $environment_id) {
+  protected function formatDeployData(string $name, array $formatted_env_vars, string $environment_url, int $site_id, int $environment_id) {
     $deploy_data = [
       'containerPort' => 8080,
       'memory_limit' => '512Mi',
@@ -843,7 +839,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
    * @return array
    *   Build data.
    */
-  private function formatBuildData(string $source_ref, string $source_repo, string $builder_image, array $formatted_env_vars = []) {
+  protected function formatBuildData(string $source_ref, string $source_repo, string $builder_image, array $formatted_env_vars = []) {
     // Package config for the client.
     return [
       'git' => [
@@ -954,7 +950,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
    * @param \UniversityOfAdelaide\OpenShift\ClientException $exception
    *   The exception to be handled.
    */
-  private function handleClientException(ClientException $exception) {
+  protected function handleClientException(ClientException $exception) {
     $reason = $exception->getMessage();
     if (strstr($exception->getBody(), 'Unauthorized')) {
       $reason = $this->t('Client is not authorized to access requested resource.');
@@ -969,17 +965,27 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
   }
 
   /**
-   * @param $deployment_name
-   * @param $source_ref
-   * @param $cron_suspended
-   * @param $cron_jobs
-   * @param $image_stream
-   * @param $volumes
-   * @param $deploy_data
+   * Create cron jobs.
+   *
+   * @param string $deployment_name
+   *   Deployment identifier.
+   * @param string $source_ref
+   *   Image stream git ref.
+   * @param bool $cron_suspended
+   *   Is cron suspended?
+   * @param array $cron_jobs
+   *   The jobs to run.
+   * @param array $image_stream
+   *   Image stream.
+   * @param array $volumes
+   *   Volumes to mount.
+   * @param array $deploy_data
+   *   Deploy data.
    *
    * @return bool
+   *   True on success.
    */
-  private function createCronJobs(string $deployment_name, string $source_ref, bool $cron_suspended, array $cron_jobs, array $image_stream, array $volumes, array $deploy_data) {
+  protected function createCronJobs(string $deployment_name, string $source_ref, bool $cron_suspended, array $cron_jobs, array $image_stream, array $volumes, array $deploy_data) {
     if ($image_stream) {
       foreach ($cron_jobs as $schedule => $args) {
         $args_array = [
