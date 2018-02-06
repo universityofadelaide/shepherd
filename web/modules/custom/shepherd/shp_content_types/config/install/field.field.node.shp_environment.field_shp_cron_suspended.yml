@@ -8,8 +8,8 @@ id: node.shp_environment.field_shp_cron_suspended
 field_name: field_shp_cron_suspended
 entity_type: node
 bundle: shp_environment
-label: 'Cron suspended'
-description: ''
+label: 'Suspend cron jobs'
+description: 'Maintenance may require suspending all cron jobs for the environment.'
 required: false
 translatable: false
 default_value:
