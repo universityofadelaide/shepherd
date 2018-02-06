@@ -14,6 +14,7 @@ dependencies:
     - field.field.node.shp_project.field_shp_readiness_probe_params
     - field.field.node.shp_project.field_shp_readiness_probe_port
     - field.field.node.shp_project.field_shp_readiness_probe_type
+    - field.field.node.shp_project.field_shp_storage_class
     - node.type.shp_project
   module:
     - content_moderation
@@ -27,7 +28,7 @@ third_party_settings:
         - group_shp_liveness
         - group_shp_readiness
       parent_name: ''
-      weight: 5
+      weight: 7
       format_type: tabs
       format_settings:
         label: Probes
@@ -79,7 +80,7 @@ content:
     type: string_textfield
     region: content
   field_shp_builder_image:
-    weight: 3
+    weight: 4
     settings:
       size: 60
       placeholder: ''
@@ -87,14 +88,14 @@ content:
     type: string_textfield
     region: content
   field_shp_default_sql:
-    weight: 4
+    weight: 6
     settings:
       progress_indicator: throbber
     third_party_settings: {  }
     type: file_generic
     region: content
   field_shp_env_vars:
-    weight: 6
+    weight: 8
     settings:
       key_size: 60
       key_label: Key
@@ -108,7 +109,7 @@ content:
     type: key_value_textfield
     region: content
   field_shp_git_default_ref:
-    weight: 2
+    weight: 3
     settings:
       size: 60
       placeholder: ''
@@ -165,6 +166,25 @@ content:
     third_party_settings: {  }
     type: options_select
     region: content
+  field_shp_storage_class:
+    weight: 5
+    settings: {  }
+    third_party_settings: {  }
+    type: options_select
+    region: content
+  moderation_state:
+    type: moderation_state_default
+    weight: 9
+    settings: {  }
+    region: content
+    third_party_settings: {  }
+  status:
+    type: boolean_checkbox
+    settings:
+      display_label: true
+    weight: 10
+    region: content
+    third_party_settings: {  }
   title:
     type: string_textfield
     weight: 0

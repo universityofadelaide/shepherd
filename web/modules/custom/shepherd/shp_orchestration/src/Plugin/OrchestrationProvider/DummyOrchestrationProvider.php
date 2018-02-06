@@ -58,6 +58,7 @@ class DummyOrchestrationProvider extends OrchestrationProviderBase {
     string $source_repo,
     string $source_ref = 'master',
     string $source_secret = NULL,
+    string $storage_class = '',
     bool $update_on_image_change = FALSE,
     array $environment_variables = [],
     array $secrets = [],
