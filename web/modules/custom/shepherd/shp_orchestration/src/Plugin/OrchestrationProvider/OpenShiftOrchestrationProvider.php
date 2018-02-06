@@ -168,11 +168,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
 
     $sanitised_project_name = self::sanitise($project_name);
     $sanitised_source_ref = self::sanitise($source_ref);
-    $deployment_name = self::generateDeploymentName(
-      $project_name,
-      $short_name,
-      $environment_id
-    );
+    $deployment_name = self::generateDeploymentName($environment_id);
     $image_stream_tag = $sanitised_project_name . ':' . $sanitised_source_ref;
     $build_config_name = $sanitised_project_name . '-' . $sanitised_source_ref;
     $formatted_env_vars = $this->formatEnvVars($environment_variables, $deployment_name);
@@ -292,11 +288,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     string $short_name,
     string $environment_id
   ) {
-    $deployment_name = self::generateDeploymentName(
-      $project_name,
-      $short_name,
-      $environment_id
-    );
+    $deployment_name = self::generateDeploymentName($environment_id);
 
     try {
       // @todo are we doing this?
@@ -350,17 +342,9 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     string $source_ref = 'master',
     bool $clear_cache = TRUE
   ) {
-    $site_deployment_name = self::generateDeploymentName(
-      $project_name,
-      $short_name,
-      $site_id
-    );
+    $site_deployment_name = self::generateDeploymentName($site_id);
 
-    $environment_deployment_name = self::generateDeploymentName(
-      $project_name,
-      $short_name,
-      $environment_id
-    );
+    $environment_deployment_name = self::generateDeploymentName($environment_id);
 
     $result = $this->client->updateService($site_deployment_name, $environment_deployment_name);
     if ($result && $clear_cache) {
@@ -387,11 +371,8 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     string $domain,
     string $path
   ) {
-    $deployment_name = self::generateDeploymentName(
-      $project_name,
-      $short_name,
-      $site_id
-    );
+    $deployment_name = self::generateDeploymentName($site_id);
+
     // @todo - make port a var and great .. so great .. yuge!
     $port = 8080;
     try {
@@ -419,11 +400,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     string $short_name,
     int $site_id
   ) {
-    $deployment_name = self::generateDeploymentName(
-      $project_name,
-      $short_name,
-      $site_id
-    );
+    $deployment_name = self::generateDeploymentName($site_id);
 
     $this->client->deleteService($deployment_name);
     $this->client->deleteRoute($deployment_name);
@@ -482,11 +459,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     string $commands = ''
   ) {
     $sanitised_project_name = self::sanitise($project_name);
-    $deployment_name = self::generateDeploymentName(
-      $project_name,
-      $short_name,
-      $environment_id
-    );
+    $deployment_name = self::generateDeploymentName($environment_id);
 
     // Retrieve existing deployment details to use where possible.
     $deployment_config = $this->client->getDeploymentConfig($deployment_name);
@@ -607,11 +580,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
    */
   public function getEnvironmentStatus(string $project_name, string $short_name, string $environment_id) {
 
-    $deployment_name = self::generateDeploymentName(
-      $project_name,
-      $short_name,
-      $environment_id
-    );
+    $deployment_name = self::generateDeploymentName($environment_id);
 
     try {
       $deployment_config = $this->client->getDeploymentConfig($deployment_name);
@@ -652,11 +621,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
    * {@inheritdoc}
    */
   public function getEnvironmentUrl(string $project_name, string $short_name, string $environment_id) {
-    $deployment_name = self::generateDeploymentName(
-      $project_name,
-      $short_name,
-      $environment_id
-    );
+    $deployment_name = self::generateDeploymentName($environment_id);
 
     try {
       $route = $this->client->getRoute($deployment_name);
@@ -675,11 +640,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
    * {@inheritdoc}
    */
   public function getTerminalUrl(string $project_name, string $short_name, string $environment_id) {
-    $deployment_name = self::generateDeploymentName(
-      $project_name,
-      $short_name,
-      $environment_id
-    );
+    $deployment_name = self::generateDeploymentName($environment_id);
 
     try {
       $pods = $this->client->getPod('', 'app=' . $deployment_name . ',environment_id=' . $environment_id);
@@ -706,11 +667,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
    * {@inheritdoc}
    */
   public function getLogUrl(string $project_name, string $short_name, string $environment_id) {
-    $deployment_name = self::generateDeploymentName(
-      $project_name,
-      $short_name,
-      $environment_id
-    );
+    $deployment_name = self::generateDeploymentName($environment_id);
 
     try {
       $pods = $this->client->getPod('', 'app=' . $deployment_name . ',environment_id=' . $environment_id);

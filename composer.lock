@@ -1433,8 +1433,7 @@
                         "status": "not-covered",
                         "message": "Project has not opted into security advisory coverage!"
                     }
-                },
-                "patches_applied": []
+                }
             },
             "notification-url": "https://packages.drupal.org/8/downloads",
             "license": [
@@ -1454,7 +1453,8 @@
             "homepage": "https://www.drupal.org/project/key_value_field",
             "support": {
                 "source": "http://cgit.drupalcode.org/key_value_field"
-            }
+            },
+            "time": "2018-02-02T18:05:22+00:00"
         },
         {
             "name": "drupal/log_stdout",
@@ -4882,12 +4882,6 @@
                 "type": "git",
                 "url": "https://git.drupal.org/project/coder.git",
                 "reference": "984c54a7b1e8f27ff1c32348df69712afd86b17f"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/klausi/coder/zipball/984c54a7b1e8f27ff1c32348df69712afd86b17f",
-                "reference": "984c54a7b1e8f27ff1c32348df69712afd86b17f",
-                "shasum": ""
             },
             "require": {
                 "ext-mbstring": "*",

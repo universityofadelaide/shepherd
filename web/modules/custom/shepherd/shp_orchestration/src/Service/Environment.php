@@ -96,11 +96,7 @@ class Environment extends EntityActionBase {
       $cron_jobs[$job->key] = $job->value;
     }
 
-    $deployment_name = $this->orchestrationProviderPlugin::generateDeploymentName(
-      $project->getTitle(),
-      $site->field_shp_short_name->value,
-      $node->id()
-    );
+    $deployment_name = $this->orchestrationProviderPlugin::generateDeploymentName($node->id());
 
     // Generate an auth token and add it to the secret associated with the
     // environment. Create the secret if it doesn't exist.
