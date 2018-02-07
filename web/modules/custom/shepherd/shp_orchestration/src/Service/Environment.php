@@ -66,6 +66,9 @@ class Environment extends EntityActionBase {
    *
    * @return \Drupal\node\NodeInterface|bool
    *   The environment node or FALSE on failure.
+   *
+   * @throws \Drupal\Core\Entity\EntityStorageException
+   * @throws \Drupal\Core\Entity\EntityMalformedException
    */
   public function created(NodeInterface $node) {
     $site = $this->environmentEntity->getSite($node);
@@ -220,6 +223,7 @@ class Environment extends EntityActionBase {
    *   Node entity.
    *
    * @return bool
+   *   True on success. False otherwise.
    */
   public function deleted(NodeInterface $node) {
     $site = $this->environmentEntity->getSite($node);
@@ -252,11 +256,14 @@ class Environment extends EntityActionBase {
    * @param \Drupal\node\NodeInterface $environment
    *   Environment entity.
    * @param bool $exclusive
-   *   Exclusive.
+   *   Send all traffic to this environment.
    * @param bool $clear_cache
    *   Clear cache.
    *
    * @return bool
+   *   True on success. False otherwise.
+   *
+   * @throws \Drupal\Core\Entity\EntityStorageException
    */
   public function promoted(NodeInterface $site, NodeInterface $environment, bool $exclusive, bool $clear_cache = TRUE) {
     $project = $this->siteEntity->getProject($site);
@@ -353,4 +360,5 @@ class Environment extends EntityActionBase {
 
     return $cron_jobs;
   }
+
 }
