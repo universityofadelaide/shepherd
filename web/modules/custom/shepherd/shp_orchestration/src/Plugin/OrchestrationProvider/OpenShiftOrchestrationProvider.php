@@ -986,31 +986,28 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
    *   True on success.
    */
   protected function createCronJobs(string $deployment_name, string $source_ref, bool $cron_suspended, array $cron_jobs, array $image_stream, array $volumes, array $deploy_data) {
-    if ($image_stream) {
-      foreach ($cron_jobs as $schedule => $args) {
-        $args_array = [
-          '/bin/sh',
-          '-c',
-          $args,
-        ];
-        try {
-          $this->client->createCronJob(
-            $deployment_name . '-' . \Drupal::service('shp_custom.random_string')->generate(5),
-            $image_stream['status']['dockerImageRepository'] . ':' . $source_ref,
-            $schedule,
-            $cron_suspended,
-            $args_array,
-            $volumes,
-            $deploy_data
-          );
-        }
-        catch (ClientException $e) {
-          $this->handleClientException($e);
-          return FALSE;
-        }
+    foreach ($cron_jobs as $schedule => $args) {
+      $args_array = [
+        '/bin/sh',
+        '-c',
+        $args,
+      ];
+      try {
+        $this->client->createCronJob(
+          $deployment_name . '-' . \Drupal::service('shp_custom.random_string')->generate(5),
+          $image_stream['status']['dockerImageRepository'] . ':' . $source_ref,
+          $schedule,
+          $cron_suspended,
+          $args_array,
+          $volumes,
+          $deploy_data
+        );
+      }
+      catch (ClientException $e) {
+        $this->handleClientException($e);
+        return FALSE;
       }
     }
-
     return TRUE;
   }
 
