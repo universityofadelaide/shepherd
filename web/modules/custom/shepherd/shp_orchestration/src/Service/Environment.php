@@ -64,7 +64,8 @@ class Environment extends EntityActionBase {
    * @param \Drupal\node\NodeInterface $node
    *   Node entity.
    *
-   * @return bool
+   * @return \Drupal\node\NodeInterface|bool
+   *   The environment node or FALSE on failure.
    */
   public function created(NodeInterface $node) {
     $site = $this->environmentEntity->getSite($node);
@@ -156,7 +157,10 @@ class Environment extends EntityActionBase {
    * @param \Drupal\node\NodeInterface $node
    *   Node entity.
    *
-   * @return bool
+   * @return \Drupal\node\NodeInterface|bool
+   *   The environment node or FALSE on failure.
+   *
+   * @throws \Drupal\Core\Entity\EntityMalformedException
    */
   public function updated(NodeInterface $node) {
     $site = $this->environmentEntity->getSite($node);
