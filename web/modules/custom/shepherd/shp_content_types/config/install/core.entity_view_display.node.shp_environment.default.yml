@@ -3,6 +3,7 @@ status: true
 dependencies:
   config:
     - field.field.node.shp_environment.field_shp_cron_jobs
+    - field.field.node.shp_environment.field_shp_cron_suspended
     - field.field.node.shp_environment.field_shp_deployment_name
     - field.field.node.shp_environment.field_shp_domain
     - field.field.node.shp_environment.field_shp_env_vars
@@ -21,34 +22,46 @@ bundle: shp_environment
 mode: default
 content:
   content_moderation_control:
-    weight: -20
+    weight: 0
     region: content
+    settings: {  }
+    third_party_settings: {  }
   field_shp_cron_jobs:
-    weight: 7
+    weight: 10
     label: above
     settings:
       value_only: false
     third_party_settings: {  }
     type: key_value
     region: content
+  field_shp_cron_suspended:
+    weight: 7
+    label: inline
+    settings:
+      format: default
+      format_custom_false: ''
+      format_custom_true: ''
+    third_party_settings: {  }
+    type: boolean
+    region: content
   field_shp_deployment_name:
-    weight: 5
-    label: above
+    weight: 6
+    label: inline
     settings:
       link_to_entity: false
     third_party_settings: {  }
     type: string
     region: content
   field_shp_domain:
-    weight: 1
-    label: above
+    weight: 2
+    label: inline
     settings:
       link_to_entity: false
     third_party_settings: {  }
     type: string
     region: content
   field_shp_env_vars:
-    weight: 6
+    weight: 9
     label: inline
     settings:
       value_only: false
@@ -56,32 +69,32 @@ content:
     type: key_value
     region: content
   field_shp_environment_type:
-    weight: 3
-    label: above
+    weight: 4
+    label: inline
     settings:
       link: true
     third_party_settings: {  }
     type: entity_reference_label
     region: content
   field_shp_git_reference:
-    weight: 4
-    label: above
+    weight: 5
+    label: inline
     settings:
       link_to_entity: false
     third_party_settings: {  }
     type: string
     region: content
   field_shp_path:
-    weight: 2
-    label: above
+    weight: 3
+    label: inline
     settings:
       link_to_entity: false
     third_party_settings: {  }
     type: string
     region: content
   field_shp_site:
-    weight: 0
-    label: above
+    weight: 1
+    label: inline
     settings:
       link: true
     third_party_settings: {  }
@@ -89,7 +102,7 @@ content:
     region: content
   field_shp_update_on_image_change:
     weight: 8
-    label: above
+    label: inline
     settings:
       format: default
       format_custom_false: ''
