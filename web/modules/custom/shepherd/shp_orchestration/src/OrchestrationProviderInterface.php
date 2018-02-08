@@ -107,6 +107,8 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
    *   The storage class to use when provisioning the PVC.
    * @param bool $update_on_image_change
    *   Whether to automatically rollout update to this environment.
+   * @param bool $cron_suspended
+   *   Whether cron is enabled on this environment.
    * @param array $environment_variables
    *   An array of key => value environment variables to set.
    * @param array $secrets
@@ -133,6 +135,7 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
     string $source_secret = NULL,
     string $storage_class = '',
     bool $update_on_image_change = FALSE,
+    bool $cron_suspended = FALSE,
     array $environment_variables = [],
     array $secrets = [],
     array $probes = [],
@@ -164,6 +167,10 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
    *   Source code git ref, defaults to 'master'.
    * @param string|null $source_secret
    *   The secret to use when pulling and building the source git repository.
+   * @param bool $update_on_image_change
+   *   Whether to automatically rollout update to this environment.
+   * @param bool $cron_suspended
+   *   Whether cron is enabled on this environment.
    * @param array $environment_variables
    *   An array of key => value environment variables to set.
    * @param array $secrets
@@ -188,6 +195,8 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
     string $source_repo,
     string $source_ref = 'master',
     string $source_secret = NULL,
+    bool $update_on_image_change = FALSE,
+    bool $cron_suspended = FALSE,
     array $environment_variables = [],
     array $secrets = [],
     array $probes = [],

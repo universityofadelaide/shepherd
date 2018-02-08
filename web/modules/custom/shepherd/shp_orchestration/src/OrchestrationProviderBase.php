@@ -81,7 +81,7 @@ abstract class OrchestrationProviderBase extends PluginBase implements Container
    * {@inheritdoc}
    */
   public static function generateDeploymentName(string $id) {
-    return 'env-' . $id;
+    return 'node-' . $id;
   }
 
   /**

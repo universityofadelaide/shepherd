@@ -160,6 +160,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     string $source_secret = NULL,
     string $storage_class = '',
     bool $update_on_image_change = FALSE,
+    bool $cron_suspended = FALSE,
     array $environment_variables = [],
     array $secrets = [],
     array $probes = [],
@@ -189,7 +190,6 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       $environment_id
     );
 
-    // @todo $update_on_image_change should be passed in as a parameter
     $deployment_config = $this->client->generateDeploymentConfig(
       $deployment_name,
       $image_stream_tag,
@@ -209,29 +209,15 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     }
 
     $image_stream = $this->client->getImageStream($sanitised_project_name);
-    if ($image_stream) {
-      foreach ($cron_jobs as $schedule => $args) {
-        $args_array = [
-          '/bin/sh',
-          '-c',
-          $args,
-        ];
-        try {
-          $this->client->createCronJob(
-            $deployment_name . '-' . \Drupal::service('shp_custom.random_string')->generate(5),
-            $image_stream['status']['dockerImageRepository'] . ':' . $source_ref,
-            $schedule,
-            $args_array,
-            $volumes,
-            $deploy_data
-          );
-        }
-        catch (ClientException $e) {
-          $this->handleClientException($e);
-          return FALSE;
-        }
-      }
-    }
+    $this->createCronJobs(
+      $deployment_name,
+      $source_ref,
+      $cron_suspended,
+      $cron_jobs,
+      $image_stream,
+      $volumes,
+      $deploy_data
+    );
 
     if (!$update_on_image_change) {
       // We need to check if the image is already 'built', or we get an error.
@@ -273,12 +259,47 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     string $source_repo,
     string $source_ref = 'master',
     string $source_secret = NULL,
+    bool $update_on_image_change = FALSE,
+    bool $cron_suspended = FALSE,
     array $environment_variables = [],
     array $secrets = [],
     array $probes = [],
     array $cron_jobs = []
   ) {
+    // @todo Refactor this too. Not DRY enough.
 
+    $sanitised_project_name = self::sanitise($project_name);
+    $deployment_name = self::generateDeploymentName($environment_id);
+    $formatted_env_vars = $this->formatEnvVars($environment_variables, $deployment_name);
+
+    if (!$volumes = $this->setupVolumes($project_name, $deployment_name)) {
+      return FALSE;
+    }
+
+    $deploy_data = $this->formatDeployData(
+      $deployment_name,
+      $formatted_env_vars,
+      $environment_url,
+      $site_id,
+      $environment_id
+    );
+
+    // Remove all the existing cron jobs.
+    $this->client->deleteCronJob('', 'app=' . $deployment_name);
+
+    // Re-create all the cron jobs.
+    $image_stream = $this->client->getImageStream($sanitised_project_name);
+    $this->createCronJobs(
+      $deployment_name,
+      $source_ref,
+      $cron_suspended,
+      $cron_jobs,
+      $image_stream,
+      $volumes,
+      $deploy_data
+    );
+
+    return TRUE;
   }
 
   /**
@@ -325,7 +346,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     $site = Node::load($environment_id->field_shp_site->target_id);
     $project = Node::load($site->field_shp_project->target_id);
 
-    self::deletedEnvironment(
+    $this->deletedEnvironment(
       $project->title->value,
       $site->field_shp_short_name->value,
       $environment_id
@@ -350,7 +371,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     $result = $this->client->updateService($site_deployment_name, $environment_deployment_name);
     if ($result && $clear_cache) {
       // @todo - Remove drush call, it relates to a project type rather than all projects.
-      self::executeJob(
+      $this->executeJob(
         $project_name,
         $short_name,
         $environment_id,
@@ -384,6 +405,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       $this->handleClientException($e);
       return FALSE;
     }
+    return TRUE;
   }
 
   /**
@@ -603,12 +625,12 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
    * @return array
    *   Extracted array that contains the status, time and number of pods.
    */
-  private function extractDeploymentConfigStatus(array $deployment_config) {
+  protected function extractDeploymentConfigStatus(array $deployment_config) {
     $environment_status = [];
     foreach ($deployment_config['status']['conditions'] as $condition) {
       if (strtolower($condition['type']) === 'available') {
         $environment_status = [
-          'running' => $condition['status'] === "True",
+          'running' => $condition['status'] === 'True',
           'time' => $condition['lastUpdateTime'],
           'available_pods' => $deployment_config['status']['availableReplicas'],
         ];
@@ -701,23 +723,18 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
    * @return string
    *   Url.
    */
-  private function generateOpenShiftPodUrl(string $pod_name, string $view) {
-
+  protected function generateOpenShiftPodUrl(string $pod_name, string $view) {
     $endpoint = $this->configEntity->endpoint;
     $namespace = $this->configEntity->namespace;
-    $link = Url::fromUri($endpoint . '/console/project/' . $namespace . '/browse/pods/' . $pod_name, [
+
+    return Url::fromUri($endpoint . '/console/project/' . $namespace . '/browse/pods/' . $pod_name, [
       'query' => [
         'tab' => $view,
       ],
-    ],
-    [
       'attributes' => [
         'target' => '_blank',
       ],
-    ]
-    );
-
-    return $link;
+    ]);
   }
 
   /**
@@ -732,7 +749,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
    * @return array
    *   The env var config array.
    */
-  private function formatEnvVars(array $environment_variables, string $deployment_name = '') {
+  protected function formatEnvVars(array $environment_variables, string $deployment_name = '') {
     $formatted_env_vars = [];
 
     foreach ($environment_variables as $name => $value) {
@@ -779,7 +796,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
    * @return array
    *   The deployment config array.
    */
-  private function formatDeployData(string $name, array $formatted_env_vars, string $environment_url, int $site_id, int $environment_id) {
+  protected function formatDeployData(string $name, array $formatted_env_vars, string $environment_url, int $site_id, int $environment_id) {
     $deploy_data = [
       'containerPort' => 8080,
       'memory_limit' => '512Mi',
@@ -823,7 +840,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
    * @return array
    *   Build data.
    */
-  private function formatBuildData(string $source_ref, string $source_repo, string $builder_image, array $formatted_env_vars = []) {
+  protected function formatBuildData(string $source_ref, string $source_repo, string $builder_image, array $formatted_env_vars = []) {
     // Package config for the client.
     return [
       'git' => [
@@ -934,7 +951,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
    * @param \UniversityOfAdelaide\OpenShift\ClientException $exception
    *   The exception to be handled.
    */
-  private function handleClientException(ClientException $exception) {
+  protected function handleClientException(ClientException $exception) {
     $reason = $exception->getMessage();
     if (strstr($exception->getBody(), 'Unauthorized')) {
       $reason = $this->t('Client is not authorized to access requested resource.');
@@ -946,6 +963,53 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
 
     // @todo Add handlers for other reasons for failure. Add as required.
     drupal_set_message(t("An error occurred while communicating with OpenShift. %reason", ['%reason' => $reason]), 'error');
+  }
+
+  /**
+   * Create cron jobs.
+   *
+   * @param string $deployment_name
+   *   Deployment identifier.
+   * @param string $source_ref
+   *   Image stream git ref.
+   * @param bool $cron_suspended
+   *   Is cron suspended?
+   * @param array $cron_jobs
+   *   The jobs to run.
+   * @param array $image_stream
+   *   Image stream.
+   * @param array $volumes
+   *   Volumes to mount.
+   * @param array $deploy_data
+   *   Deploy data.
+   *
+   * @return bool
+   *   True on success.
+   */
+  protected function createCronJobs(string $deployment_name, string $source_ref, bool $cron_suspended, array $cron_jobs, array $image_stream, array $volumes, array $deploy_data) {
+    foreach ($cron_jobs as $schedule => $args) {
+      $args_array = [
+        '/bin/sh',
+        '-c',
+        $args,
+      ];
+      try {
+        $this->client->createCronJob(
+          $deployment_name . '-' . \Drupal::service('shp_custom.random_string')->generate(5),
+          $image_stream['status']['dockerImageRepository'] . ':' . $source_ref,
+          $schedule,
+          $cron_suspended,
+          $args_array,
+          $volumes,
+          $deploy_data
+        );
+      }
+      catch (ClientException $e) {
+        $this->handleClientException($e);
+        return FALSE;
+      }
+    }
+    return TRUE;
   }
 
 }
