@@ -284,9 +284,10 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       $environment_id
     );
 
-    // Remove all the existing cron jobs
+    // Remove all the existing cron jobs.
     $this->client->deleteCronJob('', 'app=' . $deployment_name);
 
+    // Re-create all the cron jobs.
     $image_stream = $this->client->getImageStream($sanitised_project_name);
     $this->createCronJobs(
       $deployment_name,
