@@ -156,7 +156,7 @@ composer install
 ### OpenShift in Docker configuration
 Minishift is really just another layer that you don't need, you can run OpenShift locally with just
 a couple of tweaks before running ./dsh
-* Install mysql on your local host, or in a docker container listening on 3306 (but it wont work within OpenShift as shepherd can't talk to it easily).
+* Install MariaDB on your localhost, or in a docker container listening on 3306.
 * Ensure that mysql is listening on all IP's
 * Grant root access to any host
 * Set the OPENSHIFT_TYPE env var to something other than 'minishift'
@@ -184,10 +184,12 @@ git remote add shepherd https://github.com/universityofadelaide/shepherd.git
 
 You should end up with something like:
 
-origin	git@gitlab.adelaide.edu.au:web-team/ua-shepherd.git (fetch)
-origin	git@gitlab.adelaide.edu.au:web-team/ua-shepherd.git (push)
-shepherd	https://github.com/universityofadelaide/shepherd.git (fetch)
-shepherd	https://github.com/universityofadelaide/shepherd.git (push)
+```
+origin      git@gitlab.adelaide.edu.au:web-team/ua-shepherd.git (fetch)
+origin	    git@gitlab.adelaide.edu.au:web-team/ua-shepherd.git (push)
+shepherd    https://github.com/universityofadelaide/shepherd.git (fetch)
+shepherd    https://github.com/universityofadelaide/shepherd.git (push)
+```
 
 ### Merge in changes from public shepherd repo
 https://help.github.com/articles/syncing-a-fork/
