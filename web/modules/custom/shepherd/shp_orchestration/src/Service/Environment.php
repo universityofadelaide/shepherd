@@ -189,7 +189,7 @@ class Environment extends EntityActionBase {
       $env_vars = array_merge($env_vars, $event_env_vars);
     }
 
-    $environment = $this->orchestrationProviderPlugin->updatedEnvironment(
+    $environment_updated = $this->orchestrationProviderPlugin->updatedEnvironment(
       $project->getTitle(),
       $site->field_shp_short_name->value,
       $site->id(),
@@ -213,7 +213,7 @@ class Environment extends EntityActionBase {
     $event = new OrchestrationEnvironmentEvent($this->orchestrationProviderPlugin, $deployment_name, $site, $node, $project);
     $eventDispatcher->dispatch(OrchestrationEvents::UPDATED_ENVIRONMENT, $event);
 
-    return $environment;
+    return $environment_updated;
   }
 
   /**
@@ -355,6 +355,7 @@ class Environment extends EntityActionBase {
     $cron_jobs = [];
 
     foreach ($node->field_shp_cron_jobs as $job) {
+      // @todo refactor to not use schedule as the array key.
       $cron_jobs[$job->key] = $job->value;
     }
 
