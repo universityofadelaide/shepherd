@@ -355,7 +355,6 @@ class Environment extends EntityActionBase {
     $cron_jobs = [];
 
     foreach ($node->field_shp_cron_jobs as $job) {
-      // @todo refactor to not use schedule as the array key.
       $cron_jobs[$job->name] = [
         'cmd' => $job->value,
         'schedule' => $job->key,
