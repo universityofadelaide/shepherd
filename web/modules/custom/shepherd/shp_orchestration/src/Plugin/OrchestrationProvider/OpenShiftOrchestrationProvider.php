@@ -319,6 +319,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       //$this->client->updateReplicationControllers('', 'app=' . $deployment_name, 0);
 
       $this->client->deleteCronJob('', 'app=' . $deployment_name);
+      $this->client->deleteJob('', 'app=' . $deployment_name);
       $this->client->deleteRoute($deployment_name);
       $this->client->deleteService($deployment_name);
 
