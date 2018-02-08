@@ -987,17 +987,17 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
    *   True on success.
    */
   protected function createCronJobs(string $deployment_name, string $source_ref, bool $cron_suspended, array $cron_jobs, array $image_stream, array $volumes, array $deploy_data) {
-    foreach ($cron_jobs as $schedule => $args) {
+    foreach ($cron_jobs as $cron_job) {
       $args_array = [
         '/bin/sh',
         '-c',
-        $args,
+        $cron_job['cmd'],
       ];
       try {
         $this->client->createCronJob(
           $deployment_name . '-' . \Drupal::service('shp_custom.random_string')->generate(5),
           $image_stream['status']['dockerImageRepository'] . ':' . $source_ref,
-          $schedule,
+          $cron_job['schedule'],
           $cron_suspended,
           $args_array,
           $volumes,
