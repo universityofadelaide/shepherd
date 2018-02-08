@@ -345,16 +345,16 @@ class Environment extends EntityActionBase {
   /**
    * Constructs config by extracting the properties from field_shp_cron_jobs.
    *
-   * @param \Drupal\node\NodeInterface $node
-   *   Node entity.
+   * @param \Drupal\node\NodeInterface $environment
+   *   Environment entity.
    *
    * @return array
    *   Cron job array with extracted field properties.
    */
-  protected function buildCronJobs(NodeInterface $node) {
+  protected function buildCronJobs(NodeInterface $environment) {
     $cron_jobs = [];
 
-    foreach ($node->field_shp_cron_jobs as $job) {
+    foreach ($environment->field_shp_cron_jobs as $job) {
       $cron_jobs[$job->name] = [
         'cmd' => $job->value,
         'schedule' => $job->key,
