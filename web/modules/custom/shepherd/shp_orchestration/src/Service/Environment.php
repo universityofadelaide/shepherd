@@ -24,13 +24,6 @@ class Environment extends EntityActionBase {
   protected $configuration;
 
   /**
-   * Orchestration Provider Manager.
-   *
-   * @var \Drupal\shp_orchestration\OrchestrationProviderPluginManager
-   */
-  private $orchestrationProviderPluginManager;
-
-  /**
    * Environment service.
    *
    * @var \Drupal\shp_custom\Service\Environment|\Drupal\shp_orchestration\Service\Environment
@@ -71,7 +64,11 @@ class Environment extends EntityActionBase {
    * @param \Drupal\node\NodeInterface $node
    *   Node entity.
    *
-   * @return bool
+   * @return \Drupal\node\NodeInterface|bool
+   *   The environment node or FALSE on failure.
+   *
+   * @throws \Drupal\Core\Entity\EntityStorageException
+   * @throws \Drupal\Core\Entity\EntityMalformedException
    */
   public function created(NodeInterface $node) {
     $site = $this->environmentEntity->getSite($node);
@@ -80,27 +77,10 @@ class Environment extends EntityActionBase {
       return FALSE;
     }
 
-    $probes = [];
-    foreach (['liveness', 'readiness'] as $type) {
-      if ($project->get('field_shp_' . $type . '_probe_type')->value !== NULL) {
-        $probes[$type] = [
-          'type'       => $project->get('field_shp_' . $type . '_probe_type')->value,
-          'port'       => $project->get('field_shp_' . $type . '_probe_port')->value,
-          'parameters' => $project->get('field_shp_' . $type . '_probe_params')->value,
-        ];
-      }
-    }
+    $probes = $this->buildProbes($project);
+    $cron_jobs = $this->buildCronJobs($node);
 
-    $cron_jobs = [];
-    foreach ($node->field_shp_cron_jobs as $job) {
-      $cron_jobs[$job->key] = $job->value;
-    }
-
-    $deployment_name = $this->orchestrationProviderPlugin::generateDeploymentName(
-      $project->getTitle(),
-      $site->field_shp_short_name->value,
-      $node->id()
-    );
+    $deployment_name = $this->orchestrationProviderPlugin::generateDeploymentName($node->id());
 
     // Generate an auth token and add it to the secret associated with the
     // environment. Create the secret if it doesn't exist.
@@ -135,6 +115,11 @@ class Environment extends EntityActionBase {
       $env_vars = array_merge($env_vars, $event_env_vars);
     }
 
+    $storage_class = '';
+    if ($project->field_shp_storage_class->target_id) {
+      $storage_class = Term::load($project->field_shp_storage_class->target_id)->label();
+    }
+
     $environment = $this->orchestrationProviderPlugin->createdEnvironment(
       $project->getTitle(),
       $site->field_shp_short_name->value,
@@ -147,7 +132,9 @@ class Environment extends EntityActionBase {
       $project->field_shp_git_repository->value,
       $node->field_shp_git_reference->value,
       $project->field_shp_build_secret->value,
+      $storage_class,
       $node->field_shp_update_on_image_change->value,
+      $node->field_shp_cron_suspended->value,
       $env_vars,
       $secrets,
       $probes,
@@ -173,11 +160,60 @@ class Environment extends EntityActionBase {
    * @param \Drupal\node\NodeInterface $node
    *   Node entity.
    *
-   * @return bool
+   * @return \Drupal\node\NodeInterface|bool
+   *   The environment node or FALSE on failure.
+   *
+   * @throws \Drupal\Core\Entity\EntityMalformedException
    */
   public function updated(NodeInterface $node) {
-    // @todo implement me.
-    return TRUE;
+    $site = $this->environmentEntity->getSite($node);
+    $project = $this->siteEntity->getProject($site);
+    if (!isset($project) || !isset($site)) {
+      return FALSE;
+    }
+
+    $probes = $this->buildProbes($project);
+    $cron_jobs = $this->buildCronJobs($node);
+
+    $deployment_name = $this->orchestrationProviderPlugin::generateDeploymentName($node->id());
+
+    // Get environment variables and secrets.
+    $env_vars = $this->configuration->getEnvironmentVariables($node);
+    $secrets = $this->configuration->getSecrets($node);
+
+    // Allow other modules to react to the Environment creation.
+    $eventDispatcher = \Drupal::service('event_dispatcher');
+    $event = new OrchestrationEnvironmentEvent($this->orchestrationProviderPlugin, $deployment_name);
+    $eventDispatcher->dispatch(OrchestrationEvents::SETUP_ENVIRONMENT, $event);
+    if ($event_env_vars = $event->getEnvironmentVariables()) {
+      $env_vars = array_merge($env_vars, $event_env_vars);
+    }
+
+    $environment_updated = $this->orchestrationProviderPlugin->updatedEnvironment(
+      $project->getTitle(),
+      $site->field_shp_short_name->value,
+      $site->id(),
+      $node->id(),
+      $node->toUrl('canonical', ['absolute' => TRUE])->toString(),
+      $project->field_shp_builder_image->value,
+      $node->field_shp_domain->value,
+      $node->field_shp_path->value,
+      $project->field_shp_git_repository->value,
+      $node->field_shp_git_reference->value,
+      $project->field_shp_build_secret->value,
+      $node->field_shp_update_on_image_change->value,
+      $node->field_shp_cron_suspended->value,
+      $env_vars,
+      $secrets,
+      $probes,
+      $cron_jobs
+    );
+
+    // Allow other modules to react to the Environment update.
+    $event = new OrchestrationEnvironmentEvent($this->orchestrationProviderPlugin, $deployment_name, $site, $node, $project);
+    $eventDispatcher->dispatch(OrchestrationEvents::UPDATED_ENVIRONMENT, $event);
+
+    return $environment_updated;
   }
 
   /**
@@ -187,6 +223,7 @@ class Environment extends EntityActionBase {
    *   Node entity.
    *
    * @return bool
+   *   True on success. False otherwise.
    */
   public function deleted(NodeInterface $node) {
     $site = $this->environmentEntity->getSite($node);
@@ -195,11 +232,7 @@ class Environment extends EntityActionBase {
       return FALSE;
     }
 
-    $deployment_name = $this->orchestrationProviderPlugin->generateDeploymentName(
-      $project->getTitle(),
-      $site->field_shp_short_name->value,
-      $node->id()
-    );
+    $deployment_name = $this->orchestrationProviderPlugin->generateDeploymentName($node->id());
 
     $result = $this->orchestrationProviderPlugin->deletedEnvironment(
       $project->title->value,
@@ -223,11 +256,14 @@ class Environment extends EntityActionBase {
    * @param \Drupal\node\NodeInterface $environment
    *   Environment entity.
    * @param bool $exclusive
-   *   Exclusive.
+   *   Send all traffic to this environment.
    * @param bool $clear_cache
    *   Clear cache.
    *
    * @return bool
+   *   True on success. False otherwise.
+   *
+   * @throws \Drupal\Core\Entity\EntityStorageException
    */
   public function promoted(NodeInterface $site, NodeInterface $environment, bool $exclusive, bool $clear_cache = TRUE) {
     $project = $this->siteEntity->getProject($site);
@@ -279,6 +315,53 @@ class Environment extends EntityActionBase {
     }
 
     return $result;
+  }
+
+  /**
+   * Constructs the probes configuration.
+   *
+   * @param \Drupal\node\NodeInterface $project
+   *   Project entity.
+   *
+   * @return array
+   *   Probes configuration
+   */
+  protected function buildProbes(NodeInterface $project) {
+    $probes = [];
+
+    foreach (['liveness', 'readiness'] as $type) {
+      if ($project->get('field_shp_' . $type . '_probe_type')->value !== NULL) {
+        $probes[$type] = [
+          'type'       => $project->get('field_shp_' . $type . '_probe_type')->value,
+          'port'       => $project->get('field_shp_' . $type . '_probe_port')->value,
+          'parameters' => $project->get('field_shp_' . $type . '_probe_params')->value,
+        ];
+      }
+    }
+
+    return $probes;
+  }
+
+  /**
+   * Constructs config by extracting the properties from field_shp_cron_jobs.
+   *
+   * @param \Drupal\node\NodeInterface $environment
+   *   Environment entity.
+   *
+   * @return array
+   *   Cron job array with extracted field properties.
+   */
+  protected function buildCronJobs(NodeInterface $environment) {
+    $cron_jobs = [];
+
+    foreach ($environment->field_shp_cron_jobs as $job) {
+      $cron_jobs[$job->name] = [
+        'cmd' => $job->value,
+        'schedule' => $job->key,
+      ];
+    }
+
+    return $cron_jobs;
   }
 
 }

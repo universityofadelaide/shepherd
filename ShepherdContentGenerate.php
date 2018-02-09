@@ -167,6 +167,10 @@ if (!$env) {
     'field_shp_git_reference'    => 'master',
     'field_shp_site'             => [['target_id' => $site->id()]],
     'field_shp_update_on_image_change' => TRUE,
+    'field_shp_cron_suspended'   => 1,
+    'field_shp_cron_jobs'        => [
+      ['key' => '*/30 * * * *', 'value' => 'cd /code; drush -r web cron || true'],
+    ]
   ]);
   $env->moderation_state->value = 'published';
   $env->save();

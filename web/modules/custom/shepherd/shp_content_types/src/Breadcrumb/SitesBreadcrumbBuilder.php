@@ -33,10 +33,10 @@ class SitesBreadcrumbBuilder implements BreadcrumbBuilderInterface {
     if (array_key_exists('node', $parameters) && !empty($parameters['node'])
       && is_object($parameters['node'])) {
       $node = $parameters['node']->getType();
-      return in_array($node, ['shp_site', 'shp_environment']) ? TRUE : FALSE;
+      return in_array($node, ['shp_site', 'shp_environment']);
     }
     if (array_key_exists('view_id', $parameters) && !empty($parameters['view_id'])) {
-      return in_array($parameters['view_id'], array_keys($this->sitesViews)) ? TRUE : FALSE;
+      return in_array($parameters['view_id'], array_keys($this->sitesViews));
     }
     // Handle view specific stuff here.
     return FALSE;

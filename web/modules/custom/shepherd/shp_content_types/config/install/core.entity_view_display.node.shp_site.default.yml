@@ -2,10 +2,10 @@ langcode: en
 status: true
 dependencies:
   config:
-    - field.field.node.shp_site.field_shp_project
     - field.field.node.shp_site.field_shp_domain
     - field.field.node.shp_site.field_shp_go_live_date
     - field.field.node.shp_site.field_shp_path
+    - field.field.node.shp_site.field_shp_project
     - field.field.node.shp_site.field_shp_short_name
     - field.field.node.shp_site.field_shp_site_log
     - field.field.node.shp_site.field_tags
@@ -18,22 +18,19 @@ targetEntityType: node
 bundle: shp_site
 mode: default
 content:
+  content_moderation_control:
+    weight: -20
+    region: content
+    settings: {  }
+    third_party_settings: {  }
   field_drush_aliases:
     weight: 5
     region: content
     settings: {  }
     third_party_settings: {  }
-  field_shp_project:
-    weight: 3
-    label: above
-    settings:
-      link: true
-    third_party_settings: {  }
-    type: entity_reference_label
-    region: content
   field_shp_domain:
     weight: 1
-    label: above
+    label: inline
     settings:
       link_to_entity: false
     third_party_settings: {  }
@@ -41,7 +38,7 @@ content:
     region: content
   field_shp_go_live_date:
     weight: 6
-    label: above
+    label: inline
     settings:
       timezone_override: ''
       format_type: medium
@@ -50,15 +47,23 @@ content:
     region: content
   field_shp_path:
     weight: 2
-    label: above
+    label: inline
     settings:
       link_to_entity: false
     third_party_settings: {  }
     type: string
     region: content
+  field_shp_project:
+    weight: 3
+    label: inline
+    settings:
+      link: true
+    third_party_settings: {  }
+    type: entity_reference_label
+    region: content
   field_shp_short_name:
     weight: 0
-    label: above
+    label: inline
     settings:
       link_to_entity: false
     third_party_settings: {  }

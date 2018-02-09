@@ -1,0 +1,8 @@
+langcode: en
+status: true
+dependencies: {  }
+name: 'Storage class'
+vid: shp_storage_class
+description: 'Storage class for shared disk storage. E.g. silver, gold.'
+hierarchy: 0
+weight: 0

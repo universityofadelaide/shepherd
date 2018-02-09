@@ -7,6 +7,7 @@ dependencies:
     - field.field.node.shp_project.field_shp_builder_image
     - field.field.node.shp_project.field_shp_default_sql
     - field.field.node.shp_project.field_shp_env_vars
+    - field.field.node.shp_project.field_shp_git_default_ref
     - field.field.node.shp_project.field_shp_git_repository
     - field.field.node.shp_project.field_shp_liveness_probe_params
     - field.field.node.shp_project.field_shp_liveness_probe_port
@@ -14,6 +15,7 @@ dependencies:
     - field.field.node.shp_project.field_shp_readiness_probe_params
     - field.field.node.shp_project.field_shp_readiness_probe_port
     - field.field.node.shp_project.field_shp_readiness_probe_type
+    - field.field.node.shp_project.field_shp_storage_class
     - node.type.shp_project
   module:
     - user
@@ -25,11 +27,14 @@ content:
   links:
     weight: 100
     region: content
+    settings: {  }
+    third_party_settings: {  }
 hidden:
   field_shp_build_secret: true
   field_shp_builder_image: true
   field_shp_default_sql: true
   field_shp_env_vars: true
+  field_shp_git_default_ref: true
   field_shp_git_repository: true
   field_shp_liveness_probe_params: true
   field_shp_liveness_probe_port: true
@@ -37,3 +42,4 @@ hidden:
   field_shp_readiness_probe_params: true
   field_shp_readiness_probe_port: true
   field_shp_readiness_probe_type: true
+  field_shp_storage_class: true
