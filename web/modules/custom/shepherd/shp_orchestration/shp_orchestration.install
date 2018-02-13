@@ -20,10 +20,10 @@ function shp_orchestration_requirements($phase) {
 
     if ($selected_provider == 'dummy_orchestration_provider') {
       $requirements['orchestration_provider_not_configured'] = [
-        'title'       => t('Select and configure a functioning orchestration provider'),
+        'title'       => t('Select and configure an orchestration provider'),
         'value'       => t('Dummy provider selected.'),
         'severity'    => REQUIREMENT_WARNING,
-        'description' => t('A functioning provider must be selected and configured in order for Shepherd to control sites and environments. E.g. OpenShift. <a href=":url">Configure</a>',
+        'description' => t('A functioning provider must be selected and configured in order for Shepherd to control sites and environments. E.g. OpenShift. <a href=":url">Orchestration provider administration page</a>',
           [':url' => (new Url('shp_orchestration.orchestration_provider.settings'))->toString()]),
       ];
     }
