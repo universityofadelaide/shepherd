@@ -1,0 +1,32 @@
+<?php
+
+/**
+ * @file
+ * Install, update and uninstall functions for the shp_orchestration module.
+ */
+
+use Drupal\Core\Url;
+
+/**
+ * Implements hook_requirements().
+ */
+function shp_orchestration_requirements($phase) {
+  $requirements = [];
+
+  if ($phase == 'runtime') {
+    // @todo check the selected provider.
+    $config_factory = \Drupal::service('config.factory');
+    $selected_provider = $config_factory->get('shp_orchestration.settings')->get('selected_provider');
+
+    if ($selected_provider == 'dummy_orchestration_provider') {
+      $requirements['orchestration_provider_not_configured'] = [
+        'title'       => t('Select and configure a functioning orchestration provider'),
+        'value'       => t('Dummy provider selected.'),
+        'severity'    => REQUIREMENT_WARNING,
+        'description' => t('A functioning provider must be selected and configured in order for Shepherd to control sites and environments. E.g. OpenShift. <a href=":url">Configure</a>',
+          [':url' => (new Url('shp_orchestration.orchestration_provider.settings'))->toString()]),
+      ];
+    }
+  }
+  return $requirements;
+}
