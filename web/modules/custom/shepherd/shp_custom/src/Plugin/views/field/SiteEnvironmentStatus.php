@@ -61,6 +61,7 @@ class SiteEnvironmentStatus extends FieldPluginBase implements ContainerFactoryP
     $environments_status = $this->shpOrchestrationStatus->get($values->_entity);
 
     // Is the environment running ?
+    // @todo: This is _very_ OpenShift specific.
     if ($environments_status['running']) {
       // If pods are available its running else its building.
       $status = ($environments_status['available_pods'] > 0) ? 'Running' : 'Building';
@@ -69,7 +70,6 @@ class SiteEnvironmentStatus extends FieldPluginBase implements ContainerFactoryP
       // If pods attempting to run but status is false, the state is broken.
       $status = ($environments_status['available_pods'] === 0) ? 'Stopped' : 'Failed';
     }
-
     $build['environment_status'] = [
       '#plain_text' => $status,
       // @todo - figure out cache tags for views field plugins.
