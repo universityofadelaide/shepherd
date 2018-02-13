@@ -27,6 +27,8 @@ function shp_orchestration_requirements($phase) {
           [':url' => (new Url('shp_orchestration.orchestration_provider.settings'))->toString()]),
       ];
     }
+
+    // @todo Implement check for specific provider config.
   }
   return $requirements;
 }
