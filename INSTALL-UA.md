@@ -36,7 +36,7 @@ Type: password
 
 Thycotic:
 
-uat: shepherd-db-uat-password
+dev: shepherd-db-uat-password
 
 prd: shepherd-db2-password
 
@@ -48,7 +48,7 @@ Type: password
 
 Thycotic:
 
-uat: shepherd-site-db-uat-password
+dev: shepherd-site-db-uat-password
 
 prd: shepherd-site-db-password
 
@@ -83,7 +83,7 @@ Read [INSTALL.md](INSTALL.md#Create-a-Service-Account-for-Shepherd)
 
 Create the Shepherd instance from a pre-configured yaml manifest.
 
-UAT
+DEV
 
 ```bash
 oc process -f ua-shepherd-openshift.yml -p SHEPHERD_INSTALL_PROFILE=ua_shepherd -p DATABASE_HOST=mariadb-web-uat2.adelaide.edu.au | oc create -f -
@@ -112,7 +112,7 @@ installer. Admin user password is in https://thycotic.ad.adelaide.edu.au under D
 
 Visit /admin/config/shepherd/database-provisioner and configure:
 
-UAT
+DEV
 
 -- Host: mariadb-web-uat2.adelaide.edu.au
 -- Port: 3306
@@ -146,7 +146,7 @@ SHEPHERD_WEB_IMAGESTREAM="$(oc get is | tail -n1 | awk '{print $2}' | awk -F '/'
 
 Process and create the cron jobs:
 
-UAT
+DEV
 
 ```bash
 oc process -f ua-shepherd-openshift-cronjob.yml -p SHEPHERD_WEB_IMAGESTREAM=${SHEPHERD_WEB_IMAGESTREAM} -p DATABASE_HOST=mariadb-web-uat2.adelaide.edu.au | oc create -f -
@@ -162,7 +162,8 @@ oc process -f ua-shepherd-openshift-cronjob.yml -p SHEPHERD_WEB_IMAGESTREAM=${SH
 
 You will need to run a job cleaner if cronjobs do not respect the failedJobHistoryLimit and successfulJobHistoryLimit settings.
 
-https://github.com/willemvd/openshift-scheduledjobs-cleanup is an image to do just this.
+https://github.com/pingers/openshift-scheduledjobs-cleanup is an image to do just this.
+All credit to https://github.com/willemvd/openshift-scheduledjobs-cleanup - there's just a couple of minor changes.
 
 Run the following to use it:
 
