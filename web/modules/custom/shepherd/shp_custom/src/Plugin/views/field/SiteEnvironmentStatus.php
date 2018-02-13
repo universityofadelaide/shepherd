@@ -42,6 +42,9 @@ class SiteEnvironmentStatus extends FieldPluginBase implements ContainerFactoryP
     $this->shpOrchestrationStatus = $shp_orchestration_status;
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
     return new static(
       $configuration,
