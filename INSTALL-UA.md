@@ -8,18 +8,19 @@ This guide assumes a working knowledge of the `oc` command line tool.
 Visit [Openshift Console Command line tools](https://rhos-console.services.adelaide.edu.au:8443/console/command-line)
 to find useful info about logging in.
 
-If you are deploying to dev use : https://rhosd-console.services.adelaide.edu.au:8443 and use the
-corresponding : `ua-{dev/uat}-shepherd-openshift.yml`
+dev: https://rhosd-console.services.adelaide.edu.au:8443 shepherd-dev
+
+prd: https://rhos-console.services.adelaide.edu.au:8443 shepherd-prd
 
 ```bash
-# Requires uni a-number to login and access to the `wcms-test` project.
-oc login https://rhos-console.services.adelaide.edu.au:8443
+# Requires uni a-number to login and access to the Shepherd project.
+oc login https://rhosd-console.services.adelaide.edu.au:8443
 
-# Create a new wcms-test project if doesn't exist.
-oc new-project wcms-test
+# Create a new `shepherd` project if doesn't exist.
+oc new-project shepherd-dev
 
-# In this example we are using `wcms-test`
-oc project wcms-test
+# Switch to the `shepherd-dev` project.
+oc project shepherd-dev
 ```
 
 ### Secrets (passwords and keys)
