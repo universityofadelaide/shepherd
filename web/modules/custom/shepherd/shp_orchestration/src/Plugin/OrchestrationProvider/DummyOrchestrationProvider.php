@@ -25,14 +25,14 @@ class DummyOrchestrationProvider extends OrchestrationProviderBase {
   /**
    * {@inheritdoc}
    */
-  public function createdProject(string $name, string $builder_image, string $source_repo, string $source_ref = 'master', string $source_secret = NULL) {
+  public function createdProject(string $name, string $builder_image, string $source_repo, string $source_ref = 'master', string $source_secret = NULL, array $environment_variables = []) {
     return TRUE;
   }
 
   /**
    * {@inheritdoc}
    */
-  public function updatedProject(string $name, string $builder_image, string $source_repo, string $source_ref = 'master', string $source_secret = NULL) {
+  public function updatedProject(string $name, string $builder_image, string $source_repo, string $source_ref = 'master', string $source_secret = '', array $environment_variables = []) {
     return TRUE;
   }
 
@@ -60,6 +60,7 @@ class DummyOrchestrationProvider extends OrchestrationProviderBase {
     string $source_secret = NULL,
     string $storage_class = '',
     bool $update_on_image_change = FALSE,
+    bool $cron_suspended = FALSE,
     array $environment_variables = [],
     array $secrets = [],
     array $probes = [],
@@ -83,6 +84,8 @@ class DummyOrchestrationProvider extends OrchestrationProviderBase {
     string $source_repo,
     string $source_ref = 'master',
     string $source_secret = NULL,
+    bool $update_on_image_change = FALSE,
+    bool $cron_suspended = FALSE,
     array $environment_variables = [],
     array $secrets = [],
     array $probes = [],
@@ -232,11 +235,7 @@ class DummyOrchestrationProvider extends OrchestrationProviderBase {
   /**
    * {@inheritdoc}
    */
-  public static function generateDeploymentName(
-    string $project_name,
-    string $short_name,
-    int $id
-  ) {
+  public static function generateDeploymentName(string $id) {
     return 'deployment_name';
   }
 
@@ -278,6 +277,13 @@ class DummyOrchestrationProvider extends OrchestrationProviderBase {
    */
   public function getLogUrl(string $project_name, string $short_name, string $environment_id) {
     return [];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getEnvironmentStatus(string $project_name, string $short_name, string $environment_id) {
+    return FALSE;
   }
 
 }
