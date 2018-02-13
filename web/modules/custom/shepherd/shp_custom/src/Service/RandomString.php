@@ -16,11 +16,11 @@ class RandomString {
    *   The length of the string to return.
    *
    * @return string|null
-   *   The generated string. If length supplied is 0, will return null.
+   *   The generated string. If length supplied is 0, will return empty string.
    */
-  public function generate($length = 20) {
+  public function generate(int $length = 20) {
     if ($length === 0) {
-      return NULL;
+      return '';
     }
 
     $count = range(1, $length);
