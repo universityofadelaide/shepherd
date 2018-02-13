@@ -15,7 +15,6 @@ use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Url;
 use Drupal\node\Entity\Node;
 use Drupal\node\NodeInterface;
-use Drupal\shp_orchestration\Exception\OrchestrationProviderNotConfiguredException;
 use Drupal\taxonomy\Entity\Term;
 
 /**
@@ -132,15 +131,9 @@ function shp_custom_invalidate_site_cache(NodeInterface $environment) {
 function shp_custom_node_update(NodeInterface $node) {
 
   if (strpos($node->bundle(), 'shp') !== FALSE) {
-    try {
-      /** @var Drupal\shp_orchestration\OrchestrationProviderInterface $orchestration_provider_plugin */
-      $orchestration_provider_plugin = \Drupal::service('plugin.manager.orchestration_provider')
-        ->getProviderInstance();
-    }
-    catch (OrchestrationProviderNotConfiguredException $e) {
-      drupal_set_message($e->getMessage(), 'warning');
-      return FALSE;
-    }
+    /** @var Drupal\shp_orchestration\OrchestrationProviderInterface $orchestration_provider_plugin */
+    $orchestration_provider_plugin = \Drupal::service('plugin.manager.orchestration_provider')
+      ->getProviderInstance();
   }
   else {
     return NULL;
@@ -176,7 +169,7 @@ function shp_custom_node_update(NodeInterface $node) {
         $backup = \Drupal::service('shp_backup.backup');
         $site = Node::load($node->field_shp_site->target_id);
 
-        // Create the backup node and perform a backup
+        // Create the backup node and perform a backup.
         $backup->createBackupNode($site, $node, NULL, TRUE);
 
         // @todo Shepherd: Need to queue to enable this part.
