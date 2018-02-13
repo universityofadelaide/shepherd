@@ -102,8 +102,8 @@ installer. Admin user password is in https://thycotic.ad.adelaide.edu.au under D
 
 - Visit /admin/config/shepherd/orchestration and configure `OpenShift with Redis`.
 - Visit /admin/config/shepherd/orchestration/provider-settings and configure:
-- Endpoint: https://rhos-console.services.adelaide.edu.au:8443
-- Token: {auth token - see `Configuring the Orchestration Provider` in INSTALL.md}
+- Endpoint: https://rhosd-console.services.adelaide.edu.au:8443
+- Token: {auth token - see `Configure the Orchestration Provider` in INSTALL.md}
 - Verify TLS: TRUE
 - Namespace: shepherd
 - Save
@@ -125,6 +125,17 @@ PRD
 -- Port: 3306
 -- User: prd_web2
 -- Secret: privileged-db-password (Thycotic: shepherd-db2-password)
+
+### Configure LDAP for user search
+
+Visit /admin/config/people/ldap and configure:
+
+-- Hostname: ldap.adelaide.edu.au
+-- Port 389
+-- Base DN: dc=adelaide,dc=edu,dc=au
+-- Users OU: ou=people
+
+All other fields can be omitted. User and password are not needed, because Shepherd only needs to read from LDAP.
 
 ### Configure cron jobs for Shepherd
 
