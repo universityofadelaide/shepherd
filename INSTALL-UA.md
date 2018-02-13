@@ -8,9 +8,9 @@ This guide assumes a working knowledge of the `oc` command line tool.
 Visit [Openshift Console Command line tools](https://rhos-console.services.adelaide.edu.au:8443/console/command-line)
 to find useful info about logging in.
 
-dev: https://rhosd-console.services.adelaide.edu.au:8443 shepherd-dev
+DEV: https://rhosd-console.services.adelaide.edu.au:8443 shepherd-dev
 
-prd: https://rhos-console.services.adelaide.edu.au:8443 shepherd-prd
+PRD: https://rhos-console.services.adelaide.edu.au:8443 shepherd-prd
 
 ```bash
 # Requires uni a-number to login and access to the Shepherd project.
@@ -36,9 +36,9 @@ Type: password
 
 Thycotic:
 
-dev: shepherd-db-uat-password
+DEV: shepherd-db-uat-password
 
-prd: shepherd-db2-password
+PRD: shepherd-db2-password
 
 Used for managing databases for sites and their environments.
 
@@ -48,9 +48,9 @@ Type: password
 
 Thycotic:
 
-dev: shepherd-site-db-uat-password
+DEV: shepherd-site-db-uat-password
 
-prd: shepherd-site-db-password
+PRD: shepherd-site-db-password
 
 Used by Shepherd itself to connect to its own Drupal database.
 
