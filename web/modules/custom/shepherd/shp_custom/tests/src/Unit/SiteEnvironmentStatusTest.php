@@ -8,7 +8,6 @@ use Drupal\Tests\UnitTestCase;
 /**
  * Tests the ActiveJobManagerService class.
  *
- * @group ua
  * @group shepherd
  * @group shp_custom
  * @coversDefaultClass \Drupal\shp_custom\Plugin\views\field\SiteEnvironmentStatus
