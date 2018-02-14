@@ -10,7 +10,6 @@ use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\Url;
 use Drupal\node\Entity\Node;
 use Drupal\node\NodeInterface;
-use Drupal\shp_orchestration\Exception\OrchestrationProviderNotConfiguredException;
 use Drupal\shp_orchestration\OrchestrationProviderPluginManagerInterface;
 use Drupal\shp_orchestration\Service\ActiveJobManager;
 use Drupal\taxonomy\Entity\Term;
@@ -88,13 +87,7 @@ class Backup {
     $this->token = $token;
     $this->entityTypeManager = $entityTypeManager;
     $this->activeJobManager = $activeJobManager;
-
-    try {
-      $this->orchestrationProvider = $pluginManager->getProviderInstance();
-    }
-    catch (OrchestrationProviderNotConfiguredException $e) {
-      drupal_set_message($e->getMessage(), 'warning');
-    }
+    $this->orchestrationProvider = $pluginManager->getProviderInstance();
   }
 
   /**

@@ -15,15 +15,20 @@ class RandomString {
    * @param int $length
    *   The length of the string to return.
    *
-   * @return string
-   *   The generated string.
+   * @return string|null
+   *   The generated string. If length supplied is 0, will return empty string.
    */
-  public function generate($length = 20) {
-    $count = range(0, $length);
+  public function generate(int $length = 20) {
+    if ($length === 0) {
+      return '';
+    }
+
+    $count = range(1, $length);
     $random_alpha_numeric = function () {
       $chars = array_merge(range('a', 'z'), range(0, 9));
       return $chars[array_rand($chars)];
     };
+
     return implode(array_map($random_alpha_numeric, $count));
   }
 

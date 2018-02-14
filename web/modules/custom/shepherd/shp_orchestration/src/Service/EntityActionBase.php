@@ -2,7 +2,6 @@
 
 namespace Drupal\shp_orchestration\Service;
 
-use Drupal\shp_orchestration\Exception\OrchestrationProviderNotConfiguredException;
 use Drupal\shp_orchestration\OrchestrationProviderPluginManager;
 
 /**
@@ -23,12 +22,7 @@ class EntityActionBase {
    *   The orchestration provider manager.
    */
   public function __construct(OrchestrationProviderPluginManager $orchestrationProviderPluginManager) {
-    try {
-      $this->orchestrationProviderPlugin = $orchestrationProviderPluginManager->getProviderInstance();
-    }
-    catch (OrchestrationProviderNotConfiguredException $e) {
-      drupal_set_message($e->getMessage(), 'warning');
-    }
+    $this->orchestrationProviderPlugin = $orchestrationProviderPluginManager->getProviderInstance();
   }
 
 }

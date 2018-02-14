@@ -6,7 +6,6 @@ use Drupal\node\NodeInterface;
 use Drupal\shp_custom\Service\Environment as EnvironmentEntity;
 use Drupal\shp_custom\Service\Site as SiteEntity;
 use Drupal\shp_orchestration\OrchestrationProviderPluginManager;
-use Drupal\shp_orchestration\Exception\OrchestrationProviderNotConfiguredException;
 
 /**
  * Class Status.
@@ -47,13 +46,7 @@ class Status {
    *   Site service.
    */
   public function __construct(OrchestrationProviderPluginManager $orchestrationProviderPluginManager, EnvironmentEntity $environment, SiteEntity $site) {
-    try {
-      $this->orchestrationProviderPlugin = $orchestrationProviderPluginManager->getProviderInstance();
-    }
-    catch (OrchestrationProviderNotConfiguredException $e) {
-      drupal_set_message($e->getMessage(), 'warning');
-    }
-
+    $this->orchestrationProviderPlugin = $orchestrationProviderPluginManager->getProviderInstance();
     $this->environmentEntity = $environment;
     $this->siteEntity = $site;
   }
