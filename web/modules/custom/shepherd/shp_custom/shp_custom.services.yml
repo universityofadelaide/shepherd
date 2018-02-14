@@ -1,8 +1,6 @@
 services:
-  shp_custom.password:
-    class: Drupal\shp_custom\Service\Password
-  shp_custom.random_string:
-    class: Drupal\shp_custom\Service\RandomString
+  shp_custom.random_string_generator:
+    class: Drupal\shp_custom\Service\RandomStringGenerator
   shp_custom.site:
     class: Drupal\shp_custom\Service\Site
     arguments:
