@@ -129,13 +129,7 @@ function shp_custom_invalidate_site_cache(NodeInterface $environment) {
  * Triggers things when an instance's status is changed to archive.
  */
 function shp_custom_node_update(NodeInterface $node) {
-
-  if (strpos($node->bundle(), 'shp') !== FALSE) {
-    /** @var Drupal\shp_orchestration\OrchestrationProviderInterface $orchestration_provider_plugin */
-    $orchestration_provider_plugin = \Drupal::service('plugin.manager.orchestration_provider')
-      ->getProviderInstance();
-  }
-  else {
+  if (strpos($node->bundle(), 'shp') === FALSE) {
     return NULL;
   }
 

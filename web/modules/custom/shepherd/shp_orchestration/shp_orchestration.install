@@ -18,7 +18,7 @@ function shp_orchestration_requirements($phase) {
     $config_factory = \Drupal::service('config.factory');
     $selected_provider = $config_factory->get('shp_orchestration.settings')->get('selected_provider');
 
-    if ($selected_provider == 'dummy_orchestration_provider') {
+    if ($selected_provider === 'dummy_orchestration_provider') {
       $requirements['orchestration_provider_not_configured'] = [
         'title'       => t('Select and configure an orchestration provider'),
         'value'       => t('Dummy provider selected.'),
