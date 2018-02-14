@@ -1,2 +1,2 @@
-selected_provider: 'openshift_orchestration_provider'
+selected_provider: 'dummy_orchestration_provider'
 queued_operations: true

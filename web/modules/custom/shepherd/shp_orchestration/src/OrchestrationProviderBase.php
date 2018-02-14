@@ -6,7 +6,6 @@ use Drupal\Component\Plugin\PluginBase;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
-use Drupal\shp_orchestration\Exception\OrchestrationProviderNotConfiguredException;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -34,8 +33,6 @@ abstract class OrchestrationProviderBase extends PluginBase implements Container
    *   Plugin definition.
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
    *   Entity Type Manager service.
-   *
-   * @throws \Drupal\shp_orchestration\Exception\OrchestrationProviderNotConfiguredException
    */
   public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityTypeManagerInterface $entity_type_manager) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
@@ -43,11 +40,6 @@ abstract class OrchestrationProviderBase extends PluginBase implements Container
     $config_entity_id = $plugin_definition['config_entity_id'];
     $entity_manager = $this->entityTypeManager->getStorage($config_entity_id);
     $this->configEntity = $entity_manager->load($config_entity_id);
-    if (!is_object($this->configEntity)) {
-      throw new OrchestrationProviderNotConfiguredException(
-        'Orchestration provider is not configured. Changes made in Shepherd will not be reflected in backend until this is completed.'
-      );
-    }
   }
 
   /**
