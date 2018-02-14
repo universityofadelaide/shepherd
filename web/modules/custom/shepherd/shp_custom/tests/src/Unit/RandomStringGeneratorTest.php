@@ -75,10 +75,12 @@ class RandomStringGeneratorTest extends UnitTestCase {
    * @covers ::generatePassword
    */
   public function testGeneratePassword() {
-    // Function by default generates 30 length.
+    // Function by default generates 20 length.
     $generated = $this->randomStringService->generatePassword();
     $this->assertEquals(20, strlen($generated));
-    $this->assertRegExp('/[0-9a-zA-Z]/', $generated);
+    $this->assertRegExp('/[0-9a-zA-Z!@#$%^&*()]/', $generated);
+    // Check that we aren't generating identical passwords..
+    $this->assertNotEquals($generated, $this->randomStringService->generatePassword());
 
     $generated = $this->randomStringService->generatePassword(0);
     $this->assertEquals(0, strlen($generated));
@@ -88,7 +90,7 @@ class RandomStringGeneratorTest extends UnitTestCase {
 
     $generated = $this->randomStringService->generatePassword(20000);
     $this->assertEquals(20000, strlen($generated));
-    $this->assertRegExp('/[0-9a-zA-Z]/', $generated);
+    $this->assertRegExp('/[0-9a-zA-Z!@#$%^&*()]/', $generated);
   }
 
 }
