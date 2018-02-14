@@ -87,30 +87,6 @@ function shp_custom_toolbar_alter(&$items) {
 }
 
 /**
- * Generate a list of projects for a select list.
- *
- * @todo No longer used, delete this.
- *
- * @return array
- *   The choices formatted as id => label.
- */
-function shp_custom_projects() {
-  $ids = \Drupal::entityQuery('node')
-    ->condition('type', 'shp_project')
-    ->sort('title', 'ASC')
-    ->execute();
-
-  $entities = Node::loadMultiple($ids);
-
-  $choices = [];
-  foreach ($entities as $entity) {
-    $choices[$entity->id()] = $entity->getTitle();
-  }
-
-  return $choices;
-}
-
-/**
  * Invalidate site entity caches because environments for sites have changed.
  *
  * @param Drupal\node\NodeInterface $environment
@@ -147,7 +123,7 @@ function shp_custom_node_update(NodeInterface $node) {
           if ($environment->moderation_state->value != 'archived') {
 
             // Create the backup node and perform a backup.
-            $backup->createBackupNode($node, $environment, NULL, TRUE);
+            $backup->createNode($environment);
 
             // @todo Shepherd: Need to queue to enable this part.
             //if (!$result = $orchestration_provider_plugin->archivedEnvironment($entity->id())) {
@@ -159,14 +135,13 @@ function shp_custom_node_update(NodeInterface $node) {
       break;
 
     case 'shp_environment':
-      if ($node->moderation_state->value == 'archived') {
+      if ($node->moderation_state->value === 'archived') {
         $backup = \Drupal::service('shp_backup.backup');
-        $site = Node::load($node->field_shp_site->target_id);
 
         // Create the backup node and perform a backup.
-        $backup->createBackupNode($site, $node, NULL, TRUE);
+        $backup->createNode($node);
 
-        // @todo Shepherd: Need to queue to enable this part.
+        // @todo Shepherd: Need to queue to enable this part. I.e. backup must complete first.
         //$result = $orchestration_provider_plugin->archivedEnvironment($entity->id());
         shp_custom_invalidate_site_cache($node);
       }
