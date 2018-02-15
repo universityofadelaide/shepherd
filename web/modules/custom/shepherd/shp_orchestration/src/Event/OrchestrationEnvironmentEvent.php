@@ -26,10 +26,24 @@ class OrchestrationEnvironmentEvent extends Event {
   protected $deploymentName;
 
   /**
-   * Objects related to an environment.
+   * The site this environment is for.
+   *
+   * @var \Drupal\node\Entity\Node
    */
   protected $site;
+
+  /**
+   * The environment record.
+   *
+   * @var \Drupal\node\Entity\Node
+   */
   protected $environment;
+
+  /**
+   * The project for this environment.
+   *
+   * @var \Drupal\node\Entity\Node
+   */
   protected $project;
 
   /**
@@ -101,14 +115,32 @@ class OrchestrationEnvironmentEvent extends Event {
     return $this->environmentVariables;
   }
 
+  /**
+   * Get the site.
+   *
+   * @return \Drupal\node\Entity\Node
+   *   Site node.
+   */
   public function getSite() {
     return $this->site;
   }
 
+  /**
+   * Get the environment record.
+   *
+   * @return \Drupal\node\Entity\Node
+   *   Environment node.
+   */
   public function getEnvironment() {
     return $this->environment;
   }
 
+  /**
+   * Get the project for this environment.
+   *
+   * @return \Drupal\node\Entity\Node
+   *   Project node.
+   */
   public function getProject() {
     return $this->project;
   }
