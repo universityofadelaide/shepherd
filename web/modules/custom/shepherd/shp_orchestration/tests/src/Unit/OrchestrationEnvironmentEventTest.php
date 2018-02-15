@@ -33,7 +33,7 @@ class OrchestrationEnvironmentEventTest extends UnitTestCase {
   /**
    * Site node mock.
    *
-   * @var \Drupal\node\Entity\Node
+   * @var \Drupal\node\NodeInterface
    *   Site node mock.
    */
   protected $siteMock;
@@ -41,7 +41,7 @@ class OrchestrationEnvironmentEventTest extends UnitTestCase {
   /**
    * Environment node mock.
    *
-   * @var \Drupal\node\Entity\Node
+   * @var \Drupal\node\NodeInterface
    *   Environment mode mock.
    */
   protected $environmentMock;
@@ -49,7 +49,7 @@ class OrchestrationEnvironmentEventTest extends UnitTestCase {
   /**
    * Project node mock.
    *
-   * @var \Drupal\node\Entity\Node
+   * @var \Drupal\node\NodeInterface
    *   Project node mock.
    */
   protected $projectMock;
