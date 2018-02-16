@@ -505,7 +505,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     ];
     try {
       $response_body = $this->client->createJob(
-        $deployment_name . '-' . \Drupal::service('shp_custom.random_string')->generate(5),
+        $deployment_name . '-' . \Drupal::service('shp_custom.string_generator')->generateRandomString(5),
         $image_stream['status']['dockerImageRepository'] . ':' . $source_ref,
         $args_array,
         $volumes,
@@ -996,7 +996,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       ];
       try {
         $this->client->createCronJob(
-          $deployment_name . '-' . \Drupal::service('shp_custom.random_string')->generate(5),
+          $deployment_name . '-' . \Drupal::service('shp_custom.string_generator')->generateRandomString(5),
           $image_stream['status']['dockerImageRepository'] . ':' . $source_ref,
           $cron_job['schedule'],
           $cron_suspended,

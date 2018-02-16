@@ -9,7 +9,6 @@ use Drupal\Tests\UnitTestCase;
 /**
  * Tests the ActiveJobManagerService class.
  *
- * @group ua
  * @group shepherd
  * @group shp_orchestration
  * @coversDefaultClass \Drupal\shp_orchestration\Service\ActiveJobManager
@@ -35,7 +34,7 @@ class ActiveJobManagerTest extends UnitTestCase {
    */
   protected function setUp() {
     parent::setUp();
-    $this->state = $this->getMock('Drupal\Core\State\StateInterface');
+    $this->state = $this->getMockBuilder('Drupal\Core\State\StateInterface')->getMock();
 
     $this->job = (object) [
       'jobId' => '123',
