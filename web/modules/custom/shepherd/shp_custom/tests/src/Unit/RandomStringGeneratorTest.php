@@ -8,7 +8,6 @@ use Drupal\Tests\UnitTestCase;
 /**
  * Tests the RandomString service.
  *
- * @group ua
  * @group shepherd
  * @group shp_custom
  * @coversDefaultClass \Drupal\shp_custom\Service\StringGenerator
@@ -72,7 +71,6 @@ class RandomStringGeneratorTest extends UnitTestCase {
     $generated = $this->stringGeneratorService->generateRandomString(100, StringGenerator::SPECIAL);
     $this->assertRegExp('/[!@#$%^&*()]/', $generated);
     $this->assertNotRegExp('/[0-9a-zA-Z]/', $generated);
-
   }
 
   /**
