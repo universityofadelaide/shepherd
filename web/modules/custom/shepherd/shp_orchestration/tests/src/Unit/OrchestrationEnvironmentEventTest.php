@@ -173,4 +173,5 @@ class OrchestrationEnvironmentEventTest extends UnitTestCase {
     $this->orchestrationEvents->setEnvironmentVariables($this->testEnvironmentVariables);
     $this->assertArrayEquals($this->testEnvironmentVariables, $this->orchestrationEvents->getEnvironmentVariables());
   }
+
 }
