@@ -188,27 +188,39 @@ oc process -f ua-shepherd-openshift-cronjob-cleaner.yml | oc create -f -
 
 - Visit /admin/structure/taxonomy/manage/shp_environment_types/overview and configure:
 
-#### Dev environment type
+#### Production OpenShift
+
+##### Dev environment type
 
 -- Name: Dev
 -- Base domain: dev.openshift.services.adelaide.edu.au
 -- Protect from deletion: false
 -- Update go live: false
 
-#### Prd environment type
+##### Prd environment type
 
 - Name: Prd
 - Base domain: prd.openshift.services.adelaide.edu.au
 - Protect from deletion: true
 - Update go live: true
 
+#### Development OpenShift
+
+##### Dev environment type
+
+-- Name: Dev
+-- Base domain: openshift.development.services.adelaide.edu.au
+-- Protect from deletion: false
+-- Update go live: false
+
 ### Create WCMS project
 
 - Title : WCMS
 - Git repository: git@gitlab.adelaide.edu.au:web-team/ua-wcms-d8.git
 - Build secret: build-key
-- Default tag/branch: shepherd
+- Default tag/branch: shepherd-foundation
 - Builder image: uofa/s2i-shepherd-drupal
+- DEFAULT ENVIRONMENT VARIABLES: SHEPHERD_INSTALL_PROFILE: value: ua
 
 ### Create Site
 
