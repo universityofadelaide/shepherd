@@ -2,7 +2,7 @@
 
 namespace Drupal\Tests\shp_custom;
 
-use Drupal\shp_custom\Service\RandomStringGenerator;
+use Drupal\shp_custom\Service\StringGenerator;
 use Drupal\Tests\UnitTestCase;
 
 /**
@@ -11,7 +11,7 @@ use Drupal\Tests\UnitTestCase;
  * @group ua
  * @group shepherd
  * @group shp_custom
- * @coversDefaultClass \Drupal\shp_custom\Service\RandomStringGenerator
+ * @coversDefaultClass \Drupal\shp_custom\Service\StringGenerator
  */
 class RandomStringGeneratorTest extends UnitTestCase {
 
@@ -23,72 +23,72 @@ class RandomStringGeneratorTest extends UnitTestCase {
   protected function setUp() {
     parent::setUp();
 
-    $this->randomStringService = new RandomStringGenerator();
+    $this->randomStringService = new StringGenerator();
   }
 
   /**
-   * Tests the generateString function.
+   * Tests the generateRandomString function.
    *
-   * @covers ::generateString
+   * @covers ::generateRandomString
    */
-  public function testGenerateString() {
+  public function testGenerateRandomString() {
     // Function by default generates 20 length.
-    $generated = $this->randomStringService->generateString();
+    $generated = $this->randomStringService->generateRandomString();
     $this->assertEquals(20, strlen($generated));
     $this->assertRegExp('/[0-9]/', $generated);
     $this->assertRegExp('/[a-z]/', $generated);
     $this->assertNotRegExp('/[A-Z]/', $generated);
 
-    $generated = $this->randomStringService->generateString(0);
+    $generated = $this->randomStringService->generateRandomString(0);
     $this->assertEquals(0, strlen($generated));
 
-    $generated = $this->randomStringService->generateString(1);
+    $generated = $this->randomStringService->generateRandomString(1);
     $this->assertEquals(1, strlen($generated));
 
-    $generated = $this->randomStringService->generateString(20000);
+    $generated = $this->randomStringService->generateRandomString(20000);
     $this->assertEquals(20000, strlen($generated));
     $this->assertRegExp('/[0-9]/', $generated);
     $this->assertRegExp('/[a-z]/', $generated);
     $this->assertNotRegExp('/[A-Z]/', $generated);
 
-    $generated = $this->randomStringService->generateString(100, RandomStringGenerator::NUMERIC);
+    $generated = $this->randomStringService->generateRandomString(100, StringGenerator::NUMERIC);
     $this->assertRegExp('/[0-9]/', $generated);
     $this->assertNotRegExp('/[a-zA-Z]/', $generated);
 
-    $generated = $this->randomStringService->generateString(100, RandomStringGenerator::LOWERCASE);
+    $generated = $this->randomStringService->generateRandomString(100, StringGenerator::LOWERCASE);
     $this->assertRegExp('/[a-z]/', $generated);
     $this->assertNotRegExp('/[0-9A-Z]/', $generated);
 
-    $generated = $this->randomStringService->generateString(100, RandomStringGenerator::UPPERCASE);
+    $generated = $this->randomStringService->generateRandomString(100, StringGenerator::UPPERCASE);
     $this->assertRegExp('/[A-Z]/', $generated);
     $this->assertNotRegExp('/[0-9a-z]/', $generated);
 
-    $generated = $this->randomStringService->generateString(100, RandomStringGenerator::SPECIAL);
+    $generated = $this->randomStringService->generateRandomString(100, StringGenerator::SPECIAL);
     $this->assertRegExp('/[!@#$%^&*()]/', $generated);
     $this->assertNotRegExp('/[0-9a-zA-Z]/', $generated);
 
   }
 
   /**
-   * Tests the generatePassword function.
+   * Tests the generateRandomPassword function.
    *
-   * @covers ::generatePassword
+   * @covers ::generateRandomPassword
    */
-  public function testGeneratePassword() {
+  public function testGenerateRandomPassword() {
     // Function by default generates 20 length.
-    $generated = $this->randomStringService->generatePassword();
+    $generated = $this->randomStringService->generateRandomPassword();
     $this->assertEquals(20, strlen($generated));
     $this->assertRegExp('/[0-9a-zA-Z!@#$%^&*()]/', $generated);
     // Check that we aren't generating identical passwords..
-    $this->assertNotEquals($generated, $this->randomStringService->generatePassword());
+    $this->assertNotEquals($generated, $this->randomStringService->generateRandomPassword());
 
-    $generated = $this->randomStringService->generatePassword(0);
+    $generated = $this->randomStringService->generateRandomPassword(0);
     $this->assertEquals(0, strlen($generated));
 
-    $generated = $this->randomStringService->generatePassword(1);
+    $generated = $this->randomStringService->generateRandomPassword(1);
     $this->assertEquals(1, strlen($generated));
 
-    $generated = $this->randomStringService->generatePassword(20000);
+    $generated = $this->randomStringService->generateRandomPassword(20000);
     $this->assertEquals(20000, strlen($generated));
     $this->assertRegExp('/[0-9a-zA-Z!@#$%^&*()]/', $generated);
   }

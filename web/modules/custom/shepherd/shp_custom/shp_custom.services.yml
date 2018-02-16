@@ -1,6 +1,6 @@
 services:
-  shp_custom.random_string_generator:
-    class: Drupal\shp_custom\Service\RandomStringGenerator
+  shp_custom.string_generator:
+    class: Drupal\shp_custom\Service\StringGenerator
   shp_custom.site:
     class: Drupal\shp_custom\Service\Site
     arguments:

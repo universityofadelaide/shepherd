@@ -45,7 +45,7 @@ function shp_database_provisioner_node_insert(EntityInterface $entity) {
     // Construct credentials for the new environment.
     $env_db_database = 'env_' . $entity->id();
     $env_db_username = 'user_' . $entity->id();
-    $env_db_password = \Drupal::service('shp_custom.random_string_generator')->generatePassword();
+    $env_db_password = \Drupal::service('shp_custom.string_generator')->generateRandomPassword();
 
     // Add database credentials to deployment secret.
     // Create the secret if it doesn't exist, otherwise add it to the existing.

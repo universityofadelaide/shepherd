@@ -7,7 +7,7 @@ namespace Drupal\shp_custom\Service;
  *
  * @package Drupal\shp_custom
  */
-class RandomStringGenerator {
+class StringGenerator {
 
   const UPPERCASE = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
   const LOWERCASE = 'abcdefghijklmnopqrstuvwxyz';
@@ -26,8 +26,8 @@ class RandomStringGenerator {
    * @return string|null
    *   The generated string. If length supplied is 0, will return empty string.
    */
-  public function generateString(int $length = 20, string $keyspace = self::LOWERCASE . self::NUMERIC) {
-    return $this->randomStringGenerator($length, $keyspace);
+  public function generateRandomString(int $length = 20, string $keyspace = self::LOWERCASE . self::NUMERIC) {
+    return $this->randomStringProvider($length, $keyspace);
   }
 
   /**
@@ -41,8 +41,8 @@ class RandomStringGenerator {
    * @return string
    *   The generated password.
    */
-  public function generatePassword(int $length = 20, string $keyspace = self::ALL) {
-    return $this->randomStringGenerator($length, $keyspace);
+  public function generateRandomPassword(int $length = 20, string $keyspace = self::ALL) {
+    return $this->randomStringProvider($length, $keyspace);
   }
 
   /**
@@ -56,7 +56,7 @@ class RandomStringGenerator {
    * @return string
    *   Generated string.
    */
-  protected function randomStringGenerator(int $length, string $keyspace = self::ALL) {
+  protected function randomStringProvider(int $length, string $keyspace = self::ALL) {
     $string = '';
 
     $max = mb_strlen($keyspace, '8bit') - 1;
