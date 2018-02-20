@@ -1,0 +1,30 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - views.view.shp_user_sites
+  module:
+    - system
+    - views
+  theme:
+    - seven
+id: shp_user_sites
+theme: seven
+region: content
+weight: 1
+provider: null
+plugin: 'views_block:shp_user_sites-block_1'
+settings:
+  id: 'views_block:shp_user_sites-block_1'
+  label: ''
+  provider: views
+  label_display: visible
+  views_label: ''
+  items_per_page: none
+  context_mapping: {  }
+visibility:
+  request_path:
+    id: request_path
+    pages: '/user/*'
+    negate: false
+    context_mapping: {  }
