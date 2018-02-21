@@ -28,3 +28,12 @@ visibility:
     pages: '/user/*'
     negate: false
     context_mapping: {  }
+  user_role:
+    id: user_role
+    roles:
+      administrator: administrator
+      shp_site_administrator: shp_site_administrator
+      shp_online_consultant: shp_online_consultant
+    negate: false
+    context_mapping:
+      user: '@user.current_user_context:current_user'
