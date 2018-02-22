@@ -4,7 +4,8 @@ dependencies:
   config:
     - views.view.shp_user_groups
   module:
-    - system
+    - route_condition
+    - user
     - views
   theme:
     - seven
@@ -23,9 +24,9 @@ settings:
   items_per_page: none
   context_mapping: {  }
 visibility:
-  request_path:
-    id: request_path
-    pages: '/user/*'
+  route:
+    id: route
+    routes: entity.user.canonical
     negate: false
     context_mapping: {  }
   user_role:
