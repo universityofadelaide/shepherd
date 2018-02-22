@@ -23,6 +23,7 @@
         "drupal/log_stdout":                             "1.*",
         "drupal/r4032login":                             "1.*@dev",
         "drupal/redis":                                  "1.*@rc",
+        "drupal/route_condition":                        "^1.0@alpha",
         "drupal/token":                                  "1.*@dev",
         "wikimedia/composer-merge-plugin":               "^1.4"
     },
