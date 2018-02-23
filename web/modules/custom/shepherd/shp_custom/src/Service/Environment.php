@@ -13,6 +13,7 @@ use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\Url;
 use Drupal\node\NodeInterface;
+use Drupal\shp_orchestration\OrchestrationProviderPluginManagerInterface;
 use Drupal\taxonomy\Entity\Term;
 use Symfony\Component\HttpFoundation\RequestStack;
 
@@ -94,11 +95,12 @@ class Environment {
    *   Current Drupal user.
    * @param \Drupal\shp_custom\Service\Site $site
    *   Site service.
+   * @param \Drupal\shp_orchestration\OrchestrationProviderPluginManagerInterface $orchestration_provider_manager
+   *   Orchestration provider plugin manager.
+   *
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    */
-  public function __construct(RequestStack $requestStack,
-                              EntityTypeManagerInterface $entityTypeManager,
-                              AccountProxyInterface $currentUser,
-                              Site $site) {
+  public function __construct(RequestStack $requestStack, EntityTypeManagerInterface $entityTypeManager, AccountProxyInterface $currentUser, Site $site, OrchestrationProviderPluginManagerInterface $orchestration_provider_manager) {
     $this->requestStack = $requestStack;
     $this->entityTypeManager = $entityTypeManager;
     $this->currentRequest = $this->requestStack->getCurrentRequest();
@@ -106,9 +108,7 @@ class Environment {
     $this->taxonomyTerm = $this->entityTypeManager->getStorage('taxonomy_term');
     $this->currentUser = $currentUser;
     $this->site = $site;
-    // @todo - too many cross dependencies on this service, causing install failures. Fix.
-    // Pull statically for now.
-    $this->orchestrationProvider = \Drupal::service('plugin.manager.orchestration_provider')->getProviderInstance();
+    $this->orchestrationProvider = $orchestration_provider_manager;
   }
 
   /**

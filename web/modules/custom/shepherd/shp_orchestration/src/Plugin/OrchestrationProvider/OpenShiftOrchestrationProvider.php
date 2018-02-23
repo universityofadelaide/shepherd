@@ -26,6 +26,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
    * OpenShift client.
    *
    * @var \UniversityOfAdelaide\OpenShift\Client
+   *   PHP OpenShift client.
    */
   protected $client;
 

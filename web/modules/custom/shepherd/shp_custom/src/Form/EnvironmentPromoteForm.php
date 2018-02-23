@@ -10,6 +10,8 @@ use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\Url;
 use Drupal\node\NodeInterface;
+use Drupal\shp_custom\Service\Site;
+use Drupal\shp_orchestration\Service\Environment;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -24,30 +26,32 @@ class EnvironmentPromoteForm extends FormBase {
   use StringTranslationTrait;
 
   /**
-   * For retrieving config.
+   * Shepherd orchestration environment.
    *
-   * @var \Drupal\Core\Config\ConfigFactory
+   * @var \Drupal\shp_orchestration\Service\Environment
+   *   Orchestration environment.
    */
-  protected $config;
+  protected $environment;
 
   /**
-   * Used to identify who is performing the operation.
+   * Shepherd custom site.
    *
-   * @var \Drupal\Core\Session\AccountInterface
+   * @var \Drupal\shp_custom\Service\Site
+   *   Shepherd custom site.
    */
-  protected $current_user;
+  protected $site;
 
   /**
    * EnvironmentPromoteForm constructor.
    *
-   * @param \Drupal\Core\Config\ConfigFactoryInterface $config
-   *   Config Factory.
-   * @param \Drupal\Core\Session\AccountInterface $current_user
-   *   Current user.
+   * @param \Drupal\shp_orchestration\Service\Environment $environment
+   *   Shepherd orchestration environment.
+   * @param \Drupal\shp_custom\Service\Site $site
+   *   Shepherd custom site.
    */
-  public function __construct(ConfigFactoryInterface $config, AccountInterface $current_user) {
-    $this->config = $config;
-    $this->current_user = $current_user;
+  public function __construct(Environment $environment, Site $site) {
+    $this->environment = $environment;
+    $this->site = $site;
   }
 
   /**
@@ -55,8 +59,8 @@ class EnvironmentPromoteForm extends FormBase {
    */
   public static function create(ContainerInterface $container) {
     return new static(
-      $container->get('config.factory'),
-      $container->get('current_user')
+      $container->get('shp_orchestration.environment'),
+      $container->get('shp_custom.site')
     );
   }
 
@@ -70,15 +74,10 @@ class EnvironmentPromoteForm extends FormBase {
   /**
    * Callback to get page title for the name of the site.
    *
-   * @param \Drupal\node\NodeInterface $site
-   *   Site node.
-   * @param \Drupal\node\NodeInterface $environment
-   *   Environment node.
-   *
    * @return \Drupal\Core\StringTranslation\TranslatableMarkup
    *   Translated markup.
    */
-  public function getPageTitle(NodeInterface $site, NodeInterface $environment) {
+  public function getPageTitle() {
     return $this->t('Promote environment to production');
   }
 
@@ -144,12 +143,12 @@ class EnvironmentPromoteForm extends FormBase {
     $environment = $form_state->get('environment');
     $exclusive = TRUE; // $form_state->getValue('exclusive');
 
-    if ($result = \Drupal::service('shp_orchestration.environment')->promoted($site, $environment, $exclusive)) {
+    if ($this->environment->promoted($site, $environment, $exclusive)) {
       drupal_set_message($this->t('Promoted %environment for %site successfully', [
         '%environment' => $environment->getTitle(),
         '%site' => $site->getTitle(),
       ]));
-      \Drupal::service('shp_custom.site')->setGoLiveDate($environment);
+      $this->site->setGoLiveDate($environment);
     }
     else {
       drupal_set_message($this->t('Failed to promote %environment for %site',
