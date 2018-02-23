@@ -6,7 +6,11 @@ services:
     arguments: ['@entity_type.manager']
   shp_custom.environment:
     class: Drupal\shp_custom\Service\Environment
-    arguments: ['@request_stack', '@entity_type.manager', '@current_user', '@shp_custom.site', '@plugin.manager.orchestration_provider']
+    arguments:
+      - '@request_stack'
+      - '@entity_type.manager'
+      - '@current_user'
+      - '@shp_custom.site'
   shp_custom.hosts_config:
     class: Drupal\shp_custom\Service\HostsConfig
   shp_custom.route_subscriber:

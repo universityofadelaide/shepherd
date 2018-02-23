@@ -10,6 +10,7 @@ use Drupal\shp_orchestration\Event\OrchestrationEnvironmentEvent;
 use Drupal\shp_orchestration\Event\OrchestrationEvents;
 use Drupal\shp_orchestration\OrchestrationProviderPluginManager;
 use Drupal\taxonomy\Entity\Term;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Class Environment.
@@ -38,6 +39,14 @@ class Environment extends EntityActionBase {
   private $siteEntity;
 
   /**
+   * Event dispatcher.
+   *
+   * @var \Symfony\Component\EventDispatcher\EventDispatcherInterface
+   *   Event dispatcher.
+   */
+  private $eventDispatcher;
+
+  /**
    * Shepherd constructor.
    *
    * @param \Drupal\shp_orchestration\OrchestrationProviderPluginManager $orchestrationProviderPluginManager
@@ -49,11 +58,12 @@ class Environment extends EntityActionBase {
    * @param \Drupal\shp_custom\Service\Site $site
    *   Site service.
    */
-  public function __construct(OrchestrationProviderPluginManager $orchestrationProviderPluginManager, Configuration $configuration, EnvironmentEntity $environment, SiteEntity $site) {
+  public function __construct(OrchestrationProviderPluginManager $orchestrationProviderPluginManager, Configuration $configuration, EnvironmentEntity $environment, SiteEntity $site, EventDispatcherInterface $event_dispatcher) {
     parent::__construct($orchestrationProviderPluginManager);
     $this->configuration = $configuration;
     $this->environmentEntity = $environment;
     $this->siteEntity = $site;
+    $this->eventDispatcher = $event_dispatcher;
   }
 
   /**
@@ -108,9 +118,8 @@ class Environment extends EntityActionBase {
     $secrets = $this->configuration->getSecrets($node);
 
     // Allow other modules to react to the Environment creation.
-    $eventDispatcher = \Drupal::service('event_dispatcher');
     $event = new OrchestrationEnvironmentEvent($this->orchestrationProviderPlugin, $deployment_name);
-    $eventDispatcher->dispatch(OrchestrationEvents::SETUP_ENVIRONMENT, $event);
+    $this->eventDispatcher->dispatch(OrchestrationEvents::SETUP_ENVIRONMENT, $event);
     if ($event_env_vars = $event->getEnvironmentVariables()) {
       $env_vars = array_merge($env_vars, $event_env_vars);
     }
@@ -143,7 +152,7 @@ class Environment extends EntityActionBase {
 
     // Allow other modules to react to the Environment creation.
     $event = new OrchestrationEnvironmentEvent($this->orchestrationProviderPlugin, $deployment_name, $site, $node, $project);
-    $eventDispatcher->dispatch(OrchestrationEvents::CREATED_ENVIRONMENT, $event);
+    $this->eventDispatcher->dispatch(OrchestrationEvents::CREATED_ENVIRONMENT, $event);
 
     // If this is a production environment, promote it immediately.
     $environment_term = Term::load($node->field_shp_environment_type->target_id);
@@ -182,9 +191,8 @@ class Environment extends EntityActionBase {
     $secrets = $this->configuration->getSecrets($node);
 
     // Allow other modules to react to the Environment creation.
-    $eventDispatcher = \Drupal::service('event_dispatcher');
     $event = new OrchestrationEnvironmentEvent($this->orchestrationProviderPlugin, $deployment_name);
-    $eventDispatcher->dispatch(OrchestrationEvents::SETUP_ENVIRONMENT, $event);
+    $this->eventDispatcher->dispatch(OrchestrationEvents::SETUP_ENVIRONMENT, $event);
     if ($event_env_vars = $event->getEnvironmentVariables()) {
       $env_vars = array_merge($env_vars, $event_env_vars);
     }
@@ -211,7 +219,7 @@ class Environment extends EntityActionBase {
 
     // Allow other modules to react to the Environment update.
     $event = new OrchestrationEnvironmentEvent($this->orchestrationProviderPlugin, $deployment_name, $site, $node, $project);
-    $eventDispatcher->dispatch(OrchestrationEvents::UPDATED_ENVIRONMENT, $event);
+    $this->eventDispatcher->dispatch(OrchestrationEvents::UPDATED_ENVIRONMENT, $event);
 
     return $environment_updated;
   }
@@ -241,9 +249,8 @@ class Environment extends EntityActionBase {
     );
 
     // Allow other modules to react to the Environment deletion.
-    $eventDispatcher = \Drupal::service('event_dispatcher');
     $event = new OrchestrationEnvironmentEvent($this->orchestrationProviderPlugin, $deployment_name);
-    $eventDispatcher->dispatch(OrchestrationEvents::DELETED_ENVIRONMENT, $event);
+    $this->eventDispatcher->dispatch(OrchestrationEvents::DELETED_ENVIRONMENT, $event);
 
     return $result;
   }

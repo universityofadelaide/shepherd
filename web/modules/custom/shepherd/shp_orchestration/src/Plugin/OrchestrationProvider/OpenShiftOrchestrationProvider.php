@@ -5,7 +5,9 @@ namespace Drupal\shp_orchestration\Plugin\OrchestrationProvider;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Url;
 use Drupal\node\Entity\Node;
+use Drupal\shp_custom\Service\StringGenerator;
 use Drupal\shp_orchestration\OrchestrationProviderBase;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use UniversityOfAdelaide\OpenShift\Client as OpenShiftClient;
 use UniversityOfAdelaide\OpenShift\ClientException;
 
@@ -31,17 +33,51 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
   protected $client;
 
   /**
+   * Sepherd custom string generator.
+   *
+   * @var \Drupal\shp_custom\Service\StringGenerator
+   *   String generator.
+   */
+  protected $stringGenerator;
+
+  /**
    * {@inheritdoc}
    */
   public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityTypeManagerInterface $entity_type_manager) {
     parent::__construct($configuration, $plugin_id, $plugin_definition, $entity_type_manager);
-
     $this->client = new OpenShiftClient(
       $this->configEntity->endpoint,
       $this->configEntity->token,
       $this->configEntity->namespace,
       $this->configEntity->verify_tls
     );
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+    $instance = parent::create(
+      $container,
+      $configuration,
+      $plugin_id,
+      $plugin_definition
+    );
+    $instance->setStringGenerator($container->get('shp_custom.string_generator'));
+    return $instance;
+  }
+
+  /**
+   * Inject string generator to this plugin without changing base constructor.
+   *
+   * @param \Drupal\shp_custom\Service\StringGenerator $string_generator
+   *   Shepherd custom string generator.
+   *
+   * @todo: This really is just a stop-gap until we properly refactor our
+   * services and functions.
+   */
+  public function setStringGenerator(StringGenerator $string_generator) {
+    $this->stringGenerator = $string_generator;
   }
 
   /**
@@ -506,7 +542,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     ];
     try {
       $response_body = $this->client->createJob(
-        $deployment_name . '-' . \Drupal::service('shp_custom.string_generator')->generateRandomString(5),
+        $deployment_name . '-' . $this->stringGenerator->generateRandomString(5),
         $image_stream['status']['dockerImageRepository'] . ':' . $source_ref,
         $args_array,
         $volumes,
@@ -997,7 +1033,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       ];
       try {
         $this->client->createCronJob(
-          $deployment_name . '-' . \Drupal::service('shp_custom.string_generator')->generateRandomString(5),
+          $deployment_name . '-' . $this->stringGenerator->generateRandomString(5),
           $image_stream['status']['dockerImageRepository'] . ':' . $source_ref,
           $cron_job['schedule'],
           $cron_suspended,
