@@ -43,8 +43,7 @@ class Project extends EntityActionBase {
       $node->getTitle(),
       $node->field_shp_builder_image->value,
       $node->field_shp_git_repository->value,
-      // @todo Consider fetching default source ref from config.
-      'master',
+      $node->field_shp_git_default_ref->value,
       $node->field_shp_build_secret->value,
       $environment_variables
     );
