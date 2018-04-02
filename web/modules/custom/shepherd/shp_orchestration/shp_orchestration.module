@@ -7,7 +7,6 @@
 
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\node\NodeInterface;
-use Drupal\shp_orchestration\Exception\OrchestrationProviderNotConfiguredException;
 
 /**
  * Implements hook_ENTITY_TYPE_insert().
@@ -90,19 +89,14 @@ function shp_orchestration_shp_project_form_validate(array $form, FormStateInter
   // Verify that the secret exists in OpenShift.
   $secret_name = $form_state->getValue('field_shp_build_secret')[0]['value'];
 
-  try {
-    /** @var Drupal\shp_orchestration\OrchestrationProviderInterface $orchestration_provider_plugin */
-    $orchestration_provider_plugin = \Drupal::service('plugin.manager.orchestration_provider')
-      ->getProviderInstance();
+  /** @var Drupal\shp_orchestration\OrchestrationProviderInterface $orchestration_provider_plugin */
+  $orchestration_provider_plugin = \Drupal::service('plugin.manager.orchestration_provider')
+    ->getProviderInstance();
 
-    $response = $orchestration_provider_plugin->getSecret($secret_name);
-    // The client will respond FALSE if the status code doesn't return a 200.
-    if ($response === FALSE) {
-      $form_state->setErrorByName('field_shp_build_secret', t('Secret: @secret_name does not exist.', ['@secret_name' => $secret_name]));
-    }
-  }
-  catch (OrchestrationProviderNotConfiguredException $e) {
-    drupal_set_message($e->getMessage(), 'warning');
+  $response = $orchestration_provider_plugin->getSecret($secret_name);
+  // The client will respond FALSE if the status code doesn't return a 200.
+  if ($response === FALSE) {
+    $form_state->setErrorByName('field_shp_build_secret', t('Secret: @secret_name does not exist.', ['@secret_name' => $secret_name]));
   }
 }
 

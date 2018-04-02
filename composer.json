@@ -11,33 +11,25 @@
         "composer/installers":                           "^1.2",
         "cweagans/composer-patches":                     "~1.0",
         "drupal-composer/drupal-scaffold":               "^2.2",
+        "predis/predis":                                 "^1.1.1",
         "universityofadelaide/shepherd-drupal-scaffold": "~1.0",
-        "drush/drush":                                   "8.*",
-        "drupal/core":                                   "8.4.*",
-        "drupal/cas":                                    "1.x-dev",
-        "drupal/devel":                                  "~1.0",
-        "drupal/entity_reference_revisions":             "dev-1.x",
-        "drupal/field_group":                            "1.*@dev",
-        "drupal/group":                                  "1.x-dev",
-        "drupal/key_value_field":                        "1.x-dev",
+        "wikimedia/composer-merge-plugin":               "^1.4",
+        "drush/drush":                                   "9.*",
+        "drupal/core":                                   "8.5.*",
+        "drupal/cas":                                    "1.*",
+        "drupal/devel":                                  "1.*",
+        "drupal/entity_reference_revisions":             "1.*",
+        "drupal/field_group":                            "1.*",
+        "drupal/group":                                  "1.*@RC",
+        "drupal/key_value_field":                        "1.*@beta",
         "drupal/log_stdout":                             "1.*",
         "drupal/r4032login":                             "1.*@dev",
-        "drupal/redis":                                  "1.*@rc",
-        "drupal/token":                                  "1.*@dev",
-        "wikimedia/composer-merge-plugin":               "^1.4"
+        "drupal/redis":                                  "1.*@RC",
+        "drupal/route_condition":                        "^1.0@alpha",
+        "drupal/token":                                  "1.*"
     },
     "require-dev": {
-        "drupal/console":                       "^1.0",
-        "behat/mink":                           "1.7.x-dev",
-        "behat/mink-goutte-driver":             "~1.2",
-        "drupal/coder":                         "8.2.12",
-        "jcalderonzumba/gastonjs":              "~1.0.2",
-        "jcalderonzumba/mink-phantomjs-driver": "~0.3.1",
-        "mikey179/vfsStream":                   "~1.2",
-        "phpunit/phpunit":                      ">=4.8.35 <5",
-        "phpspec/prophecy":                     "^1.4",
-        "symfony/css-selector":                 "~2.8",
-        "symfony/phpunit-bridge":               "~3.2.8"
+        "webflo/drupal-core-require-dev": "~8.5"
     },
     "conflict": {
         "drupal/drupal": "*"
@@ -47,7 +39,7 @@
     "config": {
         "bin-dir": "bin/",
         "platform": {
-            "php": "7.0.8"
+            "php": "7.2.0"
         }
     },
     "scripts": {
@@ -82,13 +74,13 @@
             "drupal/core": {
                 "Switch to a memory cache backend during installation": "https://www.drupal.org/files/issues/2488350-2-58.patch",
                 "Twig debug output does not display all suggestions": "https://www.drupal.org/files/issues/2118743-139-twig-debug-info.patch",
-                "Allow profiles to provide a base profile": "https://www.drupal.org/files/issues/1356276-419--8.4.4.patch"
-            },
-            "drupal/key_value_field": {
-                "Add key / value label as setting": "https://www.drupal.org/files/issues/key_value_field-labels_as_settings-2842240-2.patch"
+                "Allow profiles to provide a base profile": "https://www.drupal.org/files/issues/drupal-n1356276-417-d8.5.x.patch"
             },
             "drupal/r4032login": {
                 "Override return destination parameter": "https://www.drupal.org/files/issues/r4032login_2534308_7.patch"
+            },
+            "drupal/redis": {
+                "Remove string assert calls": "https://www.drupal.org/files/issues/2944186-1-remove-string-assert.patch"
             }
         }
     }

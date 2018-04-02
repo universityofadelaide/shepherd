@@ -45,8 +45,9 @@ class OpenShiftConfigEntityForm extends EntityForm {
     ];
     $form['namespace'] = [
       '#type' => 'textfield',
-      '#title' => $this->t('Namespace'),
+      '#title' => $this->t('Project'),
       '#default_value' => $entity->namespace,
+      '#description' => $this->t("The OpenShift project to use."),
       '#required' => FALSE,
     ];
     $form['uid'] = [

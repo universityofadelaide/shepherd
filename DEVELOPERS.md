@@ -39,7 +39,7 @@ Development should proceed as normal, typically with:
   git commit
   git flow feature publish
   ```
-* Submit pull request through github UI
+* Submit pull request through GitHub
 * Merge into develop
 * Update the shepherd-modules repo.
   ```
@@ -47,9 +47,6 @@ Development should proceed as normal, typically with:
   ```
 
 Note: Only people with sufficient access can perform the last two steps.
-
-Pull requests should be submitted against the main Shepherd repository, not
-against the drupal-modules repository.
 
 ## Prerequisites
 
@@ -157,9 +154,9 @@ composer install
 ```
 
 ### OpenShift in Docker configuration
-Minishift is really just another layer that you don't need, you can run openshift locally with just
+Minishift is really just another layer that you don't need, you can run OpenShift locally with just
 a couple of tweaks before running ./dsh
-* Install mysql on your local host, or in a docker container listening on 3306 (but it wont work within openshift as shepherd can't talk to it easily).
+* Install MariaDB on your localhost, or in a docker container listening on 3306.
 * Ensure that mysql is listening on all IP's
 * Grant root access to any host
 * Set the OPENSHIFT_TYPE env var to something other than 'minishift'
@@ -167,7 +164,7 @@ a couple of tweaks before running ./dsh
 * Set the domain for accessing shepherd to {docker0 IPv4 address}.nip.io
   `export DOMAIN=172.17.0.1.nip.io`
 * Start the oc cluster `oc cluster up` see `oc cluster up -h` for advanced config like persistent storage and config.
-* Set nginx to run on 8080, as openshift uses port 80 `docker rm -f nginx-proxy`
+* Set nginx to run on 8080, as OpenShift uses port 80 `docker rm -f nginx-proxy`
 `docker run -d -p 8080:80 -v /var/run/docker.sock:/tmp/docker.sock:ro --restart always --name nginx-proxy jwilder/nginx-proxy`
 * Now run the ./dsh etc commands as per normal.
 * Shepherd will appear on port 8080
@@ -187,10 +184,12 @@ git remote add shepherd https://github.com/universityofadelaide/shepherd.git
 
 You should end up with something like:
 
-origin	git@gitlab.adelaide.edu.au:web-team/ua-shepherd.git (fetch)
-origin	git@gitlab.adelaide.edu.au:web-team/ua-shepherd.git (push)
-shepherd	https://github.com/universityofadelaide/shepherd.git (fetch)
-shepherd	https://github.com/universityofadelaide/shepherd.git (push)
+```
+origin      git@gitlab.adelaide.edu.au:web-team/ua-shepherd.git (fetch)
+origin	    git@gitlab.adelaide.edu.au:web-team/ua-shepherd.git (push)
+shepherd    https://github.com/universityofadelaide/shepherd.git (fetch)
+shepherd    https://github.com/universityofadelaide/shepherd.git (push)
+```
 
 ### Merge in changes from public shepherd repo
 https://help.github.com/articles/syncing-a-fork/
@@ -212,16 +211,6 @@ git commit -m"Merging changes in from upstream public repository."
 ```
 
 ## Working with Shepherd
-
-### Installing SwaggerUI for developing with OpenShift API
-```bash
-# run the swagger ui container
-docker run -d -p 8000:8080 swaggerapi/swagger-ui
-```
-
-then visit `http://swagger.test:8000` and paste
-`http://home.caseyfulton.com/openshift-openapi-spec.json` into the box at the
-top and hit explore.
 
 ### Exporting Drupal configuration
 When exporting config always to remember to clean the `yml` files of `uuid` and config hashes.
@@ -260,7 +249,7 @@ composer update
 
 To update packages using `composer update`, you will first need run
 `composer install` - otherwise wikimedia/composer-merge-plugin will fail to
-discover the openshift client dependency.
+discover the OpenShift client dependency.
 
 ## Troubleshooting
 - Shepherd assumes dnsmasq is set to the `test` domain by default.
@@ -291,5 +280,5 @@ bin/drush -r web cset shp_orchestration.openshift.openshift token ${NEW_TOKEN}
 Purging all the example generated content on OpenShift. This removes everything with the example namespace that was generated with 
 the robo dev:content-generate command.
 ```bash
-name=example; for type in is bc dc svc pvc route pods job cronjob secrets; do for item in $(oc get "${type}" | grep ${name} | awk '{ print $1 }'); do oc delete ${type} ${item}; done; done
+name=example; for type in is dc bc svc pvc route pods cronjobs jobs secrets; do for item in $(oc get "${type}" | grep ${name} | awk '{ print $1 }'); do oc delete ${type} ${item}; done; done
 ```
