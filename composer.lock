@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "d13a3426d61c5ee90c6b694cc1e7b86d",
+    "content-hash": "47a66efb6987fcbabb7427f53521fc0e",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -7496,7 +7496,6 @@
     "minimum-stability": "dev",
     "stability-flags": {
         "drupal/group": 5,
-        "drupal/key_value_field": 10,
         "drupal/r4032login": 20,
         "drupal/redis": 5,
         "drupal/route_condition": 15,
