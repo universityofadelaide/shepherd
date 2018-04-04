@@ -5,10 +5,13 @@
  * Contains shp_roles.module.
  */
 
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\group\Entity\GroupRole;
+
 /**
  * Implements hook_form_alter().
  */
-function shp_roles_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $form_state, $form_id) {
+function shp_roles_form_alter(&$form, FormStateInterface $form_state, $form_id) {
   if ($form_id === 'group_role_edit_form') {
     shp_roles_alter_roles_form($form, $form_state, $form_id);
   }
@@ -20,7 +23,7 @@ function shp_roles_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $form
  * This exists because 32 char id's for config entity id's are too short to
  * store role machine names.
  */
-function shp_roles_alter_roles_form(&$form, \Drupal\Core\Form\FormStateInterface $form_state, $form_id) {
+function shp_roles_alter_roles_form(&$form, FormStateInterface $form_state, $form_id) {
   $group_role = $form_state->getFormObject()->getEntity();
   $form['synced_role'] = [
     '#type' => 'textfield',
@@ -36,7 +39,7 @@ function shp_roles_alter_roles_form(&$form, \Drupal\Core\Form\FormStateInterface
 /**
  * Entity builder for the group role configuration entity.
  */
-function shp_roles_form_menu_add_form_builder($entity_type, \Drupal\group\Entity\GroupRole $group_role, &$form, \Drupal\Core\Form\FormStateInterface $form_state) {
+function shp_roles_form_menu_add_form_builder($entity_type, GroupRole $group_role, &$form, FormStateInterface $form_state) {
   if ($form_state->getValue('synced_role')) {
     $group_role->setThirdPartySetting('shp_roles', 'synced_role', $form_state->getValue('synced_role'));
     return;

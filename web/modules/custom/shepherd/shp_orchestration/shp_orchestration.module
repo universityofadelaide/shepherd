@@ -122,4 +122,3 @@ function shp_orchestration_shp_env_vars(NodeInterface $environment) {
 
   return $env_vars;
 }
-

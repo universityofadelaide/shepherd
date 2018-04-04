@@ -44,9 +44,11 @@ class Site {
   protected $taxonomyTerm;
 
   /**
+   * Messenger service.
+   *
    * @var \Drupal\Core\Messenger\MessengerInterface
    */
-  private $messenger;
+  protected $messenger;
 
   /**
    * Site constructor.
