@@ -4,8 +4,7 @@ env:
     global:
         - SIMPLETEST_DB="mysql://root:@127.0.0.1/drupal"
 php:
-    - 7.0
-    - 7.1
+    - 7.2
 
 cache:
     - "$HOME/.composer/cache"
@@ -28,4 +27,4 @@ install:
     - composer install
 
 script:
-    - ./vendor/phpunit/phpunit/phpunit --group shepherd -c ./web/core ./web/modules
+    - ./vendor/phpunit/phpunit/phpunit --group shepherd -c ./web/core

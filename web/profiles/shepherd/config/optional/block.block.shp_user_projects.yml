@@ -1,0 +1,40 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - views.view.shp_user_projects
+  module:
+    - route_condition
+    - user
+    - views
+  theme:
+    - seven
+id: shp_user_projects
+theme: seven
+region: content
+weight: 1
+provider: null
+plugin: 'views_block:shp_user_projects-block_1'
+settings:
+  id: 'views_block:shp_user_projects-block_1'
+  label: ''
+  provider: views
+  label_display: visible
+  views_label: ''
+  items_per_page: none
+  context_mapping: {  }
+visibility:
+  user_role:
+    id: user_role
+    roles:
+      administrator: administrator
+      shp_site_administrator: shp_site_administrator
+      shp_online_consultant: shp_online_consultant
+    negate: false
+    context_mapping:
+      user: '@user.current_user_context:current_user'
+  route:
+    id: route
+    routes: entity.user.canonical
+    negate: false
+    context_mapping: {  }

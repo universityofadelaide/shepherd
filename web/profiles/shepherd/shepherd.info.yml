@@ -52,6 +52,7 @@ dependencies:
   - log_stdout
   - r4032login
   - redis
+  - route_condition
   - token
 
   # Shepherd modules
