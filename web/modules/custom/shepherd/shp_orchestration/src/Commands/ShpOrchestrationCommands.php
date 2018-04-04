@@ -40,6 +40,7 @@ class ShpOrchestrationCommands extends DrushCommands {
    */
   public function processJobQueue() {
     $this->jobQueue->process();
+    $this->output->writeln('Job queue processed.');
   }
 
 }
