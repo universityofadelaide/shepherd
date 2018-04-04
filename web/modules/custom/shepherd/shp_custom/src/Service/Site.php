@@ -6,7 +6,9 @@ use Drupal\Core\Datetime\DrupalDateTime;
 use Drupal\Core\DependencyInjection\DependencySerializationTrait;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
+use Drupal\datetime\Plugin\Field\FieldType\DateTimeItemInterface;
 use Drupal\node\Entity\Node;
 use Drupal\node\NodeInterface;
 
@@ -42,15 +44,25 @@ class Site {
   protected $taxonomyTerm;
 
   /**
+   * @var \Drupal\Core\Messenger\MessengerInterface
+   */
+  private $messenger;
+
+  /**
    * Site constructor.
    *
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entityTypeManager
    *   Entity Type Manager.
+   * @param \Drupal\Core\Messenger\MessengerInterface $messenger
+   *   Messenger service.
+   *
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    */
-  public function __construct(EntityTypeManagerInterface $entityTypeManager) {
+  public function __construct(EntityTypeManagerInterface $entityTypeManager, MessengerInterface $messenger) {
     $this->entityTypeManager = $entityTypeManager;
     $this->taxonomyTerm = $this->entityTypeManager->getStorage('taxonomy_term');
     $this->node = $this->entityTypeManager->getStorage('node');
+    $this->messenger = $messenger;
   }
 
   /**
@@ -68,9 +80,9 @@ class Site {
     if ($term->field_shp_update_go_live->value) {
       if (!isset($site->field_shp_go_live_date->value)) {
         $date = new DrupalDateTime('now', 'UTC');
-        $site->field_shp_go_live_date->setValue($date->format(DATETIME_DATETIME_STORAGE_FORMAT));
+        $site->field_shp_go_live_date->setValue($date->format(DateTimeItemInterface::DATETIME_STORAGE_FORMAT));
         $site->save();
-        drupal_set_message($this->t('Site %name go live date applied.', [
+        $this->messenger->addStatus($this->t('Site %name go live date applied.', [
           '%name' => $site->getTitle(),
         ]));
         return TRUE;
@@ -124,7 +136,7 @@ class Site {
     $results = $this->node->getQuery()
       ->condition('type', $node_type)
       ->condition($reference_field, $node->id())
-      ->condition('status', NODE_PUBLISHED)
+      ->condition('status', NodeInterface::PUBLISHED)
       ->execute();
     return $this->node->loadMultiple($results);
   }

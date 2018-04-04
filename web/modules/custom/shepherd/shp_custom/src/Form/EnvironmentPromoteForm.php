@@ -6,6 +6,7 @@ use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Link;
+use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\Url;
@@ -42,16 +43,26 @@ class EnvironmentPromoteForm extends FormBase {
   protected $site;
 
   /**
+   * Messenger.
+   *
+   * @var \Drupal\Core\Messenger\MessengerInterface
+   */
+  protected $messenger;
+
+  /**
    * EnvironmentPromoteForm constructor.
    *
    * @param \Drupal\shp_orchestration\Service\Environment $environment
    *   Shepherd orchestration environment.
    * @param \Drupal\shp_custom\Service\Site $site
    *   Shepherd custom site.
+   * @param \Drupal\Core\Messenger\MessengerInterface $messenger
+   *   Messenger service.
    */
-  public function __construct(Environment $environment, Site $site) {
+  public function __construct(Environment $environment, Site $site, MessengerInterface $messenger) {
     $this->environment = $environment;
     $this->site = $site;
+    $this->messenger = $messenger;
   }
 
   /**
@@ -60,7 +71,8 @@ class EnvironmentPromoteForm extends FormBase {
   public static function create(ContainerInterface $container) {
     return new static(
       $container->get('shp_orchestration.environment'),
-      $container->get('shp_custom.site')
+      $container->get('shp_custom.site'),
+      $container->get('messenger')
     );
   }
 
@@ -116,6 +128,7 @@ class EnvironmentPromoteForm extends FormBase {
     ];
 
     // @todo everything is exclusive for now, implement non-exclusive?
+    // I.e. exlcusive means routing traffic to more than one deployment.
     //$form['exclusive'] = [
     //  '#title' => $this->t('Make this environment the exclusive destination?'),
     //  '#type' => 'checkbox',
@@ -144,18 +157,18 @@ class EnvironmentPromoteForm extends FormBase {
     $exclusive = TRUE; // $form_state->getValue('exclusive');
 
     if ($this->environment->promoted($site, $environment, $exclusive)) {
-      drupal_set_message($this->t('Promoted %environment for %site successfully', [
+      $this->messenger->addStatus($this->t('Promoted %environment for %site successfully', [
         '%environment' => $environment->getTitle(),
         '%site' => $site->getTitle(),
       ]));
       $this->site->setGoLiveDate($environment);
     }
     else {
-      drupal_set_message($this->t('Failed to promote %environment for %site',
+      $this->messenger->addError($this->t('Failed to promote %environment for %site',
         [
           '%environment' => $environment->getTitle(),
           '%site' => $site->getTitle(),
-        ]), 'error');
+        ]));
     }
 
     $form_state->setRedirect("entity.node.canonical", ['node' => $site->id()]);

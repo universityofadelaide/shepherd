@@ -3,6 +3,7 @@
 namespace Drupal\shp_orchestration\Plugin\OrchestrationProvider;
 
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\Url;
 use Drupal\node\Entity\Node;
 use Drupal\shp_custom\Service\StringGenerator;
@@ -41,6 +42,13 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
   protected $stringGenerator;
 
   /**
+   * Messenger service.
+   *
+   * @var \Drupal\Core\Messenger\MessengerInterface
+   */
+  protected $messenger;
+
+  /**
    * {@inheritdoc}
    */
   public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityTypeManagerInterface $entity_type_manager) {
@@ -63,21 +71,26 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       $plugin_id,
       $plugin_definition
     );
-    $instance->setStringGenerator($container->get('shp_custom.string_generator'));
+    $instance->injectServices(
+      $container->get('shp_custom.string_generator'),
+      $container->get('messenger')
+    );
     return $instance;
   }
 
   /**
-   * Inject string generator to this plugin without changing base constructor.
+   * Inject services to this plugin without changing base constructor.
    *
    * @param \Drupal\shp_custom\Service\StringGenerator $string_generator
    *   Shepherd custom string generator.
+   * @param \Drupal\Core\Messenger\MessengerInterface $messenger
+   *   Messenger service.
    *
-   * @todo: This really is just a stop-gap until we properly refactor our
-   * services and functions.
+   * @todo: This really is just a stop-gap until we properly refactor.
    */
-  public function setStringGenerator(StringGenerator $string_generator) {
+  public function injectServices(StringGenerator $string_generator, MessengerInterface $messenger) {
     $this->stringGenerator = $string_generator;
+    $this->messenger = $messenger;
   }
 
   /**
@@ -263,7 +276,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
         $this->client->instantiateDeploymentConfig($deployment_name);
       }
       else {
-        drupal_set_message(t('Build not yet complete, manual triggering of deployment will be required.'));
+        $this->messenger->addStatus(t('Build not yet complete, manual triggering of deployment will be required.'));
       }
     }
 
@@ -1000,7 +1013,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     ]);
 
     // @todo Add handlers for other reasons for failure. Add as required.
-    drupal_set_message(t("An error occurred while communicating with OpenShift. %reason", ['%reason' => $reason]), 'error');
+    $this->messenger->addError(t("An error occurred while communicating with OpenShift. %reason", ['%reason' => $reason]));
   }
 
   /**

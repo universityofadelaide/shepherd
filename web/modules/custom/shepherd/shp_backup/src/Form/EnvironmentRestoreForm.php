@@ -2,8 +2,10 @@
 
 namespace Drupal\shp_backup\Form;
 
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\node\Entity\Node;
 use Drupal\node\NodeInterface;
 use Drupal\shp_backup\Service\Backup;
@@ -26,13 +28,33 @@ class EnvironmentRestoreForm extends FormBase {
   protected $backup;
 
   /**
+   * Messenger.
+   *
+   * @var \Drupal\Core\Messenger\MessengerInterface
+   */
+  protected $messenger;
+
+  /**
+   * Entity type manager.
+   *
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
+   */
+  protected $entityTypeManager;
+
+  /**
    * EnvironmentRestoreForm constructor.
    *
    * @param \Drupal\shp_backup\Service\Backup $backup
    *   The backup service.
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
+   *   Entity type manager.
+   * @param \Drupal\Core\Messenger\MessengerInterface $messenger
+   *   Messenger service.
    */
-  public function __construct(Backup $backup) {
-    $this->backup = $backup;
+  public function __construct(Backup $backup, EntityTypeManagerInterface $entity_type_manager, MessengerInterface $messenger) {
+    $this->backup            = $backup;
+    $this->entityTypeManager = $entity_type_manager;
+    $this->messenger         = $messenger;
   }
 
   /**
@@ -40,7 +62,9 @@ class EnvironmentRestoreForm extends FormBase {
    */
   public static function create(ContainerInterface $container) {
     return new static(
-      $container->get('shp_backup.backup')
+      $container->get('shp_backup.backup'),
+      $container->get('entity_type.manager'),
+      $container->get('messenger')
     );
   }
 
@@ -111,21 +135,21 @@ class EnvironmentRestoreForm extends FormBase {
     $site = $form_state->get('site');
     $environment = $form_state->get('environment');
 
-    $backup = Node::load($form_state->getValue('backup'));
+    $backup = $this->entityTypeManager->getStorage('node')->load($form_state->getValue('backup'));
 
     // Set the backup to restore from.
     $status = $this->backup->restore($backup, $environment);
 
     if ($status) {
-      drupal_set_message($this->t('Restore has been queued for %title', [
+      $this->messenger->addStatus($this->t('Restore has been queued for %title', [
         '%title' => $environment->getTitle(),
       ]));
     }
     else {
-      drupal_set_message($this->t('Restore failed. Could not find any instances for %title',
+      $this->messenger->addError($this->t('Restore failed. Could not find any instances for %title',
         [
           '%title' => $environment->getTitle(),
-        ]), 'error');
+        ]));
     }
 
     $form_state->setRedirect("entity.node.canonical", ['node' => $site->id()]);

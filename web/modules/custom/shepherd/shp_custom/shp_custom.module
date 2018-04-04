@@ -211,13 +211,12 @@ function shp_custom_comment_insert(EntityInterface $entity) {
     $result = \Drupal::service('plugin.manager.mail')->mail('shp_custom', 'shp_site', $author_email, $langcode, $mail_message);
 
     if ($result['result'] !== TRUE) {
-      drupal_set_message(t('There was an issue sending an email notification to %email with message %msg', ['%email' => $author_email, '%msg' => $entity->comment_body->value]), 'error');
+      \Drupal::service('messenger')->addError(t('There was an issue sending an email notification to %email with message %msg', ['%email' => $author_email, '%msg' => $entity->comment_body->value]));
       return;
     }
 
-    drupal_set_message(t('An email notification has been sent to %user', ['%user' => $author->getAccountName()]));
+    \Drupal::service('messenger')->addStatus(t('An email notification has been sent to %user', ['%user' => $author->getAccountName()]));
   }
-
 }
 
 /**
