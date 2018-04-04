@@ -110,12 +110,6 @@ function shp_orchestration_shp_env_vars(NodeInterface $environment) {
     ->get('entity')
     ->getTarget()
     ->getValue();
-  /** @var Drupal\Node\NodeInterface $project */
-  $project = $site->field_shp_project
-    ->first()
-    ->get('entity')
-    ->getTarget()
-    ->getValue();
 
   // Generate default environment variables.
   $env_vars = [

@@ -16,8 +16,6 @@ function shp_redis_support_shp_env_vars(NodeInterface $environment) {
   $orchestration_provider = \Drupal::service('plugin.manager.orchestration_provider')
     ->getProviderInstance();
   if ($orchestration_provider->getPluginId() === 'openshift_with_redis') {
-    $site = \Drupal::service('shp_custom.environment')->getSite($environment);
-    $project = \Drupal::service('shp_custom.site')->getProject($site);
     $deployment_name = $orchestration_provider::generateDeploymentName($environment->id());
     $env_vars['REDIS_ENABLED'] = '1';
     $env_vars['REDIS_HOST'] = $deployment_name . '-redis';

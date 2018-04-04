@@ -57,6 +57,8 @@ class Environment extends EntityActionBase {
    *   Environment service.
    * @param \Drupal\shp_custom\Service\Site $site
    *   Site service.
+   * @param \Symfony\Component\EventDispatcher\EventDispatcherInterface $event_dispatcher
+   *   Event dispatcher.
    */
   public function __construct(OrchestrationProviderPluginManager $orchestrationProviderPluginManager, Configuration $configuration, EnvironmentEntity $environment, SiteEntity $site, EventDispatcherInterface $event_dispatcher) {
     parent::__construct($orchestrationProviderPluginManager);
