@@ -22,7 +22,7 @@ class SiteUserRoles implements ContainerInjectionInterface {
   protected $entityTypeManager;
 
   /**
-   * Class constructor.
+   * {@inheritdoc}
    */
   public function __construct(EntityTypeManagerInterface $entityTypeManager) {
     $this->entityTypeManager = $entityTypeManager;
@@ -33,7 +33,6 @@ class SiteUserRoles implements ContainerInjectionInterface {
    */
   public static function create(ContainerInterface $container) {
     return new static(
-      // Load the service required to construct this class.
       $container->get('entity.manager')
     );
   }

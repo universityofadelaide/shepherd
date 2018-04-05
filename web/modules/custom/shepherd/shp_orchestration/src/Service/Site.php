@@ -12,20 +12,19 @@ use Drupal\shp_orchestration\OrchestrationProviderPluginManager;
 class Site extends EntityActionBase {
 
   /**
-   * @var \Drupal\shp_orchestration\OrchestrationProviderPluginManager
-   */
-  private $orchestrationProviderPluginManager;
-
-  /**
+   * Site service.
+   *
    * @var \Drupal\shp_custom\Service\Site
    */
-  private $siteEntity;
+  protected $siteEntity;
 
   /**
    * Shepherd constructor.
    *
    * @param \Drupal\shp_orchestration\OrchestrationProviderPluginManager $orchestrationProviderPluginManager
+   *   Orchestration provider plugin manager.
    * @param \Drupal\shp_custom\Service\Site $site
+   *   Site service.
    */
   public function __construct(OrchestrationProviderPluginManager $orchestrationProviderPluginManager, SiteEntity $site) {
     parent::__construct($orchestrationProviderPluginManager);
@@ -36,8 +35,10 @@ class Site extends EntityActionBase {
    * Tell the active orchestration provider a project was created.
    *
    * @param \Drupal\node\NodeInterface $site
+   *   Site.
    *
    * @return bool
+   *   True on success.
    */
   public function created(NodeInterface $site) {
     $project = $this->siteEntity->getProject($site);
@@ -53,11 +54,13 @@ class Site extends EntityActionBase {
   /**
    * Tell the active orchestration provider a project was updated.
    *
-   * @param \Drupal\node\NodeInterface $node
+   * @param \Drupal\node\NodeInterface $site
+   *   Site.
    *
    * @return bool
+   *   True on success.
    */
-  public function updated(NodeInterface $node) {
+  public function updated(NodeInterface $site) {
     // @todo implement me as well.
     return TRUE;
   }
@@ -66,8 +69,10 @@ class Site extends EntityActionBase {
    * Tell the active orchestration provider a project was deleted.
    *
    * @param \Drupal\node\NodeInterface $site
+   *   Site.
    *
    * @return bool
+   *   True on success.
    */
   public function deleted(NodeInterface $site) {
     $project = $this->siteEntity->getProject($site);

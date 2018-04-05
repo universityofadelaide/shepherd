@@ -33,18 +33,20 @@ class Project extends EntityActionBase {
   /**
    * Tell the active orchestration provider a project was created.
    *
-   * @param \Drupal\node\NodeInterface $node
+   * @param \Drupal\node\NodeInterface $project
+   *   Project.
    *
    * @return bool
+   *   True on success.
    */
-  public function created(NodeInterface $node) {
-    $environment_variables = $this->configuration->getProjectEnvironmentVariables($node);
+  public function created(NodeInterface $project) {
+    $environment_variables = $this->configuration->getProjectEnvironmentVariables($project);
     return $this->orchestrationProviderPlugin->createdProject(
-      $node->getTitle(),
-      $node->field_shp_builder_image->value,
-      $node->field_shp_git_repository->value,
-      $node->field_shp_git_default_ref->value,
-      $node->field_shp_build_secret->value,
+      $project->getTitle(),
+      $project->field_shp_builder_image->value,
+      $project->field_shp_git_repository->value,
+      $project->field_shp_git_default_ref->value,
+      $project->field_shp_build_secret->value,
       $environment_variables
     );
   }
@@ -52,18 +54,20 @@ class Project extends EntityActionBase {
   /**
    * Tell the active orchestration provider a project was updated.
    *
-   * @param \Drupal\node\NodeInterface $node
+   * @param \Drupal\node\NodeInterface $project
+   *   Project.
    *
    * @return bool
+   *   True on success.
    */
-  public function updated(NodeInterface $node) {
-    $environment_variables = $this->configuration->getProjectEnvironmentVariables($node);
+  public function updated(NodeInterface $project) {
+    $environment_variables = $this->configuration->getProjectEnvironmentVariables($project);
     return $this->orchestrationProviderPlugin->updatedProject(
-      $node->getTitle(),
-      $node->field_shp_builder_image->value,
-      $node->field_shp_git_repository->value,
+      $project->getTitle(),
+      $project->field_shp_builder_image->value,
+      $project->field_shp_git_repository->value,
       'master',
-      $node->field_shp_build_secret->value,
+      $project->field_shp_build_secret->value,
       $environment_variables
     );
   }
@@ -71,11 +75,13 @@ class Project extends EntityActionBase {
   /**
    * Tell the active orchestration provider a project was deleted.
    *
-   * @param \Drupal\node\NodeInterface $node
+   * @param \Drupal\node\NodeInterface $project
+   *   Project.
    *
    * @return bool
+   *   True on success.
    */
-  public function deleted(NodeInterface $node) {
+  public function deleted(NodeInterface $project) {
     // @todo implement me.
     return TRUE;
   }

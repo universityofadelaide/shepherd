@@ -1,0 +1,6 @@
+services:
+  shp_orchestration.commands:
+    class: \Drupal\shp_orchestration\Commands\ShpOrchestrationCommands
+    arguments: [ '@shp_orchestration.job_queue' ]
+    tags:
+      - { name: drush.command }

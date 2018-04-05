@@ -5,7 +5,7 @@ namespace Drupal\shp_backup\Form;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Session\AccountInterface;
+use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\node\NodeInterface;
 use Drupal\shp_backup\Service\Backup;
@@ -45,11 +45,11 @@ class EnvironmentBackupForm extends FormBase {
   protected $token;
 
   /**
-   * Used to identify who is creating the backup.
+   * Messenger.
    *
-   * @var \Drupal\Core\Session\AccountInterface
+   * @var \Drupal\Core\Messenger\MessengerInterface
    */
-  protected $current_user;
+  protected $messenger;
 
   /**
    * EnvironmentBackupForm constructor.
@@ -60,14 +60,14 @@ class EnvironmentBackupForm extends FormBase {
    *   Backup service.
    * @param \Drupal\token\TokenInterface $token
    *   Token service.
-   * @param \Drupal\Core\Session\AccountInterface $current_user
-   *   Current user.
+   * @param \Drupal\Core\Messenger\MessengerInterface $messenger
+   *   Messenger service.
    */
-  public function __construct(ConfigFactoryInterface $config, Backup $backup, TokenInterface $token, AccountInterface $current_user) {
-    $this->config = $config;
-    $this->backup = $backup;
-    $this->token = $token;
-    $this->current_user = $current_user;
+  public function __construct(ConfigFactoryInterface $config, Backup $backup, TokenInterface $token, MessengerInterface $messenger) {
+    $this->config    = $config;
+    $this->backup    = $backup;
+    $this->token     = $token;
+    $this->messenger = $messenger;
   }
 
   /**
@@ -78,7 +78,7 @@ class EnvironmentBackupForm extends FormBase {
       $container->get('config.factory'),
       $container->get('shp_backup.backup'),
       $container->get('token'),
-      $container->get('current_user')
+      $container->get('messenger')
     );
   }
 
@@ -141,17 +141,17 @@ class EnvironmentBackupForm extends FormBase {
     $environment = $form_state->get('environment');
 
     // Call the backup service to start a backup and update the backup node.
-    if ($backup = $this->backup->createNode($environment, $form_state->getValue('backup_title'))) {
+    if ($this->backup->createNode($environment, $form_state->getValue('backup_title'))) {
 
-      drupal_set_message($this->t('Backup has been queued for %title', [
+      $this->messenger->addStatus($this->t('Backup has been queued for %title', [
         '%title' => $form_state->get('environment')->getTitle(),
       ]));
     }
     else {
-      drupal_set_message($this->t('Backup failed for %title',
+      $this->messenger->addError($this->t('Backup failed for %title',
         [
           '%title' => $form_state->get('environment')->getTitle(),
-        ]), 'error');
+        ]));
     }
 
     $form_state->setRedirect("entity.node.canonical", ['node' => $site->id()]);

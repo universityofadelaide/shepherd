@@ -3,6 +3,7 @@
 namespace Drupal\shp_orchestration;
 
 use Drupal\Core\Cache\CacheBackendInterface;
+use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Plugin\DefaultPluginManager;
 use Drupal\shp_orchestration\Annotation\OrchestrationProvider;
@@ -22,6 +23,14 @@ class OrchestrationProviderPluginManager extends DefaultPluginManager implements
   protected $providerInstance;
 
   /**
+   * Config factory.
+   *
+   * @var \Drupal\Core\Config\ConfigFactoryInterface
+   *   Config Factory.
+   */
+  protected $configFactory;
+
+  /**
    * Creates the discovery object.
    *
    * @param \Traversable $namespaces
@@ -31,8 +40,10 @@ class OrchestrationProviderPluginManager extends DefaultPluginManager implements
    *   Cache backend instance to use.
    * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
    *   The module handler to invoke the alter hook with.
+   * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
+   *   Config factory.
    */
-  public function __construct(\Traversable $namespaces, CacheBackendInterface $cache_backend, ModuleHandlerInterface $module_handler) {
+  public function __construct(\Traversable $namespaces, CacheBackendInterface $cache_backend, ModuleHandlerInterface $module_handler, ConfigFactoryInterface $config_factory) {
 
     $subdir = 'Plugin/OrchestrationProvider';
     $plugin_interface = OrchestrationProviderInterface::class;
@@ -40,14 +51,14 @@ class OrchestrationProviderPluginManager extends DefaultPluginManager implements
     parent::__construct($subdir, $namespaces, $module_handler, $plugin_interface, $plugin_definition_annotation_name);
     $this->alterInfo('shp_orchestration_orchestration_provider_info');
     $this->setCacheBackend($cache_backend, 'shp_orchestration_orchestration_provider');
+    $this->configFactory = $config_factory;
   }
 
   /**
    * {@inheritdoc}
    */
   public function getSelectedProvider() {
-    $config_factory = \Drupal::service('config.factory');
-    $selected_provider = $config_factory->get('shp_orchestration.settings')->get('selected_provider');
+    $selected_provider = $this->configFactory->get('shp_orchestration.settings')->get('selected_provider');
     $definitions = $this->getDefinitions();
     return $definitions[$selected_provider];
   }

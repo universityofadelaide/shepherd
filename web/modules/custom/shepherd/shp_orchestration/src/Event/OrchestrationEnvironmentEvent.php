@@ -62,9 +62,9 @@ class OrchestrationEnvironmentEvent extends Event {
    *   The deployment name.
    * @param \Drupal\node\NodeInterface $site
    *   The site this environment is for.
-   * @param \Drupal\node\Entity\NodeInterface $environment
+   * @param \Drupal\node\NodeInterface $environment
    *   The environment record.
-   * @param \Drupal\node\Entity\NodeInterface $project
+   * @param \Drupal\node\NodeInterface $project
    *   The project for this environment.
    */
   public function __construct(OrchestrationProviderInterface $orchestrationProvider, string $deploymentName, NodeInterface $site = NULL, NodeInterface $environment = NULL, NodeInterface $project = NULL) {
@@ -118,7 +118,7 @@ class OrchestrationEnvironmentEvent extends Event {
   /**
    * Get the site.
    *
-   * @return \Drupal\node\Entity\Node
+   * @return \Drupal\node\NodeInterface
    *   Site node.
    */
   public function getSite() {
@@ -128,7 +128,7 @@ class OrchestrationEnvironmentEvent extends Event {
   /**
    * Get the environment record.
    *
-   * @return \Drupal\node\Entity\Node
+   * @return \Drupal\node\NodeInterface
    *   Environment node.
    */
   public function getEnvironment() {
@@ -138,10 +138,11 @@ class OrchestrationEnvironmentEvent extends Event {
   /**
    * Get the project for this environment.
    *
-   * @return \Drupal\node\Entity\Node
+   * @return \Drupal\node\NodeInterface
    *   Project node.
    */
   public function getProject() {
     return $this->project;
   }
+
 }

@@ -1,6 +1,0 @@
-shp_drush_aliases.drush_aliases:
-  path: '/node/{nid}/drush-aliases'
-  defaults:
-    _controller: '\Drupal\shp_drush_aliases\Controller\SiteAliasesController::siteAliases'
-  requirements:
-    _permission: 'access content'

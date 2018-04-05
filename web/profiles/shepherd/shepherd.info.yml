@@ -60,7 +60,6 @@ dependencies:
   - shp_content_types
   - shp_custom
   - shp_database_provisioner
-  - shp_drush_aliases
   - shp_orchestration
   - shp_roles
   - shp_redis_support

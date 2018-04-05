@@ -122,7 +122,7 @@ function shp_content_types_form_node_form_alter(&$form, FormStateInterface $form
     $form['field_shp_readiness_probe_params']['#states'] = [
       'invisible' => [
         ':input[name="field_shp_readiness_probe_type"]' => [
-          ['value' => '_none'], ['value' => 'tcpSocket']
+          ['value' => '_none'], ['value' => 'tcpSocket'],
         ],
       ],
     ];
@@ -130,7 +130,7 @@ function shp_content_types_form_node_form_alter(&$form, FormStateInterface $form
       'invisible' => [
         ':input[name="field_shp_readiness_probe_type"]' => [
           ['value' => '_none'], ['value' => 'exec'],
-        ]
+        ],
       ],
     ];
   }

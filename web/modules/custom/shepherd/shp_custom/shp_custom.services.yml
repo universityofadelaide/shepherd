@@ -3,8 +3,7 @@ services:
     class: Drupal\shp_custom\Service\StringGenerator
   shp_custom.site:
     class: Drupal\shp_custom\Service\Site
-    arguments:
-      - '@entity_type.manager'
+    arguments: ['@entity_type.manager', '@messenger']
   shp_custom.environment:
     class: Drupal\shp_custom\Service\Environment
     arguments:

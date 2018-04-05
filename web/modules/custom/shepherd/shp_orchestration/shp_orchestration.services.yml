@@ -2,6 +2,7 @@ services:
   plugin.manager.orchestration_provider:
     class: Drupal\shp_orchestration\OrchestrationProviderPluginManager
     parent: default_plugin_manager
+    arguments: ['@config.factory']
   shp_orchestration.configuration:
     class: Drupal\shp_orchestration\Service\Configuration
     arguments: ['@module_handler', '@shp_custom.environment', '@shp_custom.site']
@@ -19,7 +20,7 @@ services:
     arguments: ['@plugin.manager.orchestration_provider', '@shp_orchestration.configuration']
   shp_orchestration.environment:
     class: Drupal\shp_orchestration\Service\Environment
-    arguments: ['@plugin.manager.orchestration_provider', '@shp_orchestration.configuration', '@shp_custom.environment', '@shp_custom.site']
+    arguments: ['@plugin.manager.orchestration_provider', '@shp_orchestration.configuration', '@shp_custom.environment', '@shp_custom.site', '@event_dispatcher']
   shp_orchestration.status:
     class: Drupal\shp_orchestration\Service\Status
     arguments: ['@plugin.manager.orchestration_provider','@shp_custom.environment', '@shp_custom.site']

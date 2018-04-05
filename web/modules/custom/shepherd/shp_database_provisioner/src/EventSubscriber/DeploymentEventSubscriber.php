@@ -6,6 +6,9 @@ use Drupal\shp_orchestration\Event\OrchestrationEnvironmentEvent;
 use Drupal\shp_orchestration\Event\OrchestrationEvents;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
+/**
+ * Class DeploymentEventSubscriber.
+ */
 class DeploymentEventSubscriber implements EventSubscriberInterface {
 
   /**
@@ -18,10 +21,12 @@ class DeploymentEventSubscriber implements EventSubscriberInterface {
   }
 
   /**
-   * Populate the database for an environment after its been created
-   * using the project default sql dump.
+   * Populate the database for an environment.
+   *
+   * I.e. after its been created, using the project default sql dump.
    *
    * @param \Drupal\shp_orchestration\Event\OrchestrationEnvironmentEvent $event
+   *   Orchestration environment event.
    */
   public function databasePopulate(OrchestrationEnvironmentEvent $event) {
     $orchestration_provider = $event->getOrchestrationProvider();
@@ -42,4 +47,5 @@ class DeploymentEventSubscriber implements EventSubscriberInterface {
       );
     }
   }
+
 }

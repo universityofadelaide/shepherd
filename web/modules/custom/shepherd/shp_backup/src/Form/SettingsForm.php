@@ -24,7 +24,9 @@ class SettingsForm extends ConfigFormBase {
    * ShepherdSettings constructor.
    *
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
+   *   Config factory.
    * @param \Drupal\Core\Render\RendererInterface $renderer
+   *   Renderer.
    */
   public function __construct(ConfigFactoryInterface $config_factory, RendererInterface $renderer) {
     parent::__construct($config_factory);

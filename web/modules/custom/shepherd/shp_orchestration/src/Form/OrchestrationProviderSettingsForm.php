@@ -4,7 +4,6 @@ namespace Drupal\shp_orchestration\Form;
 
 use Drupal\Component\Plugin\PluginManagerInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
-use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -18,8 +17,6 @@ class OrchestrationProviderSettingsForm extends ConfigFormBase {
 
   protected $orchestrationProviderManager;
 
-  protected $entityTypeManager;
-
   /**
    * OrchestrationProviderSettingsForm constructor.
    *
@@ -27,16 +24,10 @@ class OrchestrationProviderSettingsForm extends ConfigFormBase {
    *   ConfigFactoryInterface.
    * @param \Drupal\Component\Plugin\PluginManagerInterface $orchestration_provider_manager
    *   PluginManagerInterface.
-   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
-   *   EntityTypeManagerInterface.
    */
-  public function __construct(ConfigFactoryInterface $config_factory,
-                              PluginManagerInterface $orchestration_provider_manager,
-                              EntityTypeManagerInterface $entity_type_manager) {
+  public function __construct(ConfigFactoryInterface $config_factory, PluginManagerInterface $orchestration_provider_manager) {
     parent::__construct($config_factory);
-
     $this->orchestrationProviderManager = $orchestration_provider_manager;
-    $this->entityTypeManager = $entity_type_manager;
   }
 
   /**
@@ -45,8 +36,7 @@ class OrchestrationProviderSettingsForm extends ConfigFormBase {
   public static function create(ContainerInterface $container) {
     return new static (
       $container->get('config.factory'),
-      $container->get('plugin.manager.orchestration_provider'),
-      $container->get('entity_type.manager')
+      $container->get('plugin.manager.orchestration_provider')
     );
   }
 
