@@ -48,14 +48,14 @@ abstract class BackupQueueWorkerBase extends QueueWorkerBase implements Containe
    *   The node storage.
    * @param \Drupal\shp_backup\Service\Backup $backup
    *   The backup service.
-   * @param \Drupal\shp_orchestration\Service\ActiveJobManager $activeJobManager
+   * @param \Drupal\shp_orchestration\Service\ActiveJobManager $active_job_manager
    *   The active job manager service.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityStorageInterface $node_storage, Backup $backup, ActiveJobManager $activeJobManager) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityStorageInterface $node_storage, Backup $backup, ActiveJobManager $active_job_manager) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->nodeStorage = $node_storage;
     $this->backup = $backup;
-    $this->activeJobManager = $activeJobManager;
+    $this->activeJobManager = $active_job_manager;
   }
 
   /**

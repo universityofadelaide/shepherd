@@ -4,7 +4,9 @@ namespace Drupal\shp_orchestration\Form;
 
 use Drupal\Core\Entity\EntityForm;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use UniversityOfAdelaide\OpenShift\Client;
 use UniversityOfAdelaide\OpenShift\ClientException;
 
@@ -13,6 +15,32 @@ use UniversityOfAdelaide\OpenShift\ClientException;
  */
 class OpenShiftConfigEntityForm extends EntityForm {
   use StringTranslationTrait;
+
+  /**
+   * Messenger.
+   *
+   * @var \Drupal\Core\Messenger\MessengerInterface
+   */
+  protected $messenger;
+
+  /**
+   * OpenShiftConfigEntityForm constructor.
+   *
+   * @param \Drupal\Core\Messenger\MessengerInterface $messenger
+   *   Messenger service.
+   */
+  public function __construct(MessengerInterface $messenger) {
+    $this->messenger = $messenger;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container) {
+    return new static(
+      $container->get('messenger')
+    );
+  }
 
   /**
    * {@inheritdoc}
@@ -99,10 +127,10 @@ class OpenShiftConfigEntityForm extends EntityForm {
     $entity = $this->entity;
     $status = $entity->save();
     if ($status == SAVED_UPDATED) {
-      drupal_set_message($this->t('OpenShift configuration has been updated'));
+      $this->messenger->addStatus($this->t('OpenShift configuration has been updated'));
     }
     else {
-      drupal_set_message($this->t('OpenShift configuration has been saved'));
+      $this->messenger->addStatus($this->t('OpenShift configuration has been saved'));
     }
   }
 

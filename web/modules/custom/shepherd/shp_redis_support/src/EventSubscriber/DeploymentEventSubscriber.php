@@ -6,6 +6,9 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Drupal\shp_orchestration\Event\OrchestrationEvents;
 use Drupal\shp_orchestration\Event\OrchestrationEnvironmentEvent;
 
+/**
+ * Class DeploymentEventSubscriber.
+ */
 class DeploymentEventSubscriber implements EventSubscriberInterface {
 
   /**
@@ -22,7 +25,7 @@ class DeploymentEventSubscriber implements EventSubscriberInterface {
    * Add a redis pod to an existing environment deployment.
    *
    * @param \Drupal\shp_orchestration\Event\OrchestrationEnvironmentEvent $event
-   *
+   *   Orchestration environment event.
    */
   public function createRedisDeployment(OrchestrationEnvironmentEvent $event) {
     $orchestration_provider = $event->getOrchestrationProvider();
@@ -36,7 +39,7 @@ class DeploymentEventSubscriber implements EventSubscriberInterface {
    * Add a redis pod to an existing environment deployment.
    *
    * @param \Drupal\shp_orchestration\Event\OrchestrationEnvironmentEvent $event
-   *
+   *   Orchestration environment event.
    */
   public function deleteRedisDeployment(OrchestrationEnvironmentEvent $event) {
     $orchestration_provider = $event->getOrchestrationProvider();

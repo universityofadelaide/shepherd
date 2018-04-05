@@ -268,7 +268,7 @@ class Backup {
           'weight'     => 2,
           'url'        => Url::fromRoute('shp_backup.environment-restore-form', [
             'site'        => $site,
-            'environment' => $environment
+            'environment' => $environment,
           ]),
           // Render form in a modal window.
           'attributes' => [
@@ -276,7 +276,7 @@ class Backup {
             'data-dialog-type'    => 'modal',
             'data-dialog-options' => Json::encode([
               'width'  => '50%',
-              'height' => '50%'
+              'height' => '50%',
             ]),
           ],
         ];
