@@ -21,7 +21,7 @@
         "drupal/entity_reference_revisions":             "1.*",
         "drupal/field_group":                            "1.*",
         "drupal/group":                                  "1.*@RC",
-        "drupal/key_value_field":                        "1.*@beta",
+        "drupal/key_value_field":                        "1.*",
         "drupal/log_stdout":                             "1.*",
         "drupal/r4032login":                             "1.*@dev",
         "drupal/redis":                                  "1.*@RC",
