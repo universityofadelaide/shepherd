@@ -8,6 +8,7 @@
 use Drupal\Component\Utility\Html;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Menu\MenuTreeParameters;
 use Drupal\Core\Routing\RouteMatchInterface;
@@ -282,4 +283,13 @@ function shp_custom_generate_unique_short_name($short_name) {
  */
 function shp_custom_set_domain_path(array &$form, FormStateInterface $form_state, $request) {
   return \Drupal::service('shp_custom.environment')->setDomainPath($form, $form_state, $request);
+}
+
+/**
+ * @param EntityTypeInterface[] $entity_types
+ */
+function shp_custom_entity_type_build(&$entity_types) {
+  if (isset($entity_types['group_content'])) {
+    $entity_types['group_content']->setAccessClass('Drupal\shp_custom\Entity\Access\ShepherdGroupContentAccessControlHandler');
+  }
 }
