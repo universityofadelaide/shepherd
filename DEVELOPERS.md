@@ -100,21 +100,22 @@ composer install
 robo build
 ```
 
-Login to OpenShift Web UI using the developer:developer credentials and
-check that MariaDB is running before executing the next command.
+Login to the OpenShift web ui using the `developer:developer` credentials. If you are using `minishift` you easily access the OpenShift web interface by running: 
+```bash
+minishift console
+```
+Note : you will recieve an insecure warning in your browser, don't panic. 
+
+The `robo build` command will automagically create a project called `myproject` and a deployment of `mariadb` for you. 
+Ensure that the `mariadb` application is running before running the next command :
 
 ```bash
 robo dev:content-generate
 ```
 
-Thats it; visit the OpenShift web interface to see a build running and a
-deployment ready to occur when the build finishes. The URL to the web interface
-can be found in the terminal log when Minishift starts. Alternatively, execute
-the following command to open the Minishift console in a browser.
+That's it ! You are now up and running with Shepherd !
 
-```bash
-minishift console
-```
+Visit the OpenShift web interface to see a build running and a deployment ready to occur when the build finishes. 
 
 ## Repository details
 
