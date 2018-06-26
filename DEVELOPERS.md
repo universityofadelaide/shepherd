@@ -105,16 +105,16 @@ Login to the OpenShift web ui using the `developer:developer` credentials. If yo
 ```bash
 minishift console
 ```
-*Note : you will receive an insecure warning in your browser, don't panic.* 
+*Note: you will receive an insecure warning in your browser, don't panic.* 
 
 The `robo build` command will automagically create a project called `myproject` and a deployment of `mariadb` for you. 
-Ensure that the `mariadb` application is running before running the next command :
+Ensure that the `mariadb` application is running before running the next command:
 
 ```bash
 robo dev:content-generate
 ```
 
-That's it ! You are now up and running with Shepherd !
+That's it! You are now up and running with Shepherd!
 
 Visit the OpenShift web interface to see a build running and a deployment ready to occur when the build finishes. 
 
