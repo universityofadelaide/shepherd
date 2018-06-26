@@ -100,11 +100,12 @@ composer install
 robo build
 ```
 
-Login to the OpenShift web ui using the `developer:developer` credentials. If you are using `minishift` you easily access the OpenShift web interface by running: 
+Login to the OpenShift web ui using the `developer:developer` credentials. If you are using `minishift` you can easily access the OpenShift web interface by running: 
+
 ```bash
 minishift console
 ```
-Note : you will recieve an insecure warning in your browser, don't panic. 
+*Note : you will receive an insecure warning in your browser, don't panic.* 
 
 The `robo build` command will automagically create a project called `myproject` and a deployment of `mariadb` for you. 
 Ensure that the `mariadb` application is running before running the next command :
