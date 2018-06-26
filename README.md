@@ -14,4 +14,4 @@ For developing shepherd : [Developer documentation](DEVELOPERS.md)
 
 ## Contributing to Shepherd
 
-Want to get involved ? Contributions are always welcome. Check the [[Contributing guide](CONTRIBUTING.md) for information on how to get involved with the development of Shepherd.
+Want to get involved ? Contributions are always welcome. Check the [Contributing guide](CONTRIBUTING.md) for information on how to get involved with the development of Shepherd.
