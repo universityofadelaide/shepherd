@@ -1,8 +1,12 @@
 # Installation guide
 
-This guide assumes a working knowledge of the `oc` command line tool.
+This guide assumes a working knowledge of the [`oc`](https://docs.openshift.com/online/cli_reference/get_started_cli.html) command line tool.
 
-## Production
+If you are looking for information on how to get a local development environment setup read the [Developers guide](DEVELOPERS.md)
+
+## Prerequisites
+ * A working OpenShift cluster. 
+ * `oc` command line tool installed
 
 ### Create a project 
 Before deploying Shepherd to OpenShift, we must create a project. 
