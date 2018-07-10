@@ -99,7 +99,7 @@ if (!$project = reset($nodes)) {
     'status'                   => 1,
     'title'                    => 'Wordpress example',
     'field_shp_git_repository' => [['value' => $example_repository]],
-    'field_shp_builder_image'  => [['value' => 'uofa/s2i-shepherd-drupal']],
+    'field_shp_builder_image'  => [['value' => 'uofa/s2i-shepherd-wordpress']],
     'field_shp_build_secret'   => [['value' => 'build-key']],
     'field_shp_env_vars'       => [],
   ]);
