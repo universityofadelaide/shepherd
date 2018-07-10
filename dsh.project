@@ -3,9 +3,6 @@
 # Set default type of OpenShift installation if its not already set.
 : ${OPENSHIFT_TYPE:=minishift}
 
-# Set default git repository to install
-: ${DRUPAL_EXAMPLE_REPOSITORY:=https://github.com/universityofadelaide/shepherd-example-drupal.git}
-
 # Password for the mysql server.
 SUPER_SECRET_PASSWORD=super-secret-password
 
