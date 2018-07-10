@@ -4,7 +4,7 @@
 : ${OPENSHIFT_TYPE:=minishift}
 
 # Set default git repository to install
-: ${EXAMPLE_REPOSITORY:=https://github.com/universityofadelaide/shepherd-example-drupal.git}
+: ${DRUPAL_EXAMPLE_REPOSITORY:=https://github.com/universityofadelaide/shepherd-example-drupal.git}
 
 # Password for the mysql server.
 SUPER_SECRET_PASSWORD=super-secret-password
