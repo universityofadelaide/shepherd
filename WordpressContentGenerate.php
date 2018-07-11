@@ -9,6 +9,7 @@ use Drupal\node\Entity\Node;
 use Drupal\shp_orchestration\Entity\OpenShiftConfigEntity;
 use Drupal\shp_redis_support\Entity\OpenShiftWithRedisConfigEntity;
 use Drupal\taxonomy\Entity\Term;
+use Drupal\user\Entity\User;
 
 $domain_name = getenv("OPENSHIFT_DOMAIN") ?: '192.168.99.100.nip.io';
 $openshift_url = getenv("OPENSHIFT_URL") ?: 'https://192.168.99.100:8443';
