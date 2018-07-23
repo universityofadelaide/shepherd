@@ -13,8 +13,8 @@ objects:
     concurrencyPolicy: Forbid
     schedule: '*/1 * * * *'
     suspend: false
-    failedJobHistoryLimit: 5
-    successfulJobHistoryLimit: 5
+    failedJobsHistoryLimit: 5
+    successfulJobsHistoryLimit: 5
     jobTemplate:
       spec:
         template:
@@ -83,8 +83,8 @@ objects:
     concurrencyPolicy: Forbid
     schedule: '*/30 * * * *'
     suspend: false
-    failedJobHistoryLimit: 5
-    successfulJobHistoryLimit: 5
+    failedJobsHistoryLimit: 5
+    successfulJobsHistoryLimit: 5
     jobTemplate:
       spec:
         template:
