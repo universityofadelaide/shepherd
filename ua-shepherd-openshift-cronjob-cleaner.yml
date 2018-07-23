@@ -11,10 +11,10 @@ objects:
     name: shepherd-cronjob-cleaner
   spec:
     concurrencyPolicy: Forbid
-    schedule: '*/10 * * * *'
+    schedule: '5 * * * *'
     suspend: false
-    failedJobHistoryLimit: 3
-    successfulJobHistoryLimit: 3
+    failedJobsHistoryLimit: 3
+    successfulJobsHistoryLimit: 3
     jobTemplate:
       spec:
         template:
