@@ -21,8 +21,6 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 class EnvironmentBackupForm extends FormBase {
 
-  use StringTranslationTrait;
-
   /**
    * For retrieving config.
    *

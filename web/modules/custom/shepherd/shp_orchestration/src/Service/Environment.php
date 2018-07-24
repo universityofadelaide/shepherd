@@ -158,7 +158,7 @@ class Environment extends EntityActionBase {
 
     // If this is a production environment, promote it immediately.
     $environment_term = Term::load($node->field_shp_environment_type->target_id);
-    if ($environment_term->field_shp_protect->value == TRUE) {
+    if ($environment_term->field_shp_protect->value === TRUE) {
       $this->promoted($site, $node, TRUE, FALSE);
     }
 
@@ -297,14 +297,16 @@ class Environment extends EntityActionBase {
       ->condition('vid', 'shp_environment_types')
       ->condition('field_shp_protect', FALSE)
       ->execute();
-    $demoted_term = reset(Term::loadMultiple($ids));
+    $terms = Term::loadMultiple($ids);
+    $demoted_term = reset($terms);
 
     // Load the taxonomy term that has protect enabled.
     $ids = \Drupal::entityQuery('taxonomy_term')
       ->condition('vid', 'shp_environment_types')
       ->condition('field_shp_protect', TRUE)
       ->execute();
-    $promoted_term = reset(Term::loadMultiple($ids));
+    $terms = Term::loadMultiple($ids);
+    $promoted_term = reset($terms);
 
     // Demote all current prod environments.
     $old_promoted = \Drupal::entityQuery('node')
@@ -318,7 +320,7 @@ class Environment extends EntityActionBase {
     }
 
     // Finally Update the environment that was promoted if we need to.
-    if ($environment->field_shp_environment_type->target_id != $promoted_term->id()) {
+    if ($environment->field_shp_environment_type->target_id !== $promoted_term->id()) {
       $environment->field_shp_environment_type = [['target_id' => $promoted_term->id()]];
       $environment->save();
     }

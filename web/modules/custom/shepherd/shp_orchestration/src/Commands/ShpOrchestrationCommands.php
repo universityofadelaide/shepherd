@@ -24,6 +24,7 @@ class ShpOrchestrationCommands extends DrushCommands {
    *   The job queue.
    */
   public function __construct(JobQueue $jobQueue) {
+    parent::__construct();
     $this->jobQueue = $jobQueue;
   }
 

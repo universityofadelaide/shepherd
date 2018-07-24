@@ -58,7 +58,12 @@ class VueTable extends StylePluginBase {
 
     $form['field_options'] = [
       '#type' => 'table',
-      '#header' => ['Name', 'Url endpoint', 'Javascript property', 'Make active'],
+      '#header' => [
+        'Name',
+        'Url endpoint',
+        'Javascript property',
+        'Make active',
+      ],
     ];
 
     // Loop over all of the fields.

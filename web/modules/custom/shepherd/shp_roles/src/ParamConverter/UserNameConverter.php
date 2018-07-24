@@ -18,16 +18,20 @@ class UserNameConverter extends EntityConverter {
    */
   public function convert($value, $definition, $name, array $defaults) {
     $entity_type_id = $this->getEntityTypeFromDefaults($definition, $name, $defaults);
-    if ($storage = $this->entityManager->getStorage($entity_type_id)) {
-      $entities = $storage->loadByProperties(['name' => $value]);
-      $entity = reset($entities);
-      // If the entity type is translatable, ensure we return the proper
-      // translation object for the current context.
-      if ($entity instanceof EntityInterface && $entity instanceof TranslatableInterface) {
-        $entity = $this->entityManager->getTranslationFromContext($entity, NULL, ['operation' => 'entity_upcast']);
-      }
-      return $entity;
+    $storage = $this->entityManager->getStorage($entity_type_id);
+    $entities = $storage->loadByProperties(['name' => $value]);
+    $entity = reset($entities);
+    if ($entity === FALSE) {
+      return NULL;
     }
+
+    // If the entity type is translatable, ensure we return the proper
+    // translation object for the current context.
+    if ($entity instanceof EntityInterface && $entity instanceof TranslatableInterface) {
+      $entity = $this->entityManager->getTranslationFromContext($entity, NULL, ['operation' => 'entity_upcast']);
+    }
+
+    return $entity;
   }
 
   /**
@@ -38,7 +42,7 @@ class UserNameConverter extends EntityConverter {
       $entity_type_id = 'user';
       if (strpos($definition['type'], '{') !== FALSE) {
         $entity_type_slug = substr($entity_type_id, 1, -1);
-        return $name != $entity_type_slug && in_array($entity_type_slug, $route->compile()->getVariables(), TRUE);
+        return $name !== $entity_type_slug && in_array($entity_type_slug, $route->compile()->getVariables(), TRUE);
       }
       return $this->entityManager->hasDefinition($entity_type_id);
     }

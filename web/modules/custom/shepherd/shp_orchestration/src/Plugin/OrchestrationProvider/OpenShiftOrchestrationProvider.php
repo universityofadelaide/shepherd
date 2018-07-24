@@ -818,7 +818,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
           'valueFrom' => [
             'secretKeyRef' => [
               // If secret is '_default' use the deployment config secret.
-              'name' => $value['secret'] == '_default' ? $deployment_name : $value['secret'],
+              'name' => $value['secret'] === '_default' ? $deployment_name : $value['secret'],
               'key' => $value['secret_key'],
             ],
           ],

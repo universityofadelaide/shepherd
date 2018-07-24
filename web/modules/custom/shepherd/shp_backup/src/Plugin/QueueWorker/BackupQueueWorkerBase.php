@@ -74,8 +74,14 @@ abstract class BackupQueueWorkerBase extends QueueWorkerBase implements Containe
 
   /**
    * Get the job name from the response.
+   *
+   * @param array $response_body
+   *   OpenShift response body.
+   *
+   * @return string|bool
+   *   The name of the job, else FALSE.
    */
-  public function getJobName($response_body) {
+  public function getJobName(array $response_body) {
     // @todo Move to more generic location.
     // @todo Fix OpenShift specific structure leaking here.
     if (array_key_exists('metadata', $response_body) && array_key_exists('name', $response_body['metadata'])) {

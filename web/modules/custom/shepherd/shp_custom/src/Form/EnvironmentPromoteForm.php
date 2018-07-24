@@ -22,8 +22,6 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 class EnvironmentPromoteForm extends FormBase {
 
-  use StringTranslationTrait;
-
   /**
    * Shepherd orchestration environment.
    *

@@ -111,7 +111,7 @@ function shp_custom_node_update(NodeInterface $node) {
 
   switch ($node->getType()) {
     case 'shp_site':
-      if ($node->moderation_state->value == 'archived') {
+      if ($node->moderation_state->value === 'archived') {
         $backup = \Drupal::service('shp_backup.backup');
         $environments = \Drupal::entityQuery('node')
           ->condition('type', 'shp_environment')
@@ -120,7 +120,7 @@ function shp_custom_node_update(NodeInterface $node) {
 
         foreach ($environments as $environment_id) {
           $environment = Node::load($environment_id);
-          if ($environment->moderation_state->value != 'archived') {
+          if ($environment->moderation_state->value !== 'archived') {
 
             // Create the backup node and perform a backup.
             $backup->createNode($environment);
