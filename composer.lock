@@ -5089,12 +5089,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/universityofadelaide/openshift-client.git",
-                "reference": "075562906065076c91f9976b4545dff854dde180"
+                "reference": "038c2daa443367f504efd35236b9e0436905fe3c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/universityofadelaide/openshift-client/zipball/075562906065076c91f9976b4545dff854dde180",
-                "reference": "075562906065076c91f9976b4545dff854dde180",
+                "url": "https://api.github.com/repos/universityofadelaide/openshift-client/zipball/038c2daa443367f504efd35236b9e0436905fe3c",
+                "reference": "038c2daa443367f504efd35236b9e0436905fe3c",
                 "shasum": ""
             },
             "require": {
@@ -5126,7 +5126,7 @@
                 }
             ],
             "description": "Simple OpenShift client for PHP.",
-            "time": "2018-02-08T05:40:03+00:00"
+            "time": "2018-08-01T01:56:15+00:00"
         },
         {
             "name": "universityofadelaide/shepherd-drupal-scaffold",
@@ -5349,16 +5349,16 @@
         },
         {
             "name": "zendframework/zend-diactoros",
-            "version": "1.8.2",
+            "version": "1.8.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zendframework/zend-diactoros.git",
-                "reference": "273c18bf6aaab20be9667a3aa4e7702e1e4e7ced"
+                "reference": "72c13834fb3db2a962e913758b384ff2e6425d6e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zendframework/zend-diactoros/zipball/273c18bf6aaab20be9667a3aa4e7702e1e4e7ced",
-                "reference": "273c18bf6aaab20be9667a3aa4e7702e1e4e7ced",
+                "url": "https://api.github.com/repos/zendframework/zend-diactoros/zipball/72c13834fb3db2a962e913758b384ff2e6425d6e",
+                "reference": "72c13834fb3db2a962e913758b384ff2e6425d6e",
                 "shasum": ""
             },
             "require": {
@@ -5371,7 +5371,7 @@
             "require-dev": {
                 "ext-dom": "*",
                 "ext-libxml": "*",
-                "phpunit/phpunit": "^5.7.16 || ^6.0.8",
+                "phpunit/phpunit": "^5.7.16 || ^6.0.8 || ^7.2.7",
                 "zendframework/zend-coding-standard": "~1.0"
             },
             "type": "library",
@@ -5408,7 +5408,7 @@
                 "psr",
                 "psr-7"
             ],
-            "time": "2018-07-19T18:38:31+00:00"
+            "time": "2018-07-24T21:54:38+00:00"
         },
         {
             "name": "zendframework/zend-escaper",
