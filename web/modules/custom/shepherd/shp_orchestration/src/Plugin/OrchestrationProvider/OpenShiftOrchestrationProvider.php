@@ -664,7 +664,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       return FALSE;
     }
 
-    return $this->extractDeploymentConfigStatus($deployment_config);
+    return $deployment_config ? $this->extractDeploymentConfigStatus($deployment_config) : FALSE;
   }
 
   /**
