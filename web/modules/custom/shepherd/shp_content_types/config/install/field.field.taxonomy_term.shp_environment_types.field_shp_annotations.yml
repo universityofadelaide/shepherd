@@ -1,0 +1,20 @@
+langcode: en
+status: true
+dependencies:
+  config:
+  - field.storage.taxonomy_term.field_shp_annotations
+  - taxonomy.vocabulary.shp_environment_types
+  module:
+  - key_value_field
+id: taxonomy_term.shp_environment_types.field_shp_annotations
+field_name: field_shp_annotations
+entity_type: taxonomy_term
+bundle: shp_environment_types
+label: Annotations
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: key_value

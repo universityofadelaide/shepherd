@@ -2,15 +2,32 @@ langcode: en
 status: true
 dependencies:
   config:
-    - field.field.taxonomy_term.shp_environment_types.field_shp_base_domain
-    - field.field.taxonomy_term.shp_environment_types.field_shp_protect
-    - field.field.taxonomy_term.shp_environment_types.field_shp_update_go_live
-    - taxonomy.vocabulary.shp_environment_types
+  - field.field.taxonomy_term.shp_environment_types.field_shp_annotations
+  - field.field.taxonomy_term.shp_environment_types.field_shp_base_domain
+  - field.field.taxonomy_term.shp_environment_types.field_shp_protect
+  - field.field.taxonomy_term.shp_environment_types.field_shp_update_go_live
+  - taxonomy.vocabulary.shp_environment_types
+  module:
+  - key_value_field
 id: taxonomy_term.shp_environment_types.default
 targetEntityType: taxonomy_term
 bundle: shp_environment_types
 mode: default
 content:
+  field_shp_annotations:
+    weight: 5
+    settings:
+      key_label: Key
+      key_size: 60
+      key_placeholder: ''
+      value_label: Value
+      size: 60
+      placeholder: ''
+      description_placeholder: ''
+      description_enabled: false
+    third_party_settings: {  }
+    type: key_value_textfield
+    region: content
   field_shp_base_domain:
     weight: 1
     settings:
