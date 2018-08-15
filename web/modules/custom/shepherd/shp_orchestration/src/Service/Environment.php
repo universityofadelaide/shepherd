@@ -88,6 +88,7 @@ class Environment extends EntityActionBase {
     if (!isset($project) || !isset($site)) {
       return FALSE;
     }
+    $environment_type = $this->environmentEntity->getEnvironmentType($node);
 
     $probes = $this->buildProbes($project);
     $cron_jobs = $this->buildCronJobs($node);
@@ -131,6 +132,13 @@ class Environment extends EntityActionBase {
       $storage_class = Term::load($project->field_shp_storage_class->target_id)->label();
     }
 
+    // Extract and transform the annotations from the environment type.
+    $annotations = $environment_type ? $environment_type->field_shp_annotations->getValue() : [];
+    $annotations = array_combine(
+      array_column($annotations, 'key'),
+      array_column($annotations, 'value')
+    );
+
     $environment = $this->orchestrationProviderPlugin->createdEnvironment(
       $project->getTitle(),
       $site->field_shp_short_name->value,
@@ -149,7 +157,8 @@ class Environment extends EntityActionBase {
       $env_vars,
       $secrets,
       $probes,
-      $cron_jobs
+      $cron_jobs,
+      $annotations
     );
 
     // Allow other modules to react to the Environment creation.
@@ -297,14 +306,16 @@ class Environment extends EntityActionBase {
       ->condition('vid', 'shp_environment_types')
       ->condition('field_shp_protect', FALSE)
       ->execute();
-    $demoted_term = reset(Term::loadMultiple($ids));
+    $terms = Term::loadMultiple($ids);
+    $demoted_term = reset($terms);
 
     // Load the taxonomy term that has protect enabled.
     $ids = \Drupal::entityQuery('taxonomy_term')
       ->condition('vid', 'shp_environment_types')
       ->condition('field_shp_protect', TRUE)
       ->execute();
-    $promoted_term = reset(Term::loadMultiple($ids));
+    $terms = Term::loadMultiple($ids);
+    $promoted_term = reset($terms);
 
     // Demote all current prod environments - for this site!
     $old_promoted = \Drupal::entityQuery('node')

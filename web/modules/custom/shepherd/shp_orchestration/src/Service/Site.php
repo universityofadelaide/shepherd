@@ -42,12 +42,27 @@ class Site extends EntityActionBase {
    */
   public function created(NodeInterface $site) {
     $project = $this->siteEntity->getProject($site);
+
+    // Load the taxonomy term that has protect enabled.
+    $ids = \Drupal::entityQuery('taxonomy_term')
+      ->condition('vid', 'shp_environment_types')
+      ->condition('field_shp_protect', TRUE)
+      ->execute();
+    $promoted_term = reset(Term::loadMultiple($ids));
+    // Extract and transform the annotations from the environment type.
+    $annotations = $promoted_term ? $promoted_term->field_shp_annotations->getValue() : [];
+    $annotations = array_combine(
+      array_column($annotations, 'key'),
+      array_column($annotations, 'value')
+    );
+
     return $this->orchestrationProviderPlugin->createdSite(
       $project->getTitle(),
       $site->field_shp_short_name->value,
       $site->id(),
       $site->field_shp_domain->value,
-      $site->field_shp_path->value
+      $site->field_shp_path->value,
+      $annotations
     );
   }
 

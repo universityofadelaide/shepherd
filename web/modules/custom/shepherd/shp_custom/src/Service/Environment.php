@@ -314,4 +314,25 @@ class Environment {
     return FALSE;
   }
 
+  /**
+   * Retrieve the related Environment type.
+   *
+   * @param \Drupal\node\NodeInterface $environment
+   *   Environment entity.
+   *
+   * @return \Drupal\Core\Entity\EntityInterface|bool
+   *   The environment type term or FALSE.
+   */
+  public function getEnvironmentType(NodeInterface $environment) {
+    if (isset($environment->field_shp_environment_type->target_id)) {
+      return $environment->get('field_shp_environment_type')
+        ->first()
+        ->get('entity')
+        ->getTarget()
+        ->getValue();
+    }
+
+    return FALSE;
+  }
+
 }

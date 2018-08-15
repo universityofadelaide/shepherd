@@ -117,6 +117,8 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
    *   Details of the liveness/readiness probe to use for this deployment.
    * @param array $cron_jobs
    *   An array of cron jobs associated with this environment.
+   * @param array $annotations
+   *   An array of route annotations.
    *
    * @return bool
    *   Returns true if succeeded.
@@ -139,7 +141,8 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
     array $environment_variables = [],
     array $secrets = [],
     array $probes = [],
-    array $cron_jobs = []
+    array $cron_jobs = [],
+    array $annotations = []
   );
 
   /**
@@ -179,6 +182,8 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
    *   Details of the liveness/readiness probe to use for this deployment.
    * @param array $cron_jobs
    *   An array of cron jobs associated with this environment.
+   * @param array $annotations
+   *   An array of route annotations.
    *
    * @return bool
    *   Returns true if succeeded.
@@ -200,7 +205,8 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
     array $environment_variables = [],
     array $secrets = [],
     array $probes = [],
-    array $cron_jobs = []
+    array $cron_jobs = [],
+    array $annotations = []
   );
 
   /**
@@ -278,11 +284,13 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
    *   The domain name of the site.
    * @param string $path
    *   The path of the site.
+   * @param array $annotations
+   *   An array of route annotations.
    *
    * @return bool
    *   Returns true if succeeded.
    */
-  public function createdSite(string $project_name, string $short_name, int $site_id, string $domain_name, string $path);
+  public function createdSite(string $project_name, string $short_name, int $site_id, string $domain_name, string $path, array $annotations = []);
 
   /**
    * Handles a site being updated.
