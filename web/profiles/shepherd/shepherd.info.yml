@@ -42,9 +42,9 @@ dependencies:
   - views_ui
 
   # Contributed modules
+  - drush_cmi_tools
   - entity_reference
   - entity_reference_revisions
-  - externalauth
   - field_group
   - gnode
   - group
