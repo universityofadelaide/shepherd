@@ -20,16 +20,16 @@ class OrchestrationNamingTest extends UnitTestCase {
    *
    * @covers ::sanitise
    *
-   * @dataProvider sanitizeInputData
+   * @dataProvider sanitiseInputData
    */
-  public function testSanitize($input, $expected_output) {
+  public function testSanitise($input, $expected_output) {
     $this->assertEquals($expected_output, OrchestrationProviderBase::sanitise($input));
   }
 
   /**
-   * Test input data for sanitize test.
+   * Test input data for sanitise test.
    */
-  public function sanitizeInputData() {
+  public function sanitiseInputData() {
     return [
       ['ABC-123-fix-bug', 'abc-123-fix-bug'],
       ['ABC-123-under_score', 'abc-123-under_score'],
