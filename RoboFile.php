@@ -29,16 +29,23 @@ class RoboFile extends RoboFileBase {
    */
   public function build() {
     parent::build();
-    $this->say("To provide default content for shepherd, use robo dev:content-generate");
+    $this->say("To provide default content for shepherd, use robo dev:drupal-content-generate or robo dev:wordpress-content-generate");
   }
 
   /**
    * Create default content for the Shepherd.
    */
-  public function devContentGenerate() {
+  public function devDrupalContentGenerate() {
     $virtual_host = getenv("VIRTUAL_HOST");
     if (!empty($virtual_host)) {
-      $this->_exec("$this->drush_cmd scr ShepherdContentGenerate.php --uri=$virtual_host");
+      $this->_exec("$this->drush_cmd scr DrupalContentGenerate.php --uri=$virtual_host");
+    }
+  }
+
+  public function devWordpressContentGenerate() {
+    $virtual_host = getenv("VIRTUAL_HOST");
+    if (!empty($virtual_host)) {
+      $this->_exec("$this->drush_cmd scr WordpressContentGenerate.php --uri=$virtual_host");
     }
   }
 

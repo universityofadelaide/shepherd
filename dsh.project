@@ -3,9 +3,6 @@
 # Set default type of OpenShift installation if its not already set.
 : ${OPENSHIFT_TYPE:=minishift}
 
-# Set default git repository to install
-: ${EXAMPLE_REPOSITORY:=https://github.com/universityofadelaide/shepherd-example-drupal.git}
-
 # Password for the mysql server.
 SUPER_SECRET_PASSWORD=super-secret-password
 
@@ -86,5 +83,4 @@ fi
 
 # Put everything into the var that dsh passes into the Docker shell.
 DSH_PROJECT=(--env TOKEN=${TOKEN} --env DB_HOST=${DB_HOST} --env DB_PORT=${DB_PORT} \
---env OPENSHIFT_DOMAIN=${OPENSHIFT_DOMAIN} --env OPENSHIFT_URL=${OPENSHIFT_URL} \
---env EXAMPLE_REPOSITORY=${EXAMPLE_REPOSITORY})
+--env OPENSHIFT_DOMAIN=${OPENSHIFT_DOMAIN} --env OPENSHIFT_URL=${OPENSHIFT_URL})
