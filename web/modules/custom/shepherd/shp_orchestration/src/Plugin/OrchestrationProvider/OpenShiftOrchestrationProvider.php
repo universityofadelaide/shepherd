@@ -262,7 +262,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     $image_stream = $this->client->getImageStream($sanitised_project_name);
     $this->createCronJobs(
       $deployment_name,
-      $source_ref,
+      $sanitised_source_ref,
       $cron_suspended,
       $cron_jobs,
       $image_stream,
@@ -536,6 +536,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     string $commands = ''
   ) {
     $sanitised_project_name = self::sanitise($project_name);
+    $sanitised_source_ref = self::sanitise($source_ref);
     $deployment_name = self::generateDeploymentName($environment_id);
 
     // Retrieve existing deployment details to use where possible.
@@ -559,7 +560,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     try {
       $response_body = $this->client->createJob(
         $deployment_name . '-' . $this->stringGenerator->generateRandomString(5),
-        $image_stream['status']['dockerImageRepository'] . ':' . $source_ref,
+        $image_stream['status']['dockerImageRepository'] . ':' . $sanitised_source_ref,
         $args_array,
         $volumes,
         $deploy_data
@@ -1041,6 +1042,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
    *   True on success.
    */
   protected function createCronJobs(string $deployment_name, string $source_ref, bool $cron_suspended, array $cron_jobs, array $image_stream, array $volumes, array $deploy_data) {
+    $sanitised_source_ref = self::sanitise($source_ref);
     foreach ($cron_jobs as $cron_job) {
       $args_array = [
         '/bin/sh',
@@ -1050,7 +1052,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       try {
         $this->client->createCronJob(
           $deployment_name . '-' . $this->stringGenerator->generateRandomString(5),
-          $image_stream['status']['dockerImageRepository'] . ':' . $source_ref,
+          $image_stream['status']['dockerImageRepository'] . ':' . $sanitised_source_ref,
           $cron_job['schedule'],
           $cron_suspended,
           $args_array,

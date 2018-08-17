@@ -1,8 +1,0 @@
-name: 'Shepherd Vue View'
-type: module
-description: 'Provides a custom view display type that uses vue js for dynamic displays.'
-core: 8.x
-package: Shepherd
-dependencies:
-  - drupal:views
-  - shp_content_types
