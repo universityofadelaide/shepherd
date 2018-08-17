@@ -1,0 +1,7 @@
+ignore:
+- core.extension
+- block.block.*
+- shp_backup.settings.yml
+- shp_database_provisioner.settings.yml
+- shp_orchestration.settings.yml
+- system.site
