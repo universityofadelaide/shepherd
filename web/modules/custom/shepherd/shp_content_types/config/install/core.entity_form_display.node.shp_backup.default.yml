@@ -1,3 +1,4 @@
+uuid: 724d2c21-99cf-4552-a457-6c992658d303
 langcode: en
 status: true
 dependencies:
@@ -6,6 +7,10 @@ dependencies:
     - field.field.node.shp_backup.field_shp_environment
     - field.field.node.shp_backup.field_shp_site
     - node.type.shp_backup
+  module:
+    - content_moderation
+_core:
+  default_config_hash: ID77Uu4n1-nCH5IYSln8oGV1aE98lPN-0kc8yWgNNk4
 id: node.shp_backup.default
 targetEntityType: node
 bundle: shp_backup
@@ -43,11 +48,24 @@ content:
     third_party_settings: {  }
     type: entity_reference_autocomplete
     region: content
+  moderation_state:
+    type: moderation_state_default
+    weight: 100
+    settings: {  }
+    region: content
+    third_party_settings: {  }
   promote:
     type: boolean_checkbox
     settings:
       display_label: true
     weight: 15
+    region: content
+    third_party_settings: {  }
+  status:
+    type: boolean_checkbox
+    settings:
+      display_label: true
+    weight: 120
     region: content
     third_party_settings: {  }
   sticky:

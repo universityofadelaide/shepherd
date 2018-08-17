@@ -1,23 +1,26 @@
+uuid: 282f5a3f-30c4-45c4-a824-750be168848c
 langcode: en
 status: true
 dependencies:
   config:
     - core.entity_view_mode.node.teaser
-    - field.field.node.shp_site.field_shp_project
     - field.field.node.shp_site.field_shp_domain
-    - field.field.node.shp_site.field_shp_short_name
+    - field.field.node.shp_site.field_shp_go_live_date
     - field.field.node.shp_site.field_shp_path
+    - field.field.node.shp_site.field_shp_project
+    - field.field.node.shp_site.field_shp_short_name
     - field.field.node.shp_site.field_shp_site_log
     - field.field.node.shp_site.field_tags
     - node.type.shp_site
+  module:
+    - user
+_core:
+  default_config_hash: XqN6uZdhmScmrTgMCQ26ZrJNPQEWp2T4ioZPA6iD-xc
 id: node.shp_site.teaser
 targetEntityType: node
 bundle: shp_site
 mode: teaser
 content:
-  field_drush_aliases:
-    weight: 100
-    region: content
   links:
     weight: 100
     region: content
@@ -26,9 +29,10 @@ content:
     region: content
 hidden:
   field_shp_authoriser_id: true
-  field_shp_project: true
   field_shp_domain: true
-  field_shp_short_name: true
+  field_shp_go_live_date: true
   field_shp_path: true
+  field_shp_project: true
+  field_shp_short_name: true
   field_shp_site_log: true
   field_tags: true

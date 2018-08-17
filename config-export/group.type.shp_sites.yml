@@ -1,0 +1,12 @@
+uuid: 59c1762e-93fb-4cc3-b207-d471adff2daf
+langcode: en
+status: true
+dependencies: {  }
+_core:
+  default_config_hash: dkDXcB57ZxcTy_xx3DYy5gYUBKRfmxTZ9BRYcgDuWik
+id: shp_sites
+label: Multi-site
+description: 'For creating ad-hoc site groups.'
+creator_membership: false
+creator_wizard: false
+creator_roles: {  }

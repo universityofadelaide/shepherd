@@ -1,3 +1,4 @@
+uuid: bef7bb87-afc4-445e-83a2-d4c1b0e861d6
 langcode: en
 status: true
 dependencies:
@@ -6,6 +7,8 @@ dependencies:
     - node.type.shp_project
   module:
     - key_value_field
+_core:
+  default_config_hash: Ot3-DMRup1JQxJuR4Kgr70H46-zdVL4WgOJfAkZIsBE
 id: node.shp_project.field_shp_env_vars
 field_name: field_shp_env_vars
 entity_type: node
@@ -17,7 +20,7 @@ translatable: true
 default_value:
   -
     key: SHEPHERD_INSTALL_PROFILE
-    value: 'standard'
+    value: standard
     description: 'The machine name of the Drupal installation profile.'
   -
     key: PUBLIC_DIR

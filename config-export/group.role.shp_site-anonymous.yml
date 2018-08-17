@@ -1,0 +1,14 @@
+uuid: 23f635cb-c23a-43f6-a85d-9e6898b5926f
+langcode: en
+status: true
+dependencies:
+  config:
+    - group.type.shp_site
+id: shp_site-anonymous
+label: Anonymous
+weight: -102
+internal: true
+audience: anonymous
+group_type: shp_site
+permissions_ui: true
+permissions: {  }

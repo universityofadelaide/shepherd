@@ -1,0 +1,14 @@
+uuid: d82c8fe7-97f4-4db5-a308-31a399181344
+langcode: en
+status: true
+dependencies:
+  config:
+    - user.role.shp_developer
+  module:
+    - user
+id: user_add_role_action.shp_developer
+label: 'Add the Developer role to the selected user(s)'
+type: user
+plugin: user_add_role_action
+configuration:
+  rid: shp_developer

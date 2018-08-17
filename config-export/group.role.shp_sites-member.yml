@@ -1,0 +1,14 @@
+uuid: d56b70dd-668f-4698-8437-c9f8217cc7ee
+langcode: en
+status: true
+dependencies:
+  config:
+    - group.type.shp_sites
+id: shp_sites-member
+label: Member
+weight: -100
+internal: true
+audience: member
+group_type: shp_sites
+permissions_ui: true
+permissions: {  }

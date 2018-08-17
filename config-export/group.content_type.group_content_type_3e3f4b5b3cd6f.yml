@@ -1,0 +1,21 @@
+uuid: 1226879d-0639-48ca-a766-3805bf6daeb3
+langcode: en
+status: true
+dependencies:
+  config:
+    - group.type.shp_site
+    - node.type.shp_environment
+  module:
+    - gnode
+    - node
+_core:
+  default_config_hash: e3_LPrw_lZfPI1nri0zhcaZy2hwNvAQ5BZRgWiRgaAk
+id: group_content_type_3e3f4b5b3cd6f
+label: 'Site: Group node (Environment)'
+description: 'Adds <em class="placeholder">Environment</em> content to groups both publicly and privately.'
+group_type: shp_site
+content_plugin: 'group_node:shp_environment'
+plugin_config:
+  group_cardinality: 0
+  entity_cardinality: 1
+  use_creation_wizard: false

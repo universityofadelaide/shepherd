@@ -1,0 +1,23 @@
+uuid: 42fef3a5-0d33-4dac-923d-009428b51021
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_shp_git_default_ref
+    - node.type.shp_project
+_core:
+  default_config_hash: 39-hRaUxhD9yhuNgUGSDmDVTYLzSm_AaqjjPXrO7NpE
+id: node.shp_project.field_shp_git_default_ref
+field_name: field_shp_git_default_ref
+entity_type: node
+bundle: shp_project
+label: 'Default tag/branch'
+description: 'The default tag/branch will be used when launching new environments.'
+required: true
+translatable: false
+default_value:
+  -
+    value: master
+default_value_callback: ''
+settings: {  }
+field_type: string

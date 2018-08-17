@@ -1,0 +1,14 @@
+uuid: fda8f669-5314-460c-9b85-74d46e56078b
+langcode: en
+status: true
+dependencies:
+  config:
+    - group.type.shp_project
+id: shp_project-outsider
+label: Outsider
+weight: -101
+internal: true
+audience: outsider
+group_type: shp_project
+permissions_ui: true
+permissions: {  }

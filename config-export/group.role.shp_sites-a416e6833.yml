@@ -1,0 +1,17 @@
+uuid: c00f3ac6-0ca9-44d8-8ab7-9cc848026528
+langcode: en
+status: true
+dependencies:
+  config:
+    - group.type.shp_sites
+  enforced:
+    config:
+      - user.role.administrator
+id: shp_sites-a416e6833
+label: Administrator
+weight: 2
+internal: true
+audience: outsider
+group_type: shp_sites
+permissions_ui: false
+permissions: {  }

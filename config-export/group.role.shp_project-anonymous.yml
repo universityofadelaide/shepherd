@@ -1,0 +1,14 @@
+uuid: 20858ac6-b71f-4869-b737-63cf7384b697
+langcode: en
+status: true
+dependencies:
+  config:
+    - group.type.shp_project
+id: shp_project-anonymous
+label: Anonymous
+weight: -102
+internal: true
+audience: anonymous
+group_type: shp_project
+permissions_ui: true
+permissions: {  }

@@ -1,8 +1,11 @@
+uuid: 282bf886-3ce1-4b0a-a299-595bb7878e67
 langcode: en
 status: true
 dependencies:
   module:
     - taxonomy
+_core:
+  default_config_hash: LpNNWSPpQXpvyQ7gQfogqpeAacWh7izXtfPzdOQN7xw
 id: taxonomy_term.field_shp_protect
 field_name: field_shp_protect
 entity_type: taxonomy_term

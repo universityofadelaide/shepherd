@@ -1,3 +1,4 @@
+uuid: 4363b3ac-2249-471f-a7e4-f18b8d9dc809
 langcode: en
 status: true
 dependencies:
@@ -19,6 +20,8 @@ dependencies:
     - node.type.shp_project
   module:
     - user
+_core:
+  default_config_hash: q7m-dHSJ9ToB1MnXAgWm4r8b-Rs2fZtRurWaZI64wsc
 id: node.shp_project.teaser
 targetEntityType: node
 bundle: shp_project

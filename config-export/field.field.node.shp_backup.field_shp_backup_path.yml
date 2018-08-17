@@ -1,0 +1,21 @@
+uuid: 27b86de3-fcc4-4154-a8d6-1d638ce92d4e
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_shp_backup_path
+    - node.type.shp_backup
+_core:
+  default_config_hash: 4VZ0eSCU5S3W1MHJuQ9R1Omc4ea2S13hSCgxGqfMtOc
+id: node.shp_backup.field_shp_backup_path
+field_name: field_shp_backup_path
+entity_type: node
+bundle: shp_backup
+label: 'Backup path'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

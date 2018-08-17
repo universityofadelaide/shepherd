@@ -1,3 +1,4 @@
+uuid: 73f66b54-fe98-4071-a9a5-6deab0dd0a1f
 langcode: en
 status: true
 dependencies:
@@ -7,6 +8,8 @@ third_party_settings:
   menu_ui:
     available_menus: {  }
     parent: ''
+_core:
+  default_config_hash: m78upFN2c6rXkYn3nEHHYMFXH0h4mX2RjpOHyaWqpWQ
 name: Project
 type: shp_project
 description: 'A project specifies a specific repository for a web application.'

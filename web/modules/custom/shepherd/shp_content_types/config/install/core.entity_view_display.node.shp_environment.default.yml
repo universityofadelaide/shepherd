@@ -1,3 +1,4 @@
+uuid: 998f0e1c-e40f-4961-8fbc-0eb75ec63cb8
 langcode: en
 status: true
 dependencies:
@@ -16,6 +17,8 @@ dependencies:
   module:
     - key_value_field
     - user
+_core:
+  default_config_hash: Kczgsjembq0rQwGbXJUErfHx2CTDgLgq6Nkd2Ij_9jg
 id: node.shp_environment.default
 targetEntityType: node
 bundle: shp_environment

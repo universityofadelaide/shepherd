@@ -1,9 +1,12 @@
+uuid: 26455bfc-1bc4-4ce6-80b2-d61470a92f75
 langcode: en
 status: true
 dependencies:
   config:
     - field.storage.taxonomy_term.field_shp_update_go_live
     - taxonomy.vocabulary.shp_environment_types
+_core:
+  default_config_hash: mKqCJ8Tz4q8HfyONc8S5-4DVBu4F_GuwMdQZQ2jo6kE
 id: taxonomy_term.shp_environment_types.field_shp_update_go_live
 field_name: field_shp_update_go_live
 entity_type: taxonomy_term

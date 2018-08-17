@@ -1,3 +1,4 @@
+uuid: 0ecb2671-21fc-4384-a273-be8091563a9b
 langcode: en
 status: true
 dependencies:
@@ -7,6 +8,8 @@ dependencies:
   module:
     - gnode
     - node
+_core:
+  default_config_hash: 7j0yRHL7csxEfTaO4uB2DM3N2NGFoVhjFjnAEAvKWNg
 id: shp_sites-group_node-shp_site
 label: 'Site: Group node (Site)'
 description: 'Adds <em class="placeholder">Site</em> content to groups both publicly and privately.'

@@ -1,9 +1,12 @@
+uuid: d5fc72e1-0225-47f4-9e25-8d699a2deed1
 langcode: en
 status: true
 dependencies:
   config:
     - field.storage.node.field_shp_short_name
     - node.type.shp_site
+_core:
+  default_config_hash: 3bR5hHJ2fO0OlCPUfL3kDZ6OvA0kYaGdlabrePsDP-E
 id: node.shp_site.field_shp_short_name
 field_name: field_shp_short_name
 entity_type: node

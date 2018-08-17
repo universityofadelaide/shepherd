@@ -1,14 +1,17 @@
+uuid: c59f5b99-dfe7-49ad-9010-ad81772c166e
 langcode: en
 status: true
 dependencies:
   config:
     - field.storage.node.field_shp_liveness_probe_port
     - node.type.shp_project
+_core:
+  default_config_hash: hmbiExk222nNJExUmLU6jsq8EvGGlgZncLYMmXXzuhg
 id: node.shp_project.field_shp_liveness_probe_port
 field_name: field_shp_liveness_probe_port
 entity_type: node
 bundle: shp_project
-label: 'Port'
+label: Port
 description: ''
 required: false
 translatable: false

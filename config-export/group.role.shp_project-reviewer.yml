@@ -1,0 +1,21 @@
+uuid: c5cb2be8-6e40-45d1-8957-786a60bf452a
+langcode: en
+status: true
+dependencies:
+  config:
+    - group.type.shp_project
+  module:
+    - shp_roles
+third_party_settings:
+  shp_roles:
+    synced_role: shp_reviewer
+_core:
+  default_config_hash: xjmgne83ZYAvf5zLahiKreKmXbS37DjNymBlnxWP0b4
+id: shp_project-reviewer
+label: Reviewer
+weight: 100
+internal: false
+audience: member
+group_type: shp_project
+permissions_ui: true
+permissions: {  }

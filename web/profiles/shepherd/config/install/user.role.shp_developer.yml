@@ -1,6 +1,9 @@
+uuid: 58100653-03a6-48f2-95bb-3def064b9191
 langcode: en
 status: true
 dependencies: {  }
+_core:
+  default_config_hash: aHZkb0wmMhuaU2UtMskT29D4MEOJwV81eOZQEF0DjbI
 id: shp_developer
 label: Developer
 weight: 5

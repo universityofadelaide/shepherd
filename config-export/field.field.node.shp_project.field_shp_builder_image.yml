@@ -1,0 +1,23 @@
+uuid: 285bc4ab-88a9-4d8c-b1e4-38d2c66bd4b3
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_shp_builder_image
+    - node.type.shp_project
+_core:
+  default_config_hash: eCv1AAgOcQA1RCIvfrojz73pxMF4N5cHZcQk3pXoHYY
+id: node.shp_project.field_shp_builder_image
+field_name: field_shp_builder_image
+entity_type: node
+bundle: shp_project
+label: 'Builder image'
+description: 'The builder image used as a base to construct the deployed image.'
+required: true
+translatable: false
+default_value:
+  -
+    value: uofa/s2i-shepherd-drupal
+default_value_callback: ''
+settings: {  }
+field_type: string

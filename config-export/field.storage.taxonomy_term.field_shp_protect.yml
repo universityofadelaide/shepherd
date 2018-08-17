@@ -1,0 +1,20 @@
+uuid: 282bf886-3ce1-4b0a-a299-595bb7878e67
+langcode: en
+status: true
+dependencies:
+  module:
+    - taxonomy
+_core:
+  default_config_hash: n37FsQCVhjJMJXJHR15dSl_7vdh1Kq9uaODB1mayl4Y
+id: taxonomy_term.field_shp_protect
+field_name: field_shp_protect
+entity_type: taxonomy_term
+type: boolean
+settings: {  }
+module: core
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

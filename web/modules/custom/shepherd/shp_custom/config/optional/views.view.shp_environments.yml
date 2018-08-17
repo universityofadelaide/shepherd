@@ -1,3 +1,4 @@
+uuid: 7acfa6d5-5773-4e81-a3f9-307c8e7217ad
 langcode: en
 status: true
 dependencies:
@@ -9,6 +10,8 @@ dependencies:
     - content_moderation
     - node
     - user
+_core:
+  default_config_hash: cQE3dh0v_mTBOqCXNOpnKZ_zn1JHhO_83LtAbOOy5aQ
 id: shp_environments
 label: Environments
 module: views
@@ -307,7 +310,7 @@ display:
       arguments: {  }
       display_extenders: {  }
     cache_metadata:
-      max-age: 0
+      max-age: -1
       contexts:
         - 'languages:language_content'
         - 'languages:language_interface'
@@ -330,7 +333,7 @@ display:
         weight: 1
         menu_name: main
     cache_metadata:
-      max-age: 0
+      max-age: -1
       contexts:
         - 'languages:language_content'
         - 'languages:language_interface'

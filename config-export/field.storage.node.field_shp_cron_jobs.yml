@@ -1,0 +1,26 @@
+uuid: c1306781-0c40-4bd7-93b1-0a71caf00fd3
+langcode: en
+status: true
+dependencies:
+  module:
+    - key_value_field
+    - node
+_core:
+  default_config_hash: D174i84ayZHJIvMlcpgwS23dE17fRHehtCPngd9trag
+id: node.field_shp_cron_jobs
+field_name: field_shp_cron_jobs
+entity_type: node
+type: key_value
+settings:
+  key_max_length: 255
+  max_length: 255
+  key_is_ascii: false
+  is_ascii: false
+  case_sensitive: false
+module: key_value_field
+locked: false
+cardinality: -1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

@@ -1,0 +1,41 @@
+uuid: a3cc42dd-42a8-4fad-aa45-ab9f06f2f38b
+langcode: en
+status: true
+dependencies:
+  config:
+    - block_content.type.basic
+    - field.field.block_content.basic.body
+  module:
+    - content_moderation
+    - text
+_core:
+  default_config_hash: RpcJ-pcpS02mde4MzD1q3q7rMjKKbbNOMmKiioOJEMQ
+id: block_content.basic.default
+targetEntityType: block_content
+bundle: basic
+mode: default
+content:
+  body:
+    type: text_textarea_with_summary
+    weight: -4
+    settings:
+      rows: 9
+      summary_rows: 3
+      placeholder: ''
+    third_party_settings: {  }
+    region: content
+  info:
+    type: string_textfield
+    weight: -5
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    region: content
+  moderation_state:
+    type: moderation_state_default
+    weight: 100
+    settings: {  }
+    region: content
+    third_party_settings: {  }
+hidden: {  }

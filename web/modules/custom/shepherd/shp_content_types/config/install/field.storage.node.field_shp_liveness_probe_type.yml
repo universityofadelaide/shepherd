@@ -1,9 +1,12 @@
+uuid: 9b820d64-6db6-4b0c-ad7e-fae65aca510d
 langcode: en
 status: true
 dependencies:
   module:
     - node
     - options
+_core:
+  default_config_hash: Llxp5Kni4EZmfD6QabmQ76yvJESM66PQ2oG0JJOlfwU
 id: node.field_shp_liveness_probe_type
 field_name: field_shp_liveness_probe_type
 entity_type: node

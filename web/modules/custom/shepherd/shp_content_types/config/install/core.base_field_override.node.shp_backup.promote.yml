@@ -1,8 +1,11 @@
+uuid: 2ffed514-5ec8-4ff4-b0c2-bf5bdd267de4
 langcode: en
 status: true
 dependencies:
   config:
     - node.type.shp_backup
+_core:
+  default_config_hash: L5pJWn2c5Z-N6ShDVPHkSSVCFrXvXx5nVESe7gBvvo4
 id: node.shp_backup.promote
 field_name: promote
 entity_type: node

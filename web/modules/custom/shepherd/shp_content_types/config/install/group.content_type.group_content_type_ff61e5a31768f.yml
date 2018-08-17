@@ -1,3 +1,4 @@
+uuid: f8d6897f-95ae-4c3c-a738-274a3ee02c6e
 langcode: en
 status: true
 dependencies:
@@ -7,6 +8,8 @@ dependencies:
   module:
     - gnode
     - node
+_core:
+  default_config_hash: vQ_RtKuI5L2kzUdq7CP7yAxtMoTJDOuGkNHWvhB8YRw
 id: group_content_type_ff61e5a31768f
 label: 'Project: Group node (Environment)'
 description: 'Adds <em class="placeholder">Environment</em> content to groups both publicly and privately.'

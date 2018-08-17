@@ -1,3 +1,4 @@
+uuid: adf824df-c502-417b-bb68-b437c0395210
 langcode: en
 status: true
 dependencies:
@@ -8,6 +9,8 @@ dependencies:
     - node.type.shp_backup
   module:
     - user
+_core:
+  default_config_hash: l-lkCppyfLMj-DP-x_vkGdHMT4-nVYrqnCcG7aGvwyQ
 id: node.shp_backup.default
 targetEntityType: node
 bundle: shp_backup

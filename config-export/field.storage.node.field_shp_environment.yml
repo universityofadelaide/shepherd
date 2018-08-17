@@ -1,0 +1,21 @@
+uuid: 585ac61c-5670-4349-8032-ed9fb3dd7d7a
+langcode: en
+status: true
+dependencies:
+  module:
+    - node
+_core:
+  default_config_hash: y6RTYsiEZN_YgjvgVhxiP8Cje19GzOa63MhgHAs8MXo
+id: node.field_shp_environment
+field_name: field_shp_environment
+entity_type: node
+type: entity_reference
+settings:
+  target_type: node
+module: core
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

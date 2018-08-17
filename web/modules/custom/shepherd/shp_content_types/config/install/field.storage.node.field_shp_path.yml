@@ -1,8 +1,11 @@
+uuid: 49d0a558-363f-43ae-ace9-72690fc63545
 langcode: en
 status: true
 dependencies:
   module:
     - node
+_core:
+  default_config_hash: yMsq0O6RhzbaOtHzV13fytIjkRtb9o06kUdBDB_LMZ0
 id: node.field_shp_path
 field_name: field_shp_path
 entity_type: node

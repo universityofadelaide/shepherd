@@ -1,0 +1,14 @@
+uuid: 5b0b70ea-6db1-450d-988f-954ea676a50f
+langcode: en
+status: true
+dependencies:
+  config:
+    - user.role.shp_online_consultant
+  module:
+    - user
+id: user_remove_role_action.shp_online_consultant
+label: 'Remove the Online Consultant role from the selected user(s)'
+type: user
+plugin: user_remove_role_action
+configuration:
+  rid: shp_online_consultant

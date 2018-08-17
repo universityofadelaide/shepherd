@@ -1,0 +1,21 @@
+uuid: 858e300c-1476-4b5b-b00b-3c13bb3ea4b4
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_shp_path
+    - node.type.shp_environment
+_core:
+  default_config_hash: jzl1TTgvGL9dacfD2P2yym_F9TGgGJOTtT9XbgvP2i8
+id: node.shp_environment.field_shp_path
+field_name: field_shp_path
+entity_type: node
+bundle: shp_environment
+label: Path
+description: ''
+required: true
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

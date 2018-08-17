@@ -1,0 +1,21 @@
+uuid: 0ecb2671-21fc-4384-a273-be8091563a9b
+langcode: en
+status: true
+dependencies:
+  config:
+    - group.type.shp_sites
+    - node.type.shp_site
+  module:
+    - gnode
+    - node
+_core:
+  default_config_hash: gDWJ_XUfM2URnKnV4Plpw8nbhF1k8_QTew7oIrTUax4
+id: shp_sites-group_node-shp_site
+label: 'Site: Group node (Site)'
+description: 'Adds <em class="placeholder">Site</em> content to groups both publicly and privately.'
+group_type: shp_sites
+content_plugin: 'group_node:shp_site'
+plugin_config:
+  group_cardinality: 1
+  entity_cardinality: 1
+  use_creation_wizard: false

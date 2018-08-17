@@ -1,0 +1,25 @@
+uuid: 5b5c8417-24c1-40cc-8c71-b6127af050df
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_shp_cron_suspended
+    - node.type.shp_environment
+_core:
+  default_config_hash: cG_dioITSzCOlW1L8OVEor3Ut_UbK_baZkHOPJT4gSM
+id: node.shp_environment.field_shp_cron_suspended
+field_name: field_shp_cron_suspended
+entity_type: node
+bundle: shp_environment
+label: 'Suspend cron jobs'
+description: 'Maintenance may require suspending all cron jobs for the environment.'
+required: false
+translatable: false
+default_value:
+  -
+    value: 0
+default_value_callback: ''
+settings:
+  on_label: 'On'
+  off_label: 'Off'
+field_type: boolean

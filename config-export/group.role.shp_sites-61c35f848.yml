@@ -1,0 +1,17 @@
+uuid: c17e0cbd-095a-4086-b535-293edfe93d0e
+langcode: en
+status: true
+dependencies:
+  config:
+    - group.type.shp_sites
+  enforced:
+    config:
+      - user.role.shp_developer
+id: shp_sites-61c35f848
+label: Developer
+weight: 5
+internal: true
+audience: outsider
+group_type: shp_sites
+permissions_ui: false
+permissions: {  }

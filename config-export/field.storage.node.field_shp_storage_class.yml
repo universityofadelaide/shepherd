@@ -1,0 +1,22 @@
+uuid: f5a188cb-3417-4923-b1c4-dfe616e5ce80
+langcode: en
+status: true
+dependencies:
+  module:
+    - node
+    - taxonomy
+_core:
+  default_config_hash: Q0c9rYH1dBag4FdsQPgfcEBpy2IcM0S8UA-6vm0crOU
+id: node.field_shp_storage_class
+field_name: field_shp_storage_class
+entity_type: node
+type: entity_reference
+settings:
+  target_type: taxonomy_term
+module: core
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

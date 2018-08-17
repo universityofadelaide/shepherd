@@ -1,6 +1,9 @@
+uuid: 29c500de-4812-42f4-a7a3-db4e14f6ba7d
 langcode: en
 status: true
 dependencies: {  }
+_core:
+  default_config_hash: WL1zZPvZoocEaI9gPHAJN90gf4mCVoCx90Vbuz-hgMg
 id: shp_site
 label: Site
 description: 'A group of this type is automatically created and associated when a site is added.'

@@ -15,7 +15,6 @@ dependencies:
   - content_moderation
   - comment
   - contextual
-  - contact
   - datetime
   - dblog
   - dynamic_page_cache
@@ -65,5 +64,4 @@ dependencies:
   - shp_redis_support
 
 themes:
-  - bartik
   - seven

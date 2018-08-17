@@ -1,0 +1,14 @@
+uuid: 3a110191-4b9f-45ab-b826-d70cc89587f8
+langcode: en
+status: true
+dependencies:
+  config:
+    - user.role.shp_developer
+  module:
+    - user
+id: user_remove_role_action.shp_developer
+label: 'Remove the Developer role from the selected user(s)'
+type: user
+plugin: user_remove_role_action
+configuration:
+  rid: shp_developer

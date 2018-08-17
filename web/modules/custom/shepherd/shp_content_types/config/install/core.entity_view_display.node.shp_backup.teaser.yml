@@ -1,13 +1,17 @@
+uuid: 0740942b-dc8e-40a1-8bf1-3ff4d28c0a4f
 langcode: en
 status: true
 dependencies:
   config:
     - core.entity_view_mode.node.teaser
+    - field.field.node.shp_backup.field_shp_backup_path
     - field.field.node.shp_backup.field_shp_environment
     - field.field.node.shp_backup.field_shp_site
     - node.type.shp_backup
   module:
     - user
+_core:
+  default_config_hash: HfV7K9krHZG63KcB1Jn8yW73rD4B3P_xHM7WM1-8YhY
 id: node.shp_backup.teaser
 targetEntityType: node
 bundle: shp_backup
@@ -17,5 +21,6 @@ content:
     weight: 100
     region: content
 hidden:
+  field_shp_backup_path: true
   field_shp_environment: true
   field_shp_site: true

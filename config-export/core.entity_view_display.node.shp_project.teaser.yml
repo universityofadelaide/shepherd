@@ -1,0 +1,48 @@
+uuid: 4363b3ac-2249-471f-a7e4-f18b8d9dc809
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.teaser
+    - field.field.node.shp_project.field_shp_build_secret
+    - field.field.node.shp_project.field_shp_builder_image
+    - field.field.node.shp_project.field_shp_default_sql
+    - field.field.node.shp_project.field_shp_env_vars
+    - field.field.node.shp_project.field_shp_git_default_ref
+    - field.field.node.shp_project.field_shp_git_repository
+    - field.field.node.shp_project.field_shp_liveness_probe_params
+    - field.field.node.shp_project.field_shp_liveness_probe_port
+    - field.field.node.shp_project.field_shp_liveness_probe_type
+    - field.field.node.shp_project.field_shp_readiness_probe_params
+    - field.field.node.shp_project.field_shp_readiness_probe_port
+    - field.field.node.shp_project.field_shp_readiness_probe_type
+    - field.field.node.shp_project.field_shp_storage_class
+    - node.type.shp_project
+  module:
+    - user
+_core:
+  default_config_hash: DjU3T-FPub3chgCCuauH_heLBdm1zxM6H-0szQ2iM2E
+id: node.shp_project.teaser
+targetEntityType: node
+bundle: shp_project
+mode: teaser
+content:
+  links:
+    weight: 100
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+hidden:
+  field_shp_build_secret: true
+  field_shp_builder_image: true
+  field_shp_default_sql: true
+  field_shp_env_vars: true
+  field_shp_git_default_ref: true
+  field_shp_git_repository: true
+  field_shp_liveness_probe_params: true
+  field_shp_liveness_probe_port: true
+  field_shp_liveness_probe_type: true
+  field_shp_readiness_probe_params: true
+  field_shp_readiness_probe_port: true
+  field_shp_readiness_probe_type: true
+  field_shp_storage_class: true

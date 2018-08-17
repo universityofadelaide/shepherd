@@ -1,3 +1,4 @@
+uuid: 1a8ddff3-fdba-4f93-983e-64673d4ead6a
 langcode: en
 status: true
 dependencies:
@@ -11,6 +12,8 @@ dependencies:
   module:
     - node
     - user
+_core:
+  default_config_hash: 7RAD9kLj9l59VNxq0qcSLggoX-egjK9j5YV6QpxzF5w
 id: shp_projects
 label: Projects
 module: views
@@ -412,7 +415,7 @@ display:
       arguments: {  }
       display_extenders: {  }
     cache_metadata:
-      max-age: 0
+      max-age: -1
       contexts:
         - 'languages:language_content'
         - 'languages:language_interface'
@@ -437,7 +440,7 @@ display:
         weight: 6
         menu_name: main
     cache_metadata:
-      max-age: 0
+      max-age: -1
       contexts:
         - 'languages:language_content'
         - 'languages:language_interface'

@@ -1,14 +1,17 @@
+uuid: c8103f97-ffb3-40d1-b51a-cfbe1e5a6a3b
 langcode: en
 status: true
 dependencies:
   config:
-  - field.field.taxonomy_term.shp_environment_types.field_shp_annotations
-  - field.field.taxonomy_term.shp_environment_types.field_shp_base_domain
-  - field.field.taxonomy_term.shp_environment_types.field_shp_protect
-  - field.field.taxonomy_term.shp_environment_types.field_shp_update_go_live
-  - taxonomy.vocabulary.shp_environment_types
+    - field.field.taxonomy_term.shp_environment_types.field_shp_annotations
+    - field.field.taxonomy_term.shp_environment_types.field_shp_base_domain
+    - field.field.taxonomy_term.shp_environment_types.field_shp_protect
+    - field.field.taxonomy_term.shp_environment_types.field_shp_update_go_live
+    - taxonomy.vocabulary.shp_environment_types
   module:
-  - key_value_field
+    - key_value_field
+_core:
+  default_config_hash: KHH1S9Caj0_zbkRO87BEUkKYgfQNXXL_zjU_v41v4Bs
 id: taxonomy_term.shp_environment_types.default
 targetEntityType: taxonomy_term
 bundle: shp_environment_types

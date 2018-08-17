@@ -1,9 +1,12 @@
+uuid: f5a188cb-3417-4923-b1c4-dfe616e5ce80
 langcode: en
 status: true
 dependencies:
   module:
     - node
     - taxonomy
+_core:
+  default_config_hash: 6sTwaQjs1XPDfRPXOEXnZbVeSeTYk88q6XJiOOfTMEI
 id: node.field_shp_storage_class
 field_name: field_shp_storage_class
 entity_type: node

@@ -1,0 +1,21 @@
+uuid: 4d5ecbce-5858-49b4-b197-e300ce671bdd
+langcode: en
+status: true
+dependencies:
+  config:
+    - group.type.shp_sites
+  module:
+    - shp_roles
+third_party_settings:
+  shp_roles:
+    synced_role: shp_contributor
+_core:
+  default_config_hash: Ng5eTKEn5ITdjz-6JQqDxaI391OJWhRjyUjNuuAwrW4
+id: shp_sites-contributor
+label: Contributor
+weight: 100
+internal: false
+audience: member
+group_type: shp_sites
+permissions_ui: true
+permissions: {  }

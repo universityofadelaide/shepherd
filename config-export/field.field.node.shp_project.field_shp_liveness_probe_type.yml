@@ -1,0 +1,23 @@
+uuid: 44fb1c90-5cb2-4903-bc65-3744d6e681b8
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_shp_liveness_probe_type
+    - node.type.shp_project
+  module:
+    - options
+_core:
+  default_config_hash: 2V7RMr9vRGYDSGOPe23Wi3NvUcba80W3Mq_jkPub1UQ
+id: node.shp_project.field_shp_liveness_probe_type
+field_name: field_shp_liveness_probe_type
+entity_type: node
+bundle: shp_project
+label: Type
+description: 'A liveness probe checks if the container in which it is configured is still running.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: list_string

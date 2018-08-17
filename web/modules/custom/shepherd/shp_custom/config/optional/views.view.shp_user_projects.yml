@@ -1,3 +1,4 @@
+uuid: c5288fe0-7189-4fda-bfb8-3ccd2714b127
 langcode: en
 status: true
 dependencies:
@@ -7,6 +8,8 @@ dependencies:
     - group
     - node
     - user
+_core:
+  default_config_hash: V5_yLqlr1YV8H54ZIly6V3L_BWN80OArxhezTaQ6NgE
 id: shp_user_projects
 label: 'User projects'
 module: views

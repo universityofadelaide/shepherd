@@ -1,3 +1,4 @@
+uuid: 2d1ac626-8d1d-4d7a-81ea-9243791d457e
 langcode: en
 status: true
 dependencies:
@@ -5,6 +6,8 @@ dependencies:
     - field.storage.node.field_shp_site
     - node.type.shp_backup
     - node.type.shp_site
+_core:
+  default_config_hash: P-AeOAnYzY9kcDpGWzDAUE3-G96tnxYNBgapLJVOTiM
 id: node.shp_backup.field_shp_site
 field_name: field_shp_site
 entity_type: node

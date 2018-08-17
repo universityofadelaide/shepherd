@@ -1,0 +1,23 @@
+uuid: 5961ebc3-189f-4e0e-aa37-3c08a5e1862e
+langcode: en
+status: true
+dependencies:
+  module:
+    - node
+_core:
+  default_config_hash: 3j0S-dcfeMIKpht5nI-vnSVXvL05GwOFS2XcKqqqUWE
+id: node.field_shp_git_default_ref
+field_name: field_shp_git_default_ref
+entity_type: node
+type: string
+settings:
+  max_length: 255
+  is_ascii: false
+  case_sensitive: false
+module: core
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

@@ -6,7 +6,7 @@ dependencies:
     - node.type.shp_site
   module:
     - content_moderation
-id: environment
+id: shepherd
 label: 'Shepherd workflow'
 type: content_moderation
 type_settings:

@@ -1,3 +1,4 @@
+uuid: 15d8dc48-be1e-4e4b-bb6d-1707ee66d668
 langcode: en
 status: true
 dependencies:
@@ -21,6 +22,8 @@ dependencies:
     - key_value_field
     - options
     - user
+_core:
+  default_config_hash: GRnEpMCmPb918yS1bFGBo8CtCTPJgGBsVaf2CGsqjtk
 id: node.shp_project.default
 targetEntityType: node
 bundle: shp_project

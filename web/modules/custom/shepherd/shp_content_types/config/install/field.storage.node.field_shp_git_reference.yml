@@ -1,8 +1,11 @@
+uuid: 67097275-f868-4d16-b085-cb7e0311bf88
 langcode: en
 status: true
 dependencies:
   module:
     - node
+_core:
+  default_config_hash: '-mMQKJaL-e4lQDyVSTumOYl9i2gfnPoFG_bVKBbJccw'
 id: node.field_shp_git_reference
 field_name: field_shp_git_reference
 entity_type: node

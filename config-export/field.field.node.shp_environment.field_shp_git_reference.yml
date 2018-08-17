@@ -1,0 +1,21 @@
+uuid: 2b76fad8-cf5b-404c-945d-3099ed519479
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_shp_git_reference
+    - node.type.shp_environment
+_core:
+  default_config_hash: dyX9fuG6V7b1zti90z01crUeoW2hpxIxbN1iV-W3ihk
+id: node.shp_environment.field_shp_git_reference
+field_name: field_shp_git_reference
+entity_type: node
+bundle: shp_environment
+label: 'Git tag/branch'
+description: 'Site instances for this environment will be generated from the selected git tag or branch.'
+required: false
+translatable: true
+default_value: master
+default_value_callback: ''
+settings: {  }
+field_type: string

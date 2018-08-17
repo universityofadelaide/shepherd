@@ -1,0 +1,43 @@
+uuid: 59b545d5-7ac0-473d-902c-235c52514261
+langcode: en
+status: true
+dependencies:
+  config:
+    - group.type.shp_sites
+  module:
+    - shp_roles
+third_party_settings:
+  shp_roles:
+    synced_role: shp_online_consultant
+_core:
+  default_config_hash: Ax0GzgSzebAD6QCAFxpSBNj_cEVloj7tM_oxxDHJVG4
+id: shp_sites-online_consultant
+label: 'Online consultant'
+weight: 100
+internal: false
+audience: member
+group_type: shp_sites
+permissions_ui: true
+permissions:
+  - 'access content overview'
+  - 'administer group'
+  - 'administer members'
+  - 'update own group_membership content'
+  - 'leave group'
+  - 'view group_membership content'
+  - 'view group'
+  - 'access group_node overview'
+  - 'create group_node:shp_project entity'
+  - 'update any group_node:shp_project entity'
+  - 'view group_node:shp_project entity'
+  - 'view unpublished group_node:shp_project entity'
+  - 'create group_node:shp_environment entity'
+  - 'delete any group_node:shp_environment entity'
+  - 'update any group_node:shp_environment entity'
+  - 'view group_node:shp_environment entity'
+  - 'view unpublished group_node:shp_environment entity'
+  - 'create group_node:shp_site entity'
+  - 'delete any group_node:shp_site entity'
+  - 'update any group_node:shp_site entity'
+  - 'view group_node:shp_site entity'
+  - 'view unpublished group_node:shp_site entity'

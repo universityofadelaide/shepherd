@@ -1,0 +1,21 @@
+uuid: e5626ce0-acaa-4a05-b45f-4975897e63b4
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_shp_domain
+    - node.type.shp_site
+_core:
+  default_config_hash: YK9nLblgYiuInnc8K2AIBiMyqBSV9-AvJ7XXdd8mPQA
+id: node.shp_site.field_shp_domain
+field_name: field_shp_domain
+entity_type: node
+bundle: shp_site
+label: Domain
+description: 'The canonical production domain name for the site.'
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

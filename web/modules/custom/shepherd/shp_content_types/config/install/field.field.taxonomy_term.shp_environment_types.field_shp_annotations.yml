@@ -1,11 +1,14 @@
+uuid: f833e228-db54-4af0-bb8c-039ec2d664a1
 langcode: en
 status: true
 dependencies:
   config:
-  - field.storage.taxonomy_term.field_shp_annotations
-  - taxonomy.vocabulary.shp_environment_types
+    - field.storage.taxonomy_term.field_shp_annotations
+    - taxonomy.vocabulary.shp_environment_types
   module:
-  - key_value_field
+    - key_value_field
+_core:
+  default_config_hash: l8Bi0PzAZeLdYYQahu3jUOGYUzOgeJfaMen-TH1CJ-I
 id: taxonomy_term.shp_environment_types.field_shp_annotations
 field_name: field_shp_annotations
 entity_type: taxonomy_term

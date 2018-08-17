@@ -1,0 +1,25 @@
+uuid: f7b616f4-7bc3-4cd9-bf0c-9fba48b4396b
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.taxonomy_term.field_shp_protect
+    - taxonomy.vocabulary.shp_environment_types
+_core:
+  default_config_hash: QIGyn62xHNkyASlshTwsINgchcDL1XYhWA72RiisksY
+id: taxonomy_term.shp_environment_types.field_shp_protect
+field_name: field_shp_protect
+entity_type: taxonomy_term
+bundle: shp_environment_types
+label: 'Protect from deletion'
+description: ''
+required: false
+translatable: false
+default_value:
+  -
+    value: 0
+default_value_callback: ''
+settings:
+  on_label: 'On'
+  off_label: 'Off'
+field_type: boolean

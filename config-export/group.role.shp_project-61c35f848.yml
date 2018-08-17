@@ -1,0 +1,17 @@
+uuid: f6c0a36f-3a21-4269-80c9-7e4c46fecf5e
+langcode: en
+status: true
+dependencies:
+  config:
+    - group.type.shp_project
+  enforced:
+    config:
+      - user.role.shp_developer
+id: shp_project-61c35f848
+label: Developer
+weight: 5
+internal: true
+audience: outsider
+group_type: shp_project
+permissions_ui: false
+permissions: {  }

@@ -1,3 +1,4 @@
+uuid: 841db4da-054b-486c-bae8-71bc7d80586f
 langcode: en
 status: true
 dependencies:
@@ -13,6 +14,8 @@ dependencies:
   module:
     - datetime
     - user
+_core:
+  default_config_hash: Re3H1maxQbDJgMrrJZq5dw7ioEumeCGSedt9iuszTF8
 id: node.shp_site.default
 targetEntityType: node
 bundle: shp_site
@@ -20,11 +23,6 @@ mode: default
 content:
   content_moderation_control:
     weight: -20
-    region: content
-    settings: {  }
-    third_party_settings: {  }
-  field_drush_aliases:
-    weight: 5
     region: content
     settings: {  }
     third_party_settings: {  }

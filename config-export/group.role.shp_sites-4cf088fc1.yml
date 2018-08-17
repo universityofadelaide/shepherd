@@ -1,0 +1,17 @@
+uuid: b9e034c4-39ac-44fd-8601-2acd7bbccae4
+langcode: en
+status: true
+dependencies:
+  config:
+    - group.type.shp_sites
+  enforced:
+    config:
+      - user.role.shp_online_consultant
+id: shp_sites-4cf088fc1
+label: 'Online Consultant'
+weight: 4
+internal: true
+audience: outsider
+group_type: shp_sites
+permissions_ui: false
+permissions: {  }

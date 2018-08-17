@@ -1,0 +1,17 @@
+uuid: 520593ac-b538-49bc-8cd0-cf313dce43a7
+langcode: en
+status: true
+dependencies:
+  config:
+    - group.type.shp_project
+  enforced:
+    config:
+      - user.role.shp_site_administrator
+id: shp_project-0c5d19cf5
+label: 'Site Administrator'
+weight: 3
+internal: true
+audience: outsider
+group_type: shp_project
+permissions_ui: false
+permissions: {  }

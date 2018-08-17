@@ -1,3 +1,4 @@
+uuid: 734446ac-bcd7-4034-9e23-cbf19d308f50
 langcode: en
 status: true
 dependencies:
@@ -5,6 +6,8 @@ dependencies:
     - field.storage.node.field_shp_project
     - node.type.shp_project
     - node.type.shp_site
+_core:
+  default_config_hash: Y0gBpocV4Darg-1yKlw1Q9gvUk6bLzyuaYZqZJTqSF4
 id: node.shp_site.field_shp_project
 field_name: field_shp_project
 entity_type: node

@@ -1,9 +1,12 @@
+uuid: a07b2b21-cc2a-4e09-9aa3-154f7a599ff8
 langcode: en
 status: true
 dependencies:
   config:
     - field.storage.node.field_shp_deployment_name
     - node.type.shp_environment
+_core:
+  default_config_hash: R4fQBB0TqErlD7ibyqHJ5hO5wBZ9hrD_oc8M-Dvm2dY
 id: node.shp_environment.field_shp_deployment_name
 field_name: field_shp_deployment_name
 entity_type: node

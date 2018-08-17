@@ -1,3 +1,4 @@
+uuid: 0660c335-41f1-4899-94e8-c2f78a7e9f0f
 langcode: en
 status: true
 dependencies:
@@ -8,6 +9,8 @@ dependencies:
     - group
     - node
     - user
+_core:
+  default_config_hash: swaYUIwga3QykxkJTE7KZ9bAcY45wZdZySbdR12fIDQ
 id: shp_site_users
 label: 'Site users'
 module: views
@@ -577,12 +580,13 @@ display:
           plugin_id: node_nid
       display_extenders: {  }
     cache_metadata:
-      max-age: 0
+      max-age: -1
       contexts:
         - 'languages:language_content'
         - 'languages:language_interface'
         - url
         - url.query_args
+        - user.permissions
       tags:
         - 'config:field.storage.group_content.group_roles'
   page_1:
@@ -603,11 +607,12 @@ display:
         context: '0'
         menu_name: main
     cache_metadata:
-      max-age: 0
+      max-age: -1
       contexts:
         - 'languages:language_content'
         - 'languages:language_interface'
         - url
         - url.query_args
+        - user.permissions
       tags:
         - 'config:field.storage.group_content.group_roles'

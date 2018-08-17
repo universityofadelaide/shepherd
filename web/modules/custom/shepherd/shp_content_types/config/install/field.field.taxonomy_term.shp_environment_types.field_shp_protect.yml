@@ -1,9 +1,12 @@
+uuid: f7b616f4-7bc3-4cd9-bf0c-9fba48b4396b
 langcode: en
 status: true
 dependencies:
   config:
     - field.storage.taxonomy_term.field_shp_protect
     - taxonomy.vocabulary.shp_environment_types
+_core:
+  default_config_hash: jPs4jY8VGAuMSoeYBqSGrFxPM9FD4K3sztoHt2nA2IY
 id: taxonomy_term.shp_environment_types.field_shp_protect
 field_name: field_shp_protect
 entity_type: taxonomy_term

@@ -1,3 +1,4 @@
+uuid: 64bbd9bd-4ed1-4b23-b27c-e6ef69ca4dd1
 langcode: en
 status: true
 dependencies:
@@ -7,6 +8,8 @@ dependencies:
   module:
     - gnode
     - node
+_core:
+  default_config_hash: Q9ExQ2xkk4KIkNhXflb4D8s3s8l2OlRY3k6NIpVKhCU
 id: group_content_type_c43d5097f57ed
 label: 'Multi-site: Group node (Environment)'
 description: 'Adds <em class="placeholder">Environment</em> content to groups both publicly and privately.'

@@ -1,0 +1,21 @@
+uuid: a07b2b21-cc2a-4e09-9aa3-154f7a599ff8
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_shp_deployment_name
+    - node.type.shp_environment
+_core:
+  default_config_hash: 9Vs3oW5v1M1FS1SGdVnBtI7b_FkKMq_UAb1dU-ClDL0
+id: node.shp_environment.field_shp_deployment_name
+field_name: field_shp_deployment_name
+entity_type: node
+bundle: shp_environment
+label: 'Deployment name'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

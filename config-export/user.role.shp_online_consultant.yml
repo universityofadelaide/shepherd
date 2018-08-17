@@ -1,0 +1,26 @@
+uuid: 67d3d36e-3ef1-4a74-a688-eb0e54153e42
+langcode: en
+status: true
+dependencies: {  }
+_core:
+  default_config_hash: zo51zftxCwbpg1U4_7z1ikH5DiFISrLGL2vUBhnBER0
+id: shp_online_consultant
+label: 'Online Consultant'
+weight: 4
+is_admin: null
+permissions:
+  - 'access comments'
+  - 'access content'
+  - 'access shortcuts'
+  - 'create shp_environment content'
+  - 'create shp_site content'
+  - 'delete any shp_environment content'
+  - 'delete any shp_site content'
+  - 'edit any shp_environment content'
+  - 'edit any shp_site content'
+  - 'edit own comments'
+  - 'post comments'
+  - 'skip comment approval'
+  - 'use environment transition published'
+  - 'use environment transition published_archive'
+  - 'view own unpublished content'

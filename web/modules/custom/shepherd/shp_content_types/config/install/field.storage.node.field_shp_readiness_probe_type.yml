@@ -1,9 +1,12 @@
+uuid: 82c3cddf-5c5a-4dad-8c9f-1d2ead806998
 langcode: en
 status: true
 dependencies:
   module:
     - node
     - options
+_core:
+  default_config_hash: qbVbpjD7RNe8RWgwAIGcHXTYSKA1YlY9wnqOBUFm8GQ
 id: node.field_shp_readiness_probe_type
 field_name: field_shp_readiness_probe_type
 entity_type: node

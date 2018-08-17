@@ -1,9 +1,12 @@
+uuid: f1371d89-137b-4e4c-9c83-1f10a513c166
 langcode: en
 status: true
 dependencies:
   module:
-  - key_value_field
-  - taxonomy
+    - key_value_field
+    - taxonomy
+_core:
+  default_config_hash: gCTRy5Ziah_D7uVeBNTw8dOZP8ja-LpKpqT0HNeSed0
 id: taxonomy_term.field_shp_annotations
 field_name: field_shp_annotations
 entity_type: taxonomy_term

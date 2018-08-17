@@ -1,0 +1,31 @@
+uuid: b2a65be3-5aea-41cb-8d28-50d52efb5598
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_shp_storage_class
+    - node.type.shp_project
+    - taxonomy.vocabulary.shp_storage_class
+_core:
+  default_config_hash: 46fo_gSdNr-qvGJeXscF9jdR1sjllgRGfVFIBcHZ_do
+id: node.shp_project.field_shp_storage_class
+field_name: field_shp_storage_class
+entity_type: node
+bundle: shp_project
+label: 'Storage class'
+description: 'Specify the storage class used for persistent volume claims. Typically the default is sufficient.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:taxonomy_term'
+  handler_settings:
+    target_bundles:
+      shp_storage_class: shp_storage_class
+    sort:
+      field: name
+      direction: asc
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference

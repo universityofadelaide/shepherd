@@ -1,3 +1,4 @@
+uuid: 8e7f3dba-94f1-4d27-9eef-1375e08f2843
 langcode: en
 status: true
 dependencies:
@@ -14,6 +15,8 @@ dependencies:
     - serialization
     - taxonomy
     - user
+_core:
+  default_config_hash: HcNdLAgtfdXFJGg70PcyUeC_jVu6FO9CveGGauANPTg
 id: shp_sites
 label: Sites
 module: views
@@ -566,7 +569,7 @@ display:
       display_extenders: {  }
       use_ajax: true
     cache_metadata:
-      max-age: 0
+      max-age: -1
       contexts:
         - 'languages:language_content'
         - 'languages:language_interface'
@@ -803,7 +806,7 @@ display:
         groups:
           1: AND
     cache_metadata:
-      max-age: 0
+      max-age: -1
       contexts:
         - 'languages:language_content'
         - 'languages:language_interface'

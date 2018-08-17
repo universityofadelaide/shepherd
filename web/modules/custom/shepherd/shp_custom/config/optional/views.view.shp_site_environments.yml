@@ -1,3 +1,4 @@
+uuid: 40b58df5-2d4e-41ff-b467-e6a9f47873d2
 langcode: en
 status: true
 dependencies:
@@ -10,6 +11,8 @@ dependencies:
     - node
     - shp_custom
     - user
+_core:
+  default_config_hash: GC-29kik__fj6gHcirx-UrPR-QaFHMOIP7_UAo-1Gik
 id: shp_site_environments
 label: 'Site Environments'
 module: views
@@ -464,7 +467,7 @@ display:
           plugin_id: numeric
       display_extenders: {  }
     cache_metadata:
-      max-age: 0
+      max-age: -1
       contexts:
         - 'languages:language_content'
         - 'languages:language_interface'
@@ -492,7 +495,7 @@ display:
         context: '0'
         menu_name: main
     cache_metadata:
-      max-age: 0
+      max-age: -1
       contexts:
         - 'languages:language_content'
         - 'languages:language_interface'

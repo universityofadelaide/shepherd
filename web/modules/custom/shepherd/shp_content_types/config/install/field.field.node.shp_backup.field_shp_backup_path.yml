@@ -1,9 +1,12 @@
+uuid: 27b86de3-fcc4-4154-a8d6-1d638ce92d4e
 langcode: en
 status: true
 dependencies:
   config:
     - field.storage.node.field_shp_backup_path
     - node.type.shp_backup
+_core:
+  default_config_hash: B80EQIaFpbsNoGSVgyhMDOHuz2D7M4BtfdFUjfCZ4n0
 id: node.shp_backup.field_shp_backup_path
 field_name: field_shp_backup_path
 entity_type: node

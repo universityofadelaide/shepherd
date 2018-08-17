@@ -1,0 +1,21 @@
+uuid: af4560e5-b042-4ca4-8fd5-e610d8eb85b4
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_shp_domain
+    - node.type.shp_environment
+_core:
+  default_config_hash: tHEDOcHltfmawsHxIB_7FoIoixypfubTu52cCLMiwBw
+id: node.shp_environment.field_shp_domain
+field_name: field_shp_domain
+entity_type: node
+bundle: shp_environment
+label: Domain
+description: ''
+required: true
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

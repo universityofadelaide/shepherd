@@ -1,9 +1,12 @@
+uuid: 5b5c8417-24c1-40cc-8c71-b6127af050df
 langcode: en
 status: true
 dependencies:
   config:
     - field.storage.node.field_shp_cron_suspended
     - node.type.shp_environment
+_core:
+  default_config_hash: xo9a_MlYSNCq6iQKygyoFjWsAnS6fDnjLGjUOeG_tBU
 id: node.shp_environment.field_shp_cron_suspended
 field_name: field_shp_cron_suspended
 entity_type: node

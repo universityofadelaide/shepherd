@@ -1,0 +1,23 @@
+uuid: 870aa0bd-056e-4fa6-abab-a05fef8d1f88
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_shp_go_live_date
+    - node.type.shp_site
+  module:
+    - datetime
+_core:
+  default_config_hash: whB1eKKrKmc1O8RhcEwcE5elBW4DkZ605Yl06UXfxL8
+id: node.shp_site.field_shp_go_live_date
+field_name: field_shp_go_live_date
+entity_type: node
+bundle: shp_site
+label: 'Go live date'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: datetime

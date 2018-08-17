@@ -1,3 +1,4 @@
+uuid: 09092540-d691-45e5-bcb0-19feb330ec3d
 langcode: en
 status: true
 dependencies:
@@ -9,6 +10,8 @@ dependencies:
   module:
     - node
     - user
+_core:
+  default_config_hash: MXAMLP_vAacE1mCipCsvfRiGlmdGYJRL83ddf6o5aQA
 id: shp_site_backups
 label: 'Backup list'
 module: views
@@ -390,7 +393,7 @@ display:
           plugin_id: numeric
       display_extenders: {  }
     cache_metadata:
-      max-age: 0
+      max-age: -1
       contexts:
         - 'languages:language_content'
         - 'languages:language_interface'
@@ -411,7 +414,7 @@ display:
       display_extenders: {  }
       path: site/%node/backups
     cache_metadata:
-      max-age: 0
+      max-age: -1
       contexts:
         - 'languages:language_content'
         - 'languages:language_interface'

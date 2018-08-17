@@ -1,9 +1,12 @@
+uuid: 146fa9c4-b8b0-4c79-8a26-7dbd828d173d
 langcode: en
 status: true
 dependencies:
   module:
     - datetime
     - node
+_core:
+  default_config_hash: jdXbnHT4yqdHCSFn5aMpPcZBfHssmCAJEJqP23nX1sk
 id: node.field_shp_go_live_date
 field_name: field_shp_go_live_date
 entity_type: node

@@ -1,3 +1,4 @@
+uuid: b0175fa4-d1cf-4e0d-9764-451dbfea2741
 langcode: en
 status: true
 dependencies:
@@ -6,6 +7,8 @@ dependencies:
   module:
     - group
     - user
+_core:
+  default_config_hash: ej6SVBPA1Ha3hsA1RaSrnKJELI_TrLi8oGflfDOD_OM
 id: shp_user_groups
 label: 'User groups'
 module: views

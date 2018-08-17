@@ -1,0 +1,27 @@
+uuid: 5ac4e9b0-3187-4579-865f-ad3e9c06aca2
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_shp_site
+    - node.type.shp_environment
+_core:
+  default_config_hash: l7F8CrVUgjGDG4s04Xi476KiXe6ALqnAlmUi-H-aKAY
+id: node.shp_environment.field_shp_site
+field_name: field_shp_site
+entity_type: node
+bundle: shp_environment
+label: Site
+description: 'The site this environment belongs to.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:node'
+  handler_settings:
+    target_bundles:
+      shp_site: shp_site
+    sort:
+      field: _none
+field_type: entity_reference

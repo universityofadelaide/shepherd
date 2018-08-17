@@ -1,3 +1,4 @@
+uuid: c90039f0-b638-4424-9951-363e3211413d
 langcode: en
 status: true
 dependencies:
@@ -6,6 +7,8 @@ dependencies:
     - node.type.shp_project
   module:
     - file
+_core:
+  default_config_hash: R7PQajfE_LBeQiFunTI4tNe5o_EmJkVEYwDjxQjdac0
 id: node.shp_project.field_shp_default_sql
 field_name: field_shp_default_sql
 entity_type: node
@@ -18,7 +21,7 @@ default_value: {  }
 default_value_callback: ''
 settings:
   file_directory: 'sql/[date:custom:Y]-[date:custom:m]'
-  file_extensions: 'txt'
+  file_extensions: txt
   max_filesize: ''
   description_field: false
   handler: 'default:file'

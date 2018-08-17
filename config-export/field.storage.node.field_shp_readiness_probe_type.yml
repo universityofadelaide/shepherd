@@ -1,0 +1,32 @@
+uuid: 82c3cddf-5c5a-4dad-8c9f-1d2ead806998
+langcode: en
+status: true
+dependencies:
+  module:
+    - node
+    - options
+_core:
+  default_config_hash: 4UuzhRpb7h6z8WIwjgjxWFJvU6VRfhi8tgVS2lls3WM
+id: node.field_shp_readiness_probe_type
+field_name: field_shp_readiness_probe_type
+entity_type: node
+type: list_string
+settings:
+  allowed_values:
+    -
+      value: exec
+      label: 'Executable commands'
+    -
+      value: tcpSocket
+      label: 'TCP Socket'
+    -
+      value: httpGet
+      label: 'HTTP Get'
+  allowed_values_function: ''
+module: options
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

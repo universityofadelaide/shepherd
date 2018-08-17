@@ -1,8 +1,11 @@
+uuid: 9f500574-6312-4e61-b3a0-6624248692d4
 langcode: en
 status: true
 dependencies:
   module:
     - taxonomy
+_core:
+  default_config_hash: sF7rsvKdZZmUma4x4iucCFZcWMIs_OabIEH6XxWAyKA
 id: taxonomy_term.field_shp_update_go_live
 field_name: field_shp_update_go_live
 entity_type: taxonomy_term

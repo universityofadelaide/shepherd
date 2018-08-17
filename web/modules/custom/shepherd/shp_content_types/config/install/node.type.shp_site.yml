@@ -1,3 +1,4 @@
+uuid: babec94e-051a-4b20-a819-3fad987f6c10
 langcode: en
 status: true
 dependencies:
@@ -7,6 +8,8 @@ third_party_settings:
   menu_ui:
     available_menus: {  }
     parent: ''
+_core:
+  default_config_hash: gnlPBiTrnd7amj_N9qgvLd2JYu2aD2dqcUciHZqQNH0
 name: Site
 type: shp_site
 description: 'A site describes the metadata associated with a website hosted by the University of Adelaide.'

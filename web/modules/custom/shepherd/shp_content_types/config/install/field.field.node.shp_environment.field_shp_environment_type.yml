@@ -1,3 +1,4 @@
+uuid: 4c90b25b-8bc6-49ba-aa17-addd094eced4
 langcode: en
 status: true
 dependencies:
@@ -5,6 +6,8 @@ dependencies:
     - field.storage.node.field_shp_environment_type
     - node.type.shp_environment
     - taxonomy.vocabulary.shp_environment_types
+_core:
+  default_config_hash: Fva8hwLEZSz-n7F18y_o5gPT8fzZjz4zW9MEn4qB-ws
 id: node.shp_environment.field_shp_environment_type
 field_name: field_shp_environment_type
 entity_type: node

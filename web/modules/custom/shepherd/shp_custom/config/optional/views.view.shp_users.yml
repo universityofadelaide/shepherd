@@ -1,3 +1,4 @@
+uuid: 2811677f-d0cb-41e0-a668-0c0f9a6bbf00
 langcode: en
 status: true
 dependencies:
@@ -7,6 +8,8 @@ dependencies:
   module:
     - group
     - user
+_core:
+  default_config_hash: om_SDpj2-RYffGz8MLSFrM1BEpce5WQC8k-NegkdC5w
 id: shp_users
 label: Users
 module: views
@@ -414,7 +417,7 @@ display:
       arguments: {  }
       display_extenders: {  }
     cache_metadata:
-      max-age: 0
+      max-age: -1
       contexts:
         - 'languages:language_content'
         - 'languages:language_interface'
@@ -432,7 +435,7 @@ display:
       display_extenders: {  }
       path: users
     cache_metadata:
-      max-age: 0
+      max-age: -1
       contexts:
         - 'languages:language_content'
         - 'languages:language_interface'

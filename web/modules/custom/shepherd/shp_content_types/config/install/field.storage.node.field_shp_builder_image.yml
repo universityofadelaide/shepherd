@@ -1,8 +1,11 @@
+uuid: c2fe3f4e-c382-4c67-a827-aaea99a42370
 langcode: en
 status: true
 dependencies:
   module:
     - node
+_core:
+  default_config_hash: 5CXbg6XJe5S8YZmUzbQ0ZegfyzFo4O6kBmSzhYwWG8Q
 id: node.field_shp_builder_image
 field_name: field_shp_builder_image
 entity_type: node

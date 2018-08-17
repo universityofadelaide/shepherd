@@ -1,0 +1,21 @@
+uuid: de6d9d10-9143-45e8-812f-3cdf59e6d556
+langcode: en
+status: true
+dependencies:
+  config:
+    - group.type.shp_site
+  module:
+    - shp_roles
+third_party_settings:
+  shp_roles:
+    synced_role: shp_reviewer
+_core:
+  default_config_hash: fYZbhGXKD4jXzV9_5LtO9w1hijl_W2id6Y6yC5WscUE
+id: shp_site-reviewer
+label: Reviewer
+weight: 100
+internal: false
+audience: member
+group_type: shp_site
+permissions_ui: true
+permissions: {  }

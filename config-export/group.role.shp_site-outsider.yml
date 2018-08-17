@@ -1,0 +1,14 @@
+uuid: 67ca39da-1283-4166-bfa4-f44e7b55f758
+langcode: en
+status: true
+dependencies:
+  config:
+    - group.type.shp_site
+id: shp_site-outsider
+label: Outsider
+weight: -101
+internal: true
+audience: outsider
+group_type: shp_site
+permissions_ui: true
+permissions: {  }

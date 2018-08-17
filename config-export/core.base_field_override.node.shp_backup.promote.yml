@@ -1,0 +1,24 @@
+uuid: 2ffed514-5ec8-4ff4-b0c2-bf5bdd267de4
+langcode: en
+status: true
+dependencies:
+  config:
+    - node.type.shp_backup
+_core:
+  default_config_hash: idukE8YsuWet9hmTlkBLRNT2NOJEtW0wHYXfrLIh4RM
+id: node.shp_backup.promote
+field_name: promote
+entity_type: node
+bundle: shp_backup
+label: 'Promoted to front page'
+description: ''
+required: false
+translatable: true
+default_value:
+  -
+    value: 0
+default_value_callback: ''
+settings:
+  on_label: 'On'
+  off_label: 'Off'
+field_type: boolean
