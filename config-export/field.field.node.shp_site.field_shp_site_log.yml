@@ -1,4 +1,4 @@
-uuid: 2a6514fb-1a1a-4e15-85e2-ef8a074085de
+uuid: db5d0a71-9523-46fc-988c-6c1ca6edd824
 langcode: en
 status: true
 dependencies:
@@ -8,7 +8,7 @@ dependencies:
   module:
     - comment
 _core:
-  default_config_hash: KHA5FQM84FoeKRjtcRI8EZRP4rvQZf8ZPFCaij5lmhU
+  default_config_hash: mDQPQi4xkLUwm4-K1rM-Ohh_hQfArmYGupHpy7KsWpw
 id: node.shp_site.field_shp_site_log
 field_name: field_shp_site_log
 entity_type: node

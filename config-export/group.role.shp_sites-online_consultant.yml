@@ -1,4 +1,4 @@
-uuid: 59b545d5-7ac0-473d-902c-235c52514261
+uuid: 0bc4858b-52ae-4cc4-a3ea-a23446469799
 langcode: en
 status: true
 dependencies:
@@ -10,7 +10,7 @@ third_party_settings:
   shp_roles:
     synced_role: shp_online_consultant
 _core:
-  default_config_hash: PC5-gl6SgWDexiFBdC1AuTyEQ4-iWAtVp6M4yOnpTuc
+  default_config_hash: Ax0GzgSzebAD6QCAFxpSBNj_cEVloj7tM_oxxDHJVG4
 id: shp_sites-online_consultant
 label: 'Online consultant'
 weight: 100

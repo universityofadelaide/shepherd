@@ -1,4 +1,4 @@
-uuid: 08593e09-f3cc-457d-85bb-11b8c53f2850
+uuid: 3ff69f9c-3ae8-4d3e-bb8f-1c2bb1777f09
 langcode: en
 status: true
 dependencies:
@@ -129,6 +129,9 @@ display:
             multiple: false
             remember_roles:
               authenticated: authenticated
+            placeholder: ''
+            min_placeholder: ''
+            max_placeholder: ''
           is_grouped: false
           group_info:
             label: ''

@@ -30,7 +30,6 @@ dependencies:
   - node
   - options
   - page_cache
-  - rdf
   - rest
   - search
   - shortcut

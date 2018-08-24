@@ -1,11 +1,11 @@
-uuid: edce1015-ae4b-47a2-abf5-7cee532a283f
+uuid: 42219082-d645-4242-bb61-7bf96590f888
 langcode: en
 status: true
 dependencies:
   module:
     - node
 _core:
-  default_config_hash: vN_zizPdCz-9tbMPYqeVs2tvTltnA6zUme6Ih-aCUDQ
+  default_config_hash: pVfv5InmE4HQ6gQZl24_oAqaIqM1tiI5JwSAdxJjPLQ
 id: node.field_shp_update_on_image_change
 field_name: field_shp_update_on_image_change
 entity_type: node

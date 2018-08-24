@@ -1,4 +1,4 @@
-uuid: fbf9ddef-cd3a-4e49-812c-fc3d10edaec9
+uuid: 1d3ffeb0-6292-4b20-a98f-646649b692a0
 langcode: en
 status: true
 dependencies:
@@ -10,7 +10,7 @@ dependencies:
     - node
     - user
 _core:
-  default_config_hash: ksz-IJUbxIrYQsNfYVjEld0O-3JyMd-PiCufIMoYGbw
+  default_config_hash: y0Ff94Ra21IvJ7_1E7ZgQKwyNXvPjVhTYmcl9s4DOiw
 id: shp_user_sites
 label: 'User sites'
 module: views

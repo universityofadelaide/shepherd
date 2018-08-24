@@ -1,4 +1,4 @@
-uuid: c8a0c22e-d67f-41b2-a0d6-3787e3a2beae
+uuid: 0bddcc8e-390e-4cff-ba01-7e2093601f99
 langcode: en
 status: true
 dependencies:
@@ -14,7 +14,7 @@ dependencies:
   module:
     - content_moderation
 _core:
-  default_config_hash: iAnwb4dN3_8gsk1zvyDHXxe75Ag2WKRib8zfksY_OMI
+  default_config_hash: FinZYNGu0yFzoXJxA-82sbSH2Z1zz6CnHg8Zy7zZYmE
 id: node.shp_site.default
 targetEntityType: node
 bundle: shp_site

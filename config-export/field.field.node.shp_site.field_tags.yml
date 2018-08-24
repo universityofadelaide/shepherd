@@ -1,4 +1,4 @@
-uuid: 4d5a9661-fcab-41ba-a9cb-237ed32fda2b
+uuid: 86cc8872-4f5b-40b3-a670-79d9c7ba9559
 langcode: en
 status: true
 dependencies:
@@ -6,7 +6,7 @@ dependencies:
     - field.storage.node.field_tags
     - node.type.shp_site
 _core:
-  default_config_hash: VdLaIabzZl7eCG_teB7acFQGm-4isBrE5hTZ-C9hCPs
+  default_config_hash: FkZbjfdRiHvDuVA-1opjjk_DSXXH7EIl0QjONuhC90Y
 id: node.shp_site.field_tags
 field_name: field_tags
 entity_type: node

@@ -1,4 +1,4 @@
-uuid: ca379896-35bb-43a3-a323-e40df1cdfc9b
+uuid: 821cd8d8-3c25-4078-810a-e7eac0b79e4f
 langcode: en
 status: true
 dependencies:
@@ -10,7 +10,7 @@ third_party_settings:
   shp_roles:
     synced_role: administrator
 _core:
-  default_config_hash: psY69SyGmmSCw06yiYBVeUrlC--FEQPAqmbkXZC2y9w
+  default_config_hash: nGHpZZwr-RdKyAuKzwPty48XFTIVTgkTlL2OUHkmGUc
 id: shp_project-administrator
 label: Administrator
 weight: 100

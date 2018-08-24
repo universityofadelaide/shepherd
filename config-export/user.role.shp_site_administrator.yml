@@ -1,9 +1,9 @@
-uuid: 8e53400a-c6a7-42d7-9db8-3062647fe792
+uuid: 09a5f95c-0e73-4b9c-a8f7-f24c5bed93f3
 langcode: en
 status: true
 dependencies: {  }
 _core:
-  default_config_hash: C5fp8kP9JA5J8Me8TnlUfaTAFq-dXz3PP15DUkljPbE
+  default_config_hash: L-n_KzUlHr9g-l2b_E7lfjChld19v74O87mkJ9MOSDs
 id: shp_site_administrator
 label: 'Site Administrator'
 weight: 3

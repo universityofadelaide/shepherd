@@ -1,5 +1,5 @@
 country:
-  default: ''
+  default: AU
 first_day: 0
 timezone:
   default: Australia/Adelaide

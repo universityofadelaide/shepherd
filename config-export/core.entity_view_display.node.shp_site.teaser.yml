@@ -1,4 +1,4 @@
-uuid: 282f5a3f-30c4-45c4-a824-750be168848c
+uuid: 695c58e4-2656-4801-9314-c70edf8afd78
 langcode: en
 status: true
 dependencies:
@@ -15,12 +15,15 @@ dependencies:
   module:
     - user
 _core:
-  default_config_hash: zvihMkjemiMcHYZZqp7edg6pIFbFEZZVum4v8a9EHS4
+  default_config_hash: XqN6uZdhmScmrTgMCQ26ZrJNPQEWp2T4ioZPA6iD-xc
 id: node.shp_site.teaser
 targetEntityType: node
 bundle: shp_site
 mode: teaser
 content:
+  field_drush_aliases:
+    weight: 100
+    region: content
   links:
     weight: 100
     region: content

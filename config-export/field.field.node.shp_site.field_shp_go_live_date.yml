@@ -1,4 +1,4 @@
-uuid: 870aa0bd-056e-4fa6-abab-a05fef8d1f88
+uuid: e9f71069-0ed7-46d8-b698-ea070c9b1246
 langcode: en
 status: true
 dependencies:
@@ -8,7 +8,7 @@ dependencies:
   module:
     - datetime
 _core:
-  default_config_hash: whB1eKKrKmc1O8RhcEwcE5elBW4DkZ605Yl06UXfxL8
+  default_config_hash: 13c-c3gStQh404XcH2XJzx7xTt7ov0K-LmVqNSqOvDk
 id: node.shp_site.field_shp_go_live_date
 field_name: field_shp_go_live_date
 entity_type: node

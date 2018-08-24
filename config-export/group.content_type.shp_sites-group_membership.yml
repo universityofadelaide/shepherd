@@ -1,4 +1,4 @@
-uuid: 86c9a161-53f6-46bf-9f6e-1b8bbc93c630
+uuid: 97c06cf1-7058-4941-aa55-8e07af0427ec
 langcode: en
 status: true
 dependencies:
@@ -6,12 +6,13 @@ dependencies:
     - group.type.shp_sites
   module:
     - user
+_core:
+  default_config_hash: X80kCYFy__81pqUwINt0TC-MmNhhc5SQHNr4Ok7F9lI
 id: shp_sites-group_membership
-label: 'Multi-site: Group membership'
+label: 'Site: Group membership'
 description: 'Adds users to groups as members.'
 group_type: shp_sites
 content_plugin: group_membership
 plugin_config:
   group_cardinality: 0
   entity_cardinality: 1
-  use_creation_wizard: true

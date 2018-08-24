@@ -1,4 +1,4 @@
-uuid: 38ee5b66-5287-4b97-86e7-7be41e27a983
+uuid: 61da1cf9-3e9e-4b47-a52f-74ddb3d70af7
 langcode: en
 status: true
 dependencies:
@@ -6,7 +6,7 @@ dependencies:
     - field.storage.node.field_shp_path
     - node.type.shp_site
 _core:
-  default_config_hash: 36TO4t0QnsMXv08F5EVTDwnLJwv1wK20wdj39fyuWaQ
+  default_config_hash: ALmnLdhZC12quCOJvUQvEcz9_bwHus2uzuozro-53GA
 id: node.shp_site.field_shp_path
 field_name: field_shp_path
 entity_type: node

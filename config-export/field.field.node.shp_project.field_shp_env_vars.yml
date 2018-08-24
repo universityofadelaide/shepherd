@@ -1,4 +1,4 @@
-uuid: bef7bb87-afc4-445e-83a2-d4c1b0e861d6
+uuid: 0c1e1c53-7790-4c75-a987-785ec12990ff
 langcode: en
 status: true
 dependencies:
@@ -8,7 +8,7 @@ dependencies:
   module:
     - key_value_field
 _core:
-  default_config_hash: P_pIeGCeBUp_Hn4IsGZplXLEnOu4Ms3TcF9lv102mGY
+  default_config_hash: Ot3-DMRup1JQxJuR4Kgr70H46-zdVL4WgOJfAkZIsBE
 id: node.shp_project.field_shp_env_vars
 field_name: field_shp_env_vars
 entity_type: node

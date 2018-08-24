@@ -1,4 +1,4 @@
-uuid: 09092540-d691-45e5-bcb0-19feb330ec3d
+uuid: 2aaed50f-71a4-4b51-a28f-469c7c32c958
 langcode: en
 status: true
 dependencies:
@@ -11,7 +11,7 @@ dependencies:
     - node
     - user
 _core:
-  default_config_hash: '-bizLzoydP8EQ9SOgWOqkBkKT8R5JfmII1WfRmsYv7Y'
+  default_config_hash: MXAMLP_vAacE1mCipCsvfRiGlmdGYJRL83ddf6o5aQA
 id: shp_site_backups
 label: 'Backup list'
 module: views

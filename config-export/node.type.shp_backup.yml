@@ -1,4 +1,4 @@
-uuid: 8ea21500-43ba-478b-818e-caa971b71bb6
+uuid: 793ccda1-6c32-4588-b905-a4ef0a93bc6a
 langcode: en
 status: true
 dependencies:
@@ -9,7 +9,7 @@ third_party_settings:
     available_menus: {  }
     parent: ''
 _core:
-  default_config_hash: av4Qa1JeAzRaAXDjEbCqErGRHj8fYWEOq-Wnt11lCWI
+  default_config_hash: 4NRtLGQi4XxqQzSC9NDz9TtDTvdza-RsPJp-0iy70JM
 name: Backup
 type: shp_backup
 description: 'A Backup node is a record of a Backup taken of a shepherd environment.'

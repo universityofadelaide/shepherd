@@ -1,4 +1,4 @@
-uuid: c5cb2be8-6e40-45d1-8957-786a60bf452a
+uuid: 92c2c5a9-de63-4879-bedb-0911cbb8379a
 langcode: en
 status: true
 dependencies:
@@ -10,7 +10,7 @@ third_party_settings:
   shp_roles:
     synced_role: shp_reviewer
 _core:
-  default_config_hash: xjmgne83ZYAvf5zLahiKreKmXbS37DjNymBlnxWP0b4
+  default_config_hash: dbLN0T9SkzE4g9ybJibASEySM_jp6tMayTxRl96sbKc
 id: shp_project-reviewer
 label: Reviewer
 weight: 100

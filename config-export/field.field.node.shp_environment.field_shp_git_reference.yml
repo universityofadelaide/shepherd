@@ -1,4 +1,4 @@
-uuid: 2b76fad8-cf5b-404c-945d-3099ed519479
+uuid: 077cee9c-57a4-48d3-adc6-f5e2478e7345
 langcode: en
 status: true
 dependencies:
@@ -6,7 +6,7 @@ dependencies:
     - field.storage.node.field_shp_git_reference
     - node.type.shp_environment
 _core:
-  default_config_hash: dyX9fuG6V7b1zti90z01crUeoW2hpxIxbN1iV-W3ihk
+  default_config_hash: ON25RTgnVpvNmNigdGe4fsBhUfCtu-Twk72ZhjeEnlg
 id: node.shp_environment.field_shp_git_reference
 field_name: field_shp_git_reference
 entity_type: node

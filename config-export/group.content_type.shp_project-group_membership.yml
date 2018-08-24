@@ -1,4 +1,4 @@
-uuid: a6c3f940-45ea-4c32-ab04-26e0d5ffb3ad
+uuid: 43d03949-7be0-4263-b22a-984e98713681
 langcode: en
 status: true
 dependencies:
@@ -6,6 +6,8 @@ dependencies:
     - group.type.shp_project
   module:
     - user
+_core:
+  default_config_hash: 3UigQRKcsDtKm3vXEIz4y2ijTCF6bZY7E1fZMKE0yds
 id: shp_project-group_membership
 label: 'Project: Group membership'
 description: 'Adds users to groups as members.'

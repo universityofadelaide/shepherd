@@ -1,4 +1,4 @@
-uuid: 5708b590-57df-4768-9732-03b4bee63047
+uuid: 92341209-b835-4295-bd35-6c722b1fc38b
 langcode: en
 status: true
 dependencies:
@@ -762,7 +762,7 @@ display:
           group_type: group
           admin_label: ''
           operator: '='
-          value: false
+          value: ''
           group: 1
           exposed: true
           expose:

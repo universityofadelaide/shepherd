@@ -1,4 +1,4 @@
-uuid: ae2b098c-f6d7-40ff-b650-91d1b2fbb0ad
+uuid: e942b980-a68a-46c1-b3d1-0c656aa92921
 langcode: en
 status: true
 dependencies:
@@ -9,7 +9,7 @@ third_party_settings:
     available_menus: {  }
     parent: 'main:'
 _core:
-  default_config_hash: W2ONkjyI1lNmuGBQXUmWprHVhUw9qBV6HQ5NFNC3WQg
+  default_config_hash: XikqmmbrfkT6aO2VLjcah-ABKB4lIWaZrnk06hOjZHc
 name: Environment
 type: shp_environment
 description: 'Environment describes the deployment platform and other environment specific settings.'

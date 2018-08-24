@@ -1,11 +1,11 @@
-uuid: 776af08c-4665-4415-a95e-a51a0736532d
+uuid: 5c79cccf-cae6-4d6f-a0fa-cc89dd446f2e
 langcode: en
 status: true
 dependencies:
   module:
     - node
 _core:
-  default_config_hash: hGaHsFXs_2ipR63N-GhsAQGpxSwNS8ZsNIhwWCF1_DY
+  default_config_hash: G3UNM6yiAXGnsiLUrApJRKXGQrwLGkEFPB2LB34KrRg
 id: node.field_shp_git_repository
 field_name: field_shp_git_repository
 entity_type: node

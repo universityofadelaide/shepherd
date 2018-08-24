@@ -1,4 +1,4 @@
-uuid: 1a8ddff3-fdba-4f93-983e-64673d4ead6a
+uuid: 80ffa25e-04a4-48e5-b5e0-1755e0923292
 langcode: en
 status: true
 dependencies:
@@ -13,7 +13,7 @@ dependencies:
     - node
     - user
 _core:
-  default_config_hash: h7SgJyTA0eZNGPTVcdJXUfSWEv57b9MQaQ4EvnFY-YA
+  default_config_hash: 7RAD9kLj9l59VNxq0qcSLggoX-egjK9j5YV6QpxzF5w
 id: shp_projects
 label: Projects
 module: views

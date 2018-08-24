@@ -1,4 +1,4 @@
-uuid: c23cae6a-7557-4efa-9b0f-16a2ac70f8e2
+uuid: 3a96735d-745a-426b-9a7d-2670f58b4526
 langcode: en
 status: true
 dependencies:
@@ -6,7 +6,7 @@ dependencies:
     - field.storage.node.field_shp_git_repository
     - node.type.shp_project
 _core:
-  default_config_hash: Ox_HXCXwbr6QQrNFjSgdF7FDxvdIw_hVW8qJYN_qK3A
+  default_config_hash: CYApwfElMRPlq94MuKz_PSrNiuoTTgql32TGlsiIr1A
 id: node.shp_project.field_shp_git_repository
 field_name: field_shp_git_repository
 entity_type: node

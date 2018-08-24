@@ -1,4 +1,4 @@
-uuid: 7216fa2c-12be-496c-8809-505983a19ae3
+uuid: bf2a9f49-eb6c-433b-82a1-fb0aba91bd85
 langcode: en
 status: true
 dependencies:
@@ -9,7 +9,7 @@ dependencies:
     - gnode
     - node
 _core:
-  default_config_hash: iQVeI62SqQJQf9fwrw1gTs2QS9ZDSCzaySJRpiAddMs
+  default_config_hash: Et4l6CCfATXQfxlHPlyNa-jP5TbNduU7nVnnCoGiR5E
 id: group_content_type_97ea885840896
 label: 'Project: Group node (Project)'
 description: 'Adds <em class="placeholder">Project</em> content to groups both publicly and privately.'

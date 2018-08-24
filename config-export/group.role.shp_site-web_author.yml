@@ -1,4 +1,4 @@
-uuid: 742f0dfe-e044-4492-b46c-e9c5e6ee932b
+uuid: 27429611-f492-4cb4-a1e7-ff9816b8baeb
 langcode: en
 status: true
 dependencies:
@@ -10,7 +10,7 @@ third_party_settings:
   shp_roles:
     synced_role: shp_web_author
 _core:
-  default_config_hash: _EiVC_O7OYJZXb6tSx-CeAah5D2drlngPERaDKOs2ok
+  default_config_hash: YZHb1w5ux_ft2Hud617L0FhvfrAMBZGbGUg02UN7KtM
 id: shp_site-web_author
 label: 'Web author'
 weight: 100

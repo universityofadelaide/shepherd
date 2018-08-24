@@ -1,4 +1,4 @@
-uuid: 8e7f3dba-94f1-4d27-9eef-1375e08f2843
+uuid: 3f1c4a72-c04d-45d5-a07a-c3f224735470
 langcode: en
 status: true
 dependencies:
@@ -16,7 +16,7 @@ dependencies:
     - taxonomy
     - user
 _core:
-  default_config_hash: PKnv_xbN4K33s7ZZ5frIBZaNGT_32sEB2dAipg4bFjs
+  default_config_hash: HcNdLAgtfdXFJGg70PcyUeC_jVu6FO9CveGGauANPTg
 id: shp_sites
 label: Sites
 module: views
@@ -60,10 +60,13 @@ display:
       pager:
         type: mini
         options:
-          items_per_page: 10
+          items_per_page: 25
           offset: 0
           id: 0
           total_pages: null
+          tags:
+            previous: ‹‹
+            next: ››
           expose:
             items_per_page: false
             items_per_page_label: 'Items per page'
@@ -72,9 +75,6 @@ display:
             items_per_page_options_all_label: '- All -'
             offset: false
             offset_label: Offset
-          tags:
-            previous: ‹‹
-            next: ››
       style:
         type: table
       row:
@@ -650,6 +650,7 @@ display:
               shp_site_administrator: '0'
               shp_online_consultant: '0'
               shp_developer: '0'
+            placeholder: ''
           is_grouped: false
           group_info:
             label: ''
@@ -693,6 +694,7 @@ display:
               shp_site_administrator: '0'
               shp_online_consultant: '0'
               shp_developer: '0'
+            placeholder: ''
           is_grouped: false
           group_info:
             label: ''
@@ -829,6 +831,10 @@ display:
       path: api/websites
       style:
         type: serializer
+        options:
+          uses_fields: false
+          formats:
+            json: json
       defaults:
         style: false
         row: false

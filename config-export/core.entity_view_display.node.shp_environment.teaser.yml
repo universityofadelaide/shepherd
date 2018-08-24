@@ -1,4 +1,4 @@
-uuid: ae3bebb4-e2dc-4a72-bb50-4db2920f058c
+uuid: 2d50faa8-0611-4129-9dc5-d4cc889a64c9
 langcode: en
 status: true
 dependencies:
@@ -18,7 +18,7 @@ dependencies:
   module:
     - user
 _core:
-  default_config_hash: r-1BgArK-XO8lwN1POZ4P2R7u8PoFYCGv3YHYCsJFvs
+  default_config_hash: a8X5YHIT4ZMh0zm4bE6czfVPlkkwbmsi0qKavWVLLOA
 id: node.shp_environment.teaser
 targetEntityType: node
 bundle: shp_environment

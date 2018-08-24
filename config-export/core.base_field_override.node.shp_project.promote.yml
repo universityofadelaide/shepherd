@@ -1,11 +1,11 @@
-uuid: b95cb081-8578-470b-a431-ffdc8b304a1f
+uuid: 8c4eabf3-033d-4d49-869a-52c02e6dd3a1
 langcode: en
 status: true
 dependencies:
   config:
     - node.type.shp_project
 _core:
-  default_config_hash: rfe6cUXanaeROaCBtFWjOJ--6bgIuyALCbcfRjiBwe0
+  default_config_hash: QUzthVY7zhziwvjnLMNHvP2llhrO7OY60TI7wfKNVgc
 id: node.shp_project.promote
 field_name: promote
 entity_type: node

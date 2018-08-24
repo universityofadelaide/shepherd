@@ -1,4 +1,4 @@
-uuid: 4d5ecbce-5858-49b4-b197-e300ce671bdd
+uuid: 6fb80a1a-24bf-433a-83a3-1296f4ca3f92
 langcode: en
 status: true
 dependencies:
@@ -10,7 +10,7 @@ third_party_settings:
   shp_roles:
     synced_role: shp_contributor
 _core:
-  default_config_hash: Ng5eTKEn5ITdjz-6JQqDxaI391OJWhRjyUjNuuAwrW4
+  default_config_hash: zn6osyEylQ934TuPWkzYBxrP7Ez9aQvbFjwPpj-6Ux8
 id: shp_sites-contributor
 label: Contributor
 weight: 100
