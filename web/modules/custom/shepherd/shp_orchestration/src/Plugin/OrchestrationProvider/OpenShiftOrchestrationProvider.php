@@ -365,8 +365,8 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     try {
       // @todo are we doing this?
       // Scale the pods to zero, then delete the pod creators.
-      //$this->client->updateDeploymentConfig($deployment_name, 0);
-      //$this->client->updateReplicationControllers('', 'app=' . $deployment_name, 0);
+      $this->client->updateDeploymentConfig($deployment_name, 0);
+      $this->client->updateReplicationControllers('', 'app=' . $deployment_name, 0);
 
       $this->client->deleteCronJob('', 'app=' . $deployment_name);
       $this->client->deleteJob('', 'app=' . $deployment_name);
@@ -375,7 +375,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
 
       $this->client->deleteDeploymentConfig($deployment_name);
       // @todo remove this?
-      //$this->client->deleteReplicationControllers('', 'app=' . $deployment_name);
+      $this->client->deleteReplicationControllers('', 'app=' . $deployment_name);
 
       // Now the things not in the typically visible ui.
       $this->client->deletePersistentVolumeClaim($deployment_name . '-shared');
