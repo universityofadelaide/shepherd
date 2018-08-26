@@ -363,11 +363,10 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     $deployment_name = self::generateDeploymentName($environment_id);
 
     try {
-
       // Scale the pods to zero, then delete the pod creators.
       // @todo - placing the logic here .. as its not clear what level of logic we should place in client.
       $deploymentConfigs = $this->client->getDeploymentConfigs('app=' . $deployment_name);
-      foreach ($deploymentConfigs as $deploymentConfig) {
+      foreach ($deploymentConfigs['items'] as $deploymentConfig) {
         $this->client->updateDeploymentConfig($deploymentConfig['metadata']['name'], $deploymentConfig, [
           'spec' => [
             'replicas' => 0,
