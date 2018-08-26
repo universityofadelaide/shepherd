@@ -368,13 +368,13 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       $deploymentConfigs = $this->client->getDeploymentConfigs('app=' . $deployment_name);
       foreach ($deploymentConfigs['items'] as $deploymentConfig) {
         $this->client->updateDeploymentConfig($deploymentConfig['metadata']['name'], $deploymentConfig, [
+          'apiVersion' => 'v1',
+          'kind' => 'DeploymentConfig',
           'spec' => [
             'replicas' => 0,
           ],
         ]);
       }
-      $this->client->updateReplicationControllers('', 'app=' . $deployment_name, 0);
-
       $this->client->deleteCronJob('', 'app=' . $deployment_name);
       $this->client->deleteJob('', 'app=' . $deployment_name);
       $this->client->deleteRoute($deployment_name);
