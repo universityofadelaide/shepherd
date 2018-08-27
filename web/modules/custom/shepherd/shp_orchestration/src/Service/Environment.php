@@ -6,6 +6,7 @@ use Drupal\node\Entity\Node;
 use Drupal\node\NodeInterface;
 use Drupal\shp_custom\Service\Environment as EnvironmentEntity;
 use Drupal\shp_custom\Service\EnvironmentType;
+use Drupal\shp_custom\Service\EnvironmentTypeInterface;
 use Drupal\shp_custom\Service\Site as SiteEntity;
 use Drupal\shp_orchestration\Event\OrchestrationEnvironmentEvent;
 use Drupal\shp_orchestration\Event\OrchestrationEvents;
@@ -50,7 +51,7 @@ class Environment extends EntityActionBase {
   /**
    * Environment type service.
    *
-   * @var \Drupal\shp_custom\Service\EnvironmentType
+   * @var \Drupal\shp_custom\Service\EnvironmentTypeInterface
    */
   protected $environmentType;
 
@@ -67,9 +68,10 @@ class Environment extends EntityActionBase {
    *   Site service.
    * @param \Symfony\Component\EventDispatcher\EventDispatcherInterface $event_dispatcher
    *   Event dispatcher.
-   * @param \Drupal\shp_custom\Service\EnvironmentType $environmentType
+   * @param \Drupal\shp_custom\Service\EnvironmentTypeInterface $environmentType
+   *   Environment type service.
    */
-  public function __construct(OrchestrationProviderPluginManager $orchestrationProviderPluginManager, Configuration $configuration, EnvironmentEntity $environment, SiteEntity $site, EventDispatcherInterface $event_dispatcher, EnvironmentType $environmentType) {
+  public function __construct(OrchestrationProviderPluginManager $orchestrationProviderPluginManager, Configuration $configuration, EnvironmentEntity $environment, SiteEntity $site, EventDispatcherInterface $event_dispatcher, EnvironmentTypeInterface $environmentType) {
     parent::__construct($orchestrationProviderPluginManager);
     $this->configuration = $configuration;
     $this->environmentEntity = $environment;

@@ -9,7 +9,7 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
  *
  * @package Drupal\shp_custom\Service
  */
-class EnvironmentType {
+class EnvironmentType implements EnvironmentTypeInterface {
 
   /**
    * Entity Type Manager.
@@ -26,10 +26,7 @@ class EnvironmentType {
   protected $taxonomyTerm;
 
   /**
-   * Environment type constructor.
-   *
-   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entityTypeManager
-   *   Entity Type Manager.
+   * {@inheritdoc}
    */
   public function __construct(EntityTypeManagerInterface $entityTypeManager) {
     $this->entityTypeManager = $entityTypeManager;
@@ -37,17 +34,10 @@ class EnvironmentType {
   }
 
   /**
-   * Load the term that is used for promoted environments (production).
-   *
-   * There can be only one promoted term.
-   *
-   * @todo: Make configurable in UI.
-   *
-   * @return \Drupal\Core\Entity\EntityInterface|false
-   *   The promoted term.
+   * {@inheritdoc}
    */
   public function getPromotedTerm() {
-    $ids = \Drupal::entityQuery('taxonomy_term')
+    $ids = $this->taxonomyTerm->getQuery()
       ->condition('vid', 'shp_environment_types')
       ->condition('field_shp_protect', TRUE)
       ->execute();
@@ -66,7 +56,7 @@ class EnvironmentType {
    *   The demoted term.
    */
   public function getDemotedTerm() {
-    $ids = \Drupal::entityQuery('taxonomy_term')
+    $ids = $this->taxonomyTerm->getQuery()
       ->condition('vid', 'shp_environment_types')
       ->condition('field_shp_protect', FALSE)
       ->execute();

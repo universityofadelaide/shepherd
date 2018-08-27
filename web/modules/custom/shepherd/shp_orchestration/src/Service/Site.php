@@ -4,6 +4,7 @@ namespace Drupal\shp_orchestration\Service;
 
 use Drupal\node\NodeInterface;
 use Drupal\shp_custom\Service\EnvironmentType;
+use Drupal\shp_custom\Service\EnvironmentTypeInterface;
 use Drupal\shp_custom\Service\Site as SiteEntity;
 use Drupal\shp_orchestration\OrchestrationProviderPluginManager;
 
@@ -22,7 +23,7 @@ class Site extends EntityActionBase {
   /**
    * Environment type service.
    *
-   * @var \Drupal\shp_custom\Service\EnvironmentType
+   * @var \Drupal\shp_custom\Service\EnvironmentTypeInterface
    */
   protected $environmentType;
 
@@ -33,10 +34,10 @@ class Site extends EntityActionBase {
    *   Orchestration provider plugin manager.
    * @param \Drupal\shp_custom\Service\Site $site
    *   Site service.
-   * @param \Drupal\shp_custom\Service\EnvironmentType $environmentType
+   * @param \Drupal\shp_custom\Service\EnvironmentTypeInterface $environmentType
    *   Environment type service.
    */
-  public function __construct(OrchestrationProviderPluginManager $orchestrationProviderPluginManager, SiteEntity $site, EnvironmentType $environmentType) {
+  public function __construct(OrchestrationProviderPluginManager $orchestrationProviderPluginManager, SiteEntity $site, EnvironmentTypeInterface $environmentType) {
     parent::__construct($orchestrationProviderPluginManager);
     $this->siteEntity = $site;
     $this->environmentType = $environmentType;
