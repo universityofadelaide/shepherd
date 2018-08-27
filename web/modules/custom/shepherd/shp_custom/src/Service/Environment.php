@@ -304,11 +304,7 @@ class Environment {
    */
   public function getSite(NodeInterface $environment) {
     if (isset($environment->field_shp_site->target_id)) {
-      return $environment->get('field_shp_site')
-        ->first()
-        ->get('entity')
-        ->getTarget()
-        ->getValue();
+      return $environment->field_shp_site->entity;
     }
 
     return FALSE;
@@ -325,11 +321,7 @@ class Environment {
    */
   public function getEnvironmentType(NodeInterface $environment) {
     if (isset($environment->field_shp_environment_type->target_id)) {
-      return $environment->get('field_shp_environment_type')
-        ->first()
-        ->get('entity')
-        ->getTarget()
-        ->getValue();
+      return $environment->field_shp_environment_type->entity;
     }
 
     return FALSE;
