@@ -3,9 +3,9 @@
 namespace Drupal\shp_orchestration\Service;
 
 use Drupal\node\NodeInterface;
+use Drupal\shp_custom\Service\EnvironmentType;
 use Drupal\shp_custom\Service\Site as SiteEntity;
 use Drupal\shp_orchestration\OrchestrationProviderPluginManager;
-use Drupal\taxonomy\Entity\Term;
 
 /**
  * Class Site.
@@ -20,16 +20,26 @@ class Site extends EntityActionBase {
   protected $siteEntity;
 
   /**
+   * Environment type service.
+   *
+   * @var \Drupal\shp_custom\Service\EnvironmentType
+   */
+  protected $environmentType;
+
+  /**
    * Shepherd constructor.
    *
    * @param \Drupal\shp_orchestration\OrchestrationProviderPluginManager $orchestrationProviderPluginManager
    *   Orchestration provider plugin manager.
    * @param \Drupal\shp_custom\Service\Site $site
    *   Site service.
+   * @param \Drupal\shp_custom\Service\EnvironmentType $environmentType
+   *   Environment type service.
    */
-  public function __construct(OrchestrationProviderPluginManager $orchestrationProviderPluginManager, SiteEntity $site) {
+  public function __construct(OrchestrationProviderPluginManager $orchestrationProviderPluginManager, SiteEntity $site, EnvironmentType $environmentType) {
     parent::__construct($orchestrationProviderPluginManager);
     $this->siteEntity = $site;
+    $this->environmentType = $environmentType;
   }
 
   /**
@@ -45,11 +55,8 @@ class Site extends EntityActionBase {
     $project = $this->siteEntity->getProject($site);
 
     // Load the taxonomy term that has protect enabled.
-    $ids = \Drupal::entityQuery('taxonomy_term')
-      ->condition('vid', 'shp_environment_types')
-      ->condition('field_shp_protect', TRUE)
-      ->execute();
-    $promoted_term = reset(Term::loadMultiple($ids));
+    $promoted_term = $this->environmentType->getPromotedTerm();
+
     // Extract and transform the annotations from the environment type.
     $annotations = $promoted_term ? $promoted_term->field_shp_annotations->getValue() : [];
     $annotations = array_combine(
