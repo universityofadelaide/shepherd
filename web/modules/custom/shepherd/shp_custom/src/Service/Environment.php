@@ -304,11 +304,24 @@ class Environment {
    */
   public function getSite(NodeInterface $environment) {
     if (isset($environment->field_shp_site->target_id)) {
-      return $environment->get('field_shp_site')
-        ->first()
-        ->get('entity')
-        ->getTarget()
-        ->getValue();
+      return $environment->field_shp_site->entity;
+    }
+
+    return FALSE;
+  }
+
+  /**
+   * Retrieve the related Environment type.
+   *
+   * @param \Drupal\node\NodeInterface $environment
+   *   Environment entity.
+   *
+   * @return \Drupal\Core\Entity\EntityInterface|bool
+   *   The environment type term or FALSE.
+   */
+  public function getEnvironmentType(NodeInterface $environment) {
+    if (!$environment->field_shp_environment_type->isEmpty()) {
+      return $environment->field_shp_environment_type->entity;
     }
 
     return FALSE;

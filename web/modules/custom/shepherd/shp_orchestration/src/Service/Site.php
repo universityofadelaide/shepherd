@@ -3,6 +3,7 @@
 namespace Drupal\shp_orchestration\Service;
 
 use Drupal\node\NodeInterface;
+use Drupal\shp_custom\Service\EnvironmentTypeInterface;
 use Drupal\shp_custom\Service\Site as SiteEntity;
 use Drupal\shp_orchestration\OrchestrationProviderPluginManager;
 
@@ -19,16 +20,26 @@ class Site extends EntityActionBase {
   protected $siteEntity;
 
   /**
+   * Environment type service.
+   *
+   * @var \Drupal\shp_custom\Service\EnvironmentTypeInterface
+   */
+  protected $environmentType;
+
+  /**
    * Shepherd constructor.
    *
    * @param \Drupal\shp_orchestration\OrchestrationProviderPluginManager $orchestrationProviderPluginManager
    *   Orchestration provider plugin manager.
    * @param \Drupal\shp_custom\Service\Site $site
    *   Site service.
+   * @param \Drupal\shp_custom\Service\EnvironmentTypeInterface $environmentType
+   *   Environment type service.
    */
-  public function __construct(OrchestrationProviderPluginManager $orchestrationProviderPluginManager, SiteEntity $site) {
+  public function __construct(OrchestrationProviderPluginManager $orchestrationProviderPluginManager, SiteEntity $site, EnvironmentTypeInterface $environmentType) {
     parent::__construct($orchestrationProviderPluginManager);
     $this->siteEntity = $site;
+    $this->environmentType = $environmentType;
   }
 
   /**
@@ -42,12 +53,24 @@ class Site extends EntityActionBase {
    */
   public function created(NodeInterface $site) {
     $project = $this->siteEntity->getProject($site);
+
+    // Load the taxonomy term that has protect enabled.
+    $promoted_term = $this->environmentType->getPromotedTerm();
+
+    // Extract and transform the annotations from the environment type.
+    $annotations = $promoted_term ? $promoted_term->field_shp_annotations->getValue() : [];
+    $annotations = array_combine(
+      array_column($annotations, 'key'),
+      array_column($annotations, 'value')
+    );
+
     return $this->orchestrationProviderPlugin->createdSite(
       $project->getTitle(),
       $site->field_shp_short_name->value,
       $site->id(),
       $site->field_shp_domain->value,
-      $site->field_shp_path->value
+      $site->field_shp_path->value,
+      $annotations
     );
   }
 

@@ -1,0 +1,23 @@
+uuid: ebd9ac0b-6f77-479e-9172-fcc07d7da66d
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.group_content.shp_project-group_membership.group_roles
+    - group.content_type.shp_project-group_membership
+id: group_content.shp_project-group_membership.default
+targetEntityType: group_content
+bundle: shp_project-group_membership
+mode: default
+content:
+  group_roles:
+    label: above
+    type: entity_reference_label
+    settings:
+      link: false
+    weight: -4
+    third_party_settings: {  }
+    region: content
+hidden:
+  entity_id: true
+  uid: true

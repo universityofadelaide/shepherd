@@ -1,0 +1,161 @@
+uuid: 9e24c1ad-dd4a-41a1-934b-665d313ca488
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.shp_environment.field_shp_cron_jobs
+    - field.field.node.shp_environment.field_shp_cron_suspended
+    - field.field.node.shp_environment.field_shp_deployment_name
+    - field.field.node.shp_environment.field_shp_domain
+    - field.field.node.shp_environment.field_shp_env_vars
+    - field.field.node.shp_environment.field_shp_environment_type
+    - field.field.node.shp_environment.field_shp_git_reference
+    - field.field.node.shp_environment.field_shp_path
+    - field.field.node.shp_environment.field_shp_site
+    - field.field.node.shp_environment.field_shp_update_on_image_change
+    - node.type.shp_environment
+  module:
+    - content_moderation
+    - field_group
+    - key_value_field
+third_party_settings:
+  field_group:
+    group_shp_domain_and_path:
+      children:
+        - field_shp_domain
+        - field_shp_path
+      parent_name: ''
+      weight: 2
+      format_type: details
+      format_settings:
+        label: 'Domain and Path'
+        id: domain_and_path
+        classes: ''
+        open: true
+        required_fields: false
+      label: 'Domain and Path'
+    group_shp_advanced:
+      children:
+        - field_shp_cron_suspended
+        - field_shp_update_on_image_change
+        - field_shp_env_vars
+        - field_shp_cron_jobs
+      parent_name: ''
+      weight: 4
+      format_type: details
+      format_settings:
+        label: Advanced
+        id: advanced
+        classes: ''
+        open: false
+        required_fields: false
+      label: Advanced
+_core:
+  default_config_hash: 7pLe1LOVKBua6jzr9A_DGDs7ulKe3m1PtzBRm-vhpro
+id: node.shp_environment.default
+targetEntityType: node
+bundle: shp_environment
+mode: default
+content:
+  field_shp_cron_jobs:
+    weight: 13
+    settings:
+      key_label: Schedule
+      key_size: 60
+      key_placeholder: ''
+      value_label: Command(s)
+      size: 60
+      placeholder: ''
+      description_enabled: true
+      description_placeholder: ''
+    third_party_settings: {  }
+    type: key_value_textfield
+    region: content
+  field_shp_cron_suspended:
+    weight: 10
+    settings:
+      display_label: true
+    third_party_settings: {  }
+    type: boolean_checkbox
+    region: content
+  field_shp_domain:
+    weight: 21
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: string_textfield
+    region: content
+  field_shp_env_vars:
+    weight: 12
+    settings:
+      key_label: 'Variable name'
+      key_size: 60
+      key_placeholder: VARIABLE
+      value_label: Value
+      size: 60
+      placeholder: value
+      description_placeholder: ''
+      description_enabled: false
+    third_party_settings: {  }
+    type: key_value_textfield
+    region: content
+  field_shp_environment_type:
+    weight: 1
+    settings: {  }
+    third_party_settings: {  }
+    type: options_select
+    region: content
+  field_shp_git_reference:
+    weight: 3
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: string_textfield
+    region: content
+  field_shp_path:
+    weight: 22
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: string_textfield
+    region: content
+  field_shp_site:
+    weight: 0
+    settings:
+      match_operator: CONTAINS
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: entity_reference_autocomplete
+    region: content
+  field_shp_update_on_image_change:
+    weight: 11
+    settings:
+      display_label: true
+    third_party_settings: {  }
+    type: boolean_checkbox
+    region: content
+  moderation_state:
+    type: moderation_state_default
+    weight: 100
+    settings: {  }
+    region: content
+    third_party_settings: {  }
+  status:
+    type: boolean_checkbox
+    settings:
+      display_label: true
+    weight: 120
+    region: content
+    third_party_settings: {  }
+hidden:
+  created: true
+  field_shp_deployment_name: true
+  path: true
+  promote: true
+  sticky: true
+  title: true
+  uid: true

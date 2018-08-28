@@ -1,5 +1,0 @@
-enabled: true
-host: 'database'
-port: '3306'
-user: 'root'
-secret: 'privileged-db-password'

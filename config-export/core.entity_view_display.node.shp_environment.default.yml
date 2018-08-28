@@ -1,0 +1,117 @@
+uuid: 56d12ca7-e10e-483e-920a-a83750025430
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.shp_environment.field_shp_cron_jobs
+    - field.field.node.shp_environment.field_shp_cron_suspended
+    - field.field.node.shp_environment.field_shp_deployment_name
+    - field.field.node.shp_environment.field_shp_domain
+    - field.field.node.shp_environment.field_shp_env_vars
+    - field.field.node.shp_environment.field_shp_environment_type
+    - field.field.node.shp_environment.field_shp_git_reference
+    - field.field.node.shp_environment.field_shp_path
+    - field.field.node.shp_environment.field_shp_site
+    - field.field.node.shp_environment.field_shp_update_on_image_change
+    - node.type.shp_environment
+  module:
+    - key_value_field
+    - user
+_core:
+  default_config_hash: Kczgsjembq0rQwGbXJUErfHx2CTDgLgq6Nkd2Ij_9jg
+id: node.shp_environment.default
+targetEntityType: node
+bundle: shp_environment
+mode: default
+content:
+  content_moderation_control:
+    weight: 0
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  field_shp_cron_jobs:
+    weight: 10
+    label: above
+    settings:
+      value_only: false
+    third_party_settings: {  }
+    type: key_value
+    region: content
+  field_shp_cron_suspended:
+    weight: 7
+    label: inline
+    settings:
+      format: default
+      format_custom_false: ''
+      format_custom_true: ''
+    third_party_settings: {  }
+    type: boolean
+    region: content
+  field_shp_deployment_name:
+    weight: 6
+    label: inline
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    type: string
+    region: content
+  field_shp_domain:
+    weight: 2
+    label: inline
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    type: string
+    region: content
+  field_shp_env_vars:
+    weight: 9
+    label: inline
+    settings:
+      value_only: false
+    third_party_settings: {  }
+    type: key_value
+    region: content
+  field_shp_environment_type:
+    weight: 4
+    label: inline
+    settings:
+      link: true
+    third_party_settings: {  }
+    type: entity_reference_label
+    region: content
+  field_shp_git_reference:
+    weight: 5
+    label: inline
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    type: string
+    region: content
+  field_shp_path:
+    weight: 3
+    label: inline
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    type: string
+    region: content
+  field_shp_site:
+    weight: 1
+    label: inline
+    settings:
+      link: true
+    third_party_settings: {  }
+    type: entity_reference_label
+    region: content
+  field_shp_update_on_image_change:
+    weight: 8
+    label: inline
+    settings:
+      format: default
+      format_custom_false: ''
+      format_custom_true: ''
+    third_party_settings: {  }
+    type: boolean
+    region: content
+hidden:
+  links: true

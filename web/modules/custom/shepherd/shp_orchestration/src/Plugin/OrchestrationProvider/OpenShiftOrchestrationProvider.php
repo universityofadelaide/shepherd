@@ -214,7 +214,8 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     array $environment_variables = [],
     array $secrets = [],
     array $probes = [],
-    array $cron_jobs = []
+    array $cron_jobs = [],
+    array $annotations = []
   ) {
     // @todo Refactor this. _The complexity is too damn high!_
 
@@ -284,7 +285,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     $port = 8080;
     try {
       $this->client->createService($deployment_name, $deployment_name, $port, $port, $deployment_name);
-      $this->client->createRoute($deployment_name, $deployment_name, $domain, $path);
+      $this->client->createRoute($deployment_name, $deployment_name, $domain, $path, $annotations);
     }
     catch (ClientException $e) {
       $this->handleClientException($e);
@@ -314,7 +315,8 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     array $environment_variables = [],
     array $secrets = [],
     array $probes = [],
-    array $cron_jobs = []
+    array $cron_jobs = [],
+    array $annotations = []
   ) {
     // @todo Refactor this too. Not DRY enough.
 
@@ -447,7 +449,8 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     string $short_name,
     int $site_id,
     string $domain,
-    string $path
+    string $path,
+    array $annotations = []
   ) {
     $deployment_name = self::generateDeploymentName($site_id);
 
@@ -455,7 +458,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     $port = 8080;
     try {
       $this->client->createService($deployment_name, $deployment_name, $port, $port, $deployment_name);
-      $this->client->createRoute($deployment_name, $deployment_name, $domain, $path);
+      $this->client->createRoute($deployment_name, $deployment_name, $domain, $path, $annotations);
     }
     catch (ClientException $e) {
       $this->handleClientException($e);
@@ -796,6 +799,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
 
   /**
    * Format an array of environment variables ready to pass to OpenShift.
+   *
    * @todo - move this into the client?
    *
    * @param array $environment_variables
@@ -837,6 +841,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
 
   /**
    * Format an array of deployment data ready to pass to OpenShift.
+   *
    * @todo - move this into the client?
    *
    * @param string $name

@@ -11,6 +11,10 @@ services:
       - '@entity_type.manager'
       - '@current_user'
       - '@shp_custom.site'
+  shp_custom.environment_type:
+    class: Drupal\shp_custom\Service\EnvironmentType
+    arguments:
+      - '@entity_type.manager'
   shp_custom.hosts_config:
     class: Drupal\shp_custom\Service\HostsConfig
   shp_custom.route_subscriber:

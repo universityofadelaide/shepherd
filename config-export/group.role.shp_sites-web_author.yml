@@ -1,0 +1,21 @@
+uuid: 1c40b371-1535-4d77-ae5a-5525d310f639
+langcode: en
+status: true
+dependencies:
+  config:
+    - group.type.shp_sites
+  module:
+    - shp_roles
+third_party_settings:
+  shp_roles:
+    synced_role: shp_web_author
+_core:
+  default_config_hash: ZOI2BNxcOQTfk0TCiPdSZ_P7SW2EAjq7bLAS8Qt4LR0
+id: shp_sites-web_author
+label: 'Web author'
+weight: 100
+internal: false
+audience: member
+group_type: shp_sites
+permissions_ui: true
+permissions: {  }
