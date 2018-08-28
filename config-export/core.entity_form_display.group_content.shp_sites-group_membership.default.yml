@@ -1,0 +1,29 @@
+uuid: 24628011-4876-43f5-9ae5-5ca8660b086c
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.group_content.shp_sites-group_membership.group_roles
+    - group.content_type.shp_sites-group_membership
+id: group_content.shp_sites-group_membership.default
+targetEntityType: group_content
+bundle: shp_sites-group_membership
+mode: default
+content:
+  entity_id:
+    type: entity_reference_autocomplete
+    weight: 5
+    settings:
+      match_operator: CONTAINS
+      size: 60
+      placeholder: ''
+    region: content
+    third_party_settings: {  }
+  group_roles:
+    type: options_buttons
+    weight: 6
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+hidden:
+  uid: true

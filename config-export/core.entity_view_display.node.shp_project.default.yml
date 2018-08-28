@@ -1,0 +1,134 @@
+uuid: 879fcb32-af9a-4d41-81a5-8d8600547de0
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.shp_project.field_shp_build_secret
+    - field.field.node.shp_project.field_shp_builder_image
+    - field.field.node.shp_project.field_shp_default_sql
+    - field.field.node.shp_project.field_shp_env_vars
+    - field.field.node.shp_project.field_shp_git_default_ref
+    - field.field.node.shp_project.field_shp_git_repository
+    - field.field.node.shp_project.field_shp_liveness_probe_params
+    - field.field.node.shp_project.field_shp_liveness_probe_port
+    - field.field.node.shp_project.field_shp_liveness_probe_type
+    - field.field.node.shp_project.field_shp_readiness_probe_params
+    - field.field.node.shp_project.field_shp_readiness_probe_port
+    - field.field.node.shp_project.field_shp_readiness_probe_type
+    - field.field.node.shp_project.field_shp_storage_class
+    - node.type.shp_project
+  module:
+    - file
+    - key_value_field
+    - options
+    - user
+_core:
+  default_config_hash: GRnEpMCmPb918yS1bFGBo8CtCTPJgGBsVaf2CGsqjtk
+id: node.shp_project.default
+targetEntityType: node
+bundle: shp_project
+mode: default
+content:
+  field_shp_build_secret:
+    weight: 3
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    type: string
+    region: content
+  field_shp_builder_image:
+    weight: 2
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    type: string
+    region: content
+  field_shp_default_sql:
+    weight: 6
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    type: file_default
+    region: content
+  field_shp_env_vars:
+    weight: 5
+    label: above
+    settings:
+      value_only: false
+    third_party_settings: {  }
+    type: key_value
+    region: content
+  field_shp_git_default_ref:
+    weight: 1
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    type: string
+    region: content
+  field_shp_git_repository:
+    weight: 0
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    type: string
+    region: content
+  field_shp_liveness_probe_params:
+    weight: 9
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    type: basic_string
+    region: content
+  field_shp_liveness_probe_port:
+    weight: 11
+    label: above
+    settings:
+      thousand_separator: ''
+      prefix_suffix: true
+    third_party_settings: {  }
+    type: number_integer
+    region: content
+  field_shp_liveness_probe_type:
+    weight: 7
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    type: list_default
+    region: content
+  field_shp_readiness_probe_params:
+    weight: 10
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    type: basic_string
+    region: content
+  field_shp_readiness_probe_port:
+    weight: 12
+    label: above
+    settings:
+      thousand_separator: ''
+      prefix_suffix: true
+    third_party_settings: {  }
+    type: number_integer
+    region: content
+  field_shp_readiness_probe_type:
+    weight: 8
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    type: list_default
+    region: content
+  field_shp_storage_class:
+    weight: 4
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    type: entity_reference_label
+    region: content
+hidden:
+  links: true

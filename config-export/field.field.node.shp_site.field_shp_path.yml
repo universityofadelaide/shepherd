@@ -1,0 +1,23 @@
+uuid: 61da1cf9-3e9e-4b47-a52f-74ddb3d70af7
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_shp_path
+    - node.type.shp_site
+_core:
+  default_config_hash: ALmnLdhZC12quCOJvUQvEcz9_bwHus2uzuozro-53GA
+id: node.shp_site.field_shp_path
+field_name: field_shp_path
+entity_type: node
+bundle: shp_site
+label: Path
+description: 'The base path the site is to be served from. This should start with a leading slash, but not end with one unless it is the root path.'
+required: true
+translatable: false
+default_value:
+  -
+    value: /
+default_value_callback: ''
+settings: {  }
+field_type: string

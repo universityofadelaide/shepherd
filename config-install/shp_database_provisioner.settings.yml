@@ -1,0 +1,7 @@
+enabled: true
+host: database
+port: '3306'
+user: root
+secret: privileged-db-password
+_core:
+  default_config_hash: jyiUlyMliuBeyd_8DXT8LxFZFz8dNdfWywL2rK0GoMw

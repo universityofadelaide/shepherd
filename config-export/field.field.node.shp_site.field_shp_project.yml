@@ -1,0 +1,28 @@
+uuid: daa50299-a72c-4660-868b-1f097149656e
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_shp_project
+    - node.type.shp_project
+    - node.type.shp_site
+_core:
+  default_config_hash: Y0gBpocV4Darg-1yKlw1Q9gvUk6bLzyuaYZqZJTqSF4
+id: node.shp_site.field_shp_project
+field_name: field_shp_project
+entity_type: node
+bundle: shp_site
+label: Project
+description: ''
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:node'
+  handler_settings:
+    target_bundles:
+      shp_project: shp_project
+    sort:
+      field: _none
+field_type: entity_reference
