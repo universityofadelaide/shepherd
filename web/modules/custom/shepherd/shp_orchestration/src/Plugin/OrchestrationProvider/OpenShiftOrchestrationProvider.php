@@ -365,19 +365,24 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     $deployment_name = self::generateDeploymentName($environment_id);
 
     try {
-      // @todo are we doing this?
       // Scale the pods to zero, then delete the pod creators.
-      //$this->client->updateDeploymentConfig($deployment_name, 0);
-      //$this->client->updateReplicationControllers('', 'app=' . $deployment_name, 0);
-
+      // @todo - placing the logic here .. as its not clear what level of logic we should place in client.
+      $deploymentConfigs = $this->client->getDeploymentConfigs('app=' . $deployment_name);
+      foreach ($deploymentConfigs['items'] as $deploymentConfig) {
+        $this->client->updateDeploymentConfig($deploymentConfig['metadata']['name'], $deploymentConfig, [
+          'apiVersion' => 'v1',
+          'kind' => 'DeploymentConfig',
+          'spec' => [
+            'replicas' => 0,
+          ],
+        ]);
+      }
       $this->client->deleteCronJob('', 'app=' . $deployment_name);
       $this->client->deleteJob('', 'app=' . $deployment_name);
       $this->client->deleteRoute($deployment_name);
       $this->client->deleteService($deployment_name);
-
       $this->client->deleteDeploymentConfig($deployment_name);
-      // @todo remove this?
-      //$this->client->deleteReplicationControllers('', 'app=' . $deployment_name);
+      $this->client->deleteReplicationControllers('', 'app=' . $deployment_name);
 
       // Now the things not in the typically visible ui.
       $this->client->deletePersistentVolumeClaim($deployment_name . '-shared');
