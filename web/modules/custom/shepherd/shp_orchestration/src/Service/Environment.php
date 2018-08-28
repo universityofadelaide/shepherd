@@ -5,7 +5,6 @@ namespace Drupal\shp_orchestration\Service;
 use Drupal\node\Entity\Node;
 use Drupal\node\NodeInterface;
 use Drupal\shp_custom\Service\Environment as EnvironmentEntity;
-use Drupal\shp_custom\Service\EnvironmentType;
 use Drupal\shp_custom\Service\EnvironmentTypeInterface;
 use Drupal\shp_custom\Service\Site as SiteEntity;
 use Drupal\shp_orchestration\Event\OrchestrationEnvironmentEvent;

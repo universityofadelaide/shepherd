@@ -794,6 +794,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
 
   /**
    * Format an array of environment variables ready to pass to OpenShift.
+   *
    * @todo - move this into the client?
    *
    * @param array $environment_variables
@@ -835,6 +836,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
 
   /**
    * Format an array of deployment data ready to pass to OpenShift.
+   *
    * @todo - move this into the client?
    *
    * @param string $name
