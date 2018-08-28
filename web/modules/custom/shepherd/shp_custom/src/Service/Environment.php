@@ -320,7 +320,7 @@ class Environment {
    *   The environment type term or FALSE.
    */
   public function getEnvironmentType(NodeInterface $environment) {
-    if (isset($environment->field_shp_environment_type->target_id)) {
+    if (!$environment->field_shp_environment_type->isEmpty()) {
       return $environment->field_shp_environment_type->entity;
     }
 
