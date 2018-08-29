@@ -1,0 +1,66 @@
+uuid: 873cc1c2-7e69-46b4-9a9d-434ecba602ad
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.taxonomy_term.shp_environment_types.field_shp_annotations
+    - field.field.taxonomy_term.shp_environment_types.field_shp_base_domain
+    - field.field.taxonomy_term.shp_environment_types.field_shp_protect
+    - field.field.taxonomy_term.shp_environment_types.field_shp_update_go_live
+    - taxonomy.vocabulary.shp_environment_types
+  module:
+    - key_value_field
+_core:
+  default_config_hash: 6HzUxiLlmvysj0RwhCzxHxMy6-dANqX3h5J5WpBCf9g
+id: taxonomy_term.shp_environment_types.default
+targetEntityType: taxonomy_term
+bundle: shp_environment_types
+mode: default
+content:
+  field_shp_annotations:
+    weight: 5
+    settings:
+      key_label: Key
+      key_size: 60
+      key_placeholder: ''
+      value_label: Value
+      size: 60
+      placeholder: ''
+      description_placeholder: ''
+      description_enabled: false
+    third_party_settings: {  }
+    type: key_value_textfield
+    region: content
+  field_shp_base_domain:
+    weight: 1
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: string_textfield
+    region: content
+  field_shp_protect:
+    weight: 3
+    settings:
+      display_label: true
+    third_party_settings: {  }
+    type: boolean_checkbox
+    region: content
+  field_shp_update_go_live:
+    weight: 4
+    settings:
+      display_label: true
+    third_party_settings: {  }
+    type: boolean_checkbox
+    region: content
+  name:
+    type: string_textfield
+    weight: 0
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+hidden:
+  description: true
+  path: true

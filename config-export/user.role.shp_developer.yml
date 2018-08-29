@@ -1,0 +1,26 @@
+uuid: 90ac9695-c08f-4e59-af3c-a7ca27b66fcd
+langcode: en
+status: true
+dependencies: {  }
+_core:
+  default_config_hash: aHZkb0wmMhuaU2UtMskT29D4MEOJwV81eOZQEF0DjbI
+id: shp_developer
+label: Developer
+weight: 5
+is_admin: null
+permissions:
+  - 'access comments'
+  - 'access content'
+  - 'access shortcuts'
+  - 'create shp_environment content'
+  - 'create shp_site content'
+  - 'delete any shp_environment content'
+  - 'delete any shp_site content'
+  - 'edit any shp_environment content'
+  - 'edit any shp_site content'
+  - 'edit own comments'
+  - 'post comments'
+  - 'skip comment approval'
+  - 'use environment transition published'
+  - 'use environment transition published_archive'
+  - 'view own unpublished content'

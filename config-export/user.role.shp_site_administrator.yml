@@ -1,0 +1,21 @@
+uuid: 09a5f95c-0e73-4b9c-a8f7-f24c5bed93f3
+langcode: en
+status: true
+dependencies: {  }
+_core:
+  default_config_hash: L-n_KzUlHr9g-l2b_E7lfjChld19v74O87mkJ9MOSDs
+id: shp_site_administrator
+label: 'Site Administrator'
+weight: 3
+is_admin: null
+permissions:
+  - 'access comments'
+  - 'access content'
+  - 'access shortcuts'
+  - 'edit own comments'
+  - 'post comments'
+  - 'shp view sites'
+  - 'shp view users'
+  - 'skip comment approval'
+  - 'use environment transition published'
+  - 'view own unpublished content'

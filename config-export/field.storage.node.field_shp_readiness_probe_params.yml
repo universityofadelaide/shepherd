@@ -1,0 +1,21 @@
+uuid: 89fce3b0-6fda-4597-943f-3f4e4a55034b
+langcode: en
+status: true
+dependencies:
+  module:
+    - node
+_core:
+  default_config_hash: 8hI_i4gZDePdhN_Tjv4ZjhOOYlm_H4mwFybQ96n-XO8
+id: node.field_shp_readiness_probe_params
+field_name: field_shp_readiness_probe_params
+entity_type: node
+type: string_long
+settings:
+  case_sensitive: false
+module: core
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

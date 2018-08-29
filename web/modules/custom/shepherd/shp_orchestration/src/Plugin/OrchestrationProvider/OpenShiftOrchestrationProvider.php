@@ -214,7 +214,8 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     array $environment_variables = [],
     array $secrets = [],
     array $probes = [],
-    array $cron_jobs = []
+    array $cron_jobs = [],
+    array $annotations = []
   ) {
     // @todo Refactor this. _The complexity is too damn high!_
 
@@ -284,7 +285,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     $port = 8080;
     try {
       $this->client->createService($deployment_name, $deployment_name, $port, $port, $deployment_name);
-      $this->client->createRoute($deployment_name, $deployment_name, $domain, $path);
+      $this->client->createRoute($deployment_name, $deployment_name, $domain, $path, $annotations);
     }
     catch (ClientException $e) {
       $this->handleClientException($e);
@@ -314,7 +315,8 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     array $environment_variables = [],
     array $secrets = [],
     array $probes = [],
-    array $cron_jobs = []
+    array $cron_jobs = [],
+    array $annotations = []
   ) {
     // @todo Refactor this too. Not DRY enough.
 
@@ -363,19 +365,24 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     $deployment_name = self::generateDeploymentName($environment_id);
 
     try {
-      // @todo are we doing this?
       // Scale the pods to zero, then delete the pod creators.
-      //$this->client->updateDeploymentConfig($deployment_name, 0);
-      //$this->client->updateReplicationControllers('', 'app=' . $deployment_name, 0);
-
+      // @todo - placing the logic here .. as its not clear what level of logic we should place in client.
+      $deploymentConfigs = $this->client->getDeploymentConfigs('app=' . $deployment_name);
+      foreach ($deploymentConfigs['items'] as $deploymentConfig) {
+        $this->client->updateDeploymentConfig($deploymentConfig['metadata']['name'], $deploymentConfig, [
+          'apiVersion' => 'v1',
+          'kind' => 'DeploymentConfig',
+          'spec' => [
+            'replicas' => 0,
+          ],
+        ]);
+      }
       $this->client->deleteCronJob('', 'app=' . $deployment_name);
       $this->client->deleteJob('', 'app=' . $deployment_name);
       $this->client->deleteRoute($deployment_name);
       $this->client->deleteService($deployment_name);
-
       $this->client->deleteDeploymentConfig($deployment_name);
-      // @todo remove this?
-      //$this->client->deleteReplicationControllers('', 'app=' . $deployment_name);
+      $this->client->deleteReplicationControllers('', 'app=' . $deployment_name);
 
       // Now the things not in the typically visible ui.
       $this->client->deletePersistentVolumeClaim($deployment_name . '-shared');
@@ -442,7 +449,8 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     string $short_name,
     int $site_id,
     string $domain,
-    string $path
+    string $path,
+    array $annotations = []
   ) {
     $deployment_name = self::generateDeploymentName($site_id);
 
@@ -450,7 +458,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     $port = 8080;
     try {
       $this->client->createService($deployment_name, $deployment_name, $port, $port, $deployment_name);
-      $this->client->createRoute($deployment_name, $deployment_name, $domain, $path);
+      $this->client->createRoute($deployment_name, $deployment_name, $domain, $path, $annotations);
     }
     catch (ClientException $e) {
       $this->handleClientException($e);
@@ -791,6 +799,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
 
   /**
    * Format an array of environment variables ready to pass to OpenShift.
+   *
    * @todo - move this into the client?
    *
    * @param array $environment_variables
@@ -832,6 +841,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
 
   /**
    * Format an array of deployment data ready to pass to OpenShift.
+   *
    * @todo - move this into the client?
    *
    * @param string $name

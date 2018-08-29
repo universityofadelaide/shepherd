@@ -1,0 +1,21 @@
+uuid: a792fa5f-4b91-4611-956b-c6743a590a3b
+langcode: en
+status: true
+dependencies:
+  config:
+    - group.type.shp_sites
+  module:
+    - shp_roles
+third_party_settings:
+  shp_roles:
+    synced_role: shp_site_administrator
+_core:
+  default_config_hash: e6zyJ-f_KOh6yiGGGwFYTGI8CMPywc_ug7Ftkr0ANJw
+id: shp_sites-site-administrator
+label: 'Site administrator'
+weight: 100
+internal: false
+audience: member
+group_type: shp_sites
+permissions_ui: true
+permissions: {  }

@@ -1,0 +1,20 @@
+uuid: 92938588-38aa-4378-a084-2b3643bdc5c5
+langcode: en
+status: true
+dependencies:
+  module:
+    - node
+_core:
+  default_config_hash: 2sYGkDo8Pj8j7EU5EzvIs9vFq1XILVSbVQnjdq1rRwc
+id: node.field_shp_cron_suspended
+field_name: field_shp_cron_suspended
+entity_type: node
+type: boolean
+settings: {  }
+module: core
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

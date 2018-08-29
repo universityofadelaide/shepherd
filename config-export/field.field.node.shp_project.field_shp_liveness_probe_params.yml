@@ -1,0 +1,21 @@
+uuid: b85cc9b2-9f02-4aa6-b383-f9003780f52d
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_shp_liveness_probe_params
+    - node.type.shp_project
+_core:
+  default_config_hash: UTWQDvzCUWloCUbMYiztrKh3pvpdKKOpCmN3vA0ivnM
+id: node.shp_project.field_shp_liveness_probe_params
+field_name: field_shp_liveness_probe_params
+entity_type: node
+bundle: shp_project
+label: Parameters
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string_long

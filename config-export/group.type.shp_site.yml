@@ -1,0 +1,12 @@
+uuid: 545f1b61-4c02-47bb-8c60-5620b8eb6161
+langcode: en
+status: true
+dependencies: {  }
+_core:
+  default_config_hash: WL1zZPvZoocEaI9gPHAJN90gf4mCVoCx90Vbuz-hgMg
+id: shp_site
+label: Site
+description: 'A group of this type is automatically created and associated when a site is added.'
+creator_membership: false
+creator_wizard: true
+creator_roles: {  }

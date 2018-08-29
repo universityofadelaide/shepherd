@@ -14,13 +14,13 @@ services:
     arguments: ['@state']
   shp_orchestration.site:
     class: Drupal\shp_orchestration\Service\Site
-    arguments: ['@plugin.manager.orchestration_provider', '@shp_custom.site']
+    arguments: ['@plugin.manager.orchestration_provider', '@shp_custom.site', '@shp_custom.environment_type']
   shp_orchestration.project:
     class: Drupal\shp_orchestration\Service\Project
     arguments: ['@plugin.manager.orchestration_provider', '@shp_orchestration.configuration']
   shp_orchestration.environment:
     class: Drupal\shp_orchestration\Service\Environment
-    arguments: ['@plugin.manager.orchestration_provider', '@shp_orchestration.configuration', '@shp_custom.environment', '@shp_custom.site', '@event_dispatcher']
+    arguments: ['@plugin.manager.orchestration_provider', '@shp_orchestration.configuration', '@shp_custom.environment', '@shp_custom.site', '@event_dispatcher', '@shp_custom.environment_type']
   shp_orchestration.status:
     class: Drupal\shp_orchestration\Service\Status
     arguments: ['@plugin.manager.orchestration_provider','@shp_custom.environment', '@shp_custom.site']

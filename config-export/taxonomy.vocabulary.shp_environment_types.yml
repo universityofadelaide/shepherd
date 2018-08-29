@@ -1,0 +1,11 @@
+uuid: 462df757-06d1-4b0c-83e9-3b5ec576e357
+langcode: en
+status: true
+dependencies: {  }
+_core:
+  default_config_hash: Ms9dDtCg49qF5stZNZhJIKCVqieslicpOSLNEGgg3Zc
+name: 'Environment types'
+vid: shp_environment_types
+description: 'Types of environments (e.g. development, stage, production, etc).'
+hierarchy: 0
+weight: 0

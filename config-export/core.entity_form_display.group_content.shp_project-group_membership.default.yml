@@ -1,0 +1,29 @@
+uuid: e14db26b-cd1b-4abc-bb25-635acc15399d
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.group_content.shp_project-group_membership.group_roles
+    - group.content_type.shp_project-group_membership
+id: group_content.shp_project-group_membership.default
+targetEntityType: group_content
+bundle: shp_project-group_membership
+mode: default
+content:
+  entity_id:
+    type: entity_reference_autocomplete
+    weight: 5
+    settings:
+      match_operator: CONTAINS
+      size: 60
+      placeholder: ''
+    region: content
+    third_party_settings: {  }
+  group_roles:
+    type: options_buttons
+    weight: 6
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+hidden:
+  uid: true

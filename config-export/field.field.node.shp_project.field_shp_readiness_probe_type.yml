@@ -1,0 +1,23 @@
+uuid: c6a09bdd-5932-480c-9e2a-f2525fea5cab
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_shp_readiness_probe_type
+    - node.type.shp_project
+  module:
+    - options
+_core:
+  default_config_hash: t5dPLZoZWl_Sz12A_AA-gH4Ho0WxoHBgZKitpT80DrU
+id: node.shp_project.field_shp_readiness_probe_type
+field_name: field_shp_readiness_probe_type
+entity_type: node
+bundle: shp_project
+label: Type
+description: 'A readiness probe determines if a container is ready to service requests.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: list_string

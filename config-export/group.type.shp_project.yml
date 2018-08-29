@@ -1,0 +1,12 @@
+uuid: d02450ab-a529-4f81-a7df-b798a64027fa
+langcode: en
+status: true
+dependencies: {  }
+_core:
+  default_config_hash: I7iHKFVLla_9RQVGggOqi7A-GcSYhmO2YGotYNw0KXo
+id: shp_project
+label: Project
+description: 'A group of this type is automatically created and associated when a project is added. When a site is created based on a project, it is also automatically added to this group.'
+creator_membership: false
+creator_wizard: false
+creator_roles: {  }

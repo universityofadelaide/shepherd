@@ -98,13 +98,15 @@ composer install
 
 # Build Shepherd
 robo build
+robo config:import-plus
+drush cr
 ```
 
 Login to OpenShift Web UI using the developer:developer credentials and
 check that MariaDB is running before executing the next command.
 
 ```bash
-robo dev:content-generate
+robo dev:drupal-content-generate
 ```
 
 Thats it; visit the OpenShift web interface to see a build running and a
@@ -273,7 +275,7 @@ bin/drush -r web cset shp_orchestration.openshift.openshift token ${NEW_TOKEN}
 ## Working with Minishift
 
 Purging all the example generated content on OpenShift. This removes everything with the example namespace that was generated with 
-the robo dev:content-generate command.
+the robo dev:drupal-content-generate command.
 ```bash
 name=example; for type in is dc bc svc pvc route pods cronjobs jobs secrets; do for item in $(oc get "${type}" | grep ${name} | awk '{ print $1 }'); do oc delete ${type} ${item}; done; done
 ```

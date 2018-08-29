@@ -15,7 +15,6 @@ dependencies:
   - content_moderation
   - comment
   - contextual
-  - contact
   - datetime
   - dblog
   - dynamic_page_cache
@@ -31,7 +30,6 @@ dependencies:
   - node
   - options
   - page_cache
-  - rdf
   - rest
   - search
   - shortcut
@@ -42,9 +40,9 @@ dependencies:
   - views_ui
 
   # Contributed modules
+  - drush_cmi_tools
   - entity_reference
   - entity_reference_revisions
-  - externalauth
   - field_group
   - gnode
   - group
@@ -65,5 +63,4 @@ dependencies:
   - shp_redis_support
 
 themes:
-  - bartik
   - seven

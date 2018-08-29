@@ -5,6 +5,7 @@ namespace Drupal\shp_orchestration\Service;
 use Drupal\node\Entity\Node;
 use Drupal\node\NodeInterface;
 use Drupal\shp_custom\Service\Environment as EnvironmentEntity;
+use Drupal\shp_custom\Service\EnvironmentTypeInterface;
 use Drupal\shp_custom\Service\Site as SiteEntity;
 use Drupal\shp_orchestration\Event\OrchestrationEnvironmentEvent;
 use Drupal\shp_orchestration\Event\OrchestrationEvents;
@@ -29,14 +30,14 @@ class Environment extends EntityActionBase {
    *
    * @var \Drupal\shp_custom\Service\Environment|\Drupal\shp_orchestration\Service\Environment
    */
-  private $environmentEntity;
+  protected $environmentEntity;
 
   /**
    * Site service.
    *
    * @var \Drupal\shp_custom\Service\Site
    */
-  private $siteEntity;
+  protected $siteEntity;
 
   /**
    * Event dispatcher.
@@ -44,7 +45,14 @@ class Environment extends EntityActionBase {
    * @var \Symfony\Component\EventDispatcher\EventDispatcherInterface
    *   Event dispatcher.
    */
-  private $eventDispatcher;
+  protected $eventDispatcher;
+
+  /**
+   * Environment type service.
+   *
+   * @var \Drupal\shp_custom\Service\EnvironmentTypeInterface
+   */
+  protected $environmentType;
 
   /**
    * Shepherd constructor.
@@ -59,13 +67,16 @@ class Environment extends EntityActionBase {
    *   Site service.
    * @param \Symfony\Component\EventDispatcher\EventDispatcherInterface $event_dispatcher
    *   Event dispatcher.
+   * @param \Drupal\shp_custom\Service\EnvironmentTypeInterface $environmentType
+   *   Environment type service.
    */
-  public function __construct(OrchestrationProviderPluginManager $orchestrationProviderPluginManager, Configuration $configuration, EnvironmentEntity $environment, SiteEntity $site, EventDispatcherInterface $event_dispatcher) {
+  public function __construct(OrchestrationProviderPluginManager $orchestrationProviderPluginManager, Configuration $configuration, EnvironmentEntity $environment, SiteEntity $site, EventDispatcherInterface $event_dispatcher, EnvironmentTypeInterface $environmentType) {
     parent::__construct($orchestrationProviderPluginManager);
     $this->configuration = $configuration;
     $this->environmentEntity = $environment;
     $this->siteEntity = $site;
     $this->eventDispatcher = $event_dispatcher;
+    $this->environmentType = $environmentType;
   }
 
   /**
@@ -88,6 +99,7 @@ class Environment extends EntityActionBase {
     if (!isset($project) || !isset($site)) {
       return FALSE;
     }
+    $environment_type = $this->environmentEntity->getEnvironmentType($node);
 
     $probes = $this->buildProbes($project);
     $cron_jobs = $this->buildCronJobs($node);
@@ -131,6 +143,13 @@ class Environment extends EntityActionBase {
       $storage_class = Term::load($project->field_shp_storage_class->target_id)->label();
     }
 
+    // Extract and transform the annotations from the environment type.
+    $annotations = $environment_type ? $environment_type->field_shp_annotations->getValue() : [];
+    $annotations = array_combine(
+      array_column($annotations, 'key'),
+      array_column($annotations, 'value')
+    );
+
     $environment = $this->orchestrationProviderPlugin->createdEnvironment(
       $project->getTitle(),
       $site->field_shp_short_name->value,
@@ -149,7 +168,8 @@ class Environment extends EntityActionBase {
       $env_vars,
       $secrets,
       $probes,
-      $cron_jobs
+      $cron_jobs,
+      $annotations
     );
 
     // Allow other modules to react to the Environment creation.
@@ -292,19 +312,8 @@ class Environment extends EntityActionBase {
     // @todo everything is exclusive for now, implement non-exclusive?
 
     // Load a non protected term.
-    // @todo handle multiples? this is quite horrid.
-    $ids = \Drupal::entityQuery('taxonomy_term')
-      ->condition('vid', 'shp_environment_types')
-      ->condition('field_shp_protect', FALSE)
-      ->execute();
-    $demoted_term = reset(Term::loadMultiple($ids));
-
-    // Load the taxonomy term that has protect enabled.
-    $ids = \Drupal::entityQuery('taxonomy_term')
-      ->condition('vid', 'shp_environment_types')
-      ->condition('field_shp_protect', TRUE)
-      ->execute();
-    $promoted_term = reset(Term::loadMultiple($ids));
+    $demoted_term = $this->environmentType->getDemotedTerm();
+    $promoted_term = $this->environmentType->getPromotedTerm();
 
     // Demote all current prod environments - for this site!
     $old_promoted = \Drupal::entityQuery('node')

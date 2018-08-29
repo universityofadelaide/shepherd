@@ -1,0 +1,14 @@
+uuid: fe0813ca-e4c8-4ab3-932a-db7e987fc97c
+langcode: en
+status: true
+dependencies:
+  config:
+    - user.role.shp_site_administrator
+  module:
+    - user
+id: user_remove_role_action.shp_site_administrator
+label: 'Remove the Site Administrator role from the selected user(s)'
+type: user
+plugin: user_remove_role_action
+configuration:
+  rid: shp_site_administrator
