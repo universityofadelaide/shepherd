@@ -2,3 +2,5 @@ logo:
   path: themes/contrib/ua_theme/images/logos/uofa-logo.png
   url: ''
   use_default: false
+_core:
+  default_config_hash: 5nNrLh1J-zj98gyNXJnKHUnz8wRLdQ0qBH9cytrQmh8

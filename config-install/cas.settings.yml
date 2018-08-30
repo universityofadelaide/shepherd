@@ -43,3 +43,5 @@ login_link_label: ''
 advanced:
   debug_log: false
   connection_timeout: null
+_core:
+  default_config_hash: Bdrt3V3i8J6ObC_4TyiXY-BzRTl-H_KG8WxlzBVwoaQ
