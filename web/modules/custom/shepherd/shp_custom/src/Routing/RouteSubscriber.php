@@ -14,6 +14,11 @@ class RouteSubscriber extends RouteSubscriberBase {
    * {@inheritdoc}
    */
   protected function alterRoutes(RouteCollection $collection) {
+
+    if ($route = $collection->get('entity.node.delete_form')) {
+      $route->setRequirement('_custom_access', '\Drupal\shp_custom\Controller\SiteLocalTaskController::removeDeleteAccess');
+    }
+
     if ($route = $collection->get('view.shp_site_environments.page_1')) {
       $route->setRequirement('_custom_access', '\Drupal\shp_custom\Controller\SiteLocalTaskController::checkAccess');
     }
