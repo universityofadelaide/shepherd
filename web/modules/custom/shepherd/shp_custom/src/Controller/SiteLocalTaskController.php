@@ -27,15 +27,4 @@ class SiteLocalTaskController extends ControllerBase {
     return AccessResult::allowedIf($node->bundle() === "shp_site");
   }
 
-  public function removeDeleteAccess($node) {
-    if (!is_object($node)) {
-      $node = Node::load($node);
-    }
-    if ($node->bundle() === 'shp_site') {
-      return AccessResult::forbidden();
-
-    }
-    return AccessResult::allowed();
-  }
-
 }
