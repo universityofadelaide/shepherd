@@ -287,7 +287,7 @@ function shp_custom_set_domain_path(array &$form, FormStateInterface $form_state
  * Implements hook_tokens().
  */
 function shp_custom_tokens($type, $tokens, array $frequency, array $options, BubbleableMetadata $bubbleable_metadata) {
-  if ($type != 'shepherd') {
+  if ($type !== 'shepherd') {
     return [];
   }
 
@@ -297,7 +297,8 @@ function shp_custom_tokens($type, $tokens, array $frequency, array $options, Bub
     [$method, $frequency] = explode(':', $name);
     switch ($method) {
       case 'cron':
-        // Random, evenly distributed CSV list of minutes for cron. E.g. "0,30".
+        // Random offset, evenly distributed CSV list of minutes for cron.
+        // E.g. "30" offset could produce a string "11,41" or "12,42" etc.
         if (!empty($frequency) && 60 % (int) $frequency === 0) {
           // Fill with values according to the frequency.
           $values = range(0, 59, $frequency);
