@@ -19,7 +19,7 @@ required: false
 translatable: false
 default_value:
   -
-    key: '*/30 * * * *'
+    key: '[shepherd:cron:30] * * * *'
     value: 'cd /code; drush -r web cron || true'
     description: 'Default drupal cron tasks, set to run every 30 minutes, returning true so the container does not re-spawn if drupal is not yet installed.'
 default_value_callback: ''
