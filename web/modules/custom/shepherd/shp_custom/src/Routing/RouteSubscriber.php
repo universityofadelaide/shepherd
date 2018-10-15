@@ -21,6 +21,10 @@ class RouteSubscriber extends RouteSubscriberBase {
     if ($route = $collection->get('view.shp_site_users.page_1')) {
       $route->setRequirement('_custom_access', '\Drupal\shp_custom\Controller\SiteLocalTaskController::checkAccess');
     }
+
+    if ($route = $collection->get('')) {
+      $route->setDefault('_form', '\Drupal\form_overwrite\Form\NewUserLoginForm');
+    }
   }
 
 }
