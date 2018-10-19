@@ -75,8 +75,7 @@
         "patches": {
             "drupal/core": {
                 "Switch to a memory cache backend during installation": "https://www.drupal.org/files/issues/2488350-2-58.patch",
-                "Allow profiles to provide a base profile": "https://www.drupal.org/files/issues/drupal-n1356276-417-d8.5.x.patch",
-                "Add support to migrate multilingual revisions, fix to make phpunit run": "https://www.drupal.org/files/issues/2018-07-04/2921661-86-8.6.x.patch"
+                "Allow profiles to provide a base profile": "https://www.drupal.org/files/issues/drupal-n1356276-417-d8.5.x.patch"
             }
         }
     }
