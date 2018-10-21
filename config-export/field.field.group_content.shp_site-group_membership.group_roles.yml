@@ -1,0 +1,22 @@
+uuid: 844bc0cf-e904-4430-a2b5-b63fcea9bce6
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.group_content.group_roles
+    - group.content_type.shp_site-group_membership
+id: group_content.shp_site-group_membership.group_roles
+field_name: group_roles
+entity_type: group_content
+bundle: shp_site-group_membership
+label: Roles
+description: ''
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'group_type:group_role'
+  handler_settings:
+    group_type_id: shp_site
+field_type: entity_reference

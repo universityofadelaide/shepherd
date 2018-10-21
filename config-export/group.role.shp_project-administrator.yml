@@ -1,0 +1,31 @@
+uuid: 821cd8d8-3c25-4078-810a-e7eac0b79e4f
+langcode: en
+status: true
+dependencies:
+  config:
+    - group.type.shp_project
+  module:
+    - shp_roles
+third_party_settings:
+  shp_roles:
+    synced_role: administrator
+_core:
+  default_config_hash: nGHpZZwr-RdKyAuKzwPty48XFTIVTgkTlL2OUHkmGUc
+id: shp_project-administrator
+label: Administrator
+weight: 100
+internal: false
+audience: member
+group_type: shp_project
+permissions_ui: true
+permissions:
+  - 'access content overview'
+  - 'administer group'
+  - 'delete group'
+  - 'edit group'
+  - 'administer members'
+  - 'update own group_membership content'
+  - 'leave group'
+  - 'view group_membership content'
+  - 'view group'
+  - 'access group_node overview'

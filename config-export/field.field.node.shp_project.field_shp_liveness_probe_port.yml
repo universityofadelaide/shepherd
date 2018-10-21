@@ -1,0 +1,25 @@
+uuid: 86c36316-7592-4bb2-914a-91ad61c4b163
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_shp_liveness_probe_port
+    - node.type.shp_project
+_core:
+  default_config_hash: hmbiExk222nNJExUmLU6jsq8EvGGlgZncLYMmXXzuhg
+id: node.shp_project.field_shp_liveness_probe_port
+field_name: field_shp_liveness_probe_port
+entity_type: node
+bundle: shp_project
+label: Port
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  min: null
+  max: null
+  prefix: ''
+  suffix: ''
+field_type: integer

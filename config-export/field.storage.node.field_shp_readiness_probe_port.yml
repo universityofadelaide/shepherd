@@ -1,0 +1,22 @@
+uuid: d34b0306-db6b-4e3d-b8f6-56d3a1c3e53c
+langcode: en
+status: true
+dependencies:
+  module:
+    - node
+_core:
+  default_config_hash: AsHB0ZSusiXKKaT8ByPCrCoU3Lhvn2u3a5LfyBbr2tU
+id: node.field_shp_readiness_probe_port
+field_name: field_shp_readiness_probe_port
+entity_type: node
+type: integer
+settings:
+  unsigned: false
+  size: normal
+module: core
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false
