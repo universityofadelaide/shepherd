@@ -602,7 +602,8 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     $pods = $this->getPods();
     $environments = [];
     foreach ($pods['items'] as $pod) {
-      if (isset($pod['metadata']['labels']['environment_id']) && isset($pod['metadata']['labels']['version'])) {
+      if (isset($pod['metadata']['labels']['environment_id'], $pod['metadata']['ownerReferences'][0]['kind']) &&
+        $pod['metadata']['ownerReferences'][0]['kind'] === 'ReplicationController') {
         $environments[$pod['metadata']['labels']['environment_id']] =
           $pod['metadata']['labels']['version'] ?? '';
       }
