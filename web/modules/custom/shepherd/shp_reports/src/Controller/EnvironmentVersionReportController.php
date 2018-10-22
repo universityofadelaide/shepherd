@@ -73,9 +73,11 @@ class EnvironmentVersionReportController extends ControllerBase {
 
     $rows = [];
     foreach ($environments as $env_id => $version) {
-      $env_node = $this->entityTypeManager()->getStorage('node')->load($env_id);
-      $env_type = $this->environment->getEnvironmentType($env_node);
-      $site = $this->environment->getSite($env_node);
+      if (!($env_node = $this->entityTypeManager()->getStorage('node')->load($env_id)) ||
+        !($env_type = $this->environment->getEnvironmentType($env_node)) ||
+        !($site = $this->environment->getSite($env_node))) {
+        continue;
+      }
       $row = [];
       $row[] = new Link($site->getTitle(), Url::fromRoute('view.shp_site_environments.page_1', ['node' => $site->id()]));
       $row[] = $env_type->getName();
