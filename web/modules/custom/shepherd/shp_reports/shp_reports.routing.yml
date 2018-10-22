@@ -1,0 +1,7 @@
+shp_reports.environment_version:
+  path: '/admin/reports/shepherd/environment-version'
+  defaults:
+    _controller: '\Drupal\shp_reports\Controller\EnvironmentVersionReportController::index'
+    _title: 'Environment version report'
+  requirements:
+    _permission: 'administer nodes'
