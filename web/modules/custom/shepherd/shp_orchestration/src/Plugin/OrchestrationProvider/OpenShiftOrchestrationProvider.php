@@ -579,16 +579,35 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
   }
 
   /**
-   * Fetch the job from the provider.
-   *
-   * @param string $name
-   *   The job name.
-   *
-   * @return array|bool
-   *   The job, else false.
+   * {@inheritdoc}
    */
   public function getJob(string $name) {
     return $this->client->getJob($name);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getPods() {
+    return $this->client->getPods();
+  }
+
+  /**
+   * Retrieve the environment versions.
+   *
+   * @return array
+   *   An array of environment versions keyed by node id.
+   */
+  public function getEnvironmentVersions() {
+    $pods = $this->getPods();
+    $environments = [];
+    foreach ($pods['items'] as $pod) {
+      if (isset($pod['metadata']['labels']['environment_id'])) {
+        $environments[$pod['metadata']['labels']['environment_id']] =
+          $pod['metadata']['labels']['version'] ?? '';
+      }
+    }
+    return $environments;
   }
 
   /**

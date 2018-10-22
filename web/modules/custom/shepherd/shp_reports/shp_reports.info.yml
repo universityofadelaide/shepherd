@@ -1,0 +1,7 @@
+name: 'Shepherd Reports'
+type: module
+description: 'Provides reports about sites and projects.'
+core: 8.x
+package: Shepherd
+dependencies:
+  - shp_orchestration

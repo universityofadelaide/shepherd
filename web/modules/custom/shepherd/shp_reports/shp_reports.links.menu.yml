@@ -1,0 +1,6 @@
+shp_reports.environment_version:
+  title: 'Environment versions'
+  route_name: shp_reports.environment_version
+  parent: system.admin_reports
+  description: 'Environment version report'
+  weight: 50
