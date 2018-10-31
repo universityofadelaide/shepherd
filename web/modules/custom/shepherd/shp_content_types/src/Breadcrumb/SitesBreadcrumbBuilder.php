@@ -58,11 +58,14 @@ class SitesBreadcrumbBuilder implements BreadcrumbBuilderInterface {
         break;
 
       case 'shp_environment':
-        $site = $node->get('field_shp_site')
+        $target = $node->get('field_shp_site')
           ->first()
           ->get('entity')
-          ->getTarget()
-          ->getValue();
+          ->getTarget();
+        if ($target === NULL) {
+          break;
+        }
+        $site = $target->getValue();
         $breadcrumb->addLink(Link::createFromRoute($site->getTitle(), 'entity.node.canonical', ['node' => $site->id()]));
         break;
     }

@@ -1,0 +1,8 @@
+ignore:
+- core.extension
+- block.block.*
+- shp_backup.settings.yml
+- shp_database_provisioner.settings.yml
+- shp_orchestration.settings.yml
+- shp_redis_support.openshift_with_redis.openshift_with_redis
+- system.site

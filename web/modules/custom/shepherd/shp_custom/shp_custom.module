@@ -146,11 +146,9 @@ function shp_custom_node_update(NodeInterface $node) {
         //$result = $orchestration_provider_plugin->archivedEnvironment($entity->id());
         shp_custom_invalidate_site_cache($node);
       }
-      else {
-        // @todo Shepherd: Add new environment to reverse proxy.
-        // @todo Shepherd: Published environments should trigger re-deploy.
-        // @todo Shepherd: Move state transitioning to environment?
-      }
+      // @todo Shepherd: Add new environment to reverse proxy.
+      // @todo Shepherd: Published environments should trigger re-deploy.
+      // @todo Shepherd: Move state transitioning to environment?
       break;
   }
 }

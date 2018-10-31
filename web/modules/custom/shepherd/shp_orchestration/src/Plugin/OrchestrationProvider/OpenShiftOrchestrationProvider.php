@@ -214,7 +214,8 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     array $environment_variables = [],
     array $secrets = [],
     array $probes = [],
-    array $cron_jobs = []
+    array $cron_jobs = [],
+    array $annotations = []
   ) {
     // @todo Refactor this. _The complexity is too damn high!_
 
@@ -261,7 +262,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     $image_stream = $this->client->getImageStream($sanitised_project_name);
     $this->createCronJobs(
       $deployment_name,
-      $source_ref,
+      $sanitised_source_ref,
       $cron_suspended,
       $cron_jobs,
       $image_stream,
@@ -284,7 +285,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     $port = 8080;
     try {
       $this->client->createService($deployment_name, $deployment_name, $port, $port, $deployment_name);
-      $this->client->createRoute($deployment_name, $deployment_name, $domain, $path);
+      $this->client->createRoute($deployment_name, $deployment_name, $domain, $path, $annotations);
     }
     catch (ClientException $e) {
       $this->handleClientException($e);
@@ -314,7 +315,8 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     array $environment_variables = [],
     array $secrets = [],
     array $probes = [],
-    array $cron_jobs = []
+    array $cron_jobs = [],
+    array $annotations = []
   ) {
     // @todo Refactor this too. Not DRY enough.
 
@@ -363,19 +365,24 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     $deployment_name = self::generateDeploymentName($environment_id);
 
     try {
-      // @todo are we doing this?
       // Scale the pods to zero, then delete the pod creators.
-      //$this->client->updateDeploymentConfig($deployment_name, 0);
-      //$this->client->updateReplicationControllers('', 'app=' . $deployment_name, 0);
-
+      // @todo - placing the logic here .. as its not clear what level of logic we should place in client.
+      $deploymentConfigs = $this->client->getDeploymentConfigs('app=' . $deployment_name);
+      foreach ($deploymentConfigs['items'] as $deploymentConfig) {
+        $this->client->updateDeploymentConfig($deploymentConfig['metadata']['name'], $deploymentConfig, [
+          'apiVersion' => 'v1',
+          'kind' => 'DeploymentConfig',
+          'spec' => [
+            'replicas' => 0,
+          ],
+        ]);
+      }
       $this->client->deleteCronJob('', 'app=' . $deployment_name);
       $this->client->deleteJob('', 'app=' . $deployment_name);
       $this->client->deleteRoute($deployment_name);
       $this->client->deleteService($deployment_name);
-
       $this->client->deleteDeploymentConfig($deployment_name);
-      // @todo remove this?
-      //$this->client->deleteReplicationControllers('', 'app=' . $deployment_name);
+      $this->client->deleteReplicationControllers('', 'app=' . $deployment_name);
 
       // Now the things not in the typically visible ui.
       $this->client->deletePersistentVolumeClaim($deployment_name . '-shared');
@@ -442,7 +449,8 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     string $short_name,
     int $site_id,
     string $domain,
-    string $path
+    string $path,
+    array $annotations = []
   ) {
     $deployment_name = self::generateDeploymentName($site_id);
 
@@ -450,7 +458,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     $port = 8080;
     try {
       $this->client->createService($deployment_name, $deployment_name, $port, $port, $deployment_name);
-      $this->client->createRoute($deployment_name, $deployment_name, $domain, $path);
+      $this->client->createRoute($deployment_name, $deployment_name, $domain, $path, $annotations);
     }
     catch (ClientException $e) {
       $this->handleClientException($e);
@@ -533,6 +541,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     string $commands = ''
   ) {
     $sanitised_project_name = self::sanitise($project_name);
+    $sanitised_source_ref = self::sanitise($source_ref);
     $deployment_name = self::generateDeploymentName($environment_id);
 
     // Retrieve existing deployment details to use where possible.
@@ -556,7 +565,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     try {
       $response_body = $this->client->createJob(
         $deployment_name . '-' . $this->stringGenerator->generateRandomString(5),
-        $image_stream['status']['dockerImageRepository'] . ':' . $source_ref,
+        $image_stream['status']['dockerImageRepository'] . ':' . $sanitised_source_ref,
         $args_array,
         $volumes,
         $deploy_data
@@ -664,7 +673,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       return FALSE;
     }
 
-    return $this->extractDeploymentConfigStatus($deployment_config);
+    return $deployment_config ? $this->extractDeploymentConfigStatus($deployment_config) : FALSE;
   }
 
   /**
@@ -790,6 +799,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
 
   /**
    * Format an array of environment variables ready to pass to OpenShift.
+   *
    * @todo - move this into the client?
    *
    * @param array $environment_variables
@@ -831,6 +841,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
 
   /**
    * Format an array of deployment data ready to pass to OpenShift.
+   *
    * @todo - move this into the client?
    *
    * @param string $name
@@ -1038,6 +1049,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
    *   True on success.
    */
   protected function createCronJobs(string $deployment_name, string $source_ref, bool $cron_suspended, array $cron_jobs, array $image_stream, array $volumes, array $deploy_data) {
+    $sanitised_source_ref = self::sanitise($source_ref);
     foreach ($cron_jobs as $cron_job) {
       $args_array = [
         '/bin/sh',
@@ -1047,7 +1059,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       try {
         $this->client->createCronJob(
           $deployment_name . '-' . $this->stringGenerator->generateRandomString(5),
-          $image_stream['status']['dockerImageRepository'] . ':' . $source_ref,
+          $image_stream['status']['dockerImageRepository'] . ':' . $sanitised_source_ref,
           $cron_job['schedule'],
           $cron_suspended,
           $args_array,

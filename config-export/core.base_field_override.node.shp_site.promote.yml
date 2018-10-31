@@ -1,0 +1,24 @@
+uuid: 2f0ef0d7-b436-462f-a17f-9f86b3f04250
+langcode: en
+status: true
+dependencies:
+  config:
+    - node.type.shp_site
+_core:
+  default_config_hash: kYc0Ad6_herdCjBDdxXCpsa_GFugkjnXgnZiOHywbC4
+id: node.shp_site.promote
+field_name: promote
+entity_type: node
+bundle: shp_site
+label: 'Promoted to front page'
+description: ''
+required: false
+translatable: true
+default_value:
+  -
+    value: 0
+default_value_callback: ''
+settings:
+  on_label: 'On'
+  off_label: 'Off'
+field_type: boolean

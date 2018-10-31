@@ -1,0 +1,20 @@
+uuid: e1d67bf9-969e-45a7-a3ef-deb261be0c6e
+langcode: en
+status: true
+dependencies:
+  config:
+    - node.type.shp_backup
+_core:
+  default_config_hash: i1_Bbhpj3Y-tTVgHcrASS1zIQ5WcH6iHlDddlMaFfPo
+id: node.shp_backup.title
+field_name: title
+entity_type: node
+bundle: shp_backup
+label: 'Backup description'
+description: ''
+required: true
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string
