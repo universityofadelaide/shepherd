@@ -51,3 +51,5 @@ RoboFileBase.php
 /*/node_modules
 /node_modules
 /**/node_modules
+openshift.local.clusterup
+shared
