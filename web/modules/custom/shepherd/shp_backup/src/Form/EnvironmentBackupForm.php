@@ -3,6 +3,7 @@
 namespace Drupal\shp_backup\Form;
 
 use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Datetime\DrupalDateTime;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Messenger\MessengerInterface;
@@ -108,16 +109,11 @@ class EnvironmentBackupForm extends FormBase {
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state, NodeInterface $site = NULL, NodeInterface $environment = NULL) {
-    $config = $this->config->get('shp_backup.settings');
-    $backup_title = $this->token->replace($config->get('backup_title'), ['environment' => $environment]);
-
     $form_state->set('site', $site);
     $form_state->set('environment', $environment);
 
-    $form['backup_title'] = [
-      '#title' => $this->t('Backup identifier'),
-      '#type' => 'textfield',
-      '#default_value' => $backup_title,
+    $form['message'] = [
+      '#markup' => '<p>Once submitted, you can visit the Backups tab for this site to view the status of the backup.</p>',
     ];
 
     $form['actions'] = [
@@ -141,7 +137,7 @@ class EnvironmentBackupForm extends FormBase {
     $environment = $form_state->get('environment');
 
     // Call the backup service to start a backup and update the backup node.
-    if ($this->backup->createNode($environment, $form_state->getValue('backup_title'))) {
+    if ($this->backup->createBackup($site, $environment)) {
 
       $this->messenger->addStatus($this->t('Backup has been queued for %title', [
         '%title' => $form_state->get('environment')->getTitle(),

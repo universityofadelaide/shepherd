@@ -456,27 +456,15 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
   /**
    * Backup an environment.
    *
-   * @param string $project_name
-   *   Name of the project.
-   * @param string $short_name
-   *   Short name of the site.
+   * @param string $site_id
+   *   Site node id.
    * @param string $environment_id
    *   Environment node id.
-   * @param string $source_ref
-   *   Source code git ref, defaults to 'master'.
-   * @param string $commands
-   *   Commands to run to perform the backup.
    *
    * @return array|bool
    *   Returns a response body if successful, otherwise false.
    */
-  public function backupEnvironment(
-    string $project_name,
-    string $short_name,
-    string $environment_id,
-    string $source_ref = 'master',
-    string $commands = ''
-  );
+  public function backupEnvironment(string $site_id, string $environment_id);
 
   /**
    * Restore an environment.

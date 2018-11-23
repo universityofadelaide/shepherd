@@ -104,17 +104,6 @@ function shp_backup_tokens($type, $tokens, array $data, array $options, Bubbleab
 }
 
 /**
- * Implements hook_ENTITY_TYPE_insert().
- */
-function shp_backup_node_insert(NodeInterface $node) {
-  switch ($node->bundle()) {
-    case 'shp_backup':
-      \Drupal::service('shp_backup.backup')->create($node);
-      break;
-  }
-}
-
-/**
  * Implements hook_operation_alter().
  */
 function shp_backup_entity_operation_alter(array &$operations, EntityInterface $entity) {

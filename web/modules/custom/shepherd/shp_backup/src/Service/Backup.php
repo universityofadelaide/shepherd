@@ -113,65 +113,24 @@ class Backup {
   /**
    * Create a backup node for a given site and environment.
    *
+   * @param \Drupal\node\NodeInterface $site
+   *   The site the environment blongs to.
    * @param \Drupal\node\NodeInterface $environment
    *   The environment to create the backup node for.
-   * @param string $title
-   *   The title to use for the backup node.
    *
    * @return \Drupal\Core\Entity\EntityInterface|static
    *   The backup entity.
    */
-  public function createNode(NodeInterface $environment, $title = NULL) {
-    if (!isset($title)) {
-
-      // @todo Inject the service.
-      $config = \Drupal::config('shp_backup.settings');
-      $title = $this->token->replace($config->get('backup_title'), ['environment' => $environment]);
-    }
-    // Create a backup node.
-    $backup = Node::create([
-      'type'                     => 'shp_backup',
-      'langcode'                 => 'en',
-      // @todo Inject the service.
-      'uid'                      => \Drupal::currentUser()->id(),
-      'status'                   => 1,
-      'title'                    => $title,
-      'field_shp_backup_path'    => [['value' => '']],
-      'field_shp_site'           => [['target_id' => $environment->field_shp_site->target_id]],
-      'field_shp_environment'    => [['target_id' => $environment->id()]],
-    ]);
-    // Store the path for this backup in the backup node.
-    $backup->set('field_shp_backup_path', $this->token->replace('[shepherd:backup-path]', ['backup' => $backup]));
-    $backup->save();
-
-    return $backup;
-  }
-
-  /**
-   * Create a backup for a backup node.
-   *
-   * @param \Drupal\node\NodeInterface $backup
-   *   The environment to backup.
-   *
-   * @return bool
-   *   True on success.
-   */
-  public function create(NodeInterface $backup) {
-    $node_storage = $this->entityTypeManager->getStorage('node');
-    $site = $node_storage->load($backup->field_shp_site->target_id);
-    $environment = $node_storage->load($backup->field_shp_environment->target_id);
-    $project = $node_storage->load($site->field_shp_project->target_id);
+  public function createBackup(NodeInterface $site, NodeInterface $environment) {
+    $project = $site->field_shp_project->entity;
     $project_name = $project->title->value;
 
-    $backup_command = str_replace(["\r\n", "\n", "\r"], ' && ', trim($this->config->get('backup_command')));
-    $backup_command = $this->token->replace($backup_command, ['backup' => $backup]);
+//    $backup_command = str_replace(["\r\n", "\n", "\r"], ' && ', trim($this->config->get('backup_command')));
+//    $backup_command = $this->token->replace($backup_command, ['backup' => $backup]);
 
     $result = $this->orchestrationProvider->backupEnvironment(
-      $project_name,
-      $site->field_shp_short_name->value,
-      $environment->id(),
-      $environment->field_shp_git_reference->value,
-      $backup_command
+      $site->id(),
+      $environment->id()
     );
 
     return $result;
@@ -206,34 +165,6 @@ class Backup {
     );
 
     return $result;
-  }
-
-  /**
-   * Check if a job has completed.
-   *
-   * @param \stdClass $job
-   *   The job.
-   *
-   * @return bool
-   *   True if finished, otherwise false.
-   */
-  public function isComplete(\stdClass $job) {
-    // @todo Check backup and restore.
-    $complete = FALSE;
-    switch ($job->queueWorker) {
-      case 'shp_backup':
-      case 'shp_restore':
-        // @todo Fix OpenShift specific structure leaking here.
-        $provider_job = $this->orchestrationProvider->getJob($job->name);
-        $complete = $provider_job['status']['conditions'][0]['type'] == 'Complete'
-          && $provider_job['status']['conditions'][0]['status'] == 'True';
-
-        // @todo Check if job successful?
-        // $succeeded = $provider_job['status']['succeeded'] == '1';
-        break;
-    }
-
-    return $complete;
   }
 
   /**
