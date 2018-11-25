@@ -96,17 +96,11 @@ class Backup {
    * @param \Drupal\node\NodeInterface $site
    *   Site node to retrieve the list of backups for.
    *
-   * @return array
-   *   An array of backup folders.
+   * @return \UniversityOfAdelaide\OpenShift\Objects\Backups\BackupList|bool
+   *   The backup list if successful otherwise false.
    */
   public function getAll(NodeInterface $site) {
-
-    // @todo watch out for access control. Use EQ instead.
-    $view = Views::getView('shp_site_backups');
-    $view->setArguments(['site' => $site->id()]);
-    $view->render();
-    $backups = $view->result;
-
+    $backups = $this->orchestrationProvider->getBackupsForSite($site->id());
     return $backups;
   }
 
@@ -118,8 +112,8 @@ class Backup {
    * @param \Drupal\node\NodeInterface $environment
    *   The environment to create the backup node for.
    *
-   * @return \Drupal\Core\Entity\EntityInterface|static
-   *   The backup entity.
+   * @return \UniversityOfAdelaide\OpenShift\Objects\Backups\Backup|bool
+   *   The backup object, or false.
    */
   public function createBackup(NodeInterface $site, NodeInterface $environment) {
     $project = $site->field_shp_project->entity;
@@ -139,29 +133,26 @@ class Backup {
   /**
    * Restore a backup for a given instance.
    *
-   * @param \Drupal\node\NodeInterface $backup
-   *   The backup to restore.
+   * @param string $backup_name
+   *   The name of the backup to restore.
    * @param \Drupal\node\NodeInterface $environment
    *   The environment to restore.
    *
    * @return bool
    *   True on success.
    */
-  public function restore(NodeInterface $backup, NodeInterface $environment) {
-    $node_storage = $this->entityTypeManager->getStorage('node');
-    $site = $node_storage->load($backup->field_shp_site->target_id);
-    $project = $node_storage->load($site->field_shp_project->target_id);
-    $project_name = $project->title->value;
+  public function restore(string $backup_name, NodeInterface $environment) {
+    $site = $environment->field_shp_site->entity;
+//    $project = $node_storage->load($site->field_shp_project->target_id);
+//    $project_name = $project->title->value;
 
-    $restore_command = str_replace(["\r\n", "\n", "\r"], ' && ', trim($this->config->get('restore_command')));
-    $restore_command = $this->token->replace($restore_command, ['backup' => $backup]);
+//    $restore_command = str_replace(["\r\n", "\n", "\r"], ' && ', trim($this->config->get('restore_command')));
+//    $restore_command = $this->token->replace($restore_command, ['backup' => $backup_name]);
 
     $result = $this->orchestrationProvider->restoreEnvironment(
-      $project_name,
-      $site->field_shp_short_name->value,
-      $environment->id(),
-      $environment->field_shp_git_reference->value,
-      $restore_command
+      $backup_name,
+      $site->id(),
+      $environment->id()
     );
 
     return $result;

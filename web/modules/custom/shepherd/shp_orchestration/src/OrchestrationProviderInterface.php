@@ -461,35 +461,36 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
    * @param string $environment_id
    *   Environment node id.
    *
-   * @return array|bool
-   *   Returns a response body if successful, otherwise false.
+   * @return object|bool
+   *   Returns a backup object if successful, otherwise false.
    */
   public function backupEnvironment(string $site_id, string $environment_id);
 
   /**
+   * Get a list of backups for a site.
+   *
+   * @param string $site_id
+   *   The site node id.
+   *
+   * @return object
+   *   The list of backups.
+   */
+  public function getBackupsForSite(string $site_id);
+
+  /**
    * Restore an environment.
    *
-   * @param string $project_name
-   *   Name of the project.
-   * @param string $short_name
-   *   Short name of the site.
+   * @param string $backup_name
+   *   Name of the backup.
+   * @param string $site_id
+   *   Site node id.
    * @param string $environment_id
    *   Environment node id.
-   * @param string $source_ref
-   *   Source code git ref, defaults to 'master'.
-   * @param string $commands
-   *   Commands to run to perform the backup.
    *
    * @return array|bool
    *   Returns a response body if successful, otherwise false.
    */
-  public function restoreEnvironment(
-    string $project_name,
-    string $short_name,
-    string $environment_id,
-    string $source_ref = 'master',
-    string $commands = ''
-  );
+  public function restoreEnvironment(string $backup_name, string $site_id, string $environment_id);
 
   /**
    * Execute a job.

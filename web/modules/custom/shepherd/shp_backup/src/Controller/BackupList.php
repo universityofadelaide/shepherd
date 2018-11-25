@@ -114,6 +114,7 @@ class BackupList extends ControllerBase {
         $this->t('Expires'),
       ],
       '#rows' => $rows,
+      '#empty' => $this->t('No backups for this site yet.'),
     ];
   }
 

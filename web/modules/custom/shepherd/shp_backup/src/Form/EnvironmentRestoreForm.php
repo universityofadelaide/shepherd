@@ -96,18 +96,19 @@ class EnvironmentRestoreForm extends FormBase {
     $form_state->set('site', $site);
     $form_state->set('environment', $environment);
 
-    $backups = $this->backup->getAll($site);
+    /** @var \UniversityOfAdelaide\OpenShift\Objects\Backups\BackupList $backup_list */
+    $backup_list = $this->backup->getAll($site);
 
     $backup_options = [];
 
-    foreach ($backups as $backup) {
-      $backup_options[$backup->nid] = $backup->_entity->title->value;
+    foreach ($backup_list->getBackups() as $backup) {
+      $backup_options[$backup->getName()] = $backup->getName();
     }
 
     $build = [
       'backup' => [
         '#type' => 'select',
-        '#title' => $this->t('Backup path'),
+        '#title' => $this->t('Backup to restore from'),
         '#options' => $backup_options,
         '#required' => TRUE,
       ],
@@ -134,10 +135,8 @@ class EnvironmentRestoreForm extends FormBase {
     $site = $form_state->get('site');
     $environment = $form_state->get('environment');
 
-    $backup = $this->entityTypeManager->getStorage('node')->load($form_state->getValue('backup'));
-
     // Set the backup to restore from.
-    $status = $this->backup->restore($backup, $environment);
+    $status = $this->backup->restore($form_state->getValue('backup'), $environment);
 
     if ($status) {
       $this->messenger->addStatus($this->t('Restore has been queued for %title', [

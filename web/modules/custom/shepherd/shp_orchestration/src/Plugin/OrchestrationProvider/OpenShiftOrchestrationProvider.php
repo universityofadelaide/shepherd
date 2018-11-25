@@ -12,6 +12,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use UniversityOfAdelaide\OpenShift\Client as OpenShiftClient;
 use UniversityOfAdelaide\OpenShift\ClientException;
 use UniversityOfAdelaide\OpenShift\Objects\Backups\Backup;
+use UniversityOfAdelaide\OpenShift\Objects\Backups\Restore;
 use UniversityOfAdelaide\OpenShift\Objects\Label;
 
 /**
@@ -496,9 +497,9 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
   public function backupEnvironment(string $site_id, string $environment_id) {
     $deployment_name = self::generateDeploymentName($environment_id);
     $backup = Backup::create()
-      ->setLabel('site_id', $site_id)
-      ->setLabel('environment_id', $environment_id)
-      ->setName(sprintf('%s-backup-%s', $deployment_name, time()))
+      ->setLabel(Label::create('site_id', $site_id))
+      ->setLabel(Label::create('environment_id', $environment_id))
+      ->setName(sprintf('%s-backup-%s', $deployment_name, date('YmdHis')))
       ->setMatchLabels([
         'app' => $deployment_name
       ]);
@@ -507,13 +508,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
   }
 
   /**
-   * Get a list of backups for a site.
-   *
-   * @param string $site_id
-   *   The site node id.
-   *
-   * @return \UniversityOfAdelaide\OpenShift\Objects\Backups\BackupList
-   *   The list of backups.
+   * {@inheritdoc}
    */
   public function getBackupsForSite(string $site_id) {
     return $this->client->listBackup(Label::create('site_id', $site_id));
@@ -522,21 +517,13 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
   /**
    * {@inheritdoc}
    */
-  public function restoreEnvironment(
-    string $project_name,
-    string $short_name,
-    string $environment_id,
-    string $source_ref = 'master',
-    string $commands = ''
-  ) {
-    return $this->executeJob(
-      $project_name,
-      $short_name,
-      $environment_id,
-      $source_ref,
-      $commands
-    );
-
+  public function restoreEnvironment(string $backup_name, string $site_id, string $environment_id) {
+    $restore = Restore::create()
+      ->setName(sprintf('%s-%s', $backup_name, date('YmdHis')))
+      ->setBackupName($backup_name)
+      ->setLabel(Label::create('site_id', $site_id))
+      ->setLabel(Label::create('environment_id', $environment_id));
+    return $this->client->createRestore($restore);
   }
 
   /**
