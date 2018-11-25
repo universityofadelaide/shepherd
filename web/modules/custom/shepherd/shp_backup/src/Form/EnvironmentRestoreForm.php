@@ -9,6 +9,7 @@ use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\node\NodeInterface;
 use Drupal\shp_backup\Service\Backup;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use UniversityOfAdelaide\OpenShift\Objects\Backups\Phase;
 
 /**
  * EnvironmentRestoreForm.
@@ -101,7 +102,7 @@ class EnvironmentRestoreForm extends FormBase {
 
     $backup_options = [];
 
-    foreach ($backup_list->getBackups() as $backup) {
+    foreach ($backup_list->getCompletedBackups() as $backup) {
       $backup_options[$backup->getName()] = $backup->getName();
     }
 
