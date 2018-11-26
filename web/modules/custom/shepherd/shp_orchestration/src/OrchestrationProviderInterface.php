@@ -493,6 +493,17 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
   public function restoreEnvironment(string $backup_name, string $site_id, string $environment_id);
 
   /**
+   * Get a list of restores for a site.
+   *
+   * @param string $site_id
+   *   The site node id.
+   *
+   * @return object
+   *   The list of restores.
+   */
+  public function getRestoresForSite(string $site_id);
+
+  /**
    * Execute a job.
    *
    * @param string $project_name

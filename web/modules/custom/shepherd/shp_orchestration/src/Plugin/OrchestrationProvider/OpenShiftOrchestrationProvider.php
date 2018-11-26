@@ -528,6 +528,13 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
 
   /**
    * {@inheritdoc}
+   */
+  public function getRestoresForSite(string $site_id) {
+    return $this->client->listRestore(Label::create('site_id', $site_id));
+  }
+
+  /**
+   * {@inheritdoc}
    *
    * @todo - can this and cron job creation be combined?
    */
