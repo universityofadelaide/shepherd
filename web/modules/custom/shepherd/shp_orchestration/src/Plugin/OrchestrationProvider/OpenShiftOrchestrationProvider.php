@@ -218,7 +218,8 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     array $secrets = [],
     array $probes = [],
     array $cron_jobs = [],
-    array $annotations = []
+    array $annotations = [],
+    bool $backup_volumes = FALSE
   ) {
     // @todo Refactor this. _The complexity is too damn high!_
 
@@ -244,6 +245,11 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       $environment_id
     );
 
+    $volumes_to_backup = [];
+    // Only backup the shared volume.
+    if ($backup_volumes) {
+      $volumes_to_backup[] = $volumes['shared']['name'];
+    }
     $deployment_config = $this->client->generateDeploymentConfig(
       $deployment_name,
       $image_stream_tag,
@@ -251,7 +257,8 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       $update_on_image_change,
       $volumes,
       $deploy_data,
-      $probes
+      $probes,
+      $volumes_to_backup
     );
 
     try {
@@ -970,6 +977,19 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
   }
 
   /**
+   * Generate the name of the shared PVC from a deployment name.
+   *
+   * @param string $deployment_name
+   *   A deployment name.
+   *
+   * @return string
+   *   The shared pvc name.
+   */
+  protected static function generateSharedPvcName(string $deployment_name) {
+    return $deployment_name . '-shared';
+  }
+
+  /**
    * Generates the volume data for deployment configuration.
    *
    * @param string $project_name
@@ -981,14 +1001,13 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
    *   Volume data.
    */
   protected function generateVolumeData(string $project_name, string $deployment_name) {
-    $shared_pvc_name = $deployment_name . '-shared';
     // @todo This should be project_name-backup or similar - one backup pv per project.
     $backup_pvc_name = self::sanitise($project_name) . '-backup';
 
     $volumes = [
       'shared' => [
         'type' => 'pvc',
-        'name' => $shared_pvc_name,
+        'name' => self::generateSharedPvcName($deployment_name),
         'path' => '/shared',
       ],
       'backup' => [

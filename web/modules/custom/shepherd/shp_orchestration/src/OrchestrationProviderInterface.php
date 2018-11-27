@@ -119,6 +119,8 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
    *   An array of cron jobs associated with this environment.
    * @param array $annotations
    *   An array of route annotations.
+   * @param bool $backup_volumes
+   *   Whether to backup the volumes attached to this environment.
    *
    * @return bool
    *   Returns true if succeeded.
@@ -142,7 +144,8 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
     array $secrets = [],
     array $probes = [],
     array $cron_jobs = [],
-    array $annotations = []
+    array $annotations = [],
+    bool $backup_volumes = FALSE
   );
 
   /**

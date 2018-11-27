@@ -150,6 +150,8 @@ class Environment extends EntityActionBase {
       array_column($annotations, 'value')
     );
 
+    // todo: move into config.
+    $backup_volumes = FALSE;
     $environment = $this->orchestrationProviderPlugin->createdEnvironment(
       $project->getTitle(),
       $site->field_shp_short_name->value,
@@ -169,7 +171,8 @@ class Environment extends EntityActionBase {
       $secrets,
       $probes,
       $cron_jobs,
-      $annotations
+      $annotations,
+      $backup_volumes
     );
 
     // Allow other modules to react to the Environment creation.
