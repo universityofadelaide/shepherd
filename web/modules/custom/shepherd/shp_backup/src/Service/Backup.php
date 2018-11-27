@@ -8,13 +8,10 @@ use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\Url;
-use Drupal\node\Entity\Node;
 use Drupal\node\NodeInterface;
 use Drupal\shp_orchestration\OrchestrationProviderPluginManagerInterface;
 use Drupal\shp_orchestration\Service\ActiveJobManager;
-use Drupal\taxonomy\Entity\Term;
 use Drupal\token\TokenInterface;
-use Drupal\views\Views;
 
 /**
  * Provides a service for accessing the backups.
@@ -173,8 +170,7 @@ class Backup {
     $operations['backup'] = [
       'title' => $this->t('Backup'),
       'weight' => 1,
-      'url' => Url::fromRoute('shp_backup.environment-backup-form',
-        ['site' => $site, 'environment' => $environment]),
+      'url' => Url::fromRoute('shp_backup.environment-backup-form', ['site' => $site, 'environment' => $environment]),
       // Render form in a modal window.
       'attributes' => [
         'class' => ['button', 'use-ajax'],
@@ -183,26 +179,21 @@ class Backup {
       ],
     ];
 
-    if ($environment_term = Term::load($entity->field_shp_environment_type->target_id)) {
-      if (!$environment_term->field_shp_protect->value) {
-        $operations['restore'] = [
-          'title'      => $this->t('Restore'),
-          'weight'     => 2,
-          'url'        => Url::fromRoute('shp_backup.environment-restore-form', [
-            'site'        => $site,
-            'environment' => $environment,
-          ]),
-          // Render form in a modal window.
-          'attributes' => [
-            'class'               => ['button', 'use-ajax'],
-            'data-dialog-type'    => 'modal',
-            'data-dialog-options' => Json::encode([
-              'width'  => '50%',
-              'height' => '50%',
-            ]),
-          ],
-        ];
-      }
+    if (($environment_term = $entity->field_shp_environment_type->entity) && !$environment_term->field_shp_protect->value) {
+      $operations['restore'] = [
+        'title'      => $this->t('Restore'),
+        'weight'     => 2,
+        'url'        => Url::fromRoute('shp_backup.environment-restore-form', [
+          'site'        => $site,
+          'environment' => $environment,
+        ]),
+        // Render form in a modal window.
+        'attributes' => [
+          'class'               => ['button', 'use-ajax'],
+          'data-dialog-type'    => 'modal',
+          'data-dialog-options' => Json::encode(['width'  => '50%', 'height' => '50%']),
+        ],
+      ];
     }
   }
 
