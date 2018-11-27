@@ -109,37 +109,37 @@ function shp_custom_node_update(NodeInterface $node) {
     return NULL;
   }
 
+  /** @var \Drupal\shp_backup\Service\Backup $backup */
+  $backup = \Drupal::service('shp_backup.backup');
+
   switch ($node->getType()) {
     case 'shp_site':
       if ($node->moderation_state->value == 'archived') {
-        $backup = \Drupal::service('shp_backup.backup');
-        $environments = \Drupal::entityQuery('node')
+        $node_storage = \Drupal::entityTypeManager()->getStorage('node');
+        $environments = $node_storage->getQuery()
           ->condition('type', 'shp_environment')
           ->condition('field_shp_site', $node->id())
           ->execute();
 
-        foreach ($environments as $environment_id) {
-          $environment = Node::load($environment_id);
-          if ($environment->moderation_state->value != 'archived') {
-
-            // Create the backup node and perform a backup.
-            $backup->createNode($environment);
-
-            // @todo Shepherd: Need to queue to enable this part.
-            //if (!$result = $orchestration_provider_plugin->archivedEnvironment($entity->id())) {
-            //  return $result;
-            //}
+        foreach ($node_storage->loadMultiple($environments) as $environment) {
+          // Archived environments will already have a backup (see below).
+          if ($environment->moderation_state->value === 'archived') {
+            continue;
           }
+          $backup->createBackup($node, $environment);
+
+          // @todo Shepherd: Need to queue to enable this part.
+          //if (!$result = $orchestration_provider_plugin->archivedEnvironment($entity->id())) {
+          //  return $result;
+          //}
         }
       }
       break;
 
     case 'shp_environment':
       if ($node->moderation_state->value === 'archived') {
-        $backup = \Drupal::service('shp_backup.backup');
-
-        // Create the backup node and perform a backup.
-        $backup->createNode($node);
+        $site = $node->field_shp_site->entity;
+        $backup->createBackup($site, $node);
 
         // @todo Shepherd: Need to queue to enable this part. I.e. backup must complete first.
         //$result = $orchestration_provider_plugin->archivedEnvironment($entity->id());
