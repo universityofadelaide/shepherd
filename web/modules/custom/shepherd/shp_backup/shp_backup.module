@@ -8,29 +8,7 @@
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Render\BubbleableMetadata;
 use Drupal\node\Entity\Node;
-use Drupal\node\NodeInterface;
 use Drupal\taxonomy\Entity\Term;
-
-/**
- * Implements hook_cron().
- */
-function shp_backup_cron() {
-  // Only run backups at 3am.
-  if (date('G', time()) == 3) {
-    shp_backup_backup_environments();
-  }
-}
-
-/**
- * Back up all environments.
- */
-function shp_backup_backup_environments() {
-  // @todo Shepherd: Perform backups on orchestration provider.
-  // Retrieve list of all environments
-  // Load site, project, environment
-  // call createBackup on each
-  // As each job runs asap, does there need to be some throttling here?
-}
 
 /**
  * Implements hook_token_info().
