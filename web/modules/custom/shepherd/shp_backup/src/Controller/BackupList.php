@@ -27,6 +27,10 @@ class BackupList extends ListControllerBase {
     $rows = [];
     foreach ($backup_list->getBackups() as $backup) {
       $environment = $this->nodeStorage->load($backup->getLabel('environment_id'));
+      // Protect against environments that have been deleted.
+      if (!$environment) {
+        continue;
+      }
       $rows[] = [
         $backup->getName(),
         $environment->toLink(),

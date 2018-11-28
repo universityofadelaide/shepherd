@@ -2,6 +2,7 @@
 
 namespace Drupal\shp_orchestration\Service;
 
+use Drupal\Core\Config\ConfigFactory;
 use Drupal\node\Entity\Node;
 use Drupal\node\NodeInterface;
 use Drupal\shp_custom\Service\Environment as EnvironmentEntity;
@@ -55,6 +56,13 @@ class Environment extends EntityActionBase {
   protected $environmentType;
 
   /**
+   * The config factory.
+   *
+   * @var \Drupal\Core\Config\ConfigFactory
+   */
+  protected $configFactory;
+
+  /**
    * Shepherd constructor.
    *
    * @param \Drupal\shp_orchestration\OrchestrationProviderPluginManager $orchestrationProviderPluginManager
@@ -69,14 +77,17 @@ class Environment extends EntityActionBase {
    *   Event dispatcher.
    * @param \Drupal\shp_custom\Service\EnvironmentTypeInterface $environmentType
    *   Environment type service.
+   * @param \Drupal\Core\Config\ConfigFactory $configFactory
+   *   The config factory.
    */
-  public function __construct(OrchestrationProviderPluginManager $orchestrationProviderPluginManager, Configuration $configuration, EnvironmentEntity $environment, SiteEntity $site, EventDispatcherInterface $event_dispatcher, EnvironmentTypeInterface $environmentType) {
+  public function __construct(OrchestrationProviderPluginManager $orchestrationProviderPluginManager, Configuration $configuration, EnvironmentEntity $environment, SiteEntity $site, EventDispatcherInterface $event_dispatcher, EnvironmentTypeInterface $environmentType, ConfigFactory $configFactory) {
     parent::__construct($orchestrationProviderPluginManager);
     $this->configuration = $configuration;
     $this->environmentEntity = $environment;
     $this->siteEntity = $site;
     $this->eventDispatcher = $event_dispatcher;
     $this->environmentType = $environmentType;
+    $this->configFactory = $configFactory;
   }
 
   /**
@@ -150,8 +161,8 @@ class Environment extends EntityActionBase {
       array_column($annotations, 'value')
     );
 
-    // todo: move into config.
-    $backup_volumes = FALSE;
+    $backup_volumes_killswitch = $this->configFactory->get('shp_orchestration.settings')->get('backup_volumes_killswitch');
+    $backup_volumes = $node->field_shp_volume_snapshots->value && !$backup_volumes_killswitch;
     $environment = $this->orchestrationProviderPlugin->createdEnvironment(
       $project->getTitle(),
       $site->field_shp_short_name->value,

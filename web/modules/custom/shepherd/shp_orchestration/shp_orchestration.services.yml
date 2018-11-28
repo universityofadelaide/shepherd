@@ -20,7 +20,7 @@ services:
     arguments: ['@plugin.manager.orchestration_provider', '@shp_orchestration.configuration']
   shp_orchestration.environment:
     class: Drupal\shp_orchestration\Service\Environment
-    arguments: ['@plugin.manager.orchestration_provider', '@shp_orchestration.configuration', '@shp_custom.environment', '@shp_custom.site', '@event_dispatcher', '@shp_custom.environment_type']
+    arguments: ['@plugin.manager.orchestration_provider', '@shp_orchestration.configuration', '@shp_custom.environment', '@shp_custom.site', '@event_dispatcher', '@shp_custom.environment_type', '@config.factory']
   shp_orchestration.status:
     class: Drupal\shp_orchestration\Service\Status
     arguments: ['@plugin.manager.orchestration_provider','@shp_custom.environment', '@shp_custom.site']
