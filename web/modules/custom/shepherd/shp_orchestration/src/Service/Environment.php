@@ -201,8 +201,11 @@ class Environment extends EntityActionBase {
    */
   public function updated(NodeInterface $node) {
     $site = $this->environmentEntity->getSite($node);
+    if (!isset($site)) {
+      return FALSE;
+    }
     $project = $this->siteEntity->getProject($site);
-    if (!isset($project) || !isset($site)) {
+    if (!isset($project)) {
       return FALSE;
     }
 
