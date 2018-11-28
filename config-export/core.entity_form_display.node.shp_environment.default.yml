@@ -13,6 +13,7 @@ dependencies:
     - field.field.node.shp_environment.field_shp_path
     - field.field.node.shp_environment.field_shp_site
     - field.field.node.shp_environment.field_shp_update_on_image_change
+    - field.field.node.shp_environment.field_shp_volume_snapshots
     - node.type.shp_environment
   module:
     - content_moderation
@@ -38,6 +39,7 @@ third_party_settings:
       children:
         - field_shp_cron_suspended
         - field_shp_update_on_image_change
+        - field_shp_volume_snapshots
         - field_shp_env_vars
         - field_shp_cron_jobs
       parent_name: ''
@@ -58,7 +60,7 @@ bundle: shp_environment
 mode: default
 content:
   field_shp_cron_jobs:
-    weight: 13
+    weight: 14
     settings:
       key_label: Schedule
       key_size: 60
@@ -87,7 +89,7 @@ content:
     type: string_textfield
     region: content
   field_shp_env_vars:
-    weight: 12
+    weight: 13
     settings:
       key_label: 'Variable name'
       key_size: 60
@@ -133,6 +135,13 @@ content:
     region: content
   field_shp_update_on_image_change:
     weight: 11
+    settings:
+      display_label: true
+    third_party_settings: {  }
+    type: boolean_checkbox
+    region: content
+  field_shp_volume_snapshots:
+    weight: 12
     settings:
       display_label: true
     third_party_settings: {  }
