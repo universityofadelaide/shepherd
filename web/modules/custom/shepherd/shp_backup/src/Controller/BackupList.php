@@ -52,7 +52,7 @@ class BackupList extends ListControllerBase {
         // These values aren't available until the backup has finished.
         $backup->isCompleted() ? $this->formatDate($backup->getStartTimestamp()) : $this->t('N/A'),
         $backup->isCompleted() ? $this->formatDate($backup->getCompletionTimestamp()) : $this->t('N/A'),
-        $this->dateFormatter->formatInterval($this->parseDate($backup->getExpires())->getTimestamp() - $this->time->getRequestTime())
+        $backup->getExpires() ? $this->dateFormatter->formatInterval($this->parseDate($backup->getExpires())->getTimestamp() - $this->time->getRequestTime()) : $this->t('N/A')
       ];
     }
     return $table;
