@@ -510,15 +510,26 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       ->setMatchLabels([
         'app' => $deployment_name
       ]);
-    // todo: Exception handling lol.
-    return $this->client->createBackup($backup);
+    try {
+      return $this->client->createBackup($backup);
+    }
+    catch (ClientException $e) {
+      $this->handleClientException($e);
+      return FALSE;
+    }
   }
 
   /**
    * {@inheritdoc}
    */
   public function getBackupsForSite(string $site_id) {
-    return $this->client->listBackup(Label::create('site_id', $site_id));
+    try {
+      return $this->client->listBackup(Label::create('site_id', $site_id));
+    }
+    catch (ClientException $e) {
+      $this->handleClientException($e);
+      return FALSE;
+    }
   }
 
   /**
@@ -530,14 +541,26 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       ->setBackupName($backup_name)
       ->setLabel(Label::create('site_id', $site_id))
       ->setLabel(Label::create('environment_id', $environment_id));
-    return $this->client->createRestore($restore);
+    try {
+      return $this->client->createRestore($restore);
+    }
+    catch (ClientException $e) {
+      $this->handleClientException($e);
+      return FALSE;
+    }
   }
 
   /**
    * {@inheritdoc}
    */
   public function getRestoresForSite(string $site_id) {
-    return $this->client->listRestore(Label::create('site_id', $site_id));
+    try {
+      return $this->client->listRestore(Label::create('site_id', $site_id));
+    }
+    catch (ClientException $e) {
+      $this->handleClientException($e);
+      return FALSE;
+    }
   }
 
   /**

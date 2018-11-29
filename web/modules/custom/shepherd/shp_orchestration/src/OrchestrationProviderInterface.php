@@ -475,7 +475,7 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
    * @param string $site_id
    *   The site node id.
    *
-   * @return object
+   * @return object|bool
    *   The list of backups.
    */
   public function getBackupsForSite(string $site_id);
@@ -501,7 +501,7 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
    * @param string $site_id
    *   The site node id.
    *
-   * @return object
+   * @return object|bool
    *   The list of restores.
    */
   public function getRestoresForSite(string $site_id);

@@ -98,7 +98,11 @@ class EnvironmentRestoreForm extends FormBase {
     $form_state->set('environment', $environment);
 
     /** @var \UniversityOfAdelaide\OpenShift\Objects\Backups\BackupList $backup_list */
-    $backup_list = $this->backup->getAll($site);
+    if (!$backup_list = $this->backup->getAll($site)) {
+      return [
+        '#markup' => "<p>An error occurred while communicating with OpenShift.</p>",
+      ];
+    }
 
     $backup_options = [];
 

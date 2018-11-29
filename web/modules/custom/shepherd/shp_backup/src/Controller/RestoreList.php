@@ -22,19 +22,7 @@ class RestoreList extends ListControllerBase {
    *   Render array
    */
   public function list(Request $request, NodeInterface $node) {
-    /** @var \UniversityOfAdelaide\OpenShift\Objects\Backups\RestoreList $restore_list */
-    $restore_list = $this->orchestrationProvider->getRestoresForSite($node->id());
-    $rows = [];
-    foreach ($restore_list->getRestores() as $restore) {
-      $environment = $this->nodeStorage->load($restore->getLabel('environment_id'));
-      $rows[] = [
-        $restore->getName(),
-        $environment->toLink(),
-        $restore->getPhase(),
-        $this->formatDate($restore->getCreationTimestamp()),
-      ];
-    }
-    return [
+    $table = [
       '#theme' => 'table',
       '#header' => [
         $this->t('Name'),
@@ -45,6 +33,20 @@ class RestoreList extends ListControllerBase {
       '#rows' => $rows,
       '#empty' => $this->t('No restores for this site yet.'),
     ];
+    /** @var \UniversityOfAdelaide\OpenShift\Objects\Backups\RestoreList $restore_list */
+    if (!$restore_list = $this->orchestrationProvider->getRestoresForSite($node->id())) {
+      return $table;
+    }
+    foreach ($restore_list->getRestores() as $restore) {
+      $environment = $this->nodeStorage->load($restore->getLabel('environment_id'));
+      $table['#rows'][] = [
+        $restore->getName(),
+        $environment->toLink(),
+        $restore->getPhase(),
+        $this->formatDate($restore->getCreationTimestamp()),
+      ];
+    }
+    return $table;
   }
 
 }

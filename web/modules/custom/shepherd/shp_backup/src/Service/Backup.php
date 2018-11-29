@@ -97,8 +97,7 @@ class Backup {
    *   The backup list if successful otherwise false.
    */
   public function getAll(NodeInterface $site) {
-    $backups = $this->orchestrationProvider->getBackupsForSite($site->id());
-    return $backups;
+    return $this->orchestrationProvider->getBackupsForSite($site->id());
   }
 
   /**
