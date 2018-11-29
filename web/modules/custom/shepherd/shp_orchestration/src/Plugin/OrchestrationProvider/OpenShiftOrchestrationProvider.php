@@ -14,6 +14,7 @@ use UniversityOfAdelaide\OpenShift\Client as OpenShiftClient;
 use UniversityOfAdelaide\OpenShift\ClientException;
 use UniversityOfAdelaide\OpenShift\Objects\Backups\Backup;
 use UniversityOfAdelaide\OpenShift\Objects\Backups\Restore;
+use UniversityOfAdelaide\OpenShift\Objects\Backups\ScheduledBackup;
 use UniversityOfAdelaide\OpenShift\Objects\Label;
 
 /**
@@ -220,7 +221,8 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     array $probes = [],
     array $cron_jobs = [],
     array $annotations = [],
-    bool $backup_volumes = FALSE
+    bool $backup_volumes = FALSE,
+    string $backup_schedule = ''
   ) {
     // @todo Refactor this. _The complexity is too damn high!_
 
@@ -301,6 +303,10 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     catch (ClientException $e) {
       $this->handleClientException($e);
       return FALSE;
+    }
+
+    if ($backup_schedule) {
+      $this->scheduleBackupEnvironment($site_id, $environment_id, $backup_schedule);
     }
 
     return TRUE;
@@ -529,6 +535,28 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     }
     try {
       return $this->client->createBackup($backup);
+    }
+    catch (ClientException $e) {
+      $this->handleClientException($e);
+      return FALSE;
+    }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function scheduleBackupEnvironment(string $site_id, string $environment_id, string $schedule) {
+    $deployment_name = self::generateDeploymentName($environment_id);
+    $schedule = ScheduledBackup::create()
+      ->setLabel(Label::create('site_id', $site_id))
+      ->setLabel(Label::create('environment_id', $environment_id))
+      ->setName(self::generateScheduleName($deployment_name))
+      ->setSchedule($schedule)
+      ->setMatchLabels([
+        'app' => $deployment_name
+      ]);
+    try {
+      return $this->client->createSchedule($schedule);
     }
     catch (ClientException $e) {
       $this->handleClientException($e);

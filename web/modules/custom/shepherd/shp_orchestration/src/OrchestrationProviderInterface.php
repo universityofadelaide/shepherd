@@ -121,6 +121,8 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
    *   An array of route annotations.
    * @param bool $backup_volumes
    *   Whether to backup the volumes attached to this environment.
+   * @param string $backup_schedule
+   *   A schedule to run automated backups on, leave blank to disable.
    *
    * @return bool
    *   Returns true if succeeded.
@@ -145,7 +147,8 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
     array $probes = [],
     array $cron_jobs = [],
     array $annotations = [],
-    bool $backup_volumes = FALSE
+    bool $backup_volumes = FALSE,
+    string $backup_schedule = ''
   );
 
   /**
@@ -481,6 +484,21 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
    *   Returns a backup object if successful, otherwise false.
    */
   public function backupEnvironment(string $site_id, string $environment_id, string $friendly_name = '');
+
+  /**
+   * Schedules backups for an environment.
+   *
+   * @param string $site_id
+   *   Site node id.
+   * @param string $environment_id
+   *   Environment node id.
+   * @param string $schedule
+   *   A cron expression defining when to run the backups.
+   *
+   * @return object|bool
+   *   Returns a schedule object if successful, otherwise false.
+   */
+  public function scheduleBackupEnvironment(string $site_id, string $environment_id, string $schedule);
 
   /**
    * Get a list of backups for a site.

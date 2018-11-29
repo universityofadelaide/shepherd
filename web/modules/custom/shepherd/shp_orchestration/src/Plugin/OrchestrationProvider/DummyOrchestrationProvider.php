@@ -65,7 +65,9 @@ class DummyOrchestrationProvider extends OrchestrationProviderBase {
     array $secrets = [],
     array $probes = [],
     array $cron_jobs = [],
-    array $annotations = []
+    array $annotations = [],
+    bool $backup_volumes = FALSE,
+    string $backup_schedule = ''
   ) {
     return TRUE;
   }
@@ -165,13 +167,7 @@ class DummyOrchestrationProvider extends OrchestrationProviderBase {
   /**
    * {@inheritdoc}
    */
-  public function backupEnvironment(
-    string $project_name,
-    string $short_name,
-    string $environment_id,
-    string $source_ref = 'master',
-    string $commands = ''
-  ) {
+  public function backupEnvironment(string $site_id, string $environment_id, string $friendly_name = '') {
     return [];
   }
 
