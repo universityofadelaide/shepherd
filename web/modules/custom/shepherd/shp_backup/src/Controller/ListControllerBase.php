@@ -7,6 +7,7 @@ use Drupal\Core\Controller\ControllerBase;
 use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Core\Datetime\DateFormatter;
 use Drupal\Core\Entity\EntityStorageInterface;
+use Drupal\shp_backup\Service\Backup;
 use Drupal\shp_orchestration\OrchestrationProviderInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -44,6 +45,13 @@ abstract class ListControllerBase extends ControllerBase {
   protected $time;
 
   /**
+   * The backup service.
+   *
+   * @var \Drupal\shp_backup\Service\Backup
+   */
+  protected $backupService;
+
+  /**
    * BackupList constructor.
    *
    * @param \Drupal\shp_orchestration\OrchestrationProviderInterface $orchestrationProvider
@@ -54,12 +62,15 @@ abstract class ListControllerBase extends ControllerBase {
    *   The date formatter.
    * @param \Drupal\Component\Datetime\TimeInterface $time
    *   The time.
+   * @param \Drupal\shp_backup\Service\Backup $backupService
+   *   The backup service.
    */
-  public function __construct(OrchestrationProviderInterface $orchestrationProvider, EntityStorageInterface $nodeStorage, DateFormatter $dateFormatter, TimeInterface $time) {
+  public function __construct(OrchestrationProviderInterface $orchestrationProvider, EntityStorageInterface $nodeStorage, DateFormatter $dateFormatter, TimeInterface $time, Backup $backupService) {
     $this->orchestrationProvider = $orchestrationProvider;
     $this->nodeStorage = $nodeStorage;
     $this->dateFormatter = $dateFormatter;
     $this->time = $time;
+    $this->backupService = $backupService;
   }
 
   /**
@@ -70,7 +81,8 @@ abstract class ListControllerBase extends ControllerBase {
       $container->get('plugin.manager.orchestration_provider')->getProviderInstance(),
       $container->get('entity_type.manager')->getStorage('node'),
       $container->get('date.formatter'),
-      $container->get('datetime.time')
+      $container->get('datetime.time'),
+      $container->get('shp_backup.backup')
     );
   }
 

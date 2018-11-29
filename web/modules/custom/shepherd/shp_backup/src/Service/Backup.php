@@ -12,6 +12,7 @@ use Drupal\node\NodeInterface;
 use Drupal\shp_orchestration\OrchestrationProviderPluginManagerInterface;
 use Drupal\shp_orchestration\Service\ActiveJobManager;
 use Drupal\token\TokenInterface;
+use UniversityOfAdelaide\OpenShift\Objects\Backups\Backup as BackupObject;
 
 /**
  * Provides a service for accessing the backups.
@@ -21,6 +22,11 @@ use Drupal\token\TokenInterface;
 class Backup {
 
   use StringTranslationTrait;
+
+  /**
+   * Todo: find a better place for this?
+   */
+  const FRIENDLY_NAME_ANNOTATION = 'backups.shepherd/friendly-name';
 
   /**
    * Backup settings.
@@ -114,17 +120,32 @@ class Backup {
   }
 
   /**
+   * Get the friendly name of a backup.
+   *
+   * @param \UniversityOfAdelaide\OpenShift\Objects\Backups\Backup $backup
+   *   The backup.
+   *
+   * @return string
+   *   The name.
+   */
+  public function getFriendlyName(BackupObject $backup) {
+    return $backup->getAnnotation(self::FRIENDLY_NAME_ANNOTATION) ?: $backup->getName();
+  }
+
+  /**
    * Create a backup node for a given site and environment.
    *
    * @param \Drupal\node\NodeInterface $site
    *   The site the environment blongs to.
    * @param \Drupal\node\NodeInterface $environment
    *   The environment to create the backup node for.
+   * @param string $friendly_name
+   *   An optional friendly name to set on the backup.
    *
    * @return \UniversityOfAdelaide\OpenShift\Objects\Backups\Backup|bool
    *   The backup object, or false.
    */
-  public function createBackup(NodeInterface $site, NodeInterface $environment) {
+  public function createBackup(NodeInterface $site, NodeInterface $environment, string $friendly_name = '') {
     $project = $site->field_shp_project->entity;
     $project_name = $project->title->value;
 
@@ -133,7 +154,8 @@ class Backup {
 
     $result = $this->orchestrationProvider->backupEnvironment(
       $site->id(),
-      $environment->id()
+      $environment->id(),
+      $friendly_name
     );
 
     return $result;

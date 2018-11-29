@@ -112,7 +112,7 @@ class EnvironmentRestoreForm extends FormBase {
     $backup_options = [];
 
     foreach ($backup_list->getCompletedBackups() as $backup) {
-      $backup_options[$backup->getName()] = $backup->getName();
+      $backup_options[$backup->getName()] = $this->backup->getFriendlyName($backup);
     }
 
     $build = [

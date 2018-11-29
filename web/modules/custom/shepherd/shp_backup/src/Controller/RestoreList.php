@@ -25,12 +25,12 @@ class RestoreList extends ListControllerBase {
     $table = [
       '#theme' => 'table',
       '#header' => [
-        $this->t('Name'),
+        $this->t('From backup'),
         $this->t('Environment'),
         $this->t('Phase'),
         $this->t('Created'),
       ],
-      '#rows' => $rows,
+      '#rows' => [],
       '#empty' => $this->t('No restores for this site yet.'),
     ];
     /** @var \UniversityOfAdelaide\OpenShift\Objects\Backups\RestoreList $restore_list */
@@ -39,8 +39,9 @@ class RestoreList extends ListControllerBase {
     }
     foreach ($restore_list->getRestores() as $restore) {
       $environment = $this->nodeStorage->load($restore->getLabel('environment_id'));
+      $backup = $this->orchestrationProvider->getBackup($restore->getBackupName());
       $table['#rows'][] = [
-        $restore->getName(),
+        $backup ? $this->backupService->getFriendlyName($backup) : '',
         $environment->toLink(),
         $restore->getPhase(),
         $this->formatDate($restore->getCreationTimestamp()),

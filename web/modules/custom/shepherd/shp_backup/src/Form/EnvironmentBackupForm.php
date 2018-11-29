@@ -3,7 +3,6 @@
 namespace Drupal\shp_backup\Form;
 
 use Drupal\Core\Config\ConfigFactoryInterface;
-use Drupal\Core\Datetime\DrupalDateTime;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Messenger\MessengerInterface;
@@ -109,11 +108,16 @@ class EnvironmentBackupForm extends FormBase {
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state, NodeInterface $site = NULL, NodeInterface $environment = NULL) {
+    $config = $this->config->get('shp_backup.settings');
+    $backup_title = $this->token->replace($config->get('backup_title'), ['environment' => $environment]);
     $form_state->set('site', $site);
     $form_state->set('environment', $environment);
 
-    $form['message'] = [
-      '#markup' => '<p>Once submitted, you can visit the Backups tab for this site to view the status of the backup.</p>',
+    $form['backup_name'] = [
+      '#title' => $this->t('Backup name'),
+      '#description' => $this->t('Optionally set a friendly name for this backup. Once submitted, you can visit the Backups tab for this site to view the status of the backup.'),
+      '#type' => 'textfield',
+      '#default_value' => $backup_title,
     ];
 
     $form['actions'] = [
@@ -131,26 +135,22 @@ class EnvironmentBackupForm extends FormBase {
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
-    $form_state->cleanValues();
-
     $site = $form_state->get('site');
     $environment = $form_state->get('environment');
 
     // Call the backup service to start a backup and update the backup node.
-    if ($this->backup->createBackup($site, $environment)) {
-
+    if ($this->backup->createBackup($site, $environment, $form_state->getValue('backup_name'))) {
       $this->messenger->addStatus($this->t('Backup has been queued for %title', [
         '%title' => $form_state->get('environment')->getTitle(),
       ]));
     }
     else {
-      $this->messenger->addError($this->t('Backup failed for %title',
-        [
-          '%title' => $form_state->get('environment')->getTitle(),
-        ]));
+      $this->messenger->addError($this->t('Backup failed for %title', [
+        '%title' => $form_state->get('environment')->getTitle(),
+      ]));
     }
 
-    $form_state->setRedirect("entity.node.canonical", ['node' => $site->id()]);
+    $form_state->setRedirectUrl($site->toUrl());
   }
 
 }

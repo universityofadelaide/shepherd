@@ -46,7 +46,7 @@ class BackupList extends ListControllerBase {
         continue;
       }
       $table['#rows'][] = [
-        $backup->getName(),
+        $this->backupService->getFriendlyName($backup),
         $environment->toLink(),
         $backup->getPhase(),
         // These values aren't available until the backup has finished.

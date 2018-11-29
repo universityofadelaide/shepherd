@@ -457,17 +457,30 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
   );
 
   /**
+   * Get a backup..
+   *
+   * @param string $name
+   *   The backup name.
+   *
+   * @return object|bool
+   *   Returns a backup object if successful, otherwise false.
+   */
+  public function getBackup(string $name);
+
+  /**
    * Backup an environment.
    *
    * @param string $site_id
    *   Site node id.
    * @param string $environment_id
    *   Environment node id.
+   * @param string $friendly_name
+   *   An optional friendly name for the backup.
    *
    * @return object|bool
    *   Returns a backup object if successful, otherwise false.
    */
-  public function backupEnvironment(string $site_id, string $environment_id);
+  public function backupEnvironment(string $site_id, string $environment_id, string $friendly_name = '');
 
   /**
    * Get a list of backups for a site.

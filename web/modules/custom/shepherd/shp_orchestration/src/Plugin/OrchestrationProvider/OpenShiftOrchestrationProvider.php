@@ -6,6 +6,7 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\Url;
 use Drupal\node\Entity\Node;
+use Drupal\shp_backup\Service\Backup as BackupService;
 use Drupal\shp_custom\Service\StringGenerator;
 use Drupal\shp_orchestration\OrchestrationProviderBase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -501,7 +502,20 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
   /**
    * {@inheritdoc}
    */
-  public function backupEnvironment(string $site_id, string $environment_id) {
+  public function getBackup(string $name) {
+    try {
+      return $this->client->getBackup($name);
+    }
+    catch (ClientException $e) {
+      $this->handleClientException($e);
+      return FALSE;
+    }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function backupEnvironment(string $site_id, string $environment_id, string $friendly_name = '') {
     $deployment_name = self::generateDeploymentName($environment_id);
     $backup = Backup::create()
       ->setLabel(Label::create('site_id', $site_id))
@@ -510,6 +524,9 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       ->setMatchLabels([
         'app' => $deployment_name
       ]);
+    if (!empty($friendly_name)) {
+      $backup->setAnnotation(BackupService::FRIENDLY_NAME_ANNOTATION, $friendly_name);
+    }
     try {
       return $this->client->createBackup($backup);
     }
