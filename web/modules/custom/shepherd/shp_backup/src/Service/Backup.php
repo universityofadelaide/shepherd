@@ -88,7 +88,7 @@ class Backup {
   }
 
   /**
-   * Gets a sorted list of backups for all the environments of a site.
+   * Gets a list of backups for all the environments of a site.
    *
    * @param \Drupal\node\NodeInterface $site
    *   Site node to retrieve the list of backups for.
@@ -96,8 +96,21 @@ class Backup {
    * @return \UniversityOfAdelaide\OpenShift\Objects\Backups\BackupList|bool
    *   The backup list if successful otherwise false.
    */
-  public function getAll(NodeInterface $site) {
+  public function getAllForSite(NodeInterface $site) {
     return $this->orchestrationProvider->getBackupsForSite($site->id());
+  }
+
+  /**
+   * Gets a list of backups for an environment.
+   *
+   * @param \Drupal\node\NodeInterface $environment
+   *   Environment node to retrieve the list of backups for.
+   *
+   * @return \UniversityOfAdelaide\OpenShift\Objects\Backups\BackupList|bool
+   *   The backup list if successful otherwise false.
+   */
+  public function getAllForEnvironment(NodeInterface $environment) {
+    return $this->orchestrationProvider->getBackupsForEnvironment($environment->id());
   }
 
   /**

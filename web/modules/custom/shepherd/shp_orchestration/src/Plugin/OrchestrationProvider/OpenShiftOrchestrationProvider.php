@@ -520,16 +520,36 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
   }
 
   /**
-   * {@inheritdoc}
+   * Get backups for a given label with exception handling.
+   *
+   * @param \UniversityOfAdelaide\OpenShift\Objects\Label $label
+   *   The label selector to apply.
+   *
+   * @return bool|object|\UniversityOfAdelaide\OpenShift\Objects\Backups\BackupList
+   *   A backup list, or false.
    */
-  public function getBackupsForSite(string $site_id) {
+  protected function getBackupsByLabel(Label $label) {
     try {
-      return $this->client->listBackup(Label::create('site_id', $site_id));
+      return $this->client->listBackup($label);
     }
     catch (ClientException $e) {
       $this->handleClientException($e);
       return FALSE;
     }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getBackupsForSite(string $site_id) {
+    return $this->getBackupsByLabel(Label::create('site_id', $site_id));
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getBackupsForEnvironment(string $environment_id) {
+    return $this->getBackupsByLabel(Label::create('environment_id', $environment_id));
   }
 
   /**

@@ -481,6 +481,17 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
   public function getBackupsForSite(string $site_id);
 
   /**
+   * Get a list of backups for an environment.
+   *
+   * @param string $environment_id
+   *   The environment node id.
+   *
+   * @return object|bool
+   *   The list of backups.
+   */
+  public function getBackupsForEnvironment(string $environment_id);
+
+  /**
    * Restore an environment.
    *
    * @param string $backup_name

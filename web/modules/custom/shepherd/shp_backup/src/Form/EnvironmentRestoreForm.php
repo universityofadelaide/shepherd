@@ -9,7 +9,6 @@ use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\node\NodeInterface;
 use Drupal\shp_backup\Service\Backup;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use UniversityOfAdelaide\OpenShift\Objects\Backups\Phase;
 
 /**
  * EnvironmentRestoreForm.
@@ -98,9 +97,15 @@ class EnvironmentRestoreForm extends FormBase {
     $form_state->set('environment', $environment);
 
     /** @var \UniversityOfAdelaide\OpenShift\Objects\Backups\BackupList $backup_list */
-    if (!$backup_list = $this->backup->getAll($site)) {
+    if (!$backup_list = $this->backup->getAllForEnvironment($environment)) {
       return [
         '#markup' => "<p>An error occurred while communicating with OpenShift.</p>",
+      ];
+    }
+
+    if (!$backup_list->hasBackups()) {
+      return [
+        '#markup' => "<p>There are no backups available for this environment.</p>",
       ];
     }
 
@@ -131,31 +136,24 @@ class EnvironmentRestoreForm extends FormBase {
 
   /**
    * {@inheritdoc}
-   *
-   * @todo Shepherd: Completely refactor restore for shepherd.
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
-    $form_state->cleanValues();
-
+    /** @var \Drupal\node\NodeInterface $site */
     $site = $form_state->get('site');
     $environment = $form_state->get('environment');
 
-    // Set the backup to restore from.
-    $status = $this->backup->restore($form_state->getValue('backup'), $environment);
-
-    if ($status) {
+    if ($this->backup->restore($form_state->getValue('backup'), $environment)) {
       $this->messenger->addStatus($this->t('Restore has been queued for %title', [
         '%title' => $environment->getTitle(),
       ]));
     }
     else {
-      $this->messenger->addError($this->t('Restore failed. Could not find any instances for %title',
-        [
-          '%title' => $environment->getTitle(),
-        ]));
+      $this->messenger->addError($this->t('Restore failed for %title', [
+        '%title' => $environment->getTitle(),
+      ]));
     }
 
-    $form_state->setRedirect("entity.node.canonical", ['node' => $site->id()]);
+    $form_state->setRedirectUrl($site->toUrl());
   }
 
 }
