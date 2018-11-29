@@ -5,7 +5,7 @@ namespace Drupal\shp_orchestration\Service;
 use Drupal\Core\Config\ConfigFactory;
 use Drupal\node\Entity\Node;
 use Drupal\node\NodeInterface;
-use Drupal\shp_custom\Service\Environment as EnvironmentEntity;
+use Drupal\shp_custom\Service\Environment as EnvironmentService;
 use Drupal\shp_custom\Service\EnvironmentTypeInterface;
 use Drupal\shp_custom\Service\Site as SiteEntity;
 use Drupal\shp_orchestration\Event\OrchestrationEnvironmentEvent;
@@ -31,14 +31,14 @@ class Environment extends EntityActionBase {
    *
    * @var \Drupal\shp_custom\Service\Environment|\Drupal\shp_orchestration\Service\Environment
    */
-  protected $environmentEntity;
+  protected $environmentService;
 
   /**
    * Site service.
    *
    * @var \Drupal\shp_custom\Service\Site
    */
-  protected $siteEntity;
+  protected $siteService;
 
   /**
    * Event dispatcher.
@@ -80,11 +80,11 @@ class Environment extends EntityActionBase {
    * @param \Drupal\Core\Config\ConfigFactory $configFactory
    *   The config factory.
    */
-  public function __construct(OrchestrationProviderPluginManager $orchestrationProviderPluginManager, Configuration $configuration, EnvironmentEntity $environment, SiteEntity $site, EventDispatcherInterface $event_dispatcher, EnvironmentTypeInterface $environmentType, ConfigFactory $configFactory) {
+  public function __construct(OrchestrationProviderPluginManager $orchestrationProviderPluginManager, Configuration $configuration, EnvironmentService $environment, SiteEntity $site, EventDispatcherInterface $event_dispatcher, EnvironmentTypeInterface $environmentType, ConfigFactory $configFactory) {
     parent::__construct($orchestrationProviderPluginManager);
     $this->configuration = $configuration;
-    $this->environmentEntity = $environment;
-    $this->siteEntity = $site;
+    $this->environmentService = $environment;
+    $this->siteService = $site;
     $this->eventDispatcher = $event_dispatcher;
     $this->environmentType = $environmentType;
     $this->configFactory = $configFactory;
@@ -105,12 +105,12 @@ class Environment extends EntityActionBase {
    * @throws \Drupal\Core\Entity\EntityMalformedException
    */
   public function created(NodeInterface $node) {
-    $site = $this->environmentEntity->getSite($node);
-    $project = $this->siteEntity->getProject($site);
+    $site = $this->environmentService->getSite($node);
+    $project = $this->siteService->getProject($site);
     if (!isset($project) || !isset($site)) {
       return FALSE;
     }
-    $environment_type = $this->environmentEntity->getEnvironmentType($node);
+    $environment_type = $this->environmentService->getEnvironmentType($node);
 
     $probes = $this->buildProbes($project);
     $cron_jobs = $this->buildCronJobs($node);
@@ -211,11 +211,11 @@ class Environment extends EntityActionBase {
    * @throws \Drupal\Core\Entity\EntityMalformedException
    */
   public function updated(NodeInterface $node) {
-    $site = $this->environmentEntity->getSite($node);
+    $site = $this->environmentService->getSite($node);
     if (!isset($site)) {
       return FALSE;
     }
-    $project = $this->siteEntity->getProject($site);
+    $project = $this->siteService->getProject($site);
     if (!isset($project)) {
       return FALSE;
     }
@@ -273,8 +273,8 @@ class Environment extends EntityActionBase {
    *   True on success. False otherwise.
    */
   public function deleted(NodeInterface $node) {
-    $site = $this->environmentEntity->getSite($node);
-    $project = $this->siteEntity->getProject($site);
+    $site = $this->environmentService->getSite($node);
+    $project = $this->siteService->getProject($site);
     if (!isset($project) || !isset($site)) {
       return FALSE;
     }
@@ -312,7 +312,7 @@ class Environment extends EntityActionBase {
    * @throws \Drupal\Core\Entity\EntityStorageException
    */
   public function promoted(NodeInterface $site, NodeInterface $environment, bool $exclusive, bool $clear_cache = TRUE) {
-    $project = $this->siteEntity->getProject($site);
+    $project = $this->siteService->getProject($site);
     if (!isset($project) || !isset($site)) {
       return FALSE;
     }
