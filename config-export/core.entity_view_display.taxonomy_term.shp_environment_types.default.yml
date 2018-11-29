@@ -4,6 +4,7 @@ status: true
 dependencies:
   config:
     - field.field.taxonomy_term.shp_environment_types.field_shp_annotations
+    - field.field.taxonomy_term.shp_environment_types.field_shp_backup_schedule
     - field.field.taxonomy_term.shp_environment_types.field_shp_base_domain
     - field.field.taxonomy_term.shp_environment_types.field_shp_protect
     - field.field.taxonomy_term.shp_environment_types.field_shp_update_go_live
@@ -24,6 +25,14 @@ content:
       value_only: false
     third_party_settings: {  }
     type: key_value
+    region: content
+  field_shp_backup_schedule:
+    weight: 4
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    type: string
     region: content
   field_shp_base_domain:
     weight: 0
