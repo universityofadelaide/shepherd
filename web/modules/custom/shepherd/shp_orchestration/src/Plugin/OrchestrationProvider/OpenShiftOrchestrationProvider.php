@@ -404,6 +404,10 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       // Now the things not in the typically visible ui.
       $this->client->deletePersistentVolumeClaim($deployment_name . '-shared');
       $this->client->deleteSecret($deployment_name);
+      $scheduleName = self::generateScheduleName($deployment_name);
+      if ($this->client->getSchedule($scheduleName)) {
+        $this->client->deleteSchedule($scheduleName);
+      }
     }
     catch (ClientException $e) {
       $this->handleClientException($e);
