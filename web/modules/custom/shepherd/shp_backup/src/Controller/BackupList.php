@@ -39,7 +39,7 @@ class BackupList extends ListControllerBase {
     if (!$backup_list = $this->orchestrationProvider->getBackupsForSite($node->id())) {
       return $table;
     }
-    foreach ($backup_list->getBackups() as $backup) {
+    foreach ($backup_list->getBackupsByStartTime() as $backup) {
       $environment = $this->nodeStorage->load($backup->getLabel('environment_id'));
       // Protect against environments that have been deleted.
       if (!$environment) {

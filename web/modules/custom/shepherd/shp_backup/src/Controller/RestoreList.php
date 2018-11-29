@@ -37,7 +37,7 @@ class RestoreList extends ListControllerBase {
     if (!$restore_list = $this->orchestrationProvider->getRestoresForSite($node->id())) {
       return $table;
     }
-    foreach ($restore_list->getRestores() as $restore) {
+    foreach ($restore_list->getRestoresByCreatedTime() as $restore) {
       $environment = $this->nodeStorage->load($restore->getLabel('environment_id'));
       $backup = $this->orchestrationProvider->getBackup($restore->getBackupName());
       $table['#rows'][] = [
