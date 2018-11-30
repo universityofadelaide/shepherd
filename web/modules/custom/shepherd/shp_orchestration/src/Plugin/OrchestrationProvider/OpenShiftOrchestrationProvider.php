@@ -15,6 +15,8 @@ use UniversityOfAdelaide\OpenShift\ClientException;
 use UniversityOfAdelaide\OpenShift\Objects\Backups\Backup;
 use UniversityOfAdelaide\OpenShift\Objects\Backups\Restore;
 use UniversityOfAdelaide\OpenShift\Objects\Backups\ScheduledBackup;
+use UniversityOfAdelaide\OpenShift\Objects\Backups\Sync;
+use UniversityOfAdelaide\OpenShift\Objects\Backups\SyncEnvironment;
 use UniversityOfAdelaide\OpenShift\Objects\Label;
 
 /**
@@ -612,6 +614,27 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       ->setLabel(Label::create('environment_id', $environment_id));
     try {
       return $this->client->createRestore($restore);
+    }
+    catch (ClientException $e) {
+      $this->handleClientException($e);
+      return FALSE;
+    }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function syncEnvironment(string $from_environment_id, string $to_environment_id) {
+    $from_deployment_name = self::generateDeploymentName($from_environment_id);
+    $to_deployment_name = self::generateDeploymentName($to_environment_id);
+    $sync = Sync::createFromSourceAndTarget(
+      SyncEnvironment::createFromPvcAndSecret(self::generateSharedPvcName($from_deployment_name), $from_deployment_name),
+      SyncEnvironment::createFromPvcAndSecret(self::generateSharedPvcName($to_deployment_name), $to_deployment_name)
+    )->setName(sprintf('sync-%s-%s-%s', $from_environment_id, $to_environment_id, date('YmdHis')))
+      ->setLabel(Label::create('environment_id_from', $from_environment_id))
+      ->setLabel(Label::create('environment_id_to', $to_environment_id));
+    try {
+      return $this->client->createSync($sync);
     }
     catch (ClientException $e) {
       $this->handleClientException($e);

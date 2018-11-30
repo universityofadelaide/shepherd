@@ -146,12 +146,6 @@ class Backup {
    *   The backup object, or false.
    */
   public function createBackup(NodeInterface $site, NodeInterface $environment, string $friendly_name = '') {
-    $project = $site->field_shp_project->entity;
-    $project_name = $project->title->value;
-
-//    $backup_command = str_replace(["\r\n", "\n", "\r"], ' && ', trim($this->config->get('backup_command')));
-//    $backup_command = $this->token->replace($backup_command, ['backup' => $backup]);
-
     $result = $this->orchestrationProvider->backupEnvironment(
       $site->id(),
       $environment->id(),
@@ -174,12 +168,6 @@ class Backup {
    */
   public function restore(string $backup_name, NodeInterface $environment) {
     $site = $environment->field_shp_site->entity;
-//    $project = $node_storage->load($site->field_shp_project->target_id);
-//    $project_name = $project->title->value;
-
-//    $restore_command = str_replace(["\r\n", "\n", "\r"], ' && ', trim($this->config->get('restore_command')));
-//    $restore_command = $this->token->replace($restore_command, ['backup' => $backup_name]);
-
     $result = $this->orchestrationProvider->restoreEnvironment(
       $backup_name,
       $site->id(),
@@ -187,6 +175,21 @@ class Backup {
     );
 
     return $result;
+  }
+
+  /**
+   * Sync an environment.
+   *
+   * @param string $from_environment_id
+   *   The environment to sync from.
+   * @param string $to_environment_id
+   *   The environment to sync to.
+   *
+   * @return bool
+   *   Whether it was a success.
+   */
+  public function sync(string $from_environment_id, string $to_environment_id) {
+    return $this->orchestrationProvider->syncEnvironment($from_environment_id, $to_environment_id) ? TRUE : FALSE;
   }
 
   /**
@@ -201,16 +204,19 @@ class Backup {
     $site = $entity->field_shp_site->target_id;
     $environment = $entity->id();
 
+    $modal_attributes = [
+      'class' => ['button', 'use-ajax'],
+      'data-dialog-type' => 'modal',
+      'data-dialog-options' => Json::encode([
+        'width' => '50%',
+        'height' => '50%'
+      ]),
+    ];
     $operations['backup'] = [
       'title' => $this->t('Backup'),
       'weight' => 1,
       'url' => Url::fromRoute('shp_backup.environment-backup-form', ['site' => $site, 'environment' => $environment]),
-      // Render form in a modal window.
-      'attributes' => [
-        'class' => ['button', 'use-ajax'],
-        'data-dialog-type' => 'modal',
-        'data-dialog-options' => Json::encode(['width' => '50%', 'height' => '50%']),
-      ],
+      'attributes' => $modal_attributes,
     ];
 
     if (($environment_term = $entity->field_shp_environment_type->entity) && !$environment_term->field_shp_protect->value) {
@@ -221,12 +227,17 @@ class Backup {
           'site'        => $site,
           'environment' => $environment,
         ]),
-        // Render form in a modal window.
-        'attributes' => [
-          'class'               => ['button', 'use-ajax'],
-          'data-dialog-type'    => 'modal',
-          'data-dialog-options' => Json::encode(['width'  => '50%', 'height' => '50%']),
-        ],
+        'attributes' => $modal_attributes,
+      ];
+
+      $operations['sync'] = [
+        'title'      => $this->t('Sync'),
+        'weight'     => 2,
+        'url'        => Url::fromRoute('shp_backup.environment-sync-form', [
+          'site'        => $site,
+          'environment' => $environment,
+        ]),
+        'attributes' => $modal_attributes,
       ];
     }
   }

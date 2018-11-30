@@ -538,6 +538,19 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
   public function restoreEnvironment(string $backup_name, string $site_id, string $environment_id);
 
   /**
+   * Sync an environment.
+   *
+   * @param string $from_environment_id
+   *   The environment node id to sync from.
+   * @param string $to_environment_id
+   *   The environment node id to sync to.
+   *
+   * @return array|bool
+   *   Returns a response body if successful, otherwise false.
+   */
+  public function syncEnvironment(string $from_environment_id, string $to_environment_id);
+
+  /**
    * Get a list of restores for a site.
    *
    * @param string $site_id
