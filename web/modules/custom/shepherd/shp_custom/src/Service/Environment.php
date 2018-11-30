@@ -230,9 +230,10 @@ class Environment {
    *   Entity to apply operations to.
    */
   public function operationsLinksAlter(array &$operations, EntityInterface $entity) {
-    $site = $entity->field_shp_site->target_id;
-    $environment = $entity->id();
-    $environment_term = Term::load($entity->field_shp_environment_type->target_id);
+    if (!$site = $this->getSite($entity)) {
+      return;
+    }
+    $environment_term = $this->getEnvironmentType($entity);
 
     // If its not a protected environment, it can be promoted.
     if (!$environment_term->field_shp_protect->value) {
@@ -240,7 +241,7 @@ class Environment {
         'title'      => $this->t('Promote'),
         'weight'     => 1,
         'url'        => Url::fromRoute('shp_custom.environment-promote-form',
-          ['site' => $site, 'environment' => $environment]),
+          ['site' => $site->id(), 'environment' => $entity->id()]),
         // Render form in a modal window.
         'attributes' => [
           'class'               => ['button', 'use-ajax'],
@@ -253,7 +254,6 @@ class Environment {
       ];
     }
 
-    $site = $entity->field_shp_site->entity;
     $project = $site->field_shp_project->entity;
 
     $terminal = $this->orchestrationProvider->getTerminalUrl(
