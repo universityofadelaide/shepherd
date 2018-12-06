@@ -48,7 +48,7 @@ function shp_database_provisioner_node_insert(EntityInterface $entity) {
     $secret_data = [
       'DATABASE_HOST' => $host,
       'DATABASE_PORT' => $port,
-      'DATABASE_USER' => $username,
+      'DATABASE_USER' => $env_db_username,
       'DATABASE_NAME' => $env_db_database,
       'DATABASE_PASSWORD' => $env_db_password,
     ];
