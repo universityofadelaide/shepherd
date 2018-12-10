@@ -7,7 +7,6 @@
 
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Render\BubbleableMetadata;
-use Drupal\node\Entity\Node;
 use Drupal\taxonomy\Entity\Term;
 
 /**
@@ -19,19 +18,9 @@ function shp_backup_token_info() {
     'description' => t('Tokens related to shepherd.'),
   ];
 
-  $info['tokens']['shepherd']['backup-path'] = [
-    'name' => t('Backup storage path'),
-    'description' => t('The shepherd default backup storage path.'),
-  ];
-
-  $info['tokens']['shepherd']['site-private-files'] = [
-    'name' => t('Private files'),
-    'description' => t('The private files directory path used by deployed Drupal pods.'),
-  ];
-
-  $info['tokens']['shepherd']['site-public-files'] = [
-    'name' => t('Public files'),
-    'description' => t('The public files directory path used by deployed Drupal pods.'),
+  $info['tokens']['shepherd']['environment-type'] = [
+    'name' => t('Environment type'),
+    'description' => t('Output the environment type.'),
   ];
 
   return $info;
@@ -45,28 +34,10 @@ function shp_backup_tokens($type, $tokens, array $data, array $options, Bubbleab
     return [];
   }
 
-  $config = \Drupal::configFactory()->get('shp_backup.settings');
-
   $replacements = [];
 
   foreach ($tokens as $name => $original) {
     switch ($name) {
-      case 'backup-path':
-        if (isset($data['backup'])) {
-          $site = Node::load($data['backup']->field_shp_site->target_id);
-          $backup_path = $config->get('root_dir') . '/' . $site->id() . '/' . $data['backup']->created->value;
-          $replacements[$original] = $backup_path;
-        }
-        break;
-
-      case 'site-private-files':
-        $replacements[$original] = '/shared/private/';
-        break;
-
-      case 'site-public-files':
-        $replacements[$original] = '/shared/public/';
-        break;
-
       case 'environment-type':
         if ($data['environment']) {
           $environment_term = Term::load($data['environment']->field_shp_environment_type->target_id);
