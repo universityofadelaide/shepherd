@@ -47,7 +47,7 @@ class BackupList extends ListControllerBase {
       }
       $table['#rows'][] = [
         $this->backupService->getFriendlyName($backup),
-        $environment->toLink(),
+        $this->environmentService->getEnvironmentLink($environment, FALSE)->toString(),
         $backup->getPhase(),
         // These values aren't available until the backup has finished.
         $backup->isCompleted() ? $this->formatDate($backup->getStartTimestamp()) : $this->t('N/A'),

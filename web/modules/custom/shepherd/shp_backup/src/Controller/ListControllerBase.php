@@ -8,6 +8,7 @@ use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Core\Datetime\DateFormatter;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\shp_backup\Service\Backup;
+use Drupal\shp_custom\Service\Environment;
 use Drupal\shp_orchestration\OrchestrationProviderInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -52,7 +53,14 @@ abstract class ListControllerBase extends ControllerBase {
   protected $backupService;
 
   /**
-   * BackupList constructor.
+   * The environment service.
+   *
+   * @var \Drupal\shp_custom\Service\Environment
+   */
+  protected $environmentService;
+
+  /**
+   * ListControllerBase constructor.
    *
    * @param \Drupal\shp_orchestration\OrchestrationProviderInterface $orchestrationProvider
    *   The orchestration provider plugin.
@@ -64,13 +72,16 @@ abstract class ListControllerBase extends ControllerBase {
    *   The time.
    * @param \Drupal\shp_backup\Service\Backup $backupService
    *   The backup service.
+   * @param \Drupal\shp_custom\Service\Environment $environmentService
+   *   The environment service.
    */
-  public function __construct(OrchestrationProviderInterface $orchestrationProvider, EntityStorageInterface $nodeStorage, DateFormatter $dateFormatter, TimeInterface $time, Backup $backupService) {
+  public function __construct(OrchestrationProviderInterface $orchestrationProvider, EntityStorageInterface $nodeStorage, DateFormatter $dateFormatter, TimeInterface $time, Backup $backupService, Environment $environmentService) {
     $this->orchestrationProvider = $orchestrationProvider;
     $this->nodeStorage = $nodeStorage;
     $this->dateFormatter = $dateFormatter;
     $this->time = $time;
     $this->backupService = $backupService;
+    $this->environmentService = $environmentService;
   }
 
   /**
@@ -82,7 +93,8 @@ abstract class ListControllerBase extends ControllerBase {
       $container->get('entity_type.manager')->getStorage('node'),
       $container->get('date.formatter'),
       $container->get('datetime.time'),
-      $container->get('shp_backup.backup')
+      $container->get('shp_backup.backup'),
+      $container->get('shp_custom.environment')
     );
   }
 

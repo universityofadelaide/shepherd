@@ -2,6 +2,7 @@
 
 namespace Drupal\shp_backup\Controller;
 
+use Drupal\Core\Link;
 use Drupal\node\NodeInterface;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -39,10 +40,14 @@ class RestoreList extends ListControllerBase {
     }
     foreach ($restore_list->getRestoresByCreatedTime() as $restore) {
       $environment = $this->nodeStorage->load($restore->getLabel('environment_id'));
+      // Protect against environments that have been deleted.
+      if (!$environment) {
+        continue;
+      }
       $backup = $this->orchestrationProvider->getBackup($restore->getBackupName());
       $table['#rows'][] = [
         $backup ? $this->backupService->getFriendlyName($backup) : '',
-        $environment->toLink(),
+        $this->environmentService->getEnvironmentLink($environment, FALSE)->toString(),
         $restore->getPhase(),
         $this->formatDate($restore->getCreationTimestamp()),
       ];
