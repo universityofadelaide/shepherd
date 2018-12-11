@@ -99,6 +99,28 @@ oc create secret generic privileged-db-password --from-literal=DATABASE_PASSWORD
 ```
 [Read more about secrets](https://docs.openshift.com/container-platform/latest/dev_guide/secrets.html).
 
+#### Configure Heptio Ark for Backup/Restore
+
+Heptio Ark is used for the backup/restore process of environments. We use Ark to backup the Openshift objects, and use
+an Ark plugin to backup/restore the database.
+
+Start by following [the Ark getting started](https://heptio.github.io/ark/v0.10.0/get-started) to install the Ark client
+on your local machine. This is useful for developers to easily interface with Ark.
+
+Next, follow [the server setup](https://heptio.github.io/ark/v0.10.0/get-started#set-up-server) to configure the Openshift cluster with an Ark and Minio server.
+
+**Note:** Make sure your Ark client version, and the version of Ark you check out for the prerequisite set up are the same
+version.
+
+Once that is done, your Openshift cluster will be configured to support creating backups and restores.
+
+TODO: Document RBAC for service account to CRUD backup/restores.
+
+With the Ark client/server setup, we need to install our plugin:
+
+TODO: Update this with the correct image.
+`ark plugin add previousnext/test-ark-plugin`
+
 ### Configure environment types
 
 When environments are created you declare a type of environment the entity belongs to. An environment type is a taxonomy that describes it's name,

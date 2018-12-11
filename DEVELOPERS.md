@@ -109,6 +109,8 @@ check that MariaDB is running before executing the next command.
 robo dev:drupal-content-generate
 ```
 
+Follow the *Configure Heptio Ark for Backup/Restore* in INSTALL.md to set up Backup/Restore functionality.
+
 Thats it; visit the OpenShift web interface to see a build running and a
 deployment ready to occur when the build finishes. The URL to the web interface
 can be found in the terminal log when Minishift starts. Alternatively, execute
