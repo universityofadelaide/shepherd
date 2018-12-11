@@ -117,9 +117,21 @@ Once that is done, your Openshift cluster will be configured to support creating
 TODO: Document RBAC for service account to CRUD backup/restores.
 
 With the Ark client/server setup, we need to install our plugin:
+```bash
+ark plugin add previousnext/shepherd-ark-mysql-plugins
+```
 
-TODO: Update this with the correct image.
-`ark plugin add previousnext/test-ark-plugin`
+This adds the plugin via an initContainer on the ark pod in the heptio-ark namespace.
+
+To update your plugin, you'll need to change `imagePullPolicy: IfNotPresent` to `imagePullPolicy: Always` in the Ark deployment:
+```bash
+oc -n heptio-ark edit deploy/ark
+# Find the imagePullPolicy: ifNotPresent under initContainers and change the value to Always
+```
+You can then safely delete the ark pod, initiating a restart which will pull the latest plugin changes:
+```bash
+oc -n heptio-ark get pods | grep ark | cut -d ' ' -f 1 | xargs oc -n heptio-ark delete pod
+```
 
 ### Configure environment types
 
