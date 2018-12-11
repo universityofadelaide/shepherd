@@ -63,11 +63,6 @@ class EntityOperations implements ContainerInjectionInterface {
       return;
     }
 
-    // Only act on changing backup schedule values.
-    if ($term->original->field_shp_backup_schedule->value === $term->field_shp_backup_schedule->value) {
-      return;
-    }
-
     $schedule = trim($term->field_shp_backup_schedule->value);
     $env_ids = $this->nodeStorage->getQuery()
       ->condition('field_shp_environment_type.target_id', $term->id())
@@ -79,6 +74,7 @@ class EntityOperations implements ContainerInjectionInterface {
       if (!$environment->field_shp_site->target_id) {
         return;
       }
+      // If there's no schedule value, consider this a delete.
       if ($schedule) {
         $this->orchestrationProvider->environmentScheduleBackupUpdate($environment->field_shp_site->target_id, $environment->id(), $schedule);
       }

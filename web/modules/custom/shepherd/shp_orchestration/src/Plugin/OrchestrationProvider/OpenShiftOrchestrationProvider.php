@@ -587,6 +587,11 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       return $this->environmentScheduleBackupCreate($site_id, $environment_id, $schedule);
     }
 
+    // No point updating if the schedules are the same!
+    if ($schedule_obj->getSchedule() === $schedule) {
+      return $schedule_obj;
+    }
+
     // Existing schedule, update it.
     $schedule_obj->setSchedule($schedule);
     try {
@@ -604,7 +609,9 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
   public function environmentScheduleBackupDelete(string $environment_id) {
     $schedule_name = self::generateScheduleName(self::generateDeploymentName($environment_id));
     try {
-      $this->client->deleteSchedule($schedule_name);
+      if ($this->client->getSchedule($schedule_name)) {
+        $this->client->deleteSchedule($schedule_name);
+      }
       return TRUE;
     }
     catch (ClientException $e) {
