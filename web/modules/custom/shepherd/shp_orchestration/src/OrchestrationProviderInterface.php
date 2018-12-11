@@ -498,7 +498,33 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
    * @return object|bool
    *   Returns a schedule object if successful, otherwise false.
    */
-  public function scheduleBackupEnvironment(string $site_id, string $environment_id, string $schedule);
+  public function environmentScheduleBackupCreate(string $site_id, string $environment_id, string $schedule);
+
+  /**
+   * Updates the backup schedule for an environment.
+   *
+   * @param string $site_id
+   *   Site node id.
+   * @param string $environment_id
+   *   Environment node id.
+   * @param string $schedule
+   *   A cron expression defining when to run the backups.
+   *
+   * @return object|bool
+   *   Returns the schedule object if successful, otherwise false.
+   */
+  public function environmentScheduleBackupUpdate(string $site_id, string $environment_id, string $schedule);
+
+  /**
+   * Deletes the backup schedule for an environment.
+   *
+   * @param string $environment_id
+   *   Environment node id.
+   *
+   * @return bool
+   *   Returns if it was successful or not.
+   */
+  public function environmentScheduleBackupDelete(string $environment_id);
 
   /**
    * Get a list of backups for a site.

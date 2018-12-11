@@ -25,6 +25,8 @@ class Backup {
 
   /**
    * Todo: find a better place for this?
+   *
+   * Defines the annotation to store a backups friendly name on.
    */
   const FRIENDLY_NAME_ANNOTATION = 'backups.shepherd/friendly-name';
 

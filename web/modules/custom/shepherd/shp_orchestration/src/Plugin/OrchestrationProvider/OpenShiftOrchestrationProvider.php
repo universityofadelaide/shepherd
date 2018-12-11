@@ -308,7 +308,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     }
 
     if ($backup_schedule) {
-      $this->scheduleBackupEnvironment($site_id, $environment_id, $backup_schedule);
+      $this->environmentScheduleBackupCreate($site_id, $environment_id, $backup_schedule);
     }
 
     return TRUE;
@@ -551,7 +551,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
   /**
    * {@inheritdoc}
    */
-  public function scheduleBackupEnvironment(string $site_id, string $environment_id, string $schedule) {
+  public function environmentScheduleBackupCreate(string $site_id, string $environment_id, string $schedule) {
     $deployment_name = self::generateDeploymentName($environment_id);
     $schedule = ScheduledBackup::create()
       ->setLabel(Label::create('site_id', $site_id))
@@ -563,6 +563,49 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       ]);
     try {
       return $this->client->createSchedule($schedule);
+    }
+    catch (ClientException $e) {
+      $this->handleClientException($e);
+      return FALSE;
+    }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function environmentScheduleBackupUpdate(string $site_id, string $environment_id, string $schedule) {
+    $schedule_name = self::generateScheduleName(self::generateDeploymentName($environment_id));
+    try {
+      $schedule_obj = $this->client->getSchedule($schedule_name);
+    }
+    catch (ClientException $e) {
+      $this->handleClientException($e);
+      return FALSE;
+    }
+    // If there's no schedule, create one.
+    if (!$schedule_obj) {
+      return $this->environmentScheduleBackupCreate($site_id, $environment_id, $schedule);
+    }
+
+    // Existing schedule, update it.
+    $schedule_obj->setSchedule($schedule);
+    try {
+      return $this->client->updateSchedule($schedule_obj);
+    }
+    catch (ClientException $e) {
+      $this->handleClientException($e);
+      return FALSE;
+    }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function environmentScheduleBackupDelete(string $environment_id) {
+    $schedule_name = self::generateScheduleName(self::generateDeploymentName($environment_id));
+    try {
+      $this->client->deleteSchedule($schedule_name);
+      return TRUE;
     }
     catch (ClientException $e) {
       $this->handleClientException($e);

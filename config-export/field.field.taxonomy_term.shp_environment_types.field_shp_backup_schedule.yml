@@ -10,7 +10,7 @@ field_name: field_shp_backup_schedule
 entity_type: taxonomy_term
 bundle: shp_environment_types
 label: 'Backup schedule'
-description: 'Optionally set a backup schedule for this type of environment. This needs to be in crontab format, e.g "0 0 * * *" to run backups every night at midnight.'
+description: 'Optionally set a backup schedule for this type of environment. This needs to be in crontab format, e.g "0 0 * * *" to run backups every night at midnight. <strong>Clear this value to delete scheduled backups for all environments of this type</strong>'
 required: false
 translatable: false
 default_value: {  }
