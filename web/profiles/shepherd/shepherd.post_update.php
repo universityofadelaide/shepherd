@@ -5,6 +5,7 @@
  * Post update hooks for the Shepherd profile.
  */
 
+use Drupal\Core\Serialization\Yaml;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
 
