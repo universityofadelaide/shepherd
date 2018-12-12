@@ -61,7 +61,7 @@ function shp_backup_entity_operation_alter(array &$operations, EntityInterface $
   // User must also have permission to create shp_backup entities.
   if ($entity->getEntityTypeId() === 'node'
     && $entity->getType() === 'shp_environment'
-    && $account->hasPermission('create shp_backup content')) {
+    && $account->hasPermission('shp access environment wizard')) {
     \Drupal::service('shp_backup.backup')->operationsLinksAlter($operations, $entity);
   }
 }
