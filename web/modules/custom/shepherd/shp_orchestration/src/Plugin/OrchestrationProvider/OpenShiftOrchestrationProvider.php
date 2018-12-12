@@ -944,6 +944,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
           $volumes['shared']['name'],
           'ReadWriteMany',
           '5Gi',
+          $deployment_name,
           $storage_class
         );
       }
@@ -952,6 +953,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
           $volumes['backup']['name'],
           'ReadWriteMany',
           '5Gi',
+          $deployment_name,
           $storage_class
         );
       }
