@@ -13,7 +13,7 @@
         }
     ],
     "require": {
-        "universityofadelaide/openshift-client": "dev-develop",
+        "universityofadelaide/openshift-client": "dev-ark-backups",
         "php": ">=7.0.0"
     },
     "extra": {
