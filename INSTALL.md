@@ -18,7 +18,7 @@ oc new-project shepherd-openshift
 ```
 
 ### Create a secret 
-The `shepherd-openshift.yml` configuration file will construct the necessary objects for running Shepherd. Before you can run the script a SSH-Auth secret called `build-key` needs to be created so Shepherd can be cloned from GitHub. This can be done via the UI `/console/project/{project-name}/create-secret` and clicking on the create secret button OR via `oc` command line tool :
+The `./openshift-config/shepherd-openshift.yml` configuration file will construct the necessary objects for running Shepherd. Before you can run the script a SSH-Auth secret called `build-key` needs to be created so Shepherd can be cloned from GitHub. This can be done via the UI `/console/project/{project-name}/create-secret` and clicking on the create secret button OR via `oc` command line tool :
 
 ```bash
 oc create secret generic build-key --from-file=ssh-privatekey={key_file}
@@ -31,7 +31,7 @@ oc create secret generic build-key --from-file=ssh-privatekey={key_file}
 Login as admin and Import the Shepherd OpenShift deployment template globally
 ```bash
 oc login -u system:admin
-oc create -f shepherd-openshift.yml -n openshift
+oc create -f ./openshift-config/shepherd-openshift.yml -n openshift
 ```
 You can now click Add to project in the OpenShift ui to deploy Shepherd directly.
 
@@ -114,7 +114,11 @@ version.
 
 Once that is done, your Openshift cluster will be configured to support creating backups and restores.
 
-TODO: Document RBAC for service account to CRUD backup/restores.
+Add a ClusterRole and Binding to the shepherd service account for managing the Ark objects:
+```bash
+oc create clusterrole ark-backups --verb=get,list,create,update,delete --resource=backups,restores,schedules
+oc adm policy add-cluster-role-to-user ark-backups --serviceaccount=shepherd
+```
 
 With the Ark client/server setup, we need to install our plugin:
 ```bash
