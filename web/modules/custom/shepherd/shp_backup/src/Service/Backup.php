@@ -182,6 +182,8 @@ class Backup {
   /**
    * Sync an environment.
    *
+   * @param string $site_id
+   *   The site id.
    * @param string $from_environment_id
    *   The environment to sync from.
    * @param string $to_environment_id
@@ -190,8 +192,8 @@ class Backup {
    * @return bool
    *   Whether it was a success.
    */
-  public function sync(string $from_environment_id, string $to_environment_id) {
-    return $this->orchestrationProvider->syncEnvironment($from_environment_id, $to_environment_id) ? TRUE : FALSE;
+  public function sync(string $site_id, string $from_environment_id, string $to_environment_id) {
+    return $this->orchestrationProvider->syncEnvironment($site_id, $from_environment_id, $to_environment_id) ? TRUE : FALSE;
   }
 
   /**

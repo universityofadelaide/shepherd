@@ -139,7 +139,7 @@ class EnvironmentSyncForm extends FormBase {
     $site = $form_state->get('site');
     $environment = $form_state->get('environment');
 
-    if ($this->backup->sync($form_state->getValue('sync_from'), $environment->id())) {
+    if ($this->backup->sync($site->id(), $form_state->getValue('sync_from'), $environment->id())) {
       $this->messenger->addStatus($this->t('Sync has been triggered for %title', [
         '%title' => $environment->getTitle(),
       ]));

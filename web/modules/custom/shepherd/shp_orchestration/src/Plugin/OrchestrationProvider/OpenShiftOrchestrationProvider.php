@@ -674,17 +674,31 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
   /**
    * {@inheritdoc}
    */
-  public function syncEnvironment(string $from_environment_id, string $to_environment_id) {
+  public function syncEnvironment(string $site_id, string $from_environment_id, string $to_environment_id) {
     $from_deployment_name = self::generateDeploymentName($from_environment_id);
     $to_deployment_name = self::generateDeploymentName($to_environment_id);
     $sync = Sync::createFromSourceAndTarget(
       SyncEnvironment::createFromPvcAndSecret(self::generateSharedPvcName($from_deployment_name), $from_deployment_name),
       SyncEnvironment::createFromPvcAndSecret(self::generateSharedPvcName($to_deployment_name), $to_deployment_name)
     )->setName(sprintf('sync-%s-%s-%s', $from_environment_id, $to_environment_id, date('YmdHis')))
+      ->setLabel(Label::create('site_id', $site_id))
       ->setLabel(Label::create('environment_id_from', $from_environment_id))
       ->setLabel(Label::create('environment_id_to', $to_environment_id));
     try {
       return $this->client->createSync($sync);
+    }
+    catch (ClientException $e) {
+      $this->handleClientException($e);
+      return FALSE;
+    }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getSyncsForSite(string $site_id) {
+    try {
+      return $this->client->listSync(Label::create('site_id', $site_id));
     }
     catch (ClientException $e) {
       $this->handleClientException($e);

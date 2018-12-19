@@ -566,6 +566,8 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
   /**
    * Sync an environment.
    *
+   * @param string $site_id
+   *   The site node id.
    * @param string $from_environment_id
    *   The environment node id to sync from.
    * @param string $to_environment_id
@@ -574,7 +576,18 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
    * @return array|bool
    *   Returns a response body if successful, otherwise false.
    */
-  public function syncEnvironment(string $from_environment_id, string $to_environment_id);
+  public function syncEnvironment(string $site_id, string $from_environment_id, string $to_environment_id);
+
+  /**
+   * Get a list of syncs for a site.
+   *
+   * @param string $site_id
+   *   The site node id.
+   *
+   * @return object|bool
+   *   The list of restores.
+   */
+  public function getSyncsForSite(string $site_id);
 
   /**
    * Get a list of restores for a site.
