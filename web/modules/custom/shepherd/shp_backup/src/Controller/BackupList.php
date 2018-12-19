@@ -4,6 +4,7 @@ namespace Drupal\shp_backup\Controller;
 
 use Drupal\node\NodeInterface;
 use Symfony\Component\HttpFoundation\Request;
+use UniversityOfAdelaide\OpenShift\Objects\Backups\Phase;
 
 /**
  * Controller for listing backups.
@@ -48,7 +49,7 @@ class BackupList extends ListControllerBase {
       $table['#rows'][] = [
         $this->backupService->getFriendlyName($backup),
         $this->environmentService->getEnvironmentLink($environment, FALSE)->toString(),
-        $backup->getPhase(),
+        Phase::getFriendlyPhase($backup->getPhase()),
         // These values aren't available until the backup has finished.
         $backup->isCompleted() ? $this->formatDate($backup->getStartTimestamp()) : $this->t('N/A'),
         $backup->isCompleted() ? $this->formatDate($backup->getCompletionTimestamp()) : $this->t('N/A'),

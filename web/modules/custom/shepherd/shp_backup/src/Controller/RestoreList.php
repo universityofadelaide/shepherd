@@ -5,6 +5,7 @@ namespace Drupal\shp_backup\Controller;
 use Drupal\Core\Link;
 use Drupal\node\NodeInterface;
 use Symfony\Component\HttpFoundation\Request;
+use UniversityOfAdelaide\OpenShift\Objects\Backups\Phase;
 
 /**
  * Controller for listing restores.
@@ -48,7 +49,7 @@ class RestoreList extends ListControllerBase {
       $table['#rows'][] = [
         $backup ? $this->backupService->getFriendlyName($backup) : '',
         $this->environmentService->getEnvironmentLink($environment, FALSE)->toString(),
-        $restore->getPhase(),
+        Phase::getFriendlyPhase($restore->getPhase()),
         $this->formatDate($restore->getCreationTimestamp()),
       ];
     }

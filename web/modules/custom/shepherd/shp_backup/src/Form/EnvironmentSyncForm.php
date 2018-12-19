@@ -8,6 +8,7 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\node\NodeInterface;
 use Drupal\shp_backup\Service\Backup;
+use Drupal\shp_custom\Service\Environment;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -37,6 +38,13 @@ class EnvironmentSyncForm extends FormBase {
   protected $nodeStorage;
 
   /**
+   * The environment service.
+   *
+   * @var \Drupal\shp_custom\Service\Environment
+   */
+  protected $environmentService;
+
+  /**
    * EnvironmentSyncForm constructor.
    *
    * @param \Drupal\shp_backup\Service\Backup $backup
@@ -45,11 +53,14 @@ class EnvironmentSyncForm extends FormBase {
    *   The node storage.
    * @param \Drupal\Core\Messenger\MessengerInterface $messenger
    *   Messenger service.
+   * @param \Drupal\shp_custom\Service\Environment $environmentService
+   *   The environment service.
    */
-  public function __construct(Backup $backup, EntityStorageInterface $node_storage, MessengerInterface $messenger) {
+  public function __construct(Backup $backup, EntityStorageInterface $node_storage, MessengerInterface $messenger, Environment $environmentService) {
     $this->backup = $backup;
     $this->nodeStorage = $node_storage;
     $this->messenger = $messenger;
+    $this->environmentService = $environmentService;
   }
 
   /**
@@ -59,7 +70,8 @@ class EnvironmentSyncForm extends FormBase {
     return new static(
       $container->get('shp_backup.backup'),
       $container->get('entity_type.manager')->getStorage('node'),
-      $container->get('messenger')
+      $container->get('messenger'),
+      $container->get('shp_custom.environment')
     );
   }
 
@@ -108,7 +120,7 @@ class EnvironmentSyncForm extends FormBase {
     $sync_options = [];
 
     foreach ($this->nodeStorage->loadMultiple($environment_ids) as $environment) {
-      $sync_options[$environment->id()] = $environment->label();
+      $sync_options[$environment->id()] = $this->environmentService->getEnvironmentLink($environment, FALSE)->getText();
     }
 
     $build = [

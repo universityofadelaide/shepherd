@@ -5,6 +5,7 @@ namespace Drupal\shp_backup\Controller;
 use Drupal\Core\Link;
 use Drupal\node\NodeInterface;
 use Symfony\Component\HttpFoundation\Request;
+use UniversityOfAdelaide\OpenShift\Objects\Backups\Phase;
 
 /**
  * Controller for listing syncs.
@@ -51,7 +52,7 @@ class SyncList extends ListControllerBase {
       $table['#rows'][] = [
         $this->environmentService->getEnvironmentLink($from, FALSE)->toString(),
         $this->environmentService->getEnvironmentLink($to, FALSE)->toString(),
-        $sync->getPhase(),
+        Phase::getFriendlyPhase($sync->getPhase()),
         $this->formatDate($sync->getCreationTimestamp()),
       ];
     }
