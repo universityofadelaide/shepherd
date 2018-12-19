@@ -434,7 +434,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
         $short_name,
         $environment_id,
         $source_ref,
-        "drush -r web cr"
+        "drush -r /code/web cr"
       );
     }
 
