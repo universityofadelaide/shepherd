@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "1ede00f53fa9c33603e4aab8461484db",
+    "content-hash": "fc30b4183430fe57186c50daa4b7dff0",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -5162,12 +5162,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/universityofadelaide/openshift-client.git",
-                "reference": "c8b5627606e6525256bdbec36534c72d9e31f870"
+                "reference": "5ed2be7641f6e9d771fadee6528d6908841a8213"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/universityofadelaide/openshift-client/zipball/c8b5627606e6525256bdbec36534c72d9e31f870",
-                "reference": "c8b5627606e6525256bdbec36534c72d9e31f870",
+                "url": "https://api.github.com/repos/universityofadelaide/openshift-client/zipball/5ed2be7641f6e9d771fadee6528d6908841a8213",
+                "reference": "5ed2be7641f6e9d771fadee6528d6908841a8213",
                 "shasum": ""
             },
             "require": {
@@ -5200,7 +5200,7 @@
                 }
             ],
             "description": "Simple OpenShift client for PHP.",
-            "time": "2018-12-11T04:07:11+00:00"
+            "time": "2018-12-19T00:32:54+00:00"
         },
         {
             "name": "universityofadelaide/shepherd-drupal-scaffold",
@@ -7906,16 +7906,14 @@
     "aliases": [],
     "minimum-stability": "dev",
     "stability-flags": {
+        "universityofadelaide/openshift-client": 20,
         "drupal/drush-cmi-tools": 20,
         "drupal/group": 5,
-        "drupal/route_condition": 10,
-        "universityofadelaide/openshift-client": 20
+        "drupal/route_condition": 10
     },
     "prefer-stable": true,
     "prefer-lowest": false,
-    "platform": {
-        "php": ">=7.0.0"
-    },
+    "platform": [],
     "platform-dev": [],
     "platform-overrides": {
         "php": "7.2.0"

@@ -14,6 +14,7 @@
         "drupal-composer/drupal-scaffold":               "^2.2",
         "predis/predis":                                 "^1.1.1",
         "universityofadelaide/shepherd-drupal-scaffold": "~1.0",
+        "universityofadelaide/openshift-client":         "dev-ark-backups",
         "wikimedia/composer-merge-plugin":               "^1.4",
         "drush/drush":                                   "9.*",
         "drupal/core":                                   "8.5.*",
@@ -66,11 +67,6 @@
                 "sites/default/default.services.yml": "sites/default/services.yml",
                 "sites/default/default.settings.php": "sites/default/settings.php"
             }
-        },
-        "merge-plugin": {
-            "require": [
-                "web/modules/custom/shepherd/shp_orchestration/composer.json"
-            ]
         },
         "patches": {
             "drupal/core": {
