@@ -41,7 +41,7 @@ fi
 if ! oc get serviceaccount | grep -q shepherd; then
     oc create serviceaccount shepherd
     oc policy add-role-to-user admin system:serviceaccount:shepherd:shepherd
-    oc create clusterrole ark-backups --verb=get,list,create,update,delete --resource=backups,restores,schedules
+    oc create clusterrole ark-backups --verb=get,list,create,update,delete --resource=backups,restores,schedules,syncs
     oc adm policy add-cluster-role-to-user ark-backups --serviceaccount=shepherd
 fi
 
