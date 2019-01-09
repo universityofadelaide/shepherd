@@ -1,0 +1,57 @@
+#!/bin/bash
+
+# `set +e` is used to continue on errors throughout this script.
+set -euo pipefail
+IFS=$'\n\t'
+
+BASE_DIR="/openshift/uni-shepherd"
+
+openshift_start() {
+
+  if [ -f /.dockerenv ]; then
+    error "Inception error - you can't run $0 within a docker container."
+    exit
+  fi
+
+  # 3.9
+  oc cluster up --host-data-dir=${BASE_DIR} --public-hostname=172.17.0.1
+  # 3.11
+  #oc cluster up --base-dir=${BASE_DIR} --public-hostname=172.17.0.1
+  echo "Now start shepherd with ./dsh"
+}
+
+openshift_stop() {
+  ./dsh stop
+  oc cluster down
+}
+
+openshift_clean() {
+  ./dsh purge
+  oc cluster down
+  sudo rm -rf ${BASE_DIR}
+  sudo mkdir -p ${BASE_DIR}
+  sudo chown ${USER}:${USER} -R ${BASE_DIR}
+  for i in $(mysql -uroot -psuper-secret-password -h172.17.0.1 -e'show databases like "env_%"' -B -s)
+  do
+    echo "Dropping database $i"
+    mysql -uroot -psuper-secret-password -h172.17.0.1 -e"drop database $i"
+  done
+}
+
+COMMAND=${1:-default}
+
+case ${COMMAND} in
+  sta*)
+    openshift_start
+    ;;
+  sto*)
+    openshift_stop
+    ;;
+  c*)
+    openshift_clean
+    ;;
+  *)
+    printf "Unknown command specified. Try:\n$0 [start|stop|clean].\n"
+    exit 0
+    ;;
+esac
