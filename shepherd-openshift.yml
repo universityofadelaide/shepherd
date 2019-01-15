@@ -294,6 +294,17 @@ objects:
     selector:
       name: shepherd-redis-dc
 - apiVersion: v1
+  kind: ConfigMap
+  metadata:
+    labels:
+      app: shepherd
+    name: shepherd-redis-config
+  data:
+    redis-config: |
+      maxmemory 240Mi
+      maxmemory-policy allkeys-lru
+      save ""
+- apiVersion: v1
   kind: DeploymentConfig
   metadata:
     labels:
@@ -315,15 +326,26 @@ objects:
           - image: 'redis:alpine'
             imagePullPolicy: Always
             name: shepherd-redis
+            command:
+              - /usr/local/bin/docker-entrypoint.sh
+              - /usr/local/etc/redis/redis.conf
             ports:
               - containerPort: 6379
             resources: {}
             volumeMounts:
               - mountPath: /data
                 name: shepherd-redis-volume
+              - mountPath: /usr/local/etc/redis
+                name: shepherd-redis-config
         volumes:
-          - emptyDir: {}
-            name: shepherd-redis-volume
+          - name: shepherd-redis-volume
+            emptyDir: {}
+          - name: shepherd-redis-config
+            configMap:
+              name: shepherd-redis-config
+              items:
+                - key: redis-config
+                  path: redis.conf
     triggers:
       - type: ConfigChange
       - imageChangeParams:
@@ -334,6 +356,15 @@ objects:
             kind: ImageStreamTag
             name: 'shepherd-redis-is:alpine'
         type: ImageChange
+- apiVersion: v1
+  kind: ConfigMap
+  metadata:
+    name: redis-config
+  data:
+    redis-config: |
+      maxmemory 240Mi
+      maxmemory-policy allkeys-lru
+      save ""
 parameters:
 - name: SOURCE_REPOSITORY_URL
   description: The URL of the repository with your application source code.
@@ -391,5 +422,5 @@ parameters:
   description: The image stream path to the web image. Needed for cronjobs
 - name: STORAGE_CLASS_NAME
   description: 'Use empty for OpenShift default class. E.g. "gold"'
-  required: true
+  required: false
   value: ''
