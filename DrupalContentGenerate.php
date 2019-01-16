@@ -179,7 +179,7 @@ if (!$env = reset($nodes)) {
     'field_shp_update_on_image_change' => TRUE,
     'field_shp_cron_suspended'   => 1,
     'field_shp_cron_jobs'        => [
-      ['key' => '*/30 * * * *', 'value' => 'cd /code; drush -r web cron || true'],
+      ['key' => '*/30 * * * *', 'value' => 'cd /code; drush -r /code/web cron || true'],
     ]
   ]);
   $env->moderation_state->value = 'published';
