@@ -1,10 +1,10 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "1ede00f53fa9c33603e4aab8461484db",
+    "content-hash": "46a11472c6be5f8d65fafd77b684149c",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -1747,8 +1747,7 @@
                     "merge-extra": false
                 },
                 "patches_applied": {
-                    "Switch to a memory cache backend during installation": "https://www.drupal.org/files/issues/2488350-2-58.patch",
-                    "Allow profiles to provide a base profile": "https://www.drupal.org/files/issues/drupal-n1356276-417-d8.5.x.patch"
+                    "Switch to a memory cache backend during installation": "https://www.drupal.org/files/issues/2488350-2-58.patch"
                 }
             },
             "autoload": {
@@ -2287,7 +2286,7 @@
                 },
                 "drupal": {
                     "version": "8.x-1.0",
-                    "datestamp": "1527699484",
+                    "datestamp": "1541600580",
                     "security-coverage": {
                         "status": "covered",
                         "message": "Covered by Drupal's security advisory policy"
@@ -2343,10 +2342,10 @@
                 },
                 "drupal": {
                     "version": "8.x-1.0-beta1",
-                    "datestamp": "1534864080",
+                    "datestamp": "1543595880",
                     "security-coverage": {
                         "status": "not-covered",
-                        "message": "Project has not opted into security advisory coverage!"
+                        "message": "Beta releases are not covered by Drupal security advisories."
                     }
                 }
             },
@@ -7878,6 +7877,11 @@
         {
             "name": "webflo/drupal-core-require-dev",
             "version": "8.5.8",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/webflo/drupal-core-require-dev.git",
+                "reference": "cfda0d8c89412b36f6693c368054c3bf286839a6"
+            },
             "require": {
                 "behat/mink": "1.7.x-dev",
                 "behat/mink-goutte-driver": "^1.2",
