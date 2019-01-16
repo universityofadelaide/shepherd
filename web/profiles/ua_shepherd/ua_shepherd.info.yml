@@ -1,15 +1,71 @@
 name: University of Adelaide Shepherd profile
-package: Shepherd
+package: 'UA Shepherd'
 type: profile
 description: 'University of Adelaide Drupal 8 Shepherd install profile.'
-base profile: shepherd
 version: VERSION
 core: 8.x
 dependencies:
+  - basic_auth
+  - big_pipe
+  - block
+  - block_content
+  - breakpoint
+  - ckeditor
+  - config
+  - content_moderation
+  - comment
+  - contextual
+  - datetime
+  - dblog
+  - dynamic_page_cache
+  - editor
+  - field_ui
+  - file
+  - hal
+  - help
+  - history
+  - image
+  - menu_link_content
+  - menu_ui
+  - node
+  - options
+  - page_cache
+  - rest
+  - search
+  - shortcut
+  - taxonomy
+  - toolbar
+  - tour
+  - views
+  - views_ui
 
   # Contributed modules
   - cas
+  - drush_cmi_tools
+  - entity_reference
+  - entity_reference_revisions
+  - field_group
+  - gnode
+  - group
+  - key_value_field
+  - log_stdout
+  - r4032login
+  - redis
+  - route_condition
+  - token
+
+  # Shepherd modules
+  - shp_backup
+  - shp_content_types
+  - shp_custom
+  - shp_database_provisioner
+  - shp_orchestration
+  - shp_roles
+  - shp_redis_support
 
   # UA shepherd integrations
   - ua_ldap
   - ua_shp_ldap
+
+themes:
+  - seven

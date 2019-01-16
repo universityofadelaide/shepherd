@@ -2,5 +2,62 @@
 
 /**
  * @file
- * Install, update and uninstall functions for the ua_shepherd profile.
+ * Install, update and uninstall functions for the shepherd profile.
  */
+
+use Drupal\user\Entity\User;
+use Drupal\user\RoleInterface;
+use Drupal\field\Entity\FieldStorageConfig;
+use Drupal\field\Entity\FieldConfig;
+
+/**
+ * Implements hook_install().
+ *
+ * Perform actions to set up the site for this profile.
+ *
+ * @see system_install()
+ */
+function ua_shepherd_install() {
+  // Set front page to "node".
+  \Drupal::configFactory()->getEditable('system.site')->set('page.front', '/websites')->save(TRUE);
+
+  // Allow visitor account creation with administrative approval.
+  $user_settings = \Drupal::configFactory()->getEditable('user.settings');
+  $user_settings->set('register', USER_REGISTER_VISITORS_ADMINISTRATIVE_APPROVAL)->save(TRUE);
+
+  // Revoke default permissions for system roles.
+  user_role_revoke_permissions(RoleInterface::ANONYMOUS_ID, ['access content', 'restful get entity:node']);
+  user_role_revoke_permissions(RoleInterface::AUTHENTICATED_ID, ['access content']);
+
+  // Assign user 1 the "administrator" role.
+  $user = User::load(1);
+  $user->roles[] = 'administrator';
+  $user->save();
+
+  // We install some menu links, so we have to rebuild the router, to ensure the
+  // menu links are valid.
+  \Drupal::service('router.builder')->rebuildIfNeeded();
+
+  // Group module restricts access to content based on their memberships.
+  user_role_grant_permissions(RoleInterface::AUTHENTICATED_ID, array(
+    'access content',
+    'access toolbar',
+  ));
+
+  // Enable the admin theme.
+  \Drupal::configFactory()->getEditable('node.settings')->set('use_admin_theme', TRUE)->save(TRUE);
+
+  /*
+   * Note that we have chosen to use the Environment variable simply as the
+   * initial default here, rather than write it out in $config in settings.php.
+   * https://www.drupal.org/node/2662646 has some useful information, but the
+   * main problem with overriding in settings.php is that the config system
+   * and file system API's become out of sync. Only the file system API
+   * understands the $settings.php override and using config API doesn't
+   * return the value defined in settings.php config.
+   */
+  \Drupal::configFactory()->getEditable('system.file')->set('path.temporary', getenv('TMP_DIR') ?: '/shared/tmp')->save(TRUE);
+
+  // Do a node access rebuild, there will be zero/one node, so no need to batch.
+  node_access_rebuild(FALSE);
+}

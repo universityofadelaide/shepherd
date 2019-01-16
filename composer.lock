@@ -1,10 +1,10 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "a16319e71a9950e381b98c569e840f70",
+    "content-hash": "33145346fea8a4a8c8400c2c46d163d6",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -1814,8 +1814,7 @@
                     "merge-extra": false
                 },
                 "patches_applied": {
-                    "Switch to a memory cache backend during installation": "https://www.drupal.org/files/issues/2488350-2-58.patch",
-                    "Allow profiles to provide a base profile": "https://www.drupal.org/files/issues/drupal-n1356276-417-d8.5.x.patch"
+                    "Switch to a memory cache backend during installation": "https://www.drupal.org/files/issues/2488350-2-58.patch"
                 }
             },
             "autoload": {
