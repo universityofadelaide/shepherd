@@ -44,15 +44,21 @@
             "php": "7.2.0"
         }
     },
+    "autoload": {
+        "classmap": [
+            "scripts/composer/ScriptHandler.php"
+        ],
+        "files": ["load.environment.php"]
+    },
     "scripts": {
-        "drupal-scaffold": "DrupalComposer\\DrupalScaffold\\Plugin::scaffold",
-        "shepherd-scaffold": "UniversityOfAdelaide\\ShepherdDrupalScaffold\\Plugin::scaffold",
         "post-install-cmd": [
-            "@drupal-scaffold",
-            "@shepherd-scaffold"
+            "@composer drupal:scaffold"
         ]
     },
     "extra": {
+        "patchLevel": {
+            "drupal/core": "-p2"
+        },
         "installer-paths": {
             "web/core":                     ["type:drupal-core"],
             "web/modules/contrib/{$name}":  ["type:drupal-module"],
