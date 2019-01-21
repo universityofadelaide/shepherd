@@ -13,10 +13,12 @@ openshift_start() {
     exit
   fi
 
-  # 3.9
-  oc cluster up --host-data-dir=${BASE_DIR} --public-hostname=172.17.0.1
-  # 3.11
-  #oc cluster up --base-dir=${BASE_DIR} --public-hostname=172.17.0.1
+  # By default oc runs the same version of OpenShift as itself.
+  if [ $(oc version | grep "^oc v" | awk '{print $2}' | awk -F '.' '{print $2}') -lt "10" ]; then
+    oc cluster up --host-data-dir=${BASE_DIR} --public-hostname=172.17.0.1
+  else
+    oc cluster up --base-dir=${BASE_DIR} --public-hostname=172.17.0.1
+  fi
   echo "Now start shepherd with ./dsh"
 }
 
