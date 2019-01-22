@@ -4,42 +4,54 @@ services:
     image: uofa/apache2-php7-dev:foundation
     # This makes the container run on the same network stack as your
     # workstation. Meaning that you can interact on "localhost".
-    network_mode: host
+    ports:
+      - 8000:80
     environment:
-      SITE_TITLE: WCMS D8
+      SITE_TITLE: Shepherd
       SITE_MAIL: site@example.com
       SITE_ADMIN_EMAIL: admin@example.com
       SITE_ADMIN_USERNAME: admin
       SITE_ADMIN_PASSWORD: password
+      DATABASE_HOST: db
       PUBLIC_DIR: /shared/public
       HASH_SALT: random-hash
       CONFIG_SYNC_DIRECTORY: /shared/private/random-hash/sync
-      SHEPHERD_SITE_ID: 2
-      SHEPHERD_URL: http://shepherd.test
-      SHEPHERD_TOKEN: super-secret-token
-      SHEPHERD_INSTALL_PROFILE: ua
       REDIS_ENABLED: 1
+      REDIS_HOST: redis
+      SHEPHERD_INSTALL_PROFILE: shepherd
       SHEPHERD_SECRET_PATH: /code/private
-      XDEBUG_CONFIG: "remote_host=127.0.0.1"
-      PHP_IDE_CONFIG: serverName=localhost
+      XDEBUG_CONFIG: "remote_host=172.17.0.1"
+      PHP_IDE_CONFIG: serverName=shepherd.172.17.0.1.nip.io
+      VIRTUAL_HOST: ${PROJECT}.172.17.0.1.nip.io
     volumes:
       - .:/code
       - ./shared:/shared
       - $HOME/.ssh/id_rsa:/root/.ssh/id_rsa
+    networks:
+      - default
 
   db:
     image: mariadb
-    network_mode: host
+    ports:
+      - 3306:3306
     environment:
       MYSQL_DATABASE: drupal
       MYSQL_USER: user
       MYSQL_PASSWORD: password
       MYSQL_ROOT_PASSWORD: super-secret-password
+    networks:
+    - default
 
   mail:
     image: mailhog/mailhog
-    network_mode: host
+    networks:
+    - default
 
   redis:
     image: redis:alpine
-    network_mode: host
+    networks:
+    - default
+
+networks:
+  default:
+
