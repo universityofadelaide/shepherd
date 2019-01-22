@@ -1,0 +1,255 @@
+#!/bin/bash
+
+# `set +e` is used to continue on errors throughout this script.
+set -euo pipefail
+
+# Used as the prefix for docker networking, container naming and nginx hostname.
+export PROJECT=$(basename ${PWD})
+# docker-compose stopped stripping chars from project name in 1.21.0.
+export DOCKER_COMPOSE_VERSION=$(docker-compose -v | awk '{print $3}' | rev | cut -c 2- | rev)
+function version { echo "$@" | awk -F. '{ printf("%d%03d%03d%03d\n", $1,$2,$3,$4); }'; }
+if [ $(version ${DOCKER_COMPOSE_VERSION}) -lt $(version "1.21.0") ]; then
+  export PROJECT=$(echo ${PROJECT} | sed 's/[-_]//g')
+fi
+
+# Determine the OS type of the host machine.
+if [ "$(uname)" == "Darwin" ]; then
+  HOST_TYPE='mac'
+  export DOCKER_COMPOSE_FILE='docker-compose.osx.yml'
+else
+  HOST_TYPE='linux'
+  export DOCKER_COMPOSE_FILE='docker-compose.linux.yml'
+fi
+
+# Setup some functions to output warnings.
+notice() {
+  printf "\e[32;01m$1\e[39;49;00m\n"
+}
+
+warning() {
+  printf "\e[33;01m$1\e[39;49;00m\n"
+}
+
+error() {
+  printf "\e[31;01m$1\e[39;49;00m\n"
+}
+
+# Ensure script is NOT running inside a container - must be run from host.
+if [ -f /.dockerenv ]; then
+  error "Inception error - you can't run $0 within a docker container."
+  exit
+fi
+
+# Command: ./dsh start
+# Configures environment then brings up project using docker-compose.yml file.
+dsh_start() {
+  notice "Starting project containers."
+  docker-compose -f ${DOCKER_COMPOSE_FILE} up -d
+  export URL="http://127.0.0.1"
+  notice "Please wait about 10 seconds for the database to settle.
+You can now access the site from ${URL}.
+Project files are available in /code, You may need to build and install your
+  project before it starts working.
+Connecting via ./dsh shell and running robo build is a common next step."
+}
+
+# Command: ./dsh shell
+# Connects a shell to the web image as the current user.
+dsh_shell() {
+  if ! docker ps | grep "\s${PROJECT}_web_1" > /dev/null; then
+    notice "Project not running, starting."
+    dsh_start
+  fi
+
+  docker-compose -f ${DOCKER_COMPOSE_FILE} exec \
+   -e COLUMNS="$(tput cols)" \
+   -e LINES="$(tput lines)" \
+   web ${@:-/bin/bash}
+}
+
+# Command: ./dsh stop
+# Stops project and brings down network after disconnecting nginx proxy.
+dsh_stop() {
+  notice "Stopping containers."
+  docker-compose -f ${DOCKER_COMPOSE_FILE} stop
+}
+
+# Command: ./dsh purge
+# Stops project, then takes down containers and removes volumes if possible.
+dsh_purge() {
+  docker-compose -f ${DOCKER_COMPOSE_FILE} down -v
+}
+
+# Command: ./dsh status
+# Shows status information about project containers.
+dsh_status() {
+  if ! docker ps | grep "\s${PROJECT}_"; then
+    notice "${PROJECT} not running."
+  fi
+}
+
+# Command: ./dsh logs
+# Tails logs from web container.
+dsh_logs() {
+  docker-compose -f ${DOCKER_COMPOSE_FILE} logs -f web
+}
+
+dsh_project() {
+  set +e
+  if [ -f dsh.project ]; then
+    source dsh.project
+  fi
+  set -e
+}
+
+# Command: ./dsh pull
+# Fetches all images used by the project.
+dsh_pull() {
+  docker-compose -f ${DOCKER_COMPOSE_FILE} pull
+}
+
+# Command: ./dsh nfs
+# Sets up NFS integration for OSX.
+NFS_FILE=/etc/exports
+NFS_LINE="/Users -alldirs -mapall=$(id -u):$(id -g) localhost"
+dsh_setup_nfs() {
+  if [ ${HOST_TYPE} != "mac" ]; then
+    echo "This script is OSX-only. Please do not run it on any other Unix."
+    exit 1
+  fi
+
+  if [[ $EUID -eq 0 ]]; then
+    echo "This script must NOT be run with sudo/root. Please re-run without sudo." 1>&2
+    exit 1
+  fi
+
+  echo ""
+  echo " +-----------------------------+"
+  echo " | Setup native NFS for Docker |"
+  echo " +-----------------------------+"
+  echo ""
+
+  echo "WARNING: This script will shut down running containers."
+  echo ""
+  echo -n "Do you wish to proceed? [y]: "
+  read decision
+
+  if [ "$decision" != "y" ]; then
+    echo "Exiting. No changes made."
+    exit 1
+  fi
+
+  echo ""
+
+  if ! docker ps > /dev/null 2>&1 ; then
+    echo "== Waiting for docker to start..."
+  fi
+
+  open -a Docker
+
+  while ! docker ps > /dev/null 2>&1 ; do sleep 2; done
+
+  echo "== Stopping running docker containers..."
+  docker-compose -f ${DOCKER_COMPOSE_FILE} down > /dev/null 2>&1
+  docker volume prune -f > /dev/null
+
+  osascript -e 'quit app "Docker"'
+
+  echo "== Resetting folder permissions..."
+  sudo chown -R "$(id -u)":"$(id -g)" .
+
+  echo "== Setting up nfs..."
+  sudo cp /dev/null "$NFS_FILE"
+  grep -qF -- "$NFS_LINE" "$NFS_FILE" || sudo echo "$NFS_LINE" | sudo tee -a "$NFS_FILE" > /dev/null
+
+  LINE="nfs.server.mount.require_resv_port = 0"
+  FILE=/etc/nfs.conf
+  grep -qF -- "$LINE" "$FILE" || sudo echo "$LINE" | sudo tee -a "$FILE" > /dev/null
+
+  echo "== Restarting nfsd..."
+  sudo nfsd restart
+
+  echo "== Restarting docker..."
+  open -a Docker
+
+  while ! docker ps > /dev/null 2>&1 ; do sleep 2; done
+
+  echo ""
+  echo "SUCCESS! Now go run your containers 🐳"
+}
+
+# Command: ./dsh rnfs
+# Removes nfs setup.
+dsh_remove_nfs() {
+  if [ ${HOST_TYPE} != "mac" ]; then
+    echo "This script is OSX-only. Please do not run it on any other Unix."
+    exit 1
+  fi
+
+  if [[ $EUID -eq 0 ]]; then
+    echo "This script must NOT be run with sudo/root. Please re-run without sudo." 1>&2
+    exit 1
+  fi
+
+  echo "== Removing nfsd exports..."
+  sudo sed -i '' "/$(echo "$NFS_LINE" | sed 's/\//\\\//g')/d" ${NFS_FILE}
+  echo "== Restarting nfsd..."
+  sudo nfsd restart
+  echo "== Done"
+}
+
+dsh_help() {
+  printf "\nUsage: dsh COMMAND\n\n
+Commands:\n
+\thelp\tShow this help.\n
+\tpurge\tPurge the docker containers, network and proxy and remove all data.\n
+\tshell\tStart a shell which is connected to the containers and can be used to run commands.\n
+\tstart\tStart the docker containers, network and proxy.\n
+\tstatus\tShow the status of this projects containers.\n
+\tstop\tStop the docker containers, network and proxy, but keep data for a re-start.\n
+\nIf no command is given, shell is the default.\n
+Commands can be shortened to their uniqe component, eg ./dsh sh is the same as ./dsh shell.\n\n"
+}
+
+# Set a default command to show usage when no arguments provided.
+COMMAND=${1:-default}
+
+case ${COMMAND} in
+  e*)
+    dsh_shell ${@:2}
+    ;;
+  h*|-h|--help)
+    dsh_help
+    ;;
+  l*)
+    dsh_logs
+    ;;
+  nfs)
+    dsh_setup_nfs
+    ;;
+  rnfs)
+    dsh_remove_nfs
+    ;;
+  pul*)
+    dsh_pull
+    ;;
+  pur*)
+    dsh_purge
+    ;;
+  sh*|ss*)
+    dsh_shell ${@:2}
+    ;;
+  star*)
+    dsh_start
+    ;;
+  stat*)
+    dsh_status
+    ;;
+  sto*)
+    dsh_stop
+    ;;
+  *)
+    warning "Unknown command specified, defaulting to shell. For other options try:\n$0 [help|logs|purge|shell|start|status|stop].\n"
+    dsh_shell
+    ;;
+esac
