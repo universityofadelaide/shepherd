@@ -1,0 +1,63 @@
+version: '3'
+services:
+  web:
+    image: uofa/apache2-php7-dev:foundation
+    # You will notice that we are forwarding port which do not belong to PHP.
+    # We have to declare them here because these "sidecar" services are sharing
+    # THIS containers network stack.
+    ports:
+      - "80:80"
+      - "3306:3306"
+      - "8025:8025"
+    environment:
+      SITE_TITLE: WCMS D8
+      SITE_MAIL: site@example.com
+      SITE_ADMIN_EMAIL: admin@example.com
+      SITE_ADMIN_USERNAME: admin
+      SITE_ADMIN_PASSWORD: password
+      PUBLIC_DIR: /shared/public
+      HASH_SALT: random-hash
+      CONFIG_SYNC_DIRECTORY: /shared/private/random-hash/sync
+      SHEPHERD_SITE_ID: 2
+      SHEPHERD_URL: http://shepherd.test
+      SHEPHERD_TOKEN: super-secret-token
+      SHEPHERD_INSTALL_PROFILE: ua
+      REDIS_ENABLED: 1
+      SHEPHERD_SECRET_PATH: /code/private
+      XDEBUG_CONFIG: "remote_host=docker.for.mac.localhost"
+      PHP_IDE_CONFIG: serverName=localhost
+    volumes:
+      - nfsmount:/code
+      - ./shared:/shared
+      - $HOME/.ssh/id_rsa:/root/.ssh/id_rsa
+
+  xdebug:
+    image: nickschuch/d4m-tcp-forwarder
+    network_mode: host
+    environment:
+      - PORT=9000
+
+  db:
+    image: mariadb
+    network_mode: service:web
+    environment:
+      MYSQL_DATABASE: drupal
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+      MYSQL_ROOT_PASSWORD: super-secret-password
+
+  mail:
+    image: mailhog/mailhog
+    network_mode: service:web
+
+  redis:
+    image: redis:alpine
+    network_mode: service:web
+
+volumes:
+  nfsmount:
+    driver: local
+    driver_opts:
+      type: nfs
+      o: addr=host.docker.internal,rw,nolock,hard,nointr,nfsvers=3
+      device: ":${PWD}"

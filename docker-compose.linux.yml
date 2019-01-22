@@ -1,0 +1,45 @@
+version: '3'
+services:
+  web:
+    image: uofa/apache2-php7-dev:foundation
+    # This makes the container run on the same network stack as your
+    # workstation. Meaning that you can interact on "localhost".
+    network_mode: host
+    environment:
+      SITE_TITLE: WCMS D8
+      SITE_MAIL: site@example.com
+      SITE_ADMIN_EMAIL: admin@example.com
+      SITE_ADMIN_USERNAME: admin
+      SITE_ADMIN_PASSWORD: password
+      PUBLIC_DIR: /shared/public
+      HASH_SALT: random-hash
+      CONFIG_SYNC_DIRECTORY: /shared/private/random-hash/sync
+      SHEPHERD_SITE_ID: 2
+      SHEPHERD_URL: http://shepherd.test
+      SHEPHERD_TOKEN: super-secret-token
+      SHEPHERD_INSTALL_PROFILE: ua
+      REDIS_ENABLED: 1
+      SHEPHERD_SECRET_PATH: /code/private
+      XDEBUG_CONFIG: "remote_host=127.0.0.1"
+      PHP_IDE_CONFIG: serverName=localhost
+    volumes:
+      - .:/code
+      - ./shared:/shared
+      - $HOME/.ssh/id_rsa:/root/.ssh/id_rsa
+
+  db:
+    image: mariadb
+    network_mode: host
+    environment:
+      MYSQL_DATABASE: drupal
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+      MYSQL_ROOT_PASSWORD: super-secret-password
+
+  mail:
+    image: mailhog/mailhog
+    network_mode: host
+
+  redis:
+    image: redis:alpine
+    network_mode: host
