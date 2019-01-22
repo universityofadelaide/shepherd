@@ -2,8 +2,9 @@ version: '3'
 services:
   web:
     image: uofa/apache2-php7-dev:foundation
-    # This makes the container run on the same network stack as your
-    # workstation. Meaning that you can interact on "localhost".
+    # Chrome webdriver requires this - used for tests.
+    privileged: true
+    hostname: ${PROJECT}
     ports:
       - 8000:80
     environment:
@@ -14,6 +15,8 @@ services:
       SITE_ADMIN_PASSWORD: password
       DATABASE_HOST: db
       PUBLIC_DIR: /shared/public
+      PRIVATE_DIR: /shared/private
+      TMP_DIR: /shared/tmp
       HASH_SALT: random-hash
       CONFIG_SYNC_DIRECTORY: /shared/private/random-hash/sync
       REDIS_ENABLED: 1
@@ -21,12 +24,12 @@ services:
       SHEPHERD_INSTALL_PROFILE: shepherd
       SHEPHERD_SECRET_PATH: /code/private
       XDEBUG_CONFIG: "remote_host=172.17.0.1"
-      PHP_IDE_CONFIG: serverName=shepherd.172.17.0.1.nip.io
-      VIRTUAL_HOST: ${PROJECT}.172.17.0.1.nip.io
+      PHP_IDE_CONFIG: serverName=${PROJECT}.${DOMAIN}
+      VIRTUAL_HOST: ${PROJECT}.${DOMAIN}
     volumes:
       - .:/code
       - ./shared:/shared
-      - $HOME/.ssh/id_rsa:/root/.ssh/id_rsa
+      - ${HOST_SSH_AUTH_SOCK_DIR}:/ssh
     networks:
       - default
 
@@ -45,12 +48,16 @@ services:
   mail:
     image: mailhog/mailhog
     networks:
-    - default
+      - default
+    ports:
+      - 8025:80
+    environment:
+      - VIRTUAL_HOST=mail.${PROJECT}.${DOMAIN}
 
   redis:
     image: redis:alpine
     networks:
-    - default
+      - default
 
 networks:
   default:
