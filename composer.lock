@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "8ac7cfac1ec2f0892f36453923146e8d",
+    "content-hash": "476c87a069e1b4c216536c1de4806a4e",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -5369,16 +5369,16 @@
         },
         {
             "name": "universityofadelaide/shepherd-drupal-scaffold",
-            "version": "1.4.0",
+            "version": "2.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/universityofadelaide/shepherd-drupal-scaffold.git",
-                "reference": "03d9abf34444e9e479b2cc3be5ec304d8be4ca44"
+                "reference": "2743df31d5eeb93d0cbe4249abda688870ce626a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/universityofadelaide/shepherd-drupal-scaffold/zipball/03d9abf34444e9e479b2cc3be5ec304d8be4ca44",
-                "reference": "03d9abf34444e9e479b2cc3be5ec304d8be4ca44",
+                "url": "https://api.github.com/repos/universityofadelaide/shepherd-drupal-scaffold/zipball/2743df31d5eeb93d0cbe4249abda688870ce626a",
+                "reference": "2743df31d5eeb93d0cbe4249abda688870ce626a",
                 "shasum": ""
             },
             "require": {
@@ -5402,7 +5402,7 @@
                 "GPL-2.0+"
             ],
             "description": "Composer Plugin for updating the Shepherd Drupal tools.",
-            "time": "2018-07-18T00:42:06+00:00"
+            "time": "2018-10-11T22:50:51+00:00"
         },
         {
             "name": "webflo/drupal-finder",
