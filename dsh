@@ -9,16 +9,25 @@ export PROJECT=$(basename ${PWD})
 export DOCKER_COMPOSE_VERSION=$(docker-compose -v | awk '{print $3}' | rev | cut -c 2- | rev)
 function version { echo "$@" | awk -F. '{ printf("%d%03d%03d%03d\n", $1,$2,$3,$4); }'; }
 if [ $(version ${DOCKER_COMPOSE_VERSION}) -lt $(version "1.21.0") ]; then
-  export PROJECT=$(echo ${PROJECT} | sed 's/[-_]//g')
+  error "Please update docker-compose to >=1.21.0."
 fi
 
-# Determine the OS type of the host machine.
-if [ "$(uname)" == "Darwin" ]; then
-  HOST_TYPE='mac'
-  export DOCKER_COMPOSE_FILE='docker-compose.osx.yml'
-else
+# Set some env vars we use in our slightly modified docker-compose files
+export HOST_SSH_AUTH_SOCK_DIR=$(dirname ${SSH_AUTH_SOCK})
+export CONTAINER_SSH_AUTH_SOCK=/ssh/$(basename ${SSH_AUTH_SOCK})
+
+if [ ${GITLAB_CI:-false} == "true" ]; then
   HOST_TYPE='linux'
-  export DOCKER_COMPOSE_FILE='docker-compose.linux.yml'
+  export DOCKER_COMPOSE_FILE='docker-compose.ci.yml'
+else
+  # Determine the OS type of the host machine.
+  if [ "$(uname)" == "Darwin" ]; then
+    HOST_TYPE='mac'
+    export DOCKER_COMPOSE_FILE='docker-compose.osx.yml'
+  else
+    HOST_TYPE='linux'
+    export DOCKER_COMPOSE_FILE='docker-compose.linux.yml'
+  fi
 fi
 
 # Setup some functions to output warnings.
@@ -44,13 +53,26 @@ fi
 # Configures environment then brings up project using docker-compose.yml file.
 dsh_start() {
   notice "Starting project containers."
-  docker-compose -f ${DOCKER_COMPOSE_FILE} up -d
   export URL="http://127.0.0.1"
+  docker-compose -f ${DOCKER_COMPOSE_FILE} up -d
+  setup_nginx
   notice "Please wait about 10 seconds for the database to settle.
 You can now access the site from ${URL}.
 Project files are available in /code, You may need to build and install your
   project before it starts working.
 Connecting via ./dsh shell and running robo build is a common next step."
+}
+
+# Add functionality to the dsh setup/start function
+setup_nginx() {
+  set +e
+  export URL="http://${PROJECT}.${DOMAIN}:8080"
+  # Test to make sure its not already on the network.
+  if ! docker network inspect ${PROJECT}_default | grep "nginx-proxy" > /dev/null; then
+    notice "Connecting nginx-proxy to the network."
+    docker network connect ${PROJECT}_default nginx-proxy
+  fi
+  set -e
 }
 
 # Command: ./dsh shell
@@ -61,22 +83,45 @@ dsh_shell() {
     dsh_start
   fi
 
+  # Run the shell as the current user, avoiding permission issues.
+  if ! docker-compose -f ${DOCKER_COMPOSE_FILE} exec web id -u ${USER} > /dev/null 2>&1; then
+    notice "Setting up user $USER on web container."
+    # Add user with local $USER name to container.
+    docker-compose -f ${DOCKER_COMPOSE_FILE} exec web adduser --disabled-password --uid ${UID} \
+      --gecos ${USER} --home /home/${USER} ${USER} > /dev/null
+    # Allow sudo without password for user.
+    docker-compose -f ${DOCKER_COMPOSE_FILE} exec web /bin/bash -c "echo '${USER} ALL=(ALL) NOPASSWD: ALL' > /etc/sudoers.d/${USER}"
+  fi
+
   docker-compose -f ${DOCKER_COMPOSE_FILE} exec \
-   -e COLUMNS="$(tput cols)" \
-   -e LINES="$(tput lines)" \
-   web ${@:-/bin/bash}
+    -u ${USER} --env SSH_AUTH_SOCK=${CONTAINER_SSH_AUTH_SOCK} \
+    -e COLUMNS="$(tput cols)" \
+    -e LINES="$(tput lines)" \
+    web ${@:-/bin/bash}
 }
 
 # Command: ./dsh stop
 # Stops project and brings down network after disconnecting nginx proxy.
 dsh_stop() {
   notice "Stopping containers."
+  stop_nginx
   docker-compose -f ${DOCKER_COMPOSE_FILE} stop
+}
+
+# Add functionality to the dsh stop function
+stop_nginx() {
+  if docker network ls | grep "\s${PROJECT}_default" > /dev/null; then
+    notice "Disconnecting nginx proxy from network."
+    set +e
+    docker network disconnect ${PROJECT}_default nginx-proxy
+    set -e
+  fi
 }
 
 # Command: ./dsh purge
 # Stops project, then takes down containers and removes volumes if possible.
 dsh_purge() {
+  dsh_project purge
   docker-compose -f ${DOCKER_COMPOSE_FILE} down -v
 }
 
@@ -97,7 +142,7 @@ dsh_logs() {
 dsh_project() {
   set +e
   if [ -f dsh.project ]; then
-    source dsh.project
+    source dsh.project ${@}
   fi
   set -e
 }
@@ -210,6 +255,8 @@ Commands:\n
 \nIf no command is given, shell is the default.\n
 Commands can be shortened to their uniqe component, eg ./dsh sh is the same as ./dsh shell.\n\n"
 }
+
+dsh_project init
 
 # Set a default command to show usage when no arguments provided.
 COMMAND=${1:-default}
