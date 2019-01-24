@@ -48,8 +48,7 @@
         "classmap": [
             "scripts/composer/ScriptHandler.php",
             "scripts/composer/Plugin.php"
-        ],
-        "files": ["load.environment.php"]
+        ]
     },
     "scripts": {
         "post-install-cmd": [
