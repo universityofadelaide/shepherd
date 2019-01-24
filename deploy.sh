@@ -60,7 +60,7 @@ oc logout
 # log back in as user
 oc login
 oc project ${OPENSHIFT_PROJECT_NAME}
-oc process -f shepherd-openshift.yml -p SHEPHERD_INSTALL_PROFILE=shepherd | oc create -f -
+oc process -f shepherd-openshift.yml -p SHEPHERD_INSTALL_PROFILE=ua_shepherd | oc create -f -
 
 OPENSHIFT_IP=$(oc status | grep 'server https' | sed 's/.*https:\/\/\([0-9a-z\.]*\).*/\1/')
 OPENSHIFT_DOMAIN="${OPENSHIFT_IP}.nip.io"
