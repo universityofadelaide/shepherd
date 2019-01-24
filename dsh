@@ -30,6 +30,90 @@ else
   fi
 fi
 
+# Set some env vars we use in out slightly modified docker-compose files.
+export HOST_SSH_AUTH_SOCK_DIR=$(dirname ${SSH_AUTH_SOCK})
+export CONTAINER_SSH_AUTH_SOCK=/ssh/$(basename ${SSH_AUTH_SOCK})
+
+# Set default type of OpenShift installation if its not already set.
+: ${OPENSHIFT_TYPE:=minishift}
+
+# Password for the mysql server.
+SUPER_SECRET_PASSWORD=super-secret-password
+
+# Path to ssh key with no passphrase.
+: ${BUILD_KEY:=$HOME/.ssh/id_rsa}
+
+if [ "${OPENSHIFT_TYPE}" == "minishift" ]; then
+# Exit if minishift isn't available.
+if ! which minishift > /dev/null; then
+  echo "Minishift not found, is it installed?"
+  exit 1
+fi
+
+# Perform/check setup.
+if [ "$(minishift status)" != "Running" ]; then
+  minishift start
+fi
+
+# Ensure oc command is available.
+eval $(minishift oc-env)
+else
+echo "Using OpenShift in Docker."
+fi
+
+# Are we logged in?
+if [ ! $(oc whoami) ]; then
+# Prompt for login.
+oc login
+fi
+
+# If using Minishift, then
+if [ "${OPENSHIFT_TYPE}" == "minishift" ]; then
+# Setup a new mysql server, expose it and group the services.
+if ! oc get svc | grep -q mysql; then
+  oc new-app mariadb MYSQL_ROOT_PASSWORD=${SUPER_SECRET_PASSWORD} -l db=shepherd
+  oc expose dc mariadb --type=LoadBalancer --name=mysql-external
+  oc annotate svc mysql-external "service.alpha.openshift.io/dependencies=[{\"name\": \"mariadb\", \"kind\": \"Service\"}]"
+fi
+else
+echo "Not using Minishift, attempting to use mysql on your host."
+fi
+
+# Setup the database password in an OpenShift secret.
+if ! oc get secret | grep -q privileged-db-password; then
+oc create secret generic privileged-db-password --from-literal=DATABASE_PASSWORD=${SUPER_SECRET_PASSWORD}
+fi
+
+# Add local ssh key as build-key secret if it exists and has no passphrase.
+if ! oc get secret | grep -q build-key && [ -f ${BUILD_KEY} ] && ! grep -q ENCRYPTED ${BUILD_KEY}; then
+oc create secret generic build-key --from-file=ssh-privatekey=${BUILD_KEY}
+fi
+
+# Create a permanent token that shepherd can use to talk to OpenShift.
+if ! oc get serviceaccount | grep -q shepherd; then
+oc create serviceaccount shepherd
+oc policy add-role-to-user admin system:serviceaccount:myproject:shepherd
+fi
+
+# Retrieve the service account token and the minishift ip.
+SERVICE_ACCOUNT=$(oc describe serviceaccount shepherd | grep Token | awk '{ print $2 }')
+
+# Now set the things that we need in the dsh shell.
+TOKEN=$(oc describe secret ${SERVICE_ACCOUNT} | grep "token:" | awk '{ print $2 }')
+if [ "${OPENSHIFT_TYPE}" == "minishift" ]; then
+  OPENSHIFT_IP=$(minishift ip)
+  OPENSHIFT_DOMAIN="${OPENSHIFT_IP}.nip.io"
+  OPENSHIFT_URL="https://${OPENSHIFT_IP}:8443"
+  DB_HOST="mysql-myproject.${OPENSHIFT_DOMAIN}"
+  DB_PORT=$(oc get service mysql-external --no-headers | sed 's/.*:\([0-9]*\).*/\1/')
+else
+  OPENSHIFT_IP=$(oc status | grep 'server https' | sed 's/.*https:\/\/\([0-9a-z\.]*\).*/\1/')
+  OPENSHIFT_DOMAIN="${OPENSHIFT_IP}.nip.io"
+  OPENSHIFT_URL="https://172.17.0.1:8443"
+  DB_HOST=172.17.0.1
+  DB_PORT=3306
+fi
+
 # Setup some functions to output warnings.
 notice() {
   printf "\e[32;01m$1\e[39;49;00m\n"
@@ -94,7 +178,13 @@ dsh_shell() {
   fi
 
   docker-compose -f ${DOCKER_COMPOSE_FILE} exec \
-    -u ${USER} --env SSH_AUTH_SOCK=${CONTAINER_SSH_AUTH_SOCK} \
+    -u ${USER} \
+    --env SSH_AUTH_SOCK=${CONTAINER_SSH_AUTH_SOCK} \
+    --env TOKEN=${TOKEN} \
+    --env DB_HOST=${DB_HOST} \
+    --env DB_PORT=${DB_PORT} \
+    --env OPENSHIFT_DOMAIN=${OPENSHIFT_DOMAIN} \
+    --env OPENSHIFT_URL=${OPENSHIFT_URL} \
     -e COLUMNS="$(tput cols)" \
     -e LINES="$(tput lines)" \
     web ${@:-/bin/bash}
