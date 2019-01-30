@@ -434,7 +434,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
         $short_name,
         $environment_id,
         $source_ref,
-        "drush -r web cr"
+        "drush -r /code/web cr"
       );
     }
 
@@ -944,6 +944,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
           $volumes['shared']['name'],
           'ReadWriteMany',
           '5Gi',
+          $deployment_name,
           $storage_class
         );
       }
@@ -952,6 +953,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
           $volumes['backup']['name'],
           'ReadWriteMany',
           '5Gi',
+          $deployment_name,
           $storage_class
         );
       }
