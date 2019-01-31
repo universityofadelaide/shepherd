@@ -12,7 +12,7 @@ if [ $(version ${DOCKER_COMPOSE_VERSION}) -lt $(version "1.21.0") ]; then
   error "Please update docker-compose to >=1.21.0."
 fi
 
-# Set some env vars we use in our slightly modified docker-compose files
+# Set some env vars we use in our slightly modified docker-compose files.
 export HOST_SSH_AUTH_SOCK_DIR=$(dirname ${SSH_AUTH_SOCK})
 export CONTAINER_SSH_AUTH_SOCK=/ssh/$(basename ${SSH_AUTH_SOCK})
 
@@ -182,7 +182,7 @@ dsh_shell() {
 }
 
 # Command: ./dsh stop
-# Stops project and brings down network
+# Stops project and brings down network.
 dsh_stop() {
   notice "Stopping containers."
   docker-compose -f ${DOCKER_COMPOSE_FILE} stop
