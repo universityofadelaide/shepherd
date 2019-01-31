@@ -5,8 +5,9 @@ services:
     # You will notice that we are forwarding port which do not belong to PHP.
     # We have to declare them here because these "sidecar" services are sharing
     # THIS containers network stack.
+    # Expose shepherd on port 8000, launched sites will appear through openshift on port 80
     ports:
-      - "80:80"
+      - "8000:80"
       - "3306:3306"
       - "8025:8025"
     environment:

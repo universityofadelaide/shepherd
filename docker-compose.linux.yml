@@ -5,6 +5,7 @@ services:
     # Chrome webdriver requires this - used for tests.
     privileged: true
     hostname: ${PROJECT}
+    # Expose shepherd on port 8000, launched sites will appear through openshift on port 80
     ports:
       - 8000:80
     environment:
@@ -61,4 +62,3 @@ services:
 
 networks:
   default:
-

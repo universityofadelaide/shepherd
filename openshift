@@ -4,15 +4,14 @@
 set -euo pipefail
 IFS=$'\n\t'
 
+if [ -f /.dockerenv ]; then
+  error "Inception error - you can't run $0 within a docker container."
+  exit
+fi
+
 BASE_DIR="/openshift/uni-shepherd"
 
 openshift_start() {
-
-  if [ -f /.dockerenv ]; then
-    error "Inception error - you can't run $0 within a docker container."
-    exit
-  fi
-
   # By default oc runs the same version of OpenShift as itself.
   if [ $(oc version | grep "^oc v" | awk '{print $2}' | awk -F '.' '{print $2}') -lt "10" ]; then
     oc cluster up --host-data-dir=${BASE_DIR} --public-hostname=172.17.0.1
@@ -27,17 +26,12 @@ openshift_stop() {
   oc cluster down
 }
 
-openshift_clean() {
+openshift_purge() {
   ./dsh purge
   oc cluster down
   sudo rm -rf ${BASE_DIR}
   sudo mkdir -p ${BASE_DIR}
   sudo chown ${USER}:${USER} -R ${BASE_DIR}
-  for i in $(mysql -uroot -psuper-secret-password -h172.17.0.1 -e'show databases like "env_%"' -B -s)
-  do
-    echo "Dropping database $i"
-    mysql -uroot -psuper-secret-password -h172.17.0.1 -e"drop database $i"
-  done
 }
 
 COMMAND=${1:-default}
@@ -49,11 +43,11 @@ case ${COMMAND} in
   sto*)
     openshift_stop
     ;;
-  c*)
-    openshift_clean
+  p*)
+    openshift_purge
     ;;
   *)
-    printf "Unknown command specified. Try:\n$0 [start|stop|clean].\n"
+    printf "Unknown command specified. Try:\n$0 [start|stop|purge].\n"
     exit 0
     ;;
 esac

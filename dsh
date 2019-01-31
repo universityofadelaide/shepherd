@@ -3,7 +3,7 @@
 # `set +e` is used to continue on errors throughout this script.
 set -euo pipefail
 
-# Used as the prefix for docker networking, container naming and nginx hostname.
+# Used as the prefix for docker networking and container naming.
 export PROJECT=$(basename ${PWD})
 # docker-compose stopped stripping chars from project name in 1.21.0.
 export DOCKER_COMPOSE_VERSION=$(docker-compose -v | awk '{print $3}' | rev | cut -c 2- | rev)
@@ -76,7 +76,7 @@ if [ "${OPENSHIFT_TYPE}" == "minishift" ]; then
     oc annotate svc mysql-external "service.alpha.openshift.io/dependencies=[{\"name\": \"mariadb\", \"kind\": \"Service\"}]"
   fi
 else
-  echo "Not using Minishift, attempting to use mysql on your host."
+  echo "Not using Minishift, assuming mysql is available on port 3306."
 fi
 
 # Setup the database password in an OpenShift secret.
@@ -137,26 +137,13 @@ fi
 # Configures environment then brings up project using docker-compose.yml file.
 dsh_start() {
   notice "Starting project containers."
-  export URL="http://127.0.0.1"
+  export URL="http://127.0.0.1:8000"
   docker-compose -f ${DOCKER_COMPOSE_FILE} up -d
-  setup_nginx
   notice "Please wait about 10 seconds for the database to settle.
 You can now access the site from ${URL}.
 Project files are available in /code, You may need to build and install your
   project before it starts working.
 Connecting via ./dsh shell and running robo build is a common next step."
-}
-
-# Add functionality to the dsh setup/start function
-setup_nginx() {
-  set +e
-  export URL="http://${PROJECT}.${DOMAIN}:8080"
-  # Test to make sure its not already on the network.
-  if ! docker network inspect ${PROJECT}_default | grep "nginx-proxy" > /dev/null; then
-    notice "Connecting nginx-proxy to the network."
-    docker network connect ${PROJECT}_default nginx-proxy
-  fi
-  set -e
 }
 
 # Command: ./dsh shell
@@ -191,27 +178,15 @@ dsh_shell() {
 }
 
 # Command: ./dsh stop
-# Stops project and brings down network after disconnecting nginx proxy.
+# Stops project and brings down network
 dsh_stop() {
   notice "Stopping containers."
-  stop_nginx
   docker-compose -f ${DOCKER_COMPOSE_FILE} stop
-}
-
-# Add functionality to the dsh stop function
-stop_nginx() {
-  if docker network ls | grep "\s${PROJECT}_default" > /dev/null; then
-    notice "Disconnecting nginx proxy from network."
-    set +e
-    docker network disconnect ${PROJECT}_default nginx-proxy
-    set -e
-  fi
 }
 
 # Command: ./dsh purge
 # Stops project, then takes down containers and removes volumes if possible.
 dsh_purge() {
-  dsh_project purge
   docker-compose -f ${DOCKER_COMPOSE_FILE} down -v
 }
 
@@ -227,14 +202,6 @@ dsh_status() {
 # Tails logs from web container.
 dsh_logs() {
   docker-compose -f ${DOCKER_COMPOSE_FILE} logs -f web
-}
-
-dsh_project() {
-  set +e
-  if [ -f dsh.project ]; then
-    source dsh.project ${@}
-  fi
-  set -e
 }
 
 # Command: ./dsh pull
@@ -345,8 +312,6 @@ Commands:\n
 \nIf no command is given, shell is the default.\n
 Commands can be shortened to their uniqe component, eg ./dsh sh is the same as ./dsh shell.\n\n"
 }
-
-dsh_project init
 
 # Set a default command to show usage when no arguments provided.
 COMMAND=${1:-default}
