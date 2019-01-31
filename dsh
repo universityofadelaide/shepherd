@@ -95,6 +95,9 @@ dsh_openshift_init() {
     echo "Not using Minishift, assuming mysql is available on port 3306."
   fi
 
+  # Setup the redis configmap so redis starts.
+  oc create -f redis-config.yml
+
   # Setup the database password in an OpenShift secret.
   if ! oc get secret | grep -q privileged-db-password; then
     oc create secret generic privileged-db-password --from-literal=DATABASE_PASSWORD=${SUPER_SECRET_PASSWORD}
