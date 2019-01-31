@@ -44,55 +44,55 @@ SUPER_SECRET_PASSWORD=super-secret-password
 : ${BUILD_KEY:=$HOME/.ssh/id_rsa}
 
 if [ "${OPENSHIFT_TYPE}" == "minishift" ]; then
-# Exit if minishift isn't available.
-if ! which minishift > /dev/null; then
-  echo "Minishift not found, is it installed?"
-  exit 1
-fi
+  # Exit if minishift isn't available.
+  if ! which minishift > /dev/null; then
+    echo "Minishift not found, is it installed?"
+    exit 1
+  fi
 
-# Perform/check setup.
-if [ "$(minishift status)" != "Running" ]; then
-  minishift start
-fi
+  # Perform/check setup.
+  if [ "$(minishift status)" != "Running" ]; then
+    minishift start
+  fi
 
-# Ensure oc command is available.
-eval $(minishift oc-env)
+  # Ensure oc command is available.
+  eval $(minishift oc-env)
 else
-echo "Using OpenShift in Docker."
+  echo "Using OpenShift in Docker."
 fi
 
 # Are we logged in?
 if [ ! $(oc whoami) ]; then
-# Prompt for login.
-oc login
+  # Prompt for login.
+  oc login
 fi
 
 # If using Minishift, then
 if [ "${OPENSHIFT_TYPE}" == "minishift" ]; then
-# Setup a new mysql server, expose it and group the services.
-if ! oc get svc | grep -q mysql; then
-  oc new-app mariadb MYSQL_ROOT_PASSWORD=${SUPER_SECRET_PASSWORD} -l db=shepherd
-  oc expose dc mariadb --type=LoadBalancer --name=mysql-external
-  oc annotate svc mysql-external "service.alpha.openshift.io/dependencies=[{\"name\": \"mariadb\", \"kind\": \"Service\"}]"
-fi
+  # Setup a new mysql server, expose it and group the services.
+  if ! oc get svc | grep -q mysql; then
+    oc new-app mariadb MYSQL_ROOT_PASSWORD=${SUPER_SECRET_PASSWORD} -l db=shepherd
+    oc expose dc mariadb --type=LoadBalancer --name=mysql-external
+    oc annotate svc mysql-external "service.alpha.openshift.io/dependencies=[{\"name\": \"mariadb\", \"kind\": \"Service\"}]"
+  fi
 else
-echo "Not using Minishift, attempting to use mysql on your host."
+  echo "Not using Minishift, attempting to use mysql on your host."
 fi
 
 # Setup the database password in an OpenShift secret.
 if ! oc get secret | grep -q privileged-db-password; then
-oc create secret generic privileged-db-password --from-literal=DATABASE_PASSWORD=${SUPER_SECRET_PASSWORD}
+  oc create secret generic privileged-db-password --from-literal=DATABASE_PASSWORD=${SUPER_SECRET_PASSWORD}
 fi
 
 # Add local ssh key as build-key secret if it exists and has no passphrase.
 if ! oc get secret | grep -q build-key && [ -f ${BUILD_KEY} ] && ! grep -q ENCRYPTED ${BUILD_KEY}; then
-oc create secret generic build-key --from-file=ssh-privatekey=${BUILD_KEY}
+  oc create secret generic build-key --from-file=ssh-privatekey=${BUILD_KEY}
 fi
 
 # Create a permanent token that shepherd can use to talk to OpenShift.
 if ! oc get serviceaccount | grep -q shepherd; then
-oc create serviceaccount shepherd
-oc policy add-role-to-user admin system:serviceaccount:myproject:shepherd
+  oc create serviceaccount shepherd
+  oc policy add-role-to-user admin system:serviceaccount:myproject:shepherd
 fi
 
 # Retrieve the service account token and the minishift ip.
