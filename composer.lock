@@ -60,24 +60,24 @@
         },
         {
             "name": "chi-teck/drupal-code-generator",
-            "version": "1.27.0",
+            "version": "1.28.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Chi-teck/drupal-code-generator.git",
-                "reference": "a839bc89d385087d8a7a96a9c1c4bd470ffb627e"
+                "reference": "a43131309b56a4c1874f39a9eaa4f6cb1a9832cd"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Chi-teck/drupal-code-generator/zipball/a839bc89d385087d8a7a96a9c1c4bd470ffb627e",
-                "reference": "a839bc89d385087d8a7a96a9c1c4bd470ffb627e",
+                "url": "https://api.github.com/repos/Chi-teck/drupal-code-generator/zipball/a43131309b56a4c1874f39a9eaa4f6cb1a9832cd",
+                "reference": "a43131309b56a4c1874f39a9eaa4f6cb1a9832cd",
                 "shasum": ""
             },
             "require": {
                 "ext-json": "*",
                 "php": ">=5.5.9",
-                "symfony/console": "~2.7|^3",
-                "symfony/filesystem": "~2.7|^3",
-                "twig/twig": "^1.23.1"
+                "symfony/console": "^3.4 || ^4.0",
+                "symfony/filesystem": "^3.4 || ^4.0",
+                "twig/twig": "^1.35"
             },
             "bin": [
                 "bin/dcg"
@@ -101,7 +101,7 @@
                 "GPL-2.0-or-later"
             ],
             "description": "Drupal code generator",
-            "time": "2018-10-11T08:05:59+00:00"
+            "time": "2019-01-30T10:34:16+00:00"
         },
         {
             "name": "composer/installers",
@@ -287,21 +287,21 @@
         },
         {
             "name": "consolidation/annotated-command",
-            "version": "2.11.0",
+            "version": "2.11.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/consolidation/annotated-command.git",
-                "reference": "edea407f57104ed518cc3c3b47d5b84403ee267a"
+                "reference": "10603e40dff34531cee41a79543d3c2f1d68bc56"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/consolidation/annotated-command/zipball/edea407f57104ed518cc3c3b47d5b84403ee267a",
-                "reference": "edea407f57104ed518cc3c3b47d5b84403ee267a",
+                "url": "https://api.github.com/repos/consolidation/annotated-command/zipball/10603e40dff34531cee41a79543d3c2f1d68bc56",
+                "reference": "10603e40dff34531cee41a79543d3c2f1d68bc56",
                 "shasum": ""
             },
             "require": {
                 "consolidation/output-formatters": "^3.4",
-                "php": ">=5.4.0",
+                "php": ">=5.4.5",
                 "psr/log": "^1",
                 "symfony/console": "^2.8|^3|^4",
                 "symfony/event-dispatcher": "^2.5|^3|^4",
@@ -379,7 +379,7 @@
                 }
             ],
             "description": "Initialize Symfony Console commands from annotated command class methods.",
-            "time": "2018-12-29T04:43:17+00:00"
+            "time": "2019-01-31T18:34:33+00:00"
         },
         {
             "name": "consolidation/config",
@@ -5698,22 +5698,24 @@
         },
         {
             "name": "zendframework/zend-feed",
-            "version": "2.10.3",
+            "version": "2.11.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zendframework/zend-feed.git",
-                "reference": "6641f4cf3f4586c63f83fd70b6d19966025c8888"
+                "reference": "5248e9fffa760e5c36092aeff02c3797e4a8a690"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zendframework/zend-feed/zipball/6641f4cf3f4586c63f83fd70b6d19966025c8888",
-                "reference": "6641f4cf3f4586c63f83fd70b6d19966025c8888",
+                "url": "https://api.github.com/repos/zendframework/zend-feed/zipball/5248e9fffa760e5c36092aeff02c3797e4a8a690",
+                "reference": "5248e9fffa760e5c36092aeff02c3797e4a8a690",
                 "shasum": ""
             },
             "require": {
+                "ext-dom": "*",
+                "ext-libxml": "*",
                 "php": "^5.6 || ^7.0",
                 "zendframework/zend-escaper": "^2.5.2",
-                "zendframework/zend-stdlib": "^2.7.7 || ^3.1"
+                "zendframework/zend-stdlib": "^3.2.1"
             },
             "require-dev": {
                 "phpunit/phpunit": "^5.7.23 || ^6.4.3",
@@ -5736,8 +5738,8 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "2.10.x-dev",
-                    "dev-develop": "2.11.x-dev"
+                    "dev-master": "2.11.x-dev",
+                    "dev-develop": "2.12.x-dev"
                 }
             },
             "autoload": {
@@ -5755,7 +5757,7 @@
                 "feed",
                 "zf"
             ],
-            "time": "2018-08-01T13:53:20+00:00"
+            "time": "2019-01-29T21:37:15+00:00"
         },
         {
             "name": "zendframework/zend-stdlib",
