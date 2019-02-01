@@ -96,7 +96,7 @@ dsh_openshift_init() {
   fi
 
   # Setup the redis configmap so redis starts.
-  oc create -f redis-config.yml
+  oc apply -f redis-config.yml
 
   # Setup the database password in an OpenShift secret.
   if ! oc get secret | grep -q privileged-db-password; then
