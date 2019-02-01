@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "476c87a069e1b4c216536c1de4806a4e",
+    "content-hash": "4b7f18d2586595c6060a1840db1fc424",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -1862,8 +1862,7 @@
                     "merge-extra": false
                 },
                 "patches_applied": {
-                    "Switch to a memory cache backend during installation": "https://www.drupal.org/files/issues/2488350-2-58.patch",
-                    "Allow profiles to provide a base profile": "https://www.drupal.org/files/issues/drupal-n1356276-417-d8.5.x.patch"
+                    "Switch to a memory cache backend during installation": "https://www.drupal.org/files/issues/2488350-2-58.patch"
                 }
             },
             "autoload": {
@@ -2180,6 +2179,10 @@
                 {
                     "name": "kristiaanvandeneynde",
                     "homepage": "https://www.drupal.org/user/1345130"
+                },
+                {
+                    "name": "ronaldtebrake",
+                    "homepage": "https://www.drupal.org/user/2314038"
                 }
             ],
             "description": "This module allows you to group users, content and other entities",
@@ -4479,7 +4482,7 @@
                 },
                 {
                     "name": "Gert de Pagter",
-                    "email": "BackEndTea@gmail.com"
+                    "email": "backendtea@gmail.com"
                 }
             ],
             "description": "Symfony polyfill for ctype functions",
@@ -8047,17 +8050,6 @@
         {
             "name": "webflo/drupal-core-require-dev",
             "version": "8.5.10",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/webflo/drupal-core-require-dev.git",
-                "reference": "240d27c910ad06182fb1c6d534f135e930e3dd8e"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/webflo/drupal-core-require-dev/zipball/240d27c910ad06182fb1c6d534f135e930e3dd8e",
-                "reference": "240d27c910ad06182fb1c6d534f135e930e3dd8e",
-                "shasum": ""
-            },
             "require": {
                 "behat/mink": "1.7.x-dev",
                 "behat/mink-goutte-driver": "^1.2",
