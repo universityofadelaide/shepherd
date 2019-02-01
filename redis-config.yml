@@ -1,0 +1,9 @@
+apiVersion: v1
+data:
+  redis-config: |
+    save ""
+kind: ConfigMap
+metadata:
+  creationTimestamp: null
+  name: redis-config
+  selfLink: /api/v1/namespaces/myproject/configmaps/redis-config
