@@ -357,7 +357,7 @@ class Environment {
    * @return bool
    *   True if unique, false if not.
    */
-  private function validateEnvironmentNameUniqueness($environment_name) {
+  protected function validateEnvironmentNameUniqueness($environment_name) {
     $results = $this->node->getQuery()
       ->condition('type', 'shp_environment')
       ->condition('field_shp_domain', $environment_name)
