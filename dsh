@@ -62,7 +62,7 @@ dsh_openshift_init() {
   if [ "${OPENSHIFT_TYPE}" == "minishift" ]; then
     # Exit if minishift isn't available.
     if ! which minishift > /dev/null; then
-      echo "Minishift not found, is it installed?"
+      error "Minishift not found, is it installed?"
       exit 1
     fi
 
@@ -74,13 +74,13 @@ dsh_openshift_init() {
     # Ensure oc command is available.
     eval $(minishift oc-env)
   else
-    echo "Using OpenShift in Docker."
+    notice "Using OpenShift in Docker."
   fi
 
-  # Are we logged in?
-  if [ ! $(oc whoami) ]; then
-    # Prompt for login.
-    oc login
+  # Are we logged in as local developer, if not, bail!
+  if [[ $(oc whoami) != "developer" ]]; then
+    error "You are not logged in as developer, exiting for safety reasons."
+    exit
   fi
 
   # If using Minishift, then
@@ -92,24 +92,26 @@ dsh_openshift_init() {
       oc annotate svc mysql-external "service.alpha.openshift.io/dependencies=[{\"name\": \"mariadb\", \"kind\": \"Service\"}]"
     fi
   else
-    echo "Not using Minishift, assuming mysql is available on port 3306."
+    notice "Not using Minishift, assuming mysql is available on port 3306."
   fi
 
   # Setup the redis configmap so redis starts.
-  oc apply -f redis-config.yml
+  if ! oc get configmap redis-config > /dev/null 2>&1; then
+    oc create -f redis-config.yml
+  fi
 
   # Setup the database password in an OpenShift secret.
-  if ! oc get secret | grep -q privileged-db-password; then
+  if ! oc get secret privileged-db-password > /dev/null 2>&1; then
     oc create secret generic privileged-db-password --from-literal=DATABASE_PASSWORD=${SUPER_SECRET_PASSWORD}
   fi
 
   # Add local ssh key as build-key secret if it exists and has no passphrase.
-  if ! oc get secret | grep -q build-key && [ -f ${BUILD_KEY} ] && ! grep -q ENCRYPTED ${BUILD_KEY}; then
+  if ! oc get secret build-key > /dev/null 2>&1 && [ -f ${BUILD_KEY} ] && ! grep -q ENCRYPTED ${BUILD_KEY}; then
     oc create secret generic build-key --from-file=ssh-privatekey=${BUILD_KEY}
   fi
 
   # Create a permanent token that shepherd can use to talk to OpenShift.
-  if ! oc get serviceaccount | grep -q shepherd; then
+  if ! oc get serviceaccount shepherd > /dev/null 2>&1; then
     oc create serviceaccount shepherd
     oc policy add-role-to-user admin system:serviceaccount:myproject:shepherd
   fi
