@@ -20,15 +20,15 @@ class OpenShiftWithRedis extends OpenShiftOrchestrationProvider {
   /**
    * Create a redis deployment on OpenShift.
    *
-   * @todo move this and the delete below into the shp_redis_support module.
-   * Can we extend this class in the redis module or something?
-   *
    * @param string $deployment_name
    *   The deployment name.
+   *
+   * @throws \UniversityOfAdelaide\OpenShift\ClientException
    */
   public function createRedisDeployment(string $deployment_name) {
     $redis_name = $deployment_name . '-redis';
     $redis_data = $deployment_name . '-data';
+    $redis_conf = $deployment_name . '-config';
     $redis_port = 6379;
 
     $image_stream = $this->client->getImageStream('redis');
@@ -102,9 +102,29 @@ class OpenShiftWithRedis extends OpenShiftOrchestrationProvider {
                   [
                     'image' => 'docker.io/redis:alpine',
                     'name' => $redis_name,
+                    'livenessProbe' => [
+                      'initialDelaySeconds' => 30,
+                      'tcpSocket' => [
+                        'port' => 6379
+                      ],
+                    ],
+                    'command' => [
+                      '/usr/local/bin/docker-entrypoint.sh',
+                      '/usr/local/etc/redis/redis.conf'
+                    ],
                     'ports' => [
                       [
                         'containerPort' => $redis_port,
+                      ],
+                    ],
+                    'readinessProbe' => [
+                      'exec' => [
+                        'command' => [
+                          '/bin/sh',
+                          '-i',
+                          '-c',
+                          'test "$(redis-cli ping)" == "PONG"',
+                        ],
                       ],
                     ],
                     'resources' => [],
@@ -113,6 +133,11 @@ class OpenShiftWithRedis extends OpenShiftOrchestrationProvider {
                         'mountPath' => '/data',
                         'name' => $redis_data,
                       ],
+                      [
+                        'mountPath' => '/usr/local/etc/redis',
+                        'name' => $redis_conf,
+                      ],
+
                     ],
                   ],
                 ],
@@ -121,7 +146,20 @@ class OpenShiftWithRedis extends OpenShiftOrchestrationProvider {
                   'emptyDir' => [],
                   'name' => $redis_data,
                 ],
+                [
+                  'name' => $redis_conf,
+                  'configMap' => [
+                    'name' => 'redis-config',
+                    'items' => [
+                      [
+                        'key' => 'redis-config',
+                        'path' => 'redis.conf'
+                      ],
+                    ],
+                  ],
+                ],
               ],
+
             ],
         ],
         'triggers' => [
@@ -151,6 +189,8 @@ class OpenShiftWithRedis extends OpenShiftOrchestrationProvider {
    *
    * @param string $deployment_name
    *   The deployment name.
+   *
+   * @throws \UniversityOfAdelaide\OpenShift\ClientException
    */
   public function deleteRedisDeployment(string $deployment_name) {
     $redis_name = $deployment_name . '-redis';

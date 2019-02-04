@@ -23,7 +23,7 @@ objects:
             - args:
               - /bin/sh
               - -c
-              - cd /code; drush -r web shp-p || true
+              - cd /code; drush -r /code/web shp-p || true
               env:
               - name: DATABASE_HOST
                 value: ${DATABASE_HOST}
@@ -93,7 +93,7 @@ objects:
             - args:
               - /bin/sh
               - -c
-              - cd /code; drush -r web cron || true
+              - cd /code; drush -r /code/web cron || true
               env:
               - name: DATABASE_HOST
                 value: ${DATABASE_HOST}

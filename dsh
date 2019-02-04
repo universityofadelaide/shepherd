@@ -1,0 +1,361 @@
+#!/bin/bash
+
+# `set +e` is used to continue on errors throughout this script.
+set -euo pipefail
+
+# Used as the prefix for docker networking and container naming.
+export PROJECT=$(basename ${PWD})
+# docker-compose stopped stripping chars from project name in 1.21.0.
+export DOCKER_COMPOSE_VERSION=$(docker-compose -v | awk '{print $3}' | rev | cut -c 2- | rev)
+function version { echo "$@" | awk -F. '{ printf("%d%03d%03d%03d\n", $1,$2,$3,$4); }'; }
+if [ $(version ${DOCKER_COMPOSE_VERSION}) -lt $(version "1.21.0") ]; then
+  error "Please update docker-compose to >=1.21.0."
+fi
+
+# Set some env vars we use in our slightly modified docker-compose files.
+export HOST_SSH_AUTH_SOCK_DIR=$(dirname ${SSH_AUTH_SOCK})
+export CONTAINER_SSH_AUTH_SOCK=/ssh/$(basename ${SSH_AUTH_SOCK})
+
+if [ ${GITLAB_CI:-false} == "true" ]; then
+  HOST_TYPE='linux'
+  export DOCKER_COMPOSE_FILE='docker-compose.ci.yml'
+else
+  # Determine the OS type of the host machine.
+  if [ "$(uname)" == "Darwin" ]; then
+    HOST_TYPE='mac'
+    export DOCKER_COMPOSE_FILE='docker-compose.osx.yml'
+  else
+    HOST_TYPE='linux'
+    export DOCKER_COMPOSE_FILE='docker-compose.linux.yml'
+  fi
+fi
+
+# Setup some functions to output warnings.
+notice() {
+  printf "\e[32;01m$1\e[39;49;00m\n"
+}
+
+warning() {
+  printf "\e[33;01m$1\e[39;49;00m\n"
+}
+
+error() {
+  printf "\e[31;01m$1\e[39;49;00m\n"
+}
+
+# Ensure script is NOT running inside a container - must be run from host.
+if [ -f /.dockerenv ]; then
+  error "Inception error - you can't run $0 within a docker container."
+  exit
+fi
+
+dsh_openshift_init() {
+  # Set default type of OpenShift installation if its not already set.
+  : ${OPENSHIFT_TYPE:=minishift}
+
+  # Password for the mysql server.
+  SUPER_SECRET_PASSWORD=super-secret-password
+
+  # Path to ssh key with no passphrase.
+  : ${BUILD_KEY:=$HOME/.ssh/id_rsa}
+
+  if [ "${OPENSHIFT_TYPE}" == "minishift" ]; then
+    # Exit if minishift isn't available.
+    if ! which minishift > /dev/null; then
+      echo "Minishift not found, is it installed?"
+      exit 1
+    fi
+
+    # Perform/check setup.
+    if [ "$(minishift status)" != "Running" ]; then
+      minishift start
+    fi
+
+    # Ensure oc command is available.
+    eval $(minishift oc-env)
+  else
+    echo "Using OpenShift in Docker."
+  fi
+
+  # Are we logged in?
+  if [ ! $(oc whoami) ]; then
+    # Prompt for login.
+    oc login
+  fi
+
+  # If using Minishift, then
+  if [ "${OPENSHIFT_TYPE}" == "minishift" ]; then
+    # Setup a new mysql server, expose it and group the services.
+    if ! oc get svc | grep -q mysql; then
+      oc new-app mariadb MYSQL_ROOT_PASSWORD=${SUPER_SECRET_PASSWORD} -l db=shepherd
+      oc expose dc mariadb --type=LoadBalancer --name=mysql-external
+      oc annotate svc mysql-external "service.alpha.openshift.io/dependencies=[{\"name\": \"mariadb\", \"kind\": \"Service\"}]"
+    fi
+  else
+    echo "Not using Minishift, assuming mysql is available on port 3306."
+  fi
+
+  # Setup the redis configmap so redis starts.
+  oc apply -f redis-config.yml
+
+  # Setup the database password in an OpenShift secret.
+  if ! oc get secret | grep -q privileged-db-password; then
+    oc create secret generic privileged-db-password --from-literal=DATABASE_PASSWORD=${SUPER_SECRET_PASSWORD}
+  fi
+
+  # Add local ssh key as build-key secret if it exists and has no passphrase.
+  if ! oc get secret | grep -q build-key && [ -f ${BUILD_KEY} ] && ! grep -q ENCRYPTED ${BUILD_KEY}; then
+    oc create secret generic build-key --from-file=ssh-privatekey=${BUILD_KEY}
+  fi
+
+  # Create a permanent token that shepherd can use to talk to OpenShift.
+  if ! oc get serviceaccount | grep -q shepherd; then
+    oc create serviceaccount shepherd
+    oc policy add-role-to-user admin system:serviceaccount:myproject:shepherd
+  fi
+
+  # Retrieve the service account token and the minishift ip.
+  SERVICE_ACCOUNT=$(oc describe serviceaccount shepherd | grep Token | awk '{ print $2 }')
+
+  # Now set the things that we need in the dsh shell.
+  TOKEN=$(oc describe secret ${SERVICE_ACCOUNT} | grep "token:" | awk '{ print $2 }')
+  if [ "${OPENSHIFT_TYPE}" == "minishift" ]; then
+    OPENSHIFT_IP=$(minishift ip)
+    OPENSHIFT_DOMAIN="${OPENSHIFT_IP}.nip.io"
+    OPENSHIFT_URL="https://${OPENSHIFT_IP}:8443"
+    DB_HOST="mysql-myproject.${OPENSHIFT_DOMAIN}"
+    DB_PORT=$(oc get service mysql-external --no-headers | sed 's/.*:\([0-9]*\).*/\1/')
+  else
+    OPENSHIFT_IP=$(oc status | grep 'server https' | sed 's/.*https:\/\/\([0-9a-z\.]*\).*/\1/')
+    OPENSHIFT_DOMAIN="${OPENSHIFT_IP}.nip.io"
+    OPENSHIFT_URL="https://172.17.0.1:8443"
+    DB_HOST=172.17.0.1
+    DB_PORT=3306
+  fi
+}
+
+# Command: ./dsh start
+# Configures environment then brings up project using docker-compose.yml file.
+dsh_start() {
+  dsh_openshift_init
+  notice "Starting project containers."
+  export URL="http://127.0.0.1:8000"
+  docker-compose -f ${DOCKER_COMPOSE_FILE} up -d
+  notice "Please wait about 10 seconds for the database to settle.
+You can now access the site from ${URL}.
+Project files are available in /code, You may need to build and install your
+  project before it starts working.
+Connecting via ./dsh shell and running robo build is a common next step."
+}
+
+# Command: ./dsh shell
+# Connects a shell to the web image as the current user.
+dsh_shell() {
+  if ! docker ps | grep "\s${PROJECT}_web_1" > /dev/null; then
+    notice "Project not running, starting."
+    dsh_start
+  else
+    dsh_openshift_init
+  fi
+
+  # Run the shell as the current user, avoiding permission issues.
+  if ! docker-compose -f ${DOCKER_COMPOSE_FILE} exec web id -u ${USER} > /dev/null 2>&1; then
+    notice "Setting up user $USER on web container."
+    # Add user with local $USER name to container.
+    docker-compose -f ${DOCKER_COMPOSE_FILE} exec web adduser --disabled-password --uid ${UID} \
+      --gecos ${USER} --home /home/${USER} ${USER} > /dev/null
+    # Allow sudo without password for user.
+    docker-compose -f ${DOCKER_COMPOSE_FILE} exec web /bin/bash -c "echo '${USER} ALL=(ALL) NOPASSWD: ALL' > /etc/sudoers.d/${USER}"
+  fi
+
+  docker-compose -f ${DOCKER_COMPOSE_FILE} exec \
+    -u ${USER} \
+    --env SSH_AUTH_SOCK=${CONTAINER_SSH_AUTH_SOCK} \
+    --env TOKEN=${TOKEN} \
+    --env DB_HOST=${DB_HOST} \
+    --env DB_PORT=${DB_PORT} \
+    --env OPENSHIFT_DOMAIN=${OPENSHIFT_DOMAIN} \
+    --env OPENSHIFT_URL=${OPENSHIFT_URL} \
+    --env COLUMNS="$(tput cols)" \
+    --env LINES="$(tput lines)" \
+    web ${@:-/bin/bash}
+}
+
+# Command: ./dsh stop
+# Stops project and brings down network.
+dsh_stop() {
+  notice "Stopping containers."
+  docker-compose -f ${DOCKER_COMPOSE_FILE} stop
+}
+
+# Command: ./dsh purge
+# Stops project, then takes down containers and removes volumes if possible.
+dsh_purge() {
+  docker-compose -f ${DOCKER_COMPOSE_FILE} down -v
+}
+
+# Command: ./dsh status
+# Shows status information about project containers.
+dsh_status() {
+  if ! docker ps | grep "\s${PROJECT}_"; then
+    notice "${PROJECT} not running."
+  fi
+}
+
+# Command: ./dsh logs
+# Tails logs from web container.
+dsh_logs() {
+  docker-compose -f ${DOCKER_COMPOSE_FILE} logs -f web
+}
+
+# Command: ./dsh pull
+# Fetches all images used by the project.
+dsh_pull() {
+  docker-compose -f ${DOCKER_COMPOSE_FILE} pull
+}
+
+# Command: ./dsh nfs
+# Sets up NFS integration for OSX.
+NFS_FILE=/etc/exports
+NFS_LINE="/Users -alldirs -mapall=$(id -u):$(id -g) localhost"
+dsh_setup_nfs() {
+  if [ ${HOST_TYPE} != "mac" ]; then
+    echo "This script is OSX-only. Please do not run it on any other Unix."
+    exit 1
+  fi
+
+  if [[ $EUID -eq 0 ]]; then
+    echo "This script must NOT be run with sudo/root. Please re-run without sudo." 1>&2
+    exit 1
+  fi
+
+  echo ""
+  echo " +-----------------------------+"
+  echo " | Setup native NFS for Docker |"
+  echo " +-----------------------------+"
+  echo ""
+
+  echo "WARNING: This script will shut down running containers."
+  echo ""
+  echo -n "Do you wish to proceed? [y]: "
+  read decision
+
+  if [ "$decision" != "y" ]; then
+    echo "Exiting. No changes made."
+    exit 1
+  fi
+
+  echo ""
+
+  if ! docker ps > /dev/null 2>&1 ; then
+    echo "== Waiting for docker to start..."
+  fi
+
+  open -a Docker
+
+  while ! docker ps > /dev/null 2>&1 ; do sleep 2; done
+
+  echo "== Stopping running docker containers..."
+  docker-compose -f ${DOCKER_COMPOSE_FILE} down > /dev/null 2>&1
+  docker volume prune -f > /dev/null
+
+  osascript -e 'quit app "Docker"'
+
+  echo "== Resetting folder permissions..."
+  sudo chown -R "$(id -u)":"$(id -g)" .
+
+  echo "== Setting up nfs..."
+  sudo cp /dev/null "$NFS_FILE"
+  grep -qF -- "$NFS_LINE" "$NFS_FILE" || sudo echo "$NFS_LINE" | sudo tee -a "$NFS_FILE" > /dev/null
+
+  LINE="nfs.server.mount.require_resv_port = 0"
+  FILE=/etc/nfs.conf
+  grep -qF -- "$LINE" "$FILE" || sudo echo "$LINE" | sudo tee -a "$FILE" > /dev/null
+
+  echo "== Restarting nfsd..."
+  sudo nfsd restart
+
+  echo "== Restarting docker..."
+  open -a Docker
+
+  while ! docker ps > /dev/null 2>&1 ; do sleep 2; done
+
+  echo ""
+  echo "SUCCESS! Now go run your containers 🐳"
+}
+
+# Command: ./dsh rnfs
+# Removes nfs setup.
+dsh_remove_nfs() {
+  if [ ${HOST_TYPE} != "mac" ]; then
+    echo "This script is OSX-only. Please do not run it on any other Unix."
+    exit 1
+  fi
+
+  if [[ $EUID -eq 0 ]]; then
+    echo "This script must NOT be run with sudo/root. Please re-run without sudo." 1>&2
+    exit 1
+  fi
+
+  echo "== Removing nfsd exports..."
+  sudo sed -i '' "/$(echo "$NFS_LINE" | sed 's/\//\\\//g')/d" ${NFS_FILE}
+  echo "== Restarting nfsd..."
+  sudo nfsd restart
+  echo "== Done"
+}
+
+dsh_help() {
+  printf "\nUsage: dsh COMMAND\n\n
+Commands:\n
+\thelp\tShow this help.\n
+\tpurge\tPurge the docker containers, network and proxy and remove all data.\n
+\tshell\tStart a shell which is connected to the containers and can be used to run commands.\n
+\tstart\tStart the docker containers, network and proxy.\n
+\tstatus\tShow the status of this projects containers.\n
+\tstop\tStop the docker containers, network and proxy, but keep data for a re-start.\n
+\nIf no command is given, shell is the default.\n
+Commands can be shortened to their uniqe component, eg ./dsh sh is the same as ./dsh shell.\n\n"
+}
+
+# Set a default command to show usage when no arguments provided.
+COMMAND=${1:-default}
+
+case ${COMMAND} in
+  e*)
+    dsh_shell ${@:2}
+    ;;
+  h*|-h|--help)
+    dsh_help
+    ;;
+  l*)
+    dsh_logs
+    ;;
+  nfs)
+    dsh_setup_nfs
+    ;;
+  rnfs)
+    dsh_remove_nfs
+    ;;
+  pul*)
+    dsh_pull
+    ;;
+  pur*)
+    dsh_purge
+    ;;
+  sh*|ss*)
+    dsh_shell ${@:2}
+    ;;
+  star*)
+    dsh_start
+    ;;
+  stat*)
+    dsh_status
+    ;;
+  sto*)
+    dsh_stop
+    ;;
+  *)
+    warning "Unknown command specified, defaulting to shell. For other options try:\n$0 [help|logs|purge|shell|start|status|stop].\n"
+    dsh_shell
+    ;;
+esac
