@@ -46,7 +46,7 @@ error() {
 # Ensure script is NOT running inside a container - must be run from host.
 if [ -f /.dockerenv ]; then
   error "Inception error - you can't run $0 within a docker container."
-  exit
+  exit 1
 fi
 
 dsh_openshift_init() {
@@ -80,7 +80,8 @@ dsh_openshift_init() {
   # Are we logged in as local developer, if not, bail!
   if [[ $(oc whoami) != "developer" ]]; then
     error "You are not logged in as developer, exiting for safety reasons."
-    exit
+    error "Please login to your local development OpenShift"
+    exit 1
   fi
 
   # If using Minishift, then
