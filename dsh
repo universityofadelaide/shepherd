@@ -87,7 +87,7 @@ dsh_openshift_init() {
   # If using Minishift, then
   if [ "${OPENSHIFT_TYPE}" == "minishift" ]; then
     # Setup a new mysql server, expose it and group the services.
-    if ! oc get svc | grep -q mysql; then
+    if ! oc get svc mysql > /dev/null 2>&1; then
       oc new-app mariadb MYSQL_ROOT_PASSWORD=${SUPER_SECRET_PASSWORD} -l db=shepherd
       oc expose dc mariadb --type=LoadBalancer --name=mysql-external
       oc annotate svc mysql-external "service.alpha.openshift.io/dependencies=[{\"name\": \"mariadb\", \"kind\": \"Service\"}]"
@@ -154,12 +154,7 @@ Connecting via ./dsh shell and running robo build is a common next step."
 # Command: ./dsh shell
 # Connects a shell to the web image as the current user.
 dsh_shell() {
-  if ! docker ps | grep "\s${PROJECT}_web_1" > /dev/null; then
-    notice "Project not running, starting."
-    dsh_start
-  else
-    dsh_openshift_init
-  fi
+  dsh_start
 
   # Run the shell as the current user, avoiding permission issues.
   if ! docker-compose -f ${DOCKER_COMPOSE_FILE} exec web id -u ${USER} > /dev/null 2>&1; then
@@ -200,9 +195,7 @@ dsh_purge() {
 # Command: ./dsh status
 # Shows status information about project containers.
 dsh_status() {
-  if ! docker ps | grep "\s${PROJECT}_"; then
-    notice "${PROJECT} not running."
-  fi
+  docker-compose -f ${DOCKER_COMPOSE_FILE} ps
 }
 
 # Command: ./dsh logs
