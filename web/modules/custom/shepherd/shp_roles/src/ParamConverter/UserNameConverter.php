@@ -27,10 +27,9 @@ class UserNameConverter extends EntityConverter {
       if ($entity instanceof EntityInterface && $entity instanceof TranslatableInterface) {
         $entity = $this->entityManager->getTranslationFromContext($entity, NULL, ['operation' => 'entity_upcast']);
       }
-      return $entity;
+      // Per interface, param converters return NULL when not found.
+      return $entity ?: NULL;
     }
-    // Supply the anonymous user who won't have access to any sites.
-    return User::load(0);
   }
 
   /**
