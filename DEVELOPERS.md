@@ -269,7 +269,7 @@ curl --insecure -H "Authorization: Bearer $(oc login -u developer -p developer >
 - Updating OpenShift auth token:
 ```bash
 # From utility container (dsh shell) :
-bin/drush -r web cset shp_orchestration.openshift.openshift token ${NEW_TOKEN}
+bin/drush -r /code/web cset shp_orchestration.openshift.openshift token ${NEW_TOKEN}
 ```
 
 ## Working with Minishift

@@ -10,6 +10,7 @@ use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Menu\MenuTreeParameters;
+use Drupal\Core\Render\BubbleableMetadata;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Url;
@@ -280,4 +281,37 @@ function shp_custom_generate_unique_short_name($short_name) {
  */
 function shp_custom_set_domain_path(array &$form, FormStateInterface $form_state, $request) {
   return \Drupal::service('shp_custom.environment')->setDomainPath($form, $form_state, $request);
+}
+
+/**
+ * Implements hook_tokens().
+ */
+function shp_custom_tokens($type, $tokens, array $frequency, array $options, BubbleableMetadata $bubbleable_metadata) {
+  if ($type !== 'shepherd') {
+    return [];
+  }
+
+  $replacements = [];
+
+  foreach ($tokens as $name => $original) {
+    [$method, $frequency] = explode(':', $name);
+    switch ($method) {
+      case 'cron':
+        // Random offset, evenly distributed CSV list of minutes for cron.
+        // E.g. "30" offset could produce a string "11,41" or "12,42" etc.
+        if (!empty($frequency) && 60 % (int) $frequency === 0) {
+          // Fill with values according to the frequency.
+          $values = range(0, 59, $frequency);
+          $offset = random_int(0, $frequency - 1);
+          array_walk($values, function (&$value, $key, $offset) {
+            $value += $offset;
+          }, $offset);
+          $replacements[$original] = implode(',', $values);
+        }
+        break;
+    }
+  }
+
+  return $replacements;
+
 }

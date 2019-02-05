@@ -1,0 +1,32 @@
+uuid: d6f961ef-8fc8-48cc-a60b-fbe16a08483c
+langcode: en
+status: true
+dependencies:
+  module:
+    - options
+    - user
+_core:
+  default_config_hash: 5FeEnbRw7sIxqZ1m37DErO17QxVgi2R9pCCzCZ6sk5A
+id: user.field_ua_user_affiliations
+field_name: field_ua_user_affiliations
+entity_type: user
+type: list_string
+settings:
+  allowed_values:
+    -
+      value: staff
+      label: Staff
+    -
+      value: student
+      label: Student
+    -
+      value: 'postgraduate research student'
+      label: 'Postgraduate research student'
+  allowed_values_function: ''
+module: options
+locked: false
+cardinality: -1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

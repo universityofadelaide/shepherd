@@ -43,7 +43,7 @@ class DeploymentEventSubscriber implements EventSubscriberInterface {
         $site->field_shp_short_name->value,
         $environment->id(),
         $environment->field_shp_git_reference->value,
-        "wget $public_filename -O /tmp/dump.sql; drush -r web sqlq --file=/tmp/dump.sql; drush -r web updb -y; robo config:import-plus; drush -r web cr; rm /tmp/dump.sql"
+        "wget $public_filename -O /tmp/dump.sql; drush -r /code/web sqlq --file=/tmp/dump.sql; drush -r /code/web updb -y; robo config:import-plus; drush -r /code/web cr; rm /tmp/dump.sql"
       );
     }
   }

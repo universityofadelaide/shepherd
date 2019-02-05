@@ -9,12 +9,14 @@ use Drupal\Core\DependencyInjection\DependencySerializationTrait;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Render\Element;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\Url;
 use Drupal\node\NodeInterface;
 use Drupal\taxonomy\Entity\Term;
 use Symfony\Component\HttpFoundation\RequestStack;
+use TheSeer\Tokenizer\Token;
 
 /**
  * Environment service. Provides methods to handle Environment entities.
@@ -125,6 +127,7 @@ class Environment {
     $this->setSiteField($form, $access);
     $this->setBranchField($form, $form_state);
     $this->applyJavascriptEnvironmentType($form);
+    $this->replaceCronTokens($form, $form_state);
   }
 
   /**
@@ -325,6 +328,23 @@ class Environment {
     }
 
     return FALSE;
+  }
+
+  /**
+   * Replace any tokens from default field values.
+   *
+   * @param array $form
+   *   Form array.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   Form state.
+   */
+  public function replaceCronTokens(array &$form, FormStateInterface $form_state) {
+    foreach (Element::children($form['field_shp_cron_jobs']['widget']) as $element) {
+      if (is_numeric($element)) {
+        $form['field_shp_cron_jobs']['widget'][$element]['key']['#default_value'] = \Drupal::token()
+          ->replace($form['field_shp_cron_jobs']['widget'][$element]['key']['#default_value']);
+      }
+    }
   }
 
 }
