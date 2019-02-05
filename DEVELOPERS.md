@@ -12,7 +12,7 @@
 ### All systems
 * [Minishift](https://www.openshift.org/minishift/) virtual machine - which
 provides an OpenShift cluster for local development or
-* [Openshift](https://github.com/openshift/origin/blob/master/docs/cluster_up_down.md) running in
+* [Openshift](https://github.com/openshift/origin/blob/release-3.11/docs/cluster_up_down.md) running in
 docker - rather than in a virtual machine. 
 * [oc](https://github.com/openshift/origin/releases) command line tool enables
 interaction with the OpenShift cluster.

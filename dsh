@@ -46,7 +46,7 @@ error() {
 # Ensure script is NOT running inside a container - must be run from host.
 if [ -f /.dockerenv ]; then
   error "Inception error - you can't run $0 within a docker container."
-  exit
+  exit 1
 fi
 
 dsh_openshift_init() {
@@ -62,7 +62,7 @@ dsh_openshift_init() {
   if [ "${OPENSHIFT_TYPE}" == "minishift" ]; then
     # Exit if minishift isn't available.
     if ! which minishift > /dev/null; then
-      echo "Minishift not found, is it installed?"
+      error "Minishift not found, is it installed?"
       exit 1
     fi
 
@@ -74,42 +74,45 @@ dsh_openshift_init() {
     # Ensure oc command is available.
     eval $(minishift oc-env)
   else
-    echo "Using OpenShift in Docker."
+    notice "Using OpenShift in Docker."
   fi
 
-  # Are we logged in?
-  if [ ! $(oc whoami) ]; then
-    # Prompt for login.
-    oc login
+  # Are we logged in as local developer, if not, bail!
+  if [[ $(oc whoami) != "developer" ]]; then
+    error "You are not logged in as developer, exiting for safety reasons."
+    error "Please login to your local development OpenShift"
+    exit 1
   fi
 
   # If using Minishift, then
   if [ "${OPENSHIFT_TYPE}" == "minishift" ]; then
     # Setup a new mysql server, expose it and group the services.
-    if ! oc get svc | grep -q mysql; then
+    if ! oc get svc mysql > /dev/null 2>&1; then
       oc new-app mariadb MYSQL_ROOT_PASSWORD=${SUPER_SECRET_PASSWORD} -l db=shepherd
       oc expose dc mariadb --type=LoadBalancer --name=mysql-external
       oc annotate svc mysql-external "service.alpha.openshift.io/dependencies=[{\"name\": \"mariadb\", \"kind\": \"Service\"}]"
     fi
   else
-    echo "Not using Minishift, assuming mysql is available on port 3306."
+    notice "Not using Minishift, assuming mysql is available on port 3306."
   fi
 
   # Setup the redis configmap so redis starts.
-  oc apply -f redis-config.yml
+  if ! oc get configmap redis-config > /dev/null 2>&1; then
+    oc create -f redis-config.yml
+  fi
 
   # Setup the database password in an OpenShift secret.
-  if ! oc get secret | grep -q privileged-db-password; then
+  if ! oc get secret privileged-db-password > /dev/null 2>&1; then
     oc create secret generic privileged-db-password --from-literal=DATABASE_PASSWORD=${SUPER_SECRET_PASSWORD}
   fi
 
   # Add local ssh key as build-key secret if it exists and has no passphrase.
-  if ! oc get secret | grep -q build-key && [ -f ${BUILD_KEY} ] && ! grep -q ENCRYPTED ${BUILD_KEY}; then
+  if ! oc get secret build-key > /dev/null 2>&1 && [ -f ${BUILD_KEY} ] && ! grep -q ENCRYPTED ${BUILD_KEY}; then
     oc create secret generic build-key --from-file=ssh-privatekey=${BUILD_KEY}
   fi
 
   # Create a permanent token that shepherd can use to talk to OpenShift.
-  if ! oc get serviceaccount | grep -q shepherd; then
+  if ! oc get serviceaccount shepherd > /dev/null 2>&1; then
     oc create serviceaccount shepherd
     oc policy add-role-to-user admin system:serviceaccount:myproject:shepherd
   fi
@@ -151,12 +154,7 @@ Connecting via ./dsh shell and running robo build is a common next step."
 # Command: ./dsh shell
 # Connects a shell to the web image as the current user.
 dsh_shell() {
-  if ! docker ps | grep "\s${PROJECT}_web_1" > /dev/null; then
-    notice "Project not running, starting."
-    dsh_start
-  else
-    dsh_openshift_init
-  fi
+  dsh_start
 
   # Run the shell as the current user, avoiding permission issues.
   if ! docker-compose -f ${DOCKER_COMPOSE_FILE} exec web id -u ${USER} > /dev/null 2>&1; then
@@ -197,9 +195,7 @@ dsh_purge() {
 # Command: ./dsh status
 # Shows status information about project containers.
 dsh_status() {
-  if ! docker ps | grep "\s${PROJECT}_"; then
-    notice "${PROJECT} not running."
-  fi
+  docker-compose -f ${DOCKER_COMPOSE_FILE} ps
 }
 
 # Command: ./dsh logs
