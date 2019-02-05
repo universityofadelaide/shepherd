@@ -22,7 +22,7 @@ services:
       CONFIG_SYNC_DIRECTORY: /shared/private/random-hash/sync
       REDIS_ENABLED: 1
       REDIS_HOST: redis
-      SHEPHERD_INSTALL_PROFILE: ua_shepherd
+      SHEPHERD_INSTALL_PROFILE: shepherd
       SHEPHERD_SECRET_PATH: /code/private
       XDEBUG_CONFIG: "remote_host=172.17.0.1"
       PHP_IDE_CONFIG: serverName=${PROJECT}.${DOMAIN}

@@ -86,13 +86,13 @@ Create the Shepherd instance from a pre-configured yaml manifest.
 DEV
 
 ```bash
-oc process -f ua-shepherd-openshift.yml -p SHEPHERD_INSTALL_PROFILE=ua_shepherd -p DATABASE_HOST=mariadb-web-uat2.adelaide.edu.au | oc create -f -
+oc process -f ua-shepherd-openshift.yml -p SHEPHERD_INSTALL_PROFILE=shepherd -p DATABASE_HOST=mariadb-web-uat2.adelaide.edu.au | oc create -f -
 ```
 
 PRD
 
 ```bash
-oc process -f ua-shepherd-openshift.yml -p SHEPHERD_INSTALL_PROFILE=ua_shepherd -p DATABASE_HOST=mariadb-web-prd2.adelaide.edu.au | oc create -f -
+oc process -f ua-shepherd-openshift.yml -p SHEPHERD_INSTALL_PROFILE=shepherd -p DATABASE_HOST=mariadb-web-prd2.adelaide.edu.au | oc create -f -
 ```
 
 Find the url to Shepherd E.g. http://shepherd-web-route-wcms-test.openshift.services.adelaide.edu.au and run the

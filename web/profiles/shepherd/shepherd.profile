@@ -12,7 +12,7 @@ use Drupal\Core\Form\FormStateInterface;
  *
  * Allows the profile to alter the site configuration form.
  */
-function ua_shepherd_form_install_configure_form_alter(&$form, FormStateInterface $form_state) {
+function shepherd_form_install_configure_form_alter(&$form, FormStateInterface $form_state) {
   // Pre-populate the site name with the server name.
   $form['site_information']['site_name']['#default_value'] = 'Shepherd';
 }

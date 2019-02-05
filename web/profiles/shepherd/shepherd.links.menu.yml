@@ -1,4 +1,4 @@
-ua_shepherd.front_page:
+shepherd.front_page:
   title: 'Home'
   route_name: '<front>'
   menu_name: main
