@@ -6,6 +6,7 @@ use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\ParamConverter\EntityConverter;
 use Drupal\Core\ParamConverter\ParamNotConvertedException;
 use Drupal\Core\TypedData\TranslatableInterface;
+use Drupal\user\Entity\User;
 use Symfony\Component\Routing\Route;
 
 /**
@@ -28,6 +29,8 @@ class UserNameConverter extends EntityConverter {
       }
       return $entity;
     }
+    // Supply the anonymous user who won't have access to any sites.
+    return User::load(0);
   }
 
   /**
