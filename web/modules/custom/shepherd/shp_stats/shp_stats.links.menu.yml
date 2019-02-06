@@ -1,6 +1,0 @@
-shp_stats.sites_stats:
-  title: Stats
-  description: 'Display stats on sites'
-  route_name: shp_stats.site_stats_view
-  parent: shp_custom.admin
-  weight: -6

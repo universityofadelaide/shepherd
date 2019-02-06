@@ -1,7 +1,0 @@
-shp_stats.site_stats_view:
-  path: 'websites/stats'
-  defaults:
-    _controller: '\Drupal\shp_stats\Controller\SitesStatsController::display'
-    _title: 'Website Statistics'
-  requirements:
-    _permission: 'shp access environment wizard'

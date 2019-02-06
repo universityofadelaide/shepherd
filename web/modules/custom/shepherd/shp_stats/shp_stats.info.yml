@@ -1,8 +1,0 @@
-name: 'Shepherd stats'
-type: module
-description: 'Provides stats about Shepherd sites.'
-core: 8.x
-package: Shepherd
-dependencies:
-  - charts:charts
-  - charts_c3:charts_c3

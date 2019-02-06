@@ -1,4 +1,4 @@
-name: 'Shepherd custom'
+name: Shepherd Custom
 type: module
 description: 'Provides functionality specific to Shepherd.'
 core: 8.x
