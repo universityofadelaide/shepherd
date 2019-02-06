@@ -65,6 +65,7 @@ class ShpRedisCommands extends DrushCommands {
       $environments = $storage->getQuery()
         ->condition('type', 'shp_environment')
         ->execute();
+
       // Fix environment names to prepend "node".
       $environments = array_map(function($env) {
         return 'node-' . $env;
@@ -74,15 +75,12 @@ class ShpRedisCommands extends DrushCommands {
     }
 
     // Replace redis deployment configs.
-//    $this->output->writeln(print_r($environments, 1));
     foreach ($environments as $environment) {
       $this->orchestrationProviderPlugin->deleteRedisDeployment($environment);
       sleep(1);
       $this->orchestrationProviderPlugin->createRedisDeployment($environment);
-
       $this->output->writeln($environment . ' redis deployment updated.');
     }
-
     $this->output->writeln(count($environments) . ' redis deployments updated.');
   }
 
