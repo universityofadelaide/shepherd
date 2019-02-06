@@ -22,7 +22,7 @@ services:
       SHEPHERD_SITE_ID: 2
       SHEPHERD_URL: http://shepherd.test
       SHEPHERD_TOKEN: super-secret-token
-      SHEPHERD_INSTALL_PROFILE: ua
+      SHEPHERD_INSTALL_PROFILE: shepherd
       REDIS_ENABLED: 1
       SHEPHERD_SECRET_PATH: /code/private
       XDEBUG_CONFIG: "remote_host=docker.for.mac.localhost"

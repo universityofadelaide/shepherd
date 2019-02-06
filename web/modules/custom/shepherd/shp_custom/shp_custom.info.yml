@@ -2,7 +2,7 @@ name: Shepherd Custom
 type: module
 description: 'Provides functionality specific to Shepherd.'
 core: 8.x
-package: UA
+package: Shepherd
 dependencies:
   - shp_content_types
   - group
