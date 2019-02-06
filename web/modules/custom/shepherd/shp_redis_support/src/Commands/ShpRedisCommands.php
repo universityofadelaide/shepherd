@@ -5,6 +5,7 @@ namespace Drupal\shp_redis_support\Commands;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\shp_orchestration\OrchestrationProviderPluginManager;
 use Drush\Commands\DrushCommands;
+use Drush\Exceptions\UserAbortException;
 use Drush\Utils\StringUtils;
 
 /**
@@ -54,6 +55,9 @@ class ShpRedisCommands extends DrushCommands {
    * @param $environments A comma delimited list of environments.
    */
   public function recreateRedisDeployments(array $environments) {
+    if (!$this->io()->confirm(dt('Are you sure you want to redeploy all redis containers?'), FALSE)) {
+      throw new UserAbortException();
+    }
 
     // Find all the environments.
     if (empty($environments)) {
