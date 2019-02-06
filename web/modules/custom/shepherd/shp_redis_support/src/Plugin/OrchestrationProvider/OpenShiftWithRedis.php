@@ -10,8 +10,8 @@ use Drupal\shp_orchestration\Plugin\OrchestrationProvider\OpenShiftOrchestration
  * @OrchestrationProvider(
  *   id = "openshift_with_redis",
  *   name = "OpenShift with Redis",
- *   description = @Translation("OpenShift provider to perform orchestration
- *   tasks with redis support"), schema = "openshift.orchestration_provider",
+ *   description = @Translation("OpenShift provider to perform orchestration tasks with redis support"),
+ *   schema = "openshift.orchestration_provider",
  *   config_entity_id = "openshift_with_redis"
  * )
  */
