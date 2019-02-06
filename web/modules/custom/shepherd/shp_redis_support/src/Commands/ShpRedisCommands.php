@@ -52,7 +52,7 @@ class ShpRedisCommands extends DrushCommands {
    *   Replace specific redis deployments.
    *
    * @command shepherd:recreate-redis-deployments
-   * @param $environments A comma delimited list of environments.
+   * @param array $environments A comma delimited list of environments.
    */
   public function recreateRedisDeployments(array $environments) {
     if (!$this->io()->confirm(dt('Are you sure you want to redeploy all redis containers?'), FALSE)) {
