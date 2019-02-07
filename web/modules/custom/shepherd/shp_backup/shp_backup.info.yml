@@ -1,4 +1,4 @@
-name: Shepherd backup
+name: 'Shepherd backup'
 type: module
 description: 'Provides ability to backup and restore deployed sites.'
 core: 8.x
