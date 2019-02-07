@@ -181,12 +181,12 @@ class OpenShiftWithRedis extends OpenShiftOrchestrationProvider {
                       'limits' =>
                         [
                           'cpu' => '0m',
-                          'memory' => '256Mi',
+                          'memory' => '0Mi',
                         ],
                       'requests' =>
                         [
                           'cpu' => '0m',
-                          'memory' => '256Mi',
+                          'memory' => '32Mi',
                         ],
                     ],
                     'volumeMounts' => [
