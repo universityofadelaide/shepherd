@@ -1,4 +1,4 @@
-name: Shepherd database provisioner
+name: 'Shepherd database provisioner'
 type: module
 description: 'Provisions the necessary database and users on environment creation.'
 core: 8.x

@@ -70,8 +70,10 @@ class OrchestrationProviderPluginManager extends DefaultPluginManager implements
     if (isset($this->providerInstance)) {
       return $this->providerInstance;
     }
-    $id = $this->getSelectedProvider()['id'];
-    $this->providerInstance = $this->createInstance($id);
+    if (!$id = $this->getSelectedProvider()) {
+      return FALSE;
+    }
+    $this->providerInstance = $this->createInstance($id['id']);
     return $this->providerInstance;
   }
 

@@ -1,4 +1,4 @@
-name: Shepherd Orchestration
+name: 'Shepherd orchestration'
 type: module
 description: 'Provides orchestration functionality specific to the Shepherd project.'
 core: 8.x
