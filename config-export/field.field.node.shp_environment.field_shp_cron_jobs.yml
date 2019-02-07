@@ -14,13 +14,13 @@ field_name: field_shp_cron_jobs
 entity_type: node
 bundle: shp_environment
 label: 'Cron jobs'
-description: "Use cron style values for the scheduling field\r\nSeperate multiple entries in the command field with bash style semi-colons."
+description: "Use cron style values for the scheduling field\r\nSeparate multiple entries in the command field with bash style semi-colons."
 required: false
 translatable: false
 default_value:
   -
-    key: '*/30 * * * *'
-    value: 'cd /code; drush -r web cron || true'
+    key: '[shepherd:cron:30] * * * *'
+    value: 'cd /code; drush -r /code/web cron || true'
     description: 'Default drupal cron tasks, set to run every 30 minutes, returning true so the container does not re-spawn if drupal is not yet installed.'
 default_value_callback: ''
 settings: {  }

@@ -22,9 +22,12 @@ interface OrchestrationProviderPluginManagerInterface extends PluginManagerInter
   /**
    * Creates and returns stored provider instance.
    *
+   * @param bool $reload
+   *   Force reload to flush the provider static cache.
+   *
    * @return object
    *   The orchestration provider plugin instance.
    */
-  public function getProviderInstance();
+  public function getProviderInstance($reload = FALSE);
 
 }
