@@ -1,0 +1,21 @@
+uuid: 76a7f1ef-ef0e-42ee-ad54-352d4552b3b7
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.taxonomy_term.field_shp_base_domain
+    - taxonomy.vocabulary.shp_environment_types
+_core:
+  default_config_hash: Xqu_b5l3875db9MUGHqh6TTJy0c2R_BIeTG_vlJRoko
+id: taxonomy_term.shp_environment_types.field_shp_base_domain
+field_name: field_shp_base_domain
+entity_type: taxonomy_term
+bundle: shp_environment_types
+label: 'Base domain'
+description: 'This is used to populate urls to non-production environments. E.g. 192.168.99.100.nip.io'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

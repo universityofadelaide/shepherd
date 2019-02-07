@@ -13,8 +13,8 @@ objects:
     concurrencyPolicy: Forbid
     schedule: '*/1 * * * *'
     suspend: false
-    failedJobHistoryLimit: 5
-    successfulJobHistoryLimit: 5
+    failedJobsHistoryLimit: 5
+    successfulJobsHistoryLimit: 5
     jobTemplate:
       spec:
         template:
@@ -23,7 +23,7 @@ objects:
             - args:
               - /bin/sh
               - -c
-              - cd /code; drush -r web shp-p || true
+              - cd /code; bin/drush -r web shp-p || true
               env:
               - name: DATABASE_HOST
                 value: ${DATABASE_HOST}
@@ -83,8 +83,8 @@ objects:
     concurrencyPolicy: Forbid
     schedule: '*/30 * * * *'
     suspend: false
-    failedJobHistoryLimit: 5
-    successfulJobHistoryLimit: 5
+    failedJobsHistoryLimit: 5
+    successfulJobsHistoryLimit: 5
     jobTemplate:
       spec:
         template:
@@ -145,7 +145,7 @@ parameters:
   - name: DATABASE_HOST
     description: The database host to use. Change this if you do not wish to use the MySQL service deployed as part of this application.
     required: true
-    value: shepherd-db-svc
+    value: mariadb-web-prd2.adelaide.edu.au
   - name: DATABASE_PORT
     required: true
     value: '3306'

@@ -36,7 +36,6 @@ web/sites/*/services.yml
 /.idea/
 
 # Extras
-dsh
 RoboFileBase.php
 .DS_Store
 .bash_history

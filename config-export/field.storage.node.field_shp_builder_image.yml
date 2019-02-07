@@ -1,0 +1,23 @@
+uuid: c6bcb2ba-4e04-47b3-9b28-4e7585d0c1a5
+langcode: en
+status: true
+dependencies:
+  module:
+    - node
+_core:
+  default_config_hash: 5CXbg6XJe5S8YZmUzbQ0ZegfyzFo4O6kBmSzhYwWG8Q
+id: node.field_shp_builder_image
+field_name: field_shp_builder_image
+entity_type: node
+type: string
+settings:
+  max_length: 255
+  is_ascii: false
+  case_sensitive: false
+module: core
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

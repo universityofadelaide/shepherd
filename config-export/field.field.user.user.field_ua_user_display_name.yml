@@ -1,0 +1,22 @@
+uuid: b4ff868e-950e-4a4f-8f42-015c934e1b88
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.user.field_ua_user_display_name
+  module:
+    - user
+id: user.user.field_ua_user_display_name
+field_name: field_ua_user_display_name
+entity_type: user
+bundle: user
+label: 'Display name'
+description: ''
+required: false
+translatable: true
+default_value:
+  -
+    value: ''
+default_value_callback: ''
+settings: {  }
+field_type: string

@@ -1,0 +1,11 @@
+uuid: 4101707d-6ebf-49d4-872e-c05741587e99
+langcode: en
+status: true
+dependencies: {  }
+_core:
+  default_config_hash: F8ctCTWeeAmZkbORRLh6A6My_fYwMC8A245OrhgntCw
+name: 'Storage class'
+vid: shp_storage_class
+description: 'Storage class for shared disk storage. E.g. silver, gold.'
+hierarchy: 0
+weight: 0

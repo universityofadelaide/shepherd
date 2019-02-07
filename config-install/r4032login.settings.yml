@@ -1,0 +1,9 @@
+display_denied_message: false
+redirect_authenticated_users_to: ''
+user_login_route: cas.login
+user_login_path: /caslogin
+default_redirect_code: '302'
+destination_parameter_override: returnto
+match_noredirect_pages: ''
+_core:
+  default_config_hash: 34qmapDQq8npFCyjT8y5A-TNZamwV2wnYcGb4DuREng

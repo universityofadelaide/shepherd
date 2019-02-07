@@ -6,6 +6,7 @@ use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\ParamConverter\EntityConverter;
 use Drupal\Core\ParamConverter\ParamNotConvertedException;
 use Drupal\Core\TypedData\TranslatableInterface;
+use Drupal\user\Entity\User;
 use Symfony\Component\Routing\Route;
 
 /**
@@ -26,7 +27,8 @@ class UserNameConverter extends EntityConverter {
       if ($entity instanceof EntityInterface && $entity instanceof TranslatableInterface) {
         $entity = $this->entityManager->getTranslationFromContext($entity, NULL, ['operation' => 'entity_upcast']);
       }
-      return $entity;
+      // Per interface, param converters return NULL when not found.
+      return $entity ?: NULL;
     }
   }
 

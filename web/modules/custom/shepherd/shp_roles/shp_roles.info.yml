@@ -1,4 +1,4 @@
-name: 'Shepherd Roles'
+name: 'Shepherd roles'
 type: module
 description: 'Provides an endpoint to retrieve roles relating to a user for a given site.'
 core: 8.x

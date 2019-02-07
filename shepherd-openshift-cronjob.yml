@@ -13,8 +13,8 @@ objects:
     concurrencyPolicy: Forbid
     schedule: '*/1 * * * *'
     suspend: false
-    failedJobHistoryLimit: 5
-    successfulJobHistoryLimit: 5
+    failedJobsHistoryLimit: 5
+    successfulJobsHistoryLimit: 5
     jobTemplate:
       spec:
         template:
@@ -23,7 +23,7 @@ objects:
             - args:
               - /bin/sh
               - -c
-              - cd /code; drush -r web shp-p || true
+              - cd /code; drush -r /code/web shp-p || true
               env:
               - name: DATABASE_HOST
                 value: ${DATABASE_HOST}
@@ -83,8 +83,8 @@ objects:
     concurrencyPolicy: Forbid
     schedule: '*/30 * * * *'
     suspend: false
-    failedJobHistoryLimit: 5
-    successfulJobHistoryLimit: 5
+    failedJobsHistoryLimit: 5
+    successfulJobsHistoryLimit: 5
     jobTemplate:
       spec:
         template:
@@ -93,7 +93,7 @@ objects:
             - args:
               - /bin/sh
               - -c
-              - cd /code; drush -r web cron || true
+              - cd /code; drush -r /code/web cron || true
               env:
               - name: DATABASE_HOST
                 value: ${DATABASE_HOST}

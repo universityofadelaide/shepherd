@@ -1,0 +1,14 @@
+uuid: 79204372-4dde-4776-b142-5f8b30971015
+langcode: en
+status: true
+dependencies:
+  config:
+    - group.type.shp_project
+id: shp_project-member
+label: Member
+weight: -100
+internal: true
+audience: member
+group_type: shp_project
+permissions_ui: true
+permissions: {  }

@@ -1,7 +1,0 @@
-{
-  "name": "shepherd/shp_vue_view",
-  "description": "Provides vue js view style plugins for dynamic displays.",
-  "type": "drupal-module",
-  "keywords": ["drupal"],
-  "license": "GPL-2.0+"
-}

@@ -64,7 +64,8 @@ class DummyOrchestrationProvider extends OrchestrationProviderBase {
     array $environment_variables = [],
     array $secrets = [],
     array $probes = [],
-    array $cron_jobs = []
+    array $cron_jobs = [],
+    array $annotations = []
   ) {
     return TRUE;
   }
@@ -89,7 +90,8 @@ class DummyOrchestrationProvider extends OrchestrationProviderBase {
     array $environment_variables = [],
     array $secrets = [],
     array $probes = [],
-    array $cron_jobs = []
+    array $cron_jobs = [],
+    array $annotations = []
   ) {
     return TRUE;
   }
@@ -136,7 +138,8 @@ class DummyOrchestrationProvider extends OrchestrationProviderBase {
     string $short_name,
     int $site_id,
     string $domain,
-    string $path
+    string $path,
+    array $annotations = []
   ) {
     return TRUE;
   }
@@ -199,15 +202,16 @@ class DummyOrchestrationProvider extends OrchestrationProviderBase {
   }
 
   /**
-   * Fetch the job from the provider.
-   *
-   * @param string $name
-   *   The job name.
-   *
-   * @return array|bool
-   *   The job, else false.
+   * {@inheritdoc}
    */
   public function getJob(string $name) {
+    return [];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getEnvironmentVersions() {
     return [];
   }
 

@@ -124,7 +124,7 @@ objects:
       app: shepherd
     name: shepherd-web-shared
   spec:
-    storageClassName: silver
+    storageClassName: gold
     accessModes:
       - ReadWriteMany
     resources:

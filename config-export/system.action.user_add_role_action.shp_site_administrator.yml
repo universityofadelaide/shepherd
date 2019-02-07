@@ -1,0 +1,14 @@
+uuid: 14b6a95f-3066-4e8b-8eb1-f3ef5e4c3a8e
+langcode: en
+status: true
+dependencies:
+  config:
+    - user.role.shp_site_administrator
+  module:
+    - user
+id: user_add_role_action.shp_site_administrator
+label: 'Add the Site Administrator role to the selected user(s)'
+type: user
+plugin: user_add_role_action
+configuration:
+  rid: shp_site_administrator
