@@ -62,14 +62,14 @@ class ShpRedisCommands extends DrushCommands {
     // Find all the environments.
     if (empty($environments)) {
       $storage = $this->entityTypeManager->getStorage('node');
-      $environments = $storage->getQuery()
+      $env_ids = $storage->getQuery()
         ->condition('type', 'shp_environment')
         ->execute();
 
       // Fix environment names to prepend "node".
       $environments = array_map(function($env) {
         return 'node-' . $env;
-      }, $environments);
+      }, $env_ids);
     } else {
       $environments = StringUtils::csvToArray($environments);
     }
