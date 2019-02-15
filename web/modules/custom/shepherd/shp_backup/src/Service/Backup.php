@@ -161,6 +161,15 @@ class Backup {
     $site = $node_storage->load($backup->field_shp_site->target_id);
     $environment = $node_storage->load($backup->field_shp_environment->target_id);
     $project = $node_storage->load($site->field_shp_project->target_id);
+
+    if (empty($site) || empty($environment) || empty($project)) {
+      // User has deleted something, we can't proceed, so return FALSE early
+      // & Un-publish the backup entry as a simple indicator that it borked.
+      $backup->set('status', 0);
+      $backup->save();
+      return FALSE;
+    }
+
     $project_name = $project->title->value;
 
     $backup_command = str_replace(["\r\n", "\n", "\r"], ' && ', trim($this->config->get('backup_command')));
@@ -193,6 +202,11 @@ class Backup {
     $site = $node_storage->load($backup->field_shp_site->target_id);
     $project = $node_storage->load($site->field_shp_project->target_id);
     $project_name = $project->title->value;
+
+    if (empty($site) || empty($environment) || empty($project)) {
+      // User has deleted something, we can't proceed, so return FALSE early.
+      return FALSE;
+    }
 
     $restore_command = str_replace(["\r\n", "\n", "\r"], ' && ', trim($this->config->get('restore_command')));
     $restore_command = $this->token->replace($restore_command, ['backup' => $backup]);
