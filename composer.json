@@ -5,6 +5,7 @@
     "license": "MIT",
     "repositories": [
         {"type": "git", "url": "https://github.com/previousnext/drush_cmi_tools.git"},
+        {"type": "git", "url": "https://github.com/universityofadelaide/shepherd-drupal-scaffold.git"},
         {"type": "composer", "url": "https://packages.drupal.org/8"}
     ],
     "require": {
@@ -13,7 +14,7 @@
         "cweagans/composer-patches":                     "~1.0",
         "drupal-composer/drupal-scaffold":               "^2.2",
         "predis/predis":                                 "^1.1.1",
-        "universityofadelaide/shepherd-drupal-scaffold": "~2.0",
+        "universityofadelaide/shepherd-drupal-scaffold": "dev-revert-hardcoded-password",
         "wikimedia/composer-merge-plugin":               "^1.4",
         "drush/drush":                                   "9.*",
         "drupal/core":                                   "8.5.*",

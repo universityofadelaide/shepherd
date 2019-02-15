@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "476c87a069e1b4c216536c1de4806a4e",
+    "content-hash": "31d784836af520041fc0fb52b86b620c",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -583,16 +583,16 @@
         },
         {
             "name": "consolidation/robo",
-            "version": "1.4.3",
+            "version": "1.4.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/consolidation/Robo.git",
-                "reference": "d0b6f516ec940add7abed4f1432d30cca5f8ae0c"
+                "reference": "8bec6a6ea54a7d03d56552a4250c49dec3b3083d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/consolidation/Robo/zipball/d0b6f516ec940add7abed4f1432d30cca5f8ae0c",
-                "reference": "d0b6f516ec940add7abed4f1432d30cca5f8ae0c",
+                "url": "https://api.github.com/repos/consolidation/Robo/zipball/8bec6a6ea54a7d03d56552a4250c49dec3b3083d",
+                "reference": "8bec6a6ea54a7d03d56552a4250c49dec3b3083d",
                 "shasum": ""
             },
             "require": {
@@ -623,7 +623,7 @@
                 "natxet/cssmin": "3.0.4",
                 "nikic/php-parser": "^3.1.5",
                 "patchwork/jsqueeze": "~2",
-                "pear/archive_tar": "^1.4.2",
+                "pear/archive_tar": "^1.4.4",
                 "php-coveralls/php-coveralls": "^1",
                 "phpunit/php-code-coverage": "~2|~4",
                 "squizlabs/php_codesniffer": "^2.8"
@@ -687,7 +687,7 @@
                 }
             ],
             "description": "Modern task runner",
-            "time": "2019-01-02T21:33:28+00:00"
+            "time": "2019-02-08T20:59:23+00:00"
         },
         {
             "name": "consolidation/self-update",
@@ -5372,17 +5372,11 @@
         },
         {
             "name": "universityofadelaide/shepherd-drupal-scaffold",
-            "version": "2.4.0",
+            "version": "dev-revert-hardcoded-password",
             "source": {
                 "type": "git",
                 "url": "https://github.com/universityofadelaide/shepherd-drupal-scaffold.git",
-                "reference": "6e3bdf5032c057679a0a58a541acb102e00f4991"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/universityofadelaide/shepherd-drupal-scaffold/zipball/6e3bdf5032c057679a0a58a541acb102e00f4991",
-                "reference": "6e3bdf5032c057679a0a58a541acb102e00f4991",
-                "shasum": ""
+                "reference": "82d8c6c1bae7d9b0f2a21c35d013ef49ccdcf458"
             },
             "require": {
                 "composer-plugin-api": "^1.1",
@@ -5400,12 +5394,11 @@
                     "UniversityOfAdelaide\\ShepherdDrupalScaffold\\": "src/"
                 }
             },
-            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "GPL-2.0+"
             ],
             "description": "Composer Plugin for updating the Shepherd Drupal tools.",
-            "time": "2019-01-27T04:12:18+00:00"
+            "time": "2019-02-15T02:23:48+00:00"
         },
         {
             "name": "webflo/drupal-finder",
@@ -8050,17 +8043,6 @@
         {
             "name": "webflo/drupal-core-require-dev",
             "version": "8.5.10",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/webflo/drupal-core-require-dev.git",
-                "reference": "240d27c910ad06182fb1c6d534f135e930e3dd8e"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/webflo/drupal-core-require-dev/zipball/240d27c910ad06182fb1c6d534f135e930e3dd8e",
-                "reference": "240d27c910ad06182fb1c6d534f135e930e3dd8e",
-                "shasum": ""
-            },
             "require": {
                 "behat/mink": "1.7.x-dev",
                 "behat/mink-goutte-driver": "^1.2",
@@ -8088,6 +8070,7 @@
     "aliases": [],
     "minimum-stability": "dev",
     "stability-flags": {
+        "universityofadelaide/shepherd-drupal-scaffold": 20,
         "drupal/drush-cmi-tools": 20,
         "drupal/group": 5,
         "drupal/route_condition": 10,
