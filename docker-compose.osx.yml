@@ -16,6 +16,7 @@ services:
       SITE_ADMIN_EMAIL: admin@example.com
       SITE_ADMIN_USERNAME: admin
       SITE_ADMIN_PASSWORD: password
+      DATABASE_PASSWORD: password
       PUBLIC_DIR: /shared/public
       HASH_SALT: random-hash
       CONFIG_SYNC_DIRECTORY: /shared/private/random-hash/sync

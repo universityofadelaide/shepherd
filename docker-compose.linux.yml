@@ -15,6 +15,7 @@ services:
       SITE_ADMIN_USERNAME: admin
       SITE_ADMIN_PASSWORD: password
       DATABASE_HOST: db
+      DATABASE_PASSWORD: password
       PUBLIC_DIR: /shared/public
       PRIVATE_DIR: /shared/private
       TMP_DIR: /shared/tmp
