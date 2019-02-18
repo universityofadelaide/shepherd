@@ -165,6 +165,11 @@ class Backup {
     if (empty($site) || empty($environment) || empty($project)) {
       // User has deleted something, we can't proceed, so return FALSE early
       // & Un-publish the backup entry as a simple indicator that it borked.
+      \Drupal::logger('shp_backup')->error('Unable to create backup, one of the following nodes is missing. Site: %site, Environment: %environment, Project: %project', [
+        '%site' => $backup->field_shp_site->target_id,
+        '%environment' => $backup->field_shp_environment->target_id,
+        '%project' => (isset($site) ? $site->field_shp_project->target_id : ''),
+      ]);
       $backup->set('status', 0);
       $backup->save();
       return FALSE;
@@ -205,6 +210,11 @@ class Backup {
 
     if (empty($site) || empty($environment) || empty($project)) {
       // User has deleted something, we can't proceed, so return FALSE early.
+      \Drupal::logger('shp_restore')->error('Unable to restore from backup, one of the following nodes is missing. Site: %site, Environment: %environment, Project: %project', [
+        '%site' => $backup->field_shp_site->target_id,
+        '%environment' => $environment,
+        '%project' => (isset($site) ? $site->field_shp_project->target_id : ''),
+      ]);
       return FALSE;
     }
 
