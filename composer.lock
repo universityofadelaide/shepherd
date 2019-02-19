@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "31d784836af520041fc0fb52b86b620c",
+    "content-hash": "476c87a069e1b4c216536c1de4806a4e",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -5372,11 +5372,17 @@
         },
         {
             "name": "universityofadelaide/shepherd-drupal-scaffold",
-            "version": "dev-revert-hardcoded-password",
+            "version": "2.4.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/universityofadelaide/shepherd-drupal-scaffold.git",
-                "reference": "82d8c6c1bae7d9b0f2a21c35d013ef49ccdcf458"
+                "reference": "6e3bdf5032c057679a0a58a541acb102e00f4991"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/universityofadelaide/shepherd-drupal-scaffold/zipball/6e3bdf5032c057679a0a58a541acb102e00f4991",
+                "reference": "6e3bdf5032c057679a0a58a541acb102e00f4991",
+                "shasum": ""
             },
             "require": {
                 "composer-plugin-api": "^1.1",
@@ -5394,11 +5400,12 @@
                     "UniversityOfAdelaide\\ShepherdDrupalScaffold\\": "src/"
                 }
             },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "GPL-2.0+"
             ],
             "description": "Composer Plugin for updating the Shepherd Drupal tools.",
-            "time": "2019-02-15T02:23:48+00:00"
+            "time": "2019-01-27T04:12:18+00:00"
         },
         {
             "name": "webflo/drupal-finder",
@@ -8070,7 +8077,6 @@
     "aliases": [],
     "minimum-stability": "dev",
     "stability-flags": {
-        "universityofadelaide/shepherd-drupal-scaffold": 20,
         "drupal/drush-cmi-tools": 20,
         "drupal/group": 5,
         "drupal/route_condition": 10,

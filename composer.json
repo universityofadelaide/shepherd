@@ -5,7 +5,6 @@
     "license": "MIT",
     "repositories": [
         {"type": "git", "url": "https://github.com/previousnext/drush_cmi_tools.git"},
-        {"type": "git", "url": "https://github.com/universityofadelaide/shepherd-drupal-scaffold.git"},
         {"type": "composer", "url": "https://packages.drupal.org/8"}
     ],
     "require": {
