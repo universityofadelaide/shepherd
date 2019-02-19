@@ -338,7 +338,6 @@ display:
               authenticated: authenticated
               anonymous: '0'
               shp_site_administrator: '0'
-              shp_online_consultant: '0'
               shp_developer: '0'
               administrator: '0'
             placeholder: ''
