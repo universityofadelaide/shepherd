@@ -66,12 +66,14 @@ class OrchestrationProviderPluginManager extends DefaultPluginManager implements
   /**
    * {@inheritdoc}
    */
-  public function getProviderInstance() {
-    if (isset($this->providerInstance)) {
+  public function getProviderInstance($reload = FALSE) {
+    if (!$reload && isset($this->providerInstance)) {
       return $this->providerInstance;
     }
-    $id = $this->getSelectedProvider()['id'];
-    $this->providerInstance = $this->createInstance($id);
+    if (!$id = $this->getSelectedProvider()) {
+      return NULL;
+    }
+    $this->providerInstance = $this->createInstance($id['id']);
     return $this->providerInstance;
   }
 

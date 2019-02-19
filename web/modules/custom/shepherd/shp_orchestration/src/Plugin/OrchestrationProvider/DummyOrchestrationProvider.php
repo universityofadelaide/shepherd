@@ -167,6 +167,13 @@ class DummyOrchestrationProvider extends OrchestrationProviderBase {
   /**
    * {@inheritdoc}
    */
+  public function getBackup(string $name) {
+    return TRUE;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function backupEnvironment(string $site_id, string $environment_id, string $friendly_name = '') {
     return [];
   }
@@ -174,14 +181,64 @@ class DummyOrchestrationProvider extends OrchestrationProviderBase {
   /**
    * {@inheritdoc}
    */
-  public function restoreEnvironment(
-    string $project_name,
-    string $short_name,
-    string $environment_id,
-    string $source_ref = 'master',
-    string $commands = ''
-  ) {
-    return [];
+  public function environmentScheduleBackupCreate(string $site_id, string $environment_id, string $schedule) {
+    return TRUE;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function environmentScheduleBackupUpdate(string $site_id, string $environment_id, string $schedule) {
+    return TRUE;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function environmentScheduleBackupDelete(string $environment_id) {
+    return TRUE;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getBackupsForSite(string $site_id) {
+    return TRUE;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getBackupsForEnvironment(string $environment_id) {
+    return TRUE;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function restoreEnvironment(string $backup_name, string $site_id, string $environment_id) {
+    return TRUE;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function syncEnvironment(string $site_id, string $from_environment_id, string $to_environment_id) {
+    return TRUE;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getSyncsForSite(string $site_id) {
+    return TRUE;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getRestoresForSite(string $site_id) {
+    return TRUE;
   }
 
   /**

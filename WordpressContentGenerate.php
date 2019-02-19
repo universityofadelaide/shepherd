@@ -66,6 +66,9 @@ $orchestration_config = \Drupal::service('config.factory')->getEditable('shp_orc
 $orchestration_config->set('selected_provider', 'openshift_orchestration_provider');
 $orchestration_config->save();
 
+// Force reload the orchestration plugin to clear the static cache.
+Drupal::service('plugin.manager.orchestration_provider')->getProviderInstance(TRUE);
+
 if (!$development = taxonomy_term_load_multiple_by_name('Development', 'shp_environment_types')) {
   $development_env = Term::create([
     'vid'                   => 'shp_environment_types',

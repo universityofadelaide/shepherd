@@ -10,6 +10,7 @@ use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Link;
+use Drupal\Core\Render\Element;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\Url;
@@ -46,7 +47,6 @@ class Environment {
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
   protected $entityTypeManager;
-
 
   /**
    * Node entity type.
@@ -125,6 +125,7 @@ class Environment {
     $this->setSiteField($form, $access);
     $this->setBranchField($form, $form_state);
     $this->applyJavascriptEnvironmentType($form);
+    $this->replaceCronTokens($form, $form_state);
   }
 
   /**
@@ -194,31 +195,34 @@ class Environment {
    */
   public function setDomainPath(array &$form, FormStateInterface $form_state) {
     $ajax_response = new AjaxResponse();
-    $taxonomy_term_id = $form_state->getValue('field_shp_environment_type')[0]['target_id'];
-    $site_id = $form_state->getValue('field_shp_site')[0]['target_id'];
+    $values = $form_state->getValues();
 
-    if ($taxonomy_term_id) {
-      $taxonomy_term = $this->loadTaxonomyTerm($taxonomy_term_id);
-      $site = $this->node->load($site_id);
-      $path_value = $site->field_shp_path->value;
-      $domain_value = $site->field_shp_short_name->value . '.' . $taxonomy_term->field_shp_base_domain->value;
-      $ajax_response->addCommand(new InvokeCommand('#edit-field-shp-domain-0-value', 'val', [$domain_value]));
-      $ajax_response->addCommand(new InvokeCommand('#edit-field-shp-path-0-value', 'val', [$path_value]));
+    // If our required values are missing, clear the proposed values
+    // and bail to avoid generating 500 errors.
+    if (empty($values['field_shp_environment_type'])
+      || empty($values['field_shp_site'])
+      || empty($values['field_shp_site'][0]['target_id'])) {
+      $ajax_response->addCommand(new InvokeCommand('#edit-field-shp-domain-0-value', 'val', ['']));
+      $ajax_response->addCommand(new InvokeCommand('#edit-field-shp-path-0-value', 'val', ['']));
+      return $ajax_response;
     }
-    return $ajax_response;
-  }
 
-  /**
-   * Loads taxonomy terms.
-   *
-   * @param string $tid
-   *   Term id.
-   *
-   * @return \Drupal\Core\Entity\EntityInterface
-   *   Taxonomy term entity.
-   */
-  protected function loadTaxonomyTerm($tid) {
-    return $this->taxonomyTerm->load($tid);
+    // Load the site and term to use their values to create the unique name.
+    $site = $this->node->load($values['field_shp_site'][0]['target_id']);
+    $taxonomy_term = $this->taxonomyTerm->load($values['field_shp_environment_type'][0]['target_id']);
+
+    // Ahh the rarely seen in the wild - do-while loop!
+    $count = 0;
+    do {
+      $path_value = $site->field_shp_path->value;
+      $domain_value = $site->field_shp_short_name->value . '-' . $count++ . '.' . $taxonomy_term->field_shp_base_domain->value;
+    } while (!$this->validateEnvironmentNameUniqueness($domain_value));
+
+    // We have the unique values. W00t.
+    $ajax_response->addCommand(new InvokeCommand('#edit-field-shp-domain-0-value', 'val', [$domain_value]));
+    $ajax_response->addCommand(new InvokeCommand('#edit-field-shp-path-0-value', 'val', [$path_value]));
+
+    return $ajax_response;
   }
 
   /**
@@ -358,4 +362,38 @@ class Environment {
     }
   }
 
+  /**
+   * Replace any tokens from default field values.
+   *
+   * @param array $form
+   *   Form array.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   Form state.
+   */
+  public function replaceCronTokens(array &$form, FormStateInterface $form_state) {
+    foreach (Element::children($form['field_shp_cron_jobs']['widget']) as $element) {
+      if (is_numeric($element)) {
+        $form['field_shp_cron_jobs']['widget'][$element]['key']['#default_value'] = \Drupal::token()
+          ->replace($form['field_shp_cron_jobs']['widget'][$element]['key']['#default_value']);
+      }
+    }
+  }
+
+  /**
+   * Ensure that the environment name generated is unique.
+   *
+   * @param string $environment_name
+   *   Generated environment name.
+   *
+   * @return bool
+   *   True if unique, false if not.
+   */
+  protected function validateEnvironmentNameUniqueness($environment_name) {
+    $results = $this->node->getQuery()
+      ->condition('type', 'shp_environment')
+      ->condition('field_shp_domain', $environment_name)
+      ->execute();
+
+    return !count($results);
+  }
 }
