@@ -1,0 +1,14 @@
+uuid: f59061b9-ce0b-454b-af19-3fee4a5e4f3e
+langcode: en
+status: true
+dependencies:
+  config:
+    - user.role.shp_online_consultant
+  module:
+    - user
+id: user_add_role_action.shp_online_consultant
+label: 'Add the Online Consultant role to the selected user(s)'
+type: user
+plugin: user_add_role_action
+configuration:
+  rid: shp_online_consultant
