@@ -3,14 +3,14 @@ langcode: en
 status: true
 dependencies:
   config:
-  - core.entity_view_mode.node.teaser
-  - field.storage.node.field_shp_environment_type
-  - node.type.shp_backup
+    - core.entity_view_mode.node.teaser
+    - field.storage.node.field_shp_environment_type
+    - node.type.shp_backup
   module:
-  - content_moderation
-  - node
-  - shp_custom
-  - user
+    - content_moderation
+    - node
+    - shp_custom
+    - user
 _core:
   default_config_hash: GC-29kik__fj6gHcirx-UrPR-QaFHMOIP7_UAo-1Gik
 id: shp_site_environments
@@ -471,14 +471,14 @@ display:
     cache_metadata:
       max-age: -1
       contexts:
-      - 'languages:language_content'
-      - 'languages:language_interface'
-      - url
-      - url.query_args
-      - 'user.node_grants:view'
-      - user.permissions
+        - 'languages:language_content'
+        - 'languages:language_interface'
+        - url
+        - url.query_args
+        - 'user.node_grants:view'
+        - user.permissions
       tags:
-      - 'config:field.storage.node.field_shp_environment_type'
+        - 'config:field.storage.node.field_shp_environment_type'
   page_1:
     display_plugin: page
     id: page_1
@@ -499,11 +499,11 @@ display:
     cache_metadata:
       max-age: -1
       contexts:
-      - 'languages:language_content'
-      - 'languages:language_interface'
-      - url
-      - url.query_args
-      - 'user.node_grants:view'
-      - user.permissions
+        - 'languages:language_content'
+        - 'languages:language_interface'
+        - url
+        - url.query_args
+        - 'user.node_grants:view'
+        - user.permissions
       tags:
-      - 'config:field.storage.node.field_shp_environment_type'
+        - 'config:field.storage.node.field_shp_environment_type'
