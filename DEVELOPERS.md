@@ -165,7 +165,7 @@ Development should proceed as normal, typically with:
 * Submit pull request through GitHub
 * Merge into develop
 * Update the shepherd-modules repo.
-  ```
+  ```bash
   ./shepherd-module-update.sh
   ```
 
@@ -180,12 +180,12 @@ to minimise/avoid conflicts.
 https://help.github.com/articles/configuring-a-remote-for-a-fork/
 
 Basically setup a new repository on your own infrastructure, then add in the shepherd remote with:
-```
+```bash
 git remote add shepherd https://github.com/universityofadelaide/shepherd.git
 ```
 
 You should end up with something like:
-```
+```bash
 origin      git@gitlab.adelaide.edu.au:web-team/ua-shepherd.git (fetch)
 origin	    git@gitlab.adelaide.edu.au:web-team/ua-shepherd.git (push)
 shepherd    https://github.com/universityofadelaide/shepherd.git (fetch)
@@ -200,12 +200,12 @@ git merge shepherd/develop
 
 As soon as you start adding things to your composer.json, then the composer.lock file
 will start to give merge conflicts, and you will probably need to do:
-```
+```bash
 git checkout --theirs composer.lock
 ```
 
 Then you can finalise the merge and you're all caught up.
-```
+```bash
 git commit -m"Merging changes in from upstream public repository."
 ```
 
