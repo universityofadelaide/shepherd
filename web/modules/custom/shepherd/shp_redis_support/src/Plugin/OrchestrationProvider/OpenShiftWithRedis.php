@@ -158,7 +158,7 @@ class OpenShiftWithRedis extends OpenShiftOrchestrationProvider {
       'spec' => [
         'replicas' => 1,
         'selector' => array_key_exists('labels', $data) ?
-          array_merge($data['labels'], ['name' => $redis_name ]) : [],
+          array_merge($data['labels'], ['name' => $redis_name]) : [],
         'strategy' => [
           'type' => 'Rolling',
         ],
@@ -168,7 +168,7 @@ class OpenShiftWithRedis extends OpenShiftOrchestrationProvider {
               'openshift.io/generated-by' => 'shp_redis_support',
             ],
             'labels' => array_key_exists('labels', $data) ?
-              array_merge($data['labels'], ['name' => $redis_name ]) : [],
+              array_merge($data['labels'], ['name' => $redis_name]) : [],
           ],
           'spec' =>
             [
