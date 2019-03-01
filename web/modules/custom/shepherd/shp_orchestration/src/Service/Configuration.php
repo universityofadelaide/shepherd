@@ -128,7 +128,21 @@ class Configuration {
    *   An array of secrets.
    */
   public function getSecrets(NodeInterface $node) {
-    return $this->moduleHandler->invokeAll('shp_secrets', [$node]);
+    $secrets = [];
+
+    // Get secrets from the environment and project.
+    $site = $this->environment->getSite($node);
+    $project = $this->site->getProject($site);
+
+    if (!$node->field_shp_secrets->isEmpty()) {
+      $secrets['environment'] = $node->field_shp_secrets->value;
+    }
+
+    if (!$project->field_shp_secrets->isEmpty()) {
+      $secrets['project'] = $project->field_shp_secrets->value;
+    }
+
+    return $secrets;
   }
 
 }

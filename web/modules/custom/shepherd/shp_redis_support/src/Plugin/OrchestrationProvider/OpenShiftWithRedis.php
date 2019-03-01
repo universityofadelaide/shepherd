@@ -22,10 +22,14 @@ class OpenShiftWithRedis extends OpenShiftOrchestrationProvider {
    *
    * @param string $deployment_name
    *   The deployment name.
+   * @param string $site_id
+   *   The ID of the site the redis instance will be working with.
+   * @param string $environment
+   *   The ID of the environment the redis instance will be working with.
    *
    * @throws \UniversityOfAdelaide\OpenShift\ClientException
    */
-  public function createRedisDeployment(string $deployment_name) {
+  public function createRedisDeployment(string $deployment_name, string $site_id, string $environment) {
     $redis_name = $deployment_name . '-redis';
     $redis_port = 6379;
 
@@ -35,7 +39,8 @@ class OpenShiftWithRedis extends OpenShiftOrchestrationProvider {
       $this->client->createImageStream($image_stream);
     }
 
-    $redis_deployment_config = $this->generateDeploymentConfig($deployment_name, $redis_name, $redis_port);
+    $data = $this->formatRedisDeployData($deployment_name, $site_id, $environment);
+    $redis_deployment_config = $this->generateDeploymentConfig($deployment_name, $redis_name, $redis_port, $data);
     $this->client->createDeploymentConfig($redis_deployment_config);
 
     $this->client->createService($redis_name, $redis_name, $redis_port,
@@ -62,6 +67,30 @@ class OpenShiftWithRedis extends OpenShiftOrchestrationProvider {
   }
 
   /**
+   * @param string $name
+   *   The name of the deployment config.
+   * @param int $site_id
+   *   The ID of the site the environment represents.
+   * @param int $environment_id
+   *   The ID of the environment being created.
+   *
+   * @return array
+   *   The deployment config array.
+   */
+  private function formatRedisDeployData(string $name, int $site_id, int $environment_id) {
+    $deploy_data = [
+      'labels' => [
+        'site_id' => (string) $site_id,
+        'environment_id' => (string) $environment_id,
+        'app' => $name,
+        'deploymentconfig' => $name,
+      ],
+    ];
+
+    return $deploy_data;
+  }
+
+  /**
    * Generate image stream.
    *
    * @return array
@@ -72,8 +101,8 @@ class OpenShiftWithRedis extends OpenShiftOrchestrationProvider {
       'kind' => 'ImageStream',
       'metadata' => [
         'name' => 'redis',
-        'labels' => [
-          'app' => 'redis',
+        'annotations' => [
+          'description' => 'Track the redis alpine image',
         ],
       ],
       'spec' => [
@@ -106,14 +135,16 @@ class OpenShiftWithRedis extends OpenShiftOrchestrationProvider {
    *
    * @param string $deployment_name
    *   Deployment name.
-   * @param $redis_name
+   * @param string $redis_name
    *   Redis name.
-   * @param $redis_port
+   * @param string $redis_port
    *   Redis port.
+   * @param array $data
+   *   Array of data for labels
    *
    * @return array
    */
-  public function generateDeploymentConfig(string $deployment_name, $redis_name, $redis_port) {
+  public function generateDeploymentConfig(string $deployment_name, string $redis_name, string $redis_port, array $data) {
     $redis_data = $deployment_name . '-data';
     $redis_conf = $deployment_name . '-config';
 
@@ -122,16 +153,12 @@ class OpenShiftWithRedis extends OpenShiftOrchestrationProvider {
       'kind' => 'DeploymentConfig',
       'metadata' => [
         'name' => $redis_name,
-        'labels' => [
-          'app' => $deployment_name,
-        ],
+        'labels' => array_key_exists('labels', $data) ? $data['labels'] : [],
       ],
       'spec' => [
         'replicas' => 1,
-        'selector' => [
-          'app' => $deployment_name,
-          'deploymentconfig' => $redis_name,
-        ],
+        'selector' => array_key_exists('labels', $data) ?
+          array_merge($data['labels'], ['name' => $redis_name]) : [],
         'strategy' => [
           'type' => 'Rolling',
         ],
@@ -140,10 +167,8 @@ class OpenShiftWithRedis extends OpenShiftOrchestrationProvider {
             'annotations' => [
               'openshift.io/generated-by' => 'shp_redis_support',
             ],
-            'labels' => [
-              'app' => $deployment_name,
-              'deploymentconfig' => $redis_name,
-            ],
+            'labels' => array_key_exists('labels', $data) ?
+              array_merge($data['labels'], ['name' => $redis_name]) : [],
           ],
           'spec' =>
             [
