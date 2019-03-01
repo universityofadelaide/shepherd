@@ -5398,16 +5398,16 @@
         },
         {
             "name": "universityofadelaide/shepherd-drupal-scaffold",
-            "version": "2.4.0",
+            "version": "2.4.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/universityofadelaide/shepherd-drupal-scaffold.git",
-                "reference": "6e3bdf5032c057679a0a58a541acb102e00f4991"
+                "reference": "a3e95e3085a2076c5c2ac4e7b671d4b919148dcd"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/universityofadelaide/shepherd-drupal-scaffold/zipball/6e3bdf5032c057679a0a58a541acb102e00f4991",
-                "reference": "6e3bdf5032c057679a0a58a541acb102e00f4991",
+                "url": "https://api.github.com/repos/universityofadelaide/shepherd-drupal-scaffold/zipball/a3e95e3085a2076c5c2ac4e7b671d4b919148dcd",
+                "reference": "a3e95e3085a2076c5c2ac4e7b671d4b919148dcd",
                 "shasum": ""
             },
             "require": {
@@ -5431,7 +5431,7 @@
                 "GPL-2.0+"
             ],
             "description": "Composer Plugin for updating the Shepherd Drupal tools.",
-            "time": "2019-01-27T04:12:18+00:00"
+            "time": "2019-02-04T23:22:57+00:00"
         },
         {
             "name": "webflo/drupal-finder",
@@ -7188,6 +7188,7 @@
                 "mock",
                 "xunit"
             ],
+            "abandoned": true,
             "time": "2018-08-09T05:50:03+00:00"
         },
         {
