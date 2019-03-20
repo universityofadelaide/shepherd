@@ -31,7 +31,9 @@ class DeploymentEventSubscriber implements EventSubscriberInterface {
     $orchestration_provider = $event->getOrchestrationProvider();
     if ($orchestration_provider->getPluginId() === 'openshift_with_redis') {
       $deployment_name = $event->getDeploymentName();
-      $orchestration_provider->createRedisDeployment($deployment_name);
+      $site_id = $event->getSite()->id();
+      $environment = $event->getEnvironment()->id();
+      $orchestration_provider->createRedisDeployment($deployment_name, $site_id, $environment);
     }
   }
 

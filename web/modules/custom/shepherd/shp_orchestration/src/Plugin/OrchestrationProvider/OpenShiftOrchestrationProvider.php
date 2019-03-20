@@ -229,7 +229,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     // Tell, don't ask (to create a build config).
     $this->createBuildConfig($build_config_name, $source_ref, $source_repo, $builder_image, $source_secret, $image_stream_tag, $formatted_env_vars);
 
-    if (!$volumes = $this->setupVolumes($project_name, $deployment_name, $storage_class)) {
+    if (!$volumes = $this->setupVolumes($project_name, $deployment_name, $storage_class, $secrets)) {
       return FALSE;
     }
 
@@ -310,6 +310,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     string $source_repo,
     string $source_ref = 'master',
     string $source_secret = NULL,
+    string $storage_class = '',
     bool $update_on_image_change = FALSE,
     bool $cron_suspended = FALSE,
     array $environment_variables = [],
@@ -324,7 +325,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     $deployment_name = self::generateDeploymentName($environment_id);
     $formatted_env_vars = $this->formatEnvVars($environment_variables, $deployment_name);
 
-    if (!$volumes = $this->setupVolumes($project_name, $deployment_name)) {
+    if (!$volumes = $this->setupVolumes($project_name, $deployment_name, $storage_class, $secrets)) {
       return FALSE;
     }
 
@@ -548,7 +549,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     $deployment_config = $this->client->getDeploymentConfig($deployment_name);
 
     $image_stream = $this->client->getImageStream($sanitised_project_name);
-    $volumes = $this->generateVolumeData($project_name, $deployment_name);
+    $volumes = $this->generateVolumeData($project_name, $deployment_name, TRUE);
     $deploy_data = $this->formatDeployData(
       $deployment_name,
       $deployment_config['spec']['template']['spec']['containers'][0]['env'],
@@ -931,11 +932,14 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
    *   The name of the deployment being created.
    * @param string $storage_class
    *   Optional storage class name.
+   * @param array $secrets
+   *   Optional secrets to attach.
    *
    * @return array|bool
    *   The volume config array, or false if creating PVCs was unsuccessful.
+   * @throws \UniversityOfAdelaide\OpenShift\ClientException
    */
-  protected function setupVolumes(string $project_name, string $deployment_name, $storage_class = '') {
+  protected function setupVolumes(string $project_name, string $deployment_name, $storage_class = '', $secrets = []) {
     $volumes = $this->generateVolumeData($project_name, $deployment_name);
 
     try {
@@ -948,7 +952,8 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
           $storage_class
         );
       }
-      if (!$this->client->getPersistentVolumeClaim($volumes['backup']['name'])) {
+      // Only job containers have access to the backup pvc.
+      if (isset($volumes['backup']) && !$this->client->getPersistentVolumeClaim($volumes['backup']['name'])) {
         $this->client->createPersistentVolumeClaim(
           $volumes['backup']['name'],
           'ReadWriteMany',
@@ -963,6 +968,26 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       return FALSE;
     }
 
+    // Append project and environment specific secrets to the volumes.
+    if (count($secrets)) {
+      if (array_key_exists('environment', $secrets)) {
+        $volumes['secret-environment'] = [
+          'name' => 'secret-environment',
+          'path' => '/etc/secret-environment',
+          'type' => 'secret',
+          'secret' => $secrets['environment'],
+        ];
+      }
+      if (array_key_exists('project', $secrets)) {
+        $volumes['secret-project'] = [
+          'name' => 'secret-project',
+          'path' => '/etc/secret-project',
+          'type' => 'secret',
+          'secret' => $secrets['project'],
+        ];
+      }
+    }
+
     return $volumes;
   }
 
@@ -973,11 +998,15 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
    *   The name of the project in OpenShift.
    * @param string $deployment_name
    *   The name of the deployment.
+   * @param bool $mount_backup
+   *   Add the backup mount to the volumes, should only used by jobs.
    *
    * @return array
    *   Volume data.
+   *
+   * @throws \UniversityOfAdelaide\OpenShift\ClientException
    */
-  protected function generateVolumeData(string $project_name, string $deployment_name) {
+  protected function generateVolumeData(string $project_name, string $deployment_name, bool $mount_backup = FALSE) {
     $shared_pvc_name = $deployment_name . '-shared';
     // @todo This should be project_name-backup or similar - one backup pv per project.
     $backup_pvc_name = self::sanitise($project_name) . '-backup';
@@ -988,12 +1017,15 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
         'name' => $shared_pvc_name,
         'path' => '/shared',
       ],
-      'backup' => [
+    ];
+
+    if ($mount_backup) {
+      $volumes['backup'] = [
         'type' => 'pvc',
         'name' => $backup_pvc_name,
         'path' => '/backup',
-      ],
-    ];
+      ];
+    }
 
     // If a secret with the same name as the deployment exists, volume it in.
     if ($this->client->getSecret($deployment_name)) {

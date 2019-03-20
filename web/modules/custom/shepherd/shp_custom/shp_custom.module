@@ -294,6 +294,9 @@ function shp_custom_tokens($type, $tokens, array $frequency, array $options, Bub
   $replacements = [];
 
   foreach ($tokens as $name => $original) {
+    if (strpos($name, ':') === FALSE) {
+      continue;
+    }
     [$method, $frequency] = explode(':', $name);
     switch ($method) {
       case 'cron':
