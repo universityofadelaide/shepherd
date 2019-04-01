@@ -161,6 +161,20 @@ class Backup {
     $site = $node_storage->load($backup->field_shp_site->target_id);
     $environment = $node_storage->load($backup->field_shp_environment->target_id);
     $project = $node_storage->load($site->field_shp_project->target_id);
+
+    if (empty($site) || empty($environment) || empty($project)) {
+      // User has deleted something, we can't proceed, so return FALSE early
+      // & Un-publish the backup entry as a simple indicator that it borked.
+      \Drupal::logger('shp_backup')->error('Unable to create backup, one of the following nodes is missing. Site: %site, Environment: %environment, Project: %project', [
+        '%site' => $backup->field_shp_site->target_id,
+        '%environment' => $backup->field_shp_environment->target_id,
+        '%project' => (isset($site) ? $site->field_shp_project->target_id : ''),
+      ]);
+      $backup->set('status', 0);
+      $backup->save();
+      return FALSE;
+    }
+
     $project_name = $project->title->value;
 
     $backup_command = str_replace(["\r\n", "\n", "\r"], ' && ', trim($this->config->get('backup_command')));
@@ -193,6 +207,16 @@ class Backup {
     $site = $node_storage->load($backup->field_shp_site->target_id);
     $project = $node_storage->load($site->field_shp_project->target_id);
     $project_name = $project->title->value;
+
+    if (empty($site) || empty($environment) || empty($project)) {
+      // User has deleted something, we can't proceed, so return FALSE early.
+      \Drupal::logger('shp_restore')->error('Unable to restore from backup, one of the following nodes is missing. Site: %site, Environment: %environment, Project: %project', [
+        '%site' => $backup->field_shp_site->target_id,
+        '%environment' => $environment,
+        '%project' => (isset($site) ? $site->field_shp_project->target_id : ''),
+      ]);
+      return FALSE;
+    }
 
     $restore_command = str_replace(["\r\n", "\n", "\r"], ' && ', trim($this->config->get('restore_command')));
     $restore_command = $this->token->replace($restore_command, ['backup' => $backup]);

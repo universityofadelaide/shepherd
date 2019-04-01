@@ -1,4 +1,4 @@
-name: 'Shepherd Routes'
+name: 'Shepherd routes'
 type: module
 description: 'Provides ability to create custom routes to environments and external paths.'
 core: 8.x

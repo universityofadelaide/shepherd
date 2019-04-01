@@ -1,0 +1,6 @@
+services:
+  shp_redis_support.commands:
+    class: \Drupal\shp_redis_support\Commands\ShpRedisCommands
+    arguments: ['@entity_type.manager', '@plugin.manager.orchestration_provider']
+    tags:
+      -  { name: drush.command }

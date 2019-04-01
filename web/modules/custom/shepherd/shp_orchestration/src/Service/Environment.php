@@ -219,6 +219,11 @@ class Environment extends EntityActionBase {
       $env_vars = array_merge($env_vars, $event_env_vars);
     }
 
+    $storage_class = '';
+    if ($project->field_shp_storage_class->target_id) {
+      $storage_class = Term::load($project->field_shp_storage_class->target_id)->label();
+    }
+
     $environment_updated = $this->orchestrationProviderPlugin->updatedEnvironment(
       $project->getTitle(),
       $site->field_shp_short_name->value,
@@ -231,6 +236,7 @@ class Environment extends EntityActionBase {
       $project->field_shp_git_repository->value,
       $node->field_shp_git_reference->value,
       $project->field_shp_build_secret->value,
+      $storage_class,
       $node->field_shp_update_on_image_change->value,
       $node->field_shp_cron_suspended->value,
       $env_vars,
