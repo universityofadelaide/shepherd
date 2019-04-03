@@ -464,8 +464,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     string $short_name,
     int $site_id,
     string $domain,
-    string $path,
-    array $annotations = []
+    string $path
   ) {
     return TRUE;
   }
