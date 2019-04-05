@@ -17,7 +17,7 @@ class BackupQueueWorker extends BackupQueueWorkerBase {
    */
   public function processItem($job) {
     // Load the node for the job.
-    /** @var $backup \Drupal\node\Entity\Node */
+    /** @var $backup \Drupal\node\NodeInterface */
     if ($backup = $this->nodeStorage->load($job->backupId)) {
       // Perform the job.
       if ($responseBody = $this->backup->create($backup)) {

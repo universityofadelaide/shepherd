@@ -17,8 +17,8 @@ class RestoreQueueWorker extends BackupQueueWorkerBase {
    */
   public function processItem($job) {
     // Load the node for the job.
-    /** @var $backup \Drupal\node\Entity\Node */
-    /** @var $environment \Drupal\node\Entity\Node */
+    /** @var $backup \Drupal\node\NodeInterface */
+    /** @var $environment \Drupal\node\NodeInterface */
     if (($backup = $this->nodeStorage->load($job->backupId)) &&
       ($environment = $this->nodeStorage->load($job->environmentId))) {
       // Perform the job.
