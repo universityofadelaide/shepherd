@@ -420,12 +420,26 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     string $short_name,
     int $site_id,
     int $environment_id,
+    string $domain,
+    string $path,
+    array $annotations,
     string $source_ref = 'master',
     bool $clear_cache = TRUE
   ) {
     $site_deployment_name = self::generateDeploymentName($site_id);
 
     $environment_deployment_name = self::generateDeploymentName($environment_id);
+
+    // @todo - remove the hardcoded ports.
+    $port = 8080;
+
+    if (!$this->client->getService($site_deployment_name)) {
+      $this->client->createService($site_deployment_name, $site_deployment_name, $port, $port, $site_deployment_name);
+    }
+
+    if (!$this->client->getRoute($site_deployment_name)) {
+      $this->client->createRoute($site_deployment_name, $site_deployment_name, $domain, $path, $annotations);
+    }
 
     $result = $this->client->updateService($site_deployment_name, $environment_deployment_name);
     if ($result && $clear_cache) {
@@ -450,21 +464,8 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     string $short_name,
     int $site_id,
     string $domain,
-    string $path,
-    array $annotations = []
+    string $path
   ) {
-    $deployment_name = self::generateDeploymentName($site_id);
-
-    // @todo - make port a var and great .. so great .. yuge!
-    $port = 8080;
-    try {
-      $this->client->createService($deployment_name, $deployment_name, $port, $port, $deployment_name);
-      $this->client->createRoute($deployment_name, $deployment_name, $domain, $path, $annotations);
-    }
-    catch (ClientException $e) {
-      $this->handleClientException($e);
-      return FALSE;
-    }
     return TRUE;
   }
 
