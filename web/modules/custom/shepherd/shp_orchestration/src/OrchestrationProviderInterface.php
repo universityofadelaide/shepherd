@@ -176,6 +176,8 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
    *   Source code git ref, defaults to 'master'.
    * @param string|null $source_secret
    *   The secret to use when pulling and building the source git repository.
+   * @param string $storage_class
+   *   The storage class to use when provisioning the PVC.
    * @param bool $update_on_image_change
    *   Whether to automatically rollout update to this environment.
    * @param bool $cron_suspended
@@ -206,6 +208,7 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
     string $source_repo,
     string $source_ref = 'master',
     string $source_secret = NULL,
+    string $storage_class = '',
     bool $update_on_image_change = FALSE,
     bool $cron_suspended = FALSE,
     array $environment_variables = [],
@@ -260,6 +263,12 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
    *   Unique id of the site.
    * @param int $environment_id
    *   Unique id of the environment.
+   * @param string $domain_name
+   *   The domain name of the site.
+   * @param string $path
+   *   The path of the site.
+   * @param array $annotations
+   *   An array of route annotations.
    * @param string $source_ref
    *   Source code git ref, defaults to 'master'.
    * @param bool $clear_cache
@@ -273,6 +282,9 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
     string $short_name,
     int $site_id,
     int $environment_id,
+    string $domain_name,
+    string $path,
+    array $annotations,
     string $source_ref = 'master',
     bool $clear_cache = TRUE
   );
@@ -290,13 +302,11 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
    *   The domain name of the site.
    * @param string $path
    *   The path of the site.
-   * @param array $annotations
-   *   An array of route annotations.
    *
    * @return bool
    *   Returns true if succeeded.
    */
-  public function createdSite(string $project_name, string $short_name, int $site_id, string $domain_name, string $path, array $annotations = []);
+  public function createdSite(string $project_name, string $short_name, int $site_id, string $domain_name, string $path);
 
   /**
    * Handles a site being updated.

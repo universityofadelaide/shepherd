@@ -238,6 +238,11 @@ class Environment extends EntityActionBase {
       $env_vars = array_merge($env_vars, $event_env_vars);
     }
 
+    $storage_class = '';
+    if ($project->field_shp_storage_class->target_id) {
+      $storage_class = Term::load($project->field_shp_storage_class->target_id)->label();
+    }
+
     $environment_updated = $this->orchestrationProviderPlugin->updatedEnvironment(
       $project->getTitle(),
       $site->field_shp_short_name->value,
@@ -250,6 +255,7 @@ class Environment extends EntityActionBase {
       $project->field_shp_git_repository->value,
       $node->field_shp_git_reference->value,
       $project->field_shp_build_secret->value,
+      $storage_class,
       $node->field_shp_update_on_image_change->value,
       $node->field_shp_cron_suspended->value,
       $env_vars,
@@ -319,11 +325,24 @@ class Environment extends EntityActionBase {
       return FALSE;
     }
 
+    // Load the taxonomy term that has protect enabled.
+    $promoted_term = $this->environmentType->getPromotedTerm();
+
+    // Extract and transform the annotations from the environment type.
+    $annotations = $promoted_term ? $promoted_term->field_shp_annotations->getValue() : [];
+    $annotations = array_combine(
+      array_column($annotations, 'key'),
+      array_column($annotations, 'value')
+    );
+
     $result = $this->orchestrationProviderPlugin->promotedEnvironment(
       $project->title->value,
       $site->field_shp_short_name->value,
       $site->id(),
       $environment->id(),
+      $site->field_shp_domain->value,
+      $site->field_shp_path->value,
+      $annotations,
       $environment->field_shp_git_reference->value,
       $clear_cache
     );
