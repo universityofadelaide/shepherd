@@ -257,6 +257,12 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
    *   Unique id of the site.
    * @param int $environment_id
    *   Unique id of the environment.
+   * @param string $domain_name
+   *   The domain name of the site.
+   * @param string $path
+   *   The path of the site.
+   * @param array $annotations
+   *   An array of route annotations.
    * @param string $source_ref
    *   Source code git ref, defaults to 'master'.
    * @param bool $clear_cache
@@ -270,6 +276,9 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
     string $short_name,
     int $site_id,
     int $environment_id,
+    string $domain_name,
+    string $path,
+    array $annotations,
     string $source_ref = 'master',
     bool $clear_cache = TRUE
   );
@@ -287,13 +296,11 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
    *   The domain name of the site.
    * @param string $path
    *   The path of the site.
-   * @param array $annotations
-   *   An array of route annotations.
    *
    * @return bool
    *   Returns true if succeeded.
    */
-  public function createdSite(string $project_name, string $short_name, int $site_id, string $domain_name, string $path, array $annotations = []);
+  public function createdSite(string $project_name, string $short_name, int $site_id, string $domain_name, string $path);
 
   /**
    * Handles a site being updated.
