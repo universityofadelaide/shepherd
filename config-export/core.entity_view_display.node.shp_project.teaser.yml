@@ -45,4 +45,5 @@ hidden:
   field_shp_readiness_probe_params: true
   field_shp_readiness_probe_port: true
   field_shp_readiness_probe_type: true
+  field_shp_secrets: true
   field_shp_storage_class: true
