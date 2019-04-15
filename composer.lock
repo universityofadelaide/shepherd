@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "16402e31bedeccd9e306ca44f28ca976",
+    "content-hash": "5731f5e0ebb113cae794e9c9a0b4a3e6",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -1917,16 +1917,16 @@
         },
         {
             "name": "drupal/core",
-            "version": "8.7.0-beta2",
+            "version": "8.6.14",
             "source": {
                 "type": "git",
                 "url": "https://github.com/drupal/core.git",
-                "reference": "bb1c05930162e80277b2cb88eb2d0f647c856946"
+                "reference": "7f5f0369ffe08478aa0f26bd48dc95bcc9cde4b5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/drupal/core/zipball/bb1c05930162e80277b2cb88eb2d0f647c856946",
-                "reference": "bb1c05930162e80277b2cb88eb2d0f647c856946",
+                "url": "https://api.github.com/repos/drupal/core/zipball/7f5f0369ffe08478aa0f26bd48dc95bcc9cde4b5",
+                "reference": "7f5f0369ffe08478aa0f26bd48dc95bcc9cde4b5",
                 "shasum": ""
             },
             "require": {
@@ -1935,7 +1935,7 @@
                 "doctrine/annotations": "^1.2",
                 "doctrine/common": "^2.5",
                 "easyrdf/easyrdf": "^0.9",
-                "egulias/email-validator": "^2.0",
+                "egulias/email-validator": "^1.2",
                 "ext-date": "*",
                 "ext-dom": "*",
                 "ext-filter": "*",
@@ -1952,7 +1952,6 @@
                 "guzzlehttp/guzzle": "^6.2.1",
                 "masterminds/html5": "^2.1",
                 "paragonie/random_compat": "^1.0|^2.0",
-                "pear/archive_tar": "^1.4",
                 "php": "^5.5.9|>=7.0.8",
                 "stack/builder": "^1.0",
                 "symfony-cmf/routing": "^1.4",
@@ -2023,7 +2022,6 @@
                 "drupal/core-transliteration": "self.version",
                 "drupal/core-utility": "self.version",
                 "drupal/core-uuid": "self.version",
-                "drupal/core-version": "self.version",
                 "drupal/datetime": "self.version",
                 "drupal/datetime_range": "self.version",
                 "drupal/dblog": "self.version",
@@ -2041,7 +2039,6 @@
                 "drupal/history": "self.version",
                 "drupal/image": "self.version",
                 "drupal/inline_form_errors": "self.version",
-                "drupal/jsonapi": "self.version",
                 "drupal/language": "self.version",
                 "drupal/layout_builder": "self.version",
                 "drupal/layout_discovery": "self.version",
@@ -2092,10 +2089,9 @@
                 "behat/mink": "1.7.x-dev",
                 "behat/mink-goutte-driver": "^1.2",
                 "behat/mink-selenium2-driver": "1.3.x-dev",
-                "drupal/coder": "^8.3.1",
+                "drupal/coder": "^8.2.12",
                 "jcalderonzumba/gastonjs": "^1.0.2",
                 "jcalderonzumba/mink-phantomjs-driver": "^0.3.1",
-                "justinrainbow/json-schema": "^5.2",
                 "mikey179/vfsstream": "^1.2",
                 "phpspec/prophecy": "^1.7",
                 "phpunit/phpunit": "^4.8.35 || ^6.5",
@@ -2128,8 +2124,7 @@
                         "core/lib/Drupal/Component/Serialization/composer.json",
                         "core/lib/Drupal/Component/Transliteration/composer.json",
                         "core/lib/Drupal/Component/Utility/composer.json",
-                        "core/lib/Drupal/Component/Uuid/composer.json",
-                        "core/lib/Drupal/Component/Version/composer.json"
+                        "core/lib/Drupal/Component/Uuid/composer.json"
                     ],
                     "recurse": false,
                     "replace": false,
@@ -2157,7 +2152,7 @@
                 "GPL-2.0-or-later"
             ],
             "description": "Drupal is an open source content management platform powering millions of websites and applications.",
-            "time": "2019-04-08T00:25:46+00:00"
+            "time": "2019-04-08T01:37:34+00:00"
         },
         {
             "name": "drupal/devel",
@@ -3026,29 +3021,24 @@
         },
         {
             "name": "egulias/email-validator",
-            "version": "2.1.7",
+            "version": "1.2.15",
             "source": {
                 "type": "git",
                 "url": "https://github.com/egulias/EmailValidator.git",
-                "reference": "709f21f92707308cdf8f9bcfa1af4cb26586521e"
+                "reference": "758a77525bdaabd6c0f5669176bd4361cb2dda9e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/egulias/EmailValidator/zipball/709f21f92707308cdf8f9bcfa1af4cb26586521e",
-                "reference": "709f21f92707308cdf8f9bcfa1af4cb26586521e",
+                "url": "https://api.github.com/repos/egulias/EmailValidator/zipball/758a77525bdaabd6c0f5669176bd4361cb2dda9e",
+                "reference": "758a77525bdaabd6c0f5669176bd4361cb2dda9e",
                 "shasum": ""
             },
             "require": {
                 "doctrine/lexer": "^1.0.1",
-                "php": ">= 5.5"
+                "php": ">= 5.3.3"
             },
             "require-dev": {
-                "dominicsayers/isemail": "dev-master",
-                "phpunit/phpunit": "^4.8.35||^5.7||^6.0",
-                "satooshi/php-coveralls": "^1.0.1"
-            },
-            "suggest": {
-                "ext-intl": "PHP Internationalization Libraries are required to use the SpoofChecking validation"
+                "phpunit/phpunit": "^4.8.24"
             },
             "type": "library",
             "extra": {
@@ -3057,8 +3047,8 @@
                 }
             },
             "autoload": {
-                "psr-4": {
-                    "Egulias\\EmailValidator\\": "EmailValidator"
+                "psr-0": {
+                    "Egulias\\": "src/"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -3070,7 +3060,7 @@
                     "name": "Eduardo Gulias Davis"
                 }
             ],
-            "description": "A library for validating emails against several RFCs",
+            "description": "A library for validating emails",
             "homepage": "https://github.com/egulias/EmailValidator",
             "keywords": [
                 "email",
@@ -3079,7 +3069,7 @@
                 "validation",
                 "validator"
             ],
-            "time": "2018-12-04T22:38:24+00:00"
+            "time": "2018-09-25T20:59:41+00:00"
         },
         {
             "name": "grasmash/expander",
@@ -3678,218 +3668,6 @@
                 "random"
             ],
             "time": "2019-01-03T20:59:08+00:00"
-        },
-        {
-            "name": "pear/archive_tar",
-            "version": "1.4.7",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/pear/Archive_Tar.git",
-                "reference": "7e48add6f8edc3027dd98ad15964b1a28fd0c845"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/pear/Archive_Tar/zipball/7e48add6f8edc3027dd98ad15964b1a28fd0c845",
-                "reference": "7e48add6f8edc3027dd98ad15964b1a28fd0c845",
-                "shasum": ""
-            },
-            "require": {
-                "pear/pear-core-minimal": "^1.10.0alpha2",
-                "php": ">=5.2.0"
-            },
-            "require-dev": {
-                "phpunit/phpunit": "*"
-            },
-            "suggest": {
-                "ext-bz2": "Bz2 compression support.",
-                "ext-xz": "Lzma2 compression support.",
-                "ext-zlib": "Gzip compression support."
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "1.4.x-dev"
-                }
-            },
-            "autoload": {
-                "psr-0": {
-                    "Archive_Tar": ""
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "include-path": [
-                "./"
-            ],
-            "license": [
-                "BSD-3-Clause"
-            ],
-            "authors": [
-                {
-                    "name": "Vincent Blavet",
-                    "email": "vincent@phpconcept.net"
-                },
-                {
-                    "name": "Greg Beaver",
-                    "email": "greg@chiaraquartet.net"
-                },
-                {
-                    "name": "Michiel Rook",
-                    "email": "mrook@php.net"
-                }
-            ],
-            "description": "Tar file management class with compression support (gzip, bzip2, lzma2)",
-            "homepage": "https://github.com/pear/Archive_Tar",
-            "keywords": [
-                "archive",
-                "tar"
-            ],
-            "time": "2019-04-08T13:15:55+00:00"
-        },
-        {
-            "name": "pear/console_getopt",
-            "version": "v1.4.2",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/pear/Console_Getopt.git",
-                "reference": "6c77aeb625b32bd752e89ee17972d103588b90c0"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/pear/Console_Getopt/zipball/6c77aeb625b32bd752e89ee17972d103588b90c0",
-                "reference": "6c77aeb625b32bd752e89ee17972d103588b90c0",
-                "shasum": ""
-            },
-            "type": "library",
-            "autoload": {
-                "psr-0": {
-                    "Console": "./"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "include-path": [
-                "./"
-            ],
-            "license": [
-                "BSD-2-Clause"
-            ],
-            "authors": [
-                {
-                    "name": "Greg Beaver",
-                    "email": "cellog@php.net",
-                    "role": "Helper"
-                },
-                {
-                    "name": "Andrei Zmievski",
-                    "email": "andrei@php.net",
-                    "role": "Lead"
-                },
-                {
-                    "name": "Stig Bakken",
-                    "email": "stig@php.net",
-                    "role": "Developer"
-                }
-            ],
-            "description": "More info available on: http://pear.php.net/package/Console_Getopt",
-            "time": "2019-02-06T16:52:33+00:00"
-        },
-        {
-            "name": "pear/pear-core-minimal",
-            "version": "v1.10.9",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/pear/pear-core-minimal.git",
-                "reference": "742be8dd68c746a01e4b0a422258e9c9cae1c37f"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/pear/pear-core-minimal/zipball/742be8dd68c746a01e4b0a422258e9c9cae1c37f",
-                "reference": "742be8dd68c746a01e4b0a422258e9c9cae1c37f",
-                "shasum": ""
-            },
-            "require": {
-                "pear/console_getopt": "~1.4",
-                "pear/pear_exception": "~1.0"
-            },
-            "replace": {
-                "rsky/pear-core-min": "self.version"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-0": {
-                    "": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "include-path": [
-                "src/"
-            ],
-            "license": [
-                "BSD-3-Clause"
-            ],
-            "authors": [
-                {
-                    "name": "Christian Weiske",
-                    "email": "cweiske@php.net",
-                    "role": "Lead"
-                }
-            ],
-            "description": "Minimal set of PEAR core files to be used as composer dependency",
-            "time": "2019-03-13T18:15:44+00:00"
-        },
-        {
-            "name": "pear/pear_exception",
-            "version": "v1.0.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/pear/PEAR_Exception.git",
-                "reference": "8c18719fdae000b690e3912be401c76e406dd13b"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/pear/PEAR_Exception/zipball/8c18719fdae000b690e3912be401c76e406dd13b",
-                "reference": "8c18719fdae000b690e3912be401c76e406dd13b",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=4.4.0"
-            },
-            "require-dev": {
-                "phpunit/phpunit": "*"
-            },
-            "type": "class",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "1.0.x-dev"
-                }
-            },
-            "autoload": {
-                "psr-0": {
-                    "PEAR": ""
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "include-path": [
-                "."
-            ],
-            "license": [
-                "BSD-2-Clause"
-            ],
-            "authors": [
-                {
-                    "name": "Helgi Thormar",
-                    "email": "dufuz@php.net"
-                },
-                {
-                    "name": "Greg Beaver",
-                    "email": "cellog@php.net"
-                }
-            ],
-            "description": "The PEAR Exception base class.",
-            "homepage": "https://github.com/pear/PEAR_Exception",
-            "keywords": [
-                "exception"
-            ],
-            "time": "2015-02-10T20:07:52+00:00"
         },
         {
             "name": "predis/predis",
@@ -6864,72 +6642,6 @@
             "time": "2016-12-01T10:57:30+00:00"
         },
         {
-            "name": "justinrainbow/json-schema",
-            "version": "5.2.8",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/justinrainbow/json-schema.git",
-                "reference": "dcb6e1006bb5fd1e392b4daa68932880f37550d4"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/justinrainbow/json-schema/zipball/dcb6e1006bb5fd1e392b4daa68932880f37550d4",
-                "reference": "dcb6e1006bb5fd1e392b4daa68932880f37550d4",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.3.3"
-            },
-            "require-dev": {
-                "friendsofphp/php-cs-fixer": "~2.2.20",
-                "json-schema/json-schema-test-suite": "1.2.0",
-                "phpunit/phpunit": "^4.8.35"
-            },
-            "bin": [
-                "bin/validate-json"
-            ],
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "5.0.x-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "JsonSchema\\": "src/JsonSchema/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Bruno Prieto Reis",
-                    "email": "bruno.p.reis@gmail.com"
-                },
-                {
-                    "name": "Justin Rainbow",
-                    "email": "justin.rainbow@gmail.com"
-                },
-                {
-                    "name": "Igor Wiedler",
-                    "email": "igor@wiedler.ch"
-                },
-                {
-                    "name": "Robert Schönthal",
-                    "email": "seroscho@googlemail.com"
-                }
-            ],
-            "description": "A library to validate a json schema.",
-            "homepage": "https://github.com/justinrainbow/json-schema",
-            "keywords": [
-                "json",
-                "schema"
-            ],
-            "time": "2019-01-14T23:55:14+00:00"
-        },
-        {
             "name": "mikey179/vfsStream",
             "version": "v1.6.6",
             "source": {
@@ -8617,27 +8329,26 @@
         },
         {
             "name": "webflo/drupal-core-require-dev",
-            "version": "8.7.0-beta2",
+            "version": "8.6.14",
             "source": {
                 "type": "git",
                 "url": "https://github.com/webflo/drupal-core-require-dev.git",
-                "reference": "ed2708624e6641d46a79be0177e00574a73dd4c6"
+                "reference": "a34a91c78db67979e3fd574bbec6045a932d2ca7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/webflo/drupal-core-require-dev/zipball/ed2708624e6641d46a79be0177e00574a73dd4c6",
-                "reference": "ed2708624e6641d46a79be0177e00574a73dd4c6",
+                "url": "https://api.github.com/repos/webflo/drupal-core-require-dev/zipball/a34a91c78db67979e3fd574bbec6045a932d2ca7",
+                "reference": "a34a91c78db67979e3fd574bbec6045a932d2ca7",
                 "shasum": ""
             },
             "require": {
                 "behat/mink": "1.7.x-dev",
                 "behat/mink-goutte-driver": "^1.2",
                 "behat/mink-selenium2-driver": "1.3.x-dev",
-                "drupal/coder": "^8.3.1",
-                "drupal/core": "8.7.0-beta2",
+                "drupal/coder": "^8.2.12",
+                "drupal/core": "8.6.14",
                 "jcalderonzumba/gastonjs": "^1.0.2",
                 "jcalderonzumba/mink-phantomjs-driver": "^0.3.1",
-                "justinrainbow/json-schema": "^5.2",
                 "mikey179/vfsstream": "^1.2",
                 "phpspec/prophecy": "^1.7",
                 "phpunit/phpunit": "^4.8.35 || ^6.5",
@@ -8651,7 +8362,7 @@
                 "GPL-2.0-or-later"
             ],
             "description": "require-dev dependencies from drupal/core",
-            "time": "2019-04-08T00:31:36+00:00"
+            "time": "2019-04-08T02:01:38+00:00"
         }
     ],
     "aliases": [],
