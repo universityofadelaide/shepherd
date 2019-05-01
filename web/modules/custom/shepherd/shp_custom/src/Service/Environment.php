@@ -257,10 +257,9 @@ class Environment {
       ];
     }
 
-    try {
-      $site = $entity->field_shp_site->entity;
-      $project = $site->field_shp_project->entity;
-
+    $site = !$entity->field_shp_site->isEmpty() ? $entity->field_shp_site->entity : NULL;
+    if ($site) {
+      $project = !$site->field_shp_project->isEmpty() ? $site->field_shp_project->entity : NULL;
       $terminal = $this->orchestrationProvider->getTerminalUrl(
         $project->getTitle(),
         $site->field_shp_short_name->value,
@@ -272,25 +271,22 @@ class Environment {
         $site->field_shp_short_name->value,
         $entity->id()
       );
-    }
-    catch (\Exception $e) {
-      // Continue without generating links when referenced entities are missing.
-    }
 
-    if ($terminal) {
-      $operations['terminal'] = [
-        'title'      => $this->t('Terminal'),
-        'weight'     => 9,
-        'url'        => $terminal,
-      ];
-    }
+      if ($terminal) {
+        $operations['terminal'] = [
+          'title' => $this->t('Terminal'),
+          'weight' => 9,
+          'url' => $terminal,
+        ];
+      }
 
-    if ($logs) {
-      $operations['logs'] = [
-        'title'     => $this->t('Logs'),
-        'weight'    => 4,
-        'url'       => $logs,
-      ];
+      if ($logs) {
+        $operations['logs'] = [
+          'title' => $this->t('Logs'),
+          'weight' => 4,
+          'url' => $logs,
+        ];
+      }
     }
 
     // Process copied from getDefaultOperations()
