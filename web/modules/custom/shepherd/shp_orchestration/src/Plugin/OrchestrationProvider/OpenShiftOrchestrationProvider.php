@@ -550,7 +550,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     $deployment_config = $this->client->getDeploymentConfig($deployment_name);
 
     $image_stream = $this->client->getImageStream($sanitised_project_name);
-    $volumes = $this->generateVolumeData($project_name, $deployment_name);
+    $volumes = $this->generateVolumeData($project_name, $deployment_name, [], TRUE);
     $deploy_data = $this->formatDeployData(
       $deployment_name,
       $deployment_config['spec']['template']['spec']['containers'][0]['env'],
@@ -941,8 +941,10 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
    * @throws \UniversityOfAdelaide\OpenShift\ClientException
    */
   protected function setupVolumes(string $project_name, string $deployment_name, $storage_class = '', $secrets = []) {
-    $volumes = $this->generateVolumeData($project_name, $deployment_name);
+    // Setup all the volumes that might be mounted
+    $volumes = $this->generateVolumeData($project_name, $deployment_name, $secrets);
 
+    // Setup PVC's for the ones that are NOT secrets.
     try {
       if (!$this->client->getPersistentVolumeClaim($volumes['shared']['name'])) {
         $this->client->createPersistentVolumeClaim(
@@ -963,15 +965,65 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
           $storage_class
         );
       }
-      // Now remove from the volumes array so its not mounted on web pods..
-      unset($volumes['backup']);
     }
     catch (ClientException $e) {
       $this->handleClientException($e);
       return FALSE;
     }
 
-    // Append project and environment specific secrets to the volumes.
+    return $volumes;
+  }
+
+  /**
+   * Generates the volume data for deployment configuration.
+   *
+   * @param string $project_name
+   *   The name of the project in OpenShift.
+   * @param string $deployment_name
+   *   The name of the deployment.
+   * @param array $secrets
+   *   Optional secrets to attach.
+   * @param bool $mount_backup
+   *   Whether to mount the backup volume (for jobs).
+   *
+   * @return array
+   *   Volume data.
+   *
+   * @throws \UniversityOfAdelaide\OpenShift\ClientException
+   */
+  protected function generateVolumeData(string $project_name, string $deployment_name, array $secrets= [], $mount_backup = FALSE) {
+    $shared_pvc_name = $deployment_name . '-shared';
+    // @todo This should be project_name-backup or similar - one backup pv per project.
+    $backup_pvc_name = self::sanitise($project_name) . '-backup';
+
+    $volumes = [
+      'shared' => [
+        'type' => 'pvc',
+        'name' => $shared_pvc_name,
+        'path' => '/shared',
+      ],
+    ];
+
+    if ($mount_backup) {
+      $volumes['backup'] = [
+        'type' => 'pvc',
+        'name' => $backup_pvc_name,
+        'path' => '/backup',
+      ];
+    }
+
+    // If a secret with the same name as the deployment exists, volume it in.
+    if ($this->client->getSecret($deployment_name)) {
+      // @todo Consider allowing parameters for secret volume path. Is there a convention?
+      $volumes['secret'] = [
+        'type' => 'secret',
+        'name' => $deployment_name . '-secret',
+        'path' => '/etc/secret',
+        'secret' => $deployment_name,
+      ];
+    }
+
+    // Append project and environment specific secrets to the list of volumes.
     if (count($secrets)) {
       if (array_key_exists('environment', $secrets)) {
         $volumes['secret-environment'] = [
@@ -989,52 +1041,6 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
           'secret' => $secrets['project'],
         ];
       }
-    }
-
-    return $volumes;
-  }
-
-  /**
-   * Generates the volume data for deployment configuration.
-   *
-   * @param string $project_name
-   *   The name of the project in OpenShift.
-   * @param string $deployment_name
-   *   The name of the deployment.
-   *
-   * @return array
-   *   Volume data.
-   *
-   * @throws \UniversityOfAdelaide\OpenShift\ClientException
-   */
-  protected function generateVolumeData(string $project_name, string $deployment_name) {
-    $shared_pvc_name = $deployment_name . '-shared';
-    // @todo This should be project_name-backup or similar - one backup pv per project.
-    $backup_pvc_name = self::sanitise($project_name) . '-backup';
-
-    $volumes = [
-      'shared' => [
-        'type' => 'pvc',
-        'name' => $shared_pvc_name,
-        'path' => '/shared',
-      ],
-    ];
-
-    $volumes['backup'] = [
-      'type' => 'pvc',
-      'name' => $backup_pvc_name,
-      'path' => '/backup',
-    ];
-
-    // If a secret with the same name as the deployment exists, volume it in.
-    if ($this->client->getSecret($deployment_name)) {
-      // @todo Consider allowing parameters for secret volume path. Is there a convention?
-      $volumes['secret'] = [
-        'type' => 'secret',
-        'name' => $deployment_name . '-secret',
-        'path' => '/etc/secret',
-        'secret' => $deployment_name,
-      ];
     }
 
     return $volumes;
