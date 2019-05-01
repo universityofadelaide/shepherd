@@ -257,20 +257,25 @@ class Environment {
       ];
     }
 
-    $site = $entity->field_shp_site->entity;
-    $project = $site->field_shp_project->entity;
+    try {
+      $site    = $entity->field_shp_site->entity;
+      $project = $site->field_shp_project->entity;
 
-    $terminal = $this->orchestrationProvider->getTerminalUrl(
-      $project->getTitle(),
-      $site->field_shp_short_name->value,
-      $entity->id()
-    );
+      $terminal = $this->orchestrationProvider->getTerminalUrl(
+        $project->getTitle(),
+        $site->field_shp_short_name->value,
+        $entity->id()
+      );
 
-    $logs = $this->orchestrationProvider->getLogUrl(
-      $project->getTitle(),
-      $site->field_shp_short_name->value,
-      $entity->id()
-    );
+      $logs = $this->orchestrationProvider->getLogUrl(
+        $project->getTitle(),
+        $site->field_shp_short_name->value,
+        $entity->id()
+      );
+    }
+    catch (\Exception $e) {
+      // Continue without generating links when referenced entities are missing.
+    }
 
     if ($terminal) {
       $operations['terminal'] = [
