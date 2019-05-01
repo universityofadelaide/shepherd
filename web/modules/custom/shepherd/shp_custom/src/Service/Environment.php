@@ -258,7 +258,7 @@ class Environment {
     }
 
     try {
-      $site    = $entity->field_shp_site->entity;
+      $site = $entity->field_shp_site->entity;
       $project = $site->field_shp_project->entity;
 
       $terminal = $this->orchestrationProvider->getTerminalUrl(
