@@ -550,7 +550,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     $deployment_config = $this->client->getDeploymentConfig($deployment_name);
 
     $image_stream = $this->client->getImageStream($sanitised_project_name);
-    $volumes = $this->generateVolumeData($project_name, $deployment_name, TRUE);
+    $volumes = $this->generateVolumeData($project_name, $deployment_name, [], TRUE);
     $deploy_data = $this->formatDeployData(
       $deployment_name,
       $deployment_config['spec']['template']['spec']['containers'][0]['env'],
@@ -941,8 +941,10 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
    * @throws \UniversityOfAdelaide\OpenShift\ClientException
    */
   protected function setupVolumes(string $project_name, string $deployment_name, $storage_class = '', $secrets = []) {
-    $volumes = $this->generateVolumeData($project_name, $deployment_name);
+    // Setup all the volumes that might be mounted
+    $volumes = $this->generateVolumeData($project_name, $deployment_name, $secrets);
 
+    // Setup PVC's for the ones that are NOT secrets.
     try {
       if (!$this->client->getPersistentVolumeClaim($volumes['shared']['name'])) {
         $this->client->createPersistentVolumeClaim(
@@ -953,8 +955,8 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
           $storage_class
         );
       }
-      // Only job containers have access to the backup pvc.
-      if (isset($volumes['backup']) && !$this->client->getPersistentVolumeClaim($volumes['backup']['name'])) {
+      // Even though only job pods have access, we need to create the claim.
+      if (!$this->client->getPersistentVolumeClaim($volumes['backup']['name'])) {
         $this->client->createPersistentVolumeClaim(
           $volumes['backup']['name'],
           'ReadWriteMany',
@@ -969,26 +971,6 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       return FALSE;
     }
 
-    // Append project and environment specific secrets to the volumes.
-    if (count($secrets)) {
-      if (array_key_exists('environment', $secrets)) {
-        $volumes['secret-environment'] = [
-          'name' => 'secret-environment',
-          'path' => '/etc/secret-environment',
-          'type' => 'secret',
-          'secret' => $secrets['environment'],
-        ];
-      }
-      if (array_key_exists('project', $secrets)) {
-        $volumes['secret-project'] = [
-          'name' => 'secret-project',
-          'path' => '/etc/secret-project',
-          'type' => 'secret',
-          'secret' => $secrets['project'],
-        ];
-      }
-    }
-
     return $volumes;
   }
 
@@ -999,15 +981,17 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
    *   The name of the project in OpenShift.
    * @param string $deployment_name
    *   The name of the deployment.
+   * @param array $secrets
+   *   Optional secrets to attach.
    * @param bool $mount_backup
-   *   Add the backup mount to the volumes, should only used by jobs.
+   *   Whether to mount the backup volume (for jobs).
    *
    * @return array
    *   Volume data.
    *
    * @throws \UniversityOfAdelaide\OpenShift\ClientException
    */
-  protected function generateVolumeData(string $project_name, string $deployment_name, bool $mount_backup = FALSE) {
+  protected function generateVolumeData(string $project_name, string $deployment_name, array $secrets= [], $mount_backup = FALSE) {
     $shared_pvc_name = $deployment_name . '-shared';
     // @todo This should be project_name-backup or similar - one backup pv per project.
     $backup_pvc_name = self::sanitise($project_name) . '-backup';
@@ -1037,6 +1021,26 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
         'path' => '/etc/secret',
         'secret' => $deployment_name,
       ];
+    }
+
+    // Append project and environment specific secrets to the list of volumes.
+    if (count($secrets)) {
+      if (array_key_exists('environment', $secrets)) {
+        $volumes['secret-environment'] = [
+          'name' => 'secret-environment',
+          'path' => '/etc/secret-environment',
+          'type' => 'secret',
+          'secret' => $secrets['environment'],
+        ];
+      }
+      if (array_key_exists('project', $secrets)) {
+        $volumes['secret-project'] = [
+          'name' => 'secret-project',
+          'path' => '/etc/secret-project',
+          'type' => 'secret',
+          'secret' => $secrets['project'],
+        ];
+      }
     }
 
     return $volumes;
