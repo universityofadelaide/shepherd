@@ -393,7 +393,7 @@ class Environment extends EntityActionBase {
     $cron_jobs = [];
 
     foreach ($environment->field_shp_cron_jobs as $job) {
-      $cron_jobs[$job->name] = [
+      $cron_jobs[] = [
         'cmd' => $job->value,
         'schedule' => $job->key,
       ];
