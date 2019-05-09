@@ -262,7 +262,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     }
 
     // Get the volumes and include the backups this time.
-    $volumes = $this->generateVolumeData($project_name, $deployment_name, $secrets, TRUE);
+    $cron_volumes = $this->generateVolumeData($project_name, $deployment_name, $secrets, TRUE);
     $image_stream = $this->client->getImageStream($sanitised_project_name);
     $this->createCronJobs(
       $deployment_name,
@@ -270,7 +270,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       $cron_suspended,
       $cron_jobs,
       $image_stream,
-      $volumes,
+      $cron_volumes,
       $deploy_data
     );
 
