@@ -925,7 +925,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
   }
 
   /**
-   * Attempt to create PVC's for the deployment in OpenShift.
+   * Attempt to create PVC's for the OpenShift deployment.
    *
    * PVC's that already exist will not be created/updated.
    *
@@ -938,12 +938,9 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
    *   The name of the deployment being created.
    * @param string $storage_class
    *   Optional storage class name.
-   * @param array $secrets
-   *   Optional secrets to attach.
    *
    * @return bool
-   *   Whether settuing up the PVC's succeeded or not.
-   * @throws \UniversityOfAdelaide\OpenShift\ClientException
+   *   Whether setting up the PVC's succeeded or not.
    */
   protected function setupVolumes(string $project_name, string $deployment_name, $storage_class = '') {
     [$shared_pvc_name, $backup_pvc_name] = $this->generateVolumeNames($project_name, $deployment_name);
@@ -979,10 +976,15 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
   }
 
   /**
+   * Generate volume names for a project environment.
+   *
    * @param string $project_name
+   *   The name of the project.
    * @param string $deployment_name
+   *   The name of the deployment.
    *
    * @return array
+   *   Generated volume names.
    */
   protected function generateVolumeNames(string $project_name, string $deployment_name) {
     $shared_pvc_name = $deployment_name . '-shared';
