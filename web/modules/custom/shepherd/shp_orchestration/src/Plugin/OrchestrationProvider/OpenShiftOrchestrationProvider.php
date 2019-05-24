@@ -895,12 +895,12 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
   /**
    * Format an array of deployment data ready to pass to OpenShift.
    *
-   * @todo - move this into the client?
-   *
    * @param string $name
    *   The name of the deployment config.
    * @param array $formatted_env_vars
    *   An array of key => value env var pairs.
+   * @param array $request_limits
+   *   Array with cpu & memory request & limits.
    * @param string $environment_url
    *   The url of the environment being created.
    * @param int $site_id
@@ -910,6 +910,8 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
    *
    * @return array
    *   The deployment config array.
+   * @todo - move this into the client?
+   *
    */
   protected function formatDeployData(string $name, array $formatted_env_vars, array $request_limits, string $environment_url, int $site_id, int $environment_id) {
     $deploy_data = [
