@@ -72,6 +72,33 @@ third_party_settings:
         description: ''
         required_fields: true
       label: 'Readiness probe'
+    group_shp_limits_requests:
+      children:
+        - field_shp_cpu_limit
+        - field_shp_cpu_request
+        - field_shp_memory_request
+        - field_shp_memory_limit
+      parent_name: ''
+      weight: 8
+      format_type: details
+      format_settings:
+        id: ''
+        classes: ''
+        open: false
+        required_fields: true
+      label: 'Limits & Requests'
+    group_shp_environment_variables:
+      children:
+        - field_shp_env_vars
+      parent_name: ''
+      weight: 9
+      format_type: details
+      format_settings:
+        id: ''
+        classes: ''
+        open: false
+        required_fields: true
+      label: 'Environment variables'
 _core:
   default_config_hash: kd5btv0diMwTDHS3y864XaRY5236nffeGawlN0MoDqg
 id: node.shp_project.default
@@ -119,7 +146,7 @@ content:
     type: file_generic
     region: content
   field_shp_env_vars:
-    weight: 8
+    weight: 10
     settings:
       key_size: 60
       key_label: Key
@@ -207,7 +234,7 @@ content:
     type: options_select
     region: content
   field_shp_secrets:
-    weight: 9
+    weight: 11
     settings:
       size: 60
       placeholder: ''
@@ -222,7 +249,7 @@ content:
     region: content
   moderation_state:
     type: moderation_state_default
-    weight: 10
+    weight: 12
     settings: {  }
     region: content
     third_party_settings: {  }
@@ -230,7 +257,7 @@ content:
     type: boolean_checkbox
     settings:
       display_label: true
-    weight: 11
+    weight: 13
     region: content
     third_party_settings: {  }
   title:
