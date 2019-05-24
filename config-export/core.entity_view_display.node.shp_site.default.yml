@@ -3,8 +3,12 @@ langcode: en
 status: true
 dependencies:
   config:
+    - field.field.node.shp_site.field_shp_cpu_limit
+    - field.field.node.shp_site.field_shp_cpu_request
     - field.field.node.shp_site.field_shp_domain
     - field.field.node.shp_site.field_shp_go_live_date
+    - field.field.node.shp_site.field_shp_memory_limit
+    - field.field.node.shp_site.field_shp_memory_request
     - field.field.node.shp_site.field_shp_path
     - field.field.node.shp_site.field_shp_project
     - field.field.node.shp_site.field_shp_short_name
@@ -26,6 +30,22 @@ content:
     region: content
     settings: {  }
     third_party_settings: {  }
+  field_shp_cpu_limit:
+    weight: 7
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    type: string
+    region: content
+  field_shp_cpu_request:
+    weight: 8
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    type: string
+    region: content
   field_shp_domain:
     weight: 1
     label: inline
@@ -42,6 +62,22 @@ content:
       format_type: medium
     third_party_settings: {  }
     type: datetime_default
+    region: content
+  field_shp_memory_limit:
+    weight: 9
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    type: string
+    region: content
+  field_shp_memory_request:
+    weight: 10
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    type: string
     region: content
   field_shp_path:
     weight: 2

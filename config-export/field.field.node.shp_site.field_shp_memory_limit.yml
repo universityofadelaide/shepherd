@@ -1,0 +1,19 @@
+uuid: e92fb169-8bd5-46d5-b10b-db2022ec65e3
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_shp_memory_limit
+    - node.type.shp_site
+id: node.shp_site.field_shp_memory_limit
+field_name: field_shp_memory_limit
+entity_type: node
+bundle: shp_site
+label: 'Memory limit'
+description: ''
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

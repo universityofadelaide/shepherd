@@ -1,0 +1,19 @@
+uuid: a42ee222-3ccb-4669-9a8e-c93e82dee7c2
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_shp_cpu_limit
+    - node.type.shp_site
+id: node.shp_site.field_shp_cpu_limit
+field_name: field_shp_cpu_limit
+entity_type: node
+bundle: shp_site
+label: 'Cpu limit'
+description: ''
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

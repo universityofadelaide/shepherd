@@ -1,0 +1,19 @@
+uuid: 5f2382c0-5212-41c7-ae7d-008ef342428b
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_shp_cpu_request
+    - node.type.shp_site
+id: node.shp_site.field_shp_cpu_request
+field_name: field_shp_cpu_request
+entity_type: node
+bundle: shp_site
+label: 'Cpu request'
+description: ''
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

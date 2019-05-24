@@ -5,6 +5,8 @@ dependencies:
   config:
     - field.field.node.shp_project.field_shp_build_secret
     - field.field.node.shp_project.field_shp_builder_image
+    - field.field.node.shp_project.field_shp_cpu_limit
+    - field.field.node.shp_project.field_shp_cpu_request
     - field.field.node.shp_project.field_shp_default_sql
     - field.field.node.shp_project.field_shp_env_vars
     - field.field.node.shp_project.field_shp_git_default_ref
@@ -12,6 +14,8 @@ dependencies:
     - field.field.node.shp_project.field_shp_liveness_probe_params
     - field.field.node.shp_project.field_shp_liveness_probe_port
     - field.field.node.shp_project.field_shp_liveness_probe_type
+    - field.field.node.shp_project.field_shp_memory_limit
+    - field.field.node.shp_project.field_shp_memory_request
     - field.field.node.shp_project.field_shp_readiness_probe_params
     - field.field.node.shp_project.field_shp_readiness_probe_port
     - field.field.node.shp_project.field_shp_readiness_probe_type
@@ -40,6 +44,22 @@ content:
     region: content
   field_shp_builder_image:
     weight: 2
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    type: string
+    region: content
+  field_shp_cpu_limit:
+    weight: 14
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    type: string
+    region: content
+  field_shp_cpu_request:
+    weight: 15
     label: above
     settings:
       link_to_entity: false
@@ -100,6 +120,22 @@ content:
     settings: {  }
     third_party_settings: {  }
     type: list_default
+    region: content
+  field_shp_memory_limit:
+    weight: 17
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    type: string
+    region: content
+  field_shp_memory_request:
+    weight: 16
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    type: string
     region: content
   field_shp_readiness_probe_params:
     weight: 11

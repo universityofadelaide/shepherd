@@ -5,6 +5,8 @@ dependencies:
   config:
     - field.field.node.shp_project.field_shp_build_secret
     - field.field.node.shp_project.field_shp_builder_image
+    - field.field.node.shp_project.field_shp_cpu_limit
+    - field.field.node.shp_project.field_shp_cpu_request
     - field.field.node.shp_project.field_shp_default_sql
     - field.field.node.shp_project.field_shp_env_vars
     - field.field.node.shp_project.field_shp_git_default_ref
@@ -12,6 +14,8 @@ dependencies:
     - field.field.node.shp_project.field_shp_liveness_probe_params
     - field.field.node.shp_project.field_shp_liveness_probe_port
     - field.field.node.shp_project.field_shp_liveness_probe_type
+    - field.field.node.shp_project.field_shp_memory_limit
+    - field.field.node.shp_project.field_shp_memory_request
     - field.field.node.shp_project.field_shp_readiness_probe_params
     - field.field.node.shp_project.field_shp_readiness_probe_port
     - field.field.node.shp_project.field_shp_readiness_probe_type
@@ -91,6 +95,22 @@ content:
     third_party_settings: {  }
     type: string_textfield
     region: content
+  field_shp_cpu_limit:
+    weight: 26
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: string_textfield
+    region: content
+  field_shp_cpu_request:
+    weight: 27
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: string_textfield
+    region: content
   field_shp_default_sql:
     weight: 6
     settings:
@@ -148,6 +168,22 @@ content:
     settings: {  }
     third_party_settings: {  }
     type: options_select
+    region: content
+  field_shp_memory_limit:
+    weight: 29
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: string_textfield
+    region: content
+  field_shp_memory_request:
+    weight: 28
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: string_textfield
     region: content
   field_shp_readiness_probe_params:
     weight: 6
