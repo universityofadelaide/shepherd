@@ -235,9 +235,12 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       return FALSE;
     }
 
+    $request_limits = $this->setupRequestLimits($site_id);
+
     $deploy_data = $this->formatDeployData(
       $deployment_name,
       $formatted_env_vars,
+      $request_limits,
       $environment_url,
       $site_id,
       $environment_id
@@ -333,9 +336,12 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       return FALSE;
     }
 
+    $request_limits = $this->setupRequestLimits($site_id);
+
     $deploy_data = $this->formatDeployData(
       $deployment_name,
       $formatted_env_vars,
+      $request_limits,
       $environment_url,
       $site_id,
       $environment_id
@@ -556,9 +562,11 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
 
     $image_stream = $this->client->getImageStream($sanitised_project_name);
     $volumes = $this->generateVolumeData($project_name, $deployment_name, [], TRUE);
+
     $deploy_data = $this->formatDeployData(
       $deployment_name,
       $deployment_config['spec']['template']['spec']['containers'][0]['env'],
+      [],
       $deployment_config['metadata']['annotations']['shepherdUrl'],
       $deployment_config['metadata']['labels']['site_id'],
       $environment_id
@@ -847,6 +855,44 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
   }
 
   /**
+   * @param int $site_id
+   *   The ID of the site the environment represents.
+   *
+   * @return array
+   *   Array with cpu & memory request & limits.
+   */
+  protected function setupRequestLimits(int $site_id) {
+    $request_limits = [];
+
+    /** @var Node $site */
+    $site = Node::load($site_id);
+    /** @var Node $project */
+    $project = $site->field_shp_project->entity;
+
+    $fields = [
+      'field_shp_cpu_request'    => 'cpu_request',
+      'field_shp_cpu_limit'      => 'cpu_limit',
+      'field_shp_memory_request' => 'memory_request',
+      'field_shp_memory_limit'   => 'memory_limit',
+    ];
+
+    foreach ($fields as $field => $client_field) {
+      if (!empty($site->{$field}->value)) {
+        $request_limits[$client_field] = $site->{$field}->value;
+        continue;
+      }
+
+      if (!empty($project->{$field}->value)) {
+        $request_limits[$client_field] = $project->{$field}->value;
+        continue;
+      }
+
+    }
+
+    return $request_limits;
+  }
+
+  /**
    * Format an array of deployment data ready to pass to OpenShift.
    *
    * @todo - move this into the client?
@@ -865,7 +911,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
    * @return array
    *   The deployment config array.
    */
-  protected function formatDeployData(string $name, array $formatted_env_vars, string $environment_url, int $site_id, int $environment_id) {
+  protected function formatDeployData(string $name, array $formatted_env_vars, array $request_limits, string $environment_url, int $site_id, int $environment_id) {
     $deploy_data = [
       'containerPort' => 8080,
       'memory_limit' => '512Mi',
@@ -888,6 +934,8 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
         $deploy_data['gid'] = $this->configEntity->gid;
       }
     }
+
+    $deploy_data = array_merge($deploy_data, $request_limits);
 
     return $deploy_data;
   }
