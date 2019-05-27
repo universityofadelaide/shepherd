@@ -23,10 +23,10 @@ third_party_settings:
   field_group:
     group_shp_limits_requests:
       children:
-        - field_shp_cpu_limit
         - field_shp_cpu_request
-        - field_shp_memory_limit
+        - field_shp_cpu_limit
         - field_shp_memory_request
+        - field_shp_memory_limit
       parent_name: ''
       weight: 6
       format_type: details
@@ -44,7 +44,7 @@ bundle: shp_site
 mode: default
 content:
   field_shp_cpu_limit:
-    weight: 7
+    weight: 9
     settings:
       size: 60
       placeholder: ''
@@ -68,7 +68,7 @@ content:
     type: string_textfield
     region: content
   field_shp_memory_limit:
-    weight: 9
+    weight: 11
     settings:
       size: 60
       placeholder: ''

@@ -51,7 +51,7 @@ content:
     type: string
     region: content
   field_shp_cpu_limit:
-    weight: 14
+    weight: 15
     label: above
     settings:
       link_to_entity: false
@@ -59,7 +59,7 @@ content:
     type: string
     region: content
   field_shp_cpu_request:
-    weight: 15
+    weight: 14
     label: above
     settings:
       link_to_entity: false
