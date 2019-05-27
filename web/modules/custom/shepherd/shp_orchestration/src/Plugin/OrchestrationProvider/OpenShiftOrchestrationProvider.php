@@ -560,7 +560,6 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     $deploy_data = $this->formatDeployData(
       $deployment_name,
       $deployment_config['spec']['template']['spec']['containers'][0]['env'],
-      [],
       $deployment_config['metadata']['annotations']['shepherdUrl'],
       $deployment_config['metadata']['labels']['site_id'],
       $environment_id
@@ -864,8 +863,6 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
    *
    * @return array
    *   The deployment config array.
-   * @todo - move this into the client?
-   *
    */
   protected function formatDeployData(string $name, array $formatted_env_vars, string $environment_url, int $site_id, int $environment_id) {
     $deploy_data = [
