@@ -10,7 +10,7 @@ field_name: field_shp_memory_limit
 entity_type: node
 bundle: shp_site
 label: 'Memory limit'
-description: ''
+description: 'The limit cannot be lower than the request.'
 required: false
 translatable: true
 default_value: {  }

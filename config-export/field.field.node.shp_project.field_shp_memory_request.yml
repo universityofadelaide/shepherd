@@ -10,7 +10,7 @@ field_name: field_shp_memory_request
 entity_type: node
 bundle: shp_project
 label: 'Memory request'
-description: ''
+description: 'The request cannot be higher than the limit.'
 required: false
 translatable: false
 default_value: {  }
