@@ -1,14 +1,14 @@
-uuid: 1f5f317c-6bca-4d0c-95fd-0d0d5603190b
+uuid: 0479b75c-79fa-49b0-9b5b-80ca8237aad1
 langcode: en
 status: true
 dependencies:
   config:
     - field.storage.node.field_shp_memory_request
-    - node.type.shp_site
-id: node.shp_site.field_shp_memory_request
+    - node.type.shp_environment
+id: node.shp_environment.field_shp_memory_request
 field_name: field_shp_memory_request
 entity_type: node
-bundle: shp_site
+bundle: shp_environment
 label: 'Memory request'
 description: 'The request cannot be higher than the limit.'
 required: false

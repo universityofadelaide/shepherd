@@ -3,6 +3,8 @@ langcode: en
 status: true
 dependencies:
   config:
+    - field.field.node.shp_environment.field_shp_cpu_limit
+    - field.field.node.shp_environment.field_shp_cpu_request
     - field.field.node.shp_environment.field_shp_cron_jobs
     - field.field.node.shp_environment.field_shp_cron_suspended
     - field.field.node.shp_environment.field_shp_deployment_name
@@ -10,17 +12,35 @@ dependencies:
     - field.field.node.shp_environment.field_shp_env_vars
     - field.field.node.shp_environment.field_shp_environment_type
     - field.field.node.shp_environment.field_shp_git_reference
+    - field.field.node.shp_environment.field_shp_memory_limit
+    - field.field.node.shp_environment.field_shp_memory_request
     - field.field.node.shp_environment.field_shp_path
     - field.field.node.shp_environment.field_shp_secrets
     - field.field.node.shp_environment.field_shp_site
     - field.field.node.shp_environment.field_shp_update_on_image_change
     - node.type.shp_environment
+    - workflows.workflow.shepherd
   module:
     - content_moderation
     - field_group
     - key_value_field
 third_party_settings:
   field_group:
+    group_shp_limits_requests:
+      children:
+        - field_shp_cpu_request
+        - field_shp_cpu_limit
+        - field_shp_memory_request
+        - field_shp_memory_limit
+      parent_name: ''
+      weight: 6
+      format_type: details
+      format_settings:
+        id: ''
+        classes: ''
+        open: false
+        required_fields: true
+      label: 'Limits & Requests'
     group_shp_domain_and_path:
       children:
         - field_shp_domain
@@ -59,6 +79,22 @@ targetEntityType: node
 bundle: shp_environment
 mode: default
 content:
+  field_shp_cpu_limit:
+    weight: 123
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: string_textfield
+    region: content
+  field_shp_cpu_request:
+    weight: 122
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: string_textfield
+    region: content
   field_shp_cron_jobs:
     weight: 14
     settings:
@@ -110,6 +146,22 @@ content:
     region: content
   field_shp_git_reference:
     weight: 3
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: string_textfield
+    region: content
+  field_shp_memory_limit:
+    weight: 125
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: string_textfield
+    region: content
+  field_shp_memory_request:
+    weight: 124
     settings:
       size: 60
       placeholder: ''

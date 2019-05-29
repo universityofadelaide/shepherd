@@ -1,14 +1,14 @@
-uuid: a42ee222-3ccb-4669-9a8e-c93e82dee7c2
+uuid: e741258e-ca73-48b9-b421-eedcff342511
 langcode: en
 status: true
 dependencies:
   config:
     - field.storage.node.field_shp_cpu_limit
-    - node.type.shp_site
-id: node.shp_site.field_shp_cpu_limit
+    - node.type.shp_environment
+id: node.shp_environment.field_shp_cpu_limit
 field_name: field_shp_cpu_limit
 entity_type: node
-bundle: shp_site
+bundle: shp_environment
 label: 'Cpu limit'
 description: 'The limit cannot be lower than the request.'
 required: false

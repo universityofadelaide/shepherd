@@ -895,19 +895,19 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
   }
 
   /**
-   * @param int $site_id
-   *   The ID of the site the environment represents.
+   * @param int $environment_id
+   *   The ID of the environment being deployed.
    *
    * @return array
    *   Array with cpu & memory request & limits.
    */
-  protected function generateRequestLimits(int $site_id) {
+  protected function generateRequestLimits(int $environment_id) {
     $request_limits = [];
 
-    /** @var Node $site */
-    $site = Node::load($site_id);
+    /** @var Node $environment */
+    $environment = Node::load($environment_id);
     /** @var Node $project */
-    $project = $site->field_shp_project->entity;
+    $project = $environment->field_shp_project->entity;
 
     $fields = [
       'field_shp_cpu_request'    => 'cpu_request',
@@ -917,12 +917,12 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     ];
 
     foreach ($fields as $field => $client_field) {
-      if (!$site->{$field}->isEmpty()) {
-        $request_limits[$client_field] = $site->{$field}->value;
+      if (!empty($environment->{$field}->value)) {
+        $request_limits[$client_field] = $environment->{$field}->value;
         continue;
       }
 
-      if (!$project->{$field}->isEmpty()) {
+      if (!empty($project->{$field}->value)) {
         $request_limits[$client_field] = $project->{$field}->value;
         continue;
       }
