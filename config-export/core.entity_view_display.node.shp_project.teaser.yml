@@ -35,6 +35,8 @@ content:
 hidden:
   field_shp_build_secret: true
   field_shp_builder_image: true
+  field_shp_cpu_limit: true
+  field_shp_cpu_request: true
   field_shp_default_sql: true
   field_shp_env_vars: true
   field_shp_git_default_ref: true
@@ -42,6 +44,8 @@ hidden:
   field_shp_liveness_probe_params: true
   field_shp_liveness_probe_port: true
   field_shp_liveness_probe_type: true
+  field_shp_memory_limit: true
+  field_shp_memory_request: true
   field_shp_readiness_probe_params: true
   field_shp_readiness_probe_port: true
   field_shp_readiness_probe_type: true

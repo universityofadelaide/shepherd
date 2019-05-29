@@ -327,6 +327,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
 
     $sanitised_project_name = self::sanitise($project_name);
     $deployment_name = self::generateDeploymentName($environment_id);
+    $deployment_config = $this->client->getDeploymentConfig($deployment_name);
     $formatted_env_vars = $this->formatEnvVars($environment_variables, $deployment_name);
 
     if (!$this->setupVolumes($project_name, $deployment_name, $storage_class)) {
@@ -340,6 +341,28 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       $site_id,
       $environment_id
     );
+    $this->client->updateDeploymentConfig($deployment_name, $deployment_config, [
+      'spec' => [
+        'template' => [
+          'spec' => [
+            'containers' => [
+              0 => [
+                'resources' => [
+                  'limits' => [
+                    'cpu' => $deploy_data['cpu_limit'],
+                    'memory' => $deploy_data['memory_limit']
+                  ],
+                  'requests' => [
+                    'cpu' => $deploy_data['cpu_request'],
+                    'memory' => $deploy_data['memory_request']
+                  ]
+                ]
+              ]
+            ]
+          ]
+        ]
+      ]
+    ]);
 
     // Remove all the existing cron jobs.
     $this->client->deleteCronJob('', 'app=' . $deployment_name);
@@ -556,6 +579,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
 
     $image_stream = $this->client->getImageStream($sanitised_project_name);
     $volumes = $this->generateVolumeData($project_name, $deployment_name, [], TRUE);
+
     $deploy_data = $this->formatDeployData(
       $deployment_name,
       $deployment_config['spec']['template']['spec']['containers'][0]['env'],
@@ -849,8 +873,6 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
   /**
    * Format an array of deployment data ready to pass to OpenShift.
    *
-   * @todo - move this into the client?
-   *
    * @param string $name
    *   The name of the deployment config.
    * @param array $formatted_env_vars
@@ -889,7 +911,50 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       }
     }
 
+    $request_limits = $this->generateRequestLimits($environment_id);
+    $deploy_data = array_merge($deploy_data, $request_limits);
+
     return $deploy_data;
+  }
+
+  /**
+   * @param int $environment_id
+   *   The ID of the environment being deployed.
+   *
+   * @return array
+   *   Array with cpu & memory request & limits.
+   */
+  protected function generateRequestLimits(int $environment_id) {
+    $request_limits = [];
+
+    /** @var Node $environment */
+    $environment = Node::load($environment_id);
+    /** @var Node $site */
+    $site = $environment->field_shp_site->entity;
+    /** @var Node $project */
+    $project = $site->field_shp_project->entity;
+
+    $fields = [
+      'field_shp_cpu_request'    => 'cpu_request',
+      'field_shp_cpu_limit'      => 'cpu_limit',
+      'field_shp_memory_request' => 'memory_request',
+      'field_shp_memory_limit'   => 'memory_limit',
+    ];
+
+    foreach ($fields as $field => $client_field) {
+      if (!$environment->{$field}->isEmpty()) {
+        $request_limits[$client_field] = $environment->{$field}->value;
+        continue;
+      }
+
+      if (!$project->{$field}->isEmpty()) {
+        $request_limits[$client_field] = $project->{$field}->value;
+        continue;
+      }
+
+    }
+
+    return $request_limits;
   }
 
   /**

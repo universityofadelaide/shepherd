@@ -7,5 +7,4 @@ _core:
 name: 'Environment types'
 vid: shp_environment_types
 description: 'Types of environments (e.g. development, stage, production, etc).'
-hierarchy: 0
 weight: 0
