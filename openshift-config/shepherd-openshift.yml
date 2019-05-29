@@ -301,7 +301,7 @@ objects:
     name: shepherd-redis-config
   data:
     redis-config: |
-      maxmemory 240Mi
+      maxmemory 240mb
       maxmemory-policy allkeys-lru
       save ""
 - apiVersion: v1
@@ -362,7 +362,7 @@ objects:
     name: redis-config
   data:
     redis-config: |
-      maxmemory 240Mi
+      maxmemory 240mb
       maxmemory-policy allkeys-lru
       save ""
 parameters:

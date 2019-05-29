@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\Tests\shp_orchestration;
+namespace Drupal\Tests\shp_orchestration\Unit;
 
 use Drupal\shp_orchestration\Exception\JobInProgressException;
 use Drupal\shp_orchestration\Service\ActiveJobManager;

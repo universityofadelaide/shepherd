@@ -258,34 +258,13 @@ class Environment {
       ];
     }
 
-    $project = $site->field_shp_project->entity;
-
-    $terminal = $this->orchestrationProvider->getTerminalUrl(
-      $project->getTitle(),
-      $site->field_shp_short_name->value,
-      $entity->id()
-    );
-
-    $logs = $this->orchestrationProvider->getLogUrl(
-      $project->getTitle(),
-      $site->field_shp_short_name->value,
-      $entity->id()
-    );
-
-    if ($terminal) {
-      $operations['terminal'] = [
-        'title'      => $this->t('Terminal'),
-        'weight'     => 9,
-        'url'        => $terminal,
-      ];
-    }
-
-    if ($logs) {
-      $operations['logs'] = [
-        'title'     => $this->t('Logs'),
-        'weight'    => 4,
-        'url'       => $logs,
-      ];
+    $site = $this->getSite($entity);
+    if ($site) {
+      $project = $this->site->getProject($site);
+      if ($project) {
+        $operations['terminal'] = $this->getTerminalLink($entity, $project, $site);
+        $operations['log'] = $this->getLogLink($entity, $project, $site);
+      }
     }
 
     // Process copied from getDefaultOperations()
@@ -295,6 +274,64 @@ class Environment {
         $operations[$key]['query'] = ['destination' => $destination];
       }
     }
+  }
+
+  /**
+   * Generate the link for the web terminal UI.
+   *
+   * @param \Drupal\Core\Entity\EntityInterface $entity
+   *   Environment entity.
+   * @param $project
+   *   Project entity.
+   * @param $site
+   *   Site entity.
+   *
+   * @return array
+   *   Renderable link.
+   */
+  protected function getTerminalLink(EntityInterface $entity, $project, $site): array {
+    $terminal = $this->orchestrationProvider->getTerminalUrl(
+      $project->getTitle(),
+      $site->field_shp_short_name->value,
+      $entity->id()
+    );
+    if ($terminal) {
+      return [
+        'title' => $this->t('Terminal'),
+        'weight' => 9,
+        'url' => $terminal,
+      ];
+    }
+    return [];
+  }
+
+  /**
+   * Generate the link for the web log UI.
+   *
+   * @param \Drupal\Core\Entity\EntityInterface $entity
+   *   Environment entity.
+   * @param $project
+   *   Project entity.
+   * @param $site
+   *   Site entity.
+   *
+   * @return array
+   *   Renderable link.
+   */
+  protected function getLogLink(EntityInterface $entity, $project, $site): array {
+    $logs = $this->orchestrationProvider->getLogUrl(
+      $project->getTitle(),
+      $site->field_shp_short_name->value,
+      $entity->id()
+    );
+    if ($logs) {
+      return [
+        'title' => $this->t('Logs'),
+        'weight' => 4,
+        'url' => $logs,
+      ];
+    }
+    return [];
   }
 
   /**
@@ -396,4 +433,5 @@ class Environment {
 
     return !count($results);
   }
+
 }
