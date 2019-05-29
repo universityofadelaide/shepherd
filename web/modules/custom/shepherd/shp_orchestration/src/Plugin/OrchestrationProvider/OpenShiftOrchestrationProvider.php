@@ -327,6 +327,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
 
     $sanitised_project_name = self::sanitise($project_name);
     $deployment_name = self::generateDeploymentName($environment_id);
+    $deployment_config = $this->client->getDeploymentConfig($deployment_name);
     $formatted_env_vars = $this->formatEnvVars($environment_variables, $deployment_name);
 
     if (!$this->setupVolumes($project_name, $deployment_name, $storage_class)) {
@@ -340,6 +341,28 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       $site_id,
       $environment_id
     );
+    $this->client->updateDeploymentConfig($deployment_name, $deployment_config, [
+      'spec' => [
+        'template' => [
+          'spec' => [
+            'containers' => [
+              0 => [
+                'resources' => [
+                  'limits' => [
+                    'cpu' => $deploy_data['cpu_limit'],
+                    'memory' => $deploy_data['memory_limit']
+                  ],
+                  'requests' => [
+                    'cpu' => $deploy_data['cpu_request'],
+                    'memory' => $deploy_data['memory_request']
+                  ]
+                ]
+              ]
+            ]
+          ]
+        ]
+      ]
+    ]);
 
     // Remove all the existing cron jobs.
     $this->client->deleteCronJob('', 'app=' . $deployment_name);
@@ -888,7 +911,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       }
     }
 
-    $request_limits = $this->generateRequestLimits($site_id);
+    $request_limits = $this->generateRequestLimits($environment_id);
     $deploy_data = array_merge($deploy_data, $request_limits);
 
     return $deploy_data;
@@ -906,8 +929,10 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
 
     /** @var Node $environment */
     $environment = Node::load($environment_id);
+    /** @var Node $site */
+    $site = $environment->field_shp_site->entity;
     /** @var Node $project */
-    $project = $environment->field_shp_project->entity;
+    $project = $site->field_shp_project->entity;
 
     $fields = [
       'field_shp_cpu_request'    => 'cpu_request',
@@ -917,12 +942,12 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     ];
 
     foreach ($fields as $field => $client_field) {
-      if (!empty($environment->{$field}->value)) {
+      if (!$environment->{$field}->isEmpty()) {
         $request_limits[$client_field] = $environment->{$field}->value;
         continue;
       }
 
-      if (!empty($project->{$field}->value)) {
+      if (!$project->{$field}->isEmpty()) {
         $request_limits[$client_field] = $project->{$field}->value;
         continue;
       }
