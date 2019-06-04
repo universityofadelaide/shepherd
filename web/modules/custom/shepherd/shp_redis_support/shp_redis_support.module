@@ -19,6 +19,7 @@ function shp_redis_support_shp_env_vars(NodeInterface $environment) {
     $deployment_name = $orchestration_provider::generateDeploymentName($environment->id());
     $env_vars['REDIS_ENABLED'] = '1';
     $env_vars['REDIS_HOST'] = $deployment_name . '-redis';
+    $env_vars['REDIS_PREFIX'] = $deployment_name . '-';
   }
   return $env_vars;
 }
