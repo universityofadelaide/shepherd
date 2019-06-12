@@ -1199,7 +1199,8 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
    *   Whether setting up the PVC's succeeded or not.
    */
   protected function setupVolumes(string $project_name, string $deployment_name, $storage_class = '') {
-    [$shared_pvc_name, $backup_pvc_name] = $this->generateVolumeNames($project_name, $deployment_name);
+    $shared_pvc_name = self::generateSharedPvcName($deployment_name);
+    $backup_pvc_name = self::generateBackupPvcName($project_name);
 
     // Setup PVC's for the ones that are NOT secrets.
     try {
@@ -1245,6 +1246,19 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
   }
 
   /**
+   * Generate the name of the backup PVC from a project name.
+   *
+   * @param string $project_name
+   *   A project name.
+   *
+   * @return string
+   *   The backup pvc name.
+   */
+  protected static function generateBackupPvcName(string $project_name) {
+    return self::sanitise($project_name) . '-backup';
+  }
+
+  /**
    * Generates the volume data for deployment configuration.
    *
    * @param string $project_name
@@ -1261,8 +1275,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
    *
    * @throws \UniversityOfAdelaide\OpenShift\ClientException
    */
-  protected function generateVolumeData(string $project_name, string $deployment_name, array $secrets= [], $mount_backup = FALSE) {
-    [$shared_pvc_name, $backup_pvc_name] = $this->generateVolumeNames($project_name, $deployment_name);
+  protected function generateVolumeData(string $project_name, string $deployment_name, array $secrets = [], $mount_backup = FALSE) {
     $volumes = [
       'shared' => [
         'type' => 'pvc',
@@ -1274,7 +1287,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     if ($mount_backup) {
       $volumes['backup'] = [
         'type' => 'pvc',
-        'name' => $backup_pvc_name,
+        'name' => self::generateBackupPvcName($project_name),
         'path' => '/backup',
       ];
     }
