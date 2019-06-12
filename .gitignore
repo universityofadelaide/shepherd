@@ -50,3 +50,7 @@ RoboFileBase.php
 /*/node_modules
 /node_modules
 /**/node_modules
+
+# Ignore OSX specific folders
+shared
+openshift.local.clusterup
