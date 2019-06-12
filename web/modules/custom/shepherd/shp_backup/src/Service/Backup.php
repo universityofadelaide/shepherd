@@ -213,7 +213,7 @@ class Backup {
       'data-dialog-type' => 'modal',
       'data-dialog-options' => Json::encode([
         'width' => '50%',
-        'height' => '50%'
+        'height' => '50%',
       ]),
     ];
     $operations['backup'] = [

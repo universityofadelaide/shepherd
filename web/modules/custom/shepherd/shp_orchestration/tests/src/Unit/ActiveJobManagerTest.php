@@ -25,7 +25,7 @@ class ActiveJobManagerTest extends UnitTestCase {
   /**
    * A simple test job.
    *
-   * @var \stdClass
+   * @var object
    */
   protected $job;
 

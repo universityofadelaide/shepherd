@@ -98,4 +98,3 @@ shp_backup.settings:
     _title: 'Backup'
   requirements:
     _permission: 'administer account settings'
-

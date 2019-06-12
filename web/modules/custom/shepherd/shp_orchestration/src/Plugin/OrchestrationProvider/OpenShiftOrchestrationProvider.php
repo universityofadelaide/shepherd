@@ -227,7 +227,6 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     string $backup_schedule = ''
   ) {
     // @todo Refactor this. _The complexity is too damn high!_
-
     $sanitised_project_name = self::sanitise($project_name);
     $sanitised_source_ref = self::sanitise($source_ref);
     $deployment_name = self::generateDeploymentName($environment_id);
@@ -238,7 +237,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     // Tell, don't ask (to create a build config).
     $this->createBuildConfig($build_config_name, $source_ref, $source_repo, $builder_image, $source_secret, $image_stream_tag, $formatted_env_vars);
 
-    // Setup all the volumes that might be mounted
+    // Setup all the volumes that might be mounted.
     $volumes = $this->generateVolumeData($project_name, $deployment_name, $secrets);
     if (!$this->setupVolumes($project_name, $deployment_name, $storage_class)) {
       return FALSE;
@@ -343,7 +342,6 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     array $annotations = []
   ) {
     // @todo Refactor this too. Not DRY enough.
-
     $sanitised_project_name = self::sanitise($project_name);
     $deployment_name = self::generateDeploymentName($environment_id);
     $deployment_config = $this->client->getDeploymentConfig($deployment_name);
@@ -369,18 +367,18 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
                 'resources' => [
                   'limits' => [
                     'cpu' => $deploy_data['cpu_limit'],
-                    'memory' => $deploy_data['memory_limit']
+                    'memory' => $deploy_data['memory_limit'],
                   ],
                   'requests' => [
                     'cpu' => $deploy_data['cpu_request'],
-                    'memory' => $deploy_data['memory_request']
-                  ]
-                ]
-              ]
-            ]
-          ]
-        ]
-      ]
+                    'memory' => $deploy_data['memory_request'],
+                  ],
+                ],
+              ],
+            ],
+          ],
+        ],
+      ],
     ]);
 
     // Remove all the existing cron jobs.
@@ -564,7 +562,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       ->setLabel(Label::create('environment_id', $environment_id))
       ->setName(sprintf('%s-backup-%s', $deployment_name, date('YmdHis')))
       ->setMatchLabels([
-        'app' => $deployment_name
+        'app' => $deployment_name,
       ]);
     if (!empty($friendly_name)) {
       $backup->setAnnotation(BackupService::FRIENDLY_NAME_ANNOTATION, $friendly_name);
@@ -589,7 +587,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       ->setName(self::generateScheduleName($deployment_name))
       ->setSchedule($schedule)
       ->setMatchLabels([
-        'app' => $deployment_name
+        'app' => $deployment_name,
       ]);
     try {
       return $this->client->createSchedule($schedule);
@@ -1118,11 +1116,11 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
   protected function generateRequestLimits(int $environment_id) {
     $request_limits = [];
 
-    /** @var Node $environment */
+    /** @var \Drupal\node\Entity\Node $environment */
     $environment = Node::load($environment_id);
-    /** @var Node $site */
+    /** @var \Drupal\node\Entity\Node $site */
     $site = $environment->field_shp_site->entity;
-    /** @var Node $project */
+    /** @var \Drupal\node\Entity\Node $project */
     $project = $site->field_shp_project->entity;
 
     $fields = [

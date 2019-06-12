@@ -9,7 +9,7 @@ use Drupal\shp_backup\Service\Backup;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Hook bridges for node operations
+ * Hook bridges for node operations.
  */
 class NodeOperations implements ContainerInjectionInterface {
 
@@ -77,9 +77,9 @@ class NodeOperations implements ContainerInjectionInterface {
             $this->backupService->createBackup($node, $environment);
 
             // @todo Shepherd: Need to queue to enable this part.
-            //if (!$result = $orchestration_provider_plugin->archivedEnvironment($entity->id())) {
+            // if (!$result = $orchestration_provider_plugin->archivedEnvironment($entity->id())) {
             //  return $result;
-            //}
+            // }
           }
         }
         break;
@@ -90,7 +90,7 @@ class NodeOperations implements ContainerInjectionInterface {
           $this->backupService->createBackup($site, $node);
 
           // @todo Shepherd: Need to queue to enable this part. I.e. backup must complete first.
-          //$result = $orchestration_provider_plugin->archivedEnvironment($entity->id());
+          // $result = $orchestration_provider_plugin->archivedEnvironment($entity->id());
           shp_custom_invalidate_site_cache($node);
         }
         // @todo Shepherd: Add new environment to reverse proxy.

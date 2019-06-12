@@ -348,7 +348,6 @@ class Environment extends EntityActionBase {
     );
 
     // @todo everything is exclusive for now, implement non-exclusive?
-
     // Load a non protected term.
     $demoted_term = $this->environmentType->getDemotedTerm();
     $promoted_term = $this->environmentType->getPromotedTerm();

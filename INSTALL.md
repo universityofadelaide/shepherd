@@ -102,7 +102,7 @@ oc create secret generic privileged-db-password --from-literal=DATABASE_PASSWORD
 #### Configure Velero
 
 Heptio Velero is used for the backup/restore process of environments. We use Velero to backup the Openshift objects, and use
-an Velero plugin to backup/restore the database.
+a Velero plugin to backup/restore the database.
 
 Start by following [the Velero getting started](https://heptio.github.io/velero/v0.11.0/get-started.html) to install the Velero client
 on your local machine. This is useful for developers to easily interface with Velero.

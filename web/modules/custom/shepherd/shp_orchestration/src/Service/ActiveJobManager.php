@@ -32,7 +32,7 @@ class ActiveJobManager {
   /**
    * Record a job in progress.
    *
-   * @param \stdClass $job
+   * @param object $job
    *   The job.
    *
    * @throws \Drupal\shp_orchestration\Exception\JobInProgressException
@@ -51,7 +51,7 @@ class ActiveJobManager {
    * Should only be used to add data to an existing job.
    * Don't be evil! Use add() for new jobs.
    *
-   * @param \stdClass $job
+   * @param object $job
    *   The job.
    */
   public function update(\stdClass $job) {
