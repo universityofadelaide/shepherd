@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file
  * Contains \Robo\RoboFile.
@@ -19,14 +20,6 @@ class RoboFile extends RoboFileBase {
   /**
    * {@inheritdoc}
    */
-  public function __construct() {
-    parent::__construct();
-    // Put project specific overrides here, below the parent constructor.
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public function build() {
     parent::build();
     $this->say("To provide default content for shepherd, use robo dev:drupal-content-generate or robo dev:wordpress-content-generate");
@@ -42,10 +35,23 @@ class RoboFile extends RoboFileBase {
     }
   }
 
+  /**
+   * Create default WP content for the Shepherd.
+   */
   public function devWordpressContentGenerate() {
     $virtual_host = getenv("VIRTUAL_HOST");
     if (!empty($virtual_host)) {
       $this->_exec("$this->drush_cmd scr WordpressContentGenerate.php --uri=$virtual_host");
+    }
+  }
+
+  /**
+   * Create a dev login link.
+   */
+  public function devLogin() {
+    $virtual_host = getenv("VIRTUAL_HOST");
+    if (!empty($virtual_host)) {
+      $this->_exec("$this->drush_cmd --uri=$virtual_host uli");
     }
   }
 
