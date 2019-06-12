@@ -99,42 +99,42 @@ oc create secret generic privileged-db-password --from-literal=DATABASE_PASSWORD
 ```
 [Read more about secrets](https://docs.openshift.com/container-platform/latest/dev_guide/secrets.html).
 
-#### Configure Heptio Ark for Backup/Restore
+#### Configure Velero
 
-Heptio Ark is used for the backup/restore process of environments. We use Ark to backup the Openshift objects, and use
-an Ark plugin to backup/restore the database.
+Heptio Velero is used for the backup/restore process of environments. We use Velero to backup the Openshift objects, and use
+an Velero plugin to backup/restore the database.
 
-Start by following [the Ark getting started](https://heptio.github.io/ark/v0.10.0/get-started) to install the Ark client
-on your local machine. This is useful for developers to easily interface with Ark.
+Start by following [the Velero getting started](https://heptio.github.io/velero/v0.11.0/get-started.html) to install the Velero client
+on your local machine. This is useful for developers to easily interface with Velero.
 
-Next, follow [the server setup](https://heptio.github.io/ark/v0.10.0/get-started#set-up-server) to configure the Openshift cluster with an Ark and Minio server.
+Next, follow [the server setup](https://heptio.github.io/velero/v0.11.0/get-started.html#set-up-server) to configure the Openshift cluster with an Velero and Minio server.
 
-**Note:** Make sure your Ark client version, and the version of Ark you check out for the prerequisite set up are the same
+**Note:** Make sure your Velero client version, and the version of Velero you check out for the prerequisite set up are the same
 version.
 
 Once that is done, your Openshift cluster will be configured to support creating backups and restores.
 
-Add a ClusterRole and Binding to the shepherd service account for managing the Ark objects:
+Add a ClusterRole and Binding to the shepherd service account for managing the Velero objects:
 ```bash
-oc create clusterrole ark-backups --verb=get,list,create,update,delete --resource=backups,restores,schedules
-oc adm policy add-cluster-role-to-user ark-backups --serviceaccount=shepherd
+oc create clusterrole velero-backups --verb=get,list,create,update,delete --resource=backups,restores,schedules
+oc adm policy add-cluster-role-to-user velero-backups --serviceaccount=shepherd
 ```
 
-With the Ark client/server setup, we need to install our plugin:
+With the Velero client/server setup, we need to install our plugin:
 ```bash
 ark plugin add previousnext/shepherd-ark-mysql-plugins
 ```
 
-This adds the plugin via an initContainer on the ark pod in the heptio-ark namespace.
+This adds the plugin via an initContainer on the ark pod in the velero namespace.
 
-To update your plugin, you'll need to change `imagePullPolicy: IfNotPresent` to `imagePullPolicy: Always` in the Ark deployment:
+To update your plugin, you'll need to change `imagePullPolicy: IfNotPresent` to `imagePullPolicy: Always` in the Velero deployment:
 ```bash
-oc -n heptio-ark edit deploy/ark
+oc -n velero edit deploy/velero
 # Find the imagePullPolicy: ifNotPresent under initContainers and change the value to Always
 ```
-You can then safely delete the ark pod, initiating a restart which will pull the latest plugin changes:
+You can then safely delete the velero pod, initiating a restart which will pull the latest plugin changes:
 ```bash
-oc -n heptio-ark get pods | grep ark | cut -d ' ' -f 1 | xargs oc -n heptio-ark delete pod
+oc -n velero get pods | grep ark | cut -d ' ' -f 1 | xargs oc -n velero delete pod
 ```
 
 ### Configure environment types
