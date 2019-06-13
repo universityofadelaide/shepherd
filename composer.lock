@@ -6040,7 +6040,7 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.adelaide.edu.au:drupal-modules/ua_ldap.git",
-                "reference": "6b95e9f2e8439afde35266967930dbaf085f3892"
+                "reference": "558ab395e35cff0680ed09d78eedde63b12a3d2e"
             },
             "require": {
                 "zendframework/zend-ldap": "^2.5.1"
@@ -6050,7 +6050,7 @@
                 "GPL-2.0-or-later"
             ],
             "description": "Provides configuration and services to interact with LDAP.",
-            "time": "2019-06-04T05:28:43+00:00"
+            "time": "2019-06-13T06:15:35+00:00"
         },
         {
             "name": "ua-drupal-modules/ua_shp_ldap",
