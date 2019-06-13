@@ -67,7 +67,7 @@ dsh_openshift_init() {
     fi
 
     # Perform/check setup.
-    if [ "$(minishift status)" != "Running" ]; then
+    if ! minishift status | grep "Running" > /dev/null; then
       minishift start
     fi
 
@@ -87,7 +87,7 @@ dsh_openshift_init() {
   # If using Minishift, then
   if [ "${OPENSHIFT_TYPE}" == "minishift" ]; then
     # Setup a new mysql server, expose it and group the services.
-    if ! oc get svc mysql > /dev/null 2>&1; then
+    if ! oc get svc mariadb > /dev/null 2>&1; then
       oc new-app mariadb MYSQL_ROOT_PASSWORD=${SUPER_SECRET_PASSWORD} -l db=shepherd
       oc expose dc mariadb --type=LoadBalancer --name=mysql-external
       oc annotate svc mysql-external "service.alpha.openshift.io/dependencies=[{\"name\": \"mariadb\", \"kind\": \"Service\"}]"

@@ -27,4 +27,4 @@ install:
     - composer install
 
 script:
-    - ./vendor/phpunit/phpunit/phpunit --group shepherd -c ./web/core
+    - ./vendor/phpunit/phpunit/phpunit --group shepherd -c ./ ./web/modules/custom/

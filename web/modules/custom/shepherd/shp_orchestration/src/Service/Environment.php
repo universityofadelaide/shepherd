@@ -306,11 +306,24 @@ class Environment extends EntityActionBase {
       return FALSE;
     }
 
+    // Load the taxonomy term that has protect enabled.
+    $promoted_term = $this->environmentType->getPromotedTerm();
+
+    // Extract and transform the annotations from the environment type.
+    $annotations = $promoted_term ? $promoted_term->field_shp_annotations->getValue() : [];
+    $annotations = array_combine(
+      array_column($annotations, 'key'),
+      array_column($annotations, 'value')
+    );
+
     $result = $this->orchestrationProviderPlugin->promotedEnvironment(
       $project->title->value,
       $site->field_shp_short_name->value,
       $site->id(),
       $environment->id(),
+      $site->field_shp_domain->value,
+      $site->field_shp_path->value,
+      $annotations,
       $environment->field_shp_git_reference->value,
       $clear_cache
     );
@@ -380,7 +393,7 @@ class Environment extends EntityActionBase {
     $cron_jobs = [];
 
     foreach ($environment->field_shp_cron_jobs as $job) {
-      $cron_jobs[$job->name] = [
+      $cron_jobs[] = [
         'cmd' => $job->value,
         'schedule' => $job->key,
       ];

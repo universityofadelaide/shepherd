@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\Tests\shp_custom;
+namespace Drupal\Tests\shp_custom\Unit;
 
 use Drupal\shp_custom\Service\StringGenerator;
 use Drupal\Tests\UnitTestCase;

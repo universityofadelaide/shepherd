@@ -247,8 +247,11 @@ class Backup {
     switch ($job->queueWorker) {
       case 'shp_backup':
       case 'shp_restore':
+        // If we can't find the provider job, then its probably been deleted, move along.
+        if (!$provider_job = $this->orchestrationProvider->getJob($job->name)) {
+          return TRUE;
+        }
         // @todo Fix OpenShift specific structure leaking here.
-        $provider_job = $this->orchestrationProvider->getJob($job->name);
         $complete = $provider_job['status']['conditions'][0]['type'] == 'Complete'
           && $provider_job['status']['conditions'][0]['status'] == 'True';
 
