@@ -3,15 +3,11 @@
 namespace Drupal\shp_backup\Service;
 
 use Drupal\Component\Serialization\Json;
-use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityInterface;
-use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\Url;
 use Drupal\node\NodeInterface;
 use Drupal\shp_orchestration\OrchestrationProviderPluginManagerInterface;
-use Drupal\shp_orchestration\Service\ActiveJobManager;
-use Drupal\token\TokenInterface;
 use UniversityOfAdelaide\OpenShift\Objects\Backups\Backup as BackupObject;
 
 /**
@@ -31,41 +27,6 @@ class Backup {
   const FRIENDLY_NAME_ANNOTATION = 'backups.shepherd/friendly-name';
 
   /**
-   * Backup settings.
-   *
-   * @var \Drupal\Core\Config\Config|\Drupal\Core\Config\ImmutableConfig
-   */
-  protected $config;
-
-  /**
-   * Used to retrieve config.
-   *
-   * @var \Drupal\Core\Config\ConfigFactory
-   */
-  protected $configFactory;
-
-  /**
-   * Used to expand tokens from config into usable strings.
-   *
-   * @var \Drupal\token\Token
-   */
-  protected $token;
-
-  /**
-   * Entity type manager.
-   *
-   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
-   */
-  protected $entityTypeManager;
-
-  /**
-   * The active job manager service.
-   *
-   * @var \Drupal\shp_orchestration\Service\ActiveJobManager
-   */
-  protected $activeJobManager;
-
-  /**
    * The orchestration provider plugin manager.
    *
    * @var \Drupal\shp_orchestration\OrchestrationProviderInterface
@@ -75,23 +36,10 @@ class Backup {
   /**
    * Backup constructor.
    *
-   * @param \Drupal\Core\Config\ConfigFactoryInterface $configFactory
-   *   Config factory.
-   * @param \Drupal\token\TokenInterface $token
-   *   Token service.
-   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entityTypeManager
-   *   Entity type manager.
-   * @param \Drupal\shp_orchestration\Service\ActiveJobManager $activeJobManager
-   *   Active job manager.
    * @param \Drupal\shp_orchestration\OrchestrationProviderPluginManagerInterface $pluginManager
    *   The orchestration provider plugin manager.
    */
-  public function __construct(ConfigFactoryInterface $configFactory, TokenInterface $token, EntityTypeManagerInterface $entityTypeManager, ActiveJobManager $activeJobManager, OrchestrationProviderPluginManagerInterface $pluginManager) {
-    $this->configFactory = $configFactory;
-    $this->config = $this->configFactory->get('shp_backup.settings');
-    $this->token = $token;
-    $this->entityTypeManager = $entityTypeManager;
-    $this->activeJobManager = $activeJobManager;
+  public function __construct(OrchestrationProviderPluginManagerInterface $pluginManager) {
     $this->orchestrationProvider = $pluginManager->getProviderInstance();
   }
 
@@ -228,16 +176,6 @@ class Backup {
         'title'      => $this->t('Restore'),
         'weight'     => 2,
         'url'        => Url::fromRoute('shp_backup.environment-restore-form', [
-          'site'        => $site,
-          'environment' => $environment,
-        ]),
-        'attributes' => $modal_attributes,
-      ];
-
-      $operations['sync'] = [
-        'title'      => $this->t('Sync'),
-        'weight'     => 2,
-        'url'        => Url::fromRoute('shp_backup.environment-sync-form', [
           'site'        => $site,
           'environment' => $environment,
         ]),

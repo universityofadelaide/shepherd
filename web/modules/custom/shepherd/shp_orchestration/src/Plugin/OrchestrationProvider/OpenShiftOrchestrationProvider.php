@@ -15,8 +15,6 @@ use UniversityOfAdelaide\OpenShift\ClientException;
 use UniversityOfAdelaide\OpenShift\Objects\Backups\Backup;
 use UniversityOfAdelaide\OpenShift\Objects\Backups\Restore;
 use UniversityOfAdelaide\OpenShift\Objects\Backups\ScheduledBackup;
-use UniversityOfAdelaide\OpenShift\Objects\Backups\Sync;
-use UniversityOfAdelaide\OpenShift\Objects\Backups\SyncEnvironment;
 use UniversityOfAdelaide\OpenShift\Objects\Label;
 
 /**
@@ -557,13 +555,11 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
    */
   public function backupEnvironment(string $site_id, string $environment_id, string $friendly_name = '') {
     $deployment_name = self::generateDeploymentName($environment_id);
+    /** @var \UniversityOfAdelaide\OpenShift\Objects\Backups\Backup $backup */
     $backup = Backup::create()
       ->setLabel(Label::create('site_id', $site_id))
       ->setLabel(Label::create('environment_id', $environment_id))
-      ->setName(sprintf('%s-backup-%s', $deployment_name, date('YmdHis')))
-      ->setMatchLabels([
-        'app' => $deployment_name,
-      ]);
+      ->setName(sprintf('%s-backup-%s', $deployment_name, date('YmdHis')));
     if (!empty($friendly_name)) {
       $backup->setAnnotation(BackupService::FRIENDLY_NAME_ANNOTATION, $friendly_name);
     }
@@ -581,14 +577,12 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
    */
   public function environmentScheduleBackupCreate(string $site_id, string $environment_id, string $schedule) {
     $deployment_name = self::generateDeploymentName($environment_id);
+    /** @var \UniversityOfAdelaide\OpenShift\Objects\Backups\ScheduledBackup $schedule */
     $schedule = ScheduledBackup::create()
       ->setLabel(Label::create('site_id', $site_id))
       ->setLabel(Label::create('environment_id', $environment_id))
       ->setName(self::generateScheduleName($deployment_name))
-      ->setSchedule($schedule)
-      ->setMatchLabels([
-        'app' => $deployment_name,
-      ]);
+      ->setSchedule($schedule);
     try {
       return $this->client->createSchedule($schedule);
     }
@@ -692,41 +686,6 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       ->setLabel(Label::create('environment_id', $environment_id));
     try {
       return $this->client->createRestore($restore);
-    }
-    catch (ClientException $e) {
-      $this->handleClientException($e);
-      return FALSE;
-    }
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function syncEnvironment(string $site_id, string $from_environment_id, string $to_environment_id) {
-    $from_deployment_name = self::generateDeploymentName($from_environment_id);
-    $to_deployment_name = self::generateDeploymentName($to_environment_id);
-    $sync = Sync::createFromSourceAndTarget(
-      SyncEnvironment::createFromPvcAndSecret(self::generateSharedPvcName($from_deployment_name), $from_deployment_name),
-      SyncEnvironment::createFromPvcAndSecret(self::generateSharedPvcName($to_deployment_name), $to_deployment_name)
-    )->setName(sprintf('sync-%s-%s-%s', $from_environment_id, $to_environment_id, date('YmdHis')))
-      ->setLabel(Label::create('site_id', $site_id))
-      ->setLabel(Label::create('environment_id_from', $from_environment_id))
-      ->setLabel(Label::create('environment_id_to', $to_environment_id));
-    try {
-      return $this->client->createSync($sync);
-    }
-    catch (ClientException $e) {
-      $this->handleClientException($e);
-      return FALSE;
-    }
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getSyncsForSite(string $site_id) {
-    try {
-      return $this->client->listSync(Label::create('site_id', $site_id));
     }
     catch (ClientException $e) {
       $this->handleClientException($e);

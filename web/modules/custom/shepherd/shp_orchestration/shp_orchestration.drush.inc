@@ -25,7 +25,5 @@ function shp_orchestration_drush_command() {
  * Drush command logic for processing the job queue.
  */
 function drush_shp_orchestration_shepherd_process_job_queue() {
-  \Drupal::service('shp_orchestration.job_queue')->process();
-  // @todo - would be a good idea to print what job id etc. was processed.
-  drush_print(dt('Job queue processed'));
+  // No-op, remove from shepherd cron tasks first.
 }

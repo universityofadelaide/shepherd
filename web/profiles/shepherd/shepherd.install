@@ -59,3 +59,16 @@ function shepherd_install() {
   // Do a node access rebuild, there will be zero/one node, so no need to batch.
   node_access_rebuild(FALSE);
 }
+
+/**
+ * Remove old backup settings and active job queue related things.
+ */
+function shepherd_update_8001() {
+  \Drupal::configFactory()->getEditable('shp_backup.settings')
+    ->clear('root_dir')
+    ->clear('backup_command')
+    ->clear('restore_command');
+
+  \Drupal::database()->delete('key_value')->condition('name', 'shp_job.%', 'LIKE')->execute();
+  \Drupal::queue('shp_orchestration_job_queue')->deleteQueue();
+}

@@ -32,23 +32,6 @@ shp_backup.environment-restore-form:
     _permission: 'shp access environment wizard'
     site: ^[0-9]+
     environment: ^[0-9]+
-shp_backup.environment-sync-form:
-  path: '/site/{site}/environment/{environment}/sync'
-  defaults:
-    _form: '\Drupal\shp_backup\Form\EnvironmentSyncForm'
-    _title_callback: '\Drupal\shp_backup\Form\EnvironmentSyncForm::getPageTitle'
-    _title: 'Sync environment'
-  options:
-    parameters:
-      site:
-        type: entity:node
-      environment:
-        type: entity:node
-    no_cache: TRUE
-  requirements:
-    _permission: 'shp access environment wizard'
-    site: ^[0-9]+
-    environment: ^[0-9]+
 shp_backup.backups:
   path: '/site/{node}/backups'
   defaults:
@@ -68,20 +51,6 @@ shp_backup.restores:
   defaults:
     _controller: '\Drupal\shp_backup\Controller\RestoreList::list'
     _title: 'Restore list'
-  options:
-    parameters:
-      site:
-        type: entity:node
-    no_cache: TRUE
-  requirements:
-    _permission: 'shp access environment wizard'
-    _custom_access: '\Drupal\shp_custom\Controller\SiteLocalTaskController::checkAccess'
-    site: ^[0-9]+
-shp_backup.syncs:
-  path: '/site/{node}/syncs'
-  defaults:
-    _controller: '\Drupal\shp_backup\Controller\SyncList::list'
-    _title: 'Sync list'
   options:
     parameters:
       site:
