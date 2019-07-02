@@ -18,7 +18,6 @@ dependencies:
     - field.field.node.shp_environment.field_shp_secrets
     - field.field.node.shp_environment.field_shp_site
     - field.field.node.shp_environment.field_shp_update_on_image_change
-    - field.field.node.shp_environment.field_shp_volume_snapshots
     - node.type.shp_environment
   module:
     - key_value_field
@@ -152,16 +151,6 @@ content:
   field_shp_update_on_image_change:
     weight: 8
     label: inline
-    settings:
-      format: default
-      format_custom_false: ''
-      format_custom_true: ''
-    third_party_settings: {  }
-    type: boolean
-    region: content
-  field_shp_volume_snapshots:
-    weight: 11
-    label: above
     settings:
       format: default
       format_custom_false: ''

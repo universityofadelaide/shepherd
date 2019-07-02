@@ -49,28 +49,3 @@ function _shp_import_config_from_disk($entity_type, $bundle, $field_name) {
 function shepherd_post_update_enable_drush_cmi_tools() {
   \Drupal::service('module_installer')->install(['drush_cmi_tools']);
 }
-
-/**
- * Populate environment volume snapshot values..
- */
-function shepherd_post_update_populate_field_volume_snapshots(&$sandbox) {
-  $node_storage = \Drupal::entityTypeManager()->getStorage('node');
-  if (!isset($sandbox['progress'])) {
-    _shp_import_config_from_disk('node', 'shp_environment', 'field_shp_volume_snapshots');
-    $query = $node_storage->getQuery()
-      ->condition('type', 'shp_environment')
-      ->notExists('field_shp_volume_snapshots');
-    $sandbox['ids'] = $query->execute();
-
-    $sandbox['progress'] = 0;
-    $sandbox['max'] = count($sandbox['ids']);
-  }
-  $ids = array_splice($sandbox['ids'], 0, 50);
-  foreach ($node_storage->loadMultiple($ids) as $node) {
-    $node->set('field_shp_volume_snapshots', 1);
-    $node->setNewRevision(FALSE);
-    $node->save();
-  }
-  $sandbox['progress'] += count($ids);
-  $sandbox['#finished'] = empty($sandbox['max']) ? 1 : ($sandbox['progress'] / $sandbox['max']);
-}
