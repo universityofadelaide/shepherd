@@ -10,9 +10,3 @@ shp_backup.site_restores:
   route_name: shp_backup.restores
   base_route: entity.node.canonical
   weight: 11
-shp_backup.site_syncs:
-  title: Syncs
-  parent_id: entity.node.canonical
-  route_name: shp_backup.syncs
-  base_route: entity.node.canonical
-  weight: 12
