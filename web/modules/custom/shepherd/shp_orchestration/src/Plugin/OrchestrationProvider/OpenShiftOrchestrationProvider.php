@@ -263,13 +263,17 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
 
     // Get the volumes and include the backups this time.
     $cron_volumes = $this->generateVolumeData($project_name, $deployment_name, $secrets, TRUE);
+
+    // Retrieve image stream that will be used for this site. There is only a
+    // tiny chance it will be different to the deployment config image.
     $image_stream = $this->client->getImageStream($sanitised_project_name);
+
+    // Use the exact image stream name retrieved.
     $this->createCronJobs(
       $deployment_name,
-      $sanitised_source_ref,
       $cron_suspended,
       $cron_jobs,
-      $image_stream,
+      $image_stream['status']['tags'][0]['items'][0]['dockerImageReference'],
       $cron_volumes,
       $deploy_data
     );
@@ -325,7 +329,6 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
   ) {
     // @todo Refactor this too. Not DRY enough.
 
-    $sanitised_project_name = self::sanitise($project_name);
     $deployment_name = self::generateDeploymentName($environment_id);
     $deployment_config = $this->client->getDeploymentConfig($deployment_name);
     $formatted_env_vars = $this->formatEnvVars($environment_variables, $deployment_name);
@@ -369,10 +372,11 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
 
     // Re-create all the cron jobs.
     $volumes = $this->generateVolumeData($project_name, $deployment_name, $secrets, TRUE);
-    $image_stream = $this->client->getImageStream($sanitised_project_name);
+
+    // Retrieve existing environment image to use for cron jobs.
+    $image_stream = $deployment_config['spec']['template']['spec']['containers'][0]['image'];
     $this->createCronJobs(
       $deployment_name,
-      $source_ref,
       $cron_suspended,
       $cron_jobs,
       $image_stream,
@@ -1152,13 +1156,11 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
    *
    * @param string $deployment_name
    *   Deployment identifier.
-   * @param string $source_ref
-   *   Image stream git ref.
    * @param bool $cron_suspended
    *   Is cron suspended?
    * @param array $cron_jobs
    *   The jobs to run.
-   * @param array $image_stream
+   * @param string $image_stream
    *   Image stream.
    * @param array $volumes
    *   Volumes to mount.
@@ -1168,8 +1170,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
    * @return bool
    *   True on success.
    */
-  protected function createCronJobs(string $deployment_name, string $source_ref, bool $cron_suspended, array $cron_jobs, array $image_stream, array $volumes, array $deploy_data) {
-    $sanitised_source_ref = self::sanitise($source_ref);
+  protected function createCronJobs(string $deployment_name, bool $cron_suspended, array $cron_jobs, string $image_stream, array $volumes, array $deploy_data) {
     foreach ($cron_jobs as $cron_job) {
       $args_array = [
         '/bin/sh',
@@ -1179,7 +1180,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       try {
         $this->client->createCronJob(
           $deployment_name . '-' . $this->stringGenerator->generateRandomString(5),
-          $image_stream['status']['dockerImageRepository'] . ':' . $sanitised_source_ref,
+          $image_stream,
           $cron_job['schedule'],
           $cron_suspended,
           $args_array,
