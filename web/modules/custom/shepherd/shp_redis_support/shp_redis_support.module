@@ -18,8 +18,17 @@ function shp_redis_support_shp_env_vars(NodeInterface $environment) {
   if ($orchestration_provider->getPluginId() === 'openshift_with_redis') {
     $deployment_name = $orchestration_provider::generateDeploymentName($environment->id());
     $env_vars['REDIS_ENABLED'] = '1';
-    $env_vars['REDIS_HOST'] = $deployment_name . '-redis';
     $env_vars['REDIS_PREFIX'] = $deployment_name;
+
+    // Allow for a single large redis host
+    $config_factory = \Drupal::service('config.factory');
+    if ($redis_host = $config_factory->get('shp_orchestration.settings')->get('redis_host')) {
+      $env_vars['REDIS_HOST'] = $redis_host;
+    }
+    else {
+      $env_vars['REDIS_HOST'] = $deployment_name . '-redis';
+    }
+
   }
   return $env_vars;
 }

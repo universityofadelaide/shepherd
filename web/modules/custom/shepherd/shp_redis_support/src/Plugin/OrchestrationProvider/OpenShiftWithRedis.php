@@ -30,6 +30,12 @@ class OpenShiftWithRedis extends OpenShiftOrchestrationProvider {
    * @throws \UniversityOfAdelaide\OpenShift\ClientException
    */
   public function createRedisDeployment(string $deployment_name, string $site_id, string $environment) {
+    // If a single large redis host is configured, don't to anything extra.
+    $config_factory = \Drupal::service('config.factory');
+    if ($config_factory->get('shp_orchestration.settings')->get('redis_host')) {
+      return;
+    }
+
     $redis_name = $deployment_name . '-redis';
     $redis_port = 6379;
 
