@@ -3,7 +3,6 @@
 namespace Drupal\shp_backup\Controller;
 
 use Drupal\node\NodeInterface;
-use Symfony\Component\HttpFoundation\Request;
 use UniversityOfAdelaide\OpenShift\Objects\Backups\Phase;
 
 /**
@@ -14,15 +13,13 @@ class BackupList extends ListControllerBase {
   /**
    * Builds backup list page.
    *
-   * @param \Symfony\Component\HttpFoundation\Request $request
-   *   Current request.
    * @param \Drupal\node\NodeInterface $node
    *   The site node.
    *
    * @return array
    *   Render array
    */
-  public function list(Request $request, NodeInterface $node) {
+  public function list(NodeInterface $node) {
     $table = [
       '#theme' => 'table',
       '#header' => [
@@ -31,7 +28,6 @@ class BackupList extends ListControllerBase {
         $this->t('Phase'),
         $this->t('Started'),
         $this->t('Completed'),
-        $this->t('Expires'),
       ],
       '#rows' => [],
       '#empty' => $this->t('No backups for this site yet.'),
@@ -53,7 +49,6 @@ class BackupList extends ListControllerBase {
         // These values aren't available until the backup has finished.
         $backup->isCompleted() ? $this->formatDate($backup->getStartTimestamp()) : $this->t('N/A'),
         $backup->isCompleted() ? $this->formatDate($backup->getCompletionTimestamp()) : $this->t('N/A'),
-        $backup->getExpires() ? $this->dateFormatter->formatInterval($this->parseDate($backup->getExpires())->getTimestamp() - $this->time->getRequestTime()) : $this->t('N/A'),
       ];
     }
     return $table;
