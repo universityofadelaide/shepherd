@@ -13,6 +13,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use UniversityOfAdelaide\OpenShift\Client as OpenShiftClient;
 use UniversityOfAdelaide\OpenShift\ClientException;
 use UniversityOfAdelaide\OpenShift\Objects\Backups\Backup;
+use UniversityOfAdelaide\OpenShift\Objects\Backups\Database;
 use UniversityOfAdelaide\OpenShift\Objects\Backups\Restore;
 use UniversityOfAdelaide\OpenShift\Objects\Backups\ScheduledBackup;
 use UniversityOfAdelaide\OpenShift\Objects\Label;
@@ -557,8 +558,10 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     $deployment_name = self::generateDeploymentName($environment_id);
     /** @var \UniversityOfAdelaide\OpenShift\Objects\Backups\Backup $backup */
     $backup = Backup::create()
-      ->setLabel(Label::create('site_id', $site_id))
-      ->setLabel(Label::create('environment_id', $environment_id))
+      ->setVolumes(['shared' => self::generateSharedPvcName($deployment_name)])
+      ->addDatabase($this->generateDatabaseFromDeploymentName($deployment_name))
+      ->setLabel(Label::create('site', $site_id))
+      ->setLabel(Label::create('environment', $environment_id))
       ->setName(sprintf('%s-backup-%s', $deployment_name, date('YmdHis')));
     if (!empty($friendly_name)) {
       $backup->setAnnotation(BackupService::FRIENDLY_NAME_ANNOTATION, $friendly_name);
@@ -573,14 +576,36 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
   }
 
   /**
+   * Generates a database object used by backup/restores from a deployment.
+   *
+   * @param string $deployment_name
+   *   The deployment name.
+   *
+   * @return \UniversityOfAdelaide\OpenShift\Objects\Backups\Database
+   *   A database object.
+   */
+  private function generateDatabaseFromDeploymentName(string $deployment_name) {
+    return (new Database())
+      ->setId('default')
+      ->setSecretName($deployment_name)
+      ->setSecretKeys([
+        KeyMySQLHostname => EnvMySQLHostname,
+        KeyMySQLDatabase => EnvMySQLDatabase,
+        KeyMySQLPort => EnvMySQLPort,
+        KeyMySQLUsername => EnvMySQLUsername,
+        KeyMySQLPassword => EnvMySQLPassword,
+      ]);
+  }
+
+  /**
    * {@inheritdoc}
    */
   public function environmentScheduleBackupCreate(string $site_id, string $environment_id, string $schedule) {
     $deployment_name = self::generateDeploymentName($environment_id);
     /** @var \UniversityOfAdelaide\OpenShift\Objects\Backups\ScheduledBackup $schedule */
     $schedule = ScheduledBackup::create()
-      ->setLabel(Label::create('site_id', $site_id))
-      ->setLabel(Label::create('environment_id', $environment_id))
+      ->setLabel(Label::create('site', $site_id))
+      ->setLabel(Label::create('environment', $environment_id))
       ->setName(self::generateScheduleName($deployment_name))
       ->setSchedule($schedule);
     try {
@@ -665,25 +690,26 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
    * {@inheritdoc}
    */
   public function getBackupsForSite(string $site_id) {
-    return $this->getBackupsByLabel(Label::create('site_id', $site_id));
+    return $this->getBackupsByLabel(Label::create('site', $site_id));
   }
 
   /**
    * {@inheritdoc}
    */
   public function getBackupsForEnvironment(string $environment_id) {
-    return $this->getBackupsByLabel(Label::create('environment_id', $environment_id));
+    return $this->getBackupsByLabel(Label::create('environment', $environment_id));
   }
 
   /**
    * {@inheritdoc}
    */
   public function restoreEnvironment(string $backup_name, string $site_id, string $environment_id) {
+    $deployment_name = self::generateDeploymentName($environment_id);
     $restore = Restore::create()
-      ->setName(sprintf('%s-%s', $backup_name, date('YmdHis')))
+      ->setName(sprintf('%s-restore-%s', $deployment_name, date('YmdHis')))
       ->setBackupName($backup_name)
-      ->setLabel(Label::create('site_id', $site_id))
-      ->setLabel(Label::create('environment_id', $environment_id));
+      ->setLabel(Label::create('site', $site_id))
+      ->setLabel(Label::create('environment', $environment_id));
     try {
       return $this->client->createRestore($restore);
     }
@@ -698,7 +724,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
    */
   public function getRestoresForSite(string $site_id) {
     try {
-      return $this->client->listRestore(Label::create('site_id', $site_id));
+      return $this->client->listRestore(Label::create('site', $site_id));
     }
     catch (ClientException $e) {
       $this->handleClientException($e);

@@ -7,6 +7,13 @@
 
 use Drupal\Core\Entity\EntityInterface;
 
+// Secret key names used to store database credentials.
+define('EnvMySQLHostname', 'DATABASE_HOST');
+define('EnvMySQLDatabase', 'DATABASE_NAME');
+define('EnvMySQLPort', 'DATABASE_PORT');
+define('EnvMySQLUsername', 'DATABASE_USER');
+define('EnvMySQLPassword', 'DATABASE_PASSWORD');
+
 /**
  * Implements hook_ENTITY_TYPE_insert().
  */
@@ -46,11 +53,11 @@ function shp_database_provisioner_node_insert(EntityInterface $entity) {
     // Add database credentials to deployment secret.
     // Create the secret if it doesn't exist, otherwise add it to the existing.
     $secret_data = [
-      'DATABASE_HOST' => $host,
-      'DATABASE_PORT' => $port,
-      'DATABASE_USER' => $env_db_username,
-      'DATABASE_NAME' => $env_db_database,
-      'DATABASE_PASSWORD' => $env_db_password,
+      EnvMySQLHostname => $host,
+      EnvMySQLPort => $port,
+      EnvMySQLUsername => $env_db_username,
+      EnvMySQLDatabase => $env_db_database,
+      EnvMySQLPassword => $env_db_password,
     ];
     if ($env_secret = $orchestration_provider_plugin->getSecret($deployment_name)) {
       $secret_result = $orchestration_provider_plugin->updateSecret($deployment_name, array_merge($env_secret, $secret_data));
@@ -99,10 +106,10 @@ function shp_database_provisioner_node_insert(EntityInterface $entity) {
 function shp_database_provisioner_shp_env_vars(EntityInterface $entity) {
   $config = \Drupal::config('shp_database_provisioner.settings');
   return [
-    'DATABASE_HOST' => $config->get('host'),
-    'DATABASE_PORT' => $config->get('port'),
-    'DATABASE_NAME' => 'env_' . $entity->id(),
-    'DATABASE_USER' => 'user_' . $entity->id(),
+    EnvMySQLHostname => $config->get('host'),
+    EnvMySQLPort => $config->get('port'),
+    EnvMySQLDatabase => 'env_' . $entity->id(),
+    EnvMySQLUsername => 'user_' . $entity->id(),
     // The following path is based on convention set in:
     // OpenShiftOrchestrationProvider::setupVolumes()
     // The 'default' deployment config secret is mounted at /etc/secret.

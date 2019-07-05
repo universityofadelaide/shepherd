@@ -37,7 +37,7 @@ class BackupList extends ListControllerBase {
       return $table;
     }
     foreach ($backup_list->getBackupsByCreatedTime() as $backup) {
-      $environment = $this->nodeStorage->load($backup->getLabel('environment_id'));
+      $environment = $this->nodeStorage->load($backup->getLabel('environment'));
       // Protect against environments that have been deleted.
       if (!$environment) {
         continue;
@@ -46,9 +46,8 @@ class BackupList extends ListControllerBase {
         $this->backupService->getFriendlyName($backup),
         $this->environmentService->getEnvironmentLink($environment, FALSE)->toString(),
         Phase::getFriendlyPhase($backup->getPhase()),
-        // These values aren't available until the backup has finished.
-        $backup->isCompleted() ? $this->formatDate($backup->getStartTimestamp()) : $this->t('N/A'),
-        $backup->isCompleted() ? $this->formatDate($backup->getCompletionTimestamp()) : $this->t('N/A'),
+        $backup->getStartTimestamp() ? $this->formatDate($backup->getStartTimestamp()) : $this->t('N/A'),
+        $backup->getCompletionTimestamp() ? $this->formatDate($backup->getCompletionTimestamp()) : $this->t('N/A'),
       ];
     }
     return $table;
