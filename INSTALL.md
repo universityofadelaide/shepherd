@@ -101,7 +101,7 @@ oc create secret generic privileged-db-password --from-literal=DATABASE_PASSWORD
 
 #### Configure Backup/Restore operators
 
-Shepherd uses custom Kubernetes objects for backup and restore operations. These are developed and managed by https://gitlab.adelaide.edu.au/web-team/shepherd-operator
+Shepherd uses custom Kubernetes objects for backup and restore operations. These are developed and managed by https://github.com/universityofadelaide/shepherd-operator
 
 Follow the documentation there to install the manifests and run the operators.
 
