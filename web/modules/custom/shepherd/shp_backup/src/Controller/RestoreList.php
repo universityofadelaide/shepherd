@@ -27,7 +27,8 @@ class RestoreList extends ListControllerBase {
         $this->t('From backup'),
         $this->t('Environment'),
         $this->t('Phase'),
-        $this->t('Created'),
+        $this->t('Started'),
+        $this->t('Completed'),
       ],
       '#rows' => [],
       '#empty' => $this->t('No restores for this site yet.'),
@@ -47,7 +48,8 @@ class RestoreList extends ListControllerBase {
         $backup ? $this->backupService->getFriendlyName($backup) : '',
         $this->environmentService->getEnvironmentLink($environment, FALSE)->toString(),
         Phase::getFriendlyPhase($restore->getPhase()),
-        $this->formatDate($restore->getCreationTimestamp()),
+        $backup->getStartTimestamp() ? $this->formatDate($backup->getStartTimestamp()) : $this->t('N/A'),
+        $backup->getCompletionTimestamp() ? $this->formatDate($backup->getCompletionTimestamp()) : $this->t('N/A'),
       ];
     }
     return $table;
