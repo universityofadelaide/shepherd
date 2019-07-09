@@ -55,6 +55,9 @@
         "post-install-cmd": [
             "@composer drupal:scaffold",
             "UniversityOfAdelaide\\Shepherd\\Plugin::scaffold"
+        ],
+        "post-update-cmd": [
+            "echo \"Checking out dsh that scaffold overrides\"; git checkout dsh"
         ]
     },
     "extra": {
