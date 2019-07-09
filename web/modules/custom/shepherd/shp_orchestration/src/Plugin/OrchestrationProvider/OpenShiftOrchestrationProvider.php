@@ -257,7 +257,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       $update_on_image_change,
       $volumes,
       $deploy_data,
-      $probes,
+      $probes
     );
 
     try {
