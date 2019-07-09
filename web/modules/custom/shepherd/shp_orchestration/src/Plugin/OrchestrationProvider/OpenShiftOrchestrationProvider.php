@@ -250,11 +250,6 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       $environment_id
     );
 
-    $volumes_to_backup = [];
-    // Only backup the shared volume.
-    if ($backup_volumes) {
-      $volumes_to_backup[] = $volumes['shared']['name'];
-    }
     $deployment_config = $this->client->generateDeploymentConfig(
       $deployment_name,
       $image_stream_tag,
@@ -263,7 +258,6 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       $volumes,
       $deploy_data,
       $probes,
-      $volumes_to_backup
     );
 
     try {
