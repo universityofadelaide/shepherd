@@ -705,7 +705,10 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
    */
   public function restoreEnvironment(string $backup_name, string $site_id, string $environment_id) {
     $deployment_name = self::generateDeploymentName($environment_id);
+    /** @var \UniversityOfAdelaide\OpenShift\Objects\Backups\Restore $restore */
     $restore = Restore::create()
+      ->setVolumes(['shared' => self::generateSharedPvcName($deployment_name)])
+      ->addDatabase($this->generateDatabaseFromDeploymentName($deployment_name))
       ->setName(sprintf('%s-restore-%s', $deployment_name, date('YmdHis')))
       ->setBackupName($backup_name)
       ->setLabel(Label::create('site', $site_id))

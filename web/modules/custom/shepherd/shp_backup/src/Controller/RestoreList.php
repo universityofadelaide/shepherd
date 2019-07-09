@@ -14,15 +14,13 @@ class RestoreList extends ListControllerBase {
   /**
    * Builds backup list page.
    *
-   * @param \Symfony\Component\HttpFoundation\Request $request
-   *   Current request.
    * @param \Drupal\node\NodeInterface $node
    *   The site node.
    *
    * @return array
    *   Render array
    */
-  public function list(Request $request, NodeInterface $node) {
+  public function list(NodeInterface $node) {
     $table = [
       '#theme' => 'table',
       '#header' => [
@@ -39,7 +37,7 @@ class RestoreList extends ListControllerBase {
       return $table;
     }
     foreach ($restore_list->getRestoresByCreatedTime() as $restore) {
-      $environment = $this->nodeStorage->load($restore->getLabel('environment_id'));
+      $environment = $this->nodeStorage->load($restore->getLabel('environment'));
       // Protect against environments that have been deleted.
       if (!$environment) {
         continue;
