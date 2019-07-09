@@ -111,7 +111,7 @@ robo dev:drupal-content-generate
 robo dev:wordpress-content-generate
 ```
 
-Follow the *Configure Velero* in [INSTALL.md](INSTALL.md) to set up Backup/Restore functionality.
+Follow the *Configure Backup/Restore operators* section in [INSTALL.md](INSTALL.md) to set up Backup/Restore functionality.
 
 Thats it; visit the OpenShift web interface to see a build running and a
 deployment ready to occur when the build finishes.
