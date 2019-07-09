@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "542cfcc23ea8dcbdb728d33156b00199",
+    "content-hash": "4b0fd24ed06e88537bff31e03520a93c",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -5832,16 +5832,16 @@
         },
         {
             "name": "universityofadelaide/openshift-client",
-            "version": "dev-ark-backups",
+            "version": "dev-restic-backups",
             "source": {
                 "type": "git",
                 "url": "https://github.com/universityofadelaide/openshift-client.git",
-                "reference": "7b317b8bfd2fc1fad0e1f4e7d9ccdc0b8c7fb1bc"
+                "reference": "fb4c9e8a8b46ef3eb786b9ca9aa3afd360320854"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/universityofadelaide/openshift-client/zipball/7b317b8bfd2fc1fad0e1f4e7d9ccdc0b8c7fb1bc",
-                "reference": "7b317b8bfd2fc1fad0e1f4e7d9ccdc0b8c7fb1bc",
+                "url": "https://api.github.com/repos/universityofadelaide/openshift-client/zipball/fb4c9e8a8b46ef3eb786b9ca9aa3afd360320854",
+                "reference": "fb4c9e8a8b46ef3eb786b9ca9aa3afd360320854",
                 "shasum": ""
             },
             "require": {
@@ -5874,7 +5874,7 @@
                 }
             ],
             "description": "Simple OpenShift client for PHP.",
-            "time": "2018-12-19T05:42:38+00:00"
+            "time": "2019-07-09T06:14:52+00:00"
         },
         {
             "name": "universityofadelaide/shepherd-drupal-scaffold",
@@ -8624,17 +8624,6 @@
         {
             "name": "webflo/drupal-core-require-dev",
             "version": "8.7.2",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/webflo/drupal-core-require-dev.git",
-                "reference": "0f1f36e71d63e05f1bb599e0bfd20f7722b700a2"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/webflo/drupal-core-require-dev/zipball/0f1f36e71d63e05f1bb599e0bfd20f7722b700a2",
-                "reference": "0f1f36e71d63e05f1bb599e0bfd20f7722b700a2",
-                "shasum": ""
-            },
             "require": {
                 "behat/mink": "1.7.x-dev",
                 "behat/mink-goutte-driver": "^1.2",
