@@ -598,6 +598,8 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     $deployment_name = self::generateDeploymentName($environment_id);
     /** @var \UniversityOfAdelaide\OpenShift\Objects\Backups\ScheduledBackup $schedule */
     $schedule = ScheduledBackup::create()
+      ->setVolumes(['shared' => self::generateSharedPvcName($deployment_name)])
+      ->addDatabase($this->generateDatabaseFromDeploymentName($deployment_name))
       ->setLabel(Label::create('site', $site_id))
       ->setLabel(Label::create('environment', $environment_id))
       ->setName(self::generateScheduleName($deployment_name))
