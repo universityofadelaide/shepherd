@@ -54,13 +54,13 @@ class SiteUserRoles implements ContainerInjectionInterface {
     $group_manager = $this->entityTypeManager
       ->getStorage('group_content');
     $project_groups = $group_manager->loadByProperties([
-        'entity_id' => $site->id(),
-        'type' => 'shp_project-group_node-shp_site',
-      ]);
+      'entity_id' => $site->id(),
+      'type' => 'shp_project-group_node-shp_site',
+    ]);
     $site_groups = $group_manager->loadByProperties([
-        'entity_id' => $site->id(),
-        'type' => 'shp_site-group_node-shp_site',
-      ]);
+      'entity_id' => $site->id(),
+      'type' => 'shp_site-group_node-shp_site',
+    ]);
     $group_contents = array_merge($project_groups, $site_groups);
 
     /** @var \Drupal\group\Entity\GroupContentInterface $group_content */

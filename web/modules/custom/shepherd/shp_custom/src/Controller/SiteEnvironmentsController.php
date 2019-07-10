@@ -38,7 +38,7 @@ class SiteEnvironmentsController extends ControllerBase {
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container) {
-    return new static (
+    return new static(
       $container->get('plugin.manager.orchestration_provider')
     );
   }

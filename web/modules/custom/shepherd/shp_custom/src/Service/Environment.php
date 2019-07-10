@@ -9,12 +9,12 @@ use Drupal\Core\DependencyInjection\DependencySerializationTrait;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Link;
 use Drupal\Core\Render\Element;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\Url;
 use Drupal\node\NodeInterface;
-use Drupal\taxonomy\Entity\Term;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
@@ -234,9 +234,10 @@ class Environment {
    *   Entity to apply operations to.
    */
   public function operationsLinksAlter(array &$operations, EntityInterface $entity) {
-    $site = $entity->field_shp_site->target_id;
-    $environment = $entity->id();
-    $environment_term = Term::load($entity->field_shp_environment_type->target_id);
+    if (!$site = $this->getSite($entity)) {
+      return;
+    }
+    $environment_term = $this->getEnvironmentType($entity);
 
     // If its not a protected environment, it can be promoted.
     if (!$environment_term->field_shp_protect->value) {
@@ -244,7 +245,7 @@ class Environment {
         'title'      => $this->t('Promote'),
         'weight'     => 1,
         'url'        => Url::fromRoute('shp_custom.environment-promote-form',
-          ['site' => $site, 'environment' => $environment]),
+          ['site' => $site->id(), 'environment' => $entity->id()]),
         // Render form in a modal window.
         'attributes' => [
           'class'               => ['button', 'use-ajax'],
@@ -274,7 +275,6 @@ class Environment {
       }
     }
   }
-
 
   /**
    * Generate the link for the web terminal UI.
@@ -366,6 +366,37 @@ class Environment {
     }
 
     return FALSE;
+  }
+
+  /**
+   * Get the link to an environment.
+   *
+   * @param \Drupal\node\NodeInterface $environment
+   *   The environment node.
+   * @param bool $render
+   *   Whether to render the link or not.
+   *
+   * @return \Drupal\Core\Link|array|null
+   *   A renderable link to the environment, null if it doesn't exist.
+   */
+  public function getEnvironmentLink(NodeInterface $environment, $render = TRUE) {
+    $environment_term = $this->getEnvironmentType($environment);
+    if (!$environment_term) {
+      return NULL;
+    }
+
+    // If its a protected environment, its production, show that url.
+    if ($environment_term->field_shp_protect->value) {
+      $site = $environment->field_shp_site->first()->entity;
+      $domain_and_path = rtrim($site->field_shp_domain->value . $site->field_shp_path->value, '/');
+      $link = Link::fromTextAndUrl($domain_and_path, Url::fromUri('//' . $domain_and_path));
+      return $render ? $link->toRenderable() : $link;
+    }
+    else {
+      $domain_and_path = rtrim($environment->field_shp_domain->value . $environment->field_shp_path->value, '/');
+      $link = Link::fromTextAndUrl($domain_and_path, Url::fromUri('//' . $domain_and_path));
+      return $render ? $link->toRenderable() : $link;
+    }
   }
 
   /**

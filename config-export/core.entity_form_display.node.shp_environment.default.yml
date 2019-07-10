@@ -44,6 +44,7 @@ third_party_settings:
       children:
         - field_shp_cron_suspended
         - field_shp_update_on_image_change
+        - field_shp_volume_snapshots
         - field_shp_env_vars
         - field_shp_secrets
         - field_shp_cron_jobs
@@ -114,7 +115,7 @@ content:
     type: string_textfield
     region: content
   field_shp_env_vars:
-    weight: 12
+    weight: 13
     settings:
       key_label: 'Variable name'
       key_size: 60

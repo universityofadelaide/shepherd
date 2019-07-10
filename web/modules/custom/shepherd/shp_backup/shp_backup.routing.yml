@@ -32,6 +32,34 @@ shp_backup.environment-restore-form:
     _permission: 'shp access environment wizard'
     site: ^[0-9]+
     environment: ^[0-9]+
+shp_backup.backups:
+  path: '/site/{node}/backups'
+  defaults:
+    _controller: '\Drupal\shp_backup\Controller\BackupList::list'
+    _title: 'Backup list'
+  options:
+    parameters:
+      site:
+        type: entity:node
+    no_cache: TRUE
+  requirements:
+    _permission: 'shp access environment wizard'
+    _custom_access: '\Drupal\shp_custom\Controller\SiteLocalTaskController::checkAccess'
+    site: ^[0-9]+
+shp_backup.restores:
+  path: '/site/{node}/restores'
+  defaults:
+    _controller: '\Drupal\shp_backup\Controller\RestoreList::list'
+    _title: 'Restore list'
+  options:
+    parameters:
+      site:
+        type: entity:node
+    no_cache: TRUE
+  requirements:
+    _permission: 'shp access environment wizard'
+    _custom_access: '\Drupal\shp_custom\Controller\SiteLocalTaskController::checkAccess'
+    site: ^[0-9]+
 shp_backup.settings:
   path: '/admin/config/shepherd/backup'
   defaults:
@@ -39,4 +67,3 @@ shp_backup.settings:
     _title: 'Backup'
   requirements:
     _permission: 'administer account settings'
-
