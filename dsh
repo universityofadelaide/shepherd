@@ -106,6 +106,16 @@ dsh_openshift_init() {
     oc create secret generic privileged-db-password --from-literal=DATABASE_PASSWORD=${SUPER_SECRET_PASSWORD}
   fi
 
+  # Setup the restic password in an OpenShift secret.
+  if ! oc get secret shepherd-restic-secret > /dev/null 2>&1; then
+    oc create secret generic shepherd-restic-secret --from-literal=password=${SUPER_SECRET_PASSWORD}
+  fi
+
+  # Setup the restic PVC for storing backups
+  if ! oc get pvc restic-repository > /dev/null 2>&1; then
+    oc apply -f ./openshift-config/shepherd-restic-repo-pvc.yml
+  fi
+
   # Add local ssh key as build-key secret if it exists and has no passphrase.
   if ! oc get secret build-key > /dev/null 2>&1 && [ -f ${BUILD_KEY} ] && ! grep -q ENCRYPTED ${BUILD_KEY}; then
     oc create secret generic build-key --from-file=ssh-privatekey=${BUILD_KEY}

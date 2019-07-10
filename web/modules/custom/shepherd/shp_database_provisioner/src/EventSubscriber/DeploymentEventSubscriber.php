@@ -15,7 +15,7 @@ class DeploymentEventSubscriber implements EventSubscriberInterface {
    * {@inheritdoc}
    */
   public static function getSubscribedEvents() {
-    $events[OrchestrationEvents::CREATED_ENVIRONMENT][] = array('databasePopulate');
+    $events[OrchestrationEvents::CREATED_ENVIRONMENT][] = ['databasePopulate'];
 
     return $events;
   }
