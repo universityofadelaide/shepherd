@@ -22,13 +22,9 @@ function shp_redis_support_shp_env_vars(NodeInterface $environment) {
 
     // Allow for a single large redis host
     $config_factory = \Drupal::service('config.factory');
-    if ($redis_host = $config_factory->get('shp_orchestration.settings')->get('redis_host')) {
-      $env_vars['REDIS_HOST'] = $redis_host;
-    }
-    else {
-      $env_vars['REDIS_HOST'] = $deployment_name . '-redis';
-    }
-
+    $redis_host = $config_factory->get('shp_orchestration.settings')->get('redis_host')) {
+    $env_vars['REDIS_HOST'] = $redis_host ?? $deployment_name . '-redis';
   }
+
   return $env_vars;
 }
