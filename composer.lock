@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "4b0fd24ed06e88537bff31e03520a93c",
+    "content-hash": "59369fb893d6b4f2328ddbd2a14f967f",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -5832,16 +5832,16 @@
         },
         {
             "name": "universityofadelaide/openshift-client",
-            "version": "dev-restic-backups",
+            "version": "dev-develop",
             "source": {
                 "type": "git",
                 "url": "https://github.com/universityofadelaide/openshift-client.git",
-                "reference": "fb4c9e8a8b46ef3eb786b9ca9aa3afd360320854"
+                "reference": "9e765401bffcf2b43457424933637e7ed5f4ce0f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/universityofadelaide/openshift-client/zipball/fb4c9e8a8b46ef3eb786b9ca9aa3afd360320854",
-                "reference": "fb4c9e8a8b46ef3eb786b9ca9aa3afd360320854",
+                "url": "https://api.github.com/repos/universityofadelaide/openshift-client/zipball/9e765401bffcf2b43457424933637e7ed5f4ce0f",
+                "reference": "9e765401bffcf2b43457424933637e7ed5f4ce0f",
                 "shasum": ""
             },
             "require": {
@@ -5874,7 +5874,7 @@
                 }
             ],
             "description": "Simple OpenShift client for PHP.",
-            "time": "2019-07-09T06:14:52+00:00"
+            "time": "2019-07-10T01:32:09+00:00"
         },
         {
             "name": "universityofadelaide/shepherd-drupal-scaffold",

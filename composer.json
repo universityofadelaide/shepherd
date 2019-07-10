@@ -13,7 +13,7 @@
         "cweagans/composer-patches":                     "~1.0",
         "drupal-composer/drupal-scaffold":               "^2.2",
         "predis/predis":                                 "^1.1.1",
-        "universityofadelaide/openshift-client":         "dev-restic-backups",
+        "universityofadelaide/openshift-client":         "dev-develop",
         "universityofadelaide/shepherd-drupal-scaffold": "~2.0",
         "wikimedia/composer-merge-plugin":               "^1.4",
         "drush/drush":                                   "9.*",
