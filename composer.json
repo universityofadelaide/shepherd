@@ -13,6 +13,7 @@
         "cweagans/composer-patches":                     "~1.0",
         "drupal-composer/drupal-scaffold":               "^2.2",
         "predis/predis":                                 "^1.1.1",
+        "universityofadelaide/openshift-client":         "dev-develop",
         "universityofadelaide/shepherd-drupal-scaffold": "~2.0",
         "wikimedia/composer-merge-plugin":               "^1.4",
         "drush/drush":                                   "9.*",
@@ -54,6 +55,9 @@
         "post-install-cmd": [
             "@composer drupal:scaffold",
             "UniversityOfAdelaide\\Shepherd\\Plugin::scaffold"
+        ],
+        "post-update-cmd": [
+            "echo \"Checking out dsh that scaffold overrides\"; git checkout dsh"
         ]
     },
     "extra": {
@@ -73,11 +77,6 @@
                 "sites/default/default.services.yml": "sites/default/services.yml",
                 "sites/default/default.settings.php": "sites/default/settings.php"
             }
-        },
-        "merge-plugin": {
-            "require": [
-                "web/modules/custom/shepherd/shp_orchestration/composer.json"
-            ]
         }
     }
 }

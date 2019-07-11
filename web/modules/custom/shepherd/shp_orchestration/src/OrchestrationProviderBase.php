@@ -77,6 +77,19 @@ abstract class OrchestrationProviderBase extends PluginBase implements Container
   }
 
   /**
+   * Generates a schedule name for a given deployment.
+   *
+   * @param string $deployment_name
+   *   The deployment name.
+   *
+   * @return string
+   *   The schedule name.
+   */
+  public static function generateScheduleName(string $deployment_name): string {
+    return sprintf('%s-backup-schedule', $deployment_name);
+  }
+
+  /**
    * Converts a string into a format acceptable for orchestration providers.
    *
    * Lowercase a-z0-9 with dashes.

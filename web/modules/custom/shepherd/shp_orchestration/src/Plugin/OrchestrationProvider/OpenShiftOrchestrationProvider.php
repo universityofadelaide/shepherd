@@ -6,11 +6,17 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\Url;
 use Drupal\node\Entity\Node;
+use Drupal\shp_backup\Service\Backup as BackupService;
 use Drupal\shp_custom\Service\StringGenerator;
 use Drupal\shp_orchestration\OrchestrationProviderBase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use UniversityOfAdelaide\OpenShift\Client as OpenShiftClient;
 use UniversityOfAdelaide\OpenShift\ClientException;
+use UniversityOfAdelaide\OpenShift\Objects\Backups\Backup;
+use UniversityOfAdelaide\OpenShift\Objects\Backups\Database;
+use UniversityOfAdelaide\OpenShift\Objects\Backups\Restore;
+use UniversityOfAdelaide\OpenShift\Objects\Backups\ScheduledBackup;
+use UniversityOfAdelaide\OpenShift\Objects\Label;
 
 /**
  * OpenShiftOrchestrationProvider.
@@ -215,10 +221,11 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     array $secrets = [],
     array $probes = [],
     array $cron_jobs = [],
-    array $annotations = []
+    array $annotations = [],
+    bool $backup_volumes = FALSE,
+    string $backup_schedule = ''
   ) {
     // @todo Refactor this. _The complexity is too damn high!_
-
     $sanitised_project_name = self::sanitise($project_name);
     $sanitised_source_ref = self::sanitise($source_ref);
     $deployment_name = self::generateDeploymentName($environment_id);
@@ -229,7 +236,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     // Tell, don't ask (to create a build config).
     $this->createBuildConfig($build_config_name, $source_ref, $source_repo, $builder_image, $source_secret, $image_stream_tag, $formatted_env_vars);
 
-    // Setup all the volumes that might be mounted
+    // Setup all the volumes that might be mounted.
     $volumes = $this->generateVolumeData($project_name, $deployment_name, $secrets);
     if (!$this->setupVolumes($project_name, $deployment_name, $storage_class)) {
       return FALSE;
@@ -300,6 +307,10 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       return FALSE;
     }
 
+    if ($backup_schedule) {
+      $this->environmentScheduleBackupCreate($site_id, $environment_id, $backup_schedule);
+    }
+
     return TRUE;
   }
 
@@ -328,7 +339,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     array $annotations = []
   ) {
     // @todo Refactor this too. Not DRY enough.
-
+    $sanitised_project_name = self::sanitise($project_name);
     $deployment_name = self::generateDeploymentName($environment_id);
     $deployment_config = $this->client->getDeploymentConfig($deployment_name);
     $formatted_env_vars = $this->formatEnvVars($environment_variables, $deployment_name);
@@ -353,18 +364,18 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
                 'resources' => [
                   'limits' => [
                     'cpu' => $deploy_data['cpu_limit'],
-                    'memory' => $deploy_data['memory_limit']
+                    'memory' => $deploy_data['memory_limit'],
                   ],
                   'requests' => [
                     'cpu' => $deploy_data['cpu_request'],
-                    'memory' => $deploy_data['memory_request']
-                  ]
-                ]
-              ]
-            ]
-          ]
-        ]
-      ]
+                    'memory' => $deploy_data['memory_request'],
+                  ],
+                ],
+              ],
+            ],
+          ],
+        ],
+      ],
     ]);
 
     // Remove all the existing cron jobs.
@@ -420,6 +431,10 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       // Now the things not in the typically visible ui.
       $this->client->deletePersistentVolumeClaim($deployment_name . '-shared');
       $this->client->deleteSecret($deployment_name);
+      $scheduleName = self::generateScheduleName($deployment_name);
+      if ($this->client->getSchedule($scheduleName)) {
+        $this->client->deleteSchedule($scheduleName);
+      }
     }
     catch (ClientException $e) {
       $this->handleClientException($e);
@@ -525,41 +540,198 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
   /**
    * {@inheritdoc}
    */
-  public function backupEnvironment(
-    string $project_name,
-    string $short_name,
-    string $environment_id,
-    string $source_ref = 'master',
-    string $commands = ''
-  ) {
-    return $this->executeJob(
-      $project_name,
-      $short_name,
-      $environment_id,
-      $source_ref,
-      $commands
-    );
-
+  public function getBackup(string $name) {
+    try {
+      return $this->client->getBackup($name);
+    }
+    catch (ClientException $e) {
+      $this->handleClientException($e);
+      return FALSE;
+    }
   }
 
   /**
    * {@inheritdoc}
    */
-  public function restoreEnvironment(
-    string $project_name,
-    string $short_name,
-    string $environment_id,
-    string $source_ref = 'master',
-    string $commands = ''
-  ) {
-    return $this->executeJob(
-      $project_name,
-      $short_name,
-      $environment_id,
-      $source_ref,
-      $commands
-    );
+  public function backupEnvironment(string $site_id, string $environment_id, string $friendly_name = '') {
+    $deployment_name = self::generateDeploymentName($environment_id);
+    /** @var \UniversityOfAdelaide\OpenShift\Objects\Backups\Backup $backup */
+    $backup = Backup::create()
+      ->setVolumes(['shared' => self::generateSharedPvcName($deployment_name)])
+      ->addDatabase($this->generateDatabaseFromDeploymentName($deployment_name))
+      ->setLabel(Label::create('site', $site_id))
+      ->setLabel(Label::create('environment', $environment_id))
+      ->setName(sprintf('%s-backup-%s', $deployment_name, date('YmdHis')));
+    if (!empty($friendly_name)) {
+      $backup->setAnnotation(BackupService::FRIENDLY_NAME_ANNOTATION, $friendly_name);
+    }
+    try {
+      return $this->client->createBackup($backup);
+    }
+    catch (ClientException $e) {
+      $this->handleClientException($e);
+      return FALSE;
+    }
+  }
 
+  /**
+   * Generates a database object used by backup/restores from a deployment.
+   *
+   * @param string $deployment_name
+   *   The deployment name.
+   *
+   * @return \UniversityOfAdelaide\OpenShift\Objects\Backups\Database
+   *   A database object.
+   */
+  private function generateDatabaseFromDeploymentName(string $deployment_name) {
+    return (new Database())
+      ->setId('default')
+      ->setSecretName($deployment_name)
+      ->setSecretKeys([
+        KeyMySQLHostname => EnvMySQLHostname,
+        KeyMySQLDatabase => EnvMySQLDatabase,
+        KeyMySQLPort => EnvMySQLPort,
+        KeyMySQLUsername => EnvMySQLUsername,
+        KeyMySQLPassword => EnvMySQLPassword,
+      ]);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function environmentScheduleBackupCreate(string $site_id, string $environment_id, string $schedule) {
+    $deployment_name = self::generateDeploymentName($environment_id);
+    /** @var \UniversityOfAdelaide\OpenShift\Objects\Backups\ScheduledBackup $schedule */
+    $schedule = ScheduledBackup::create()
+      ->setLabel(Label::create('site', $site_id))
+      ->setLabel(Label::create('environment', $environment_id))
+      ->setName(self::generateScheduleName($deployment_name))
+      ->setSchedule($schedule);
+    try {
+      return $this->client->createSchedule($schedule);
+    }
+    catch (ClientException $e) {
+      $this->handleClientException($e);
+      return FALSE;
+    }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function environmentScheduleBackupUpdate(string $site_id, string $environment_id, string $schedule) {
+    $schedule_name = self::generateScheduleName(self::generateDeploymentName($environment_id));
+    try {
+      $schedule_obj = $this->client->getSchedule($schedule_name);
+    }
+    catch (ClientException $e) {
+      $this->handleClientException($e);
+      return FALSE;
+    }
+    // If there's no schedule, create one.
+    if (!$schedule_obj) {
+      return $this->environmentScheduleBackupCreate($site_id, $environment_id, $schedule);
+    }
+
+    // No point updating if the schedules are the same!
+    if ($schedule_obj->getSchedule() === $schedule) {
+      return $schedule_obj;
+    }
+
+    // Existing schedule, update it.
+    $schedule_obj->setSchedule($schedule);
+    try {
+      return $this->client->updateSchedule($schedule_obj);
+    }
+    catch (ClientException $e) {
+      $this->handleClientException($e);
+      return FALSE;
+    }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function environmentScheduleBackupDelete(string $environment_id) {
+    $schedule_name = self::generateScheduleName(self::generateDeploymentName($environment_id));
+    try {
+      if ($this->client->getSchedule($schedule_name)) {
+        $this->client->deleteSchedule($schedule_name);
+      }
+      return TRUE;
+    }
+    catch (ClientException $e) {
+      $this->handleClientException($e);
+      return FALSE;
+    }
+  }
+
+  /**
+   * Get backups for a given label with exception handling.
+   *
+   * @param \UniversityOfAdelaide\OpenShift\Objects\Label $label
+   *   The label selector to apply.
+   *
+   * @return bool|object|\UniversityOfAdelaide\OpenShift\Objects\Backups\BackupList
+   *   A backup list, or false.
+   */
+  protected function getBackupsByLabel(Label $label) {
+    try {
+      return $this->client->listBackup($label);
+    }
+    catch (ClientException $e) {
+      $this->handleClientException($e);
+      return FALSE;
+    }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getBackupsForSite(string $site_id) {
+    return $this->getBackupsByLabel(Label::create('site', $site_id));
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getBackupsForEnvironment(string $environment_id) {
+    return $this->getBackupsByLabel(Label::create('environment', $environment_id));
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function restoreEnvironment(string $backup_name, string $site_id, string $environment_id) {
+    $deployment_name = self::generateDeploymentName($environment_id);
+    /** @var \UniversityOfAdelaide\OpenShift\Objects\Backups\Restore $restore */
+    $restore = Restore::create()
+      ->setVolumes(['shared' => self::generateSharedPvcName($deployment_name)])
+      ->addDatabase($this->generateDatabaseFromDeploymentName($deployment_name))
+      ->setName(sprintf('%s-restore-%s', $deployment_name, date('YmdHis')))
+      ->setBackupName($backup_name)
+      ->setLabel(Label::create('site', $site_id))
+      ->setLabel(Label::create('environment', $environment_id));
+    try {
+      return $this->client->createRestore($restore);
+    }
+    catch (ClientException $e) {
+      $this->handleClientException($e);
+      return FALSE;
+    }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getRestoresForSite(string $site_id) {
+    try {
+      return $this->client->listRestore(Label::create('site', $site_id));
+    }
+    catch (ClientException $e) {
+      $this->handleClientException($e);
+      return FALSE;
+    }
   }
 
   /**
@@ -931,11 +1103,11 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
   protected function generateRequestLimits(int $environment_id) {
     $request_limits = [];
 
-    /** @var Node $environment */
+    /** @var \Drupal\node\Entity\Node $environment */
     $environment = Node::load($environment_id);
-    /** @var Node $site */
+    /** @var \Drupal\node\Entity\Node $site */
     $site = $environment->field_shp_site->entity;
-    /** @var Node $project */
+    /** @var \Drupal\node\Entity\Node $project */
     $project = $site->field_shp_project->entity;
 
     $fields = [
@@ -1012,7 +1184,8 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
    *   Whether setting up the PVC's succeeded or not.
    */
   protected function setupVolumes(string $project_name, string $deployment_name, $storage_class = '') {
-    [$shared_pvc_name, $backup_pvc_name] = $this->generateVolumeNames($project_name, $deployment_name);
+    $shared_pvc_name = self::generateSharedPvcName($deployment_name);
+    $backup_pvc_name = self::generateBackupPvcName($project_name);
 
     // Setup PVC's for the ones that are NOT secrets.
     try {
@@ -1045,23 +1218,31 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
   }
 
   /**
-   * Generate volume names for a project environment.
+   * Generate the name of the shared PVC from a deployment name.
+   *
+   * @param string $deployment_name
+   *   A deployment name.
+   *
+   * @return string
+   *   The shared pvc name.
+   */
+  protected static function generateSharedPvcName(string $deployment_name) {
+    return $deployment_name . '-shared';
+  }
+
+  /**
+   * Generate the name of the backup PVC from a project name.
    *
    * @param string $project_name
-   *   The name of the project.
-   * @param string $deployment_name
-   *   The name of the deployment.
+   *   A project name.
    *
-   * @return array
-   *   Generated volume names.
+   * @return string
+   *   The backup pvc name.
    */
-  protected function generateVolumeNames(string $project_name, string $deployment_name) {
-    $shared_pvc_name = $deployment_name . '-shared';
-    // @todo This should be project_name-backup or similar - one backup pv per project.
-    $backup_pvc_name = self::sanitise($project_name) . '-backup';
-
-    return [$shared_pvc_name, $backup_pvc_name];
+  protected static function generateBackupPvcName(string $project_name) {
+    return self::sanitise($project_name) . '-backup';
   }
+
   /**
    * Generates the volume data for deployment configuration.
    *
@@ -1079,12 +1260,11 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
    *
    * @throws \UniversityOfAdelaide\OpenShift\ClientException
    */
-  protected function generateVolumeData(string $project_name, string $deployment_name, array $secrets= [], $mount_backup = FALSE) {
-    [$shared_pvc_name, $backup_pvc_name] = $this->generateVolumeNames($project_name, $deployment_name);
+  protected function generateVolumeData(string $project_name, string $deployment_name, array $secrets = [], $mount_backup = FALSE) {
     $volumes = [
       'shared' => [
         'type' => 'pvc',
-        'name' => $shared_pvc_name,
+        'name' => self::generateSharedPvcName($deployment_name),
         'path' => '/shared',
       ],
     ];
@@ -1092,7 +1272,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     if ($mount_backup) {
       $volumes['backup'] = [
         'type' => 'pvc',
-        'name' => $backup_pvc_name,
+        'name' => self::generateBackupPvcName($project_name),
         'path' => '/backup',
       ];
     }

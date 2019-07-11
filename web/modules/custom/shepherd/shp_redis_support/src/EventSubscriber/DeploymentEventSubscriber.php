@@ -15,8 +15,8 @@ class DeploymentEventSubscriber implements EventSubscriberInterface {
    * {@inheritdoc}
    */
   public static function getSubscribedEvents() {
-    $events[OrchestrationEvents::CREATED_ENVIRONMENT][] = array('createRedisDeployment');
-    $events[OrchestrationEvents::DELETED_ENVIRONMENT][] = array('deleteRedisDeployment');
+    $events[OrchestrationEvents::CREATED_ENVIRONMENT][] = ['createRedisDeployment'];
+    $events[OrchestrationEvents::DELETED_ENVIRONMENT][] = ['deleteRedisDeployment'];
 
     return $events;
   }
