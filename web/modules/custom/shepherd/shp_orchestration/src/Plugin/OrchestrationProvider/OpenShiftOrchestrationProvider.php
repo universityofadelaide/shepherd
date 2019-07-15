@@ -275,15 +275,18 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     // tiny chance it will be different to the deployment config image.
     $image_stream = $this->client->getImageStream($sanitised_project_name);
 
-    // Use the exact image stream name retrieved.
-    $this->createCronJobs(
-      $deployment_name,
-      $cron_suspended,
-      $cron_jobs,
-      $image_stream['status']['tags'][0]['items'][0]['dockerImageReference'],
-      $cron_volumes,
-      $deploy_data
-    );
+    // Don't bother creating cronjobs if there's no image to associate yet.
+    if (isset($image_stream['status']['tags'][0]['items'][0])) {
+      // Use the exact image stream name retrieved.
+      $this->createCronJobs(
+        $deployment_name,
+        $cron_suspended,
+        $cron_jobs,
+        $image_stream['status']['tags'][0]['items'][0]['dockerImageReference'],
+        $cron_volumes,
+        $deploy_data
+      );
+    }
 
     if (!$update_on_image_change) {
       // We need to check if the image is already 'built', or we get an error.
