@@ -275,14 +275,14 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     // tiny chance it will be different to the deployment config image.
     $image_stream = $this->client->getImageStream($sanitised_project_name);
 
-    // Don't bother creating cronjobs if there's no image to associate yet.
-    if (isset($image_stream['status']['tags'][0]['items'][0])) {
+    // Don't try creating cron jobs if there's no image to associate yet.
+    if ($image = $image_stream['status']['tags'][0]['items'][0]['dockerImageReference'] ?? FALSE) {
       // Use the exact image stream name retrieved.
       $this->createCronJobs(
         $deployment_name,
         $cron_suspended,
         $cron_jobs,
-        $image_stream['status']['tags'][0]['items'][0]['dockerImageReference'],
+        $image,
         $cron_volumes,
         $deploy_data
       );
@@ -387,16 +387,17 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     // Re-create all the cron jobs.
     $volumes = $this->generateVolumeData($project_name, $deployment_name, $secrets, TRUE);
 
-    // Retrieve existing environment image to use for cron jobs.
-    $image_stream = $deployment_config['spec']['template']['spec']['containers'][0]['image'];
-    $this->createCronJobs(
-      $deployment_name,
-      $cron_suspended,
-      $cron_jobs,
-      $image_stream,
-      $volumes,
-      $deploy_data
-    );
+    // Retrieve image to use for cron jobs, dont try and create if no image yet.
+    if ($image = $deployment_config['spec']['template']['spec']['containers'][0]['image'] ?? FALSE) {
+      $this->createCronJobs(
+        $deployment_name,
+        $cron_suspended,
+        $cron_jobs,
+        $image,
+        $volumes,
+        $deploy_data
+      );
+    }
 
     return TRUE;
   }
