@@ -2,14 +2,15 @@
 
 namespace Drupal\shp_backup\Form;
 
+use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Datetime\DateFormatterInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\node\NodeInterface;
 use Drupal\shp_backup\Service\Backup;
-use Drupal\token\TokenInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -24,13 +25,6 @@ class EnvironmentBackupForm extends FormBase {
   use StringTranslationTrait;
 
   /**
-   * For retrieving config.
-   *
-   * @var \Drupal\Core\Config\ConfigFactory
-   */
-  protected $config;
-
-  /**
    * Used to start backups.
    *
    * @var \Drupal\shp_backup\Service\Backup
@@ -38,11 +32,18 @@ class EnvironmentBackupForm extends FormBase {
   protected $backup;
 
   /**
-   * Used to replace text within parameters.
+   * Time service.
    *
-   * @var \Drupal\token\Token
+   * @var \Drupal\Component\Datetime\TimeInterface
    */
-  protected $token;
+  protected $time;
+
+  /**
+   * Date formatter service.
+   *
+   * @var \Drupal\Core\Datetime\DateFormatterInterface
+   */
+  protected $dateFormatter;
 
   /**
    * Messenger.
@@ -54,19 +55,19 @@ class EnvironmentBackupForm extends FormBase {
   /**
    * EnvironmentBackupForm constructor.
    *
-   * @param \Drupal\Core\Config\ConfigFactoryInterface $config
-   *   Config Factory.
    * @param \Drupal\shp_backup\Service\Backup $backup
    *   Backup service.
-   * @param \Drupal\token\TokenInterface $token
-   *   Token service.
+   * @param \Drupal\Component\Datetime\TimeInterface $time
+   *   Time service.
+   * @param \Drupal\Core\Datetime\DateFormatterInterface $date_formatter
+   *   Date formatter service.
    * @param \Drupal\Core\Messenger\MessengerInterface $messenger
    *   Messenger service.
    */
-  public function __construct(ConfigFactoryInterface $config, Backup $backup, TokenInterface $token, MessengerInterface $messenger) {
-    $this->config    = $config;
-    $this->backup    = $backup;
-    $this->token     = $token;
+  public function __construct(Backup $backup, TimeInterface $time, DateFormatterInterface $date_formatter, MessengerInterface $messenger) {
+    $this->backup = $backup;
+    $this->time = $time;
+    $this->dateFormatter = $date_formatter;
     $this->messenger = $messenger;
   }
 
@@ -75,9 +76,9 @@ class EnvironmentBackupForm extends FormBase {
    */
   public static function create(ContainerInterface $container) {
     return new static(
-      $container->get('config.factory'),
       $container->get('shp_backup.backup'),
-      $container->get('token'),
+      $container->get('datetime.time'),
+      $container->get('date.formatter'),
       $container->get('messenger')
     );
   }
@@ -108,8 +109,6 @@ class EnvironmentBackupForm extends FormBase {
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state, NodeInterface $site = NULL, NodeInterface $environment = NULL) {
-    $config = $this->config->get('shp_backup.settings');
-    $backup_title = $this->token->replace($config->get('backup_title'), ['environment' => $environment]);
     $form_state->set('site', $site);
     $form_state->set('environment', $environment);
 
@@ -117,7 +116,7 @@ class EnvironmentBackupForm extends FormBase {
       '#title' => $this->t('Backup name'),
       '#description' => $this->t('Optionally set a friendly name for this backup. Once submitted, you can visit the Backups tab for this site to view the status of the backup.'),
       '#type' => 'textfield',
-      '#default_value' => $backup_title,
+      '#default_value' => $this->dateFormatter->format($this->time->getRequestTime(), 'medium'),
     ];
 
     $form['actions'] = [
