@@ -60,10 +60,3 @@ shp_backup.restores:
     _permission: 'shp access environment wizard'
     _custom_access: '\Drupal\shp_custom\Controller\SiteLocalTaskController::checkAccess'
     site: ^[0-9]+
-shp_backup.settings:
-  path: '/admin/config/shepherd/backup'
-  defaults:
-    _form: '\Drupal\shp_backup\Form\SettingsForm'
-    _title: 'Backup'
-  requirements:
-    _permission: 'administer account settings'

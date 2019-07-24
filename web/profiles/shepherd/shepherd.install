@@ -64,10 +64,7 @@ function shepherd_install() {
  * Remove old backup settings and active job queue related things.
  */
 function shepherd_update_8001() {
-  \Drupal::configFactory()->getEditable('shp_backup.settings')
-    ->clear('root_dir')
-    ->clear('backup_command')
-    ->clear('restore_command');
+  \Drupal::configFactory()->getEditable('shp_backup.settings')->delete();
 
   \Drupal::database()->delete('key_value')->condition('name', 'shp_job.%', 'LIKE')->execute();
   \Drupal::queue('shp_orchestration_job_queue')->deleteQueue();
