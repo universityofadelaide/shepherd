@@ -7,7 +7,6 @@
 
 use Drupal\node\Entity\Node;
 use Drupal\shp_orchestration\Entity\OpenShiftConfigEntity;
-use Drupal\shp_redis_support\Entity\OpenShiftWithRedisConfigEntity;
 use Drupal\taxonomy\Entity\Term;
 use Drupal\user\Entity\User;
 
@@ -105,7 +104,9 @@ if (!$project = reset($nodes)) {
     'field_shp_git_repository' => [['value' => $example_repository]],
     'field_shp_builder_image'  => [['value' => 'uofa/s2i-shepherd-wordpress']],
     'field_shp_build_secret'   => [['value' => 'build-key']],
-    'field_shp_env_vars'       => [],
+    'field_shp_env_vars'       => [
+      ['key' => 'PUBLIC_DIR', 'value' => '/shared/public'],
+    ],
   ]);
   $project->save();
 }
@@ -180,4 +181,3 @@ if (!$oc_user) {
 /** @var \Drupal\group\Entity\GroupInterface $project_group */
 $project_group = \Drupal::service('shp_content_types.group_manager')->load($project);
 $project_group->addMember($oc_user, ['group_roles' => ['shp_project-online-consulta']]);
-

@@ -11,8 +11,10 @@ dependencies:
     - field.field.node.shp_site.field_shp_site_log
     - field.field.node.shp_site.field_tags
     - node.type.shp_site
+    - workflows.workflow.shepherd
   module:
     - content_moderation
+    - field_group
 _core:
   default_config_hash: FinZYNGu0yFzoXJxA-82sbSH2Z1zz6CnHg8Zy7zZYmE
 id: node.shp_site.default
@@ -61,7 +63,7 @@ content:
     region: content
   moderation_state:
     type: moderation_state_default
-    weight: 100
+    weight: 11
     settings: {  }
     region: content
     third_party_settings: {  }
@@ -69,7 +71,7 @@ content:
     type: boolean_checkbox
     settings:
       display_label: true
-    weight: 120
+    weight: 12
     region: content
     third_party_settings: {  }
   title:

@@ -118,7 +118,6 @@ class OpenShiftWithRedis extends OpenShiftOrchestrationProvider {
               'kind' => 'DockerImage',
               'name' => 'docker.io/redis:alpine',
             ],
-            'importPolicy' => [],
             'name' => 'alpine',
             'referencePolicy' => [
               'type' => 'Source',
@@ -229,7 +228,6 @@ class OpenShiftWithRedis extends OpenShiftOrchestrationProvider {
                 ],
               'volumes' => [
                 [
-                  'emptyDir' => [],
                   'name' => $redis_data,
                 ],
                 [

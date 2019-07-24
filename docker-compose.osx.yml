@@ -27,6 +27,7 @@ services:
       SHEPHERD_SECRET_PATH: /code/private
       XDEBUG_CONFIG: "remote_host=docker.for.mac.localhost"
       PHP_IDE_CONFIG: serverName=localhost
+      VIRTUAL_HOST: 127.0.0.1:8000
     volumes:
       - nfsmount:/code
       - ./shared:/shared

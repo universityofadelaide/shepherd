@@ -32,8 +32,12 @@ content:
     region: content
 hidden:
   field_shp_authoriser_id: true
+  field_shp_cpu_limit: true
+  field_shp_cpu_request: true
   field_shp_domain: true
   field_shp_go_live_date: true
+  field_shp_memory_limit: true
+  field_shp_memory_request: true
   field_shp_path: true
   field_shp_project: true
   field_shp_short_name: true

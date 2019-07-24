@@ -131,6 +131,10 @@ if (!$project = reset($nodes)) {
     'field_shp_readiness_probe_port' => [['value' => '8080']],
     'field_shp_liveness_probe_type' => [['value' => 'tcpSocket']],
     'field_shp_liveness_probe_port' => [['value' => '8080']],
+    'field_shp_cpu_request'    => [['value' => '100m']],
+    'field_shp_cpu_limit'      => [['value' => '200m']],
+    'field_shp_memory_request' => [['value' => '256Mi']],
+    'field_shp_memory_limit'   => [['value' => '512Mi']],
   ]);
   $project->save();
 }
@@ -183,7 +187,11 @@ if (!$env = reset($nodes)) {
     'field_shp_cron_suspended'   => 1,
     'field_shp_cron_jobs'        => [
       ['key' => '*/30 * * * *', 'value' => 'cd /code; drush -r /code/web cron || true'],
-    ]
+    ],
+    'field_shp_cpu_request'    => [['value' => '100m']],
+    'field_shp_cpu_limit'      => [['value' => '200m']],
+    'field_shp_memory_request' => [['value' => '256Mi']],
+    'field_shp_memory_limit'   => [['value' => '512Mi']],
   ]);
   $env->moderation_state->value = 'published';
   $env->save();

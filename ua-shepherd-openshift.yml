@@ -321,4 +321,4 @@ parameters:
   - name: SHEPHERD_INSTALL_PROFILE
     description: The Drupal install profile to use.
     required: true
-    value: ua_shepherd
+    value: shepherd

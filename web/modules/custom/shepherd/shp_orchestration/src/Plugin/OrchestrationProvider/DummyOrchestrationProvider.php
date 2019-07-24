@@ -125,6 +125,9 @@ class DummyOrchestrationProvider extends OrchestrationProviderBase {
     string $short_name,
     int $site_id,
     int $environment_id,
+    string $domain,
+    string $path,
+    array $annotations,
     string $source_ref = 'master',
     bool $clear_cache = TRUE
   ) {
@@ -139,8 +142,7 @@ class DummyOrchestrationProvider extends OrchestrationProviderBase {
     string $short_name,
     int $site_id,
     string $domain,
-    string $path,
-    array $annotations = []
+    string $path
   ) {
     return TRUE;
   }
