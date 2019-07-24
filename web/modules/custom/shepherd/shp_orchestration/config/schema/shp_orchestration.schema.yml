@@ -8,3 +8,6 @@ shp_orchestration.settings:
     queued_operations:
       type: boolean
       label: 'Enable queued operations. Ensures multiple actions are not executed concurrently for a given environment.'
+    backup_volumes_killswitch:
+      type: boolean
+      label: 'A global killswitch to turn off volume snapshots for a site'

@@ -6,12 +6,6 @@ services:
   shp_orchestration.configuration:
     class: Drupal\shp_orchestration\Service\Configuration
     arguments: ['@module_handler', '@shp_custom.environment', '@shp_custom.site']
-  shp_orchestration.job_queue:
-    class: Drupal\shp_orchestration\Service\JobQueue
-    arguments: ['@queue', '@plugin.manager.queue_worker', '@shp_orchestration.active_job_manager']
-  shp_orchestration.active_job_manager:
-    class: Drupal\shp_orchestration\Service\ActiveJobManager
-    arguments: ['@state']
   shp_orchestration.site:
     class: Drupal\shp_orchestration\Service\Site
     arguments: ['@plugin.manager.orchestration_provider', '@shp_custom.site', '@shp_custom.environment_type']
@@ -20,7 +14,7 @@ services:
     arguments: ['@plugin.manager.orchestration_provider', '@shp_orchestration.configuration']
   shp_orchestration.environment:
     class: Drupal\shp_orchestration\Service\Environment
-    arguments: ['@plugin.manager.orchestration_provider', '@shp_orchestration.configuration', '@shp_custom.environment', '@shp_custom.site', '@event_dispatcher', '@shp_custom.environment_type']
+    arguments: ['@plugin.manager.orchestration_provider', '@shp_orchestration.configuration', '@shp_custom.environment', '@shp_custom.site', '@event_dispatcher', '@shp_custom.environment_type', '@config.factory']
   shp_orchestration.status:
     class: Drupal\shp_orchestration\Service\Status
     arguments: ['@plugin.manager.orchestration_provider','@shp_custom.environment', '@shp_custom.site']

@@ -1,1 +1,2 @@
-delete: {}
+delete:
+  - views.view.shp_site_backups

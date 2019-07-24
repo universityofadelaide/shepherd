@@ -34,7 +34,7 @@ class OrchestrationProviderSettingsForm extends ConfigFormBase {
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container) {
-    return new static (
+    return new static(
       $container->get('config.factory'),
       $container->get('plugin.manager.orchestration_provider')
     );

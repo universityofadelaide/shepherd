@@ -18,7 +18,7 @@ oc new-project shepherd-openshift
 ```
 
 ### Create a secret 
-The `shepherd-openshift.yml` configuration file will construct the necessary objects for running Shepherd. Before you can run the script a SSH-Auth secret called `build-key` needs to be created so Shepherd can be cloned from GitHub. This can be done via the UI `/console/project/{project-name}/create-secret` and clicking on the create secret button OR via `oc` command line tool :
+The `./openshift-config/shepherd-openshift.yml` configuration file will construct the necessary objects for running Shepherd. Before you can run the script a SSH-Auth secret called `build-key` needs to be created so Shepherd can be cloned from GitHub. This can be done via the UI `/console/project/{project-name}/create-secret` and clicking on the create secret button OR via `oc` command line tool :
 
 ```bash
 oc create secret generic build-key --from-file=ssh-privatekey={key_file}
@@ -31,7 +31,7 @@ oc create secret generic build-key --from-file=ssh-privatekey={key_file}
 Login as admin and Import the Shepherd OpenShift deployment template globally
 ```bash
 oc login -u system:admin
-oc create -f shepherd-openshift.yml -n openshift
+oc create -f ./openshift-config/shepherd-openshift.yml -n openshift
 ```
 You can now click Add to project in the OpenShift ui to deploy Shepherd directly.
 
@@ -98,6 +98,12 @@ oc create secret generic privileged-db-password --from-literal=DATABASE_PASSWORD
 # The name of your password is privileged-db-password and the key is DATABASE_PASSWORD.
 ```
 [Read more about secrets](https://docs.openshift.com/container-platform/latest/dev_guide/secrets.html).
+
+#### Configure Backup/Restore operators
+
+Shepherd uses custom Kubernetes objects for backup and restore operations. These are developed and managed by https://github.com/universityofadelaide/shepherd-operator
+
+Follow the documentation there to install the manifests and run the operators.
 
 ### Configure environment types
 

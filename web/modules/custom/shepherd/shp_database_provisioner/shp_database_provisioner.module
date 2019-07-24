@@ -7,6 +7,13 @@
 
 use Drupal\Core\Entity\EntityInterface;
 
+// Secret key names used to store database credentials.
+define('EnvMySQLHostname', 'DATABASE_HOST');
+define('EnvMySQLDatabase', 'DATABASE_NAME');
+define('EnvMySQLPort', 'DATABASE_PORT');
+define('EnvMySQLUsername', 'DATABASE_USER');
+define('EnvMySQLPassword', 'DATABASE_PASSWORD');
+
 /**
  * Implements hook_ENTITY_TYPE_insert().
  */
@@ -40,19 +47,23 @@ function shp_database_provisioner_node_insert(EntityInterface $entity) {
     $env_db_username = 'user_' . $entity->id();
     $env_db_password = \Drupal::service('shp_custom.string_generator')->generateRandomPassword();
 
+    $host = $config->get('host');
+    $username = $config->get('user');
+    $port = $config->get('port');
     // Add database credentials to deployment secret.
     // Create the secret if it doesn't exist, otherwise add it to the existing.
+    $secret_data = [
+      EnvMySQLHostname => $host,
+      EnvMySQLPort => $port,
+      EnvMySQLUsername => $env_db_username,
+      EnvMySQLDatabase => $env_db_database,
+      EnvMySQLPassword => $env_db_password,
+    ];
     if ($env_secret = $orchestration_provider_plugin->getSecret($deployment_name)) {
-      $secret_result = $orchestration_provider_plugin->updateSecret(
-        $deployment_name,
-        array_merge($env_secret, ['DATABASE_PASSWORD' => $env_db_password])
-      );
+      $secret_result = $orchestration_provider_plugin->updateSecret($deployment_name, array_merge($env_secret, $secret_data));
     }
     else {
-      $secret_result = $orchestration_provider_plugin->createSecret(
-        $deployment_name,
-        ['DATABASE_PASSWORD' => $env_db_password]
-      );
+      $secret_result = $orchestration_provider_plugin->createSecret($deployment_name, $secret_data);
     }
     if (!$secret_result) {
       // @todo Handle errors.
@@ -62,14 +73,7 @@ function shp_database_provisioner_node_insert(EntityInterface $entity) {
     // Fetch privileged database password from orchestration secret store.
     $privileged_db_password = $orchestration_provider_plugin->getSecret($config->get('secret'), 'DATABASE_PASSWORD');
 
-    $db = new mysqli(
-      $config->get('host'),
-      $config->get('user'),
-      $privileged_db_password,
-      NULL,
-      $config->get('port'),
-      NULL
-    );
+    $db = new mysqli($host, $username, $privileged_db_password, NULL, $port, NULL);
 
     $query = sprintf('CREATE DATABASE `%s`', $env_db_database);
     $statement = $db->prepare($query);
@@ -102,10 +106,10 @@ function shp_database_provisioner_node_insert(EntityInterface $entity) {
 function shp_database_provisioner_shp_env_vars(EntityInterface $entity) {
   $config = \Drupal::config('shp_database_provisioner.settings');
   return [
-    'DATABASE_HOST' => $config->get('host'),
-    'DATABASE_PORT' => $config->get('port'),
-    'DATABASE_NAME' => 'env_' . $entity->id(),
-    'DATABASE_USER' => 'user_' . $entity->id(),
+    EnvMySQLHostname => $config->get('host'),
+    EnvMySQLPort => $config->get('port'),
+    EnvMySQLDatabase => 'env_' . $entity->id(),
+    EnvMySQLUsername => 'user_' . $entity->id(),
     // The following path is based on convention set in:
     // OpenShiftOrchestrationProvider::setupVolumes()
     // The 'default' deployment config secret is mounted at /etc/secret.

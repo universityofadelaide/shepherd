@@ -119,6 +119,10 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
    *   An array of cron jobs associated with this environment.
    * @param array $annotations
    *   An array of route annotations.
+   * @param bool $backup_volumes
+   *   Whether to backup the volumes attached to this environment.
+   * @param string $backup_schedule
+   *   A schedule to run automated backups on, leave blank to disable.
    *
    * @return bool
    *   Returns true if succeeded.
@@ -142,7 +146,9 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
     array $secrets = [],
     array $probes = [],
     array $cron_jobs = [],
-    array $annotations = []
+    array $annotations = [],
+    bool $backup_volumes = FALSE,
+    string $backup_schedule = ''
   );
 
   /**
@@ -464,54 +470,119 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
   );
 
   /**
+   * Get a backup..
+   *
+   * @param string $name
+   *   The backup name.
+   *
+   * @return object|bool
+   *   Returns a backup object if successful, otherwise false.
+   */
+  public function getBackup(string $name);
+
+  /**
    * Backup an environment.
    *
-   * @param string $project_name
-   *   Name of the project.
-   * @param string $short_name
-   *   Short name of the site.
+   * @param string $site_id
+   *   Site node id.
    * @param string $environment_id
    *   Environment node id.
-   * @param string $source_ref
-   *   Source code git ref, defaults to 'master'.
-   * @param string $commands
-   *   Commands to run to perform the backup.
+   * @param string $friendly_name
+   *   An optional friendly name for the backup.
    *
-   * @return array|bool
-   *   Returns a response body if successful, otherwise false.
+   * @return object|bool
+   *   Returns a backup object if successful, otherwise false.
    */
-  public function backupEnvironment(
-    string $project_name,
-    string $short_name,
-    string $environment_id,
-    string $source_ref = 'master',
-    string $commands = ''
-  );
+  public function backupEnvironment(string $site_id, string $environment_id, string $friendly_name = '');
+
+  /**
+   * Schedules backups for an environment.
+   *
+   * @param string $site_id
+   *   Site node id.
+   * @param string $environment_id
+   *   Environment node id.
+   * @param string $schedule
+   *   A cron expression defining when to run the backups.
+   *
+   * @return object|bool
+   *   Returns a schedule object if successful, otherwise false.
+   */
+  public function environmentScheduleBackupCreate(string $site_id, string $environment_id, string $schedule);
+
+  /**
+   * Updates the backup schedule for an environment.
+   *
+   * @param string $site_id
+   *   Site node id.
+   * @param string $environment_id
+   *   Environment node id.
+   * @param string $schedule
+   *   A cron expression defining when to run the backups.
+   *
+   * @return object|bool
+   *   Returns the schedule object if successful, otherwise false.
+   */
+  public function environmentScheduleBackupUpdate(string $site_id, string $environment_id, string $schedule);
+
+  /**
+   * Deletes the backup schedule for an environment.
+   *
+   * @param string $environment_id
+   *   Environment node id.
+   *
+   * @return bool
+   *   Returns if it was successful or not.
+   */
+  public function environmentScheduleBackupDelete(string $environment_id);
+
+  /**
+   * Get a list of backups for a site.
+   *
+   * @param string $site_id
+   *   The site node id.
+   *
+   * @return object|bool
+   *   The list of backups.
+   */
+  public function getBackupsForSite(string $site_id);
+
+  /**
+   * Get a list of backups for an environment.
+   *
+   * @param string $environment_id
+   *   The environment node id.
+   *
+   * @return object|bool
+   *   The list of backups.
+   */
+  public function getBackupsForEnvironment(string $environment_id);
 
   /**
    * Restore an environment.
    *
-   * @param string $project_name
-   *   Name of the project.
-   * @param string $short_name
-   *   Short name of the site.
+   * @param string $backup_name
+   *   Name of the backup.
+   * @param string $site_id
+   *   Site node id.
    * @param string $environment_id
    *   Environment node id.
-   * @param string $source_ref
-   *   Source code git ref, defaults to 'master'.
-   * @param string $commands
-   *   Commands to run to perform the backup.
    *
    * @return array|bool
    *   Returns a response body if successful, otherwise false.
    */
-  public function restoreEnvironment(
-    string $project_name,
-    string $short_name,
-    string $environment_id,
-    string $source_ref = 'master',
-    string $commands = ''
-  );
+  public function restoreEnvironment(string $backup_name, string $site_id, string $environment_id);
+
+  /**
+   * Get a list of restores for a site.
+   *
+   * @param string $site_id
+   *   The site node id.
+   *
+   * @return object|bool
+   *   The list of restores.
+   */
+  public function getRestoresForSite(string $site_id);
 
   /**
    * Execute a job.

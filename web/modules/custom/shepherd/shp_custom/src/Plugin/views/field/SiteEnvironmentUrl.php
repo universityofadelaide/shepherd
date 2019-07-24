@@ -2,9 +2,6 @@
 
 namespace Drupal\shp_custom\Plugin\views\field;
 
-use Drupal\Core\Link;
-use Drupal\Core\Url;
-use Drupal\taxonomy\Entity\Term;
 use Drupal\views\Plugin\views\field\FieldPluginBase;
 use Drupal\views\ResultRow;
 
@@ -29,23 +26,9 @@ class SiteEnvironmentUrl extends FieldPluginBase {
    */
   public function render(ResultRow $values) {
     $entity = $values->_entity;
-    $environment_term = Term::load($entity->field_shp_environment_type->target_id);
-
-    // If its a protected environment, its production, show that url.
-    if ($environment_term->field_shp_protect->value) {
-      $site = $entity->field_shp_site->first()->entity;
-      $domain_and_path = rtrim($site->field_shp_domain->value . $site->field_shp_path->value, '/');
-      return Link::fromTextAndUrl(
-        $domain_and_path,
-        Url::fromUri('//' . $domain_and_path))->toRenderable();
-    }
-    else {
-      $domain_and_path = rtrim($entity->field_shp_domain->value . $entity->field_shp_path->value, '/');
-      return Link::fromTextAndUrl(
-        $domain_and_path,
-        Url::fromUri('//' . $domain_and_path))->toRenderable();
-    }
-
+    /** @var \Drupal\shp_custom\Service\Environment $environment_service */
+    $environment_service = \Drupal::service('shp_custom.environment');
+    return $environment_service->getEnvironmentLink($entity);
   }
 
 }

@@ -99,7 +99,6 @@ class EnvironmentPromoteForm extends FormBase {
     $form_state->set('environment', $environment);
 
     // @todo Lookup existing prod and list on this form.
-
     $form['site'] = [
       '#type' => 'item',
       '#title' => $this->t('Site'),
@@ -127,12 +126,11 @@ class EnvironmentPromoteForm extends FormBase {
 
     // @todo everything is exclusive for now, implement non-exclusive?
     // I.e. exlcusive means routing traffic to more than one deployment.
-    //$form['exclusive'] = [
+    // $form['exclusive'] = [
     //  '#title' => $this->t('Make this environment the exclusive destination?'),
     //  '#type' => 'checkbox',
     //  '#default_value' => FALSE,
-    //];
-
+    // ];
     $form['actions'] = [
       '#type' => 'actions',
       'submit' => [
@@ -152,7 +150,8 @@ class EnvironmentPromoteForm extends FormBase {
 
     $site = $form_state->get('site');
     $environment = $form_state->get('environment');
-    $exclusive = TRUE; // $form_state->getValue('exclusive');
+    // $form_state->getValue('exclusive');
+    $exclusive = TRUE;
 
     if ($this->environment->promoted($site, $environment, $exclusive)) {
       $this->messenger->addStatus($this->t('Promoted %environment for %site successfully', [

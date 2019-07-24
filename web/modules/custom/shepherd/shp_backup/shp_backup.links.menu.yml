@@ -1,5 +1,0 @@
-shp_backup.settings:
-  title: 'Backup settings'
-  description: 'Configure backup of deployed sites.'
-  parent: shp_custom.admin_config_shepherd
-  route_name: shp_backup.settings
