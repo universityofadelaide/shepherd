@@ -263,16 +263,27 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
 
     // Get the volumes and include the backups this time.
     $cron_volumes = $this->generateVolumeData($project_name, $deployment_name, $secrets, TRUE);
+
+    // Retrieve image stream that will be used for this site. There is only a
+    // tiny chance it will be different to the deployment config image.
     $image_stream = $this->client->getImageStream($sanitised_project_name);
-    $this->createCronJobs(
-      $deployment_name,
-      $sanitised_source_ref,
-      $cron_suspended,
-      $cron_jobs,
-      $image_stream,
-      $cron_volumes,
-      $deploy_data
-    );
+
+    // Look through the image stream tags to find the one being deployed.
+    foreach ($image_stream['status']['tags'] as $index => $images) {
+      if ($images['tag'] === $sanitised_source_ref) {
+        // Got one! [0] is the most recently created image.
+        if ($image = $images['items'][0]['dockerImageReference'] ?? FALSE) {
+          $this->createCronJobs(
+            $deployment_name,
+            $cron_suspended,
+            $cron_jobs,
+            $image,
+            $cron_volumes,
+            $deploy_data
+          );
+        }
+      }
+    }
 
     if (!$update_on_image_change) {
       // We need to check if the image is already 'built', or we get an error.
@@ -369,16 +380,18 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
 
     // Re-create all the cron jobs.
     $volumes = $this->generateVolumeData($project_name, $deployment_name, $secrets, TRUE);
-    $image_stream = $this->client->getImageStream($sanitised_project_name);
-    $this->createCronJobs(
-      $deployment_name,
-      $source_ref,
-      $cron_suspended,
-      $cron_jobs,
-      $image_stream,
-      $volumes,
-      $deploy_data
-    );
+
+    // Retrieve image to use for cron jobs, dont try and create if no image yet.
+    if ($image = $deployment_config['spec']['template']['spec']['containers'][0]['image'] ?? FALSE) {
+      $this->createCronJobs(
+        $deployment_name,
+        $cron_suspended,
+        $cron_jobs,
+        $image,
+        $volumes,
+        $deploy_data
+      );
+    }
 
     return TRUE;
   }
@@ -560,8 +573,6 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
 
   /**
    * {@inheritdoc}
-   *
-   * @todo - can this and cron job creation be combined?
    */
   public function executeJob(
     string $project_name,
@@ -577,7 +588,13 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     // Retrieve existing deployment details to use where possible.
     $deployment_config = $this->client->getDeploymentConfig($deployment_name);
 
-    $image_stream = $this->client->getImageStream($sanitised_project_name);
+    // The image may either be not set, or set and blank. If either of those,
+    // bail, rather than possibly use an incorrect image.
+    $image = $deployment_config['spec']['template']['spec']['containers'][0]['image'] ?? FALSE;
+    if (!$image || empty(trim($image))) {
+      return [];
+    }
+
     $volumes = $this->generateVolumeData($project_name, $deployment_name, [], TRUE);
 
     $deploy_data = $this->formatDeployData(
@@ -596,7 +613,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     try {
       $response_body = $this->client->createJob(
         $deployment_name . '-' . $this->stringGenerator->generateRandomString(5),
-        $image_stream['status']['dockerImageRepository'] . ':' . $sanitised_source_ref,
+        $image,
         $args_array,
         $volumes,
         $deploy_data
@@ -763,10 +780,14 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
         return FALSE;
       }
 
-      // Return the link to the first pod.
-      $pod_name = $pods['items'][0]['metadata']['name'];
-      return $this->generateOpenShiftPodUrl($pod_name, 'terminal');
-
+      // Determine the link to the correct pod.
+      foreach ($pods['items'] as $index => $details) {
+        // Return the first running, non-job container.
+        if ($this->isWebPod($details)) {
+          $pod_name = $pods['items'][0]['metadata']['name'];
+          return $this->generateOpenShiftPodUrl($pod_name, 'terminal');
+        }
+      }
     }
     catch (ClientException $e) {
       $this->handleClientException($e);
@@ -789,10 +810,15 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       if (!count($pods['items'])) {
         return FALSE;
       }
-      // Return the link to the first pod.
-      $pod_name = $pods['items'][0]['metadata']['name'];
-      return $this->generateOpenShiftPodUrl($pod_name, 'logs');
 
+      // Determine the link to the correct pod.
+      foreach ($pods['items'] as $index => $details) {
+        // Return the first running, non-job container.
+        if ($this->isWebPod($details)) {
+          $pod_name = $pods['items'][0]['metadata']['name'];
+          return $this->generateOpenShiftPodUrl($pod_name, 'logs');
+        }
+      }
     }
     catch (ClientException $e) {
       $this->handleClientException($e);
@@ -801,6 +827,22 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     catch (\InvalidArgumentException $e) {
       return FALSE;
     }
+  }
+
+  /**
+   * Helper function to confirm if requested pod is a web pod.
+   *
+   * @param $pod
+   *
+   * @return bool
+   */
+  protected function isWebPod($pod) {
+    if (!isset($pod['metadata']['job-name']) &&
+      $pod['status']['phase'] === 'Running' &&
+      !strpos($pod['metadata']['name'], 'redis')) {
+      return TRUE;
+    }
+    return FALSE;
   }
 
   /**
@@ -1152,13 +1194,11 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
    *
    * @param string $deployment_name
    *   Deployment identifier.
-   * @param string $source_ref
-   *   Image stream git ref.
    * @param bool $cron_suspended
    *   Is cron suspended?
    * @param array $cron_jobs
    *   The jobs to run.
-   * @param array $image_stream
+   * @param string $image_stream
    *   Image stream.
    * @param array $volumes
    *   Volumes to mount.
@@ -1168,8 +1208,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
    * @return bool
    *   True on success.
    */
-  protected function createCronJobs(string $deployment_name, string $source_ref, bool $cron_suspended, array $cron_jobs, array $image_stream, array $volumes, array $deploy_data) {
-    $sanitised_source_ref = self::sanitise($source_ref);
+  protected function createCronJobs(string $deployment_name, bool $cron_suspended, array $cron_jobs, string $image_stream, array $volumes, array $deploy_data) {
     foreach ($cron_jobs as $cron_job) {
       $args_array = [
         '/bin/sh',
@@ -1179,7 +1218,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       try {
         $this->client->createCronJob(
           $deployment_name . '-' . $this->stringGenerator->generateRandomString(5),
-          $image_stream['status']['dockerImageRepository'] . ':' . $sanitised_source_ref,
+          $image_stream,
           $cron_job['schedule'],
           $cron_suspended,
           $args_array,

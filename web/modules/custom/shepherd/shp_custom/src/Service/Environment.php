@@ -261,8 +261,12 @@ class Environment {
     if ($site) {
       $project = $this->site->getProject($site);
       if ($project) {
-        $operations['terminal'] = $this->getTerminalLink($entity, $project, $site);
-        $operations['log'] = $this->getLogLink($entity, $project, $site);
+        if ($terminal_link = $this->getTerminalLink($entity, $project, $site)) {
+          $operations['terminal'] = $terminal_link;
+        }
+        if ($log_link = $this->getLogLink($entity, $project, $site)) {
+          $operations['log'] = $log_link;
+        }
       }
     }
 
