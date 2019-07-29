@@ -956,7 +956,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       // Determine the link to the correct pod.
       foreach ($pods['items'] as $index => $details) {
         // Return the first running, non-job container.
-        if ($this->checkWebPod($details)) {
+        if ($this->isWebPod($details)) {
           $pod_name = $pods['items'][0]['metadata']['name'];
           return $this->generateOpenShiftPodUrl($pod_name, 'terminal');
         }
@@ -987,7 +987,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       // Determine the link to the correct pod.
       foreach ($pods['items'] as $index => $details) {
         // Return the first running, non-job container.
-        if ($this->checkWebPod($details)) {
+        if ($this->isWebPod($details)) {
           $pod_name = $pods['items'][0]['metadata']['name'];
           return $this->generateOpenShiftPodUrl($pod_name, 'logs');
         }
@@ -1005,14 +1005,14 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
   /**
    * Helper function to confirm if requested pod is a web pod.
    *
-   * @param $pod_details
+   * @param $pod
    *
    * @return bool
    */
-  protected function checkWebPod($pod_details) {
-    if (!isset($pod_details['metadata']['job-name']) &&
-      $pod_details['status']['phase'] === 'Running' &&
-      !strpos($pod_details['metadata']['name'], 'redis')) {
+  protected function isWebPod($pod) {
+    if (!isset($pod['metadata']['job-name']) &&
+      $pod['status']['phase'] === 'Running' &&
+      !strpos($pod['metadata']['name'], 'redis')) {
       return TRUE;
     }
     return FALSE;
