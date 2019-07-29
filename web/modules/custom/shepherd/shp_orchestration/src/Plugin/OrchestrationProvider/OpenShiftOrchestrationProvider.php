@@ -746,8 +746,6 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
 
   /**
    * {@inheritdoc}
-   *
-   * @todo - can this and cron job creation be combined?
    */
   public function executeJob(
     string $project_name,
@@ -763,7 +761,13 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     // Retrieve existing deployment details to use where possible.
     $deployment_config = $this->client->getDeploymentConfig($deployment_name);
 
-    $image_stream = $this->client->getImageStream($sanitised_project_name);
+    // The image may either be not set, or set and blank. If either of those,
+    // bail, rather than possibly use an incorrect image.
+    $image = $deployment_config['spec']['template']['spec']['containers'][0]['image'] ?? FALSE;
+    if (!$image || empty(trim($image))) {
+      return [];
+    }
+
     $volumes = $this->generateVolumeData($project_name, $deployment_name, [], TRUE);
 
     $deploy_data = $this->formatDeployData(
@@ -782,7 +786,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     try {
       $response_body = $this->client->createJob(
         $deployment_name . '-' . $this->stringGenerator->generateRandomString(5),
-        $image_stream['status']['dockerImageRepository'] . ':' . $sanitised_source_ref,
+        $image,
         $args_array,
         $volumes,
         $deploy_data
@@ -949,10 +953,14 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
         return FALSE;
       }
 
-      // Return the link to the first pod.
-      $pod_name = $pods['items'][0]['metadata']['name'];
-      return $this->generateOpenShiftPodUrl($pod_name, 'terminal');
-
+      // Determine the link to the correct pod.
+      foreach ($pods['items'] as $index => $details) {
+        // Return the first running, non-job container.
+        if ($this->checkWebPod($details)) {
+          $pod_name = $pods['items'][0]['metadata']['name'];
+          return $this->generateOpenShiftPodUrl($pod_name, 'terminal');
+        }
+      }
     }
     catch (ClientException $e) {
       $this->handleClientException($e);
@@ -975,10 +983,15 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       if (!count($pods['items'])) {
         return FALSE;
       }
-      // Return the link to the first pod.
-      $pod_name = $pods['items'][0]['metadata']['name'];
-      return $this->generateOpenShiftPodUrl($pod_name, 'logs');
 
+      // Determine the link to the correct pod.
+      foreach ($pods['items'] as $index => $details) {
+        // Return the first running, non-job container.
+        if ($this->checkWebPod($details)) {
+          $pod_name = $pods['items'][0]['metadata']['name'];
+          return $this->generateOpenShiftPodUrl($pod_name, 'logs');
+        }
+      }
     }
     catch (ClientException $e) {
       $this->handleClientException($e);
@@ -987,6 +1000,22 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     catch (\InvalidArgumentException $e) {
       return FALSE;
     }
+  }
+
+  /**
+   * Helper function to confirm if requested pod is a web pod.
+   *
+   * @param $pod_details
+   *
+   * @return bool
+   */
+  private function checkWebPod($pod_details) {
+    if (!isset($pod_details['metadata']['job-name']) &&
+      $pod_details['status']['phase'] === 'Running' &&
+      !strpos($pod_details['metadata']['name'], 'redis')) {
+      return TRUE;
+    }
+    return FALSE;
   }
 
   /**
