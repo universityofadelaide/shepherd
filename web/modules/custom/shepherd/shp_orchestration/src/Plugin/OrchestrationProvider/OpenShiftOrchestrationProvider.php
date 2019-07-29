@@ -1009,7 +1009,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
    *
    * @return bool
    */
-  private function checkWebPod($pod_details) {
+  protected function checkWebPod($pod_details) {
     if (!isset($pod_details['metadata']['job-name']) &&
       $pod_details['status']['phase'] === 'Running' &&
       !strpos($pod_details['metadata']['name'], 'redis')) {
