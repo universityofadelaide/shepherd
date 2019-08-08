@@ -273,8 +273,8 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
 
     // Retrieve image stream that will be used for this site. There is only a
     // tiny chance it will be different to the deployment config image.
-    if (($image_stream = $this->client->getImageStream($sanitised_project_name))
-    && is_array($image_stream) && isset($image_stream['status']['tags'])) {
+    $image_stream = $this->client->getImageStream($sanitised_project_name);
+    if (is_array($image_stream) && isset($image_stream['status']['tags'])) {
       // Look through the image stream tags to find the one being deployed.
       foreach ($image_stream['status']['tags'] as $index => $images) {
         if ($images['tag'] === $sanitised_source_ref) {
