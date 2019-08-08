@@ -274,22 +274,26 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     // Retrieve image stream that will be used for this site. There is only a
     // tiny chance it will be different to the deployment config image.
     $image_stream = $this->client->getImageStream($sanitised_project_name);
-
-    // Look through the image stream tags to find the one being deployed.
-    foreach ($image_stream['status']['tags'] as $index => $images) {
-      if ($images['tag'] === $sanitised_source_ref) {
-        // Got one! [0] is the most recently created image.
-        if ($image = $images['items'][0]['dockerImageReference'] ?? FALSE) {
-          $this->createCronJobs(
-            $deployment_name,
-            $cron_suspended,
-            $cron_jobs,
-            $image,
-            $cron_volumes,
-            $deploy_data
-          );
+    if (is_array($image_stream) && isset($image_stream['status']['tags'])) {
+      // Look through the image stream tags to find the one being deployed.
+      foreach ($image_stream['status']['tags'] as $index => $images) {
+        if ($images['tag'] === $sanitised_source_ref) {
+          // Got one! [0] is the most recently created image.
+          if ($image = $images['items'][0]['dockerImageReference'] ?? FALSE) {
+            $this->createCronJobs(
+              $deployment_name,
+              $cron_suspended,
+              $cron_jobs,
+              $image,
+              $cron_volumes,
+              $deploy_data
+            );
+          }
         }
       }
+    }
+    else {
+      $this->messenger->addStatus(t('Build not yet complete, cron jobs cannot be created yet.'));
     }
 
     if (!$update_on_image_change) {
