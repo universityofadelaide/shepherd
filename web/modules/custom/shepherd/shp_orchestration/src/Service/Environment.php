@@ -161,8 +161,6 @@ class Environment extends EntityActionBase {
       array_column($annotations, 'value')
     );
 
-    $backup_volumes_killswitch = $this->configFactory->get('shp_orchestration.settings')->get('backup_volumes_killswitch');
-    $backup_volumes = $node->field_shp_volume_snapshots->value && !$backup_volumes_killswitch;
     $backup_schedule = !$environment_type->field_shp_backup_schedule->isEmpty() ? $environment_type->field_shp_backup_schedule->value : '';
     $environment = $this->orchestrationProviderPlugin->createdEnvironment(
       $project->getTitle(),
@@ -184,7 +182,6 @@ class Environment extends EntityActionBase {
       $probes,
       $cron_jobs,
       $annotations,
-      $backup_volumes,
       $backup_schedule
     );
 
