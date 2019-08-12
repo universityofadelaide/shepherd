@@ -108,7 +108,7 @@ class EnvironmentPromoteForm extends FormBase {
       '#type' => 'item',
       '#title' => $this->t('Production url'),
       'url' => Link::fromTextAndUrl(
-        $site->field_shp_domain->value,
+        $site->field_shp_domain->value . $site->field_shp_path->value,
         Url::fromUri('//' . $site->field_shp_domain->value . $site->field_shp_path->value))->toRenderable(),
     ];
     $form['promote_environment'] = [

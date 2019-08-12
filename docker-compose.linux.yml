@@ -1,36 +1,45 @@
 version: '3'
 services:
   web:
-    image: uofa/apache2-php7-dev:foundation
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+      args:
+        USER_ID: ${USER_ID:-1000}
+        GROUP_ID: ${GROUP_ID:-1000}
+    image: uofa/s2i-shepherd-drupal-dev
     # Chrome webdriver requires this - used for tests.
     privileged: true
     hostname: ${PROJECT}
-    # Expose shepherd on port 8000, launched sites will appear through openshift on port 80
     ports:
-      - 8000:80
+      - "8000:8080"
     environment:
+      DATABASE_HOST: db
+      DATABASE_USER: user
+      DATABASE_PASSWORD: password
+      HASH_SALT: random-hash
+      MEMCACHE_ENABLED: 0
+      MEMCACHE_HOST: memcached
+      PHP_IDE_CONFIG: serverName=${PROJECT}.${DOMAIN}
+      REDIS_ENABLED: 1
+      REDIS_HOST: redis
+      # REDIS_PASSWORD: testing
+      SHEPHERD_INSTALL_PROFILE: shepherd
+      SHEPHERD_SECRET_PATH: /code/private
       SITE_TITLE: Shepherd
       SITE_MAIL: site@example.com
       SITE_ADMIN_EMAIL: admin@example.com
       SITE_ADMIN_USERNAME: admin
       SITE_ADMIN_PASSWORD: password
-      DATABASE_HOST: db
-      PUBLIC_DIR: /shared/public
-      PRIVATE_DIR: /shared/private
-      TMP_DIR: /shared/tmp
-      HASH_SALT: random-hash
-      CONFIG_SYNC_DIRECTORY: /shared/private/random-hash/sync
-      REDIS_ENABLED: 1
-      REDIS_HOST: redis
-      SHEPHERD_INSTALL_PROFILE: shepherd
-      SHEPHERD_SECRET_PATH: /code/private
-      XDEBUG_CONFIG: "remote_host=172.17.0.1"
-      PHP_IDE_CONFIG: serverName=${PROJECT}.${DOMAIN}
       VIRTUAL_HOST: ${PROJECT}.${DOMAIN}
+      # Do not define this as '/' or apache2 will give strange behaviour, to test locally,
+      # change to the web directory and create a symlink to the subpath name eg ln -s . subpath
+      # WEB_PATH: /subpath
+      XDEBUG_CONFIG: "remote_host=172.17.0.1"
     volumes:
       - .:/code
       - ./shared:/shared
-      - ${HOST_SSH_AUTH_SOCK_DIR}:/ssh
+      - ${XDG_RUNTIME_DIR}/keyring:/ssh
     networks:
       - default
 
@@ -44,21 +53,49 @@ services:
       MYSQL_PASSWORD: password
       MYSQL_ROOT_PASSWORD: super-secret-password
     networks:
-    - default
+      - default
 
   mail:
     image: mailhog/mailhog
-    networks:
-      - default
     ports:
       - 8025:80
     environment:
-      - VIRTUAL_HOST=mail.${PROJECT}.${DOMAIN}
-
-  redis:
-    image: redis:alpine
+      VIRTUAL_HOST: mail.${PROJECT}.${DOMAIN}
     networks:
       - default
 
-networks:
-  default:
+  redis:
+    image: redis:alpine
+    command: |
+      redis-server
+      --maxmemory 512Mi
+      --maxmemory-policy allkeys-lru
+      --save ""
+    # --requirepass password
+    networks:
+      - default
+
+  memcached:
+    image: jboss/infinispan-server:9.4.11.Final
+    ports:
+      - "9990:9990"
+    environment:
+      APP_USER: user
+      APP_PASS: pass
+      MGMT_USER: admin
+      MGMT_PASS: admin
+    entrypoint:
+      - docker-entrypoint.sh
+      - -c
+      - standalone-memcached.xml
+    volumes:
+      - ./docker/standalone-memcached.xml:/opt/jboss/infinispan-server/standalone/configuration/standalone-memcached.xml
+    networks:
+      - default
+
+  selenium:
+    image: selenium/standalone-chrome:3.141.59-oxygen
+    volumes:
+      - /dev/shm:/dev/shm
+    networks:
+      - default

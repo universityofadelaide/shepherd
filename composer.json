@@ -36,6 +36,7 @@
         "ua-drupal-modules/ua_shp_ldap":                 "dev-develop"
     },
     "require-dev": {
+        "dealerdirect/phpcodesniffer-composer-installer": "^0.5.0",
         "webflo/drupal-core-require-dev": "~8.7"
     },
     "conflict": {

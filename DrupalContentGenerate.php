@@ -178,7 +178,7 @@ if (!$env = reset($nodes)) {
     'uid'                        => '1',
     'status'                     => 1,
     'title'                      => 'Drupal test environment',
-    'field_shp_domain'           => 'drupal-test-development.' . $domain_name,
+    'field_shp_domain'           => 'test-0.' . $domain_name,
     'field_shp_path'             => $site->field_shp_path->value,
     'field_shp_environment_type' => [['target_id' => $development_env->id()]],
     'field_shp_git_reference'    => 'master',

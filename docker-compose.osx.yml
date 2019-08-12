@@ -1,33 +1,40 @@
 version: '3'
 services:
   web:
-    image: uofa/apache2-php7-dev:foundation
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+      args:
+        USER_ID: ${USER_ID:-1000}
+        GROUP_ID: ${GROUP_ID:-1000}
+    image: uofa/s2i-shepherd-drupal-dev
     # You will notice that we are forwarding port which do not belong to PHP.
     # We have to declare them here because these "sidecar" services are sharing
     # THIS containers network stack.
-    # Expose shepherd on port 8000, launched sites will appear through openshift on port 80
     ports:
-      - "8000:80"
+      - "8000:8080"
       - "3306:3306"
       - "8025:8025"
+      - "9990:9990"
+      - "11211:11211"
     environment:
-      SITE_TITLE: WCMS D8
+      HASH_SALT: random-hash
+      MEMCACHE_ENABLED: 0
+      PHP_IDE_CONFIG: serverName=localhost
+      PUBLIC_DIR: /shared/public
+      REDIS_ENABLED: 1
+      # REDIS_PASSWORD: testing
+      SHEPHERD_INSTALL_PROFILE: shepherd
+      SHEPHERD_SECRET_PATH: /code/private
+      SHEPHERD_TOKEN: super-secret-token
+      SHEPHERD_URL: http://shepherd.test
+      SITE_TITLE: Shepherd
       SITE_MAIL: site@example.com
       SITE_ADMIN_EMAIL: admin@example.com
       SITE_ADMIN_USERNAME: admin
       SITE_ADMIN_PASSWORD: password
-      PUBLIC_DIR: /shared/public
-      HASH_SALT: random-hash
-      CONFIG_SYNC_DIRECTORY: /shared/private/random-hash/sync
-      SHEPHERD_SITE_ID: 2
-      SHEPHERD_URL: http://shepherd.test
-      SHEPHERD_TOKEN: super-secret-token
-      SHEPHERD_INSTALL_PROFILE: shepherd
-      REDIS_ENABLED: 1
-      SHEPHERD_SECRET_PATH: /code/private
-      XDEBUG_CONFIG: "remote_host=docker.for.mac.localhost"
-      PHP_IDE_CONFIG: serverName=localhost
       VIRTUAL_HOST: 127.0.0.1:8000
+      XDEBUG_CONFIG: "remote_host=docker.for.mac.localhost"
     volumes:
       - nfsmount:/code
       - ./shared:/shared
@@ -54,7 +61,34 @@ services:
 
   redis:
     image: redis:alpine
+    command: |
+      redis-server
+      --maxmemory 512Mi
+      --maxmemory-policy allkeys-lru
+      --save ""
+    # --requirepass password
     network_mode: service:web
+
+  memcached:
+    image: jboss/infinispan-server:9.4.11.Final
+    environment:
+      APP_USER: user
+      APP_PASS: pass
+      MGMT_USER: admin
+      MGMT_PASS: admin
+    entrypoint:
+      - docker-entrypoint.sh
+      - -c
+      - standalone-memcached.xml
+    volumes:
+      - ./docker/standalone-memcached.xml:/opt/jboss/infinispan-server/standalone/configuration/standalone-memcached.xml
+    network_mode: service:web
+
+  selenium:
+    image: selenium/standalone-chrome:3.141.59-oxygen
+    network_mode: service:web
+    volumes:
+      - /dev/shm:/dev/shm
 
 volumes:
   nfsmount:
