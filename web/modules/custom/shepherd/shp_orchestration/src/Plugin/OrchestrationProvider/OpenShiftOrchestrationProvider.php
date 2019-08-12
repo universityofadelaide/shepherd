@@ -222,7 +222,6 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     array $probes = [],
     array $cron_jobs = [],
     array $annotations = [],
-    bool $backup_volumes = FALSE,
     string $backup_schedule = ''
   ) {
     // @todo Refactor this. _The complexity is too damn high!_
