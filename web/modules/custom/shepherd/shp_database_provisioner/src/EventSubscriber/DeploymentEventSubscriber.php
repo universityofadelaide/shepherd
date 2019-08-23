@@ -2,14 +2,54 @@
 
 namespace Drupal\shp_database_provisioner\EventSubscriber;
 
+use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\shp_orchestration\Event\OrchestrationEnvironmentEvent;
 use Drupal\shp_orchestration\Event\OrchestrationEvents;
+use Drupal\token\TokenInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
  * Class DeploymentEventSubscriber.
  */
 class DeploymentEventSubscriber implements EventSubscriberInterface {
+
+  use StringTranslationTrait;
+
+  /**
+   * Backup settings.
+   *
+   * @var \Drupal\Core\Config\Config|\Drupal\Core\Config\ImmutableConfig
+   */
+  protected $config;
+
+  /**
+   * Used to retrieve config.
+   *
+   * @var \Drupal\Core\Config\ConfigFactory
+   */
+  protected $configFactory;
+
+  /**
+   * Used to expand tokens from config into usable strings.
+   *
+   * @var \Drupal\token\Token
+   */
+  protected $token;
+
+  /**
+   * DeploymentEventSubscriber constructor.
+   *
+   * @param \Drupal\Core\Config\ConfigFactoryInterface $configFactory
+   *   Config factory.
+   * @param \Drupal\token\TokenInterface $token
+   *   Token service.
+   */
+  public function __construct(ConfigFactoryInterface $configFactory, TokenInterface $token) {
+    $this->configFactory = $configFactory;
+    $this->config = $this->configFactory->get('shp_database_provisioner.settings');
+    $this->token = $token;
+  }
 
   /**
    * {@inheritdoc}
@@ -35,15 +75,16 @@ class DeploymentEventSubscriber implements EventSubscriberInterface {
     $site = $event->getSite();
     $environment = $event->getEnvironment();
 
-    if (!empty($project->field_shp_default_sql->target_id)) {
-      $public_filename = file_create_url($project->field_shp_default_sql->entity->getFileUri());
+    $populate_command = str_replace(["\r\n", "\n", "\r"], ' && ', trim($this->config->get('populate_command')));
+    $populate_command = $this->token->replace($populate_command, ['project' => $project]);
 
+    if (!empty($project->field_shp_default_sql->target_id)) {
       $orchestration_provider->executeJob(
         $project->title->value,
         $site->field_shp_short_name->value,
         $environment->id(),
         $environment->field_shp_git_reference->value,
-        "wget $public_filename -O /tmp/dump.sql; drush -r /code/web sqlq --file=/tmp/dump.sql; drush -r /code/web updb -y; robo config:import-plus; drush -r /code/web cr; rm /tmp/dump.sql"
+        $populate_command
       );
     }
   }

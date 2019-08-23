@@ -1,5 +1,6 @@
 services:
   shp_database_provisioner.environment:
     class: Drupal\shp_database_provisioner\EventSubscriber\DeploymentEventSubscriber
+    arguments: ['@config.factory', '@token']
     tags:
       - { name: event_subscriber }

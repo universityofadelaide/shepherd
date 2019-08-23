@@ -6,6 +6,51 @@
  */
 
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Render\BubbleableMetadata;
+use Drupal\file\Entity\File;
+
+/**
+ * Implements hook_token_info().
+ */
+function shp_database_provisioner_token_info() {
+  $info['types']['shepherd'] = [
+    'name' => t('Shepherd'),
+    'description' => t('Tokens related to shepherd.'),
+  ];
+
+  $info['tokens']['shepherd']['public-filename'] = [
+    'name' => t('Public filename'),
+    'description' => t('The public filename for the database to be provisioned.'),
+  ];
+
+  return $info;
+}
+
+/**
+ * Implements hook_tokens().
+ */
+function shp_database_provisioner_tokens($type, $tokens, array $data, array $options, BubbleableMetadata $bubbleable_metadata) {
+  if ($type != 'shepherd') {
+    return [];
+  }
+
+  $replacements = [];
+
+  foreach ($tokens as $name => $original) {
+    switch ($name) {
+      case 'public-filename':
+        if (isset($data['project'])) {
+          if (($file_id = $data['project']->field_shp_default_sql->target_id) && $file = File::load($file_id)) {
+            $replacements[$original] = file_create_url($file->getFileUri());
+          }
+        }
+        break;
+    }
+  }
+
+  return $replacements;
+
+}
 
 // Secret key names used to store database credentials.
 define('EnvMySQLHostname', 'DATABASE_HOST');
