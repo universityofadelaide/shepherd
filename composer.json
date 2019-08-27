@@ -14,7 +14,7 @@
         "drupal-composer/drupal-scaffold":               "^2.2",
         "predis/predis":                                 "^1.1.1",
         "universityofadelaide/openshift-client":         "dev-develop",
-        "universityofadelaide/shepherd-drupal-scaffold": "~2.0",
+        "universityofadelaide/shepherd-drupal-scaffold": "~3.0",
         "wikimedia/composer-merge-plugin":               "^1.4",
         "drush/drush":                                   "9.*",
         "drupal/core":                                   "^8.6",
