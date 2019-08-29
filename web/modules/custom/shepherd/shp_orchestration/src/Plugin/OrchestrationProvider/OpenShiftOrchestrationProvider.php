@@ -2,7 +2,6 @@
 
 namespace Drupal\shp_orchestration\Plugin\OrchestrationProvider;
 
-use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\Url;
 use Drupal\node\Entity\Node;
@@ -25,8 +24,6 @@ use UniversityOfAdelaide\OpenShift\Objects\Label;
  *   id = "openshift_orchestration_provider",
  *   name = "OpenShift",
  *   description = @Translation("OpenShift provider to perform orchestration tasks"),
- *   schema = "openshift.orchestration_provider",
- *   config_entity_id = "openshift"
  * )
  */
 class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
@@ -55,48 +52,40 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
   protected $messenger;
 
   /**
-   * {@inheritdoc}
+   * OrchestrationProviderBase constructor.
+   *
+   * @param array $configuration
+   *   Plugin configuration.
+   * @param string $plugin_id
+   *   Plugin id.
+   * @param mixed $plugin_definition
+   *   Plugin definition.
+   * @param \UniversityOfAdelaide\OpenShift\Client $client
+   *   The Openshift Client.
+   * @param \Drupal\shp_custom\Service\StringGenerator $string_generator
+   *   Shepherd custom string generator.
+   * @param \Drupal\Core\Messenger\MessengerInterface $messenger
+   *   Messenger service.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityTypeManagerInterface $entity_type_manager) {
-    parent::__construct($configuration, $plugin_id, $plugin_definition, $entity_type_manager);
-    $this->client = new OpenShiftClient(
-      $this->configEntity->endpoint,
-      $this->configEntity->token,
-      $this->configEntity->namespace,
-      $this->configEntity->verify_tls
-    );
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, OpenShiftClient $client, StringGenerator $string_generator, MessengerInterface $messenger) {
+    parent::__construct($configuration, $plugin_id, $plugin_definition);
+    $this->client = $client;
+    $this->stringGenerator = $string_generator;
+    $this->messenger = $messenger;
   }
 
   /**
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
-    $instance = parent::create(
-      $container,
+    return new static(
       $configuration,
       $plugin_id,
-      $plugin_definition
-    );
-    $instance->injectServices(
+      $plugin_definition,
+      $container->get('shp_orchestration.client'),
       $container->get('shp_custom.string_generator'),
       $container->get('messenger')
     );
-    return $instance;
-  }
-
-  /**
-   * Inject services to this plugin without changing base constructor.
-   *
-   * @param \Drupal\shp_custom\Service\StringGenerator $string_generator
-   *   Shepherd custom string generator.
-   * @param \Drupal\Core\Messenger\MessengerInterface $messenger
-   *   Messenger service.
-   *
-   * @todo: This really is just a stop-gap until we properly refactor.
-   */
-  public function injectServices(StringGenerator $string_generator, MessengerInterface $messenger) {
-    $this->stringGenerator = $string_generator;
-    $this->messenger = $messenger;
   }
 
   /**

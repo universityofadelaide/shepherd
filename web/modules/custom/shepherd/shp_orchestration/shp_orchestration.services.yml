@@ -18,3 +18,9 @@ services:
   shp_orchestration.status:
     class: Drupal\shp_orchestration\Service\Status
     arguments: ['@plugin.manager.orchestration_provider','@shp_custom.environment', '@shp_custom.site']
+  shp_orchestration.client_factory:
+    class: Drupal\shp_orchestration\OpenShiftClientFactory
+    arguments: ['@config.factory']
+  shp_orchestration.client:
+    class: Drupal\shp_orchestration\OpenShiftClientFactory
+    factory: 'shp_orchestration.client_factory:getClient'
