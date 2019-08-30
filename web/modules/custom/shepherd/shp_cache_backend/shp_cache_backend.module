@@ -1,0 +1,20 @@
+<?php
+
+/**
+ * @file
+ * Contains shp_cache_backend.module.
+ */
+
+use Drupal\node\NodeInterface;
+
+/**
+ * Implements hook_shp_env_vars().
+ */
+function shp_cache_backend_shp_env_vars(NodeInterface $environment) {
+  if (!$environment->field_cache_backend->isEmpty()) {
+    /** @var \Drupal\shp_cache_backend\Plugin\CacheBackendInterface $cache_backend */
+    $cache_backend = $environment->field_cache_backend->first()->getContainedPluginInstance();
+    return $cache_backend->getEnvironmentVariables($environment);
+  }
+  return [];
+}

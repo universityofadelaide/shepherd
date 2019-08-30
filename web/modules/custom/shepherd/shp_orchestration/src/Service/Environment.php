@@ -185,6 +185,12 @@ class Environment extends EntityActionBase {
       $backup_schedule
     );
 
+    if (!$node->field_cache_backend->isEmpty()) {
+      /** @var \Drupal\shp_cache_backend\Plugin\CacheBackendInterface $cache_backend */
+      $cache_backend = $node->field_cache_backend->first()->getContainedPluginInstance();
+      $cache_backend->onEnvironmentCreate($node);
+    }
+
     // Allow other modules to react to the Environment creation.
     $event = new OrchestrationEnvironmentEvent($this->orchestrationProviderPlugin, $deployment_name, $site, $node, $project);
     $this->eventDispatcher->dispatch(OrchestrationEvents::CREATED_ENVIRONMENT, $event);
