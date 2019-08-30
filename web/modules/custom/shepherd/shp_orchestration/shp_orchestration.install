@@ -37,6 +37,7 @@ function shp_orchestration_requirements($phase) {
  * Migrate orchestration settings to flat config object.
  */
 function shp_orchestration_update_8001() {
+  \Drupal::service('module_installer')->install(['shp_cache_backend']);
   $settings = \Drupal::configFactory()->getEditable('shp_orchestration.settings');
   /** @var \Drupal\shp_orchestration\OrchestrationProviderInterface $provider */
   $provider = \Drupal::service('plugin.manager.orchestration_provider')->getProviderInstance();

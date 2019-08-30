@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "e7972baac06a2da3a8912ab33dc02065",
+    "content-hash": "f405f161b833e97d8209264365a57b9b",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -2642,6 +2642,72 @@
             }
         },
         {
+            "name": "drupal/plugin",
+            "version": "2.6.0",
+            "source": {
+                "type": "git",
+                "url": "https://git.drupalcode.org/project/plugin.git",
+                "reference": "8.x-2.6"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://ftp.drupal.org/files/projects/plugin-8.x-2.6.zip",
+                "reference": "8.x-2.6",
+                "shasum": "703b976e6158c2b3e5cd6d7f6358f82ed411689f"
+            },
+            "require": {
+                "drupal/core": "~8.0 || >= 8.0.5",
+                "php": "~5.5|~7.0"
+            },
+            "type": "drupal-module",
+            "extra": {
+                "branch-alias": {
+                    "dev-2.x": "2.x-dev"
+                },
+                "drupal": {
+                    "version": "8.x-2.6",
+                    "datestamp": "1558296181",
+                    "security-coverage": {
+                        "status": "covered",
+                        "message": "Covered by Drupal's security advisory policy"
+                    }
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Drupal\\plugin\\": "src"
+                }
+            },
+            "autoload-dev": {
+                "psr-4": {
+                    "Drupal\\Tests\\plugin\\": "tests/src"
+                }
+            },
+            "notification-url": "https://packages.drupal.org/8/downloads",
+            "license": [
+                "GPL-2.0"
+            ],
+            "authors": [
+                {
+                    "name": "Berdir",
+                    "homepage": "https://www.drupal.org/user/214652"
+                },
+                {
+                    "name": "bradjones1",
+                    "homepage": "https://www.drupal.org/user/405824"
+                },
+                {
+                    "name": "joachim",
+                    "homepage": "https://www.drupal.org/user/107701"
+                }
+            ],
+            "description": "Provides tools that extend Drupal's plugin system.",
+            "homepage": "https://www.drupal.org/project/plugin",
+            "support": {
+                "source": "https://git.drupalcode.org/project/plugin"
+            }
+        },
+        {
             "name": "drupal/r4032login",
             "version": "1.1.0",
             "source": {
@@ -2756,9 +2822,6 @@
                         "status": "covered",
                         "message": "Covered by Drupal's security advisory policy"
                     }
-                },
-                "patches_applied": {
-                    "Implement initial RedisCluster client integration": "https://www.drupal.org/files/issues/2018-08-18/redis-rediscluster_client_integration-2900947-12-D8.patch"
                 }
             },
             "autoload": {
@@ -2783,7 +2846,7 @@
             "description": "Provide a module placeholder, for using as dependency for module that needs Redis.",
             "homepage": "https://www.drupal.org/project/redis",
             "support": {
-                "source": "https://git.drupalcode.org/project/redis"
+                "source": "http://cgit.drupalcode.org/redis"
             }
         },
         {
@@ -8824,10 +8887,10 @@
     "aliases": [],
     "minimum-stability": "dev",
     "stability-flags": {
-        "universityofadelaide/openshift-client": 20,
         "drupal/drush-cmi-tools": 20,
         "drupal/group": 5,
-        "drupal/route_condition": 10
+        "drupal/route_condition": 10,
+        "universityofadelaide/openshift-client": 20
     },
     "prefer-stable": true,
     "prefer-lowest": false,
