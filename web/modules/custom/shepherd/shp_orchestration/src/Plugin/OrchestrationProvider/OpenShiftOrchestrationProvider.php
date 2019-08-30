@@ -2,6 +2,7 @@
 
 namespace Drupal\shp_orchestration\Plugin\OrchestrationProvider;
 
+use Drupal\Core\Config\ImmutableConfig;
 use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\Url;
 use Drupal\node\Entity\Node;
@@ -52,6 +53,13 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
   protected $messenger;
 
   /**
+   * The config entity.
+   *
+   * @var \Drupal\Core\Config\ImmutableConfig
+   */
+  protected $config;
+
+  /**
    * OrchestrationProviderBase constructor.
    *
    * @param array $configuration
@@ -60,6 +68,8 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
    *   Plugin id.
    * @param mixed $plugin_definition
    *   Plugin definition.
+   * @param \Drupal\Core\Config\ImmutableConfig $config
+   *   Orchestration config.
    * @param \UniversityOfAdelaide\OpenShift\Client $client
    *   The Openshift Client.
    * @param \Drupal\shp_custom\Service\StringGenerator $string_generator
@@ -67,11 +77,12 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
    * @param \Drupal\Core\Messenger\MessengerInterface $messenger
    *   Messenger service.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, OpenShiftClient $client, StringGenerator $string_generator, MessengerInterface $messenger) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, ImmutableConfig $config, OpenShiftClient $client, StringGenerator $string_generator, MessengerInterface $messenger) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->client = $client;
     $this->stringGenerator = $string_generator;
     $this->messenger = $messenger;
+    $this->config = $config;
   }
 
   /**
@@ -82,6 +93,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       $configuration,
       $plugin_id,
       $plugin_definition,
+      $container->get('config.factory')->get('shp_orchestration.settings'),
       $container->get('shp_orchestration.client'),
       $container->get('shp_custom.string_generator'),
       $container->get('messenger')
@@ -1022,8 +1034,8 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
    *   Url.
    */
   protected function generateOpenShiftPodUrl(string $pod_name, string $view) {
-    $endpoint = $this->configEntity->endpoint;
-    $namespace = $this->configEntity->namespace;
+    $endpoint = $this->config->get('connection.endpoint');
+    $namespace = $this->config->get('connection.namespace');
 
     return Url::fromUri($endpoint . '/console/project/' . $namespace . '/browse/pods/' . $pod_name, [
       'query' => [
@@ -1111,10 +1123,10 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     ];
 
     // If set, add uid and gid from config to deploy data.
-    if (strlen($this->configEntity->uid) > 0) {
-      $deploy_data['uid'] = $this->configEntity->uid;
-      if (strlen($this->configEntity->gid) > 0) {
-        $deploy_data['gid'] = $this->configEntity->gid;
+    if (strlen($this->config->get('connection.uid')) > 0) {
+      $deploy_data['uid'] = $this->config->get('connection.uid');
+      if (strlen($this->config->get('connection.gid')) > 0) {
+        $deploy_data['gid'] = $this->config->get('connection.gid');
       }
     }
 
