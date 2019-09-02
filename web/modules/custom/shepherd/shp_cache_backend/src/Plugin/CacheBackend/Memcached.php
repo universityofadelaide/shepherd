@@ -9,6 +9,7 @@ use Drupal\shp_orchestration\Plugin\OrchestrationProvider\OpenShiftOrchestration
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Serializer\Serializer;
 use UniversityOfAdelaide\OpenShift\Client;
+use UniversityOfAdelaide\OpenShift\Objects\ConfigMap;
 use UniversityOfAdelaide\OpenShift\Objects\NetworkPolicy;
 
 /**
@@ -102,19 +103,6 @@ class Memcached extends CacheBackendBase {
   }
 
   /**
-   * Gets the memcache service name.
-   *
-   * @param string $deployment_name
-   *   The deployment name.
-   *
-   * @return string
-   *   The service name.
-   */
-  protected static function getMemcacheServiceName(string $deployment_name) {
-    return $deployment_name . '-mc';
-  }
-
-  /**
    * {@inheritdoc}
    */
   public function getEnvironmentVariables(NodeInterface $environment) {
@@ -137,28 +125,18 @@ class Memcached extends CacheBackendBase {
     if (!$configMap = $this->client->getConfigmap($this->configMapName)) {
       return;
     }
-
-    if (empty($configMap->getData()[$this->jdgConfigFile])) {
+    if (!$xml = $this->loadXml($configMap)) {
       return;
     }
-    $name = 'memcached_node' . $environment->id();
-    $data = $configMap->getData();
-    if (!$xml = simplexml_load_string($data[$this->jdgConfigFile])) {
-      return;
-    }
-    // Register namespaces to query subsystems by.
-    $xml->registerXPathNamespace('connectors', 'urn:infinispan:server:endpoint:9.4');
-    $xml->registerXPathNamespace('dc', 'urn:infinispan:server:core:9.4');
 
+    $name = self::getMemcacheName($environment);
     // Find the next port to use.
     $max_port = $this->defaultPort;
     foreach ($xml->{'socket-binding-group'}->{'socket-binding'} as $binding) {
       $binding_name = (string) $binding->attributes()->name;
       $port = (int) $binding->attributes()->port;
-      if (strpos($binding_name, 'memcached_node') === 0 && !empty($port)) {
-        if ($port > $max_port) {
-          $max_port = $port;
-        }
+      if (strpos($binding_name, 'memcached_node') === 0 && !empty($port) && $port > $max_port) {
+        $max_port = $port;
       }
     }
     $new_port = $max_port + 1;
@@ -169,7 +147,7 @@ class Memcached extends CacheBackendBase {
       // @todo make this configurable.
       ->setPodSelectorMatchLabels(['application' => $this->datagridSelector])
       ->setPort($new_port)
-      ->setName('datagrid-allow-' . $deployment_name);
+      ->setName(self::getNetworkPolicyName($deployment_name));
     $this->client->createNetworkpolicy($network_policy);
 
     // Create the Service.
@@ -212,7 +190,93 @@ class Memcached extends CacheBackendBase {
    * {@inheritdoc}
    */
   public function onEnvironmentDelete(NodeInterface $environment) {
-    // TODO: Implement onEnvironmentDelete() method.
+    $deployment_name = OpenShiftOrchestrationProvider::generateDeploymentName($environment->id());
+    $np_name = self::getNetworkPolicyName($deployment_name);
+    if ($this->client->getNetworkpolicy($np_name)) {
+      $this->client->deleteNetworkpolicy($np_name);
+    }
+    $service_name = self::getMemcacheServiceName($deployment_name);
+    if ($this->client->getService($service_name)) {
+      $this->client->deleteService($service_name);
+    }
+
+    if (!$configMap = $this->client->getConfigmap($this->configMapName)) {
+      return;
+    }
+    if (!$xml = $this->loadXml($configMap)) {
+      return;
+    }
+    $name = self::getMemcacheName($environment);
+    $socketBindingGroup = $xml->{'socket-binding-group'};
+    foreach ($socketBindingGroup->{'socket-binding'} as $binding) {
+      if ((string) $binding->attributes()->name === $name) {
+        unset($binding[0]);
+        break;
+      }
+    }
+    $test = $xml->asXML();
+    $socket_binding = $socketBindingGroup->xpath(sprintf('//socket-binding[@name="%s"]', $name));
+  }
+
+  /**
+   * Loads the XML from the datagrid config map.
+   *
+   * @param \UniversityOfAdelaide\OpenShift\Objects\ConfigMap $configMap
+   *   The config map.
+   *
+   * @return bool|\SimpleXMLElement
+   *   An SimpleXMLElement, or FALSE on failure.
+   */
+  protected function loadXml(ConfigMap $configMap) {
+    if (empty($configMap->getData()[$this->jdgConfigFile])) {
+      return FALSE;
+    }
+    if (!$xml = simplexml_load_string($configMap->getData()[$this->jdgConfigFile])) {
+      return FALSE;
+    }
+    // Register namespaces to query subsystems by.
+    $xml->registerXPathNamespace('connectors', 'urn:infinispan:server:endpoint:9.4');
+    $xml->registerXPathNamespace('dc', 'urn:infinispan:server:core:9.4');
+    return $xml;
+  }
+
+  /**
+   * Gets the memcache name for this environment.
+   *
+   * @param \Drupal\node\NodeInterface $environment
+   *   The environment name.
+   *
+   * @return string
+   *   The memcache name.
+   */
+  protected static function getMemcacheName(NodeInterface $environment) {
+    return 'memcached_node' . $environment->id();
+  }
+
+  /**
+   * Get the network policy name.
+   *
+   * @param string $deployment_name
+   *   The deployment name.
+   *
+   * @return string
+   *   The network policy name.
+   */
+  protected static function getNetworkPolicyName(string $deployment_name) {
+    return 'datagrid-allow-' . $deployment_name;
+  }
+
+  /**
+   * Gets the memcache service name.
+   *
+   * @param string $deployment_name
+   *   The deployment name.
+   *
+   * @return string
+   *   The service name.
+   */
+  protected static function getMemcacheServiceName(string $deployment_name) {
+    return $deployment_name . '-mc';
   }
 
 }
