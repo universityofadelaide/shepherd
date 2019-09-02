@@ -24,3 +24,10 @@ services:
   shp_orchestration.client:
     class: Drupal\shp_orchestration\OpenShiftClientFactory
     factory: 'shp_orchestration.client_factory:getClient'
+  logger.channel.shp_orchestration:
+    class: Drupal\Core\Logger\LoggerChannel
+    factory: logger.factory:get
+    arguments: ['shp_orchestration']
+  shp_orchestration.exception_handler:
+    class: Drupal\shp_orchestration\ExceptionHandler
+    arguments: ['@logger.channel.shp_orchestration', '@messenger']

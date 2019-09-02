@@ -8,6 +8,7 @@ use Drupal\Core\Url;
 use Drupal\node\Entity\Node;
 use Drupal\shp_backup\Service\Backup as BackupService;
 use Drupal\shp_custom\Service\StringGenerator;
+use Drupal\shp_orchestration\ExceptionHandler;
 use Drupal\shp_orchestration\OrchestrationProviderBase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use UniversityOfAdelaide\OpenShift\Client as OpenShiftClient;
@@ -60,6 +61,13 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
   protected $config;
 
   /**
+   * The orchestration exception handler.
+   *
+   * @var \Drupal\shp_orchestration\ExceptionHandler
+   */
+  protected $exceptionHandler;
+
+  /**
    * OrchestrationProviderBase constructor.
    *
    * @param array $configuration
@@ -76,13 +84,16 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
    *   Shepherd custom string generator.
    * @param \Drupal\Core\Messenger\MessengerInterface $messenger
    *   Messenger service.
+   * @param \Drupal\shp_orchestration\ExceptionHandler $exceptionHandler
+   *   The exception handler service.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, ImmutableConfig $config, OpenShiftClient $client, StringGenerator $string_generator, MessengerInterface $messenger) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, ImmutableConfig $config, OpenShiftClient $client, StringGenerator $string_generator, MessengerInterface $messenger, ExceptionHandler $exceptionHandler) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->client = $client;
     $this->stringGenerator = $string_generator;
     $this->messenger = $messenger;
     $this->config = $config;
+    $this->exceptionHandler = $exceptionHandler;
   }
 
   /**
@@ -96,7 +107,8 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       $container->get('config.factory')->get('shp_orchestration.settings'),
       $container->get('shp_orchestration.client'),
       $container->get('shp_custom.string_generator'),
-      $container->get('messenger')
+      $container->get('messenger'),
+      $container->get('shp_orchestration.exception_handler')
     );
   }
 
@@ -117,7 +129,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       $this->createBuildConfig($build_config_name, $source_ref, $source_repo, $builder_image, $source_secret, $image_stream_tag, $formatted_env_vars);
     }
     catch (ClientException $e) {
-      $this->handleClientException($e);
+      $this->exceptionHandler->handleClientException($e);
       return FALSE;
     }
     return TRUE;
@@ -150,7 +162,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       );
     }
     catch (ClientException $e) {
-      $this->handleClientException($e);
+      $this->exceptionHandler->handleClientException($e);
       return FALSE;
     }
     return TRUE;
@@ -193,7 +205,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
         $this->client->createBuildConfig($build_config);
       }
       catch (ClientException $e) {
-        $this->handleClientException($e);
+        $this->exceptionHandler->handleClientException($e);
         return FALSE;
       }
     }
@@ -264,7 +276,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       $this->client->createDeploymentConfig($deployment_config);
     }
     catch (ClientException $e) {
-      $this->handleClientException($e);
+      $this->exceptionHandler->handleClientException($e);
       return FALSE;
     }
 
@@ -314,7 +326,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       $this->client->createRoute($deployment_name, $deployment_name, $domain, $path, $annotations);
     }
     catch (ClientException $e) {
-      $this->handleClientException($e);
+      $this->exceptionHandler->handleClientException($e);
       return FALSE;
     }
 
@@ -449,7 +461,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       }
     }
     catch (ClientException $e) {
-      $this->handleClientException($e);
+      $this->exceptionHandler->handleClientException($e);
       return FALSE;
     }
     return TRUE;
@@ -557,7 +569,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       return $this->client->getBackup($name);
     }
     catch (ClientException $e) {
-      $this->handleClientException($e);
+      $this->exceptionHandler->handleClientException($e);
       return FALSE;
     }
   }
@@ -581,7 +593,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       return $this->client->createBackup($backup);
     }
     catch (ClientException $e) {
-      $this->handleClientException($e);
+      $this->exceptionHandler->handleClientException($e);
       return FALSE;
     }
   }
@@ -625,7 +637,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       return $this->client->createSchedule($schedule);
     }
     catch (ClientException $e) {
-      $this->handleClientException($e);
+      $this->exceptionHandler->handleClientException($e);
       return FALSE;
     }
   }
@@ -639,7 +651,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       $schedule_obj = $this->client->getSchedule($schedule_name);
     }
     catch (ClientException $e) {
-      $this->handleClientException($e);
+      $this->exceptionHandler->handleClientException($e);
       return FALSE;
     }
     // If there's no schedule, create one.
@@ -658,7 +670,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       return $this->client->updateSchedule($schedule_obj);
     }
     catch (ClientException $e) {
-      $this->handleClientException($e);
+      $this->exceptionHandler->handleClientException($e);
       return FALSE;
     }
   }
@@ -675,7 +687,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       return TRUE;
     }
     catch (ClientException $e) {
-      $this->handleClientException($e);
+      $this->exceptionHandler->handleClientException($e);
       return FALSE;
     }
   }
@@ -694,7 +706,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       return $this->client->listBackup($label);
     }
     catch (ClientException $e) {
-      $this->handleClientException($e);
+      $this->exceptionHandler->handleClientException($e);
       return FALSE;
     }
   }
@@ -730,7 +742,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       return $this->client->createRestore($restore);
     }
     catch (ClientException $e) {
-      $this->handleClientException($e);
+      $this->exceptionHandler->handleClientException($e);
       return FALSE;
     }
   }
@@ -743,7 +755,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       return $this->client->listRestore(Label::create('site', $site_id));
     }
     catch (ClientException $e) {
-      $this->handleClientException($e);
+      $this->exceptionHandler->handleClientException($e);
       return FALSE;
     }
   }
@@ -797,7 +809,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       );
     }
     catch (ClientException $e) {
-      $this->handleClientException($e);
+      $this->exceptionHandler->handleClientException($e);
       return FALSE;
     }
     return $response_body;
@@ -824,7 +836,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       $secret = $this->client->getSecret($name);
     }
     catch (ClientException $e) {
-      $this->handleClientException($e);
+      $this->exceptionHandler->handleClientException($e);
       return FALSE;
     }
     if (is_array($secret) && array_key_exists('data', $secret)) {
@@ -844,7 +856,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       return $this->client->createSecret($name, $data);
     }
     catch (ClientException $e) {
-      $this->handleClientException($e);
+      $this->exceptionHandler->handleClientException($e);
       return FALSE;
     }
   }
@@ -857,7 +869,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       return $this->client->updateSecret($name, $data);
     }
     catch (ClientException $e) {
-      $this->handleClientException($e);
+      $this->exceptionHandler->handleClientException($e);
       return FALSE;
     }
   }
@@ -870,7 +882,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       $deployment_configs = $this->client->getDeploymentConfigs('site_id=' . $site_id);
     }
     catch (ClientException $e) {
-      $this->handleClientException($e);
+      $this->exceptionHandler->handleClientException($e);
       return FALSE;
     }
     $environments_status = [];
@@ -894,7 +906,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       $deployment_config = $this->client->getDeploymentConfig($deployment_name);
     }
     catch (ClientException $e) {
-      $this->handleClientException($e);
+      $this->exceptionHandler->handleClientException($e);
       return FALSE;
     }
 
@@ -936,7 +948,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       return Url::fromUri('//' . $route['spec']['host'] . (array_key_exists('path', $route['spec']) ? $route['spec']['path'] : '/'));
     }
     catch (ClientException $e) {
-      $this->handleClientException($e);
+      $this->exceptionHandler->handleClientException($e);
       return FALSE;
     }
     catch (\InvalidArgumentException $e) {
@@ -967,7 +979,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       }
     }
     catch (ClientException $e) {
-      $this->handleClientException($e);
+      $this->exceptionHandler->handleClientException($e);
       return FALSE;
     }
     catch (\InvalidArgumentException $e) {
@@ -998,7 +1010,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       }
     }
     catch (ClientException $e) {
-      $this->handleClientException($e);
+      $this->exceptionHandler->handleClientException($e);
       return FALSE;
     }
     catch (\InvalidArgumentException $e) {
@@ -1253,7 +1265,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       }
     }
     catch (ClientException $e) {
-      $this->handleClientException($e);
+      $this->exceptionHandler->handleClientException($e);
       return FALSE;
     }
 
@@ -1355,26 +1367,6 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
   }
 
   /**
-   * Handles OpenShift ClientExceptions.
-   *
-   * @param \UniversityOfAdelaide\OpenShift\ClientException $exception
-   *   The exception to be handled.
-   */
-  protected function handleClientException(ClientException $exception) {
-    $reason = $exception->getMessage();
-    if (strstr($exception->getBody(), 'Unauthorized')) {
-      $reason = $this->t('Client is not authorized to access requested resource.');
-    }
-
-    \Drupal::logger('shp_orchestration')->error('An error occurred while communicating with OpenShift. %reason', [
-      '%reason' => $reason,
-    ]);
-
-    // @todo Add handlers for other reasons for failure. Add as required.
-    $this->messenger->addError(t("An error occurred while communicating with OpenShift. %reason", ['%reason' => $reason]));
-  }
-
-  /**
    * Create cron jobs.
    *
    * @param string $deployment_name
@@ -1412,7 +1404,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
         );
       }
       catch (ClientException $e) {
-        $this->handleClientException($e);
+        $this->exceptionHandler->handleClientException($e);
         return FALSE;
       }
     }
