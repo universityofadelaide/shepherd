@@ -5,6 +5,9 @@ namespace Drupal\shp_cache_backend\Plugin\CacheBackend;
 use Drupal\node\NodeInterface;
 use Drupal\shp_cache_backend\Plugin\CacheBackendBase;
 use Drupal\shp_orchestration\Plugin\OrchestrationProvider\OpenShiftOrchestrationProvider;
+use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\Serializer\Serializer;
+use UniversityOfAdelaide\OpenShift\Client;
 use UniversityOfAdelaide\OpenShift\Objects\NetworkPolicy;
 
 /**
@@ -18,29 +21,108 @@ use UniversityOfAdelaide\OpenShift\Objects\NetworkPolicy;
 class Memcached extends CacheBackendBase {
 
   /**
+   * The serializer service.
+   *
+   * @var \Symfony\Component\Serializer\Serializer
+   */
+  protected $serializer;
+
+  /**
+   * The JGD config file.
+   *
+   * @var string
+   */
+  protected $jdgConfigFile = 'standalone.xml';
+
+  /**
+   * The config map name.
+   *
+   * TODO: make this name configurable?
+   *
+   * @var string
+   */
+  protected $configMapName = 'datagrid-config';
+
+  /**
+   * The default port to create a memcache instance for.
+   *
+   * @var int
+   */
+  protected $defaultPort = 11311;
+
+  /**
+   * Redis constructor.
+   *
+   * @param array $configuration
+   *   A configuration array containing information about the plugin instance.
+   * @param string $plugin_id
+   *   The plugin_id for the plugin instance.
+   * @param mixed $plugin_definition
+   *   The plugin implementation definition.
+   * @param \UniversityOfAdelaide\OpenShift\Client $client
+   *   The OS Client.
+   * @param \Symfony\Component\Serializer\Serializer $serializer
+   *   The serializer service.
+   */
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, Client $client, Serializer $serializer) {
+    parent::__construct($configuration, $plugin_id, $plugin_definition, $client);
+    $this->serializer = $serializer;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+    return new static(
+      $configuration,
+      $plugin_id,
+      $plugin_definition,
+      $container->get('shp_orchestration.client'),
+      $container->get('serializer')
+    );
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getEnvironmentVariables(NodeInterface $environment) {
+    $deployment_name = OpenShiftOrchestrationProvider::generateDeploymentName($environment->id());
+    return [
+      'MEMCACHE_ENABLED' => '1',
+      'MEMCACHE_HOST' => $deployment_name . '-mc' . '.svc.cluster.local',
+    ];
+  }
+
+  /**
    * {@inheritdoc}
    */
   public function onEnvironmentCreate(NodeInterface $environment) {
     $deployment_name = OpenShiftOrchestrationProvider::generateDeploymentName($environment->id());
-    // @todo: make this name configurable?
-    if (!$configMap = $this->client->getConfigmap('datagrid-config')) {
+    if (!$configMap = $this->client->getConfigmap($this->configMapName)) {
       return;
     }
 
-    if (empty($configMap->getData()['standalone.xml'])) {
+    if (empty($configMap->getData()[$this->jdgConfigFile])) {
       return;
     }
     $name = 'memcached_node' . $environment->id();
-
-    /** @var \Symfony\Component\Serializer\Serializer $serializer */
-    $serializer = \Drupal::service('serializer');
     $data = $configMap->getData();
-    $normalized = $serializer->decode($data['standalone.xml'], 'xml');
-    // Find the next port to be used.
-    $ports = array_column(array_filter($normalized['socket-binding-group']['socket-binding'], function ($binding) {
-      return strpos($binding['@name'], 'memcached_node') === 0 && isset($binding['@port']);
-    }), '@port');
-    $new_port = max($ports) + 1;
+    $xml = simplexml_load_string($data[$this->jdgConfigFile]);
+    $xml->registerXPathNamespace('connectors', 'urn:infinispan:server:endpoint:9.4');
+    $xml->registerXPathNamespace('dc', 'urn:infinispan:server:core:9.4');
+
+    // Find the next port to use.
+    $max_port = $this->defaultPort;
+    foreach ($xml->{'socket-binding-group'}->{'socket-binding'} as $binding) {
+      $binding_name = (string) $binding->attributes()->name;
+      $port = (int) $binding->attributes()->port;
+      if (strpos($binding_name, 'memcached_node') === 0 && !empty($port)) {
+        if ($port > $max_port) {
+          $max_port = $port;
+        }
+      }
+    }
+    $new_port = $max_port + 1;
 
     // Create the NetworkPolicy.
     $datagrid_selector = 'datagrid-app';
@@ -63,43 +145,28 @@ class Memcached extends CacheBackendBase {
     );
 
     // Add the socket-binding.
-    $normalized['socket-binding-group']['socket-binding'][] = [
-      '@name' => $name,
-      '@port' => $new_port,
-    ];
+    $socket_binding = $xml->{'socket-binding-group'}->addChild('socket-binding');
+    $socket_binding->addAttribute('name', $name);
+    $socket_binding->addAttribute('port', $new_port);
 
     // Add the memcache-connector element.
-    foreach ($normalized['profile']['subsystem'] as $idx => $subsystem) {
-      if (!array_key_exists('memcached-connector', $subsystem)) {
-        continue;
-      }
-      $subsystem['memcached-connector'][] = [
-        '@name' => $name,
-        '@cache-container' => 'clustered',
-        '@cache' => $name,
-        '@socket-binding' => $name,
-      ];
-      $normalized['profile']['subsystem'][$idx] = $subsystem;
-      break;
-    }
+    $connector_subsystem = $xml->xpath('//connectors:subsystem')[0];
+    $connector = $connector_subsystem->addChild('memcached-connector');
+    $connector->addAttribute('name', $name);
+    $connector->addAttribute('cache-container', 'clustered');
+    $connector->addAttribute('cache', $name);
+    $connector->addAttribute('socket-binding', $name);
+
     // Add the distributed-cache element.
-    foreach ($normalized['profile']['subsystem'] as $idx => $subsystem) {
-      if (!array_key_exists('cache-container', $subsystem)) {
-        continue;
-      }
-      $subsystem['cache-container']['distributed-cache'][] = [
-        '@statistics' => "true",
-        '@name' => $name,
-        '@mode' => 'SYNC',
-        '@start' => 'EAGER',
-        'memory' => [
-          'object' => '',
-        ],
-      ];
-      $normalized['profile']['subsystem'][$idx] = $subsystem;
-      break;
-    }
-    $data['standalone.xml'] = $serializer->encode($normalized, 'xml', ['xml_root_node_name' => 'server']);
+    $cache_container = $xml->xpath('//dc:subsystem')[0]->{'cache-container'};
+    $distributed_cache = $cache_container->addChild('distributed-cache');
+    $distributed_cache->addAttribute('statistics', 'true');
+    $distributed_cache->addAttribute('name', $name);
+    $distributed_cache->addAttribute('mode', 'SYNC');
+    $distributed_cache->addAttribute('start', 'EAGER');
+    $distributed_cache->addChild('memory')->addChild('object');
+
+    $data[$this->jdgConfigFile] = $xml->asXML();
     $configMap->setData($data);
     $this->client->updateConfigmap($configMap);
   }
