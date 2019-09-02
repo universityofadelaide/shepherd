@@ -121,7 +121,11 @@ class Memcached extends CacheBackendBase {
     $deployment_name = OpenShiftOrchestrationProvider::generateDeploymentName($environment->id());
     return [
       'MEMCACHE_ENABLED' => '1',
-      'MEMCACHE_HOST' => sprintf('%s.%s.svc.cluster.local', self::getMemcacheServiceName($deployment_name), $this->namespace),
+      'MEMCACHE_HOST' => sprintf(
+        '%s.%s.svc.cluster.local',
+        self::getMemcacheServiceName($deployment_name),
+        $this->namespace
+      ),
     ];
   }
 
@@ -142,7 +146,7 @@ class Memcached extends CacheBackendBase {
     if (!$xml = simplexml_load_string($data[$this->jdgConfigFile])) {
       return;
     }
-
+    // Register namespaces to query subsystems by.
     $xml->registerXPathNamespace('connectors', 'urn:infinispan:server:endpoint:9.4');
     $xml->registerXPathNamespace('dc', 'urn:infinispan:server:core:9.4');
 

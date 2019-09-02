@@ -320,6 +320,17 @@ class Environment extends EntityActionBase {
     $event = new OrchestrationEnvironmentEvent($this->orchestrationProviderPlugin, $deployment_name);
     $this->eventDispatcher->dispatch(OrchestrationEvents::DELETED_ENVIRONMENT, $event);
 
+    if (!$node->field_cache_backend->isEmpty()) {
+      /** @var \Drupal\shp_cache_backend\Plugin\CacheBackendInterface $cache_backend */
+      $cache_backend = $node->field_cache_backend->first()->getContainedPluginInstance();
+      try {
+        $cache_backend->onEnvironmentDelete($node);
+      }
+      catch (ClientException $e) {
+        $this->exceptionHandler->handleClientException($e);
+      }
+    }
+
     return $result;
   }
 
