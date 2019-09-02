@@ -2,6 +2,7 @@
 
 namespace Drupal\shp_cache_backend\Plugin\CacheBackend;
 
+use Drupal\Core\Config\ImmutableConfig;
 use Drupal\node\NodeInterface;
 use Drupal\shp_cache_backend\Plugin\CacheBackendBase;
 use Drupal\shp_orchestration\Plugin\OrchestrationProvider\OpenShiftOrchestrationProvider;
@@ -28,6 +29,13 @@ class Memcached extends CacheBackendBase {
   protected $serializer;
 
   /**
+   * The namespace objects are being created in.
+   *
+   * @var string
+   */
+  protected $namespace;
+
+  /**
    * The JGD config file.
    *
    * @var string
@@ -51,6 +59,13 @@ class Memcached extends CacheBackendBase {
   protected $defaultPort = 11311;
 
   /**
+   * The pod selector used in network policies.
+   *
+   * @var string
+   */
+  protected $datagridSelector = 'datagrid-app';
+
+  /**
    * Redis constructor.
    *
    * @param array $configuration
@@ -63,10 +78,13 @@ class Memcached extends CacheBackendBase {
    *   The OS Client.
    * @param \Symfony\Component\Serializer\Serializer $serializer
    *   The serializer service.
+   * @param \Drupal\Core\Config\ImmutableConfig $config
+   *   The orchestration config.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, Client $client, Serializer $serializer) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, Client $client, Serializer $serializer, ImmutableConfig $config) {
     parent::__construct($configuration, $plugin_id, $plugin_definition, $client);
     $this->serializer = $serializer;
+    $this->namespace = $config->get('connection.namespace');
   }
 
   /**
@@ -78,8 +96,22 @@ class Memcached extends CacheBackendBase {
       $plugin_id,
       $plugin_definition,
       $container->get('shp_orchestration.client'),
-      $container->get('serializer')
+      $container->get('serializer'),
+      $container->get('config.factory')->get('shp_orchestration.settings')
     );
+  }
+
+  /**
+   * Gets the memcache service name.
+   *
+   * @param string $deployment_name
+   *   The deployment name.
+   *
+   * @return string
+   *   The service name.
+   */
+  protected static function getMemcacheServiceName(string $deployment_name) {
+    return $deployment_name . '-mc';
   }
 
   /**
@@ -89,7 +121,7 @@ class Memcached extends CacheBackendBase {
     $deployment_name = OpenShiftOrchestrationProvider::generateDeploymentName($environment->id());
     return [
       'MEMCACHE_ENABLED' => '1',
-      'MEMCACHE_HOST' => $deployment_name . '-mc' . '.svc.cluster.local',
+      'MEMCACHE_HOST' => sprintf('%s.%s.svc.cluster.local', self::getMemcacheServiceName($deployment_name), $this->namespace),
     ];
   }
 
@@ -107,7 +139,10 @@ class Memcached extends CacheBackendBase {
     }
     $name = 'memcached_node' . $environment->id();
     $data = $configMap->getData();
-    $xml = simplexml_load_string($data[$this->jdgConfigFile]);
+    if (!$xml = simplexml_load_string($data[$this->jdgConfigFile])) {
+      return;
+    }
+
     $xml->registerXPathNamespace('connectors', 'urn:infinispan:server:endpoint:9.4');
     $xml->registerXPathNamespace('dc', 'urn:infinispan:server:core:9.4');
 
@@ -125,11 +160,10 @@ class Memcached extends CacheBackendBase {
     $new_port = $max_port + 1;
 
     // Create the NetworkPolicy.
-    $datagrid_selector = 'datagrid-app';
     $network_policy = NetworkPolicy::create()
       ->setIngressMatchLabels(['app' => $deployment_name])
       // @todo make this configurable.
-      ->setPodSelectorMatchLabels(['application' => $datagrid_selector])
+      ->setPodSelectorMatchLabels(['application' => $this->datagridSelector])
       ->setPort($new_port)
       ->setName('datagrid-allow-' . $deployment_name);
     // @todo error handling.
@@ -137,8 +171,8 @@ class Memcached extends CacheBackendBase {
 
     // Create the Service.
     $this->client->createService(
-      $deployment_name . '-mc',
-      $datagrid_selector,
+      self::getMemcacheServiceName($deployment_name),
+      $this->datagridSelector,
       11211,
       $new_port,
       $deployment_name
