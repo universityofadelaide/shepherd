@@ -39,6 +39,8 @@ class Memcached extends CacheBackendBase {
   /**
    * The JGD config file.
    *
+   * TODO: make this name configurable?
+   *
    * @var string
    */
   protected $jdgConfigFile = 'standalone.xml';
@@ -61,6 +63,8 @@ class Memcached extends CacheBackendBase {
 
   /**
    * The pod selector used in network policies.
+   *
+   * TODO: make this name configurable?
    *
    * @var string
    */
@@ -144,7 +148,6 @@ class Memcached extends CacheBackendBase {
     // Create the NetworkPolicy.
     $network_policy = NetworkPolicy::create()
       ->setIngressMatchLabels(['app' => $deployment_name])
-      // @todo make this configurable.
       ->setPodSelectorMatchLabels(['application' => $this->datagridSelector])
       ->setPort($new_port)
       ->setName(self::getNetworkPolicyName($deployment_name));
@@ -165,7 +168,7 @@ class Memcached extends CacheBackendBase {
     $socket_binding->addAttribute('port', $new_port);
 
     // Add the memcache-connector element.
-    $connector_subsystem = $xml->xpath('//connectors:subsystem')[0];
+    $connector_subsystem = $xml->xpath('//c:subsystem')[0];
     $connector = $connector_subsystem->addChild('memcached-connector');
     $connector->addAttribute('name', $name);
     $connector->addAttribute('cache-container', 'clustered');
@@ -181,7 +184,7 @@ class Memcached extends CacheBackendBase {
     $distributed_cache->addAttribute('start', 'EAGER');
     $distributed_cache->addChild('memory')->addChild('object');
 
-    $data[$this->jdgConfigFile] = $xml->asXML();
+    $data[$this->jdgConfigFile] = $this->formatXml($xml);
     $configMap->setData($data);
     $this->client->updateConfigmap($configMap);
   }
@@ -207,15 +210,50 @@ class Memcached extends CacheBackendBase {
       return;
     }
     $name = self::getMemcacheName($environment);
-    $socketBindingGroup = $xml->{'socket-binding-group'};
-    foreach ($socketBindingGroup->{'socket-binding'} as $binding) {
-      if ((string) $binding->attributes()->name === $name) {
-        unset($binding[0]);
-        break;
-      }
+    // Delete the socket-binding.
+    if ($socket_binding = reset($xml->xpath(sprintf('//s:server/s:socket-binding-group/s:socket-binding[@name="%s"]', $name)))) {
+      $this->deleteXmlElement($socket_binding);
     }
-    $test = $xml->asXML();
-    $socket_binding = $socketBindingGroup->xpath(sprintf('//socket-binding[@name="%s"]', $name));
+
+    // Delete the memcache-connector.
+    if ($memcached_connector = reset($xml->xpath(sprintf('//c:subsystem/c:memcached-connector[@name="%s"]', $name)))) {
+      $this->deleteXmlElement($memcached_connector);
+    }
+
+    // Delete the distributed-cache.
+    if ($distributed_cache = reset($xml->xpath(sprintf('//dc:subsystem/dc:cache-container/dc:distributed-cache[@name="%s"]', $name)))) {
+      $this->deleteXmlElement($distributed_cache);
+    }
+
+    $test = $this->formatXml($xml);
+  }
+
+  /**
+   * Deletes an XML element.
+   *
+   * @param \SimpleXMLElement $el
+   *   The element to delete.
+   */
+  protected function deleteXmlElement(\SimpleXMLElement $el) {
+    $domRef = dom_import_simplexml($el);
+    $domRef->parentNode->removeChild($domRef);
+  }
+
+  /**
+   * Format the XML into a well formed string.
+   *
+   * @param \SimpleXMLElement $xml
+   *   The xml.
+   *
+   * @return string
+   *   Well formed XML.
+   */
+  protected function formatXml(\SimpleXMLElement $xml) {
+    $dom = new \DOMDocument("1.0");
+    $dom->preserveWhiteSpace = FALSE;
+    $dom->formatOutput = TRUE;
+    $dom->loadXML($xml->asXML());
+    return $dom->saveXML();
   }
 
   /**
@@ -235,7 +273,8 @@ class Memcached extends CacheBackendBase {
       return FALSE;
     }
     // Register namespaces to query subsystems by.
-    $xml->registerXPathNamespace('connectors', 'urn:infinispan:server:endpoint:9.4');
+    $xml->registerXPathNamespace('s', 'urn:jboss:domain:8.0');
+    $xml->registerXPathNamespace('c', 'urn:infinispan:server:endpoint:9.4');
     $xml->registerXPathNamespace('dc', 'urn:infinispan:server:core:9.4');
     return $xml;
   }
