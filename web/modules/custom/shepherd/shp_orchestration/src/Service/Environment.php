@@ -10,9 +10,11 @@ use Drupal\shp_custom\Service\EnvironmentTypeInterface;
 use Drupal\shp_custom\Service\Site as SiteEntity;
 use Drupal\shp_orchestration\Event\OrchestrationEnvironmentEvent;
 use Drupal\shp_orchestration\Event\OrchestrationEvents;
+use Drupal\shp_orchestration\ExceptionHandler;
 use Drupal\shp_orchestration\OrchestrationProviderPluginManager;
 use Drupal\taxonomy\Entity\Term;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use UniversityOfAdelaide\OpenShift\ClientException;
 
 /**
  * Class Environment.
@@ -63,6 +65,14 @@ class Environment extends EntityActionBase {
   protected $configFactory;
 
   /**
+   * The orchestration exception handler.
+   *
+   * @var \Drupal\shp_orchestration\ExceptionHandler
+   */
+  protected $exceptionHandler;
+
+
+  /**
    * Shepherd constructor.
    *
    * @param \Drupal\shp_orchestration\OrchestrationProviderPluginManager $orchestrationProviderPluginManager
@@ -79,8 +89,10 @@ class Environment extends EntityActionBase {
    *   Environment type service.
    * @param \Drupal\Core\Config\ConfigFactory $configFactory
    *   The config factory.
+   * @param \Drupal\shp_orchestration\ExceptionHandler $exceptionHandler
+   *   The exception handler service.
    */
-  public function __construct(OrchestrationProviderPluginManager $orchestrationProviderPluginManager, Configuration $configuration, EnvironmentService $environment, SiteEntity $site, EventDispatcherInterface $event_dispatcher, EnvironmentTypeInterface $environmentType, ConfigFactory $configFactory) {
+  public function __construct(OrchestrationProviderPluginManager $orchestrationProviderPluginManager, Configuration $configuration, EnvironmentService $environment, SiteEntity $site, EventDispatcherInterface $event_dispatcher, EnvironmentTypeInterface $environmentType, ConfigFactory $configFactory, ExceptionHandler $exceptionHandler) {
     parent::__construct($orchestrationProviderPluginManager);
     $this->configuration = $configuration;
     $this->environmentService = $environment;
@@ -88,6 +100,7 @@ class Environment extends EntityActionBase {
     $this->eventDispatcher = $event_dispatcher;
     $this->environmentType = $environmentType;
     $this->configFactory = $configFactory;
+    $this->exceptionHandler = $exceptionHandler;
   }
 
   /**
@@ -188,7 +201,12 @@ class Environment extends EntityActionBase {
     if (!$node->field_cache_backend->isEmpty()) {
       /** @var \Drupal\shp_cache_backend\Plugin\CacheBackendInterface $cache_backend */
       $cache_backend = $node->field_cache_backend->first()->getContainedPluginInstance();
-      $cache_backend->onEnvironmentCreate($node);
+      try {
+        $cache_backend->onEnvironmentCreate($node);
+      }
+      catch (ClientException $e) {
+        $this->exceptionHandler->handleClientException($e);
+      }
     }
 
     // Allow other modules to react to the Environment creation.

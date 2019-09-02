@@ -166,7 +166,6 @@ class Memcached extends CacheBackendBase {
       ->setPodSelectorMatchLabels(['application' => $this->datagridSelector])
       ->setPort($new_port)
       ->setName('datagrid-allow-' . $deployment_name);
-    // @todo error handling.
     $this->client->createNetworkpolicy($network_policy);
 
     // Create the Service.
