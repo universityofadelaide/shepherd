@@ -80,10 +80,8 @@ class MemcachedCacheBackendKernelTest extends KernelTestBase {
    */
   public function testOnEnvironmentCreate() {
     $this->client->expects($this->once())
-      ->with('datagrid-allow-node-123')
       ->method('createNetworkpolicy');
     $this->client->expects($this->once())
-      ->with('node-123-mc')
       ->method('createService');
     $config_map = ConfigMap::create()
       ->setData([
