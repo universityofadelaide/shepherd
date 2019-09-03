@@ -23,8 +23,8 @@
     <ini name="error_reporting" value="32767"/>
     <!-- Do not limit the amount of memory tests take to run. -->
     <ini name="memory_limit" value="-1"/>
-    <env name="SIMPLETEST_BASE_URL" value="http://web"/>
-    <env name="SIMPLETEST_DB" value="mysql://user:password@db/drupal#test_"/>
+    <env name="SIMPLETEST_BASE_URL" value="http://127.0.0.1:8000"/>
+    <env name="SIMPLETEST_DB" value="mysql://user:password@127.0.0.1/drupal"/>
     <env name="BROWSERTEST_OUTPUT_DIRECTORY" value="/tmp"/>
     <env name="SYMFONY_DEPRECATIONS_HELPER" value="weak"/>
     <const name="BOOTSTRAP_IS_PHPUNIT" value="true"/>

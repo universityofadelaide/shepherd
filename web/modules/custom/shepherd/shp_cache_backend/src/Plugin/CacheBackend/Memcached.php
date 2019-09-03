@@ -184,8 +184,7 @@ class Memcached extends CacheBackendBase {
     $distributed_cache->addAttribute('start', 'EAGER');
     $distributed_cache->addChild('memory')->addChild('object');
 
-    $data[$this->jdgConfigFile] = $this->formatXml($xml);
-    $configMap->setData($data);
+    $configMap->setDataKey($this->jdgConfigFile, $this->formatXml($xml));
     $this->client->updateConfigmap($configMap);
   }
 
@@ -211,21 +210,40 @@ class Memcached extends CacheBackendBase {
     }
     $name = self::getMemcacheName($environment);
     // Delete the socket-binding.
-    if ($socket_binding = reset($xml->xpath(sprintf('//s:server/s:socket-binding-group/s:socket-binding[@name="%s"]', $name)))) {
+    if ($socket_binding = $this->findElement($xml, sprintf('//s:server/s:socket-binding-group/s:socket-binding[@name="%s"]', $name))) {
       $this->deleteXmlElement($socket_binding);
     }
 
     // Delete the memcache-connector.
-    if ($memcached_connector = reset($xml->xpath(sprintf('//c:subsystem/c:memcached-connector[@name="%s"]', $name)))) {
+    if ($memcached_connector = $this->findElement($xml, sprintf('//c:subsystem/c:memcached-connector[@name="%s"]', $name))) {
       $this->deleteXmlElement($memcached_connector);
     }
 
     // Delete the distributed-cache.
-    if ($distributed_cache = reset($xml->xpath(sprintf('//dc:subsystem/dc:cache-container/dc:distributed-cache[@name="%s"]', $name)))) {
+    if ($distributed_cache = $this->findElement($xml, sprintf('//dc:subsystem/dc:cache-container/dc:distributed-cache[@name="%s"]', $name))) {
       $this->deleteXmlElement($distributed_cache);
     }
 
-    $test = $this->formatXml($xml);
+    $configMap->setDataKey($this->jdgConfigFile, $this->formatXml($xml));
+    $this->client->updateConfigmap($configMap);
+  }
+
+  /**
+   * Finds an element by xpath and returns the first match.
+   *
+   * @param \SimpleXMLElement $xml
+   *   The xml to search in.
+   * @param string $xpath
+   *   The xpath to search by.
+   *
+   * @return \SimpleXMLElement|false
+   *   The element, or FALSE.
+   */
+  protected function findElement(\SimpleXMLElement $xml, $xpath) {
+    if ($elements = $xml->xpath($xpath)) {
+      return reset($elements);
+    }
+    return FALSE;
   }
 
   /**
