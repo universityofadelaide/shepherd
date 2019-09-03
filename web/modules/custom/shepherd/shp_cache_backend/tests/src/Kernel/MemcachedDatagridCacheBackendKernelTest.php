@@ -5,15 +5,15 @@ namespace Drupal\Tests\shp_cache_backend\Kernel;
 use Drupal\Core\Config\ImmutableConfig;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\node\NodeInterface;
-use Drupal\shp_cache_backend\Plugin\CacheBackend\Memcached;
+use Drupal\shp_cache_backend\Plugin\CacheBackend\MemcachedDatagrid;
 use UniversityOfAdelaide\OpenShift\Client;
 use UniversityOfAdelaide\OpenShift\Objects\ConfigMap;
 use UniversityOfAdelaide\OpenShift\Objects\NetworkPolicy;
 
 /**
- * @coversDefaultClass \Drupal\shp_cache_backend\Plugin\CacheBackend\Memcached
+ * @coversDefaultClass \Drupal\shp_cache_backend\Plugin\CacheBackend\MemcachedDatagrid
  */
-class MemcachedCacheBackendKernelTest extends KernelTestBase {
+class MemcachedDatagridCacheBackendKernelTest extends KernelTestBase {
 
   /**
    * {@inheritdoc}
@@ -35,7 +35,7 @@ class MemcachedCacheBackendKernelTest extends KernelTestBase {
   /**
    * Our plugin to test.
    *
-   * @var \Drupal\shp_cache_backend\Plugin\CacheBackend\Memcached
+   * @var \Drupal\shp_cache_backend\Plugin\CacheBackend\MemcachedDatagrid
    */
   protected $plugin;
 
@@ -62,7 +62,7 @@ class MemcachedCacheBackendKernelTest extends KernelTestBase {
     $config->expects($this->any())
       ->method('get')
       ->willReturn('mynamespace');
-    $this->plugin = new Memcached([], 'test', [], $this->client, $serializer, $config);
+    $this->plugin = new MemcachedDatagrid([], 'test', [], $this->client, $serializer, $config);
   }
 
   /**

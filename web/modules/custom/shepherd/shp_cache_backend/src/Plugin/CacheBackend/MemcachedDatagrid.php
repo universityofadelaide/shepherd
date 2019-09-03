@@ -16,11 +16,11 @@ use UniversityOfAdelaide\OpenShift\Objects\NetworkPolicy;
  * Provides Redis integration.
  *
  * @CacheBackend(
- *   id = "memcached",
- *   label = @Translation("Memcached")
+ *   id = "memcached_datagrid",
+ *   label = @Translation("Memcached Datagrid")
  * )
  */
-class Memcached extends CacheBackendBase {
+class MemcachedDatagrid extends CacheBackendBase {
 
   /**
    * The serializer service.
