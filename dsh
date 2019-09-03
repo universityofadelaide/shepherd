@@ -117,7 +117,7 @@ dsh_openshift_init() {
   fi
 
   # Import jboss datagrid image.
-  if ! oc get image | grep jboss > /dev/null; then
+  if ! oc get imagestream jboss-datagrid73-openshift > /dev/null 2>&1; then
     oc import-image jboss-datagrid73-openshift --from='registry.access.redhat.com/jboss-datagrid-7/datagrid73-openshift' --confirm
   fi
 
