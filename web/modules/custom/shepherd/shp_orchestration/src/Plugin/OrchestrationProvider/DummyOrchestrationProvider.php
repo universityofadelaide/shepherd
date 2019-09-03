@@ -3,6 +3,7 @@
 namespace Drupal\shp_orchestration\Plugin\OrchestrationProvider;
 
 use Drupal\shp_orchestration\OrchestrationProviderBase;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * DummyOrchestrationProvider.
@@ -20,6 +21,13 @@ class DummyOrchestrationProvider extends OrchestrationProviderBase {
    */
   public function __construct(array $configuration, $plugin_id, $plugin_definition) {
     // Don't bother calling parent constructor.
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+    return new static($configuration, $plugin_id, $plugin_definition);
   }
 
   /**
