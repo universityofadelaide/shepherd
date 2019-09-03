@@ -6,8 +6,6 @@
  */
 
 use Drupal\node\Entity\Node;
-use Drupal\shp_orchestration\Entity\OpenShiftConfigEntity;
-use Drupal\shp_redis_support\Entity\OpenShiftWithRedisConfigEntity;
 use Drupal\taxonomy\Entity\Term;
 use Drupal\user\Entity\User;
 
@@ -52,7 +50,7 @@ $orchestration_config = \Drupal::service('config.factory')->getEditable('shp_orc
 foreach ($openshift_config as $key => $value) {
   $orchestration_config->set('connection.' . $key, $value);
 }
-$orchestration_config->set('selected_provider', 'openshift');
+$orchestration_config->set('selected_provider', 'openshift_orchestration_provider');
 $orchestration_config->save();
 
 // Force reload the orchestration plugin to clear the static cache.
@@ -166,6 +164,9 @@ if (!$env = reset($nodes)) {
     'field_shp_cpu_limit'      => [['value' => '200m']],
     'field_shp_memory_request' => [['value' => '256Mi']],
     'field_shp_memory_limit'   => [['value' => '512Mi']],
+    'field_cache_backend'      => [
+      'plugin_id' => 'redis',
+    ],
   ]);
   $env->moderation_state->value = 'published';
   $env->save();
