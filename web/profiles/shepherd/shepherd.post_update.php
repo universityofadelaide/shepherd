@@ -49,3 +49,38 @@ function _shp_import_config_from_disk($entity_type, $bundle, $field_name) {
 function shepherd_post_update_enable_drush_cmi_tools() {
   \Drupal::service('module_installer')->install(['drush_cmi_tools']);
 }
+
+
+/**
+ * Batch update paragraphs to add heading style fields in.
+ */
+function shepherd_post_update_add_cache_backend(&$sandbox) {
+  $entity_storage = \Drupal::entityTypeManager()->getStorage('node');
+  if (!isset($sandbox['progress'])) {
+    \Drupal::state()->set('shp_orchestration_update_killswitch', TRUE);
+    \Drupal::service('module_installer')->install(['plugin']);
+    _shp_import_config_from_disk('node', 'shp_environment', 'field_cache_backend');
+    $query = $entity_storage->getQuery()
+      ->condition('type', 'shp_environment');
+    $sandbox['ids'] = $query->execute();
+    $sandbox['progress'] = 0;
+    $sandbox['max'] = count($sandbox['ids']);
+  }
+  $ids = array_splice($sandbox['ids'], 0, 50);
+
+  /** @var \Drupal\node\NodeInterface $node */
+  foreach ($entity_storage->loadMultiple($ids) as $node) {
+    $node->set('field_cache_backend', [
+      'plugin_id' => 'redis',
+    ]);
+    $node->setNewRevision(FALSE);
+    $node->save();
+  }
+  $sandbox['progress'] += count($ids);
+
+  // Reset caches.
+  $sandbox['#finished'] = empty($sandbox['max']) ? 1 : ($sandbox['progress'] / $sandbox['max']);
+  if ($sandbox['#finished'] === 1) {
+    \Drupal::state()->delete('shp_orchestration_update_killswitch');
+  }
+}
