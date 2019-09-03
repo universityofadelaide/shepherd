@@ -47,38 +47,12 @@ $openshift_config = [
   'token'      => $token,
   'namespace'  => 'myproject',
   'verify_tls' => FALSE,
-  'id'         => 'openshift',
 ];
-
-// Configure OpenShift as orchestration provider.
-if ($openshift = OpenShiftConfigEntity::load('openshift')) {
-  // If config already exists, replace with current values.
-  foreach ($openshift_config as $key => $value) {
-    $openshift->set($key, $value);
-  }
-}
-else {
-  $openshift = OpenShiftConfigEntity::create($openshift_config);
-}
-$openshift->save();
-
-// Update settings to create a redis enabled version of the endpoint.
-$openshift_config['id'] = 'openshift_with_redis';
-
-// Configure OpenShift as orchestration provider.
-if ($openshift = OpenShiftWithRedisConfigEntity::load('openshift_with_redis')) {
-  // If config already exists, replace with current values.
-  foreach ($openshift_config as $key => $value) {
-    $openshift->set($key, $value);
-  }
-}
-else {
-  $openshift = OpenShiftWithRedisConfigEntity::create($openshift_config);
-}
-$openshift->save();
-
 $orchestration_config = \Drupal::service('config.factory')->getEditable('shp_orchestration.settings');
-$orchestration_config->set('selected_provider', 'openshift_with_redis');
+foreach ($openshift_config as $key => $value) {
+  $orchestration_config->set('connection.' . $key, $value);
+}
+$orchestration_config->set('selected_provider', 'openshift');
 $orchestration_config->save();
 
 // Force reload the orchestration plugin to clear the static cache.
