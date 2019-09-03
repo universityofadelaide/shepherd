@@ -56,7 +56,7 @@ dependencies:
 
   # Shepherd modules
   - shp_backup
-  - shp_cache_backends
+  - shp_cache_backend
   - shp_content_types
   - shp_custom
   - shp_database_provisioner
