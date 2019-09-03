@@ -269,4 +269,3 @@ data:
 kind: ConfigMap
 metadata:
   name: datagrid-config
-  namespace: myproject

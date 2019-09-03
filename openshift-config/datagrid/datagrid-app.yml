@@ -9,7 +9,6 @@ metadata:
     application: datagrid-app
     template: datagrid73-basic
   name: datagrid-app
-  namespace: myproject
 spec:
   replicas: 1
   revisionHistoryLimit: 10

@@ -2,7 +2,6 @@ apiVersion: extensions/v1beta1
 kind: NetworkPolicy
 metadata:
   name: jdg-allow-8778
-  namespace: myproject
 spec:
   ingress:
     - from:

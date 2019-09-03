@@ -2,7 +2,6 @@ apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
   name: jdg-allow-8888
-  namespace: myproject
 spec:
   ingress:
     - from:

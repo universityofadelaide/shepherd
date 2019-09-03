@@ -116,6 +116,16 @@ dsh_openshift_init() {
     oc apply -f ./openshift-config/shepherd-restic-repo-pvc.yml
   fi
 
+  # Import jboss datagrid image.
+  if ! oc get image | grep jboss > /dev/null; then
+    oc import-image jboss-datagrid73-openshift --from='registry.access.redhat.com/jboss-datagrid-7/datagrid73-openshift' --confirm
+  fi
+
+  # Setup datagrid config
+  if ! oc get configmap datagrid-config > /dev/null 2>&1; then
+    oc apply -f ./openshift-config/datagrid
+  fi
+
   # Add local ssh key as build-key secret if it exists and has no passphrase.
   if ! oc get secret build-key > /dev/null 2>&1 && [ -f ${BUILD_KEY} ] && ! grep -q ENCRYPTED ${BUILD_KEY}; then
     oc create secret generic build-key --from-file=ssh-privatekey=${BUILD_KEY}
