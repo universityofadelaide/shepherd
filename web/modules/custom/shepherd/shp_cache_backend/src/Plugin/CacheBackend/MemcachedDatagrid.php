@@ -159,7 +159,8 @@ class MemcachedDatagrid extends CacheBackendBase {
       $this->datagridSelector,
       11211,
       $new_port,
-      $deployment_name
+      $deployment_name,
+      ['deploymentConfig' => $this->datagridSelector]
     );
 
     // Add the socket-binding.
