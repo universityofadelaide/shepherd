@@ -1,48 +1,41 @@
-apiVersion: apps.openshift.io/v1
-kind: DeploymentConfig
+apiVersion: apps/v1
+kind: StatefulSet
 metadata:
-  annotations:
-    openshift.io/generated-by: OpenShiftNewApp
-  generation: 1
   labels:
     app: datagrid73-basic
     application: datagrid-app
     template: datagrid73-basic
   name: datagrid-app
 spec:
+  podManagementPolicy: OrderedReady
   replicas: 1
   revisionHistoryLimit: 10
   selector:
-    deploymentConfig: datagrid-app
-  strategy:
-    activeDeadlineSeconds: 21600
-    recreateParams:
-      timeoutSeconds: 600
-    resources: {}
-    type: Recreate
+    matchLabels:
+      app: datagrid73-basic
+      application: datagrid-app
+      deploymentconfig: datagrid-app
+  serviceName: datagrid-app-ping
   template:
     metadata:
-      annotations:
-        openshift.io/generated-by: OpenShiftNewApp
-      creationTimestamp: null
       labels:
         app: datagrid73-basic
         application: datagrid-app
-        deploymentConfig: datagrid-app
+        deploymentconfig: datagrid-app
       name: datagrid-app
     spec:
       containers:
         - env:
             - name: USER_CONFIG_MAP
-              value: "true"
+              value: 'true'
             - name: JGROUPS_PING_PROTOCOL
               value: openshift.DNS_PING
             - name: OPENSHIFT_DNS_PING_SERVICE_NAME
               value: datagrid-app-ping
             - name: OPENSHIFT_DNS_PING_SERVICE_PORT
-              value: "8888"
+              value: '8888'
             - name: AB_ENABLE_PROMETHEUS
-              value: "true"
+              value: 'true'
           image: 172.30.1.1:5000/myproject/jboss-datagrid73-openshift:latest
           imagePullPolicy: Always
           livenessProbe:
@@ -72,6 +65,9 @@ spec:
               protocol: TCP
             - containerPort: 11311
               name: mc-node61
+              protocol: TCP
+            - containerPort: 11314
+              name: node-8-mc
               protocol: TCP
           readinessProbe:
             exec:
@@ -106,6 +102,5 @@ spec:
             defaultMode: 420
             name: datagrid-config
           name: datagrid-config-rhnqg
-  test: false
-  triggers:
-    - type: ConfigChange
+  updateStrategy:
+    type: RollingUpdate
