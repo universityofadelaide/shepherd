@@ -16,7 +16,7 @@ spec:
       protocol: TCP
       targetPort: 8888
   selector:
-    application: datagrid-app
+    deploymentConfig: datagrid-app
   sessionAffinity: None
   type: ClusterIP
 

@@ -14,14 +14,14 @@ spec:
     matchLabels:
       app: datagrid73-basic
       application: datagrid-app
-      deploymentconfig: datagrid-app
+      deploymentConfig: datagrid-app
   serviceName: datagrid-app-ping
   template:
     metadata:
       labels:
         app: datagrid73-basic
         application: datagrid-app
-        deploymentconfig: datagrid-app
+        deploymentConfig: datagrid-app
       name: datagrid-app
     spec:
       containers:
