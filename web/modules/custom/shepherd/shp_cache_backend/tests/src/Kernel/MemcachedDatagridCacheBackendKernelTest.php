@@ -9,6 +9,8 @@ use Drupal\shp_cache_backend\Plugin\CacheBackend\MemcachedDatagrid;
 use UniversityOfAdelaide\OpenShift\Client;
 use UniversityOfAdelaide\OpenShift\Objects\ConfigMap;
 use UniversityOfAdelaide\OpenShift\Objects\NetworkPolicy;
+use UniversityOfAdelaide\OpenShift\Objects\StatefulSet;
+use UniversityOfAdelaide\OpenShift\Serializer\OpenShiftSerializerFactory;
 
 /**
  * @coversDefaultClass \Drupal\shp_cache_backend\Plugin\CacheBackend\MemcachedDatagrid
@@ -99,6 +101,17 @@ class MemcachedDatagridCacheBackendKernelTest extends KernelTestBase {
     $this->client->expects($this->once())
       ->method('updateConfigmap')
       ->with($resulting_config_map);
+    $os_serializer = OpenShiftSerializerFactory::create();
+    /** @var \UniversityOfAdelaide\OpenShift\Objects\ConfigMap $configMap */
+    $stateful_set = $os_serializer->deserialize(file_get_contents(drupal_get_path('module', 'shp_cache_backend') . '/tests/fixtures/statefulset.json'), StatefulSet::class, 'json');
+    $this->client->expects($this->once())
+      ->method('getStatefulset')
+      ->with('datagrid-app')
+      ->willReturn($stateful_set);
+    $resulting_stateful_set = $os_serializer->deserialize(file_get_contents(drupal_get_path('module', 'shp_cache_backend') . '/tests/fixtures/statefulset_with123.json'), StatefulSet::class, 'json');
+    $this->client->expects($this->once())
+      ->method('updateStatefulset')
+      ->with($resulting_stateful_set);
     $this->plugin->onEnvironmentCreate($this->environment);
   }
 
@@ -136,6 +149,17 @@ class MemcachedDatagridCacheBackendKernelTest extends KernelTestBase {
     $this->client->expects($this->once())
       ->method('updateConfigmap')
       ->with($resulting_config_map);
+    $os_serializer = OpenShiftSerializerFactory::create();
+    /** @var \UniversityOfAdelaide\OpenShift\Objects\ConfigMap $configMap */
+    $stateful_set = $os_serializer->deserialize(file_get_contents(drupal_get_path('module', 'shp_cache_backend') . '/tests/fixtures/statefulset_with123.json'), StatefulSet::class, 'json');
+    $this->client->expects($this->once())
+      ->method('getStatefulset')
+      ->with('datagrid-app')
+      ->willReturn($stateful_set);
+    $resulting_stateful_set = $os_serializer->deserialize(file_get_contents(drupal_get_path('module', 'shp_cache_backend') . '/tests/fixtures/statefulset.json'), StatefulSet::class, 'json');
+    $this->client->expects($this->once())
+      ->method('updateStatefulset')
+      ->with($resulting_stateful_set);
     $this->plugin->onEnvironmentDelete($this->environment);
   }
 

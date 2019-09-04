@@ -154,8 +154,9 @@ class MemcachedDatagrid extends CacheBackendBase {
     $this->client->createNetworkpolicy($network_policy);
 
     // Create the Service.
+    $service_name = self::getMemcacheServiceName($deployment_name);
     $this->client->createService(
-      self::getMemcacheServiceName($deployment_name),
+      $service_name,
       $this->datagridSelector,
       11211,
       $new_port,
@@ -187,6 +188,21 @@ class MemcachedDatagrid extends CacheBackendBase {
 
     $configMap->setDataKey($this->jdgConfigFile, $this->formatXml($xml));
     $this->client->updateConfigmap($configMap);
+
+    // Update the stateful set, adding the port definition for this service.
+    if (!$statefulSet = $this->client->getStatefulset($this->datagridSelector)) {
+      return;
+    }
+    $spec = $statefulSet->getSpec();
+    foreach ($spec['template']['spec']['containers'] as &$container) {
+      $container['ports'][] = [
+        'containerPort' => $new_port,
+        'name' => $service_name,
+        'protocol' => 'TCP',
+      ];
+    }
+    $statefulSet->setSpec($spec);
+    $this->client->updateStatefulset($statefulSet);
   }
 
   /**
@@ -227,6 +243,21 @@ class MemcachedDatagrid extends CacheBackendBase {
 
     $configMap->setDataKey($this->jdgConfigFile, $this->formatXml($xml));
     $this->client->updateConfigmap($configMap);
+
+    // Update the stateful set, removing the port definition for this service.
+    if (!$statefulSet = $this->client->getStatefulset($this->datagridSelector)) {
+      return;
+    }
+    $spec = $statefulSet->getSpec();
+    foreach ($spec['template']['spec']['containers'] as &$container) {
+      foreach ($container['ports'] as $pid => $port) {
+        if ($port['name'] === $service_name) {
+          unset($container['ports'][$pid]);
+        }
+      }
+    }
+    $statefulSet->setSpec($spec);
+    $this->client->updateStatefulset($statefulSet);
   }
 
   /**
