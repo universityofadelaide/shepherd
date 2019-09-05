@@ -6,6 +6,7 @@ use Drupal\Core\Config\ImmutableConfig;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\node\NodeInterface;
 use Drupal\shp_cache_backend\Plugin\CacheBackend\MemcachedDatagrid;
+use Drupal\Tests\UnitTestCase;
 use UniversityOfAdelaide\OpenShift\Client;
 use UniversityOfAdelaide\OpenShift\Objects\ConfigMap;
 use UniversityOfAdelaide\OpenShift\Objects\NetworkPolicy;
@@ -15,7 +16,7 @@ use UniversityOfAdelaide\OpenShift\Serializer\OpenShiftSerializerFactory;
 /**
  * @coversDefaultClass \Drupal\shp_cache_backend\Plugin\CacheBackend\MemcachedDatagrid
  */
-class MemcachedDatagridCacheBackendKernelTest extends KernelTestBase {
+class MemcachedDatagridCacheBackendKernelTest extends UnitTestCase {
 
   /**
    * {@inheritdoc}
@@ -54,17 +55,17 @@ class MemcachedDatagridCacheBackendKernelTest extends KernelTestBase {
   public function setUp() {
     parent::setUp();
 
+    // Set up mocks for our plugin.
     $this->environment = $this->createMock(NodeInterface::class);
     $this->environment->expects($this->any())
       ->method('id')
       ->willReturn(123);
     $this->client = $this->createMock(Client::class);
-    $serializer = \Drupal::service('serializer');
     $config = $this->createMock(ImmutableConfig::class);
     $config->expects($this->any())
       ->method('get')
       ->willReturn('mynamespace');
-    $this->plugin = new MemcachedDatagrid([], 'test', [], $this->client, $serializer, $config);
+    $this->plugin = new MemcachedDatagrid([], 'test', [], $this->client, $config);
   }
 
   /**
@@ -81,37 +82,46 @@ class MemcachedDatagridCacheBackendKernelTest extends KernelTestBase {
    * @covers ::onEnvironmentCreate
    */
   public function testOnEnvironmentCreate() {
+    $fixture_dir = __DIR__ . '/../../fixtures';
+    // The client will create a network policy and service.
     $this->client->expects($this->once())
       ->method('createNetworkpolicy');
     $this->client->expects($this->once())
       ->method('createService');
+
+    // The client will return a config map, with some XML in its data.
     $config_map = ConfigMap::create()
       ->setData([
         'something_else' => 'foo',
-        'standalone.xml' => file_get_contents(drupal_get_path('module', 'shp_cache_backend') . '/tests/fixtures/standalone.xml'),
+        'standalone.xml' => file_get_contents($fixture_dir . '/standalone.xml'),
       ]);
     $this->client->expects($this->once())
       ->method('getConfigmap')
       ->willReturn($config_map);
+    // The client will receive an updated config map, with updated XML.
     $resulting_config_map = ConfigMap::create()
       ->setData([
         'something_else' => 'foo',
-        'standalone.xml' => file_get_contents(drupal_get_path('module', 'shp_cache_backend') . '/tests/fixtures/standalone_with123.xml'),
+        'standalone.xml' => file_get_contents($fixture_dir . '/standalone_with123.xml'),
       ]);
     $this->client->expects($this->once())
       ->method('updateConfigmap')
       ->with($resulting_config_map);
+
+    // The client will return a stateful set based on a JSON fixture.
     $os_serializer = OpenShiftSerializerFactory::create();
     /** @var \UniversityOfAdelaide\OpenShift\Objects\ConfigMap $configMap */
-    $stateful_set = $os_serializer->deserialize(file_get_contents(drupal_get_path('module', 'shp_cache_backend') . '/tests/fixtures/statefulset.json'), StatefulSet::class, 'json');
+    $stateful_set = $os_serializer->deserialize(file_get_contents($fixture_dir . '/statefulset.json'), StatefulSet::class, 'json');
     $this->client->expects($this->once())
       ->method('getStatefulset')
       ->with('datagrid-app')
       ->willReturn($stateful_set);
-    $resulting_stateful_set = $os_serializer->deserialize(file_get_contents(drupal_get_path('module', 'shp_cache_backend') . '/tests/fixtures/statefulset_with123.json'), StatefulSet::class, 'json');
+    // The client will receive an updated statefulset with the new port added.
+    $resulting_stateful_set = $os_serializer->deserialize(file_get_contents($fixture_dir . '/statefulset_with123.json'), StatefulSet::class, 'json');
     $this->client->expects($this->once())
       ->method('updateStatefulset')
       ->with($resulting_stateful_set);
+
     $this->plugin->onEnvironmentCreate($this->environment);
   }
 
@@ -119,6 +129,8 @@ class MemcachedDatagridCacheBackendKernelTest extends KernelTestBase {
    * @covers ::onEnvironmentDelete
    */
   public function testOnEnvironmentDelete() {
+    $fixture_dir = __DIR__ . '/../../fixtures';
+    // The client will get and delete a network policy and service.
     $this->client->expects($this->once())
       ->method('getNetworkpolicy')
       ->with('datagrid-allow-node-123')
@@ -133,33 +145,43 @@ class MemcachedDatagridCacheBackendKernelTest extends KernelTestBase {
     $this->client->expects($this->once())
       ->method('deleteService')
       ->with('node-123-mc');
+
+    // The client will return a config map, with XML containing the
+    // environment's memcache definitions.
     $config_map = ConfigMap::create()
       ->setData([
         'something_else' => 'foo',
-        'standalone.xml' => file_get_contents(drupal_get_path('module', 'shp_cache_backend') . '/tests/fixtures/standalone_with123.xml'),
+        'standalone.xml' => file_get_contents($fixture_dir . '/standalone_with123.xml'),
       ]);
     $this->client->expects($this->once())
       ->method('getConfigmap')
       ->willReturn($config_map);
+    // The client will receive an updated config map with the environment's
+    // memcache definitions removed.
     $resulting_config_map = ConfigMap::create()
       ->setData([
         'something_else' => 'foo',
-        'standalone.xml' => file_get_contents(drupal_get_path('module', 'shp_cache_backend') . '/tests/fixtures/standalone.xml'),
+        'standalone.xml' => file_get_contents($fixture_dir . '/standalone.xml'),
       ]);
     $this->client->expects($this->once())
       ->method('updateConfigmap')
       ->with($resulting_config_map);
+
+    // The client will return a stateful set containing the environment's port.
     $os_serializer = OpenShiftSerializerFactory::create();
     /** @var \UniversityOfAdelaide\OpenShift\Objects\ConfigMap $configMap */
-    $stateful_set = $os_serializer->deserialize(file_get_contents(drupal_get_path('module', 'shp_cache_backend') . '/tests/fixtures/statefulset_with123.json'), StatefulSet::class, 'json');
+    $stateful_set = $os_serializer->deserialize(file_get_contents($fixture_dir . '/statefulset_with123.json'), StatefulSet::class, 'json');
     $this->client->expects($this->once())
       ->method('getStatefulset')
       ->with('datagrid-app')
       ->willReturn($stateful_set);
-    $resulting_stateful_set = $os_serializer->deserialize(file_get_contents(drupal_get_path('module', 'shp_cache_backend') . '/tests/fixtures/statefulset.json'), StatefulSet::class, 'json');
+    // The client will receive a stateful set with the environment's port
+    // removed.
+    $resulting_stateful_set = $os_serializer->deserialize(file_get_contents($fixture_dir . '/statefulset.json'), StatefulSet::class, 'json');
     $this->client->expects($this->once())
       ->method('updateStatefulset')
       ->with($resulting_stateful_set);
+
     $this->plugin->onEnvironmentDelete($this->environment);
   }
 

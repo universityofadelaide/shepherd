@@ -23,13 +23,6 @@ use UniversityOfAdelaide\OpenShift\Objects\NetworkPolicy;
 class MemcachedDatagrid extends CacheBackendBase {
 
   /**
-   * The serializer service.
-   *
-   * @var \Symfony\Component\Serializer\Serializer
-   */
-  protected $serializer;
-
-  /**
    * The namespace objects are being created in.
    *
    * @var string
@@ -81,14 +74,11 @@ class MemcachedDatagrid extends CacheBackendBase {
    *   The plugin implementation definition.
    * @param \UniversityOfAdelaide\OpenShift\Client $client
    *   The OS Client.
-   * @param \Symfony\Component\Serializer\Serializer $serializer
-   *   The serializer service.
    * @param \Drupal\Core\Config\ImmutableConfig $config
    *   The orchestration config.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, Client $client, Serializer $serializer, ImmutableConfig $config) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, Client $client, ImmutableConfig $config) {
     parent::__construct($configuration, $plugin_id, $plugin_definition, $client);
-    $this->serializer = $serializer;
     $this->namespace = $config->get('connection.namespace');
   }
 
@@ -101,7 +91,6 @@ class MemcachedDatagrid extends CacheBackendBase {
       $plugin_id,
       $plugin_definition,
       $container->get('shp_orchestration.client'),
-      $container->get('serializer'),
       $container->get('config.factory')->get('shp_orchestration.settings')
     );
   }
