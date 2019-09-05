@@ -3,7 +3,6 @@
 namespace Drupal\Tests\shp_cache_backend\Kernel;
 
 use Drupal\Core\Config\ImmutableConfig;
-use Drupal\KernelTests\KernelTestBase;
 use Drupal\node\NodeInterface;
 use Drupal\shp_cache_backend\Plugin\CacheBackend\MemcachedDatagrid;
 use Drupal\Tests\UnitTestCase;
