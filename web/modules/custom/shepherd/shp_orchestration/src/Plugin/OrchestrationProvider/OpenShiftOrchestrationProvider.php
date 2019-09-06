@@ -283,40 +283,20 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     // Get the volumes and include the backups this time.
     $cron_volumes = $this->generateVolumeData($project_name, $deployment_name, $secrets, TRUE);
 
-    // Retrieve image stream that will be used for this site. There is only a
-    // tiny chance it will be different to the deployment config image.
-    $image_stream = $this->client->getImageStream($sanitised_project_name);
-    if (is_array($image_stream) && isset($image_stream['status']['tags'])) {
-      // Look through the image stream tags to find the one being deployed.
-      foreach ($image_stream['status']['tags'] as $index => $images) {
-        if ($images['tag'] === $sanitised_source_ref) {
-          // Got one! [0] is the most recently created image.
-          if ($image = $images['items'][0]['dockerImageReference'] ?? FALSE) {
-            $this->createCronJobs(
-              $deployment_name,
-              $cron_suspended,
-              $cron_jobs,
-              $image,
-              $cron_volumes,
-              $deploy_data
-            );
-          }
-        }
-      }
+    $image = $this->getImageStreamImage($sanitised_project_name, $sanitised_source_ref);
+    if ($image) {
+      $this->createCronJobs(
+        $deployment_name,
+        $cron_suspended,
+        $cron_jobs,
+        $image,
+        $cron_volumes,
+        $deploy_data
+      );
+      $this->client->instantiateDeploymentConfig($deployment_name);
     }
     else {
-      $this->messenger->addStatus(t('Build not yet complete, cron jobs cannot be created yet.'));
-    }
-
-    if (!$update_on_image_change) {
-      // We need to check if the image is already 'built', or we get an error.
-      $build_status = $this->client->getBuilds('', 'buildconfig=' . $build_config_name);
-      if (count($build_status['items']) && $build_status['items'][0]['status']['phase'] === 'Complete') {
-        $this->client->instantiateDeploymentConfig($deployment_name);
-      }
-      else {
-        $this->messenger->addStatus(t('Build not yet complete, manual triggering of deployment will be required.'));
-      }
+      $this->messenger->addStatus(t('Image unavailable, deployment and cron jobs cannot be completed.'));
     }
 
     // @todo - make port a var and great .. so great .. yuge!
@@ -335,6 +315,22 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     }
 
     return TRUE;
+  }
+
+  protected function getImageStreamImage($sanitised_project_name, $sanitised_source_ref) {
+    // Retrieve image stream that will be used for this site. There is only a
+    // tiny chance it will be different to the deployment config image.
+    $image_stream = $this->client->getImageStream($sanitised_project_name);
+    if (is_array($image_stream) && isset($image_stream['status']['tags'])) {
+      // Look through the image stream tags to find the one being deployed.
+      foreach ($image_stream['status']['tags'] as $index => $images) {
+        if ($images['tag'] === $sanitised_source_ref) {
+          // Got one! [0] is the most recently created image.
+          return $images['items'][0]['dockerImageReference'] ?? FALSE;
+        }
+      }
+    }
+    return FALSE;
   }
 
   /**
