@@ -317,6 +317,19 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     return TRUE;
   }
 
+  /**
+   * Returns the specific image definition from an image stream.
+   *
+   * @param $sanitised_project_name
+   *   The project name.
+   * @param $sanitised_source_ref
+   *   The source ref.
+   *
+   * @return array|bool
+   *   Image definition if exists otherwise FALSE.
+   *
+   * @throws \UniversityOfAdelaide\OpenShift\ClientException
+   */
   protected function getImageStreamImage($sanitised_project_name, $sanitised_source_ref) {
     // Retrieve image stream that will be used for this site. There is only a
     // tiny chance it will be different to the deployment config image.
