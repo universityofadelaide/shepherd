@@ -50,6 +50,7 @@ RoboFileBase.php
 /*/node_modules
 /node_modules
 /**/node_modules
+/docker
 
 # Ignore OSX specific folders
 shared
