@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\Tests\shp_cache_backend\Kernel;
+namespace Drupal\Tests\shp_cache_backend\Unit;
 
 use Drupal\Core\Config\ImmutableConfig;
 use Drupal\node\NodeInterface;
@@ -14,8 +14,9 @@ use UniversityOfAdelaide\OpenShift\Serializer\OpenShiftSerializerFactory;
 
 /**
  * @coversDefaultClass \Drupal\shp_cache_backend\Plugin\CacheBackend\MemcachedDatagrid
+ * @group shepherd
  */
-class MemcachedDatagridCacheBackendKernelTest extends UnitTestCase {
+class MemcachedDatagridCacheBackendTest extends UnitTestCase {
 
   /**
    * {@inheritdoc}
