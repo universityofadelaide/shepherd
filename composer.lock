@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "4ef233b99abeca2ad5d85f4faea24a11",
+    "content-hash": "0e2ebc0d3b326565a840becb3eb92e8a",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -2648,6 +2648,72 @@
                 "source": "https://git.drupalcode.org/project/log_stdout",
                 "issues": "https://www.drupal.org/project/issues/log_stdout",
                 "irc": "irc://irc.freenode.org/drupal-support"
+            }
+        },
+        {
+            "name": "drupal/plugin",
+            "version": "2.6.0",
+            "source": {
+                "type": "git",
+                "url": "https://git.drupalcode.org/project/plugin.git",
+                "reference": "8.x-2.6"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://ftp.drupal.org/files/projects/plugin-8.x-2.6.zip",
+                "reference": "8.x-2.6",
+                "shasum": "703b976e6158c2b3e5cd6d7f6358f82ed411689f"
+            },
+            "require": {
+                "drupal/core": "~8.0 || >= 8.0.5",
+                "php": "~5.5|~7.0"
+            },
+            "type": "drupal-module",
+            "extra": {
+                "branch-alias": {
+                    "dev-2.x": "2.x-dev"
+                },
+                "drupal": {
+                    "version": "8.x-2.6",
+                    "datestamp": "1558296181",
+                    "security-coverage": {
+                        "status": "covered",
+                        "message": "Covered by Drupal's security advisory policy"
+                    }
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Drupal\\plugin\\": "src"
+                }
+            },
+            "autoload-dev": {
+                "psr-4": {
+                    "Drupal\\Tests\\plugin\\": "tests/src"
+                }
+            },
+            "notification-url": "https://packages.drupal.org/8/downloads",
+            "license": [
+                "GPL-2.0"
+            ],
+            "authors": [
+                {
+                    "name": "Berdir",
+                    "homepage": "https://www.drupal.org/user/214652"
+                },
+                {
+                    "name": "bradjones1",
+                    "homepage": "https://www.drupal.org/user/405824"
+                },
+                {
+                    "name": "joachim",
+                    "homepage": "https://www.drupal.org/user/107701"
+                }
+            ],
+            "description": "Provides tools that extend Drupal's plugin system.",
+            "homepage": "https://www.drupal.org/project/plugin",
+            "support": {
+                "source": "https://git.drupalcode.org/project/plugin"
             }
         },
         {
@@ -5973,16 +6039,16 @@
         },
         {
             "name": "universityofadelaide/shepherd-drupal-scaffold",
-            "version": "2.4.2",
+            "version": "3.6.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/universityofadelaide/shepherd-drupal-scaffold.git",
-                "reference": "f5a17abeefa6c1044366b370a9e694c5927687e5"
+                "reference": "66316e03e3cade57446c45a4efe726780f192433"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/universityofadelaide/shepherd-drupal-scaffold/zipball/f5a17abeefa6c1044366b370a9e694c5927687e5",
-                "reference": "f5a17abeefa6c1044366b370a9e694c5927687e5",
+                "url": "https://api.github.com/repos/universityofadelaide/shepherd-drupal-scaffold/zipball/66316e03e3cade57446c45a4efe726780f192433",
+                "reference": "66316e03e3cade57446c45a4efe726780f192433",
                 "shasum": ""
             },
             "require": {
@@ -6006,7 +6072,7 @@
                 "GPL-2.0+"
             ],
             "description": "Composer Plugin for updating the Shepherd Drupal tools.",
-            "time": "2019-06-05T22:18:19+00:00"
+            "time": "2019-09-18T06:29:43+00:00"
         },
         {
             "name": "webflo/drupal-finder",
@@ -8832,8 +8898,7 @@
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
-        "composer-plugin-api": "^1.0",
-        "php": ">=7.0.0"
+        "composer-plugin-api": "^1.0"
     },
     "platform-dev": [],
     "platform-overrides": {
