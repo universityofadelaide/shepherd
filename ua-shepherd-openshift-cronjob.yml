@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: Template
 objects:
-- apiVersion: batch/v2alpha1
+- apiVersion: batch/v1beta1
   kind: CronJob
   metadata:
     labels:
@@ -71,7 +71,7 @@ objects:
                 secret:
                   secretName: shepherd-db-password
                   defaultMode: 420
-- apiVersion: batch/v2alpha1
+- apiVersion: batch/v1beta1
   kind: CronJob
   metadata:
     labels:
@@ -145,7 +145,7 @@ parameters:
   - name: DATABASE_HOST
     description: The database host to use. Change this if you do not wish to use the MySQL service deployed as part of this application.
     required: true
-    value: mariadb-web-prd2.adelaide.edu.au
+    value: mariadb-drup-prd.adelaide.edu.au
   - name: DATABASE_PORT
     required: true
     value: '3306'
