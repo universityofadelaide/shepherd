@@ -61,8 +61,29 @@ class SettingsForm extends ConfigFormBase {
       '#description' => t('The name of the secret in which the privileged user password is stored. Fetched from the orchestration provider.'),
       '#default_value' => $config->get('secret'),
     ];
+    $form['options'] = [
+      '#type' => 'textarea',
+      '#title' => t('Options'),
+      '#description' => t('A list of options to supply to the create. Enter one kay-value pair per line, in the format MAX_USER_CONNECTIONS 20'),
+      '#default_value' => $config->get('options'),
+    ];
 
     return parent::buildForm($form, $form_state);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function validateForm(array &$form, FormStateInterface $form_state) {
+    // Attempt to create a test user and notify user if there's a problem.
+
+
+    if ($error = user_validate_name($form_state->getValue(['account', 'name']))) {
+      $form_state->setErrorByName('account][name', $error);
+    }
+
+
+    parent::validateForm($form, $form_state);
   }
 
   /**
@@ -75,6 +96,7 @@ class SettingsForm extends ConfigFormBase {
       ->set('port', $form_state->getValue(['port']))
       ->set('user', $form_state->getValue(['user']))
       ->set('secret', $form_state->getValue(['secret']))
+      ->set('options', $form_state->getValue(['options']))
       ->save();
 
     parent::submitForm($form, $form_state);

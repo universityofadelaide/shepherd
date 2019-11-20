@@ -17,3 +17,6 @@ shp_database_provisioner.settings:
     secret:
       type: string
       label: 'Secret'
+    options:
+      type: string
+      label: 'Options'
