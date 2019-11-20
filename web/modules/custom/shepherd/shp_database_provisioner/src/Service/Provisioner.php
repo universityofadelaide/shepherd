@@ -50,9 +50,13 @@ class Provisioner {
    * Provisioner constructor.
    *
    * @param \Drupal\Core\Config\ConfigFactoryInterface $configFactory
+   *   Config factory service.
    * @param \Drupal\shp_orchestration\OrchestrationProviderPluginManagerInterface $orchestrationProviderPluginManager
+   *   Orchestration provider plugin manager.
    * @param \Drupal\shp_custom\Service\Environment $environmentService
+   *   Environment service.
    * @param \Drupal\shp_custom\Service\StringGenerator $stringGenerator
+   *   String generator service.
    */
   public function __construct(ConfigFactoryInterface $configFactory, OrchestrationProviderPluginManagerInterface $orchestrationProviderPluginManager, Environment $environmentService, StringGenerator $stringGenerator) {
     $this->configFactory = $configFactory;
