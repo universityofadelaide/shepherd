@@ -2,13 +2,66 @@
 
 namespace Drupal\shp_database_provisioner\Form;
 
+use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\shp_custom\Service\StringGenerator;
+use Drupal\shp_database_provisioner\Service\Provisioner;
+use Drupal\shp_orchestration\OrchestrationProviderInterface;
+use Drupal\shp_orchestration\OrchestrationProviderPluginManagerInterface;
+use mysqli;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Configure Database provisioner settings.
  */
 class SettingsForm extends ConfigFormBase {
+
+  /**
+   * @var \Drupal\shp_database_provisioner\Service\Provisioner
+   */
+  protected $provisioner;
+
+  /**
+   * @var \Drupal\shp_custom\Service\StringGenerator
+   */
+  protected $stringGenerator;
+
+  /**
+   * @var object
+   */
+  protected $orchestrationProvider;
+
+  /**
+   * PrintQuotaTopupForm constructor.
+   *
+   * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
+   *   Config factory.
+   * @param \Drupal\shp_database_provisioner\Service\Provisioner $provisioner
+   *   Database provisioner.
+   * @param \Drupal\shp_custom\Service\StringGenerator $string_generator
+   *   String generator.
+   * @param \Drupal\shp_orchestration\OrchestrationProviderPluginManagerInterface $orchestration_provider_plugin_manager
+   *   Orchestration provider plugin manager.
+   */
+  public function __construct(ConfigFactoryInterface $config_factory, Provisioner $provisioner, StringGenerator $string_generator, OrchestrationProviderPluginManagerInterface $orchestration_provider_plugin_manager) {
+    parent::__construct($config_factory);
+    $this->provisioner = $provisioner;
+    $this->stringGenerator = $string_generator;
+    $this->orchestrationProvider = $orchestration_provider_plugin_manager->getProviderInstance();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container) {
+    return new static(
+      $container->get('config.factory'),
+      $container->get('shp_database_provisioner.provisioner'),
+      $container->get('shp_custom.string_generator'),
+      $container->get('plugin.manager.orchestration_provider')
+    );
+  }
 
   /**
    * {@inheritdoc}
@@ -76,13 +129,22 @@ class SettingsForm extends ConfigFormBase {
    */
   public function validateForm(array &$form, FormStateInterface $form_state) {
     // Attempt to create a test user and notify user if there's a problem.
-
-
-    if ($error = user_validate_name($form_state->getValue(['account', 'name']))) {
-      $form_state->setErrorByName('account][name', $error);
+    $privileged_password = $this->orchestrationProvider->getSecret($form_state->getValue(['secret']),
+      'DATABASE_PASSWORD');
+    $db = new mysqli(
+      $form_state->getValue(['host']),
+      $form_state->getValue(['user']),
+      $privileged_password,
+      NULL,
+      $form_state->getValue(['port']),
+      NULL
+    );
+    $test_database = 'shepherd_test';
+    $success = $this->provisioner->createDatabase($test_database, $db) &&
+      $this->provisioner->createUser($test_database, $test_database, $this->stringGenerator->generateRandomPassword(), $db);
+    if (!$success) {
+      $form_state->setError($form, 'Could not create a test database and user. Confirm the secret exists and details are correct.');
     }
-
-
     parent::validateForm($form, $form_state);
   }
 
