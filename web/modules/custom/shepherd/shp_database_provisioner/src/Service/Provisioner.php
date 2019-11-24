@@ -13,9 +13,13 @@ class Provisioner {
 
   // Secret key names used to store database credentials.
   public const ENV_MYSQL_HOSTNAME = 'DATABASE_HOST';
+
   public const ENV_MYSQL_PORT = 'DATABASE_PORT';
+
   public const ENV_MYSQL_DATABASE = 'DATABASE_NAME';
+
   public const ENV_MYSQL_USERNAME = 'DATABASE_USER';
+
   public const ENV_MYSQL_PASSWORD = 'DATABASE_PASSWORD';
 
   /**
@@ -58,7 +62,12 @@ class Provisioner {
    * @param \Drupal\shp_custom\Service\StringGenerator $stringGenerator
    *   String generator service.
    */
-  public function __construct(ConfigFactoryInterface $configFactory, OrchestrationProviderPluginManagerInterface $orchestrationProviderPluginManager, Environment $environmentService, StringGenerator $stringGenerator) {
+  public function __construct(
+    ConfigFactoryInterface $configFactory,
+    OrchestrationProviderPluginManagerInterface $orchestrationProviderPluginManager,
+    Environment $environmentService,
+    StringGenerator $stringGenerator
+  ) {
     $this->configFactory = $configFactory;
     $this->orchestrationProviderPlugin = $orchestrationProviderPluginManager->getProviderInstance();
     $this->environmentService = $environmentService;
@@ -96,15 +105,18 @@ class Provisioner {
     $host = $config->get('host');
     $port = $config->get('port');
     // Save the credentials in a secret for use by the environment.
-    if (!$this->setSecret($host, $port, $database, $username, $password, $deployment_name)) {
+    if (!$this->setSecret($host, $port, $database, $username, $password,
+      $deployment_name)) {
       // @todo Handle errors.
       return FALSE;
     }
 
     // Fetch privileged database password from orchestration secret store.
     $privileged_username = $config->get('user');
-    $privileged_password = $this->orchestrationProviderPlugin->getSecret($config->get('secret'), 'DATABASE_PASSWORD');
-    $db = new mysqli($host, $privileged_username, $privileged_password, NULL, $port, NULL);
+    $privileged_password = $this->orchestrationProviderPlugin->getSecret($config->get('secret'),
+      'DATABASE_PASSWORD');
+    $db = new mysqli($host, $privileged_username, $privileged_password, NULL,
+      $port, NULL);
 
     return $this->createDatabase($database, $db) &&
       $this->createUser($database, $username, $password, $db);
@@ -178,6 +190,27 @@ class Provisioner {
   }
 
   /**
+   * Create a database for the environment.
+   *
+   * @param string $database
+   *   Database name.
+   * @param \mysqli $db
+   *   Privileged database connection.
+   *
+   * @return bool
+   *   True on success otherwise false.
+   */
+  public function dropDatabase(string $database, mysqli $db): bool {
+    $query = sprintf('DROP DATABASE `%s`', $database);
+    $statement = $db->prepare($query);
+    if ($statement === NULL) {
+      // @todo Handle errors.
+      return FALSE;
+    }
+    return $statement->execute();
+  }
+
+  /**
    * Creates a database user and privileges for the environment.
    *
    * @param string $database
@@ -203,6 +236,33 @@ class Provisioner {
       $database,
       $username,
       $password
+    );
+    $statement = $db->prepare($query);
+    if ($statement === NULL) {
+      // @todo Handle errors.
+      return FALSE;
+    }
+    return $statement->execute();
+  }
+
+  /**
+   * Creates a database user and privileges for the environment.
+   *
+   * @param string $username
+   *   Environment database user name.
+   * @param \mysqli $db
+   *   Privileged database connection.
+   *
+   * @return bool
+   *   True on success otherwise false.
+   */
+  public function dropUser(
+    string $username,
+    mysqli $db
+  ): bool {
+    $query = sprintf(
+      "DROP USER `%s`@`%%`",
+      $username
     );
     $statement = $db->prepare($query);
     if ($statement === NULL) {

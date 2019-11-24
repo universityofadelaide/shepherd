@@ -127,6 +127,22 @@ class SettingsForm extends ConfigFormBase {
   /**
    * {@inheritdoc}
    */
+  public function submitForm(array &$form, FormStateInterface $form_state) {
+    $this->config('shp_database_provisioner.settings')
+      ->set('enabled', $form_state->getValue(['enabled']))
+      ->set('host', $form_state->getValue(['host']))
+      ->set('port', $form_state->getValue(['port']))
+      ->set('user', $form_state->getValue(['user']))
+      ->set('secret', $form_state->getValue(['secret']))
+      ->set('options', $form_state->getValue(['options']))
+      ->save();
+
+    parent::submitForm($form, $form_state);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function validateForm(array &$form, FormStateInterface $form_state) {
     // Attempt to create a test user and notify user if there's a problem.
     $privileged_password = $this->orchestrationProvider->getSecret($form_state->getValue(['secret']),
@@ -140,28 +156,19 @@ class SettingsForm extends ConfigFormBase {
       NULL
     );
     $test_database = 'shepherd_test';
+    // Create a user and database, and clean up.
     $success = $this->provisioner->createDatabase($test_database, $db) &&
-      $this->provisioner->createUser($test_database, $test_database, $this->stringGenerator->generateRandomPassword(), $db);
-    if (!$success) {
+      $this->provisioner->createUser($test_database, $test_database, $this->stringGenerator->generateRandomPassword(), $db) &&
+      $this->provisioner->dropDatabase($test_database, $db) &&
+      $this->provisioner->dropUser($test_database, $db);
+
+    if ($success) {
+      $this->messenger()->addStatus(t('Successfully connected to the database.'));
+    }
+    else {
       $form_state->setError($form, 'Could not create a test database and user. Confirm the secret exists and details are correct.');
     }
     parent::validateForm($form, $form_state);
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function submitForm(array &$form, FormStateInterface $form_state) {
-    $this->config('shp_database_provisioner.settings')
-      ->set('enabled', $form_state->getValue(['enabled']))
-      ->set('host', $form_state->getValue(['host']))
-      ->set('port', $form_state->getValue(['port']))
-      ->set('user', $form_state->getValue(['user']))
-      ->set('secret', $form_state->getValue(['secret']))
-      ->set('options', $form_state->getValue(['options']))
-      ->save();
-
-    parent::submitForm($form, $form_state);
   }
 
 }
