@@ -221,6 +221,8 @@ class Provisioner {
    *   Environment database password.
    * @param \mysqli $db
    *   Privileged database connection.
+   * @param string $options
+   *   Grant options.
    *
    * @return bool
    *   True on success otherwise false.
@@ -229,7 +231,8 @@ class Provisioner {
     string $database,
     string $username,
     string $password,
-    mysqli $db
+    mysqli $db,
+    string $options = ''
   ): bool {
     $query = sprintf(
       "GRANT ALL PRIVILEGES ON `%s`.* TO `%s`@`%%` IDENTIFIED BY '%s'",
@@ -237,6 +240,10 @@ class Provisioner {
       $username,
       $password
     );
+    if (!empty($options)) {
+      $query .= sprintf(' WITH %s', $options);
+    }
+
     $statement = $db->prepare($query);
     if ($statement === NULL) {
       // @todo Handle errors.

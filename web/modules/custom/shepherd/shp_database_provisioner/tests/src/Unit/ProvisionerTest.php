@@ -81,13 +81,13 @@ class ProvisionerTest extends UnitTestCase {
    *
    * @dataProvider createUserInputData
    */
-  public function testCreateUser($database, $username, $password, $expected_output) {
+  public function testCreateUser($database, $username, $password, $options, $expected_output) {
     $dbMock = $this->getMockBuilder('mysqli')
       ->getMock();
     $dbMock->expects($this->once())
       ->method('prepare')
       ->with($expected_output);
-    $this->provisioner->createUser($database, $username, $password, $dbMock);
+    $this->provisioner->createUser($database, $username, $password, $dbMock, $options);
 
   }
 
@@ -100,8 +100,23 @@ class ProvisionerTest extends UnitTestCase {
         'foo',
         'bar',
         'meh',
+        '',
         'GRANT ALL PRIVILEGES ON `foo`.* TO `bar`@`%` IDENTIFIED BY \'meh\'',
-      ]
+      ],
+      [
+        'foo',
+        'bar',
+        'meh',
+        'MAX_USER_CONNECTIONS 20',
+        'GRANT ALL PRIVILEGES ON `foo`.* TO `bar`@`%` IDENTIFIED BY \'meh\' WITH MAX_USER_CONNECTIONS 20',
+      ],
+      [
+        'foo',
+        'bar',
+        'meh',
+        "MAX_USER_CONNECTIONS 20\nMAX_QUERIES_PER_HOUR 10",
+        "GRANT ALL PRIVILEGES ON `foo`.* TO `bar`@`%` IDENTIFIED BY 'meh' WITH MAX_USER_CONNECTIONS 20\nMAX_QUERIES_PER_HOUR 10",
+      ],
     ];
   }
 

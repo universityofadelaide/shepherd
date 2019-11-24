@@ -5,6 +5,8 @@ namespace Drupal\shp_database_provisioner\Form;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Link;
+use Drupal\Core\Url;
 use Drupal\shp_custom\Service\StringGenerator;
 use Drupal\shp_database_provisioner\Service\Provisioner;
 use Drupal\shp_orchestration\OrchestrationProviderInterface;
@@ -117,7 +119,8 @@ class SettingsForm extends ConfigFormBase {
     $form['options'] = [
       '#type' => 'textarea',
       '#title' => t('Options'),
-      '#description' => t('A list of options to supply to the create. Enter one kay-value pair per line, in the format MAX_USER_CONNECTIONS 20'),
+      '#description' => t('A list of <a href=":user_resources_url">user resource</a> limit options. Enter one kay-value pair per line, in the format MAX_USER_CONNECTIONS 20',
+        [':user_resources_url' => 'https://dev.mysql.com/doc/refman/8.0/en/user-resources.html']),
       '#default_value' => $config->get('options'),
     ];
 
