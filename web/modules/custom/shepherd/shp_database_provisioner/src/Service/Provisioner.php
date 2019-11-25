@@ -104,6 +104,7 @@ class Provisioner {
 
     $host = $config->get('host');
     $port = $config->get('port');
+    $options = $config->get('options');
     // Save the credentials in a secret for use by the environment.
     if (!$this->setSecret($host, $port, $database, $username, $password,
       $deployment_name)) {
@@ -119,7 +120,7 @@ class Provisioner {
       $port, NULL);
 
     return $this->createDatabase($database, $db) &&
-      $this->createUser($database, $username, $password, $db);
+      $this->createUser($database, $username, $password, $db, $options);
   }
 
   /**
@@ -245,7 +246,7 @@ class Provisioner {
     }
 
     $statement = $db->prepare($query);
-    if ($statement === NULL) {
+    if ($statement === NULL || $statement === FALSE) {
       // @todo Handle errors.
       return FALSE;
     }

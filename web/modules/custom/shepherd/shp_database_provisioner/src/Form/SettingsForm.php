@@ -161,7 +161,7 @@ class SettingsForm extends ConfigFormBase {
     $test_database = 'shepherd_test';
     // Create a user and database, and clean up.
     $success = $this->provisioner->createDatabase($test_database, $db) &&
-      $this->provisioner->createUser($test_database, $test_database, $this->stringGenerator->generateRandomPassword(), $db) &&
+      $this->provisioner->createUser($test_database, $test_database, $this->stringGenerator->generateRandomPassword(), $db, $form_state->getValue('options')) &&
       $this->provisioner->dropDatabase($test_database, $db) &&
       $this->provisioner->dropUser($test_database, $db);
 
@@ -170,6 +170,9 @@ class SettingsForm extends ConfigFormBase {
     }
     else {
       $form_state->setError($form, 'Could not create a test database and user. Confirm the secret exists and details are correct.');
+      // Always try to clean up.
+      $this->provisioner->dropDatabase($test_database, $db) ||
+      $this->provisioner->dropUser($test_database, $db);
     }
     parent::validateForm($form, $form_state);
   }
