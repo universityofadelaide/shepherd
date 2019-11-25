@@ -183,7 +183,7 @@ class Provisioner {
   public function createDatabase(string $database, mysqli $db): bool {
     $query = sprintf('CREATE DATABASE `%s`', $database);
     $statement = $db->prepare($query);
-    if ($statement === NULL) {
+    if ($statement === NULL || $statement === FALSE) {
       // @todo Handle errors.
       return FALSE;
     }
@@ -204,7 +204,7 @@ class Provisioner {
   public function dropDatabase(string $database, mysqli $db): bool {
     $query = sprintf('DROP DATABASE `%s`', $database);
     $statement = $db->prepare($query);
-    if ($statement === NULL) {
+    if ($statement === NULL || $statement === FALSE) {
       // @todo Handle errors.
       return FALSE;
     }
@@ -273,7 +273,7 @@ class Provisioner {
       $username
     );
     $statement = $db->prepare($query);
-    if ($statement === NULL) {
+    if ($statement === NULL || $statement === FALSE) {
       // @todo Handle errors.
       return FALSE;
     }
