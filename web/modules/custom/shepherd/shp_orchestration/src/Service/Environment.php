@@ -191,7 +191,7 @@ class Environment extends EntityActionBase {
 
     // If this is a production environment, promote it immediately.
     $environment_term = Term::load($node->field_shp_environment_type->target_id);
-    if ($environment_term->field_shp_protect->value == TRUE) {
+    if ($environment_term->field_shp_protect->value === TRUE) {
       $this->promoted($site, $node, TRUE, FALSE);
     }
 
@@ -362,7 +362,7 @@ class Environment extends EntityActionBase {
     }
 
     // Finally Update the environment that was promoted if we need to.
-    if ($environment->field_shp_environment_type->target_id != $promoted_term->id()) {
+    if ($environment->field_shp_environment_type->target_id !== $promoted_term->id()) {
       $environment->field_shp_environment_type = [['target_id' => $promoted_term->id()]];
       $environment->save();
     }

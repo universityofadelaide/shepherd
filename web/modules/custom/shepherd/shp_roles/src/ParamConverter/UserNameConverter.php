@@ -39,7 +39,7 @@ class UserNameConverter extends EntityConverter {
       $entity_type_id = 'user';
       if (strpos($definition['type'], '{') !== FALSE) {
         $entity_type_slug = substr($entity_type_id, 1, -1);
-        return $name != $entity_type_slug && in_array($entity_type_slug, $route->compile()->getVariables(), TRUE);
+        return $name !== $entity_type_slug && in_array($entity_type_slug, $route->compile()->getVariables(), TRUE);
       }
       return $this->entityManager->hasDefinition($entity_type_id);
     }
