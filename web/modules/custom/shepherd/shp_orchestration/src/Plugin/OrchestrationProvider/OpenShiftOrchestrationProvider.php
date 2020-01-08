@@ -9,6 +9,7 @@ use Drupal\node\Entity\Node;
 use Drupal\shp_backup\Service\Backup as BackupService;
 use Drupal\shp_custom\Service\StringGenerator;
 use Drupal\shp_orchestration\OrchestrationProviderBase;
+use phpDocumentor\Reflection\Types\This;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use UniversityOfAdelaide\OpenShift\Client as OpenShiftClient;
 use UniversityOfAdelaide\OpenShift\ClientException;
@@ -30,6 +31,17 @@ use UniversityOfAdelaide\OpenShift\Objects\Label;
  * )
  */
 class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
+
+  /**
+   * Define keys used for MySQL connectivity by the backup operator.
+   *
+   * @see https://github.com/universityofadelaide/shepherd-operator/blob/master/pkg/apis/meta/v1/types.go#L34
+   */
+  protected const KeyMySQLHostname = 'hostname';
+  protected const KeyMySQLDatabase = 'database';
+  protected const KeyMySQLPort = 'port';
+  protected const KeyMySQLUsername = 'username';
+  protected const KeyMySQLPassword = 'password';
 
   /**
    * OpenShift client.
@@ -599,11 +611,11 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       ->setId('default')
       ->setSecretName($deployment_name)
       ->setSecretKeys([
-        KeyMySQLHostname => EnvMySQLHostname,
-        KeyMySQLDatabase => EnvMySQLDatabase,
-        KeyMySQLPort => EnvMySQLPort,
-        KeyMySQLUsername => EnvMySQLUsername,
-        KeyMySQLPassword => EnvMySQLPassword,
+        $this::KeyMySQLHostname => 'DATABASE_HOST',
+        $this::KeyMySQLDatabase => 'DATABASE_NAME',
+        $this::KeyMySQLPort => 'DATABASE_PORT',
+        $this::KeyMySQLUsername => 'DATABASE_USER',
+        $this::KeyMySQLPassword => 'DATABASE_PASSWORD',
       ]);
   }
 
