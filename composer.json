@@ -18,7 +18,7 @@
         "wikimedia/composer-merge-plugin":               "^1.4",
         "drush/drush":                                   "9.*",
         "drupal/core":                                   "^8.8",
-        "drupal/drush-cmi-tools":                        "dev-8.x-2.x",
+        "drupal/drush_cmi_tools":                        "dev-8.x-2.x",
         "drupal/devel":                                  "1.*",
         "drupal/entity_reference_revisions":             "1.*",
         "drupal/field_group":                            "1.*",
