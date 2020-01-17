@@ -3,5 +3,6 @@ host: database
 port: '3306'
 user: root
 secret: privileged-db-password
+options: ''
 _core:
   default_config_hash: jyiUlyMliuBeyd_8DXT8LxFZFz8dNdfWywL2rK0GoMw

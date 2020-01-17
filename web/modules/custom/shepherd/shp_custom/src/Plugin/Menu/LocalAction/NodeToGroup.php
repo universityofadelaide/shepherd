@@ -20,7 +20,7 @@ class NodeToGroup extends WithDestination {
     $variables = $route->compile()->getVariables();
 
     foreach ($variables as $name) {
-      if ($name == 'group') {
+      if ($name === 'group') {
         $id = $route_match->getRawParameter('node');
         $node = Node::load($id);
 

@@ -30,7 +30,7 @@ function shp_backup_token_info() {
  * Implements hook_tokens().
  */
 function shp_backup_tokens($type, $tokens, array $data, array $options, BubbleableMetadata $bubbleable_metadata) {
-  if ($type != 'shepherd') {
+  if ($type !== 'shepherd') {
     return [];
   }
 

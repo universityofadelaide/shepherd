@@ -9,17 +9,6 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\node\NodeInterface;
 
 /**
- * Define keys used for MySQL connectivity by the backup operator.
- *
- * @see https://gitlab.adelaide.edu.au/web-team/shepherd-operator/blob/master/pkg/apis/meta/v1/types.go#L34
- */
-define('KeyMySQLHostname', 'hostname');
-define('KeyMySQLDatabase', 'database');
-define('KeyMySQLPort', 'port');
-define('KeyMySQLUsername', 'username');
-define('KeyMySQLPassword', 'password');
-
-/**
  * Implements hook_ENTITY_TYPE_insert().
  */
 function shp_orchestration_node_insert(NodeInterface $node) {

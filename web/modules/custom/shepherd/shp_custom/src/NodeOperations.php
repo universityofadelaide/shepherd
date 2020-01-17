@@ -63,7 +63,7 @@ class NodeOperations implements ContainerInjectionInterface {
 
     switch ($node->getType()) {
       case 'shp_site':
-        if ($node->moderation_state->value == 'archived') {
+        if ($node->moderation_state->value === 'archived') {
           $environments = $this->nodeStorage->getQuery()
             ->condition('type', 'shp_environment')
             ->condition('field_shp_site', $node->id())

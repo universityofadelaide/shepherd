@@ -13,7 +13,7 @@ use Drupal\Core\Url;
 function shp_orchestration_requirements($phase) {
   $requirements = [];
 
-  if ($phase == 'runtime') {
+  if ($phase === 'runtime') {
     // @todo check the selected provider.
     $config_factory = \Drupal::service('config.factory');
     $selected_provider = $config_factory->get('shp_orchestration.settings')->get('selected_provider');
