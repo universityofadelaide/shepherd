@@ -240,6 +240,9 @@ class Environment extends EntityActionBase {
       $storage_class = Term::load($project->field_shp_storage_class->target_id)->label();
     }
 
+    $environment_type = Term::load($node->field_shp_environment_type->target_id);
+    $backup_schedule = !$environment_type->field_shp_backup_schedule->isEmpty() ? $environment_type->field_shp_backup_schedule->value : '';
+
     $environment_updated = $this->orchestrationProviderPlugin->updatedEnvironment(
       $project->getTitle(),
       $site->field_shp_short_name->value,
@@ -258,7 +261,9 @@ class Environment extends EntityActionBase {
       $env_vars,
       $secrets,
       $probes,
-      $cron_jobs
+      $cron_jobs,
+      [],
+      $backup_schedule
     );
 
     // Allow other modules to react to the Environment update.
@@ -347,7 +352,6 @@ class Environment extends EntityActionBase {
     // @todo everything is exclusive for now, implement non-exclusive?
     // Load a non protected term.
     $demoted_term = $this->environmentType->getDemotedTerm();
-    $promoted_term = $this->environmentType->getPromotedTerm();
 
     // Demote all current prod environments - for this site!
     $old_promoted = \Drupal::entityQuery('node')

@@ -93,7 +93,8 @@ class DummyOrchestrationProvider extends OrchestrationProviderBase {
     array $secrets = [],
     array $probes = [],
     array $cron_jobs = [],
-    array $annotations = []
+    array $annotations = [],
+    string $backup_schedule = ''
   ) {
     return TRUE;
   }
