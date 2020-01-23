@@ -10,7 +10,7 @@ field_name: field_shp_cpu_limit
 entity_type: node
 bundle: shp_environment
 label: 'Cpu limit'
-description: 'The limit cannot be lower than the request.'
+description: 'The limit cannot be lower than the request. E.g. 200m'
 required: false
 translatable: true
 default_value: {  }
