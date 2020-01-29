@@ -357,7 +357,8 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     array $secrets = [],
     array $probes = [],
     array $cron_jobs = [],
-    array $annotations = []
+    array $annotations = [],
+    string $backup_schedule = ''
   ) {
     // @todo Refactor this too. Not DRY enough.
     $sanitised_project_name = self::sanitise($project_name);
@@ -415,6 +416,14 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
         $volumes,
         $deploy_data
       );
+    }
+
+    // Add/remove the backup schedule as determined by environment type.
+    if ($backup_schedule) {
+      $this->environmentScheduleBackupUpdate($site_id, $environment_id, $backup_schedule);
+    }
+    else {
+      $this->environmentScheduleBackupDelete($environment_id);
     }
 
     return TRUE;
