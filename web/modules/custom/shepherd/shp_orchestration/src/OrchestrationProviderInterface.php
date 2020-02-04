@@ -189,6 +189,8 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
    *   An array of cron jobs associated with this environment.
    * @param array $annotations
    *   An array of route annotations.
+   * @param string $backup_schedule
+   *   A schedule to run automated backups on, leave blank to disable.
    *
    * @return bool
    *   Returns true if succeeded.
@@ -212,7 +214,8 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
     array $secrets = [],
     array $probes = [],
     array $cron_jobs = [],
-    array $annotations = []
+    array $annotations = [],
+    string $backup_schedule = ''
   );
 
   /**
