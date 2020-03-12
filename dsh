@@ -52,6 +52,8 @@ fi
 dsh_openshift_init() {
   # Set default type of OpenShift installation if its not already set.
   : ${OPENSHIFT_TYPE:=minishift}
+  # Set the default minishift driver.
+  : ${MINISHIFT_DRIVER:=xhyve}
 
   # Password for the mysql server.
   SUPER_SECRET_PASSWORD=super-secret-password
@@ -68,7 +70,8 @@ dsh_openshift_init() {
 
     # Perform/check setup.
     if ! minishift status | grep "Running" > /dev/null; then
-      minishift start
+
+      minishift start --vm-driver ${MINISHIFT_DRIVER}
     fi
 
     # Ensure oc command is available.
