@@ -233,7 +233,8 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     array $probes = [],
     array $cron_jobs = [],
     array $annotations = [],
-    string $backup_schedule = ''
+    string $backup_schedule = '',
+    int $backup_retention = 0
   ) {
     // @todo Refactor this. _The complexity is too damn high!_
     $sanitised_project_name = self::sanitise($project_name);
@@ -358,7 +359,8 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     array $probes = [],
     array $cron_jobs = [],
     array $annotations = [],
-    string $backup_schedule = ''
+    string $backup_schedule = '',
+    int $retention = 0
   ) {
     // @todo Refactor this too. Not DRY enough.
     $sanitised_project_name = self::sanitise($project_name);
@@ -420,7 +422,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
 
     // Add/remove the backup schedule as determined by environment type.
     if ($backup_schedule) {
-      $this->environmentScheduleBackupUpdate($site_id, $environment_id, $backup_schedule);
+      $this->environmentScheduleBackupUpdate($site_id, $environment_id, $backup_schedule, $retention);
     }
     else {
       $this->environmentScheduleBackupDelete($environment_id);
@@ -630,7 +632,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
   /**
    * {@inheritdoc}
    */
-  public function environmentScheduleBackupCreate(string $site_id, string $environment_id, string $schedule) {
+  public function environmentScheduleBackupCreate(string $site_id, string $environment_id, string $schedule, int $retention) {
     $deployment_name = self::generateDeploymentName($environment_id);
     /** @var \UniversityOfAdelaide\OpenShift\Objects\Backups\ScheduledBackup $schedule */
     $schedule = ScheduledBackup::create()
@@ -639,7 +641,8 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       ->setLabel(Label::create('site', $site_id))
       ->setLabel(Label::create('environment', $environment_id))
       ->setName(self::generateScheduleName($deployment_name))
-      ->setSchedule($schedule);
+      ->setSchedule($schedule)
+      ->setRetention($retention);
     try {
       return $this->client->createSchedule($schedule);
     }
@@ -652,7 +655,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
   /**
    * {@inheritdoc}
    */
-  public function environmentScheduleBackupUpdate(string $site_id, string $environment_id, string $schedule) {
+  public function environmentScheduleBackupUpdate(string $site_id, string $environment_id, string $schedule, int $retention) {
     $schedule_name = self::generateScheduleName(self::generateDeploymentName($environment_id));
     try {
       $schedule_obj = $this->client->getSchedule($schedule_name);
@@ -663,7 +666,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     }
     // If there's no schedule, create one.
     if (!$schedule_obj) {
-      return $this->environmentScheduleBackupCreate($site_id, $environment_id, $schedule);
+      return $this->environmentScheduleBackupCreate($site_id, $environment_id, $schedule, $retention);
     }
 
     // No point updating if the schedules are the same!
