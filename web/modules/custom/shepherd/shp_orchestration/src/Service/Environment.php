@@ -215,7 +215,7 @@ class Environment extends EntityActionBase {
 
     // If this is a production environment, promote it immediately.
     $environment_term = Term::load($node->field_shp_environment_type->target_id);
-    if ($environment_term->field_shp_protect->value == TRUE) {
+    if ($environment_term->field_shp_protect->value === TRUE) {
       $this->promoted($site, $node, TRUE, FALSE);
     }
 
@@ -264,6 +264,9 @@ class Environment extends EntityActionBase {
       $storage_class = Term::load($project->field_shp_storage_class->target_id)->label();
     }
 
+    $environment_type = Term::load($node->field_shp_environment_type->target_id);
+    $backup_schedule = !$environment_type->field_shp_backup_schedule->isEmpty() ? $environment_type->field_shp_backup_schedule->value : '';
+
     $environment_updated = $this->orchestrationProviderPlugin->updatedEnvironment(
       $project->getTitle(),
       $site->field_shp_short_name->value,
@@ -282,7 +285,9 @@ class Environment extends EntityActionBase {
       $env_vars,
       $secrets,
       $probes,
-      $cron_jobs
+      $cron_jobs,
+      [],
+      $backup_schedule
     );
 
     // Allow other modules to react to the Environment update.
@@ -382,7 +387,6 @@ class Environment extends EntityActionBase {
     // @todo everything is exclusive for now, implement non-exclusive?
     // Load a non protected term.
     $demoted_term = $this->environmentType->getDemotedTerm();
-    $promoted_term = $this->environmentType->getPromotedTerm();
 
     // Demote all current prod environments - for this site!
     $old_promoted = \Drupal::entityQuery('node')
@@ -397,7 +401,7 @@ class Environment extends EntityActionBase {
     }
 
     // Finally Update the environment that was promoted if we need to.
-    if ($environment->field_shp_environment_type->target_id != $promoted_term->id()) {
+    if ($environment->field_shp_environment_type->target_id !== $promoted_term->id()) {
       $environment->field_shp_environment_type = [['target_id' => $promoted_term->id()]];
       $environment->save();
     }

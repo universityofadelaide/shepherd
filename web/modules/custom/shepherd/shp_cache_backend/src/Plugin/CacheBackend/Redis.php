@@ -204,13 +204,13 @@ class Redis extends CacheBackendBase {
                     'resources' => [
                       'limits' =>
                         [
-                          'cpu' => '0m',
+                          'cpu' => '200m',
                           'memory' => '256Mi',
                         ],
                       'requests' =>
                         [
-                          'cpu' => '0m',
-                          'memory' => '256Mi',
+                          'cpu' => '100m',
+                          'memory' => '50Mi',
                         ],
                     ],
                     'volumeMounts' => [

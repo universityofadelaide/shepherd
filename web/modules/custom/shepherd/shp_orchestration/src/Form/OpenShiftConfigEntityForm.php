@@ -126,7 +126,7 @@ class OpenShiftConfigEntityForm extends EntityForm {
   public function save(array $form, FormStateInterface $form_state) {
     $entity = $this->entity;
     $status = $entity->save();
-    if ($status == SAVED_UPDATED) {
+    if ($status === SAVED_UPDATED) {
       $this->messenger->addStatus($this->t('OpenShift configuration has been updated'));
     }
     else {

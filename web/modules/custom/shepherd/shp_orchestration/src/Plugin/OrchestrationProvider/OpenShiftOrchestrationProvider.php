@@ -31,6 +31,17 @@ use UniversityOfAdelaide\OpenShift\Objects\Label;
 class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
 
   /**
+   * Define keys used for MySQL connectivity by the backup operator.
+   *
+   * @see https://github.com/universityofadelaide/shepherd-operator/blob/master/pkg/apis/meta/v1/types.go#L34
+   */
+  protected const KeyMySQLHostname = 'hostname';
+  protected const KeyMySQLDatabase = 'database';
+  protected const KeyMySQLPort = 'port';
+  protected const KeyMySQLUsername = 'username';
+  protected const KeyMySQLPassword = 'password';
+
+  /**
    * OpenShift client.
    *
    * @var \UniversityOfAdelaide\OpenShift\Client
@@ -368,7 +379,8 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     array $secrets = [],
     array $probes = [],
     array $cron_jobs = [],
-    array $annotations = []
+    array $annotations = [],
+    string $backup_schedule = ''
   ) {
     // @todo Refactor this too. Not DRY enough.
     $sanitised_project_name = self::sanitise($project_name);
@@ -426,6 +438,14 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
         $volumes,
         $deploy_data
       );
+    }
+
+    // Add/remove the backup schedule as determined by environment type.
+    if ($backup_schedule) {
+      $this->environmentScheduleBackupUpdate($site_id, $environment_id, $backup_schedule);
+    }
+    else {
+      $this->environmentScheduleBackupDelete($environment_id);
     }
 
     return TRUE;
@@ -621,11 +641,11 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       ->setId('default')
       ->setSecretName($deployment_name)
       ->setSecretKeys([
-        KeyMySQLHostname => EnvMySQLHostname,
-        KeyMySQLDatabase => EnvMySQLDatabase,
-        KeyMySQLPort => EnvMySQLPort,
-        KeyMySQLUsername => EnvMySQLUsername,
-        KeyMySQLPassword => EnvMySQLPassword,
+        $this::KeyMySQLHostname => 'DATABASE_HOST',
+        $this::KeyMySQLDatabase => 'DATABASE_NAME',
+        $this::KeyMySQLPort => 'DATABASE_PORT',
+        $this::KeyMySQLUsername => 'DATABASE_USER',
+        $this::KeyMySQLPassword => 'DATABASE_PASSWORD',
       ]);
   }
 
@@ -1099,7 +1119,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
           'valueFrom' => [
             'secretKeyRef' => [
               // If secret is '_default' use the deployment config secret.
-              'name' => $value['secret'] == '_default' ? $deployment_name : $value['secret'],
+              'name' => $value['secret'] === '_default' ? $deployment_name : $value['secret'],
               'key' => $value['secret_key'],
             ],
           ],

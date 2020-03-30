@@ -8,32 +8,37 @@
         {"type": "composer", "url": "https://packages.drupal.org/8"}
     ],
     "require": {
-        "composer-plugin-api": "^1.0",
-        "composer/installers": "^1.2",
-        "cweagans/composer-patches": "~1.0",
-        "drupal-composer/drupal-scaffold": "^2.2",
-        "drupal/core": "^8.6",
-        "drupal/devel": "1.*",
-        "drupal/drush-cmi-tools": "dev-8.x-2.x",
-        "drupal/entity_reference_revisions": "1.*",
-        "drupal/field_group": "1.*",
-        "drupal/group": "1.*@RC",
-        "drupal/key_value_field": "1.*",
-        "drupal/log_stdout": "1.*",
+        "composer-plugin-api":                           "^1.0",
+        "composer/installers":                           "^1.2",
+        "cweagans/composer-patches":                     "~1.0",
+        "drupal-composer/drupal-scaffold":               "^2.2",
+        "predis/predis":                                 "^1.1.1",
+        "universityofadelaide/openshift-client":         "dev-develop",
+        "universityofadelaide/shepherd-drupal-scaffold": "^4.0",
+        "wikimedia/composer-merge-plugin":               "^1.4",
+        "drush/drush":                                   "9.*",
+        "drupal/core":                                   "^8.8",
+        "drupal/drush_cmi_tools":                        "dev-8.x-2.x",
+        "drupal/devel":                                  "1.*",
+        "drupal/entity_reference_revisions":             "1.*",
+        "drupal/field_group":                            "1.*",
+        "drupal/group":                                  "1.*@RC",
+        "drupal/key_value_field":                        "1.*",
+        "drupal/log_stdout":                             "1.*",
         "drupal/plugin": "^2.6",
-        "drupal/r4032login": "1.*",
-        "drupal/redis": "1.*",
-        "drupal/route_condition": "^1.0@beta",
-        "drupal/token": "1.*",
-        "drush/drush": "9.*",
-        "predis/predis": "^1.1.1",
-        "universityofadelaide/openshift-client": "dev-develop",
-        "universityofadelaide/shepherd-drupal-scaffold": "^3.0",
-        "wikimedia/composer-merge-plugin": "^1.4"
+        "drupal/r4032login":                             "1.*",
+        "drupal/redis":                                  "1.*",
+        "drupal/route_condition":                        "^1.0@beta",
+        "drupal/token":                                  "1.*",
+        "webmozart/path-util":                           "^2.3",
+        "zaporylie/composer-drupal-optimizations":       "^1.0"
     },
     "require-dev": {
         "dealerdirect/phpcodesniffer-composer-installer": "^0.5.0",
-        "webflo/drupal-core-require-dev": "~8.5"
+        "drupal/core-dev": "^8.8",
+        "mglaman/phpstan-drupal": "^0.11.8",
+        "phpstan/phpstan-deprecation-rules": "^0.11.2",
+        "weitzman/drupal-test-traits": "^1.2"
     },
     "conflict": {
         "drupal/drupal": "*"
@@ -63,6 +68,7 @@
         ]
     },
     "extra": {
+        "composer-exit-on-patch-failure": true,
         "patchLevel": {
             "drupal/core": "-p2"
         },
@@ -78,6 +84,9 @@
             "initial": {
                 "sites/default/default.services.yml": "sites/default/services.yml",
                 "sites/default/default.settings.php": "sites/default/settings.php"
+            },
+            "locations": {
+                "web-root": "web/"
             }
         }
     }
