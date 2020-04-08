@@ -66,7 +66,8 @@ class DummyOrchestrationProvider extends OrchestrationProviderBase {
     array $probes = [],
     array $cron_jobs = [],
     array $annotations = [],
-    string $backup_schedule = ''
+    string $backup_schedule = '',
+    int $backup_retention = 0
   ) {
     return TRUE;
   }
@@ -184,14 +185,14 @@ class DummyOrchestrationProvider extends OrchestrationProviderBase {
   /**
    * {@inheritdoc}
    */
-  public function environmentScheduleBackupCreate(string $site_id, string $environment_id, string $schedule) {
+  public function environmentScheduleBackupCreate(string $site_id, string $environment_id, string $schedule, int $retention) {
     return TRUE;
   }
 
   /**
    * {@inheritdoc}
    */
-  public function environmentScheduleBackupUpdate(string $site_id, string $environment_id, string $schedule) {
+  public function environmentScheduleBackupUpdate(string $site_id, string $environment_id, string $schedule, int $retention) {
     return TRUE;
   }
 

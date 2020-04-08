@@ -145,7 +145,8 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
     array $probes = [],
     array $cron_jobs = [],
     array $annotations = [],
-    string $backup_schedule = ''
+    string $backup_schedule = '',
+    int   $backup_retention = 0
   );
 
   /**
@@ -508,7 +509,7 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
    * @return object|bool
    *   Returns a schedule object if successful, otherwise false.
    */
-  public function environmentScheduleBackupCreate(string $site_id, string $environment_id, string $schedule);
+  public function environmentScheduleBackupCreate(string $site_id, string $environment_id, string $schedule, int $retention);
 
   /**
    * Updates the backup schedule for an environment.
@@ -519,11 +520,13 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
    *   Environment node id.
    * @param string $schedule
    *   A cron expression defining when to run the backups.
+   * @param string $retention
+   *   The number of scheduled backups to retain.
    *
    * @return object|bool
    *   Returns the schedule object if successful, otherwise false.
    */
-  public function environmentScheduleBackupUpdate(string $site_id, string $environment_id, string $schedule);
+  public function environmentScheduleBackupUpdate(string $site_id, string $environment_id, string $schedule, int $retention);
 
   /**
    * Deletes the backup schedule for an environment.
