@@ -8,7 +8,6 @@ use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\Url;
 use Drupal\node\NodeInterface;
 use Drupal\shp_orchestration\OrchestrationProviderPluginManagerInterface;
-use UniversityOfAdelaide\OpenShift\Objects\Backups\Backup as BackupObject;
 
 /**
  * Provides a service for accessing the backups.
@@ -18,13 +17,6 @@ use UniversityOfAdelaide\OpenShift\Objects\Backups\Backup as BackupObject;
 class Backup {
 
   use StringTranslationTrait;
-
-  /**
-   * Todo: find a better place for this?
-   *
-   * Defines the annotation to store a backups friendly name on.
-   */
-  const FRIENDLY_NAME_ANNOTATION = 'backups.shepherd/friendly-name';
 
   /**
    * The orchestration provider plugin manager.
@@ -67,19 +59,6 @@ class Backup {
    */
   public function getAllForEnvironment(NodeInterface $environment) {
     return $this->orchestrationProvider->getBackupsForEnvironment($environment->id());
-  }
-
-  /**
-   * Get the friendly name of a backup.
-   *
-   * @param \UniversityOfAdelaide\OpenShift\Objects\Backups\Backup $backup
-   *   The backup.
-   *
-   * @return string
-   *   The name.
-   */
-  public function getFriendlyName(BackupObject $backup) {
-    return $backup->getAnnotation(self::FRIENDLY_NAME_ANNOTATION) ?: $backup->getName();
   }
 
   /**
