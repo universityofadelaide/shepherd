@@ -59,6 +59,14 @@ class BackupList extends ListControllerBase {
       $operations = [
         '#type' => 'dropbutton',
         '#links' => [
+          'edit' => [
+            'title' => $this->t('Edit'),
+            'url' => Url::fromRoute('shp_backup.backup-edit-form', [
+              'site' => $node->id(),
+              'backupName' => $backup->getName(),
+            ]),
+            'attributes' => $modal_attributes,
+          ],
           'delete' => [
             'title' => $this->t('Delete'),
             'url' => Url::fromRoute('shp_backup.backup-delete-form', [

@@ -178,6 +178,13 @@ class DummyOrchestrationProvider extends OrchestrationProviderBase {
   /**
    * {@inheritdoc}
    */
+  public function updateBackup(string $name) {
+    return TRUE;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function deleteBackup(string $name) {
     return TRUE;
   }

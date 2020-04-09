@@ -586,6 +586,19 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
   /**
    * {@inheritdoc}
    */
+  public function updateBackup(Backup $backup) {
+    try {
+      return $this->client->updateBackup($backup);
+    }
+    catch (ClientException $e) {
+      $this->handleClientException($e);
+      return FALSE;
+    }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function deleteBackup(string $name) {
     try {
       return $this->client->deleteBackup($name);

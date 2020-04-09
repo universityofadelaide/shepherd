@@ -48,6 +48,20 @@ shp_backup.backup-delete-form:
     _permission: 'shp access environment wizard'
     site: ^[0-9]+
 
+shp_backup.backup-edit-form:
+  path: '/site/{site}/backup/{backupName}/edit'
+  defaults:
+    _form: '\Drupal\shp_backup\Form\BackupEditForm'
+    _title_callback: '\Drupal\shp_backup\Form\BackupEditForm::getPageTitle'
+    _title: 'Edit backup'
+  options:
+    parameters:
+      site:
+        type: entity:node
+  requirements:
+    _permission: 'shp access environment wizard'
+    site: ^[0-9]+
+
 shp_backup.backups:
   path: '/site/{node}/backups'
   defaults:

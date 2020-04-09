@@ -3,6 +3,7 @@
 namespace Drupal\shp_orchestration;
 
 use Drupal\Component\Plugin\PluginInspectionInterface;
+use UniversityOfAdelaide\OpenShift\Objects\Backups\Backup;
 
 /**
  * Interface OrchestrationProviderInterface.
@@ -480,6 +481,17 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
    *   Returns a backup object if successful, otherwise false.
    */
   public function getBackup(string $name);
+
+  /**
+   * Update a backup.
+   *
+   * @param \UniversityOfAdelaide\OpenShift\Objects\Backups\Backup $backup
+   *   The backup.
+   *
+   * @return \UniversityOfAdelaide\OpenShift\Objects\Backups\Backup|bool
+   *   Returns a backup object if successful, otherwise false.
+   */
+  public function updateBackup(Backup $backup);
 
   /**
    * Delete a backup.
