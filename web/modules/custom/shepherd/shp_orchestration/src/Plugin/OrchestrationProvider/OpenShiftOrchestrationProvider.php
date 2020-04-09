@@ -594,9 +594,10 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       ->addDatabase($this->generateDatabaseFromDeploymentName($deployment_name))
       ->setLabel(Label::create('site', $site_id))
       ->setLabel(Label::create('environment', $environment_id))
+      ->setLabel(Label::create(Backup::MANUAL_LABEL, TRUE))
       ->setName(sprintf('%s-backup-%s', $deployment_name, date('YmdHis')));
     if (!empty($friendly_name)) {
-      $backup->setAnnotation(BackupService::FRIENDLY_NAME_ANNOTATION, $friendly_name);
+      $backup->setAnnotation(Backup::FRIENDLY_NAME_ANNOTATION, $friendly_name);
     }
     try {
       return $this->client->createBackup($backup);

@@ -20,7 +20,7 @@ bundle: shp_environment_types
 mode: default
 content:
   field_shp_annotations:
-    weight: 5
+    weight: 4
     settings:
       key_label: Key
       key_size: 60
@@ -34,14 +34,14 @@ content:
     type: key_value_textfield
     region: content
   field_shp_backup_retention:
-    weight: 101
+    weight: 6
     settings:
       placeholder: ''
     third_party_settings: {  }
     type: number
     region: content
   field_shp_backup_schedule:
-    weight: 6
+    weight: 5
     settings:
       size: 60
       placeholder: ''
@@ -57,14 +57,14 @@ content:
     type: string_textfield
     region: content
   field_shp_protect:
-    weight: 3
+    weight: 2
     settings:
       display_label: true
     third_party_settings: {  }
     type: boolean_checkbox
     region: content
   field_shp_update_go_live:
-    weight: 4
+    weight: 3
     settings:
       display_label: true
     third_party_settings: {  }
@@ -77,6 +77,13 @@ content:
     settings:
       size: 60
       placeholder: ''
+    third_party_settings: {  }
+  status:
+    type: boolean_checkbox
+    settings:
+      display_label: true
+    weight: 7
+    region: content
     third_party_settings: {  }
 hidden:
   description: true

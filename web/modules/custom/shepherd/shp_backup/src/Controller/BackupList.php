@@ -24,6 +24,7 @@ class BackupList extends ListControllerBase {
       '#theme' => 'table',
       '#header' => [
         $this->t('Name'),
+        $this->t('Type'),
         $this->t('Environment'),
         $this->t('Phase'),
         $this->t('Started'),
@@ -39,7 +40,8 @@ class BackupList extends ListControllerBase {
     foreach ($backup_list->getBackupsByCreatedTime() as $backup) {
       $environment = $this->nodeStorage->load($backup->getLabel('environment'));
       $table['#rows'][] = [
-        $this->backupService->getFriendlyName($backup),
+        $backup->getFriendlyName(),
+        $backup->isManual() ? $this->t('Manual') : $this->t('Scheduled'),
         $environment ? $this->environmentService->getEnvironmentLink($environment, FALSE)->toString() : $this->t('Deleted'),
         Phase::getFriendlyPhase($backup->getPhase()),
         $backup->getStartTimestamp() ? $this->formatDate($backup->getStartTimestamp()) : $this->t('N/A'),
