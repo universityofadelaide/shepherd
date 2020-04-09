@@ -586,6 +586,19 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
   /**
    * {@inheritdoc}
    */
+  public function deleteBackup(string $name) {
+    try {
+      return $this->client->deleteBackup($name);
+    }
+    catch (ClientException $e) {
+      $this->handleClientException($e);
+      return FALSE;
+    }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function backupEnvironment(string $site_id, string $environment_id, string $friendly_name = '') {
     $deployment_name = self::generateDeploymentName($environment_id);
     /** @var \UniversityOfAdelaide\OpenShift\Objects\Backups\Backup $backup */

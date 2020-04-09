@@ -178,6 +178,13 @@ class DummyOrchestrationProvider extends OrchestrationProviderBase {
   /**
    * {@inheritdoc}
    */
+  public function deleteBackup(string $name) {
+    return TRUE;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function backupEnvironment(string $site_id, string $environment_id, string $friendly_name = '') {
     return [];
   }

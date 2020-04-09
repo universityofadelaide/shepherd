@@ -471,15 +471,26 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
   );
 
   /**
-   * Get a backup..
+   * Get a backup.
    *
    * @param string $name
    *   The backup name.
    *
-   * @return object|bool
+   * @return \UniversityOfAdelaide\OpenShift\Objects\Backups\Backup|bool
    *   Returns a backup object if successful, otherwise false.
    */
   public function getBackup(string $name);
+
+  /**
+   * Delete a backup.
+   *
+   * @param string $name
+   *   The backup name.
+   *
+   * @return bool
+   *   Returns true if succeeded.
+   */
+  public function deleteBackup(string $name);
 
   /**
    * Backup an environment.
@@ -505,6 +516,8 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
    *   Environment node id.
    * @param string $schedule
    *   A cron expression defining when to run the backups.
+   * @param int $retention
+   *   The number of scheduled backups to retain.
    *
    * @return object|bool
    *   Returns a schedule object if successful, otherwise false.
@@ -520,7 +533,7 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
    *   Environment node id.
    * @param string $schedule
    *   A cron expression defining when to run the backups.
-   * @param string $retention
+   * @param int $retention
    *   The number of scheduled backups to retain.
    *
    * @return object|bool
