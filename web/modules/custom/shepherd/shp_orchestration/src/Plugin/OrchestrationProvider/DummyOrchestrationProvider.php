@@ -3,6 +3,7 @@
 namespace Drupal\shp_orchestration\Plugin\OrchestrationProvider;
 
 use Drupal\shp_orchestration\OrchestrationProviderBase;
+use UniversityOfAdelaide\OpenShift\Objects\Backups\Backup;
 
 /**
  * DummyOrchestrationProvider.
@@ -172,6 +173,13 @@ class DummyOrchestrationProvider extends OrchestrationProviderBase {
    * {@inheritdoc}
    */
   public function getBackup(string $name) {
+    return TRUE;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function updateBackup(Backup $backup) {
     return TRUE;
   }
 

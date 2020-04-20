@@ -6,7 +6,6 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\Url;
 use Drupal\node\Entity\Node;
-use Drupal\shp_backup\Service\Backup as BackupService;
 use Drupal\shp_custom\Service\StringGenerator;
 use Drupal\shp_orchestration\OrchestrationProviderBase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -576,6 +575,19 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
   public function getBackup(string $name) {
     try {
       return $this->client->getBackup($name);
+    }
+    catch (ClientException $e) {
+      $this->handleClientException($e);
+      return FALSE;
+    }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function updateBackup(Backup $backup) {
+    try {
+      return $this->client->updateBackup($backup);
     }
     catch (ClientException $e) {
       $this->handleClientException($e);

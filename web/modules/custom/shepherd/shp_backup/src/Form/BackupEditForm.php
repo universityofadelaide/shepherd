@@ -9,15 +9,16 @@ use Drupal\Core\Url;
 use Drupal\node\NodeInterface;
 use Drupal\shp_orchestration\OrchestrationProviderInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use UniversityOfAdelaide\OpenShift\Objects\Backups\Backup;
 
 /**
- * BackupDeleteForm.
+ * BackupEditForm.
  *
- * Deletes a backup.
+ * Edits a backup.
  *
  * @package Drupal\shp_backup\Form
  */
-class BackupDeleteForm extends FormBase {
+class BackupEditForm extends FormBase {
 
   /**
    * The orchestration provider plugin.
@@ -60,7 +61,7 @@ class BackupDeleteForm extends FormBase {
    * {@inheritdoc}
    */
   public function getFormId() {
-    return 'shp_backup_delete_form';
+    return 'shp_backup_edit_form';
   }
 
   /**
@@ -75,7 +76,7 @@ class BackupDeleteForm extends FormBase {
   public function getPageTitle($backupName) {
     $backup = $this->orchestrationProvider->getBackup($backupName);
     $name = $backup ? $backup->getFriendlyName() : 'N/A';
-    return t('Delete backup - @name', ['@name' => $name]);
+    return t('Edit backup - @name', ['@name' => $name]);
   }
 
   /**
@@ -90,14 +91,18 @@ class BackupDeleteForm extends FormBase {
       ];
     }
     $form_state->set('backupName', $backupName);
-    $form['confirm'] = [
-      '#markup' => $this->t("<p>Are you sure you want to delete the Backup @name.</p>", ['@name' => $backup->getFriendlyName()]),
+    $form['name'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('Name'),
+      '#description' => $this->t('Change the name of this backup'),
+      '#required' => TRUE,
+      '#default_value' => $backup->getFriendlyName(),
     ];
     $form['actions'] = [
       '#type' => 'actions',
       'submit' => [
         '#type' => 'submit',
-        '#value' => $this->t('Confirm'),
+        '#value' => $this->t('Save'),
       ],
     ];
 
@@ -110,11 +115,12 @@ class BackupDeleteForm extends FormBase {
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $name = $form_state->get('backupName');
     $backup = $this->orchestrationProvider->getBackup($name);
-    if ($this->orchestrationProvider->deleteBackup($name)) {
-      $this->messenger->addStatus($this->t('Successfully deleted backup @name', ['@name' => $backup->getFriendlyName()]));
+    $backup->setAnnotation(Backup::FRIENDLY_NAME_ANNOTATION, $form_state->getValue('name'));
+    if ($this->orchestrationProvider->updateBackup($backup)) {
+      $this->messenger->addStatus($this->t('Successfully updated backup @name', ['@name' => $backup->getFriendlyName()]));
     }
     else {
-      $this->messenger->addError($this->t('There was an issue deleting backup @name', ['@name' => $backup->getFriendlyName()]));
+      $this->messenger->addError($this->t('There was an issue updating backup @name', ['@name' => $backup->getFriendlyName()]));
     }
 
     $form_state->setRedirectUrl(Url::fromRoute('shp_backup.backups', ['node' => $form_state->get('site')]));
