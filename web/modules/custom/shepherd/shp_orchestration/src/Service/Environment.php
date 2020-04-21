@@ -175,6 +175,7 @@ class Environment extends EntityActionBase {
     );
 
     $backup_schedule = !$environment_type->field_shp_backup_schedule->isEmpty() ? $environment_type->field_shp_backup_schedule->value : '';
+    $backup_retention = !$environment_type->field_shp_backup_retention->isEmpty() ? $environment_type->field_shp_backup_retention->value : '';
     $environment = $this->orchestrationProviderPlugin->createdEnvironment(
       $project->getTitle(),
       $site->field_shp_short_name->value,
@@ -195,7 +196,8 @@ class Environment extends EntityActionBase {
       $probes,
       $cron_jobs,
       $annotations,
-      $backup_schedule
+      $backup_schedule,
+      $backup_retention
     );
 
     if (!$node->field_cache_backend->isEmpty()) {

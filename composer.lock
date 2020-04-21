@@ -3533,6 +3533,7 @@
                     "email": "jakub.onderka@gmail.com"
                 }
             ],
+            "abandoned": "php-parallel-lint/php-console-color",
             "time": "2018-09-29T17:23:10+00:00"
         },
         {
@@ -3579,6 +3580,7 @@
                 }
             ],
             "description": "Highlight PHP code in terminal",
+            "abandoned": "php-parallel-lint/php-console-highlighter",
             "time": "2018-09-29T18:48:56+00:00"
         },
         {
@@ -6143,12 +6145,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/universityofadelaide/openshift-client.git",
-                "reference": "7e6305ce73704a2ffe2b55d7630a11d14944f721"
+                "reference": "901b3d750f55add02013cc9abebddc2abb5e8ee8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/universityofadelaide/openshift-client/zipball/7e6305ce73704a2ffe2b55d7630a11d14944f721",
-                "reference": "7e6305ce73704a2ffe2b55d7630a11d14944f721",
+                "url": "https://api.github.com/repos/universityofadelaide/openshift-client/zipball/901b3d750f55add02013cc9abebddc2abb5e8ee8",
+                "reference": "901b3d750f55add02013cc9abebddc2abb5e8ee8",
                 "shasum": ""
             },
             "require": {
@@ -6181,7 +6183,7 @@
                 }
             ],
             "description": "Simple OpenShift client for PHP.",
-            "time": "2020-01-29T03:41:51+00:00"
+            "time": "2020-04-20T07:16:49+00:00"
         },
         {
             "name": "universityofadelaide/shepherd-drupal-scaffold",
