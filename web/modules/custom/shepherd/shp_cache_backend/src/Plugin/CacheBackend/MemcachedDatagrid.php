@@ -328,7 +328,7 @@ class MemcachedDatagrid extends CacheBackendBase {
    *   The memcache name.
    */
   protected static function getMemcacheName(NodeInterface $environment) {
-    return 'memcached_node' . $environment->id();
+    return 'memcached_node-' . $environment->id();
   }
 
   /**
