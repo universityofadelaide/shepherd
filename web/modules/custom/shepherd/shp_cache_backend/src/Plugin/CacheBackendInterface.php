@@ -41,4 +41,20 @@ interface CacheBackendInterface extends PluginInspectionInterface {
    */
   public function onEnvironmentDelete(NodeInterface $environment);
 
+  /**
+   * Execute actions on environment promotion.
+   *
+   * @param \Drupal\node\NodeInterface $environment
+   *   The environment node.
+   */
+  public function onEnvironmentPromote(NodeInterface $environment);
+
+  /**
+   * Execute actions on environment demotion.
+   *
+   * @param \Drupal\node\NodeInterface $environment
+   *   The environment node.
+   */
+  public function onEnvironmentDemotion(NodeInterface $environment);
+
 }

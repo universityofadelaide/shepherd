@@ -56,4 +56,18 @@ abstract class CacheBackendBase extends PluginBase implements ContainerFactoryPl
     return [];
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  public function onEnvironmentPromote(NodeInterface $environment) {
+    // No-op by default.
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function onEnvironmentDemotion(NodeInterface $environment) {
+    // No-op by default.
+  }
+
 }

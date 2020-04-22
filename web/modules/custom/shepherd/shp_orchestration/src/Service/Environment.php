@@ -398,14 +398,38 @@ class Environment extends EntityActionBase {
       ->execute();
     foreach ($old_promoted as $nid) {
       $node = Node::load($nid);
-      $node->field_shp_environment_type = [['target_id' => $demoted_term->id()]];
+      $node->field_shp_environment_type = $demoted_term->id();
       $node->save();
+
+      // Run any cache backend demotion functions.
+      if (!$node->field_cache_backend->isEmpty()) {
+        /** @var \Drupal\shp_cache_backend\Plugin\CacheBackendInterface $cache_backend */
+        $cache_backend = $node->field_cache_backend->first()->getContainedPluginInstance();
+        try {
+          $cache_backend->onEnvironmentDemotion($node);
+        }
+        catch (ClientException $e) {
+          $this->exceptionHandler->handleClientException($e);
+        }
+      }
     }
 
     // Finally Update the environment that was promoted if we need to.
     if ($environment->field_shp_environment_type->target_id !== $promoted_term->id()) {
       $environment->field_shp_environment_type = [['target_id' => $promoted_term->id()]];
       $environment->save();
+    }
+
+    // Run any cache-backend promotion functions.
+    if (!$environment->field_cache_backend->isEmpty()) {
+      /** @var \Drupal\shp_cache_backend\Plugin\CacheBackendInterface $cache_backend */
+      $cache_backend = $environment->field_cache_backend->first()->getContainedPluginInstance();
+      try {
+        $cache_backend->onEnvironmentPromote($environment);
+      }
+      catch (ClientException $e) {
+        $this->exceptionHandler->handleClientException($e);
+      }
     }
 
     return $result;
