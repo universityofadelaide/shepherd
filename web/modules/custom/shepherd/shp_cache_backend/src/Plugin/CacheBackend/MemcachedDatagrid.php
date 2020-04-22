@@ -243,18 +243,19 @@ class MemcachedDatagrid extends CacheBackendBase {
    *   The environment.
    */
   protected function generateMemcachedDeployment(NodeInterface $environment) {
-    $memcachedName = self::getMemcachedDeploymentName($environment);
+    $memcachedDeploymentName = self::getMemcachedDeploymentName($environment);
+    $deploymentName = OpenShiftOrchestrationProvider::generateDeploymentName($environment->id());
     $memcachedPort = 11211;
 
     if (!$image_stream = $this->client->getImageStream('memcached')) {
       $this->client->createImageStream($this->generateImageStream());
     }
 
-    $data = $this->formatMemcachedDeployData($deployment_name, $environment->field_shp_site->target_id, $environment->id());
-    $deployConfig = $this->generateDeploymentConfig($memcachedName, $memcachedPort, $data);
+    $data = $this->formatMemcachedDeployData($deploymentName, $environment->field_shp_site->target_id, $environment->id());
+    $deployConfig = $this->generateDeploymentConfig($environment, $memcachedDeploymentName, $memcachedPort, $data);
     $this->client->createDeploymentConfig($deployConfig);
 
-    $this->client->createService($memcachedName, $memcachedName, $memcachedPort, $memcachedPort, $deployment_name);
+    $this->client->createService($memcachedDeploymentName, $memcachedDeploymentName, $memcachedPort, $memcachedPort, $deploymentName);
   }
 
   /**
@@ -378,8 +379,6 @@ class MemcachedDatagrid extends CacheBackendBase {
                 'command' => [
                   'memcached',
                   '-m 64',
-                  '-v v',
-                  '-o modern'
                 ],
                 'ports' => [
                   [
@@ -389,12 +388,12 @@ class MemcachedDatagrid extends CacheBackendBase {
                 ],
                 'resources' => [
                   'limits' => [
-                    'cpu' => '200m',
-                    'memory' => '256Mi',
+                    'cpu' => '100m',
+                    'memory' => '128Mi',
                   ],
                   'requests' => [
-                    'cpu' => '100m',
-                    'memory' => '50Mi',
+                    'cpu' => '50m',
+                    'memory' => '64Mi',
                   ],
                 ],
               ],
