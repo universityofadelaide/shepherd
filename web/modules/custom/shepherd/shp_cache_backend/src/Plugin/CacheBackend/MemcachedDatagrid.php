@@ -109,6 +109,8 @@ class MemcachedDatagrid extends CacheBackendBase {
    */
   public function getEnvironmentVariables(NodeInterface $environment) {
     $deployment_name = OpenShiftOrchestrationProvider::generateDeploymentName($environment->id());
+    // Use the JDG server for promoted environments, otherwise use the
+    // memcached pod.
     if ($this->environmentType->isPromotedEnvironment($environment)) {
       $host = sprintf(
         '%s.%s.svc.cluster.local',
@@ -130,6 +132,7 @@ class MemcachedDatagrid extends CacheBackendBase {
    */
   public function onEnvironmentPromote(NodeInterface $environment) {
     $memcached_name = self::getMemcachedDeploymentName($environment);
+    // Scale the memcached deployment to 0 when the environment is promoted.
     if ($deployment_config = $this->client->getDeploymentConfig($memcached_name)) {
       $this->client->updateDeploymentConfig($memcached_name, $deployment_config, [
         'spec' => ['replicas' => 0],
@@ -142,6 +145,7 @@ class MemcachedDatagrid extends CacheBackendBase {
    */
   public function onEnvironmentDemotion(NodeInterface $environment) {
     $memcached_name = self::getMemcachedDeploymentName($environment);
+    // Scale the memcached deployment to 1 when the environment is demoted.
     if ($deployment_config = $this->client->getDeploymentConfig($memcached_name)) {
       $this->client->updateDeploymentConfig($memcached_name, $deployment_config, [
         'spec' => ['replicas' => 1],
