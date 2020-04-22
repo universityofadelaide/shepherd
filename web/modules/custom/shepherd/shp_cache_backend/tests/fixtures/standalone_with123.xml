@@ -260,7 +260,7 @@
       <memcached-connector name="memcached_sheperd" cache-container="clustered" cache="memcached_sheperd" socket-binding="memcached_sheperd"/>
       <memcached-connector name="memcached_node61" cache-container="clustered" cache="memcached_node61" socket-binding="memcached_node61"/>
       <memcached-connector name="memcached_node33" cache-container="clustered" cache="memcached_node33" socket-binding="memcached_node33"/>
-      <memcached-connector name="memcached_node123" cache-container="clustered" cache="memcached_node123" socket-binding="memcached_node123"/>
+      <memcached-connector name="memcached_node-123" cache-container="clustered" cache="memcached_node-123" socket-binding="memcached_node-123"/>
     </subsystem>
     <subsystem xmlns="urn:infinispan:server:core:9.4" default-cache-container="clustered">
       <cache-container statistics="true" name="clustered" default-cache="mycache">
@@ -293,7 +293,7 @@
             <object/>
           </memory>
         </distributed-cache>
-        <distributed-cache statistics="true" name="memcached_node123" mode="SYNC" start="EAGER">
+        <distributed-cache statistics="true" name="memcached_node-123" mode="SYNC" start="EAGER">
           <memory>
             <object/>
           </memory>
@@ -450,6 +450,6 @@
     <socket-binding name="txn-recovery-environment" port="4712"/>
     <socket-binding name="txn-status-manager" port="4713"/>
     <socket-binding name="memcached_node33" port="11313"/>
-    <socket-binding name="memcached_node123" port="11314"/>
+    <socket-binding name="memcached_node-123" port="11314"/>
   </socket-binding-group>
 </server>

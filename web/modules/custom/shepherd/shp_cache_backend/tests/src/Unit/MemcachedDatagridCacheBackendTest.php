@@ -5,6 +5,7 @@ namespace Drupal\Tests\shp_cache_backend\Unit;
 use Drupal\Core\Config\ImmutableConfig;
 use Drupal\node\NodeInterface;
 use Drupal\shp_cache_backend\Plugin\CacheBackend\MemcachedDatagrid;
+use Drupal\shp_custom\Service\EnvironmentType;
 use Drupal\Tests\UnitTestCase;
 use UniversityOfAdelaide\OpenShift\Client;
 use UniversityOfAdelaide\OpenShift\Objects\ConfigMap;
@@ -50,6 +51,13 @@ class MemcachedDatagridCacheBackendTest extends UnitTestCase {
   protected $environment;
 
   /**
+   * A mock environment type service.
+   *
+   * @var \Drupal\shp_custom\Service\EnvironmentType|\PHPUnit\Framework\MockObject\MockObject
+   */
+  protected $environmentType;
+
+  /**
    * {@inheritdoc}
    */
   public function setUp() {
@@ -60,22 +68,40 @@ class MemcachedDatagridCacheBackendTest extends UnitTestCase {
     $this->environment->expects($this->any())
       ->method('id')
       ->willReturn(123);
+    $this->environment->field_shp_site = new \stdClass();
+    $this->environment->field_shp_site->target_id = 456;
     $this->client = $this->createMock(Client::class);
     $config = $this->createMock(ImmutableConfig::class);
     $config->expects($this->any())
       ->method('get')
       ->willReturn('mynamespace');
-    $this->plugin = new MemcachedDatagrid([], 'test', [], $this->client, $config);
+    $this->environmentType = $this->createMock(EnvironmentType::class);
+    $this->plugin = new MemcachedDatagrid([], 'test', [], $this->client, $config, $this->environmentType);
   }
 
   /**
    * @covers ::getEnvironmentVariables
+   *
+   * @dataProvider getEnvironmentVarsProvider
    */
-  public function testGetEnvironmentVariables() {
+  public function testGetEnvironmentVariables($isPromoted, $host) {
+    $this->environmentType->expects($this->once())
+      ->method('isPromotedEnvironment')
+      ->willReturn($isPromoted);
     $this->assertEquals([
       'MEMCACHE_ENABLED' => '1',
-      'MEMCACHE_HOST' => 'node-123-mc.mynamespace.svc.cluster.local',
+      'MEMCACHE_HOST' => $host,
     ], $this->plugin->getEnvironmentVariables($this->environment));
+  }
+
+  /**
+   * Data provider for testGetEnvironmentVariables.
+   */
+  public function getEnvironmentVarsProvider() {
+    return [
+      [TRUE, 'node-123-mc.mynamespace.svc.cluster.local'],
+      [FALSE, 'node-123-memcached'],
+    ];
   }
 
   /**
@@ -86,8 +112,14 @@ class MemcachedDatagridCacheBackendTest extends UnitTestCase {
     // The client will create a network policy and service.
     $this->client->expects($this->once())
       ->method('createNetworkpolicy');
-    $this->client->expects($this->once())
+    $this->client->expects($this->exactly(2))
       ->method('createService');
+    $this->client->expects($this->once())
+      ->method('getImageStream');
+    $this->client->expects($this->once())
+      ->method('createImageStream');
+    $this->client->expects($this->once())
+      ->method('createDeploymentConfig');
 
     // The client will return a config map, with some XML in its data.
     $config_map = ConfigMap::create()
@@ -138,13 +170,23 @@ class MemcachedDatagridCacheBackendTest extends UnitTestCase {
     $this->client->expects($this->once())
       ->method('deleteNetworkpolicy')
       ->with('datagrid-allow-node-123');
-    $this->client->expects($this->once())
+    $this->client->expects($this->exactly(2))
       ->method('getService')
-      ->with('node-123-mc')
+      ->with($this->logicalOr('node-123-mc', 'node-123-memcached'))
+      ->willReturn(TRUE);
+    $this->client->expects($this->exactly(2))
+      ->method('deleteService')
+      ->with($this->logicalOr('node-123-mc', 'node-123-memcached'));
+    $this->client->expects($this->once())
+      ->method('getDeploymentConfig')
+      ->with('node-123-memcached')
       ->willReturn(TRUE);
     $this->client->expects($this->once())
-      ->method('deleteService')
-      ->with('node-123-mc');
+      ->method('deleteDeploymentConfig')
+      ->with('node-123-memcached');
+    $this->client->expects($this->once())
+      ->method('deleteReplicationControllers')
+      ->with('', 'openshift.io/deployment-config.name=node-123-memcached');
 
     // The client will return a config map, with XML containing the
     // environment's memcache definitions.
