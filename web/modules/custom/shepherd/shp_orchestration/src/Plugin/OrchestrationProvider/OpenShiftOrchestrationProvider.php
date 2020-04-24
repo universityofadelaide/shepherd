@@ -408,16 +408,12 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
                 'env' => $deploy_data['env_vars'],
                 'resources' => [
                   'limits' => [
-                    // @TODO Add this back in, values missing from
-                    // formatDeployData.
-                    'cpu' => $deploy_data['cpu_limit'] ?? NULL,
+                    'cpu' => $deploy_data['cpu_limit'],
                     'memory' => $deploy_data['memory_limit'],
                   ],
                   'requests' => [
-                    // @TODO Add this back in, values missing from
-                    // formatDeployData.
-                    'cpu' => $deploy_data['cpu_request'] ?? NULL,
-                    'memory' => $deploy_data['memory_request'] ?? NULL,
+                    'cpu' => $deploy_data['cpu_request'],
+                    'memory' => $deploy_data['memory_request'],
                   ],
                 ],
               ],
@@ -1183,7 +1179,10 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
   protected function formatDeployData(string $name, array $formatted_env_vars, string $environment_url, int $site_id, int $environment_id) {
     $deploy_data = [
       'containerPort' => 8080,
+      'cpu_limit' => '200m',
+      'cpu_request' => '100m',
       'memory_limit' => '512Mi',
+      'memory_request' => '256Mi',
       'env_vars' => $formatted_env_vars,
       'annotations' => [
         'shepherdUrl' => $environment_url,
