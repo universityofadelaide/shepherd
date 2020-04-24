@@ -52,7 +52,7 @@ function shepherd_post_update_enable_drush_cmi_tools() {
 
 
 /**
- * Batch update paragraphs to add heading style fields in.
+ * Batch update environments and add the cache backend field.
  */
 function shepherd_post_update_add_cache_backend(&$sandbox) {
   $entity_storage = \Drupal::entityTypeManager()->getStorage('node');

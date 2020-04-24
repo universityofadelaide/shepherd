@@ -39,11 +39,8 @@ function shp_orchestration_requirements($phase) {
 function shp_orchestration_update_8001() {
   \Drupal::service('module_installer')->install(['shp_cache_backend']);
   $settings = \Drupal::configFactory()->getEditable('shp_orchestration.settings');
-  /** @var \Drupal\shp_orchestration\OrchestrationProviderInterface $provider */
-  $provider = \Drupal::service('plugin.manager.orchestration_provider')->getProviderInstance();
-  $config_entity_id = $provider->getPluginDefinition()['config_entity_id'];
-  $storage = \Drupal::entityTypeManager()->getStorage($config_entity_id);
-  $config_entity = $storage->load($config_entity_id);
+  $storage = \Drupal::entityTypeManager()->getStorage('openshift_with_redis');
+  $config_entity = $storage->load('openshift_with_redis');
 
   // Migrate settings.
   $settings->set('connection.endpoint', $config_entity->get('endpoint'));
