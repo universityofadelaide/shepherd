@@ -384,7 +384,6 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     int $retention = 0
   ) {
     // @todo Refactor this too. Not DRY enough.
-    $sanitised_project_name = self::sanitise($project_name);
     $deployment_name = self::generateDeploymentName($environment_id);
     $deployment_config = $this->client->getDeploymentConfig($deployment_name);
     $formatted_env_vars = $this->formatEnvVars($environment_variables, $deployment_name);
@@ -409,12 +408,16 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
                 'env' => $deploy_data['env_vars'],
                 'resources' => [
                   'limits' => [
-                    'cpu' => $deploy_data['cpu_limit'],
+                    // @TODO Add this back in, values missing from
+                    // formatDeployData.
+                    'cpu' => $deploy_data['cpu_limit'] ?? NULL,
                     'memory' => $deploy_data['memory_limit'],
                   ],
                   'requests' => [
-                    'cpu' => $deploy_data['cpu_request'],
-                    'memory' => $deploy_data['memory_request'],
+                    // @TODO Add this back in, values missing from
+                    // formatDeployData.
+                    'cpu' => $deploy_data['cpu_request'] ?? NULL,
+                    'memory' => $deploy_data['memory_request'] ?? NULL,
                   ],
                 ],
               ],
