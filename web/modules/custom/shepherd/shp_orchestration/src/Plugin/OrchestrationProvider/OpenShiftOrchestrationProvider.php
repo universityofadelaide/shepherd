@@ -406,6 +406,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
           'spec' => [
             'containers' => [
               0 => [
+                'env' => $deploy_data['env_vars'],
                 'resources' => [
                   'limits' => [
                     'cpu' => $deploy_data['cpu_limit'],
