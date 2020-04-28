@@ -175,8 +175,7 @@ data:
           </datasources>
         </subsystem>
         <subsystem xmlns="urn:infinispan:server:endpoint:9.4">
-          <memcached-connector name="memcached_sheperd" cache-container="clustered" cache="memcached_sheperd" socket-binding="memcached_sheperd"/>
-          <memcached-connector name="memcached_node3" cache-container="clustered" cache="memcached_node3" socket-binding="memcached_node3"/>
+          <memcached-connector name="memcached_shepherd" cache-container="clustered" cache="memcached_shepherd" socket-binding="memcached_shepherd"/>
         </subsystem>
         <subsystem xmlns="urn:infinispan:server:core:9.4" default-cache-container="clustered">
           <cache-container statistics="true" name="clustered" default-cache="mycache">
@@ -184,16 +183,11 @@ data:
             <global-state>
               <overlay-configuration-storage/>
             </global-state>
-            <replicated-cache statistics="true" name="memcached_sheperd" mode="SYNC" start="EAGER">
+            <replicated-cache statistics="true" name="memcached_shepherd" mode="SYNC" start="EAGER">
               <memory>
                 <object/>
               </memory>
             </replicated-cache>
-            <distributed-cache statistics="true" name="memcached_node3" mode="SYNC" start="EAGER">
-              <memory>
-                <object/>
-              </memory>
-            </distributed-cache>
             <distributed-cache statistics="true" name="mycache" mode="SYNC" start="EAGER">
               <memory>
                 <object/>
@@ -351,8 +345,7 @@ data:
         <socket-binding name="jgroups-tcp-fd" port="57600"/>
         <socket-binding name="jgroups-udp" port="55200" multicast-address="${jboss.default.multicast.address:234.99.54.14}" multicast-port="45688"/>
         <socket-binding name="jgroups-udp-fd" port="54200"/>
-        <socket-binding name="memcached_sheperd" port="11211"/>
-        <socket-binding name="memcached_node3" port="11311"/>
+        <socket-binding name="memcached_shepherd" port="11211"/>
         <socket-binding name="txn-recovery-environment" port="4712"/>
         <socket-binding name="txn-status-manager" port="4713"/>
       </socket-binding-group>
