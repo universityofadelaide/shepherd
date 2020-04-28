@@ -474,6 +474,10 @@ class MemcachedDatagrid extends CacheBackendBase {
           unset($container['ports'][$pid]);
         }
       }
+      // Remove the empty ports key so OS doesn't complain about empty arrays.
+      if (empty($container['ports'])) {
+        unset($container['ports']);
+      }
     }
     $statefulSet->setSpec($spec);
     $this->client->updateStatefulset($statefulSet);
