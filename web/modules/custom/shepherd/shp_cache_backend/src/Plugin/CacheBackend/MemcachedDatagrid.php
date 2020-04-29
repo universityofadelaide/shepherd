@@ -478,8 +478,10 @@ class MemcachedDatagrid extends CacheBackendBase {
       if (empty($container['ports'])) {
         unset($container['ports']);
       }
-      // Reindex the array.
-      $container['ports'] = array_values($container['ports']);
+      else {
+        // Reindex the array.
+        $container['ports'] = array_values($container['ports']);
+      }
     }
 
     $statefulSet->setSpec($spec);
