@@ -123,7 +123,7 @@ abstract class ListControllerBase extends ControllerBase {
    */
   protected function parseDate($date): DrupalDateTime {
     $date = DrupalDateTime::createFromFormat('Y-m-d\TH:i:s\Z', $date, 'Etc/Zulu');
-    $date->setTimezone(new \DateTimeZone(drupal_get_user_timezone()));
+    $date->setTimezone(new \DateTimeZone(date_default_timezone_get()));
     return $date;
   }
 
