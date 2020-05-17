@@ -19,7 +19,6 @@
         "drush/drush":                                   "9.*",
         "drupal/core":                                   "^8.8",
         "drupal/drush_cmi_tools":                        "dev-8.x-2.x",
-        "drupal/devel":                                  "1.*",
         "drupal/entity_reference_revisions":             "1.*",
         "drupal/field_group":                            "1.*",
         "drupal/group":                                  "1.*@RC",
@@ -33,10 +32,10 @@
         "zaporylie/composer-drupal-optimizations":       "^1.0"
     },
     "require-dev": {
-        "dealerdirect/phpcodesniffer-composer-installer": "^0.5.0",
-        "drupal/core-dev": "^8.8",
+        "drupal/devel": "^2.1",
         "mglaman/phpstan-drupal": "^0.11.8",
         "phpstan/phpstan-deprecation-rules": "^0.11.2",
+        "drupal/core-dev": "^8.8",
         "weitzman/drupal-test-traits": "^1.2"
     },
     "conflict": {
