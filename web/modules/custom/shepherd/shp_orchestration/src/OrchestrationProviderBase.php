@@ -16,8 +16,18 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 abstract class OrchestrationProviderBase extends PluginBase implements ContainerFactoryPluginInterface, OrchestrationProviderInterface {
 
+  /**
+   * Entity type manager.
+   *
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
+   */
   protected $entityTypeManager;
 
+  /**
+   * Config entity.
+   *
+   * @var \Drupal\Core\Entity\EntityInterface|null
+   */
   protected $configEntity;
 
   use StringTranslationTrait;

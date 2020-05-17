@@ -3,7 +3,6 @@
 namespace Drupal\shp_backup\Controller;
 
 use Drupal\node\NodeInterface;
-use Symfony\Component\HttpFoundation\Request;
 use UniversityOfAdelaide\OpenShift\Objects\Backups\Phase;
 
 /**

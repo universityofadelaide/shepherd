@@ -21,6 +21,8 @@ use Drupal\Tests\UnitTestCase;
 class ProvisionerTest extends UnitTestCase {
 
   /**
+   * Provisioner service.
+   *
    * @var \Drupal\shp_database_provisioner\Service\Provisioner
    */
   protected $provisioner;

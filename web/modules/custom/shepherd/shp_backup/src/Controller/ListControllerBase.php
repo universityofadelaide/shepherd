@@ -119,6 +119,7 @@ abstract class ListControllerBase extends ControllerBase {
    *   The date string.
    *
    * @return \Drupal\Core\Datetime\DrupalDateTime
+   *   Date.
    */
   protected function parseDate($date): DrupalDateTime {
     $date = DrupalDateTime::createFromFormat('Y-m-d\TH:i:s\Z', $date, 'Etc/Zulu');
