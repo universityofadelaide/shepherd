@@ -35,27 +35,27 @@
   </php>
   <testsuites>
     <testsuite name="unit">
-      <directory>./web/modules/custom/*/tests/src/Unit</directory>
+      <directory>./web/modules/custom/shepherd/*/tests/src/Unit</directory>
       <directory>./web/profiles/custom/*/tests/src/Unit</directory>
       <directory>./tests/Unit</directory>
     </testsuite>
     <testsuite name="kernel">
-      <directory>./web/modules/custom/*/tests/src/Kernel</directory>
+      <directory>./web/modules/custom/shepherd/*/tests/src/Kernel</directory>
       <directory>./web/profiles/custom/*/tests/src/Kernel</directory>
     </testsuite>
     <testsuite name="functional">
-      <directory>./web/modules/custom/*/tests/src/Functional</directory>
+      <directory>./web/modules/custom/shepherd/*/tests/src/Functional</directory>
       <directory>./web/profiles/custom/*/tests/src/Functional</directory>
-      <exclude>./web/modules/custom/*/tests/src/Functional/Clean</exclude>
+      <exclude>./web/modules/custom/shepherd/*/tests/src/Functional/Clean</exclude>
       <exclude>./web/profiles/custom/*/tests/src/Functional/Clean</exclude>
     </testsuite>
     <!-- Need to be run with REDIS_ENABLED=0 due to being clean install browser tests. -->
     <testsuite name="functionalclean">
-      <directory>./web/modules/custom/*/tests/src/Functional/Clean</directory>
+      <directory>./web/modules/custom/shepherd/*/tests/src/Functional/Clean</directory>
       <directory>./web/profiles/custom/*/tests/src/Functional/Clean</directory>
     </testsuite>
     <testsuite name="functionaljs">
-      <directory>./web/modules/custom/*/tests/src/FunctionalJavascript</directory>
+      <directory>./web/modules/custom/shepherd/*/tests/src/FunctionalJavascript</directory>
       <directory>./web/profiles/custom/*/tests/src/FunctionalJavascript</directory>
     </testsuite>
   </testsuites>
