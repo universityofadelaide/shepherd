@@ -3,6 +3,7 @@
 namespace Drupal\shp_orchestration\Plugin\OrchestrationProvider;
 
 use Drupal\shp_orchestration\OrchestrationProviderBase;
+use UniversityOfAdelaide\OpenShift\Objects\Backups\Backup;
 
 /**
  * DummyOrchestrationProvider.
@@ -66,7 +67,8 @@ class DummyOrchestrationProvider extends OrchestrationProviderBase {
     array $probes = [],
     array $cron_jobs = [],
     array $annotations = [],
-    string $backup_schedule = ''
+    string $backup_schedule = '',
+    int $backup_retention = 0
   ) {
     return TRUE;
   }
@@ -93,7 +95,8 @@ class DummyOrchestrationProvider extends OrchestrationProviderBase {
     array $secrets = [],
     array $probes = [],
     array $cron_jobs = [],
-    array $annotations = []
+    array $annotations = [],
+    string $backup_schedule = ''
   ) {
     return TRUE;
   }
@@ -176,6 +179,20 @@ class DummyOrchestrationProvider extends OrchestrationProviderBase {
   /**
    * {@inheritdoc}
    */
+  public function updateBackup(Backup $backup) {
+    return TRUE;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function deleteBackup(string $name) {
+    return TRUE;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function backupEnvironment(string $site_id, string $environment_id, string $friendly_name = '') {
     return [];
   }
@@ -183,14 +200,14 @@ class DummyOrchestrationProvider extends OrchestrationProviderBase {
   /**
    * {@inheritdoc}
    */
-  public function environmentScheduleBackupCreate(string $site_id, string $environment_id, string $schedule) {
+  public function environmentScheduleBackupCreate(string $site_id, string $environment_id, string $schedule, int $retention) {
     return TRUE;
   }
 
   /**
    * {@inheritdoc}
    */
-  public function environmentScheduleBackupUpdate(string $site_id, string $environment_id, string $schedule) {
+  public function environmentScheduleBackupUpdate(string $site_id, string $environment_id, string $schedule, int $retention) {
     return TRUE;
   }
 

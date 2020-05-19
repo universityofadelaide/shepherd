@@ -45,7 +45,7 @@ class RestoreList extends ListControllerBase {
       }
       $backup = $this->orchestrationProvider->getBackup($restore->getBackupName());
       $table['#rows'][] = [
-        $backup ? $this->backupService->getFriendlyName($backup) : '',
+        $backup ? $backup->getFriendlyName() : '',
         $this->environmentService->getEnvironmentLink($environment, FALSE)->toString(),
         Phase::getFriendlyPhase($restore->getPhase()),
         $restore->getStartTimestamp() ? $this->formatDate($restore->getStartTimestamp()) : $this->t('N/A'),

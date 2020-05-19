@@ -3,6 +3,7 @@ host: database
 port: '3306'
 user: root
 secret: privileged-db-password
+options: ''
 populate_command: "wget [shepherd:public-filename] -O /tmp/dump.sql\r\ndrush sqlq --file=/tmp/dump.sql\r\ndrush updb -y\r\nrobo config:import-plus\r\ndrush cr\r\nrm /tmp/dump.sql"
 _core:
   default_config_hash: jyiUlyMliuBeyd_8DXT8LxFZFz8dNdfWywL2rK0GoMw

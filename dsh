@@ -52,6 +52,8 @@ fi
 dsh_openshift_init() {
   # Set default type of OpenShift installation if its not already set.
   : ${OPENSHIFT_TYPE:=minishift}
+  # Set the default minishift driver.
+  : ${MINISHIFT_DRIVER:=xhyve}
 
   # Password for the mysql server.
   SUPER_SECRET_PASSWORD=super-secret-password
@@ -68,7 +70,8 @@ dsh_openshift_init() {
 
     # Perform/check setup.
     if ! minishift status | grep "Running" > /dev/null; then
-      minishift start
+
+      minishift start --vm-driver ${MINISHIFT_DRIVER}
     fi
 
     # Ensure oc command is available.
@@ -119,6 +122,8 @@ dsh_openshift_init() {
   # Add local ssh key as build-key secret if it exists and has no passphrase.
   if ! oc get secret build-key > /dev/null 2>&1 && [ -f ${BUILD_KEY} ] && ! grep -q ENCRYPTED ${BUILD_KEY}; then
     oc create secret generic build-key --from-file=ssh-privatekey=${BUILD_KEY}
+  else
+    echo "build-key passwordless secret not created, builds will likely be broken."
   fi
 
   # Create a permanent token that shepherd can use to talk to OpenShift.
@@ -206,7 +211,10 @@ dsh_logs() {
 # Command: ./dsh pull
 # Fetches all images used by the project.
 dsh_pull() {
-  docker-compose -f ${DOCKER_COMPOSE_FILE} pull
+  # docker-compose doesn't resolve sub-dependencies in Dockerfiles.
+  docker pull uofa/s2i-shepherd-drupal
+  docker-compose -f ${DOCKER_COMPOSE_FILE} pull --ignore-pull-failures
+  docker-compose -f ${DOCKER_COMPOSE_FILE} build
 }
 
 # Command: ./dsh nfs

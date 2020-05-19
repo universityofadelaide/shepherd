@@ -184,6 +184,22 @@ objects:
           name: shepherd-web
           ports:
           - containerPort: 8080
+          livenessProbe:
+            failureThreshold: 3
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            successThreshold: 1
+            tcpSocket:
+              port: 8080
+            timeoutSeconds: 10
+          readinessProbe:
+            failureThreshold: 3
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            successThreshold: 1
+            tcpSocket:
+              port: 8080
+            timeoutSeconds: 10
           resources:
             limits:
               memory: ${MEMORY_LIMIT_WEB}
@@ -329,6 +345,21 @@ objects:
             command:
               - /usr/local/bin/docker-entrypoint.sh
               - /usr/local/etc/redis/redis.conf
+            livenessProbe:
+              failureThreshold: 3
+              initialDelaySeconds: 30
+              periodSeconds: 10
+              successThreshold: 1
+              tcpSocket:
+                port: 6379
+              timeoutSeconds: 1
+            readinessProbe:
+              exec:
+                command:
+                - /bin/sh
+                - -i
+                - -c
+                - test "$(redis-cli ping)" == "PONG"
             ports:
               - containerPort: 6379
             resources: {}

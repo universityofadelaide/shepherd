@@ -4,3 +4,7 @@ services:
     arguments: ['@config.factory', '@token']
     tags:
       - { name: event_subscriber }
+  shp_database_provisioner.provisioner:
+    class: Drupal\shp_database_provisioner\Service\Provisioner
+    arguments:
+      ['@config.factory', '@plugin.manager.orchestration_provider', '@shp_custom.environment', '@shp_custom.string_generator']

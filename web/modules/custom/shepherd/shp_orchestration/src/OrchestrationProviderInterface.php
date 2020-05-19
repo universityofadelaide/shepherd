@@ -3,6 +3,7 @@
 namespace Drupal\shp_orchestration;
 
 use Drupal\Component\Plugin\PluginInspectionInterface;
+use UniversityOfAdelaide\OpenShift\Objects\Backups\Backup;
 
 /**
  * Interface OrchestrationProviderInterface.
@@ -145,7 +146,8 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
     array $probes = [],
     array $cron_jobs = [],
     array $annotations = [],
-    string $backup_schedule = ''
+    string $backup_schedule = '',
+    int   $backup_retention = 0
   );
 
   /**
@@ -189,6 +191,8 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
    *   An array of cron jobs associated with this environment.
    * @param array $annotations
    *   An array of route annotations.
+   * @param string $backup_schedule
+   *   A schedule to run automated backups on, leave blank to disable.
    *
    * @return bool
    *   Returns true if succeeded.
@@ -212,7 +216,8 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
     array $secrets = [],
     array $probes = [],
     array $cron_jobs = [],
-    array $annotations = []
+    array $annotations = [],
+    string $backup_schedule = ''
   );
 
   /**
@@ -467,15 +472,37 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
   );
 
   /**
-   * Get a backup..
+   * Get a backup.
    *
    * @param string $name
    *   The backup name.
    *
-   * @return object|bool
+   * @return \UniversityOfAdelaide\OpenShift\Objects\Backups\Backup|bool
    *   Returns a backup object if successful, otherwise false.
    */
   public function getBackup(string $name);
+
+  /**
+   * Update a backup.
+   *
+   * @param \UniversityOfAdelaide\OpenShift\Objects\Backups\Backup $backup
+   *   The backup.
+   *
+   * @return \UniversityOfAdelaide\OpenShift\Objects\Backups\Backup|bool
+   *   Returns a backup object if successful, otherwise false.
+   */
+  public function updateBackup(Backup $backup);
+
+  /**
+   * Delete a backup.
+   *
+   * @param string $name
+   *   The backup name.
+   *
+   * @return bool
+   *   Returns true if succeeded.
+   */
+  public function deleteBackup(string $name);
 
   /**
    * Backup an environment.
@@ -501,11 +528,13 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
    *   Environment node id.
    * @param string $schedule
    *   A cron expression defining when to run the backups.
+   * @param int $retention
+   *   The number of scheduled backups to retain.
    *
    * @return object|bool
    *   Returns a schedule object if successful, otherwise false.
    */
-  public function environmentScheduleBackupCreate(string $site_id, string $environment_id, string $schedule);
+  public function environmentScheduleBackupCreate(string $site_id, string $environment_id, string $schedule, int $retention);
 
   /**
    * Updates the backup schedule for an environment.
@@ -516,11 +545,13 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
    *   Environment node id.
    * @param string $schedule
    *   A cron expression defining when to run the backups.
+   * @param int $retention
+   *   The number of scheduled backups to retain.
    *
    * @return object|bool
    *   Returns the schedule object if successful, otherwise false.
    */
-  public function environmentScheduleBackupUpdate(string $site_id, string $environment_id, string $schedule);
+  public function environmentScheduleBackupUpdate(string $site_id, string $environment_id, string $schedule, int $retention);
 
   /**
    * Deletes the backup schedule for an environment.

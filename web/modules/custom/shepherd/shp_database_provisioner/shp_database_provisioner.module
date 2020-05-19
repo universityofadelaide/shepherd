@@ -8,6 +8,7 @@
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Render\BubbleableMetadata;
 use Drupal\file\Entity\File;
+use Drupal\shp_database_provisioner\Service\Provisioner;
 
 /**
  * Implements hook_token_info().
@@ -30,7 +31,7 @@ function shp_database_provisioner_token_info() {
  * Implements hook_tokens().
  */
 function shp_database_provisioner_tokens($type, $tokens, array $data, array $options, BubbleableMetadata $bubbleable_metadata) {
-  if ($type != 'shepherd') {
+  if ($type !== 'shepherd') {
     return [];
   }
 
@@ -52,97 +53,11 @@ function shp_database_provisioner_tokens($type, $tokens, array $data, array $opt
 
 }
 
-// Secret key names used to store database credentials.
-define('EnvMySQLHostname', 'DATABASE_HOST');
-define('EnvMySQLDatabase', 'DATABASE_NAME');
-define('EnvMySQLPort', 'DATABASE_PORT');
-define('EnvMySQLUsername', 'DATABASE_USER');
-define('EnvMySQLPassword', 'DATABASE_PASSWORD');
-
 /**
  * Implements hook_ENTITY_TYPE_insert().
  */
 function shp_database_provisioner_node_insert(EntityInterface $entity) {
-  $config = \Drupal::config('shp_database_provisioner.settings');
-  if ($entity->bundle() === 'shp_environment' && $config->get('enabled')) {
-    /** @var \Drupal\shp_orchestration\OrchestrationProviderInterface $orchestration_provider_plugin */
-    $orchestration_provider_plugin = \Drupal::service('plugin.manager.orchestration_provider')->getProviderInstance();
-
-    if (isset($entity->field_shp_site->target_id)) {
-      $site = $entity->get('field_shp_site')
-        ->first()
-        ->get('entity')
-        ->getTarget()
-        ->getValue();
-
-      if (!isset($site->field_shp_project->target_id)) {
-        // @todo Handle errors.
-        return FALSE;
-      }
-    }
-    else {
-      // @todo Handle errors.
-      return FALSE;
-    }
-
-    $deployment_name = $orchestration_provider_plugin::generateDeploymentName($entity->id());
-
-    // Construct credentials for the new environment.
-    $env_db_database = 'env_' . $entity->id();
-    $env_db_username = 'user_' . $entity->id();
-    $env_db_password = \Drupal::service('shp_custom.string_generator')->generateRandomPassword();
-
-    $host = $config->get('host');
-    $username = $config->get('user');
-    $port = $config->get('port');
-    // Add database credentials to deployment secret.
-    // Create the secret if it doesn't exist, otherwise add it to the existing.
-    $secret_data = [
-      EnvMySQLHostname => $host,
-      EnvMySQLPort => $port,
-      EnvMySQLUsername => $env_db_username,
-      EnvMySQLDatabase => $env_db_database,
-      EnvMySQLPassword => $env_db_password,
-    ];
-    if ($env_secret = $orchestration_provider_plugin->getSecret($deployment_name)) {
-      $secret_result = $orchestration_provider_plugin->updateSecret($deployment_name, array_merge($env_secret, $secret_data));
-    }
-    else {
-      $secret_result = $orchestration_provider_plugin->createSecret($deployment_name, $secret_data);
-    }
-    if (!$secret_result) {
-      // @todo Handle errors.
-      return FALSE;
-    }
-
-    // Fetch privileged database password from orchestration secret store.
-    $privileged_db_password = $orchestration_provider_plugin->getSecret($config->get('secret'), 'DATABASE_PASSWORD');
-
-    $db = new mysqli($host, $username, $privileged_db_password, NULL, $port, NULL);
-
-    $query = sprintf('CREATE DATABASE `%s`', $env_db_database);
-    $statement = $db->prepare($query);
-    if ($statement === NULL) {
-      // @todo Handle errors.
-      return FALSE;
-    }
-    $statement->execute();
-
-    $query = sprintf(
-      "GRANT ALL PRIVILEGES ON `%s`.* TO `%s`@`%%` IDENTIFIED BY '%s'",
-      $env_db_database,
-      $env_db_username,
-      $env_db_password
-    );
-    $statement = $db->prepare($query);
-    if ($statement === NULL) {
-      // @todo Handle errors.
-      return FALSE;
-    }
-    $statement->execute();
-  }
-
-  return TRUE;
+  \Drupal::service('shp_database_provisioner.provisioner')->create($entity);
 }
 
 /**
@@ -151,10 +66,10 @@ function shp_database_provisioner_node_insert(EntityInterface $entity) {
 function shp_database_provisioner_shp_env_vars(EntityInterface $entity) {
   $config = \Drupal::config('shp_database_provisioner.settings');
   return [
-    EnvMySQLHostname => $config->get('host'),
-    EnvMySQLPort => $config->get('port'),
-    EnvMySQLDatabase => 'env_' . $entity->id(),
-    EnvMySQLUsername => 'user_' . $entity->id(),
+    Provisioner::ENV_MYSQL_HOSTNAME => $config->get('host'),
+    Provisioner::ENV_MYSQL_PORT => $config->get('port'),
+    Provisioner::ENV_MYSQL_DATABASE => 'env_' . $entity->id(),
+    Provisioner::ENV_MYSQL_USERNAME => 'user_' . $entity->id(),
     // The following path is based on convention set in:
     // OpenShiftOrchestrationProvider::setupVolumes()
     // The 'default' deployment config secret is mounted at /etc/secret.
