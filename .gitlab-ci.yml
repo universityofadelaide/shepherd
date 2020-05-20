@@ -1,31 +1,72 @@
-# Shepherd Gitlab CI script
-shepherd:
-  script:
-    - killall ssh-agent
-    - eval $(ssh-agent)
-    - echo "${JENKINS_DEPLOYMENT_KEY}" > /tmp/jenkins_deployment_key
-    - chmod 0600 /tmp/jenkins_deployment_key
-    - ssh-add /tmp/jenkins_deployment_key
-    - ssh-add -l
-    - docker pull uofa/apache2-php7-dev:shepherd
-    - docker pull mariadb
-    - mkdir -p ~/.ssh && chmod 0700 ~/.ssh
-    - ssh-keyscan -H gitlab.adelaide.edu.au > ~/.ssh/known_hosts
-    - echo "Host *" > ~/.ssh/config && echo "    StrictHostKeyChecking no" >> ~/.ssh/config
-    - docker run --rm -v $(pwd):/app -v $SSH_AUTH_SOCK:/ssh-auth.sock -v /etc/passwd:/etc/passwd:ro -v /etc/group:/etc/group:ro -v ${HOME}:${HOME} --user $(id -u):$(id -g) --env SSH_AUTH_SOCK=/ssh-auth.sock composer install --ignore-platform-reqs
-    - ./dsh start
-    - sleep 10
-    - ./dsh exec $(basename ${CI_JOB_NAME} | sed 's/[-_]//g')_web_1 root 'chmod -R 777 /web/app/sites/default'
-    # This is one big long command line passed to the utility container.
-    - ./dsh exec bash -c '
-        export GITLAB_CI=true &&
-        export SIMPLETEST_DB=\'mysql://user:password@db/drupal\' &&
-        cd /code &&
-        sudo phpdismod xdebug && robo build &&
-        ./bin/phpunit --group ua --testdox -c ./app/core ./app/modules';
-  after_script:
-    - ./dsh exec $(basename ${CI_JOB_NAME} | sed 's/[-_]//g')_web_1 root 'rm -rf /web/app/sites/default'
-    - ./dsh purge
-  tags:
+image: uofa/s2i-shepherd-drupal:latest
+services:
+  - alias: db
+    name:  centos/mariadb-102-centos7
+  - alias: mail
+    name:  mailhog/mailhog:latest
+  - alias: selenium
+    name:  selenium/standalone-chrome:latest
+
+variables:
+  # build directory.
+  GIT_CLONE_PATH: "$CI_BUILDS_DIR"
+  HOME: "$CI_BUILDS_DIR"
+  # "db" env vars.
+  MYSQL_DATABASE: drupal
+  MYSQL_USER: user
+  MYSQL_PASSWORD: password
+  MYSQL_ROOT_PASSWORD: super-secret-password
+  # "app" env vars.
+  BROWSERTEST_OUTPUT_DIRECTORY: "${CI_BUILDS_DIR}web/sites/simpletest/browser_output"
+  APPLICATION_ROOT: "${CI_BUILDS_DIR}web"
+  HASH_SALT: random-hash
+  PUBLIC_DIR: /shared/public
+  PRIVATE_DIR: /shared/private
+  TMP_DIR: /shared/tmp
+  REDIS_ENABLED: 0
+  SHEPHERD_INSTALL_PROFILE: ua
+  SHEPHERD_SECRET_PATH: /code/private
+  SHEPHERD_TOKEN: super-secret-token
+  SITE_TITLE: WCMS D8
+  SITE_MAIL: site@example.com
+  SITE_ADMIN_EMAIL: admin@example.com
+  SITE_ADMIN_USERNAME: admin
+  SITE_ADMIN_PASSWORD: password
+  KUBERNETES_SERVICE_ACCOUNT_OVERWRITE: dev-gitlab-runner-build
+
+build:
+  artifacts:
+    paths:
+      - ${BROWSERTEST_OUTPUT_DIRECTORY}
+    expire_in: 1 hour
+    when: on_failure
   except:
-  - tags
+    - master
+    - develop
+  script:
+    # Debug the user and groups.
+    - id
+    # Use https clone URLs.
+    - git config --global url."https://${COMPOSER_USER}:${COMPOSER_TOKEN}@gitlab.adelaide.edu.au/".insteadOf "git@gitlab.adelaide.edu.au:"
+    - git config --global url."https://github.com/".insteadOf 'git@github.com:'
+    - composer global require hirak/prestissimo
+    # Setup.
+    - composer --ignore-platform-reqs --no-progress install
+    - ./bin/robo dev:xdebug-disable
+    # Linting
+    - ./bin/robo lint:php
+    - ./bin/phpunit --testsuite unit --stop-on-failure
+    - mkdir -p ${PUBLIC_DIR} ${PRIVATE_DIR} ${TMP_DIR} ${BROWSERTEST_OUTPUT_DIRECTORY}
+    - chmod +w ${APPLICATION_ROOT}/sites/default ${BROWSERTEST_OUTPUT_DIRECTORY}
+    - ln -sf ${PUBLIC_DIR} ${APPLICATION_ROOT}/sites/default/files
+    - cp ${APPLICATION_ROOT}/sites/default/ci.settings.php ${APPLICATION_ROOT}/sites/default/settings.local.php
+    # Build the site.
+    - ./bin/robo build:install
+    - ./bin/robo config:import-plus
+    - ./bin/robo dev:cache-rebuild
+    - apache2 &
+    - sleep ${SLEEP_TIME:-0}
+    - ./bin/phpunit --stop-on-failure --testsuite kernel
+    - ./bin/phpunit --stop-on-failure --testsuite functional
+    - ./bin/phpunit --stop-on-failure --testsuite functionaljs
+    - ./bin/phpunit --stop-on-failure --testsuite functionalclean

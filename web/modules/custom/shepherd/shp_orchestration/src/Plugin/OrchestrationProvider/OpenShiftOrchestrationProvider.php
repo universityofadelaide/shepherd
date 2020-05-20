@@ -34,11 +34,13 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
    *
    * @see https://github.com/universityofadelaide/shepherd-operator/blob/master/pkg/apis/meta/v1/types.go#L34
    */
+  // phpcs:disable Generic.NamingConventions.UpperCaseConstantName
   protected const KeyMySQLHostname = 'hostname';
   protected const KeyMySQLDatabase = 'database';
   protected const KeyMySQLPort = 'port';
   protected const KeyMySQLUsername = 'username';
   protected const KeyMySQLPassword = 'password';
+  // phpcs:enable
 
   /**
    * OpenShift client.
@@ -49,7 +51,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
   protected $client;
 
   /**
-   * Sepherd custom string generator.
+   * Shepherd custom string generator.
    *
    * @var \Drupal\shp_custom\Service\StringGenerator
    *   String generator.
@@ -188,13 +190,20 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
   /**
    * Create a build config in OpenShift.
    *
-   * @param $build_config_name
-   * @param $source_ref
-   * @param $source_repo
-   * @param $builder_image
-   * @param $formatted_env_vars
-   * @param $source_secret
-   * @param $image_stream_tag
+   * @param string $build_config_name
+   *   Build config name.
+   * @param string $source_ref
+   *   Source ref.
+   * @param string $source_repo
+   *   Source repo.
+   * @param string $builder_image
+   *   Builder image.
+   * @param string $source_secret
+   *   Source secret.
+   * @param string $image_stream_tag
+   *   Image stream tag.
+   * @param array $formatted_env_vars
+   *   Formatted env vars.
    *
    * @return bool
    *   Created or already exists = TRUE. Fail = FALSE.
@@ -1079,17 +1088,16 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
   /**
    * Helper function to confirm if requested pod is a web pod.
    *
-   * @param $pod
+   * @param string $pod
+   *   Pod name.
    *
    * @return bool
+   *   True if web pod, false otherwise.
    */
   protected function isWebPod($pod) {
-    if (!isset($pod['metadata']['job-name']) &&
+    return !isset($pod['metadata']['job-name']) &&
       $pod['status']['phase'] === 'Running' &&
-      !strpos($pod['metadata']['name'], 'redis')) {
-      return TRUE;
-    }
-    return FALSE;
+      !strpos($pod['metadata']['name'], 'redis');
   }
 
   /**
@@ -1210,6 +1218,8 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
   }
 
   /**
+   * Generate request limits.
+   *
    * @param int $environment_id
    *   The ID of the environment being deployed.
    *

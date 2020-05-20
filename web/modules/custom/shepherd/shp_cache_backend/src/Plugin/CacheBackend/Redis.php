@@ -94,7 +94,7 @@ class Redis extends CacheBackendBase {
    * Generate image stream.
    *
    * @return array
-   *   The image stream.
+   *   Image stream definition.
    */
   protected function generateImageStream() {
     $image_stream = [
@@ -143,7 +143,7 @@ class Redis extends CacheBackendBase {
    *   Array of data for labels.
    *
    * @return array
-   *   The deployment config array.
+   *   Deployment config definition.
    */
   protected function generateDeploymentConfig(string $deployment_name, string $redis_name, string $redis_port, array $data) {
     $redis_data = $deployment_name . '-data';

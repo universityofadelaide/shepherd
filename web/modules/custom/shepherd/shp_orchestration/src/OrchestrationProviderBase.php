@@ -3,10 +3,8 @@
 namespace Drupal\shp_orchestration;
 
 use Drupal\Component\Plugin\PluginBase;
-use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * A base class to implement an orchestration provider plugin.
