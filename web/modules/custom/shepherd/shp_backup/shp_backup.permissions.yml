@@ -1,2 +1,5 @@
 shp view backups:
   title: 'View backups'
+
+shp bulk backup:
+  title: 'Run bulk backups'

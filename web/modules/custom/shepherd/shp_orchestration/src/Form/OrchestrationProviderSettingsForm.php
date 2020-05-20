@@ -15,6 +15,11 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 class OrchestrationProviderSettingsForm extends ConfigFormBase {
 
+  /**
+   * Orchestration provider manager.
+   *
+   * @var \Drupal\Component\Plugin\PluginManagerInterface
+   */
   protected $orchestrationProviderManager;
 
   /**

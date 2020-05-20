@@ -63,7 +63,7 @@ services:
     image: redis:alpine
     command: |
       redis-server
-      --maxmemory 512Mi
+      --maxmemory 512mb
       --maxmemory-policy allkeys-lru
       --save ""
     # --requirepass password

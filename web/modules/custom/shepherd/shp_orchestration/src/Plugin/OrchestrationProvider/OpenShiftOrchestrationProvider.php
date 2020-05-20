@@ -6,7 +6,6 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\Url;
 use Drupal\node\Entity\Node;
-use Drupal\shp_backup\Service\Backup as BackupService;
 use Drupal\shp_custom\Service\StringGenerator;
 use Drupal\shp_orchestration\OrchestrationProviderBase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -36,11 +35,13 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
    *
    * @see https://github.com/universityofadelaide/shepherd-operator/blob/master/pkg/apis/meta/v1/types.go#L34
    */
+  // phpcs:disable Generic.NamingConventions.UpperCaseConstantName
   protected const KeyMySQLHostname = 'hostname';
   protected const KeyMySQLDatabase = 'database';
   protected const KeyMySQLPort = 'port';
   protected const KeyMySQLUsername = 'username';
   protected const KeyMySQLPassword = 'password';
+  // phpcs:enable
 
   /**
    * OpenShift client.
@@ -51,7 +52,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
   protected $client;
 
   /**
-   * Sepherd custom string generator.
+   * Shepherd custom string generator.
    *
    * @var \Drupal\shp_custom\Service\StringGenerator
    *   String generator.
@@ -176,13 +177,20 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
   /**
    * Create a build config in OpenShift.
    *
-   * @param $build_config_name
-   * @param $source_ref
-   * @param $source_repo
-   * @param $builder_image
-   * @param $formatted_env_vars
-   * @param $source_secret
-   * @param $image_stream_tag
+   * @param string $build_config_name
+   *   Build config name.
+   * @param string $source_ref
+   *   Source ref.
+   * @param string $source_repo
+   *   Source repo.
+   * @param string $builder_image
+   *   Builder image.
+   * @param string $source_secret
+   *   Source secret.
+   * @param string $image_stream_tag
+   *   Image stream tag.
+   * @param array $formatted_env_vars
+   *   Formatted env vars.
    *
    * @return bool
    *   Created or already exists = TRUE. Fail = FALSE.
@@ -233,7 +241,8 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     array $probes = [],
     array $cron_jobs = [],
     array $annotations = [],
-    string $backup_schedule = ''
+    string $backup_schedule = '',
+    int $backup_retention = 0
   ) {
     // @todo Refactor this. _The complexity is too damn high!_
     $sanitised_project_name = self::sanitise($project_name);
@@ -358,7 +367,8 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     array $probes = [],
     array $cron_jobs = [],
     array $annotations = [],
-    string $backup_schedule = ''
+    string $backup_schedule = '',
+    int $retention = 0
   ) {
     // @todo Refactor this too. Not DRY enough.
     $sanitised_project_name = self::sanitise($project_name);
@@ -420,7 +430,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
 
     // Add/remove the backup schedule as determined by environment type.
     if ($backup_schedule) {
-      $this->environmentScheduleBackupUpdate($site_id, $environment_id, $backup_schedule);
+      $this->environmentScheduleBackupUpdate($site_id, $environment_id, $backup_schedule, $retention);
     }
     else {
       $this->environmentScheduleBackupDelete($environment_id);
@@ -584,6 +594,32 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
   /**
    * {@inheritdoc}
    */
+  public function updateBackup(Backup $backup) {
+    try {
+      return $this->client->updateBackup($backup);
+    }
+    catch (ClientException $e) {
+      $this->handleClientException($e);
+      return FALSE;
+    }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function deleteBackup(string $name) {
+    try {
+      return $this->client->deleteBackup($name);
+    }
+    catch (ClientException $e) {
+      $this->handleClientException($e);
+      return FALSE;
+    }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function backupEnvironment(string $site_id, string $environment_id, string $friendly_name = '') {
     $deployment_name = self::generateDeploymentName($environment_id);
     /** @var \UniversityOfAdelaide\OpenShift\Objects\Backups\Backup $backup */
@@ -592,9 +628,10 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       ->addDatabase($this->generateDatabaseFromDeploymentName($deployment_name))
       ->setLabel(Label::create('site', $site_id))
       ->setLabel(Label::create('environment', $environment_id))
+      ->setLabel(Label::create(Backup::MANUAL_LABEL, TRUE))
       ->setName(sprintf('%s-backup-%s', $deployment_name, date('YmdHis')));
     if (!empty($friendly_name)) {
-      $backup->setAnnotation(BackupService::FRIENDLY_NAME_ANNOTATION, $friendly_name);
+      $backup->setAnnotation(Backup::FRIENDLY_NAME_ANNOTATION, $friendly_name);
     }
     try {
       return $this->client->createBackup($backup);
@@ -630,7 +667,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
   /**
    * {@inheritdoc}
    */
-  public function environmentScheduleBackupCreate(string $site_id, string $environment_id, string $schedule) {
+  public function environmentScheduleBackupCreate(string $site_id, string $environment_id, string $schedule, int $retention) {
     $deployment_name = self::generateDeploymentName($environment_id);
     /** @var \UniversityOfAdelaide\OpenShift\Objects\Backups\ScheduledBackup $schedule */
     $schedule = ScheduledBackup::create()
@@ -639,7 +676,8 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       ->setLabel(Label::create('site', $site_id))
       ->setLabel(Label::create('environment', $environment_id))
       ->setName(self::generateScheduleName($deployment_name))
-      ->setSchedule($schedule);
+      ->setSchedule($schedule)
+      ->setRetention($retention);
     try {
       return $this->client->createSchedule($schedule);
     }
@@ -652,7 +690,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
   /**
    * {@inheritdoc}
    */
-  public function environmentScheduleBackupUpdate(string $site_id, string $environment_id, string $schedule) {
+  public function environmentScheduleBackupUpdate(string $site_id, string $environment_id, string $schedule, int $retention) {
     $schedule_name = self::generateScheduleName(self::generateDeploymentName($environment_id));
     try {
       $schedule_obj = $this->client->getSchedule($schedule_name);
@@ -663,7 +701,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     }
     // If there's no schedule, create one.
     if (!$schedule_obj) {
-      return $this->environmentScheduleBackupCreate($site_id, $environment_id, $schedule);
+      return $this->environmentScheduleBackupCreate($site_id, $environment_id, $schedule, $retention);
     }
 
     // No point updating if the schedules are the same!
@@ -1048,17 +1086,16 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
   /**
    * Helper function to confirm if requested pod is a web pod.
    *
-   * @param $pod
+   * @param string $pod
+   *   Pod name.
    *
    * @return bool
+   *   True if web pod, false otherwise.
    */
   protected function isWebPod($pod) {
-    if (!isset($pod['metadata']['job-name']) &&
+    return !isset($pod['metadata']['job-name']) &&
       $pod['status']['phase'] === 'Running' &&
-      !strpos($pod['metadata']['name'], 'redis')) {
-      return TRUE;
-    }
-    return FALSE;
+      !strpos($pod['metadata']['name'], 'redis');
   }
 
   /**
@@ -1176,6 +1213,8 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
   }
 
   /**
+   * Generate request limits.
+   *
    * @param int $environment_id
    *   The ID of the environment being deployed.
    *

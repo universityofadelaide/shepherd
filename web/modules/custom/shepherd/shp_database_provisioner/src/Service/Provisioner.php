@@ -9,6 +9,9 @@ use Drupal\shp_custom\Service\StringGenerator;
 use Drupal\shp_orchestration\OrchestrationProviderPluginManagerInterface;
 use mysqli;
 
+/**
+ * Class Provisioner.
+ */
 class Provisioner {
 
   // Secret key names used to store database credentials.
@@ -279,4 +282,5 @@ class Provisioner {
     }
     return $statement->execute();
   }
+
 }

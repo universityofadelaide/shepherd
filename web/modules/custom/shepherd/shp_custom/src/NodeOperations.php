@@ -77,9 +77,11 @@ class NodeOperations implements ContainerInjectionInterface {
             $this->backupService->createBackup($node, $environment);
 
             // @todo Shepherd: Need to queue to enable this part.
-            // if (!$result = $orchestration_provider_plugin->archivedEnvironment($entity->id())) {
-            //  return $result;
-            // }
+            // phpcs:disable -- Disabled code, not a comment.
+            /* if (!$result = $orchestration_provider_plugin->archivedEnvironment($entity->id())) {
+            return $result;
+            } */
+            // phpcs:enable
           }
         }
         break;
@@ -90,7 +92,9 @@ class NodeOperations implements ContainerInjectionInterface {
           $this->backupService->createBackup($site, $node);
 
           // @todo Shepherd: Need to queue to enable this part. I.e. backup must complete first.
+          // phpcs:disable -- Disabled code, not a comment.
           // $result = $orchestration_provider_plugin->archivedEnvironment($entity->id());
+          // phpcs:enable
           shp_custom_invalidate_site_cache($node);
         }
         // @todo Shepherd: Add new environment to reverse proxy.

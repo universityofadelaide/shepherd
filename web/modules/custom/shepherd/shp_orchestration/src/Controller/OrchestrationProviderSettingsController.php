@@ -16,16 +16,39 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 class OrchestrationProviderSettingsController extends ControllerBase {
 
+  /**
+   * Orchestration provider manager.
+   *
+   * @var \Drupal\shp_orchestration\OrchestrationProviderPluginManagerInterface
+   */
   protected $orchestrationProviderManager;
 
+  /**
+   * Entity type manager.
+   *
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
+   */
   protected $entityTypeManager;
 
+  /**
+   * Config factory.
+   *
+   * @var \Drupal\Core\Config\ConfigFactoryInterface
+   */
   protected $configFactory;
 
+  /**
+   * Provider plugin.
+   *
+   * @var array
+   */
   protected $selectedProviderPlugin;
 
-  protected $providerConfigEntities;
-
+  /**
+   * Entity form builder.
+   *
+   * @var \Drupal\Core\Entity\EntityFormBuilderInterface
+   */
   protected $entityFormBuilder;
 
   /**

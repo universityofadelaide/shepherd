@@ -30,4 +30,5 @@ install:
     - composer install
 
 script:
-    - ./vendor/phpunit/phpunit/phpunit --group shepherd -c ./ ./web/modules/custom/
+    - ./bin/robo lint:php
+    - ./vendor/phpunit/phpunit/phpunit --stop-on-failure --group shepherd -c ./ ./web/modules/custom/

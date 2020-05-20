@@ -54,7 +54,7 @@ minishift config set memory 4096
 minishift config set cpus 4
 ```
 
-Start Minishift, ready for the next step.
+Start Minishift, ready for the next step. 
 ```bash
 minishift start
 ```
@@ -82,6 +82,8 @@ Putting these into ~/.bashrc is recommended for ongoing development.
   `export OPENSHIFT_TYPE=openshift`
 * Set the domain for accessing shepherd to the ip of local docker
   `export DOMAIN=$(ip addr show docker0 | grep "inet\b" | awk '{print $2}' | cut -d/ -f1).nip.io`
+* Set the default minishift vm driver.
+  `export MINISHIFT_DRIVER=virtualbox`
 * Start the oc cluster with `./openshift start`.
 * Now run the ./dsh etc commands as per normal.
 
