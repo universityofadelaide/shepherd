@@ -50,7 +50,6 @@ function shepherd_post_update_enable_drush_cmi_tools() {
   \Drupal::service('module_installer')->install(['drush_cmi_tools']);
 }
 
-
 /**
  * Batch update environments and add the cache backend field.
  */

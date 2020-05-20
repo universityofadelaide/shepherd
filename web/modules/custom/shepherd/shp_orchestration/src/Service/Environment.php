@@ -71,7 +71,6 @@ class Environment extends EntityActionBase {
    */
   protected $exceptionHandler;
 
-
   /**
    * Shepherd constructor.
    *

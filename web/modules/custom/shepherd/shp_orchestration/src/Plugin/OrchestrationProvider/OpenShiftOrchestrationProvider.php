@@ -340,9 +340,9 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
   /**
    * Returns the specific image definition from an image stream.
    *
-   * @param $sanitised_project_name
+   * @param string $sanitised_project_name
    *   The project name.
-   * @param $sanitised_source_ref
+   * @param string $sanitised_source_ref
    *   The source ref.
    *
    * @return array|bool
@@ -350,7 +350,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
    *
    * @throws \UniversityOfAdelaide\OpenShift\ClientException
    */
-  protected function getImageStreamImage($sanitised_project_name, $sanitised_source_ref) {
+  protected function getImageStreamImage(string $sanitised_project_name, string $sanitised_source_ref) {
     // Retrieve image stream that will be used for this site. There is only a
     // tiny chance it will be different to the deployment config image.
     $image_stream = $this->client->getImageStream($sanitised_project_name);

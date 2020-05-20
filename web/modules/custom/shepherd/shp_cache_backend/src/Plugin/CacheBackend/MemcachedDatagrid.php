@@ -83,6 +83,8 @@ class MemcachedDatagrid extends CacheBackendBase {
    *   The OS Client.
    * @param \Drupal\Core\Config\ImmutableConfig $config
    *   The orchestration config.
+   * @param \Drupal\shp_custom\Service\EnvironmentType $environmentType
+   *   Environment type.
    */
   public function __construct(array $configuration, $plugin_id, $plugin_definition, Client $client, ImmutableConfig $config, EnvironmentType $environmentType) {
     parent::__construct($configuration, $plugin_id, $plugin_definition, $client);
