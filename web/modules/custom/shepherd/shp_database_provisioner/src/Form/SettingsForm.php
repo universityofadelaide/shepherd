@@ -18,22 +18,16 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class SettingsForm extends ConfigFormBase {
 
   /**
-   * Database provisioner.
-   *
    * @var \Drupal\shp_database_provisioner\Service\Provisioner
    */
   protected $provisioner;
 
   /**
-   * Random string generator.
-   *
    * @var \Drupal\shp_custom\Service\StringGenerator
    */
   protected $stringGenerator;
 
   /**
-   * Orchestration provider.
-   *
    * @var object
    */
   protected $orchestrationProvider;
