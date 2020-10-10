@@ -23,11 +23,6 @@ function shp_backup_token_info() {
     'description' => t('Output the environment type.'),
   ];
 
-  $info['tokens']['shepherd']['environment-type'] = [
-    'name' => t('Environment type'),
-    'description' => t('The term for the type of environment being restored.'),
-  ];
-
   return $info;
 }
 
