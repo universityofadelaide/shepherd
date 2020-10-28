@@ -1,0 +1,25 @@
+uuid: 40878796-c580-4844-bfb8-7d79e618e540
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.taxonomy_term.field_shp_backup_retention
+    - taxonomy.vocabulary.shp_environment_types
+id: taxonomy_term.shp_environment_types.field_shp_backup_retention
+field_name: field_shp_backup_retention
+entity_type: taxonomy_term
+bundle: shp_environment_types
+label: 'Backup Retention'
+description: 'Number of scheduled backups to retain.'
+required: false
+translatable: false
+default_value:
+  -
+    value: 7
+default_value_callback: ''
+settings:
+  min: 0
+  max: 90
+  prefix: ''
+  suffix: ''
+field_type: integer

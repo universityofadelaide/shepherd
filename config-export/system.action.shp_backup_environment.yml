@@ -1,0 +1,11 @@
+uuid: cd353da5-60d3-465c-8a35-d31d8da38a46
+langcode: en
+status: true
+dependencies:
+  module:
+    - shp_backup
+id: shp_backup_environment
+label: 'Backup environment'
+type: node
+plugin: shp_backup_environment
+configuration: {  }

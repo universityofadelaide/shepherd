@@ -13,6 +13,12 @@ use Symfony\Component\Validator\Constraint;
  * )
  */
 class Domain extends Constraint {
+
+  /**
+   * Invalid domain message.
+   *
+   * @var string
+   */
   public $message = '%value is not a valid domain. You may use only letters, numbers, dots (.) and dashes (-).';
 
 }

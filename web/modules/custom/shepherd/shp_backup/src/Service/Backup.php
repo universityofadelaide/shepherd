@@ -8,7 +8,6 @@ use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\Url;
 use Drupal\node\NodeInterface;
 use Drupal\shp_orchestration\OrchestrationProviderPluginManagerInterface;
-use UniversityOfAdelaide\OpenShift\Objects\Backups\Backup as BackupObject;
 
 /**
  * Provides a service for accessing the backups.
@@ -18,13 +17,6 @@ use UniversityOfAdelaide\OpenShift\Objects\Backups\Backup as BackupObject;
 class Backup {
 
   use StringTranslationTrait;
-
-  /**
-   * Todo: find a better place for this?
-   *
-   * Defines the annotation to store a backups friendly name on.
-   */
-  const FRIENDLY_NAME_ANNOTATION = 'backups.shepherd/friendly-name';
 
   /**
    * The orchestration provider plugin manager.
@@ -70,19 +62,6 @@ class Backup {
   }
 
   /**
-   * Get the friendly name of a backup.
-   *
-   * @param \UniversityOfAdelaide\OpenShift\Objects\Backups\Backup $backup
-   *   The backup.
-   *
-   * @return string
-   *   The name.
-   */
-  public function getFriendlyName(BackupObject $backup) {
-    return $backup->getAnnotation(self::FRIENDLY_NAME_ANNOTATION) ?: $backup->getName();
-  }
-
-  /**
    * Create a backup node for a given site and environment.
    *
    * @param \Drupal\node\NodeInterface $site
@@ -125,23 +104,6 @@ class Backup {
     );
 
     return $result;
-  }
-
-  /**
-   * Sync an environment.
-   *
-   * @param string $site_id
-   *   The site id.
-   * @param string $from_environment_id
-   *   The environment to sync from.
-   * @param string $to_environment_id
-   *   The environment to sync to.
-   *
-   * @return bool
-   *   Whether it was a success.
-   */
-  public function sync(string $site_id, string $from_environment_id, string $to_environment_id) {
-    return $this->orchestrationProvider->syncEnvironment($site_id, $from_environment_id, $to_environment_id) ? TRUE : FALSE;
   }
 
   /**

@@ -13,7 +13,19 @@ use Symfony\Component\Validator\Constraint;
  * )
  */
 class ComboUniqueField extends Constraint {
+
+  /**
+   * Fields which comprise the unique combination.
+   *
+   * @var array
+   */
   public $fields = [];
+
+  /**
+   * Uniqueness error message.
+   *
+   * @var string
+   */
   public $message = '%value is not unique in combination with %fields.';
 
 }

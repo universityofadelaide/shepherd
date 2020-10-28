@@ -13,6 +13,12 @@ use Symfony\Component\Validator\Constraint;
  * )
  */
 class EnvironmentVariableName extends Constraint {
+
+  /**
+   * Invalid environment variable name message.
+   *
+   * @var string
+   */
   public $message = '%value is not a valid environment variable name. Must consist solely of uppercase letters, digits, and the \'_\' (underscore) and do not begin with a digit.';
 
 }

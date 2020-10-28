@@ -5,47 +5,72 @@
  or your current system user. See core/tests/README.md and
  https://www.drupal.org/node/2116263 for details.
 -->
-<phpunit bootstrap="web/core/tests/bootstrap.php" colors="true"
+<phpunit bootstrap="./web/core/tests/bootstrap.php" colors="true"
          beStrictAboutTestsThatDoNotTestAnything="true"
          beStrictAboutOutputDuringTests="true"
          beStrictAboutChangesToGlobalState="true"
-         addUncoveredFilesFromWhitelist="true">
-<!-- TODO set printerClass="\Drupal\Tests\Listeners\HtmlOutputPrinter" once
- https://youtrack.jetbrains.com/issue/WI-24808 is resolved. Drupal provides a
- result printer that links to the html output results for functional tests.
- Unfortunately, this breaks the output of PHPStorm's PHPUnit runner. However, if
- using the command line you can add
- - -printer="\Drupal\Tests\Listeners\HtmlOutputPrinter" to use it (note there
- should be no spaces between the hyphens).
--->
+         printerClass="\Drupal\Tests\Listeners\HtmlOutputPrinter">
+  <!-- TODO set printerClass="\Drupal\Tests\Listeners\HtmlOutputPrinter" once
+   https://youtrack.jetbrains.com/issue/WI-24808 is resolved. Drupal provides a
+   result printer that links to the html output results for functional tests.
+   Unfortunately, this breaks the output of PHPStorm's PHPUnit runner. However, if
+   using the command line you can add
+   - -printerClass="\Drupal\Tests\Listeners\HtmlOutputPrinter" to use it (note
+   there should be no spaces between the hyphens).
+  -->
   <php>
     <!-- Set error reporting to E_ALL. -->
     <ini name="error_reporting" value="32767"/>
-    <!-- Do not limit the amount of memory tests take to run. -->
     <ini name="memory_limit" value="-1"/>
-    <env name="SIMPLETEST_BASE_URL" value="http://web"/>
-    <env name="SIMPLETEST_DB" value="mysql://user:password@db/drupal#test_"/>
-    <env name="BROWSERTEST_OUTPUT_DIRECTORY" value="/tmp"/>
-    <env name="SYMFONY_DEPRECATIONS_HELPER" value="weak"/>
+    <env name="BROWSERTEST_OUTPUT_DIRECTORY" value="/code/web/sites/simpletest/browser_output"/>
+    <env name="SIMPLETEST_BASE_URL" value="http://127.0.0.1:8080"/>
+    <!-- See \weitzman\DrupalTestTraits\MinkSetup -->
+    <env name="DTT_BASE_URL" value="http://127.0.0.1:8080"/>
+    <!-- See \weitzman\DrupalTestTraits\WebDriverSetup -->
+    <env name="DTT_MINK_DRIVER_ARGS" value='["chrome", { "chromeOptions": { "w3c": false } }, "http://127.0.0.1:4444/wd/hub"]'/>
+    <env name="SIMPLETEST_DB" value="mysql://user:password@127.0.0.1/drupal"/>
     <const name="BOOTSTRAP_IS_PHPUNIT" value="true"/>
+    <!-- To disable deprecation testing completely set SYMFONY_DEPRECATIONS_HELPER value: 'disabled' -->
+    <env name="SYMFONY_DEPRECATIONS_HELPER" value="disabled"/>
   </php>
   <testsuites>
     <testsuite name="unit">
-      <directory>./web/modules/custom/*/tests/src/Unit</directory>
+      <directory>./web/modules/custom/shepherd/*/tests/src/Unit</directory>
+      <directory>./web/profiles/custom/*/tests/src/Unit</directory>
+      <directory>./tests/Unit</directory>
     </testsuite>
     <testsuite name="kernel">
-      <directory>./web/modules/custom/*/tests/src/Kernel</directory>
+      <directory>./web/modules/custom/shepherd/*/tests/src/Kernel</directory>
+      <directory>./web/profiles/custom/*/tests/src/Kernel</directory>
     </testsuite>
     <testsuite name="functional">
-      <directory>./web/modules/custom/*/tests/src/Functional</directory>
+      <directory>./web/modules/custom/shepherd/*/tests/src/Functional</directory>
+      <directory>./web/profiles/custom/*/tests/src/Functional</directory>
+      <exclude>./web/modules/custom/shepherd/*/tests/src/Functional/Clean</exclude>
+      <exclude>./web/profiles/custom/*/tests/src/Functional/Clean</exclude>
     </testsuite>
-    <testsuite name="functional-javascript">
-      <directory>./web/modules/custom/*/tests/src/FunctionalJavascript</directory>
+    <!-- Need to be run with REDIS_ENABLED=0 due to being clean install browser tests. -->
+    <testsuite name="functionalclean">
+      <directory>./web/modules/custom/shepherd/*/tests/src/Functional/Clean</directory>
+      <directory>./web/profiles/custom/*/tests/src/Functional/Clean</directory>
+    </testsuite>
+    <testsuite name="functionaljs">
+      <directory>./web/modules/custom/shepherd/*/tests/src/FunctionalJavascript</directory>
+      <directory>./web/profiles/custom/*/tests/src/FunctionalJavascript</directory>
     </testsuite>
   </testsuites>
+  <listeners>
+    <listener class="\Drupal\Tests\Listeners\DrupalListener">
+    </listener>
+    <!-- The Symfony deprecation listener has to come after the Drupal listener -->
+    <listener class="Symfony\Bridge\PhpUnit\SymfonyTestsListener">
+    </listener>
+  </listeners>
+  <!-- Filter for coverage reports. -->
   <filter>
     <whitelist>
       <directory>./web/modules/custom</directory>
+      <directory>./src</directory>
       <!-- By definition test classes have no tests. -->
       <exclude>
         <directory suffix="Test.php">./</directory>

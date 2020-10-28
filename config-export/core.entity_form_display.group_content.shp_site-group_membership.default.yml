@@ -15,7 +15,11 @@ content:
   entity_id:
     type: ua_shp_ldap_user
     weight: 5
-    settings: {  }
+    settings:
+      match_operator: CONTAINS
+      size: 60
+      placeholder: ''
+      match_limit: 10
     region: content
     third_party_settings: {  }
   group_roles:

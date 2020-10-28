@@ -67,6 +67,8 @@ class OpenShiftWithRedis extends OpenShiftOrchestrationProvider {
   }
 
   /**
+   * Formats redis deploy data.
+   *
    * @param string $name
    *   The name of the deployment config.
    * @param int $site_id
@@ -94,6 +96,7 @@ class OpenShiftWithRedis extends OpenShiftOrchestrationProvider {
    * Generate image stream.
    *
    * @return array
+   *   Image stream definition.
    */
   public function generateImageStream() {
     $image_stream = [
@@ -142,6 +145,7 @@ class OpenShiftWithRedis extends OpenShiftOrchestrationProvider {
    *   Array of data for labels.
    *
    * @return array
+   *   Deployment config definition.
    */
   public function generateDeploymentConfig(string $deployment_name, string $redis_name, string $redis_port, array $data) {
     $redis_data = $deployment_name . '-data';
@@ -204,13 +208,13 @@ class OpenShiftWithRedis extends OpenShiftOrchestrationProvider {
                     'resources' => [
                       'limits' =>
                         [
-                          'cpu' => '0m',
-                          'memory' => '0Mi',
+                          'cpu' => '200m',
+                          'memory' => '256Mi',
                         ],
                       'requests' =>
                         [
-                          'cpu' => '0m',
-                          'memory' => '0Mi',
+                          'cpu' => '100m',
+                          'memory' => '50Mi',
                         ],
                     ],
                     'volumeMounts' => [

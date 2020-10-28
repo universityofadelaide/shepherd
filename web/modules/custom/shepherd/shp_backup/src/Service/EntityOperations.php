@@ -64,19 +64,20 @@ class EntityOperations implements ContainerInjectionInterface {
     }
 
     $schedule = trim($term->field_shp_backup_schedule->value);
+    $retention = trim($term->field_shp_backup_retention->value);
     $env_ids = $this->nodeStorage->getQuery()
       ->condition('field_shp_environment_type.target_id', $term->id())
       ->execute();
     if (empty($env_ids)) {
       return;
     }
-    array_map(function (NodeInterface $environment) use ($schedule) {
+    array_map(function (NodeInterface $environment) use ($schedule, $retention) {
       if (!$environment->field_shp_site->target_id) {
         return;
       }
       // If there's no schedule value, consider this a delete.
       if ($schedule) {
-        $this->orchestrationProvider->environmentScheduleBackupUpdate($environment->field_shp_site->target_id, $environment->id(), $schedule);
+        $this->orchestrationProvider->environmentScheduleBackupUpdate($environment->field_shp_site->target_id, $environment->id(), $schedule, $retention);
       }
       else {
         $this->orchestrationProvider->environmentScheduleBackupDelete($environment->id());

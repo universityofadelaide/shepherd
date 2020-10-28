@@ -285,15 +285,15 @@ class Environment {
    *
    * @param \Drupal\Core\Entity\EntityInterface $entity
    *   Environment entity.
-   * @param $project
+   * @param \Drupal\Core\Entity\EntityInterface $project
    *   Project entity.
-   * @param $site
+   * @param \Drupal\Core\Entity\EntityInterface $site
    *   Site entity.
    *
    * @return array
    *   Renderable link.
    */
-  protected function getTerminalLink(EntityInterface $entity, $project, $site): array {
+  protected function getTerminalLink(EntityInterface $entity, EntityInterface $project, EntityInterface $site): array {
     $terminal = $this->orchestrationProvider->getTerminalUrl(
       $project->getTitle(),
       $site->field_shp_short_name->value,
@@ -314,15 +314,15 @@ class Environment {
    *
    * @param \Drupal\Core\Entity\EntityInterface $entity
    *   Environment entity.
-   * @param $project
+   * @param \Drupal\Core\Entity\EntityInterface $project
    *   Project entity.
-   * @param $site
+   * @param \Drupal\Core\Entity\EntityInterface $site
    *   Site entity.
    *
    * @return array
    *   Renderable link.
    */
-  protected function getLogLink(EntityInterface $entity, $project, $site): array {
+  protected function getLogLink(EntityInterface $entity, EntityInterface $project, EntityInterface $site): array {
     $logs = $this->orchestrationProvider->getLogUrl(
       $project->getTitle(),
       $site->field_shp_short_name->value,
