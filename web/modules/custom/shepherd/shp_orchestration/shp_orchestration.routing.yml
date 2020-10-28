@@ -5,10 +5,3 @@ shp_orchestration.orchestration_provider.settings:
     _title: 'Orchestration Provider Settings'
   requirements:
     _permission: 'administer account settings'
-shp_orchestration.orchestration_provider.provider_settings:
-  path: '/admin/config/shepherd/orchestration/provider-settings'
-  defaults:
-    _controller: '\Drupal\shp_orchestration\Controller\OrchestrationProviderSettingsController::index'
-    _title_callback: '\Drupal\shp_orchestration\Controller\OrchestrationProviderSettingsController::getPageTitle'
-  requirements:
-    _permission: 'administer account settings'

@@ -4,7 +4,29 @@ shp_orchestration.settings:
   mapping:
     selected_provider:
       type: string
-      label: 'Selected orchestration provider to use.'
+      label: 'Selected provider'
+    connection:
+      type: mapping
+      label: 'Connection settings'
+      mapping:
+        endpoint:
+          label: 'Endpoint'
+          type: string
+        token:
+          label: 'Token'
+          type: string
+        namespace:
+          type: string
+          label: 'Namespace'
+        verify_tls:
+          type: boolean
+          label: 'Verify TLS'
+        uid:
+          type: string
+          label: 'User ID'
+        gid:
+          type: string
+          label: 'Group ID'
     queued_operations:
       type: boolean
       label: 'Enable queued operations. Ensures multiple actions are not executed concurrently for a given environment.'

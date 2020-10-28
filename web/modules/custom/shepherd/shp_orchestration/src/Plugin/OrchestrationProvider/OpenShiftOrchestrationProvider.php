@@ -2,11 +2,12 @@
 
 namespace Drupal\shp_orchestration\Plugin\OrchestrationProvider;
 
-use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Config\ImmutableConfig;
 use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\Url;
 use Drupal\node\Entity\Node;
 use Drupal\shp_custom\Service\StringGenerator;
+use Drupal\shp_orchestration\ExceptionHandler;
 use Drupal\shp_orchestration\OrchestrationProviderBase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use UniversityOfAdelaide\OpenShift\Client as OpenShiftClient;
@@ -24,8 +25,6 @@ use UniversityOfAdelaide\OpenShift\Objects\Label;
  *   id = "openshift_orchestration_provider",
  *   name = "OpenShift",
  *   description = @Translation("OpenShift provider to perform orchestration tasks"),
- *   schema = "openshift.orchestration_provider",
- *   config_entity_id = "openshift"
  * )
  */
 class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
@@ -67,48 +66,62 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
   protected $messenger;
 
   /**
-   * {@inheritdoc}
+   * The config entity.
+   *
+   * @var \Drupal\Core\Config\ImmutableConfig
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityTypeManagerInterface $entity_type_manager) {
-    parent::__construct($configuration, $plugin_id, $plugin_definition, $entity_type_manager);
-    $this->client = new OpenShiftClient(
-      $this->configEntity->endpoint,
-      $this->configEntity->token,
-      $this->configEntity->namespace,
-      $this->configEntity->verify_tls
-    );
+  protected $config;
+
+  /**
+   * The orchestration exception handler.
+   *
+   * @var \Drupal\shp_orchestration\ExceptionHandler
+   */
+  protected $exceptionHandler;
+
+  /**
+   * OrchestrationProviderBase constructor.
+   *
+   * @param array $configuration
+   *   Plugin configuration.
+   * @param string $plugin_id
+   *   Plugin id.
+   * @param mixed $plugin_definition
+   *   Plugin definition.
+   * @param \Drupal\Core\Config\ImmutableConfig $config
+   *   Orchestration config.
+   * @param \UniversityOfAdelaide\OpenShift\Client $client
+   *   The Openshift Client.
+   * @param \Drupal\shp_custom\Service\StringGenerator $string_generator
+   *   Shepherd custom string generator.
+   * @param \Drupal\Core\Messenger\MessengerInterface $messenger
+   *   Messenger service.
+   * @param \Drupal\shp_orchestration\ExceptionHandler $exceptionHandler
+   *   The exception handler service.
+   */
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, ImmutableConfig $config, OpenShiftClient $client, StringGenerator $string_generator, MessengerInterface $messenger, ExceptionHandler $exceptionHandler) {
+    parent::__construct($configuration, $plugin_id, $plugin_definition);
+    $this->client = $client;
+    $this->stringGenerator = $string_generator;
+    $this->messenger = $messenger;
+    $this->config = $config;
+    $this->exceptionHandler = $exceptionHandler;
   }
 
   /**
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
-    $instance = parent::create(
-      $container,
+    return new static(
       $configuration,
       $plugin_id,
-      $plugin_definition
-    );
-    $instance->injectServices(
+      $plugin_definition,
+      $container->get('config.factory')->get('shp_orchestration.settings'),
+      $container->get('shp_orchestration.client'),
       $container->get('shp_custom.string_generator'),
-      $container->get('messenger')
+      $container->get('messenger'),
+      $container->get('shp_orchestration.exception_handler')
     );
-    return $instance;
-  }
-
-  /**
-   * Inject services to this plugin without changing base constructor.
-   *
-   * @param \Drupal\shp_custom\Service\StringGenerator $string_generator
-   *   Shepherd custom string generator.
-   * @param \Drupal\Core\Messenger\MessengerInterface $messenger
-   *   Messenger service.
-   *
-   * @todo: This really is just a stop-gap until we properly refactor.
-   */
-  public function injectServices(StringGenerator $string_generator, MessengerInterface $messenger) {
-    $this->stringGenerator = $string_generator;
-    $this->messenger = $messenger;
   }
 
   /**
@@ -128,7 +141,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       $this->createBuildConfig($build_config_name, $source_ref, $source_repo, $builder_image, $source_secret, $image_stream_tag, $formatted_env_vars);
     }
     catch (ClientException $e) {
-      $this->handleClientException($e);
+      $this->exceptionHandler->handleClientException($e);
       return FALSE;
     }
     return TRUE;
@@ -161,7 +174,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       );
     }
     catch (ClientException $e) {
-      $this->handleClientException($e);
+      $this->exceptionHandler->handleClientException($e);
       return FALSE;
     }
     return TRUE;
@@ -211,7 +224,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
         $this->client->createBuildConfig($build_config);
       }
       catch (ClientException $e) {
-        $this->handleClientException($e);
+        $this->exceptionHandler->handleClientException($e);
         return FALSE;
       }
     }
@@ -283,47 +296,27 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       $this->client->createDeploymentConfig($deployment_config);
     }
     catch (ClientException $e) {
-      $this->handleClientException($e);
+      $this->exceptionHandler->handleClientException($e);
       return FALSE;
     }
 
     // Get the volumes and include the backups this time.
     $cron_volumes = $this->generateVolumeData($project_name, $deployment_name, $secrets, TRUE);
 
-    // Retrieve image stream that will be used for this site. There is only a
-    // tiny chance it will be different to the deployment config image.
-    $image_stream = $this->client->getImageStream($sanitised_project_name);
-    if (is_array($image_stream) && isset($image_stream['status']['tags'])) {
-      // Look through the image stream tags to find the one being deployed.
-      foreach ($image_stream['status']['tags'] as $index => $images) {
-        if ($images['tag'] === $sanitised_source_ref) {
-          // Got one! [0] is the most recently created image.
-          if ($image = $images['items'][0]['dockerImageReference'] ?? FALSE) {
-            $this->createCronJobs(
-              $deployment_name,
-              $cron_suspended,
-              $cron_jobs,
-              $image,
-              $cron_volumes,
-              $deploy_data
-            );
-          }
-        }
-      }
+    $image = $this->getImageStreamImage($sanitised_project_name, $sanitised_source_ref);
+    if ($image) {
+      $this->createCronJobs(
+        $deployment_name,
+        $cron_suspended,
+        $cron_jobs,
+        $image,
+        $cron_volumes,
+        $deploy_data
+      );
+      $this->client->instantiateDeploymentConfig($deployment_name);
     }
     else {
-      $this->messenger->addStatus(t('Build not yet complete, cron jobs cannot be created yet.'));
-    }
-
-    if (!$update_on_image_change) {
-      // We need to check if the image is already 'built', or we get an error.
-      $build_status = $this->client->getBuilds('', 'buildconfig=' . $build_config_name);
-      if (count($build_status['items']) && $build_status['items'][0]['status']['phase'] === 'Complete') {
-        $this->client->instantiateDeploymentConfig($deployment_name);
-      }
-      else {
-        $this->messenger->addStatus(t('Build not yet complete, manual triggering of deployment will be required.'));
-      }
+      $this->messenger->addStatus(t('Image unavailable, deployment and cron jobs cannot be completed.'));
     }
 
     // @todo - make port a var and great .. so great .. yuge!
@@ -333,7 +326,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       $this->client->createRoute($deployment_name, $deployment_name, $domain, $path, $annotations);
     }
     catch (ClientException $e) {
-      $this->handleClientException($e);
+      $this->exceptionHandler->handleClientException($e);
       return FALSE;
     }
 
@@ -342,6 +335,35 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     }
 
     return TRUE;
+  }
+
+  /**
+   * Returns the specific image definition from an image stream.
+   *
+   * @param string $sanitised_project_name
+   *   The project name.
+   * @param string $sanitised_source_ref
+   *   The source ref.
+   *
+   * @return array|bool
+   *   Image definition if exists otherwise FALSE.
+   *
+   * @throws \UniversityOfAdelaide\OpenShift\ClientException
+   */
+  protected function getImageStreamImage(string $sanitised_project_name, string $sanitised_source_ref) {
+    // Retrieve image stream that will be used for this site. There is only a
+    // tiny chance it will be different to the deployment config image.
+    $image_stream = $this->client->getImageStream($sanitised_project_name);
+    if (is_array($image_stream) && isset($image_stream['status']['tags'])) {
+      // Look through the image stream tags to find the one being deployed.
+      foreach ($image_stream['status']['tags'] as $index => $images) {
+        if ($images['tag'] === $sanitised_source_ref) {
+          // Got one! [0] is the most recently created image.
+          return $images['items'][0]['dockerImageReference'] ?? FALSE;
+        }
+      }
+    }
+    return FALSE;
   }
 
   /**
@@ -371,7 +393,6 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     int $retention = 0
   ) {
     // @todo Refactor this too. Not DRY enough.
-    $sanitised_project_name = self::sanitise($project_name);
     $deployment_name = self::generateDeploymentName($environment_id);
     $deployment_config = $this->client->getDeploymentConfig($deployment_name);
     $formatted_env_vars = $this->formatEnvVars($environment_variables, $deployment_name);
@@ -393,6 +414,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
           'spec' => [
             'containers' => [
               0 => [
+                'env' => $deploy_data['env_vars'],
                 'resources' => [
                   'limits' => [
                     'cpu' => $deploy_data['cpu_limit'],
@@ -478,7 +500,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       }
     }
     catch (ClientException $e) {
-      $this->handleClientException($e);
+      $this->exceptionHandler->handleClientException($e);
       return FALSE;
     }
     return TRUE;
@@ -586,7 +608,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       return $this->client->getBackup($name);
     }
     catch (ClientException $e) {
-      $this->handleClientException($e);
+      $this->exceptionHandler->handleClientException($e);
       return FALSE;
     }
   }
@@ -637,7 +659,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       return $this->client->createBackup($backup);
     }
     catch (ClientException $e) {
-      $this->handleClientException($e);
+      $this->exceptionHandler->handleClientException($e);
       return FALSE;
     }
   }
@@ -682,7 +704,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       return $this->client->createSchedule($schedule);
     }
     catch (ClientException $e) {
-      $this->handleClientException($e);
+      $this->exceptionHandler->handleClientException($e);
       return FALSE;
     }
   }
@@ -696,7 +718,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       $schedule_obj = $this->client->getSchedule($schedule_name);
     }
     catch (ClientException $e) {
-      $this->handleClientException($e);
+      $this->exceptionHandler->handleClientException($e);
       return FALSE;
     }
     // If there's no schedule, create one.
@@ -715,7 +737,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       return $this->client->updateSchedule($schedule_obj);
     }
     catch (ClientException $e) {
-      $this->handleClientException($e);
+      $this->exceptionHandler->handleClientException($e);
       return FALSE;
     }
   }
@@ -732,7 +754,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       return TRUE;
     }
     catch (ClientException $e) {
-      $this->handleClientException($e);
+      $this->exceptionHandler->handleClientException($e);
       return FALSE;
     }
   }
@@ -751,7 +773,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       return $this->client->listBackup($label);
     }
     catch (ClientException $e) {
-      $this->handleClientException($e);
+      $this->exceptionHandler->handleClientException($e);
       return FALSE;
     }
   }
@@ -787,7 +809,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       return $this->client->createRestore($restore);
     }
     catch (ClientException $e) {
-      $this->handleClientException($e);
+      $this->exceptionHandler->handleClientException($e);
       return FALSE;
     }
   }
@@ -800,7 +822,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       return $this->client->listRestore(Label::create('site', $site_id));
     }
     catch (ClientException $e) {
-      $this->handleClientException($e);
+      $this->exceptionHandler->handleClientException($e);
       return FALSE;
     }
   }
@@ -854,7 +876,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       );
     }
     catch (ClientException $e) {
-      $this->handleClientException($e);
+      $this->exceptionHandler->handleClientException($e);
       return FALSE;
     }
     return $response_body;
@@ -881,7 +903,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       $secret = $this->client->getSecret($name);
     }
     catch (ClientException $e) {
-      $this->handleClientException($e);
+      $this->exceptionHandler->handleClientException($e);
       return FALSE;
     }
     if (is_array($secret) && array_key_exists('data', $secret)) {
@@ -901,7 +923,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       return $this->client->createSecret($name, $data);
     }
     catch (ClientException $e) {
-      $this->handleClientException($e);
+      $this->exceptionHandler->handleClientException($e);
       return FALSE;
     }
   }
@@ -914,7 +936,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       return $this->client->updateSecret($name, $data);
     }
     catch (ClientException $e) {
-      $this->handleClientException($e);
+      $this->exceptionHandler->handleClientException($e);
       return FALSE;
     }
   }
@@ -927,7 +949,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       $deployment_configs = $this->client->getDeploymentConfigs('site_id=' . $site_id);
     }
     catch (ClientException $e) {
-      $this->handleClientException($e);
+      $this->exceptionHandler->handleClientException($e);
       return FALSE;
     }
     $environments_status = [];
@@ -951,7 +973,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       $deployment_config = $this->client->getDeploymentConfig($deployment_name);
     }
     catch (ClientException $e) {
-      $this->handleClientException($e);
+      $this->exceptionHandler->handleClientException($e);
       return FALSE;
     }
 
@@ -993,7 +1015,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       return Url::fromUri('//' . $route['spec']['host'] . (array_key_exists('path', $route['spec']) ? $route['spec']['path'] : '/'));
     }
     catch (ClientException $e) {
-      $this->handleClientException($e);
+      $this->exceptionHandler->handleClientException($e);
       return FALSE;
     }
     catch (\InvalidArgumentException $e) {
@@ -1024,7 +1046,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       }
     }
     catch (ClientException $e) {
-      $this->handleClientException($e);
+      $this->exceptionHandler->handleClientException($e);
       return FALSE;
     }
     catch (\InvalidArgumentException $e) {
@@ -1055,7 +1077,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       }
     }
     catch (ClientException $e) {
-      $this->handleClientException($e);
+      $this->exceptionHandler->handleClientException($e);
       return FALSE;
     }
     catch (\InvalidArgumentException $e) {
@@ -1090,8 +1112,8 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
    *   Url.
    */
   protected function generateOpenShiftPodUrl(string $pod_name, string $view) {
-    $endpoint = $this->configEntity->endpoint;
-    $namespace = $this->configEntity->namespace;
+    $endpoint = $this->config->get('connection.endpoint');
+    $namespace = $this->config->get('connection.namespace');
 
     return Url::fromUri($endpoint . '/console/project/' . $namespace . '/browse/pods/' . $pod_name, [
       'query' => [
@@ -1165,7 +1187,10 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
   protected function formatDeployData(string $name, array $formatted_env_vars, string $environment_url, int $site_id, int $environment_id) {
     $deploy_data = [
       'containerPort' => 8080,
+      'cpu_limit' => '200m',
+      'cpu_request' => '100m',
       'memory_limit' => '512Mi',
+      'memory_request' => '256Mi',
       'env_vars' => $formatted_env_vars,
       'annotations' => [
         'shepherdUrl' => $environment_url,
@@ -1179,10 +1204,10 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     ];
 
     // If set, add uid and gid from config to deploy data.
-    if (strlen($this->configEntity->uid) > 0) {
-      $deploy_data['uid'] = $this->configEntity->uid;
-      if (strlen($this->configEntity->gid) > 0) {
-        $deploy_data['gid'] = $this->configEntity->gid;
+    if (strlen($this->config->get('connection.uid')) > 0) {
+      $deploy_data['uid'] = $this->config->get('connection.uid');
+      if (strlen($this->config->get('connection.gid')) > 0) {
+        $deploy_data['gid'] = $this->config->get('connection.gid');
       }
     }
 
@@ -1311,7 +1336,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       }
     }
     catch (ClientException $e) {
-      $this->handleClientException($e);
+      $this->exceptionHandler->handleClientException($e);
       return FALSE;
     }
 
@@ -1413,26 +1438,6 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
   }
 
   /**
-   * Handles OpenShift ClientExceptions.
-   *
-   * @param \UniversityOfAdelaide\OpenShift\ClientException $exception
-   *   The exception to be handled.
-   */
-  protected function handleClientException(ClientException $exception) {
-    $reason = $exception->getMessage();
-    if (strstr($exception->getBody(), 'Unauthorized')) {
-      $reason = $this->t('Client is not authorized to access requested resource.');
-    }
-
-    \Drupal::logger('shp_orchestration')->error('An error occurred while communicating with OpenShift. %reason', [
-      '%reason' => $reason,
-    ]);
-
-    // @todo Add handlers for other reasons for failure. Add as required.
-    $this->messenger->addError(t("An error occurred while communicating with OpenShift. %reason", ['%reason' => $reason]));
-  }
-
-  /**
    * Create cron jobs.
    *
    * @param string $deployment_name
@@ -1470,7 +1475,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
         );
       }
       catch (ClientException $e) {
-        $this->handleClientException($e);
+        $this->exceptionHandler->handleClientException($e);
         return FALSE;
       }
     }

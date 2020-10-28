@@ -32,3 +32,31 @@ function shp_orchestration_requirements($phase) {
   }
   return $requirements;
 }
+
+/**
+ * Migrate orchestration settings to flat config object.
+ */
+function shp_orchestration_update_8001() {
+  \Drupal::service('module_installer')->install(['shp_cache_backend']);
+  $settings = \Drupal::configFactory()->getEditable('shp_orchestration.settings');
+  $storage = \Drupal::entityTypeManager()->getStorage('openshift_with_redis');
+  $config_entity = $storage->load('openshift_with_redis');
+
+  // Migrate settings.
+  $settings->set('connection.endpoint', $config_entity->get('endpoint'));
+  $settings->set('connection.token', $config_entity->get('token'));
+  $settings->set('connection.namespace', $config_entity->get('namespace'));
+  $settings->set('connection.verify_tls', $config_entity->get('verify_tls'));
+  $settings->set('connection.uid', $config_entity->get('uid'));
+  $settings->set('connection.gid', $config_entity->get('gid'));
+  $settings->set('selected_provider', 'openshift_orchestration_provider');
+  $settings->save();
+
+  // Delete old config entities.
+  $config_entity->delete();
+  $entities = $storage->loadMultiple($storage->getQuery()->execute());
+  $storage->delete($entities);
+  $storage = \Drupal::entityTypeManager()->getStorage('openshift');
+  $entities = $storage->loadMultiple($storage->getQuery()->execute());
+  $storage->delete($entities);
+}

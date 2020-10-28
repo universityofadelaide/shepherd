@@ -1,0 +1,154 @@
+{
+    "apiVersion": "apps/v1",
+    "kind": "StatefulSet",
+    "metadata": {
+        "creationTimestamp": "2019-09-04T04:14:57Z",
+        "labels": {
+            "app": "datagrid73-basic",
+            "application": "datagrid-app",
+            "template": "datagrid73-basic"
+        },
+        "name": "datagrid-app",
+        "namespace": "myproject"
+    },
+    "spec": {
+        "podManagementPolicy": "OrderedReady",
+        "replicas": 1,
+        "revisionHistoryLimit": 10,
+        "selector": {
+            "matchLabels": {
+                "app": "datagrid73-basic",
+                "application": "datagrid-app",
+                "deploymentConfig": "datagrid-app"
+            }
+        },
+        "serviceName": "datagrid-app-ping",
+        "template": {
+            "metadata": {
+                "creationTimestamp": null,
+                "labels": {
+                    "app": "datagrid73-basic",
+                    "application": "datagrid-app",
+                    "deploymentConfig": "datagrid-app"
+                },
+                "name": "datagrid-app"
+            },
+            "spec": {
+                "containers": [
+                    {
+                        "env": [
+                            {
+                                "name": "USER_CONFIG_MAP",
+                                "value": "true"
+                            },
+                            {
+                                "name": "JGROUPS_PING_PROTOCOL",
+                                "value": "openshift.DNS_PING"
+                            },
+                            {
+                                "name": "OPENSHIFT_DNS_PING_SERVICE_NAME",
+                                "value": "datagrid-app-ping"
+                            },
+                            {
+                                "name": "OPENSHIFT_DNS_PING_SERVICE_PORT",
+                                "value": "8888"
+                            },
+                            {
+                                "name": "AB_ENABLE_PROMETHEUS",
+                                "value": "true"
+                            }
+                        ],
+                        "image": "172.30.1.1:5000/myproject/jboss-datagrid73-openshift:latest",
+                        "imagePullPolicy": "Always",
+                        "livenessProbe": {
+                            "exec": {
+                                "command": [
+                                    "/bin/bash",
+                                    "-c",
+                                    "/opt/datagrid/bin/livenessProbe.sh"
+                                ]
+                            },
+                            "failureThreshold": 3,
+                            "initialDelaySeconds": 60,
+                            "periodSeconds": 10,
+                            "successThreshold": 1,
+                            "timeoutSeconds": 1
+                        },
+                        "name": "datagrid-app",
+                        "ports": [
+                            {
+                                "containerPort": 8778,
+                                "name": "jolokia",
+                                "protocol": "TCP"
+                            },
+                            {
+                                "containerPort": 9779,
+                                "name": "prometheus",
+                                "protocol": "TCP"
+                            },
+                            {
+                                "containerPort": 8888,
+                                "name": "ping",
+                                "protocol": "TCP"
+                            },
+                            {
+                                "containerPort": 11314,
+                                "name": "node-123-mc",
+                                "protocol": "TCP"
+                            }
+                        ],
+                        "readinessProbe": {
+                            "exec": {
+                                "command": [
+                                    "/bin/bash",
+                                    "-c",
+                                    "/opt/datagrid/bin/readinessProbe.sh"
+                                ]
+                            },
+                            "failureThreshold": 3,
+                            "periodSeconds": 10,
+                            "successThreshold": 1,
+                            "timeoutSeconds": 1
+                        },
+                        "resources": {
+                            "limits": {
+                                "cpu": "500m",
+                                "memory": "1Gi"
+                            },
+                            "requests": {
+                                "cpu": "100m",
+                                "memory": "256Mi"
+                            }
+                        },
+                        "terminationMessagePath": "/dev/termination-log",
+                        "terminationMessagePolicy": "File",
+                        "volumeMounts": [
+                            {
+                                "mountPath": "/opt/datagrid/standalone/configuration/user",
+                                "name": "datagrid-config-rhnqg",
+                                "readOnly": true
+                            }
+                        ]
+                    }
+                ],
+                "dnsPolicy": "ClusterFirst",
+                "restartPolicy": "Always",
+                "schedulerName": "default-scheduler",
+                "securityContext": {},
+                "terminationGracePeriodSeconds": 60,
+                "volumes": [
+                    {
+                        "configMap": {
+                            "defaultMode": 420,
+                            "name": "datagrid-config"
+                        },
+                        "name": "datagrid-config-rhnqg"
+                    }
+                ]
+            }
+        },
+        "updateStrategy": {
+            "type": "RollingUpdate"
+        }
+    }
+}

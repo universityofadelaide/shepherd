@@ -24,6 +24,7 @@
         "drupal/group":                                  "1.*@RC",
         "drupal/key_value_field":                        "1.*",
         "drupal/log_stdout":                             "1.*",
+        "drupal/plugin": "^2.6",
         "drupal/r4032login":                             "1.*",
         "drupal/redis":                                  "1.*",
         "drupal/route_condition":                        "^1.0@beta",

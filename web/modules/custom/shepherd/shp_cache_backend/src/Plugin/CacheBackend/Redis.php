@@ -1,61 +1,59 @@
 <?php
 
-namespace Drupal\shp_redis_support\Plugin\OrchestrationProvider;
+namespace Drupal\shp_cache_backend\Plugin\CacheBackend;
 
+use Drupal\node\NodeInterface;
+use Drupal\shp_cache_backend\Plugin\CacheBackendBase;
 use Drupal\shp_orchestration\Plugin\OrchestrationProvider\OpenShiftOrchestrationProvider;
 
 /**
- * Class OpenShiftWithRedis.
+ * Provides Redis integration.
  *
- * @OrchestrationProvider(
- *   id = "openshift_with_redis",
- *   name = "OpenShift with Redis",
- *   description = @Translation("OpenShift provider to perform orchestration tasks with redis support"),
- *   schema = "openshift.orchestration_provider",
- *   config_entity_id = "openshift_with_redis"
+ * @CacheBackend(
+ *   id = "redis",
+ *   label = @Translation("Redis")
  * )
  */
-class OpenShiftWithRedis extends OpenShiftOrchestrationProvider {
+class Redis extends CacheBackendBase {
 
   /**
-   * Create a redis deployment on OpenShift.
-   *
-   * @param string $deployment_name
-   *   The deployment name.
-   * @param string $site_id
-   *   The ID of the site the redis instance will be working with.
-   * @param string $environment
-   *   The ID of the environment the redis instance will be working with.
-   *
-   * @throws \UniversityOfAdelaide\OpenShift\ClientException
+   * {@inheritdoc}
    */
-  public function createRedisDeployment(string $deployment_name, string $site_id, string $environment) {
+  public function getEnvironmentVariables(NodeInterface $environment) {
+    $deployment_name = OpenShiftOrchestrationProvider::generateDeploymentName($environment->id());
+    return [
+      'REDIS_ENABLED' => '1',
+      'REDIS_HOST' => $deployment_name . '-redis',
+      'REDIS_PREFIX' => $deployment_name,
+    ];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function onEnvironmentCreate(NodeInterface $environment) {
+    // @todo: move this function somewhere else?
+    $deployment_name = OpenShiftOrchestrationProvider::generateDeploymentName($environment->id());
     $redis_name = $deployment_name . '-redis';
     $redis_port = 6379;
 
-    $image_stream = $this->client->getImageStream('redis');
-    if (!$image_stream) {
+    if (!$image_stream = $this->client->getImageStream('redis')) {
       $image_stream = $this->generateImageStream();
       $this->client->createImageStream($image_stream);
     }
 
-    $data = $this->formatRedisDeployData($deployment_name, $site_id, $environment);
+    $data = $this->formatRedisDeployData($deployment_name, $environment->field_shp_site->target_id, $environment->id());
     $redis_deployment_config = $this->generateDeploymentConfig($deployment_name, $redis_name, $redis_port, $data);
     $this->client->createDeploymentConfig($redis_deployment_config);
 
-    $this->client->createService($redis_name, $redis_name, $redis_port,
-      $redis_port, $deployment_name);
+    $this->client->createService($redis_name, $redis_name, $redis_port, $redis_port, $deployment_name);
   }
 
   /**
-   * Delete the redis deployment.
-   *
-   * @param string $deployment_name
-   *   The deployment name.
-   *
-   * @throws \UniversityOfAdelaide\OpenShift\ClientException
+   * {@inheritdoc}
    */
-  public function deleteRedisDeployment(string $deployment_name) {
+  public function onEnvironmentDelete(NodeInterface $environment) {
+    $deployment_name = OpenShiftOrchestrationProvider::generateDeploymentName($environment->id());
     $redis_name = $deployment_name . '-redis';
     if ($this->client->getService($redis_name)) {
       $this->client->deleteService($redis_name);
@@ -67,7 +65,7 @@ class OpenShiftWithRedis extends OpenShiftOrchestrationProvider {
   }
 
   /**
-   * Formats redis deploy data.
+   * Format the redis deploy data.
    *
    * @param string $name
    *   The name of the deployment config.
@@ -79,7 +77,7 @@ class OpenShiftWithRedis extends OpenShiftOrchestrationProvider {
    * @return array
    *   The deployment config array.
    */
-  private function formatRedisDeployData(string $name, int $site_id, int $environment_id) {
+  protected function formatRedisDeployData(string $name, int $site_id, int $environment_id) {
     $deploy_data = [
       'labels' => [
         'site_id' => (string) $site_id,
@@ -98,7 +96,7 @@ class OpenShiftWithRedis extends OpenShiftOrchestrationProvider {
    * @return array
    *   Image stream definition.
    */
-  public function generateImageStream() {
+  protected function generateImageStream() {
     $image_stream = [
       'apiVersion' => 'v1',
       'kind' => 'ImageStream',
@@ -147,7 +145,7 @@ class OpenShiftWithRedis extends OpenShiftOrchestrationProvider {
    * @return array
    *   Deployment config definition.
    */
-  public function generateDeploymentConfig(string $deployment_name, string $redis_name, string $redis_port, array $data) {
+  protected function generateDeploymentConfig(string $deployment_name, string $redis_name, string $redis_port, array $data) {
     $redis_data = $deployment_name . '-data';
     $redis_conf = $deployment_name . '-config';
 
@@ -160,8 +158,7 @@ class OpenShiftWithRedis extends OpenShiftOrchestrationProvider {
       ],
       'spec' => [
         'replicas' => 1,
-        'selector' => array_key_exists('labels', $data) ?
-        array_merge($data['labels'], ['name' => $redis_name]) : [],
+        'selector' => array_key_exists('labels', $data) ? array_merge($data['labels'], ['name' => $redis_name]) : [],
         'strategy' => [
           'type' => 'Rolling',
         ],
@@ -170,8 +167,7 @@ class OpenShiftWithRedis extends OpenShiftOrchestrationProvider {
             'annotations' => [
               'openshift.io/generated-by' => 'shp_redis_support',
             ],
-            'labels' => array_key_exists('labels', $data) ?
-            array_merge($data['labels'], ['name' => $redis_name]) : [],
+            'labels' => array_key_exists('labels', $data) ? array_merge($data['labels'], ['name' => $redis_name]) : [],
           ],
           'spec' =>
             [
