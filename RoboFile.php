@@ -65,11 +65,8 @@ class RoboFile extends RoboFileBase {
   public function devImportDb($sql_file) {
     $domain_name = getenv("OPENSHIFT_DOMAIN") ?: '192.168.99.100.nip.io';
     $openshift_url = getenv("OPENSHIFT_URL") ?: 'https://192.168.99.100:8443';
-    $example_repository = getenv("DRUPAL_EXAMPLE_REPOSITORY") ?:
-      'https://github.com/universityofadelaide/shepherd-example-drupal.git';
-
     $database_host = getenv("DB_HOST") ?: 'mysql-myproject.' . $domain_name;
-    $database_port = getenv("DB_PORT") ?: '31632';
+    $token = trim(getenv("TOKEN"));
 
     $start = new DateTime();
     $this->_exec("$this->drush_cmd -y sql-drop");
@@ -78,6 +75,11 @@ class RoboFile extends RoboFileBase {
       ->exec("$this->drush_cmd -y cset shp_database_provisioner.settings host $database_host")
       ->exec("$this->drush_cmd -y cset shp_database_provisioner.settings user root")
       ->exec("$this->drush_cmd -y cget shp_database_provisioner.settings")
+      ->exec("$this->drush_cmd -y cset shp_orchestration.settings connection.namespace myproject")
+      ->exec("$this->drush_cmd -y cset shp_orchestration.settings connection.endpoint $openshift_url")
+      ->exec("$this->drush_cmd -y cset shp_orchestration.settings connection.token $token")
+      ->exec("$this->drush_cmd -y cget shp_orchestration.settings")
+      ->exec("$this->drush_cmd -y pmu cas")
       ->run();
     $this->_exec("$this->drush_cmd cr");
     $this->_exec("$this->drush_cmd updb --entity-updates -y");
