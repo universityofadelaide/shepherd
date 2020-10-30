@@ -55,4 +55,35 @@ class RoboFile extends RoboFileBase {
     }
   }
 
+  /**
+   * Custom import db with some sefety built in.
+   *
+   * @param string $sql_file
+   *
+   * @throws \Robo\Exception\TaskException
+   */
+  public function devImportDb($sql_file) {
+    $domain_name = getenv("OPENSHIFT_DOMAIN") ?: '192.168.99.100.nip.io';
+    $openshift_url = getenv("OPENSHIFT_URL") ?: 'https://192.168.99.100:8443';
+    $example_repository = getenv("DRUPAL_EXAMPLE_REPOSITORY") ?:
+      'https://github.com/universityofadelaide/shepherd-example-drupal.git';
+
+    $database_host = getenv("DB_HOST") ?: 'mysql-myproject.' . $domain_name;
+    $database_port = getenv("DB_PORT") ?: '31632';
+
+    $start = new DateTime();
+    $this->_exec("$this->drush_cmd -y sql-drop");
+    $this->_exec("$this->drush_cmd sqlq --file=$sql_file");
+    $this->taskExecStack()
+      ->exec("$this->drush_cmd -y cset shp_database_provisioner.settings host $database_host")
+      ->exec("$this->drush_cmd -y cset shp_database_provisioner.settings user root")
+      ->exec("$this->drush_cmd -y cget shp_database_provisioner.settings")
+      ->run();
+    $this->_exec("$this->drush_cmd cr");
+    $this->_exec("$this->drush_cmd updb --entity-updates -y");
+    $this->say('Duration: ' . date_diff(new DateTime(), $start)->format('%im %Ss'));
+    $this->_exec("$this->drush_cmd upwd admin password");
+    $this->say('Database imported, admin user password is : password');
+  }
+
 }
