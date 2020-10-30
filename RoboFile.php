@@ -71,6 +71,8 @@ class RoboFile extends RoboFileBase {
     $start = new DateTime();
     $this->_exec("$this->drush_cmd -y sql-drop");
     $this->_exec("$this->drush_cmd sqlq --file=$sql_file");
+    $this->_exec("$this->drush_cmd cr");
+    $this->_exec("$this->drush_cmd updb --entity-updates -y");
     $this->taskExecStack()
       ->exec("$this->drush_cmd -y cset shp_database_provisioner.settings host $database_host")
       ->exec("$this->drush_cmd -y cset shp_database_provisioner.settings user root")
@@ -81,8 +83,6 @@ class RoboFile extends RoboFileBase {
       ->exec("$this->drush_cmd -y cget shp_orchestration.settings")
       ->exec("$this->drush_cmd -y pmu cas")
       ->run();
-    $this->_exec("$this->drush_cmd cr");
-    $this->_exec("$this->drush_cmd updb --entity-updates -y");
     $this->say('Duration: ' . date_diff(new DateTime(), $start)->format('%im %Ss'));
     $this->_exec("$this->drush_cmd upwd admin password");
     $this->say('Database imported, admin user password is : password');
