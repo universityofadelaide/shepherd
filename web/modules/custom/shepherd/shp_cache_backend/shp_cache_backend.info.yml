@@ -1,0 +1,9 @@
+name: 'Shepherd Cache Backends'
+type: module
+description: 'Provides integration to different cache backends.'
+core: 8.x
+package: Shepherd
+dependencies:
+  - plugin:plugin
+  - shp_orchestration:shp_orchestration
+  - drupal:serialization

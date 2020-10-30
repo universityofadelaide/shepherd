@@ -22,16 +22,15 @@
     <!-- Set error reporting to E_ALL. -->
     <ini name="error_reporting" value="32767"/>
     <ini name="memory_limit" value="-1"/>
+    <env name="SIMPLETEST_DB" value="mysql://user:password@127.0.0.1/drupal"/>
+    <env name="SYMFONY_DEPRECATIONS_HELPER" value="weak"/>
     <env name="BROWSERTEST_OUTPUT_DIRECTORY" value="/code/web/sites/simpletest/browser_output"/>
     <env name="SIMPLETEST_BASE_URL" value="http://127.0.0.1:8080"/>
     <!-- See \weitzman\DrupalTestTraits\MinkSetup -->
     <env name="DTT_BASE_URL" value="http://127.0.0.1:8080"/>
     <!-- See \weitzman\DrupalTestTraits\WebDriverSetup -->
     <env name="DTT_MINK_DRIVER_ARGS" value='["chrome", { "chromeOptions": { "w3c": false } }, "http://127.0.0.1:4444/wd/hub"]'/>
-    <env name="SIMPLETEST_DB" value="mysql://user:password@127.0.0.1/drupal"/>
     <const name="BOOTSTRAP_IS_PHPUNIT" value="true"/>
-    <!-- To disable deprecation testing completely set SYMFONY_DEPRECATIONS_HELPER value: 'disabled' -->
-    <env name="SYMFONY_DEPRECATIONS_HELPER" value="disabled"/>
   </php>
   <testsuites>
     <testsuite name="unit">

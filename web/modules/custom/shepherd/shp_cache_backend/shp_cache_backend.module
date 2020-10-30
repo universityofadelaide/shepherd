@@ -1,0 +1,32 @@
+<?php
+
+/**
+ * @file
+ * Contains shp_cache_backend.module.
+ */
+
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\node\NodeInterface;
+
+/**
+ * Implements hook_shp_env_vars().
+ */
+function shp_cache_backend_shp_env_vars(NodeInterface $environment) {
+  if (!$environment->field_cache_backend->isEmpty()) {
+    /** @var \Drupal\shp_cache_backend\Plugin\CacheBackendInterface $cache_backend */
+    $cache_backend = $environment->field_cache_backend->first()->getContainedPluginInstance();
+    return $cache_backend->getEnvironmentVariables($environment);
+  }
+  return [];
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function shp_cache_backend_form_node_shp_environment_edit_form_alter(&$form, FormStateInterface $form_state) {
+  $form['field_cache_backend']['widget']['#disabled'] = TRUE;
+  $form['field_cache_backend']['notice'] = [
+    '#type' => 'markup',
+    '#markup' => t('<p class="description">The cache backend can not be changed.</p>'),
+  ];
+}

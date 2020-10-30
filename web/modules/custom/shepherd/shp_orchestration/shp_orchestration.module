@@ -31,6 +31,11 @@ function shp_orchestration_node_insert(NodeInterface $node) {
  * Implements hook_ENTITY_TYPE_update().
  */
 function shp_orchestration_node_update(NodeInterface $node) {
+  // Don't do anything if the killswitch is set, this allows us to do node
+  // updates without triggering OpenShift changes.
+  if (\Drupal::state()->get('shp_orchestration_update_killswitch', FALSE)) {
+    return;
+  }
   switch ($node->bundle()) {
     case 'shp_site':
       \Drupal::service('shp_orchestration.site')->updated($node);

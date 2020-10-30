@@ -3,6 +3,7 @@
 namespace Drupal\shp_custom\Service;
 
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\node\NodeInterface;
 
 /**
  * Environment type service.
@@ -31,6 +32,20 @@ class EnvironmentType implements EnvironmentTypeInterface {
   public function __construct(EntityTypeManagerInterface $entityTypeManager) {
     $this->entityTypeManager = $entityTypeManager;
     $this->taxonomyTerm = $this->entityTypeManager->getStorage('taxonomy_term');
+  }
+
+  /**
+   * Determine whether an environment is promoted or now.
+   *
+   * @param \Drupal\node\NodeInterface $environment
+   *   The environment.
+   *
+   * @return bool
+   *   TRUE if this environment is promoted.
+   */
+  public function isPromotedEnvironment(NodeInterface $environment) {
+    $promoted_term = $this->getPromotedTerm();
+    return !$environment->field_shp_environment_type->isEmpty() && $environment->field_shp_environment_type->target_id === $promoted_term->id();
   }
 
   /**

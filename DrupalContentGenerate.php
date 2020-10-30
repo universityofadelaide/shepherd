@@ -6,8 +6,6 @@
  */
 
 use Drupal\node\Entity\Node;
-use Drupal\shp_orchestration\Entity\OpenShiftConfigEntity;
-use Drupal\shp_redis_support\Entity\OpenShiftWithRedisConfigEntity;
 use Drupal\taxonomy\Entity\Term;
 use Drupal\user\Entity\User;
 
@@ -47,38 +45,12 @@ $openshift_config = [
   'token'      => $token,
   'namespace'  => 'myproject',
   'verify_tls' => FALSE,
-  'id'         => 'openshift',
 ];
-
-// Configure OpenShift as orchestration provider.
-if ($openshift = OpenShiftConfigEntity::load('openshift')) {
-  // If config already exists, replace with current values.
-  foreach ($openshift_config as $key => $value) {
-    $openshift->set($key, $value);
-  }
-}
-else {
-  $openshift = OpenShiftConfigEntity::create($openshift_config);
-}
-$openshift->save();
-
-// Update settings to create a redis enabled version of the endpoint.
-$openshift_config['id'] = 'openshift_with_redis';
-
-// Configure OpenShift as orchestration provider.
-if ($openshift = OpenShiftWithRedisConfigEntity::load('openshift_with_redis')) {
-  // If config already exists, replace with current values.
-  foreach ($openshift_config as $key => $value) {
-    $openshift->set($key, $value);
-  }
-}
-else {
-  $openshift = OpenShiftWithRedisConfigEntity::create($openshift_config);
-}
-$openshift->save();
-
 $orchestration_config = \Drupal::service('config.factory')->getEditable('shp_orchestration.settings');
-$orchestration_config->set('selected_provider', 'openshift_with_redis');
+foreach ($openshift_config as $key => $value) {
+  $orchestration_config->set('connection.' . $key, $value);
+}
+$orchestration_config->set('selected_provider', 'openshift_orchestration_provider');
 $orchestration_config->save();
 
 // Force reload the orchestration plugin to clear the static cache.
@@ -192,6 +164,9 @@ if (!$env = reset($nodes)) {
     'field_shp_cpu_limit'      => [['value' => '1000m']],
     'field_shp_memory_request' => [['value' => '256Mi']],
     'field_shp_memory_limit'   => [['value' => '512Mi']],
+    'field_cache_backend'      => [
+      'plugin_id' => 'redis',
+    ],
   ]);
   $env->moderation_state->value = 'published';
   $env->save();

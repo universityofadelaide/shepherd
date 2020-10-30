@@ -1,0 +1,5 @@
+cache_backend:
+  label: Cache Backend
+  provider: shp_cache_backend
+  plugin_manager_service_id: plugin.manager.cache_backend
+  plugin_definition_decorator_class: \Drupal\plugin\PluginDefinition\ArrayPluginDefinitionDecorator

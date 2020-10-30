@@ -10,9 +10,11 @@ use Drupal\shp_custom\Service\EnvironmentTypeInterface;
 use Drupal\shp_custom\Service\Site as SiteEntity;
 use Drupal\shp_orchestration\Event\OrchestrationEnvironmentEvent;
 use Drupal\shp_orchestration\Event\OrchestrationEvents;
+use Drupal\shp_orchestration\ExceptionHandler;
 use Drupal\shp_orchestration\OrchestrationProviderPluginManager;
 use Drupal\taxonomy\Entity\Term;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use UniversityOfAdelaide\OpenShift\ClientException;
 
 /**
  * Class Environment.
@@ -63,6 +65,13 @@ class Environment extends EntityActionBase {
   protected $configFactory;
 
   /**
+   * The orchestration exception handler.
+   *
+   * @var \Drupal\shp_orchestration\ExceptionHandler
+   */
+  protected $exceptionHandler;
+
+  /**
    * Shepherd constructor.
    *
    * @param \Drupal\shp_orchestration\OrchestrationProviderPluginManager $orchestrationProviderPluginManager
@@ -79,8 +88,10 @@ class Environment extends EntityActionBase {
    *   Environment type service.
    * @param \Drupal\Core\Config\ConfigFactory $configFactory
    *   The config factory.
+   * @param \Drupal\shp_orchestration\ExceptionHandler $exceptionHandler
+   *   The exception handler service.
    */
-  public function __construct(OrchestrationProviderPluginManager $orchestrationProviderPluginManager, Configuration $configuration, EnvironmentService $environment, SiteEntity $site, EventDispatcherInterface $event_dispatcher, EnvironmentTypeInterface $environmentType, ConfigFactory $configFactory) {
+  public function __construct(OrchestrationProviderPluginManager $orchestrationProviderPluginManager, Configuration $configuration, EnvironmentService $environment, SiteEntity $site, EventDispatcherInterface $event_dispatcher, EnvironmentTypeInterface $environmentType, ConfigFactory $configFactory, ExceptionHandler $exceptionHandler) {
     parent::__construct($orchestrationProviderPluginManager);
     $this->configuration = $configuration;
     $this->environmentService = $environment;
@@ -88,6 +99,7 @@ class Environment extends EntityActionBase {
     $this->eventDispatcher = $event_dispatcher;
     $this->environmentType = $environmentType;
     $this->configFactory = $configFactory;
+    $this->exceptionHandler = $exceptionHandler;
   }
 
   /**
@@ -186,6 +198,17 @@ class Environment extends EntityActionBase {
       $backup_schedule,
       $backup_retention
     );
+
+    if (!$node->field_cache_backend->isEmpty()) {
+      /** @var \Drupal\shp_cache_backend\Plugin\CacheBackendInterface $cache_backend */
+      $cache_backend = $node->field_cache_backend->first()->getContainedPluginInstance();
+      try {
+        $cache_backend->onEnvironmentCreate($node);
+      }
+      catch (ClientException $e) {
+        $this->exceptionHandler->handleClientException($e);
+      }
+    }
 
     // Allow other modules to react to the Environment creation.
     $event = new OrchestrationEnvironmentEvent($this->orchestrationProviderPlugin, $deployment_name, $site, $node, $project);
@@ -303,6 +326,17 @@ class Environment extends EntityActionBase {
     $event = new OrchestrationEnvironmentEvent($this->orchestrationProviderPlugin, $deployment_name);
     $this->eventDispatcher->dispatch(OrchestrationEvents::DELETED_ENVIRONMENT, $event);
 
+    if (!$node->field_cache_backend->isEmpty()) {
+      /** @var \Drupal\shp_cache_backend\Plugin\CacheBackendInterface $cache_backend */
+      $cache_backend = $node->field_cache_backend->first()->getContainedPluginInstance();
+      try {
+        $cache_backend->onEnvironmentDelete($node);
+      }
+      catch (ClientException $e) {
+        $this->exceptionHandler->handleClientException($e);
+      }
+    }
+
     return $result;
   }
 
@@ -363,14 +397,38 @@ class Environment extends EntityActionBase {
       ->execute();
     foreach ($old_promoted as $nid) {
       $node = Node::load($nid);
-      $node->field_shp_environment_type = [['target_id' => $demoted_term->id()]];
+      $node->field_shp_environment_type = $demoted_term->id();
       $node->save();
+
+      // Run any cache backend demotion functions.
+      if (!$node->field_cache_backend->isEmpty()) {
+        /** @var \Drupal\shp_cache_backend\Plugin\CacheBackendInterface $cache_backend */
+        $cache_backend = $node->field_cache_backend->first()->getContainedPluginInstance();
+        try {
+          $cache_backend->onEnvironmentDemotion($node);
+        }
+        catch (ClientException $e) {
+          $this->exceptionHandler->handleClientException($e);
+        }
+      }
     }
 
     // Finally Update the environment that was promoted if we need to.
     if ($environment->field_shp_environment_type->target_id !== $promoted_term->id()) {
       $environment->field_shp_environment_type = [['target_id' => $promoted_term->id()]];
       $environment->save();
+    }
+
+    // Run any cache-backend promotion functions.
+    if (!$environment->field_cache_backend->isEmpty()) {
+      /** @var \Drupal\shp_cache_backend\Plugin\CacheBackendInterface $cache_backend */
+      $cache_backend = $environment->field_cache_backend->first()->getContainedPluginInstance();
+      try {
+        $cache_backend->onEnvironmentPromote($environment);
+      }
+      catch (ClientException $e) {
+        $this->exceptionHandler->handleClientException($e);
+      }
     }
 
     return $result;

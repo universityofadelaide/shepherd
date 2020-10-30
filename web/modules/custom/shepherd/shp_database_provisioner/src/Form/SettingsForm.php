@@ -5,6 +5,7 @@ namespace Drupal\shp_database_provisioner\Form;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Render\Renderer;
 use Drupal\shp_custom\Service\StringGenerator;
 use Drupal\shp_database_provisioner\Service\Provisioner;
 use Drupal\shp_orchestration\OrchestrationProviderPluginManagerInterface;
@@ -38,7 +39,14 @@ class SettingsForm extends ConfigFormBase {
   protected $orchestrationProvider;
 
   /**
-   * PrintQuotaTopupForm constructor.
+   * Used to render the pretty tokenizer output.
+   *
+   * @var \Drupal\Core\Render\Renderer
+   */
+  protected $renderer;
+
+  /**
+   * ShepherdSettings constructor.
    *
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
    *   Config factory.
@@ -48,12 +56,15 @@ class SettingsForm extends ConfigFormBase {
    *   String generator.
    * @param \Drupal\shp_orchestration\OrchestrationProviderPluginManagerInterface $orchestration_provider_plugin_manager
    *   Orchestration provider plugin manager.
+   * @param \Drupal\Core\Render\Renderer $renderer
+   *   Drupal renderer.
    */
-  public function __construct(ConfigFactoryInterface $config_factory, Provisioner $provisioner, StringGenerator $string_generator, OrchestrationProviderPluginManagerInterface $orchestration_provider_plugin_manager) {
+  public function __construct(ConfigFactoryInterface $config_factory, Provisioner $provisioner, StringGenerator $string_generator, OrchestrationProviderPluginManagerInterface $orchestration_provider_plugin_manager, Renderer $renderer) {
     parent::__construct($config_factory);
     $this->provisioner = $provisioner;
     $this->stringGenerator = $string_generator;
     $this->orchestrationProvider = $orchestration_provider_plugin_manager->getProviderInstance();
+    $this->renderer = $renderer;
   }
 
   /**
@@ -64,7 +75,8 @@ class SettingsForm extends ConfigFormBase {
       $container->get('config.factory'),
       $container->get('shp_database_provisioner.provisioner'),
       $container->get('shp_custom.string_generator'),
-      $container->get('plugin.manager.orchestration_provider')
+      $container->get('plugin.manager.orchestration_provider'),
+      $container->get('renderer')
     );
   }
 
@@ -87,6 +99,12 @@ class SettingsForm extends ConfigFormBase {
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
     $config = $this->config('shp_database_provisioner.settings');
+
+    $token_tree = [
+      '#theme' => 'token_tree_link',
+      '#token_types' => ['shp_database_provisioner'],
+    ];
+    $rendered_token_tree = $this->renderer->render($token_tree);
 
     $form['enabled'] = [
       '#type' => 'checkbox',
@@ -127,6 +145,19 @@ class SettingsForm extends ConfigFormBase {
       '#default_value' => $config->get('options'),
     ];
 
+    $form['populate_command'] = [
+      '#type' => 'textarea',
+      '#title' => $this->t('Populate command'),
+      '#description' => t('Commands to run to populate a database. Each command on a new line will be combined with && when run to stop on any error. This field supports tokens. @browse_tokens_link', ['@browse_tokens_link' => $rendered_token_tree]),
+      '#default_value' => $config->get('populate_command'),
+      '#element_validate' => [
+        'token_element_validate',
+      ],
+      '#token_types' => [
+        'shp_database_provisioner',
+      ],
+    ];
+
     return parent::buildForm($form, $form_state);
   }
 
@@ -141,6 +172,7 @@ class SettingsForm extends ConfigFormBase {
       ->set('user', $form_state->getValue(['user']))
       ->set('secret', $form_state->getValue(['secret']))
       ->set('options', $form_state->getValue(['options']))
+      ->set('populate_command', $form_state->getValue(['populate_command']))
       ->save();
 
     parent::submitForm($form, $form_state);
