@@ -76,14 +76,16 @@ class RoboFile extends RoboFileBase {
     $this->taskExecStack()
       ->exec("$this->drush_cmd -y cset shp_database_provisioner.settings host $database_host")
       ->exec("$this->drush_cmd -y cset shp_database_provisioner.settings user root")
+      ->exec("$this->drush_cmd -y cset shp_database_provisioner.settings populate_command \"wget [shepherd:public-filename] -O /tmp/dump.sql\r\ndrush sqlq --file=/tmp/dump.sql\r\ndrush updb -y\r\nrobo config:import-plus\r\ndrush cr\r\nrm /tmp/dump.sql\"")
       ->exec("$this->drush_cmd -y cget shp_database_provisioner.settings")
       ->exec("$this->drush_cmd -y cset shp_orchestration.settings connection.namespace myproject")
       ->exec("$this->drush_cmd -y cset shp_orchestration.settings connection.endpoint $openshift_url")
       ->exec("$this->drush_cmd -y cset shp_orchestration.settings connection.token $token")
       ->exec("$this->drush_cmd -y cset shp_orchestration.settings connection.verify_tls 0")
       ->exec("$this->drush_cmd -y cget shp_orchestration.settings")
-      ->exec("$this->drush_cmd -y pmu cas")
       ->run();
+    $this->configImportPlus();
+    $this->_exec("$this->drush_cmd -y pmu cas");
     $this->say('Duration: ' . date_diff(new DateTime(), $start)->format('%im %Ss'));
     $this->_exec("$this->drush_cmd upwd admin password");
     $this->say('Database imported, admin user password is : password');
