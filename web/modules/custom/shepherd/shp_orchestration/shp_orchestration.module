@@ -110,11 +110,7 @@ function shp_orchestration_shp_project_form_validate(array $form, FormStateInter
  */
 function shp_orchestration_shp_env_vars(NodeInterface $environment) {
   /** @var Drupal\Node\NodeInterface $site */
-  $site = $environment->field_shp_site
-    ->first()
-    ->get('entity')
-    ->getTarget()
-    ->getValue();
+  $site = $environment->field_shp_site->entity;
 
   // Generate default environment variables.
   $env_vars = [
@@ -124,6 +120,15 @@ function shp_orchestration_shp_env_vars(NodeInterface $environment) {
     'SHEPHERD_TOKEN_FILE' => '/etc/secret/SHEPHERD_TOKEN',
     'WEB_PATH' => $environment->field_shp_path->value,
   ];
+
+  // Add NewRelic environment variables if enabled.
+  if ($environment->field_newrelic_enabled->value) {
+    $env_vars['NEW_RELIC_ENABLED'] = 'true';
+    // @TODO Figure out how the license key is passed in - probably through
+    // shepherd secrets?
+    $env_vars['NEW_RELIC_LICENSE_KEY'] = '';
+    $env_vars['NEW_RELIC_APP_NAME'] = sprintf('%s-%s', $site->field_shp_short_name->value, $environment->id());
+  }
 
   return $env_vars;
 }
