@@ -9,7 +9,7 @@ id: node.shp_environment.field_newrelic_enabled
 field_name: field_newrelic_enabled
 entity_type: node
 bundle: shp_environment
-label: 'NewRelic Enabled'
+label: 'NewRelic enabled'
 description: 'Whether NewRelic should be enabled for this environment.'
 required: false
 translatable: false
