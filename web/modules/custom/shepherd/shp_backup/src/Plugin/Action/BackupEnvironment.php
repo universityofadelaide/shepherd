@@ -104,7 +104,9 @@ class BackupEnvironment extends EntityActionBase {
       $this->messenger()->addError('No site found for @name.', ['@name' => $object->label()]);
       return;
     }
-    $backup_name = $this->t('Bulk backup - @date', ['@date' => $this->dateFormatter->format($this->time->getRequestTime(), 'medium')]);
+    $backup_name = $this->t('Bulk backup - @date', [
+      '@date' => $this->dateFormatter->format($this->time->getRequestTime(), 'medium'),
+    ]);
     $this->backupService->createBackup($site, $object, $backup_name);
   }
 

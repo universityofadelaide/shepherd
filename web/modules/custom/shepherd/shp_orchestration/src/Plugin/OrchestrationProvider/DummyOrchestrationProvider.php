@@ -7,7 +7,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use UniversityOfAdelaide\OpenShift\Objects\Backups\Backup;
 
 /**
- * DummyOrchestrationProvider.
+ * A mock orchestration provider.
  *
  * @OrchestrationProvider(
  *   id = "dummy_orchestration_provider",

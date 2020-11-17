@@ -3,7 +3,7 @@
 namespace Drupal\shp_orchestration\Event;
 
 /**
- * Class OrchestrationEvents.
+ * Orchestration event constants.
  */
 final class OrchestrationEvents {
 

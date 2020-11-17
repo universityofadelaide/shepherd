@@ -7,10 +7,9 @@ use Drupal\Core\Entity\EntityInterface;
 use Drupal\shp_custom\Service\Environment;
 use Drupal\shp_custom\Service\StringGenerator;
 use Drupal\shp_orchestration\OrchestrationProviderPluginManagerInterface;
-use mysqli;
 
 /**
- * Class Provisioner.
+ * A service to provision databases.
  */
 class Provisioner {
 
@@ -119,7 +118,7 @@ class Provisioner {
     $privileged_username = $config->get('user');
     $privileged_password = $this->orchestrationProviderPlugin->getSecret($config->get('secret'),
       'DATABASE_PASSWORD');
-    $db = new mysqli($host, $privileged_username, $privileged_password, NULL,
+    $db = new \mysqli($host, $privileged_username, $privileged_password, NULL,
       $port, NULL);
 
     return $this->createDatabase($database, $db) &&
@@ -183,7 +182,7 @@ class Provisioner {
    * @return bool
    *   True on success otherwise false.
    */
-  public function createDatabase(string $database, mysqli $db): bool {
+  public function createDatabase(string $database, \mysqli $db): bool {
     $query = sprintf('CREATE DATABASE `%s`', $database);
     $statement = $db->prepare($query);
     if ($statement === NULL || $statement === FALSE) {
@@ -204,7 +203,7 @@ class Provisioner {
    * @return bool
    *   True on success otherwise false.
    */
-  public function dropDatabase(string $database, mysqli $db): bool {
+  public function dropDatabase(string $database, \mysqli $db): bool {
     $query = sprintf('DROP DATABASE `%s`', $database);
     $statement = $db->prepare($query);
     if ($statement === NULL || $statement === FALSE) {
@@ -235,7 +234,7 @@ class Provisioner {
     string $database,
     string $username,
     string $password,
-    mysqli $db,
+    \mysqli $db,
     string $options = ''
   ): bool {
     $query = sprintf(
@@ -269,7 +268,7 @@ class Provisioner {
    */
   public function dropUser(
     string $username,
-    mysqli $db
+    \mysqli $db
   ): bool {
     $query = sprintf(
       "DROP USER `%s`@`%%`",

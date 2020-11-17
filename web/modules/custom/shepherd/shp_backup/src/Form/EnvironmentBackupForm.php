@@ -101,7 +101,10 @@ class EnvironmentBackupForm extends FormBase {
    *   Translated markup.
    */
   public function getPageTitle(NodeInterface $site, NodeInterface $environment) {
-    return $this->t('Backup environment - @site_title : @environment_title', ['@site_title' => $site->getTitle(), '@environment_title' => $environment->getTitle()]);
+    return $this->t('Backup environment - @site_title : @environment_title', [
+      '@site_title' => $site->getTitle(),
+      '@environment_title' => $environment->getTitle(),
+    ]);
   }
 
   /**

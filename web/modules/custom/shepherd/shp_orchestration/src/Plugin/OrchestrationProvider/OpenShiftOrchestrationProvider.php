@@ -19,7 +19,7 @@ use UniversityOfAdelaide\OpenShift\Objects\Backups\ScheduledBackup;
 use UniversityOfAdelaide\OpenShift\Objects\Label;
 
 /**
- * OpenShiftOrchestrationProvider.
+ * The openshift orchestration provider.
  *
  * @OrchestrationProvider(
  *   id = "openshift_orchestration_provider",

@@ -13,9 +13,7 @@ use Drupal\node\Entity\Node;
 use Drupal\node\NodeInterface;
 
 /**
- * Class Site.
- *
- * @package Drupal\shp_custom\Service
+ * A service for interacting with Site entities.
  */
 class Site {
 
