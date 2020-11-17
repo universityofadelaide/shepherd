@@ -1393,6 +1393,11 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
         'name' => self::generateSharedPvcName($deployment_name),
         'path' => '/shared',
       ],
+      'local' => [
+        'type' => 'empty',
+        'name' => 'local',
+        'path' => '/local',
+      ],
     ];
 
     if ($mount_backup) {
