@@ -10,9 +10,7 @@ use Drupal\shp_orchestration\OrchestrationProviderPluginManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Class OrchestrationProviderSettingsController.
- *
- * @package Drupal\shp_orchestration\Controller
+ * A controller for modifying provider settings.
  */
 class OrchestrationProviderSettingsController extends ControllerBase {
 

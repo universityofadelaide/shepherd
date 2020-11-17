@@ -6,7 +6,7 @@ use Drupal\node\NodeInterface;
 use Drupal\shp_orchestration\OrchestrationProviderPluginManager;
 
 /**
- * Class Project.
+ * A service for interacting with project entities.
  */
 class Project extends EntityActionBase {
 

@@ -25,6 +25,7 @@ before_install:
     - mysql -e 'CREATE DATABASE IF NOT EXISTS drupal CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci' -uroot
     - sed -i '1i export PATH="$HOME/.composer/vendor/bin:$PATH"' $HOME/.bashrc
     - source $HOME/.bashrc
+    - composer self-update --1
 
 install:
     - composer install

@@ -17,7 +17,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use UniversityOfAdelaide\OpenShift\ClientException;
 
 /**
- * Class Environment.
+ * A service for interacting with environment entities.
  */
 class Environment extends EntityActionBase {
 
