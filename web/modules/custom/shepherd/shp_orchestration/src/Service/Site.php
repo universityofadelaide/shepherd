@@ -8,7 +8,7 @@ use Drupal\shp_custom\Service\Site as SiteEntity;
 use Drupal\shp_orchestration\OrchestrationProviderPluginManager;
 
 /**
- * Class Site.
+ * A service for interacting with site entities.
  */
 class Site extends EntityActionBase {
 

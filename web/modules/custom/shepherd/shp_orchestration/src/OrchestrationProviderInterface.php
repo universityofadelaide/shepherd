@@ -6,9 +6,7 @@ use Drupal\Component\Plugin\PluginInspectionInterface;
 use UniversityOfAdelaide\OpenShift\Objects\Backups\Backup;
 
 /**
- * Interface OrchestrationProviderInterface.
- *
- * @package Drupal\shp_orchestration
+ * Defines an interface for orchestration providers.
  */
 interface OrchestrationProviderInterface extends PluginInspectionInterface {
 
