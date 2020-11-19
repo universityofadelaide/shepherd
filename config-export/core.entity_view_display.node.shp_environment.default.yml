@@ -4,6 +4,7 @@ status: true
 dependencies:
   config:
     - field.field.node.shp_environment.field_cache_backend
+    - field.field.node.shp_environment.field_newrelic_enabled
     - field.field.node.shp_environment.field_shp_cpu_limit
     - field.field.node.shp_environment.field_shp_cpu_request
     - field.field.node.shp_environment.field_shp_cron_jobs
@@ -42,6 +43,16 @@ content:
     settings: {  }
     third_party_settings: {  }
     type: plugin_label
+    region: content
+  field_newrelic_enabled:
+    weight: 17
+    label: above
+    settings:
+      format: default
+      format_custom_false: ''
+      format_custom_true: ''
+    third_party_settings: {  }
+    type: boolean
     region: content
   field_shp_cpu_limit:
     weight: 12

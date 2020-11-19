@@ -4,6 +4,10 @@ status: true
 dependencies:
   config:
     - core.entity_view_mode.node.teaser
+    - field.field.node.shp_environment.field_cache_backend
+    - field.field.node.shp_environment.field_newrelic_enabled
+    - field.field.node.shp_environment.field_shp_cpu_limit
+    - field.field.node.shp_environment.field_shp_cpu_request
     - field.field.node.shp_environment.field_shp_cron_jobs
     - field.field.node.shp_environment.field_shp_cron_suspended
     - field.field.node.shp_environment.field_shp_deployment_name
@@ -11,7 +15,10 @@ dependencies:
     - field.field.node.shp_environment.field_shp_env_vars
     - field.field.node.shp_environment.field_shp_environment_type
     - field.field.node.shp_environment.field_shp_git_reference
+    - field.field.node.shp_environment.field_shp_memory_limit
+    - field.field.node.shp_environment.field_shp_memory_request
     - field.field.node.shp_environment.field_shp_path
+    - field.field.node.shp_environment.field_shp_secrets
     - field.field.node.shp_environment.field_shp_site
     - field.field.node.shp_environment.field_shp_update_on_image_change
     - node.type.shp_environment
@@ -33,6 +40,8 @@ content:
     weight: 100
     region: content
 hidden:
+  field_cache_backend: true
+  field_newrelic_enabled: true
   field_shp_cpu_limit: true
   field_shp_cpu_request: true
   field_shp_cron_jobs: true

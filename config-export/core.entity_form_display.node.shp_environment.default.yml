@@ -4,6 +4,7 @@ status: true
 dependencies:
   config:
     - field.field.node.shp_environment.field_cache_backend
+    - field.field.node.shp_environment.field_newrelic_enabled
     - field.field.node.shp_environment.field_shp_cpu_limit
     - field.field.node.shp_environment.field_shp_cpu_request
     - field.field.node.shp_environment.field_shp_cron_jobs
@@ -46,6 +47,7 @@ third_party_settings:
       children:
         - field_shp_cron_suspended
         - field_shp_update_on_image_change
+        - field_newrelic_enabled
         - field_shp_env_vars
         - field_shp_secrets
         - field_shp_cron_jobs
@@ -76,8 +78,15 @@ content:
     third_party_settings: {  }
     type: 'plugin_selector:plugin_select_list'
     region: content
+  field_newrelic_enabled:
+    weight: 12
+    settings:
+      display_label: true
+    third_party_settings: {  }
+    type: boolean_checkbox
+    region: content
   field_shp_cpu_limit:
-    weight: 16
+    weight: 17
     settings:
       size: 60
       placeholder: ''
@@ -85,7 +94,7 @@ content:
     type: string_textfield
     region: content
   field_shp_cpu_request:
-    weight: 15
+    weight: 16
     settings:
       size: 60
       placeholder: ''
@@ -93,7 +102,7 @@ content:
     type: string_textfield
     region: content
   field_shp_cron_jobs:
-    weight: 14
+    weight: 15
     settings:
       key_label: Schedule
       key_size: 60
@@ -103,6 +112,8 @@ content:
       placeholder: ''
       description_enabled: true
       description_placeholder: ''
+      description_label: Description
+      description_rows: 5
     third_party_settings: {  }
     type: key_value_textfield
     region: content
@@ -132,6 +143,8 @@ content:
       placeholder: value
       description_placeholder: ''
       description_enabled: false
+      description_label: Description
+      description_rows: 5
     third_party_settings: {  }
     type: key_value_textfield
     region: content
@@ -150,7 +163,7 @@ content:
     type: string_textfield
     region: content
   field_shp_memory_limit:
-    weight: 18
+    weight: 19
     settings:
       size: 60
       placeholder: ''
@@ -158,7 +171,7 @@ content:
     type: string_textfield
     region: content
   field_shp_memory_request:
-    weight: 17
+    weight: 18
     settings:
       size: 60
       placeholder: ''
@@ -174,7 +187,7 @@ content:
     type: string_textfield
     region: content
   field_shp_secrets:
-    weight: 13
+    weight: 14
     settings:
       size: 60
       placeholder: ''

@@ -1,0 +1,23 @@
+uuid: 5445cf3f-ef3c-475b-a94a-818f1749e264
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_newrelic_enabled
+    - node.type.shp_environment
+id: node.shp_environment.field_newrelic_enabled
+field_name: field_newrelic_enabled
+entity_type: node
+bundle: shp_environment
+label: 'NewRelic enabled'
+description: 'Whether NewRelic should be enabled for this environment.'
+required: false
+translatable: false
+default_value:
+  -
+    value: 0
+default_value_callback: ''
+settings:
+  on_label: 'On'
+  off_label: 'Off'
+field_type: boolean
