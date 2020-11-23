@@ -194,6 +194,8 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
    *   An array of route annotations.
    * @param string $backup_schedule
    *   A schedule to run automated backups on, leave blank to disable.
+   * @param int $backup_retention
+   *   The number of scheduled backups to retain.
    *
    * @return bool
    *   Returns true if succeeded.
@@ -218,7 +220,8 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
     array $probes = [],
     array $cron_jobs = [],
     array $annotations = [],
-    string $backup_schedule = ''
+    string $backup_schedule = '',
+    int $backup_retention = 0,
   );
 
   /**

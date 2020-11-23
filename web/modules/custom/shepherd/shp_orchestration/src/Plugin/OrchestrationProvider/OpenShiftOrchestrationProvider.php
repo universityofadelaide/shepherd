@@ -391,7 +391,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     array $cron_jobs = [],
     array $annotations = [],
     string $backup_schedule = '',
-    int $retention = 0
+    int $backup_retention = 0,
   ) {
     // @todo Refactor this too. Not DRY enough.
     $deployment_name = self::generateDeploymentName($environment_id);
@@ -453,7 +453,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
 
     // Add/remove the backup schedule as determined by environment type.
     if ($backup_schedule) {
-      $this->environmentScheduleBackupUpdate($site_id, $environment_id, $backup_schedule, $retention);
+      $this->environmentScheduleBackupUpdate($site_id, $environment_id, $backup_schedule, $backup_retention);
     }
     else {
       $this->environmentScheduleBackupDelete($environment_id);

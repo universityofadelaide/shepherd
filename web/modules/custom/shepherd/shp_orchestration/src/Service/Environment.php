@@ -267,6 +267,7 @@ class Environment extends EntityActionBase {
 
     $environment_type = Term::load($node->field_shp_environment_type->target_id);
     $backup_schedule = !$environment_type->field_shp_backup_schedule->isEmpty() ? $environment_type->field_shp_backup_schedule->value : '';
+    $backup_retention = !$environment_type->field_shp_backup_retention->isEmpty() ? $environment_type->field_shp_backup_retention->value : '';
 
     $environment_updated = $this->orchestrationProviderPlugin->updatedEnvironment(
       $project->getTitle(),
@@ -288,7 +289,8 @@ class Environment extends EntityActionBase {
       $probes,
       $cron_jobs,
       [],
-      $backup_schedule
+      $backup_schedule,
+      $backup_retention
     );
 
     // Allow other modules to react to the Environment update.
@@ -421,7 +423,7 @@ class Environment extends EntityActionBase {
     }
 
     // Finally Update the environment that was promoted if we need to.
-    if ($environment->field_shp_environment_type->target_id !== $promoted_term->id()) {
+    if (!$this->environmentType->isPromotedEnvironment($environment)) {
       $environment->field_shp_environment_type = [['target_id' => $promoted_term->id()]];
       $environment->save();
     }
