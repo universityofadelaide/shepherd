@@ -312,8 +312,11 @@ class Environment extends EntityActionBase {
    */
   public function deleted(NodeInterface $node) {
     $site = $this->environmentService->getSite($node);
+    if (!$site) {
+      return FALSE;
+    }
     $project = $this->siteService->getProject($site);
-    if (!isset($project) || !isset($site)) {
+    if (!$project) {
       return FALSE;
     }
 
