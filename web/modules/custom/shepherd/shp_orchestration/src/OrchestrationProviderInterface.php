@@ -4,6 +4,7 @@ namespace Drupal\shp_orchestration;
 
 use Drupal\Component\Plugin\PluginInspectionInterface;
 use UniversityOfAdelaide\OpenShift\Objects\Backups\Backup;
+use UniversityOfAdelaide\OpenShift\Objects\Hpa;
 
 /**
  * Defines an interface for orchestration providers.
@@ -275,6 +276,8 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
    *   Source code git ref, defaults to 'master'.
    * @param bool $clear_cache
    *   Execute a cache clear job after promotion?
+   * @param \UniversityOfAdelaide\OpenShift\Objects\Hpa|null $hpa
+   *   An HPA to create, or NULL if one shouldn't be created.
    *
    * @return bool
    *   Returns true if succeeded.
@@ -288,7 +291,8 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
     string $path,
     array $annotations,
     string $source_ref = 'master',
-    bool $clear_cache = TRUE
+    bool $clear_cache = TRUE,
+    Hpa $hpa = NULL
   );
 
   /**

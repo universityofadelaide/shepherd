@@ -15,6 +15,7 @@ use Drupal\shp_orchestration\OrchestrationProviderPluginManager;
 use Drupal\taxonomy\Entity\Term;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use UniversityOfAdelaide\OpenShift\ClientException;
+use UniversityOfAdelaide\OpenShift\Objects\Hpa;
 
 /**
  * A service for interacting with environment entities.
@@ -215,8 +216,7 @@ class Environment extends EntityActionBase {
     $this->eventDispatcher->dispatch(OrchestrationEvents::CREATED_ENVIRONMENT, $event);
 
     // If this is a production environment, promote it immediately.
-    $environment_term = Term::load($node->field_shp_environment_type->target_id);
-    if ($environment_term->field_shp_protect->value === TRUE) {
+    if ($this->environmentType->isPromotedEnvironment($node)) {
       $this->promoted($site, $node, TRUE, FALSE);
     }
 
@@ -372,7 +372,13 @@ class Environment extends EntityActionBase {
       array_column($annotations, 'key'),
       array_column($annotations, 'value')
     );
-
+    $hpa = Hpa::create();
+    if (!$environment->field_min_replicas->isEmpty()) {
+      $hpa->setMinReplicas($environment->field_min_replicas->value);
+    }
+    if (!$environment->field_max_replicas->isEmpty()) {
+      $hpa->setMaxReplicas($environment->field_max_replicas->value);
+    }
     $result = $this->orchestrationProviderPlugin->promotedEnvironment(
       $project->title->value,
       $site->field_shp_short_name->value,
@@ -382,7 +388,8 @@ class Environment extends EntityActionBase {
       $site->field_shp_path->value,
       $annotations,
       $environment->field_shp_git_reference->value,
-      $clear_cache
+      $clear_cache,
+      $hpa
     );
 
     // @todo everything is exclusive for now, implement non-exclusive?

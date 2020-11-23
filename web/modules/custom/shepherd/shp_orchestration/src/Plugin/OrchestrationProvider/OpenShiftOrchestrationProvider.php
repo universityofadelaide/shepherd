@@ -293,15 +293,8 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       $probes
     );
 
-    $hpa = Hpa::create()
-      ->setName($deployment_name)
-      ->setMinReplicas(1)
-      ->setMaxReplicas(2)
-      ->setTargetCpu(80);
-
     try {
       $this->client->createDeploymentConfig($deployment_config);
-      $this->client->createHpa($hpa);
     }
     catch (ClientException $e) {
       $this->exceptionHandler->handleClientException($e);
@@ -543,7 +536,8 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     string $path,
     array $annotations,
     string $source_ref = 'master',
-    bool $clear_cache = TRUE
+    bool $clear_cache = TRUE,
+    Hpa $hpa = NULL
   ) {
     $site_deployment_name = self::generateDeploymentName($site_id);
 
@@ -558,6 +552,17 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
 
     if (!$this->client->getRoute($site_deployment_name)) {
       $this->client->createRoute($site_deployment_name, $site_deployment_name, $domain, $path, $annotations);
+    }
+
+    if ($hpa && !$this->client->getHpa($environment_deployment_name)) {
+      $hpa->setName($environment_deployment_name);
+      try {
+        $this->client->createHpa($hpa);
+      }
+      catch (ClientException $e) {
+        $this->exceptionHandler->handleClientException($e);
+        return FALSE;
+      }
     }
 
     $result = $this->client->updateService($site_deployment_name, $environment_deployment_name);
