@@ -392,6 +392,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     array $annotations = [],
     string $backup_schedule = '',
     int $backup_retention = 0,
+    Hpa $hpa = NULL
   ) {
     // @todo Refactor this too. Not DRY enough.
     $deployment_name = self::generateDeploymentName($environment_id);
@@ -432,6 +433,17 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
         ],
       ],
     ]);
+    // Update the HPA only if there is one.
+    if ($this->client->getHpa($deployment_name)) {
+      $hpa->setName($deployment_name);
+      try {
+        $this->client->updateHpa($hpa);
+      }
+      catch (ClientException $e) {
+        $this->exceptionHandler->handleClientException($e);
+        return FALSE;
+      }
+    }
 
     // Remove all the existing cron jobs.
     $this->client->deleteCronJob('', 'app=' . $deployment_name);

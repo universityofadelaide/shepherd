@@ -290,7 +290,8 @@ class Environment extends EntityActionBase {
       $cron_jobs,
       [],
       $backup_schedule,
-      $backup_retention
+      $backup_retention,
+      $this->getHpaForEnvironment($node)
     );
 
     // Allow other modules to react to the Environment update.
@@ -374,13 +375,6 @@ class Environment extends EntityActionBase {
       array_column($annotations, 'key'),
       array_column($annotations, 'value')
     );
-    $hpa = Hpa::create();
-    if (!$environment->field_min_replicas->isEmpty()) {
-      $hpa->setMinReplicas($environment->field_min_replicas->value);
-    }
-    if (!$environment->field_max_replicas->isEmpty()) {
-      $hpa->setMaxReplicas($environment->field_max_replicas->value);
-    }
     $result = $this->orchestrationProviderPlugin->promotedEnvironment(
       $project->title->value,
       $site->field_shp_short_name->value,
@@ -391,7 +385,7 @@ class Environment extends EntityActionBase {
       $annotations,
       $environment->field_shp_git_reference->value,
       $clear_cache,
-      $hpa
+      $this->getHpaForEnvironment($environment)
     );
 
     // @todo everything is exclusive for now, implement non-exclusive?
@@ -488,6 +482,26 @@ class Environment extends EntityActionBase {
     }
 
     return $cron_jobs;
+  }
+
+  /**
+   * Constructs an HPA object for an environment.
+   *
+   * @param \Drupal\node\NodeInterface $environment
+   *   Environment entity.
+   *
+   * @return \UniversityOfAdelaide\OpenShift\Objects\Hpa
+   *   The HPA object
+   */
+  protected function getHpaForEnvironment(NodeInterface $environment) {
+    $hpa = Hpa::create();
+    if (!$environment->field_min_replicas->isEmpty()) {
+      $hpa->setMinReplicas($environment->field_min_replicas->value);
+    }
+    if (!$environment->field_max_replicas->isEmpty()) {
+      $hpa->setMaxReplicas($environment->field_max_replicas->value);
+    }
+    return $hpa;
   }
 
 }

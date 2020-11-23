@@ -107,6 +107,7 @@ class DummyOrchestrationProvider extends OrchestrationProviderBase {
     array $annotations = [],
     string $backup_schedule = '',
     int $backup_retention = 0,
+    Hpa $hpa = NULL
   ) {
     return TRUE;
   }

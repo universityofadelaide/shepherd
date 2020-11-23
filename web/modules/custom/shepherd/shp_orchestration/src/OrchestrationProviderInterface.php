@@ -196,6 +196,8 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
    *   A schedule to run automated backups on, leave blank to disable.
    * @param int $backup_retention
    *   The number of scheduled backups to retain.
+   * @param \UniversityOfAdelaide\OpenShift\Objects\Hpa|null $hpa
+   *   An HPA to create, or NULL if one shouldn't be created.
    *
    * @return bool
    *   Returns true if succeeded.
@@ -222,6 +224,7 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
     array $annotations = [],
     string $backup_schedule = '',
     int $backup_retention = 0,
+    Hpa $hpa = NULL
   );
 
   /**
