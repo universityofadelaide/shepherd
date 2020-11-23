@@ -16,6 +16,7 @@ use UniversityOfAdelaide\OpenShift\Objects\Backups\Backup;
 use UniversityOfAdelaide\OpenShift\Objects\Backups\Database;
 use UniversityOfAdelaide\OpenShift\Objects\Backups\Restore;
 use UniversityOfAdelaide\OpenShift\Objects\Backups\ScheduledBackup;
+use UniversityOfAdelaide\OpenShift\Objects\Hpa;
 use UniversityOfAdelaide\OpenShift\Objects\Label;
 
 /**
@@ -292,8 +293,15 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       $probes
     );
 
+    $hpa = Hpa::create()
+      ->setName($deployment_name)
+      ->setMinReplicas(1)
+      ->setMaxReplicas(2)
+      ->setTargetCpu(80);
+
     try {
       $this->client->createDeploymentConfig($deployment_config);
+      $this->client->createHpa($hpa);
     }
     catch (ClientException $e) {
       $this->exceptionHandler->handleClientException($e);
@@ -489,6 +497,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       $this->client->deleteRoute($deployment_name);
       $this->client->deleteService($deployment_name);
       $this->client->deleteDeploymentConfig($deployment_name);
+      $this->client->deleteHpa($deployment_name);
       $this->client->deleteReplicationControllers('', 'app=' . $deployment_name);
 
       // Now the things not in the typically visible ui.
