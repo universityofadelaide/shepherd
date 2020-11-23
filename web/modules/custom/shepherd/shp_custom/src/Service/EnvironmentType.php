@@ -53,6 +53,7 @@ class EnvironmentType implements EnvironmentTypeInterface {
     $terms = $this->taxonomyTerm->loadMultiple($ids);
     return reset($terms);
   }
+
   /**
    * {@inheritdoc}
    */
