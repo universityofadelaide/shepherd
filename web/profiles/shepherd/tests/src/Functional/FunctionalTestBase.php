@@ -115,7 +115,6 @@ class FunctionalTestBase extends TestCase {
     return $this->container->get('config.factory')->getEditable($name);
   }
 
-
   /**
    * Set config values noting future values if required.
    *
@@ -141,7 +140,6 @@ class FunctionalTestBase extends TestCase {
       $entry->save();
     }
   }
-
 
   /**
    * Load the last created entity of a given type.
