@@ -29,7 +29,13 @@ before_install:
 
 install:
     - composer install
+    - robo build
 
 script:
     - ./bin/robo lint:php
-    - ./vendor/phpunit/phpunit/phpunit --stop-on-failure --group shepherd -c ./ ./web/modules/custom/
+    - ./bin/phpunit --stop-on-failure --testsuite unit
+    - ./bin/phpunit --stop-on-failure --testsuite unit
+    - ./bin/phpunit --stop-on-failure --testsuite kernel
+    - ./bin/phpunit --stop-on-failure --testsuite functional
+    - ./bin/phpunit --stop-on-failure --testsuite functionaljs
+    - ./bin/phpunit --stop-on-failure --testsuite functionalclean
