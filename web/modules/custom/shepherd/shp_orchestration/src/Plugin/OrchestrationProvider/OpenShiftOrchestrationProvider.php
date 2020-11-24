@@ -332,7 +332,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     }
 
     if ($backup_schedule) {
-      $this->environmentScheduleBackupCreate($site_id, $environment_id, $backup_schedule);
+      $this->environmentScheduleBackupCreate($site_id, $environment_id, $backup_schedule, $backup_retention);
     }
 
     return TRUE;
