@@ -29,7 +29,7 @@ before_install:
 
 install:
     - composer install
-    - robo build
+    - ./bin/robo build
 
 script:
     - ./bin/robo lint:php
