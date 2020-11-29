@@ -15,6 +15,8 @@ env:
         - SITE_ADMIN_EMAIL=admin@example.com
         - SITE_ADMIN_USERNAME=admin
         - SITE_ADMIN_PASSWORD=password
+        - DATABASE_USER=root
+
 php:
     - 7.2
 
