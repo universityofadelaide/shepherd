@@ -6,6 +6,9 @@ services:
 env:
     global:
         - SIMPLETEST_DB="mysql://root:@127.0.0.1/drupal"
+        - PUBLIC_DIR=/tmp/shared/public
+        - PRIVATE_DIR=/tmp/shared/private
+        - TMP_DIR=/tmp/shared/tmp
 php:
     - 7.2
 
