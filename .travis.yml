@@ -6,7 +6,7 @@ services:
 env:
     global:
         - SIMPLETEST_DB="mysql://drupal:password@127.0.0.1/drupal"
-        - PUBLIC_DIR=/tmp/shared/public
+        - PUBLIC_DIR=web/sites/default/files
         - PRIVATE_DIR=/tmp/shared/private
         - TMP_DIR=/tmp/shared/tmp
         - SHEPHERD_INSTALL_PROFILE=shepherd
