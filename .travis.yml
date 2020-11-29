@@ -41,7 +41,7 @@ before_install:
 
 install:
     - composer install
-    - ./bin/drush sqlq "SHOW TABLES;"
+    - ./bin/drush --debug sqlq "SHOW TABLES;"
     - ./bin/robo build
 
 script:
