@@ -16,6 +16,7 @@ env:
         - SITE_ADMIN_USERNAME=admin
         - SITE_ADMIN_PASSWORD=password
         - DATABASE_USER=root
+        - DATABASE_PASSWORD_FILE=/tmp/db-pass
 
 php:
     - 7.2
@@ -34,6 +35,7 @@ mysql:
 before_install:
     - phpenv config-rm xdebug.ini || true
     - mysql -e 'CREATE DATABASE IF NOT EXISTS drupal CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci' -uroot
+    - echo '' > $DATABASE_PASSWORD_FILE
     - sed -i '1i export PATH="$HOME/.composer/vendor/bin:$PATH"' $HOME/.bashrc
     - source $HOME/.bashrc
     - composer self-update --1
