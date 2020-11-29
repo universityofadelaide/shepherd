@@ -9,6 +9,12 @@ env:
         - PUBLIC_DIR=/tmp/shared/public
         - PRIVATE_DIR=/tmp/shared/private
         - TMP_DIR=/tmp/shared/tmp
+        - SHEPHERD_INSTALL_PROFILE=shepherd
+        - SITE_TITLE=Shepherd
+        - SITE_MAIL=site@example.com
+        - SITE_ADMIN_EMAIL=admin@example.com
+        - SITE_ADMIN_USERNAME=admin
+        - SITE_ADMIN_PASSWORD=password
 php:
     - 7.2
 
