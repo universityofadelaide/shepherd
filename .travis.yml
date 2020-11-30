@@ -43,6 +43,7 @@ before_install:
     - export BROWSERTEST_OUTPUT_DIRECTORY="$(pwd)/web/sites/simpletest/browser_output"
     # For whatever reason, when this runs during robo build we get permission denied.
     - mkdir -p $PUBLIC_DIR $BROWSERTEST_OUTPUT_DIRECTORY
+    - apache2 -v
 
 install:
     - composer install
