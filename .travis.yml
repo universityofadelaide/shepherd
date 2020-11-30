@@ -39,10 +39,11 @@ before_install:
     - sed -i '1i export PATH="$HOME/.composer/vendor/bin:$PATH"' $HOME/.bashrc
     - source $HOME/.bashrc
     - composer self-update --1
+    - pwd
+    - ls -la
 
 install:
     - composer install
-    - ./bin/drush --debug sqlq "SHOW TABLES;"
     - ./bin/robo build
 
 script:
