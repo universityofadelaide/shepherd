@@ -45,12 +45,12 @@ before_install:
   - export SHEPHERD_ROOT=$(pwd)
   # For whatever reason, when this runs during robo build we get permission denied.
   - mkdir -p $PUBLIC_DIR $BROWSERTEST_OUTPUT_DIRECTORY
+  # Move settings into place for CI.
+  - mv web/sites/default/ci.settings.php web/sites/default/settings.local.php
 
 install:
   - composer install
   - (php -S localhost:8888 -t $(pwd)/web/ &) >> /dev/null 2>&1
-  # Move settings into place for CI.
-  - mv web/sites/default/ci.settings.php web/sites/default/settings.local.php
   - ./bin/robo build
   # Enable test modules.
   - ./bin/drush en -y shp_cache_backend_test
