@@ -39,9 +39,9 @@ before_install:
     - sed -i '1i export PATH="$HOME/.composer/vendor/bin:$PATH"' $HOME/.bashrc
     - source $HOME/.bashrc
     - composer self-update --1
-    - pwd
-    - ls -la
-    - mkdir -p web/sites/default/files
+    - export BROWSERTEST_OUTPUT_DIRECTORY="$(pwd)/web/sites/simpletest/browser_output"
+    # For whatever reason, when this runs during robo build we get permission denied.
+    - mkdir -p $PUBLIC_DIR $BROWSERTEST_OUTPUT_DIRECTORY
 
 install:
     - composer install
