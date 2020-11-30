@@ -70,3 +70,6 @@ script:
     - ./bin/phpunit --stop-on-failure --testsuite functional
     - ./bin/phpunit --stop-on-failure --testsuite functionaljs
     - ./bin/phpunit --stop-on-failure --testsuite functionalclean
+
+after_script:
+    - cat $BROWSERTEST_OUTPUT_DIRECTORY/Drupal_Tests_shp_content_types_Functional_EnvironmentConstraintsTest-1-dtt.html
