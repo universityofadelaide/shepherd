@@ -6,6 +6,7 @@ services:
 env:
     global:
         - SIMPLETEST_DB="mysql://drupal:password@127.0.0.1/drupal"
+        - DTT_BASE_URL=http://127.0.0.1
         - PUBLIC_DIR=web/sites/default/files
         - PRIVATE_DIR=/tmp/shared/private
         - TMP_DIR=/tmp/shared/tmp
