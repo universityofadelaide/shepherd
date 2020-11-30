@@ -38,8 +38,10 @@ class EnvironmentType implements EnvironmentTypeInterface {
    * {@inheritdoc}
    */
   public function isPromotedEnvironment(NodeInterface $environment) {
-    $promoted_term = $this->getPromotedTerm();
-    return !$environment->field_shp_environment_type->isEmpty() && $environment->field_shp_environment_type->target_id === $promoted_term->id();
+    if ($promoted_term = $this->getPromotedTerm()) {
+      return !$environment->field_shp_environment_type->isEmpty() && $environment->field_shp_environment_type->target_id === $promoted_term->id();
+    }
+    return FALSE;
   }
 
   /**
