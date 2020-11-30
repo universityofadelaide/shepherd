@@ -49,7 +49,11 @@ before_install:
 install:
   - composer install
   - (php -S localhost:8888 -t $(pwd)/web/ &) >> /dev/null 2>&1
+  # Move settings into place for CI.
+  - mv web/sites/default/ci.settings.php web/sites/default/settings.local.php
   - ./bin/robo build
+  # Enable test modules.
+  - ./bin/drush en -y shp_cache_backend_test
 
 script:
   - ./bin/robo lint:php
