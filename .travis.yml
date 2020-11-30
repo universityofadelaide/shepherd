@@ -50,6 +50,10 @@ install:
   - composer install
   - (php -S localhost:8888 -t $(pwd)/web/ &) >> /dev/null 2>&1
   - ./bin/robo build
+  # Use dummy OS provider, turn off DB provisioning.
+  - ./bin/drush cset -y shp_orchestration.settings selected_provider dummy_orchestration_provider
+  - ./bin/drush cset -y shp_database_provisioner.settings enabled 0
+  - ./bin/drush cr
 
 #before_script:
 #  - sudo apt-get update
