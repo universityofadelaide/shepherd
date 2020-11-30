@@ -21,6 +21,7 @@ class RoboFile extends RoboFileBase {
    * {@inheritdoc}
    */
   public function __construct() {
+    parent::__construct();
     if ($root = getenv('SHEPHERD_ROOT')) {
       $this->configDir = $root . '/config-export';
       $this->configInstallDir = $root . '/config-install';
