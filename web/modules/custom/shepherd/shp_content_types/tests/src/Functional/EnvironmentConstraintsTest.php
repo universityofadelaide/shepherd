@@ -12,6 +12,14 @@ use Drupal\Tests\shepherd\Functional\FunctionalTestBase;
 class EnvironmentConstraintsTest extends FunctionalTestBase {
 
   /**
+   * {@inheritdoc}
+   */
+  public function setUp() {
+    parent::setUp();
+    $this->assertTrue(\Drupal::moduleHandler()->moduleExists('shp_cache_backend_test'), 'Please enable the shp_cache_backend_test module.');
+  }
+
+  /**
    * Tests the replicas constraint.
    */
   public function testReplicasConstraint() {

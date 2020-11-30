@@ -72,6 +72,9 @@ trait ContentCreationTrait {
       'field_shp_git_reference' => 'master',
       'field_shp_site' => $site,
       'field_shp_cron_suspended' => 1,
+      'field_cache_backend' => [
+        'plugin_id' => 'dummy',
+      ],
       'moderation_state' => 'published',
     ];
     return $this->doCreateNode($values);
