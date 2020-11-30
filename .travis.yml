@@ -1,75 +1,77 @@
 language: php
 
 services:
-    - mysql
+  - mysql
 
 env:
-    global:
-        - SIMPLETEST_DB="mysql://drupal:password@127.0.0.1/drupal"
-        - DTT_BASE_URL=http://127.0.0.1
-        - PUBLIC_DIR=web/sites/default/files
-        - PRIVATE_DIR=/tmp/shared/private
-        - TMP_DIR=/tmp/shared/tmp
-        - SHEPHERD_INSTALL_PROFILE=shepherd
-        - SITE_TITLE=Shepherd
-        - SITE_MAIL=site@example.com
-        - SITE_ADMIN_EMAIL=admin@example.com
-        - SITE_ADMIN_USERNAME=admin
-        - SITE_ADMIN_PASSWORD=password
-        - DATABASE_USER=drupal
+  global:
+    - SIMPLETEST_DB="mysql://drupal:password@127.0.0.1/drupal"
+    - DTT_BASE_URL=http://127.0.0.1:8888
+    - PUBLIC_DIR=web/sites/default/files
+    - PRIVATE_DIR=/tmp/shared/private
+    - TMP_DIR=/tmp/shared/tmp
+    - SHEPHERD_INSTALL_PROFILE=shepherd
+    - SITE_TITLE=Shepherd
+    - SITE_MAIL=site@example.com
+    - SITE_ADMIN_EMAIL=admin@example.com
+    - SITE_ADMIN_USERNAME=admin
+    - SITE_ADMIN_PASSWORD=password
+    - DATABASE_USER=drupal
 
 php:
-    - 7.2
+  - 7.2
 
 cache:
-    - "$HOME/.composer/cache"
+  directories:
+    - $HOME/.composer/cache
 
 matrix:
-    fast_finish: true
+  fast_finish: true
 
 mysql:
-    database: drupal
-    username: root
-    encoding: utf8
+  database: drupal
+  username: root
+  encoding: utf8
 
 before_install:
-    - phpenv config-rm xdebug.ini || true
-    - mysql -u root -e 'CREATE DATABASE IF NOT EXISTS drupal CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci'
-    - mysql -u root -e "CREATE USER 'drupal'@'127.0.0.1' IDENTIFIED BY 'password';"
-    - mysql -u root -e "GRANT ALL ON drupal.* TO 'drupal'@'127.0.0.1';"
-    - sed -i '1i export PATH="$HOME/.composer/vendor/bin:$PATH"' $HOME/.bashrc
-    - source $HOME/.bashrc
-    - composer self-update --1
-    - export BROWSERTEST_OUTPUT_DIRECTORY="$(pwd)/web/sites/simpletest/browser_output"
-    # For whatever reason, when this runs during robo build we get permission denied.
-    - mkdir -p $PUBLIC_DIR $BROWSERTEST_OUTPUT_DIRECTORY
+  - phpenv config-rm xdebug.ini || true
+  - mysql -u root -e 'CREATE DATABASE IF NOT EXISTS drupal CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci'
+  - mysql -u root -e "CREATE USER 'drupal'@'127.0.0.1' IDENTIFIED BY 'password';"
+  - mysql -u root -e "GRANT ALL ON drupal.* TO 'drupal'@'127.0.0.1';"
+  - sed -i '1i export PATH="$HOME/.composer/vendor/bin:$PATH"' $HOME/.bashrc
+  - source $HOME/.bashrc
+  - composer self-update --1
+  - export BROWSERTEST_OUTPUT_DIRECTORY="$(pwd)/web/sites/simpletest/browser_output"
+  # For whatever reason, when this runs during robo build we get permission denied.
+  - mkdir -p $PUBLIC_DIR $BROWSERTEST_OUTPUT_DIRECTORY
 
 install:
-    - composer install
-    - ./bin/robo build
+  - composer install
+  - (php -S localhost:8888 -t $(pwd)/web/ &) >> /dev/null 2>&1
+  - ./bin/robo build
 
-before_script:
-  - sudo apt-get update
-  - sudo apt-get install apache2 libapache2-mod-fastcgi
-  # enable php-fpm
-  - sudo cp ~/.phpenv/versions/$(phpenv version-name)/etc/php-fpm.conf.default ~/.phpenv/versions/$(phpenv version-name)/etc/php-fpm.conf
-  - sudo a2enmod rewrite actions fastcgi alias
-  - echo "cgi.fix_pathinfo = 1" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
-  - sudo sed -i -e "s,www-data,travis,g" /etc/apache2/envvars
-  - sudo chown -R travis:travis /var/lib/apache2/fastcgi
-  - ~/.phpenv/versions/$(phpenv version-name)/sbin/php-fpm
-  # configure apache virtual hosts
-  - sudo cp -f build/travis-ci-apache.conf /etc/apache2/sites-available/000-default.conf
-  - sudo sed -e "s?%TRAVIS_BUILD_DIR%?$(pwd)?g" --in-place /etc/apache2/sites-available/000-default.conf
-  - sudo service apache2 restart
+#before_script:
+#  - sudo apt-get update
+#  - sudo apt-get install apache2 libapache2-mod-fastcgi
+#  # enable php-fpm
+#  - sudo cp ~/.phpenv/versions/$(phpenv version-name)/etc/php-fpm.conf.default ~/.phpenv/versions/$(phpenv version-name)/etc/php-fpm.conf
+#  - sudo a2enmod rewrite actions fastcgi alias
+#  - echo "cgi.fix_pathinfo = 1" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
+#  - sudo sed -i -e "s,www-data,travis,g" /etc/apache2/envvars
+#  - sudo chown -R travis:travis /var/lib/apache2/fastcgi
+#  - ~/.phpenv/versions/$(phpenv version-name)/sbin/php-fpm
+#  # configure apache virtual hosts
+#  - sudo cp -f build/travis-ci-apache.conf /etc/apache2/sites-available/000-default.conf
+#  - sudo sed -e "s?%TRAVIS_BUILD_DIR%?$(pwd)?g" --in-place /etc/apache2/sites-available/000-default.conf
+#  - sudo service apache2 restart
 
 script:
-    - ./bin/robo lint:php
-    - ./bin/phpunit --stop-on-failure --testsuite unit
-    - ./bin/phpunit --stop-on-failure --testsuite kernel
-    - ./bin/phpunit --stop-on-failure --testsuite functional
-    - ./bin/phpunit --stop-on-failure --testsuite functionaljs
-    - ./bin/phpunit --stop-on-failure --testsuite functionalclean
+  - ./bin/robo lint:php
+  - ./bin/phpunit --stop-on-failure --testsuite unit
+  - ./bin/phpunit --stop-on-failure --testsuite kernel
+  - ./bin/phpunit --stop-on-failure --testsuite functional
+  - ./bin/phpunit --stop-on-failure --testsuite functionaljs
+  - ./bin/phpunit --stop-on-failure --testsuite functionalclean
 
 after_script:
-    - cat $BROWSERTEST_OUTPUT_DIRECTORY/Drupal_Tests_shp_content_types_Functional_EnvironmentConstraintsTest-1-dtt.html
+  - cat $BROWSERTEST_OUTPUT_DIRECTORY/Drupal_Tests_shp_content_types_Functional_EnvironmentConstraintsTest-1-dtt.html
