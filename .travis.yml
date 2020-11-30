@@ -42,6 +42,7 @@ before_install:
   - source $HOME/.bashrc
   - composer self-update --1
   - export BROWSERTEST_OUTPUT_DIRECTORY="$(pwd)/web/sites/simpletest/browser_output"
+  - export SHEPHERD_ROOT=$(pwd)
   # For whatever reason, when this runs during robo build we get permission denied.
   - mkdir -p $PUBLIC_DIR $BROWSERTEST_OUTPUT_DIRECTORY
 
