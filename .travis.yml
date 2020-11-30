@@ -41,6 +41,7 @@ before_install:
     - composer self-update --1
     - pwd
     - ls -la
+    - mkdir -p web/sites/default/files
 
 install:
     - composer install
