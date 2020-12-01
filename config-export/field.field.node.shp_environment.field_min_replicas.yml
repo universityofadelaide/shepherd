@@ -10,10 +10,10 @@ field_name: field_min_replicas
 entity_type: node
 bundle: shp_environment
 label: 'Min Replicas'
-description: 'The minimum number of replicas applied to the Horizontal Pod Autoscaler. Defaults to 1 if left empty.'
+description: 'The minimum number of replicas applied to the Horizontal Pod Autoscaler.'
 required: false
 translatable: false
-default_value: {  }
+default_value: 1
 default_value_callback: ''
 settings:
   min: 1

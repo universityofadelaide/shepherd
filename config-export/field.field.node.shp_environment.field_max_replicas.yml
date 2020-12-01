@@ -10,10 +10,10 @@ field_name: field_max_replicas
 entity_type: node
 bundle: shp_environment
 label: 'Max Replicas'
-description: 'The maximum number of replicas applied to the Horizontal Pod Autoscaler. Defaults to 2 if left empty.'
+description: 'The maximum number of replicas applied to the Horizontal Pod Autoscaler.'
 required: false
 translatable: false
-default_value: {  }
+default_value: 2
 default_value_callback: ''
 settings:
   min: 1

@@ -19,7 +19,7 @@ env:
     - DATABASE_USER=drupal
 
 php:
-  - 7.2
+  - 7.4
 
 cache:
   directories:
