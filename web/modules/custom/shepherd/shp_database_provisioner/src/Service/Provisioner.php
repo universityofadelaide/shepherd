@@ -87,7 +87,7 @@ class Provisioner {
    */
   public function create(EntityInterface $entity): bool {
     $config = $this->configFactory->get('shp_database_provisioner.settings');
-    if ($entity->bundle() !== 'shp_environment' && !$config->get('enabled')) {
+    if ($entity->bundle() !== 'shp_environment' || !$config->get('enabled')) {
       return FALSE;
     }
 

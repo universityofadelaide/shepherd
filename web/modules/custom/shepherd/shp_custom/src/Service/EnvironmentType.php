@@ -35,17 +35,13 @@ class EnvironmentType implements EnvironmentTypeInterface {
   }
 
   /**
-   * Determine whether an environment is promoted or now.
-   *
-   * @param \Drupal\node\NodeInterface $environment
-   *   The environment.
-   *
-   * @return bool
-   *   TRUE if this environment is promoted.
+   * {@inheritdoc}
    */
   public function isPromotedEnvironment(NodeInterface $environment) {
-    $promoted_term = $this->getPromotedTerm();
-    return !$environment->field_shp_environment_type->isEmpty() && $environment->field_shp_environment_type->target_id === $promoted_term->id();
+    if ($promoted_term = $this->getPromotedTerm()) {
+      return !$environment->field_shp_environment_type->isEmpty() && $environment->field_shp_environment_type->target_id === $promoted_term->id();
+    }
+    return FALSE;
   }
 
   /**
@@ -61,14 +57,7 @@ class EnvironmentType implements EnvironmentTypeInterface {
   }
 
   /**
-   * Load the term that is used for demoted environments (old production).
-   *
-   * There can be only one demoted term.
-   *
-   * @todo: Make configurable in UI.
-   *
-   * @return \Drupal\Core\Entity\EntityInterface|false
-   *   The demoted term.
+   * {@inheritdoc}
    */
   public function getDemotedTerm() {
     $ids = $this->taxonomyTerm->getQuery()

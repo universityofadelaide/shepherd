@@ -16,6 +16,7 @@ use UniversityOfAdelaide\OpenShift\Objects\Backups\Backup;
 use UniversityOfAdelaide\OpenShift\Objects\Backups\Database;
 use UniversityOfAdelaide\OpenShift\Objects\Backups\Restore;
 use UniversityOfAdelaide\OpenShift\Objects\Backups\ScheduledBackup;
+use UniversityOfAdelaide\OpenShift\Objects\Hpa;
 use UniversityOfAdelaide\OpenShift\Objects\Label;
 
 /**
@@ -331,7 +332,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     }
 
     if ($backup_schedule) {
-      $this->environmentScheduleBackupCreate($site_id, $environment_id, $backup_schedule);
+      $this->environmentScheduleBackupCreate($site_id, $environment_id, $backup_schedule, $backup_retention);
     }
 
     return TRUE;
@@ -390,7 +391,8 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     array $cron_jobs = [],
     array $annotations = [],
     string $backup_schedule = '',
-    int $retention = 0
+    int $backup_retention = 0,
+    Hpa $hpa = NULL
   ) {
     // @todo Refactor this too. Not DRY enough.
     $deployment_name = self::generateDeploymentName($environment_id);
@@ -431,6 +433,17 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
         ],
       ],
     ]);
+    // Update the HPA only if there is one.
+    if ($this->client->getHpa($deployment_name)) {
+      $hpa->setName($deployment_name);
+      try {
+        $this->client->updateHpa($hpa);
+      }
+      catch (ClientException $e) {
+        $this->exceptionHandler->handleClientException($e);
+        return FALSE;
+      }
+    }
 
     // Remove all the existing cron jobs.
     $this->client->deleteCronJob('', 'app=' . $deployment_name);
@@ -452,7 +465,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
 
     // Add/remove the backup schedule as determined by environment type.
     if ($backup_schedule) {
-      $this->environmentScheduleBackupUpdate($site_id, $environment_id, $backup_schedule, $retention);
+      $this->environmentScheduleBackupUpdate($site_id, $environment_id, $backup_schedule, $backup_retention);
     }
     else {
       $this->environmentScheduleBackupDelete($environment_id);
@@ -489,6 +502,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       $this->client->deleteRoute($deployment_name);
       $this->client->deleteService($deployment_name);
       $this->client->deleteDeploymentConfig($deployment_name);
+      $this->client->deleteHpa($deployment_name);
       $this->client->deleteReplicationControllers('', 'app=' . $deployment_name);
 
       // Now the things not in the typically visible ui.
@@ -534,7 +548,8 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     string $path,
     array $annotations,
     string $source_ref = 'master',
-    bool $clear_cache = TRUE
+    bool $clear_cache = TRUE,
+    Hpa $hpa = NULL
   ) {
     $site_deployment_name = self::generateDeploymentName($site_id);
 
@@ -549,6 +564,17 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
 
     if (!$this->client->getRoute($site_deployment_name)) {
       $this->client->createRoute($site_deployment_name, $site_deployment_name, $domain, $path, $annotations);
+    }
+
+    if ($hpa && !$this->client->getHpa($environment_deployment_name)) {
+      $hpa->setName($environment_deployment_name);
+      try {
+        $this->client->createHpa($hpa);
+      }
+      catch (ClientException $e) {
+        $this->exceptionHandler->handleClientException($e);
+        return FALSE;
+      }
     }
 
     $result = $this->client->updateService($site_deployment_name, $environment_deployment_name);

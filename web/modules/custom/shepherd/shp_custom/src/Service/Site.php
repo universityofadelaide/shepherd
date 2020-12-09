@@ -216,13 +216,9 @@ class Site {
    *   Project node.
    */
   public function getProject(NodeInterface $site) {
-    if (isset($site->field_shp_project->target_id)) {
+    if (!$site->field_shp_project->isEmpty()) {
       /** @var \Drupal\node\NodeInterface $project */
-      return $site->get('field_shp_project')
-        ->first()
-        ->get('entity')
-        ->getTarget()
-        ->getValue();
+      return $site->field_shp_project->entity;
     }
 
     return FALSE;

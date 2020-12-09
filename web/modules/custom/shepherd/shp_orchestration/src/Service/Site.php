@@ -87,12 +87,14 @@ class Site extends EntityActionBase {
    *   True on success.
    */
   public function deleted(NodeInterface $site) {
-    $project = $this->siteEntity->getProject($site);
-    return $this->orchestrationProviderPlugin->deletedSite(
-      $project->getTitle(),
-      $site->field_shp_short_name->value,
-      $site->id()
-    );
+    if ($project = $this->siteEntity->getProject($site)) {
+      return $this->orchestrationProviderPlugin->deletedSite(
+        $project->getTitle(),
+        $site->field_shp_short_name->value,
+        $site->id()
+      );
+    }
+    return FALSE;
   }
 
 }

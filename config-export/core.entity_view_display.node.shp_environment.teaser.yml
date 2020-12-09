@@ -5,6 +5,8 @@ dependencies:
   config:
     - core.entity_view_mode.node.teaser
     - field.field.node.shp_environment.field_cache_backend
+    - field.field.node.shp_environment.field_max_replicas
+    - field.field.node.shp_environment.field_min_replicas
     - field.field.node.shp_environment.field_newrelic_enabled
     - field.field.node.shp_environment.field_shp_cpu_limit
     - field.field.node.shp_environment.field_shp_cpu_request
@@ -41,6 +43,8 @@ content:
     region: content
 hidden:
   field_cache_backend: true
+  field_max_replicas: true
+  field_min_replicas: true
   field_newrelic_enabled: true
   field_shp_cpu_limit: true
   field_shp_cpu_request: true

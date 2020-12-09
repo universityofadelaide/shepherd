@@ -5,6 +5,7 @@ namespace Drupal\shp_orchestration\Plugin\OrchestrationProvider;
 use Drupal\shp_orchestration\OrchestrationProviderBase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use UniversityOfAdelaide\OpenShift\Objects\Backups\Backup;
+use UniversityOfAdelaide\OpenShift\Objects\Hpa;
 
 /**
  * A mock orchestration provider.
@@ -104,7 +105,9 @@ class DummyOrchestrationProvider extends OrchestrationProviderBase {
     array $probes = [],
     array $cron_jobs = [],
     array $annotations = [],
-    string $backup_schedule = ''
+    string $backup_schedule = '',
+    int $backup_retention = 0,
+    Hpa $hpa = NULL
   ) {
     return TRUE;
   }
@@ -141,7 +144,8 @@ class DummyOrchestrationProvider extends OrchestrationProviderBase {
     string $path,
     array $annotations,
     string $source_ref = 'master',
-    bool $clear_cache = TRUE
+    bool $clear_cache = TRUE,
+    Hpa $hpa = NULL
   ) {
     return TRUE;
   }

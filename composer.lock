@@ -6328,12 +6328,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/universityofadelaide/openshift-client.git",
-                "reference": "658ffcc234fb0a7e9d75f3a8048864d7ac7454eb"
+                "reference": "a0f5b59222ececd4a0e57093c271ac4f4e675847"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/universityofadelaide/openshift-client/zipball/658ffcc234fb0a7e9d75f3a8048864d7ac7454eb",
-                "reference": "658ffcc234fb0a7e9d75f3a8048864d7ac7454eb",
+                "url": "https://api.github.com/repos/universityofadelaide/openshift-client/zipball/a0f5b59222ececd4a0e57093c271ac4f4e675847",
+                "reference": "a0f5b59222ececd4a0e57093c271ac4f4e675847",
                 "shasum": ""
             },
             "require": {
@@ -6366,20 +6366,20 @@
                 }
             ],
             "description": "Simple OpenShift client for PHP.",
-            "time": "2020-11-17T01:25:46+00:00"
+            "time": "2020-12-08T21:59:34+00:00"
         },
         {
             "name": "universityofadelaide/shepherd-drupal-scaffold",
-            "version": "4.0.4",
+            "version": "4.0.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/universityofadelaide/shepherd-drupal-scaffold.git",
-                "reference": "80cde81dd72f0d9f05dc3fb621c6b6016c2ba41b"
+                "reference": "f6e587aa8bff08a3590c65367d9c6d3c62430375"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/universityofadelaide/shepherd-drupal-scaffold/zipball/80cde81dd72f0d9f05dc3fb621c6b6016c2ba41b",
-                "reference": "80cde81dd72f0d9f05dc3fb621c6b6016c2ba41b",
+                "url": "https://api.github.com/repos/universityofadelaide/shepherd-drupal-scaffold/zipball/f6e587aa8bff08a3590c65367d9c6d3c62430375",
+                "reference": "f6e587aa8bff08a3590c65367d9c6d3c62430375",
                 "shasum": ""
             },
             "require": {
@@ -6403,7 +6403,7 @@
                 "GPL-2.0+"
             ],
             "description": "Composer Plugin for updating the Shepherd Drupal tools.",
-            "time": "2020-10-02T05:22:54+00:00"
+            "time": "2020-11-25T03:00:01+00:00"
         },
         {
             "name": "webflo/drupal-finder",

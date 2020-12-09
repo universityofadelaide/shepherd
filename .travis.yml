@@ -1,35 +1,64 @@
 language: php
 
 services:
-    - mysql
+  - mysql
 
 env:
-    global:
-        - SIMPLETEST_DB="mysql://root:@127.0.0.1/drupal"
+  global:
+    - SIMPLETEST_DB="mysql://drupal:password@127.0.0.1/drupal"
+    - DTT_BASE_URL=http://127.0.0.1:8888
+    - PUBLIC_DIR=web/sites/default/files
+    - PRIVATE_DIR=/tmp/shared/private
+    - TMP_DIR=/tmp/shared/tmp
+    - SHEPHERD_INSTALL_PROFILE=shepherd
+    - SITE_TITLE=Shepherd
+    - SITE_MAIL=site@example.com
+    - SITE_ADMIN_EMAIL=admin@example.com
+    - SITE_ADMIN_USERNAME=admin
+    - SITE_ADMIN_PASSWORD=password
+    - DATABASE_USER=drupal
+
 php:
-    - 7.2
+  - 7.4
 
 cache:
-    - "$HOME/.composer/cache"
+  directories:
+    - $HOME/.composer/cache
 
 matrix:
-    fast_finish: true
+  fast_finish: true
 
 mysql:
-    database: drupal
-    username: root
-    encoding: utf8
+  database: drupal
+  username: root
+  encoding: utf8
 
 before_install:
-    - phpenv config-rm xdebug.ini || true
-    - mysql -e 'CREATE DATABASE IF NOT EXISTS drupal CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci' -uroot
-    - sed -i '1i export PATH="$HOME/.composer/vendor/bin:$PATH"' $HOME/.bashrc
-    - source $HOME/.bashrc
-    - composer self-update --1
+  - phpenv config-rm xdebug.ini || true
+  - mysql -u root -e 'CREATE DATABASE IF NOT EXISTS drupal CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci'
+  - mysql -u root -e "CREATE USER 'drupal'@'127.0.0.1' IDENTIFIED BY 'password';"
+  - mysql -u root -e "GRANT ALL ON drupal.* TO 'drupal'@'127.0.0.1';"
+  - sed -i '1i export PATH="$HOME/.composer/vendor/bin:$PATH"' $HOME/.bashrc
+  - source $HOME/.bashrc
+  - composer self-update --1
+  - export BROWSERTEST_OUTPUT_DIRECTORY="$(pwd)/web/sites/simpletest/browser_output"
+  - export SHEPHERD_ROOT=$(pwd)
+  # For whatever reason, when this runs during robo build we get permission denied.
+  - mkdir -p $PUBLIC_DIR $BROWSERTEST_OUTPUT_DIRECTORY
+  # Move settings into place for CI.
+  - mv web/sites/default/ci.settings.php web/sites/default/settings.local.php
 
 install:
-    - composer install
+  - composer install
+  - (php -S localhost:8888 -t $(pwd)/web/ &) >> /dev/null 2>&1
+  - ./bin/robo build
+  # Enable test modules.
+  - ./bin/drush en -y shp_cache_backend_test
 
 script:
-    - ./bin/robo lint:php
-    - ./vendor/phpunit/phpunit/phpunit --stop-on-failure --group shepherd -c ./ ./web/modules/custom/
+  - ./bin/robo lint:php
+  - ./bin/phpunit --stop-on-failure --testsuite unit
+  - ./bin/phpunit --stop-on-failure --testsuite kernel
+  - ./bin/phpunit --stop-on-failure --testsuite functional
+  - ./bin/phpunit --stop-on-failure --testsuite functionaljs
+  - ./bin/phpunit --stop-on-failure --testsuite functionalclean

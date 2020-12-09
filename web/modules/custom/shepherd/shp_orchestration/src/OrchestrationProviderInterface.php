@@ -4,6 +4,7 @@ namespace Drupal\shp_orchestration;
 
 use Drupal\Component\Plugin\PluginInspectionInterface;
 use UniversityOfAdelaide\OpenShift\Objects\Backups\Backup;
+use UniversityOfAdelaide\OpenShift\Objects\Hpa;
 
 /**
  * Defines an interface for orchestration providers.
@@ -193,6 +194,10 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
    *   An array of route annotations.
    * @param string $backup_schedule
    *   A schedule to run automated backups on, leave blank to disable.
+   * @param int $backup_retention
+   *   The number of scheduled backups to retain.
+   * @param \UniversityOfAdelaide\OpenShift\Objects\Hpa|null $hpa
+   *   An HPA to create, or NULL if one shouldn't be created.
    *
    * @return bool
    *   Returns true if succeeded.
@@ -217,7 +222,9 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
     array $probes = [],
     array $cron_jobs = [],
     array $annotations = [],
-    string $backup_schedule = ''
+    string $backup_schedule = '',
+    int $backup_retention = 0,
+    Hpa $hpa = NULL
   );
 
   /**
@@ -275,6 +282,8 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
    *   Source code git ref, defaults to 'master'.
    * @param bool $clear_cache
    *   Execute a cache clear job after promotion?
+   * @param \UniversityOfAdelaide\OpenShift\Objects\Hpa|null $hpa
+   *   An HPA to create, or NULL if one shouldn't be created.
    *
    * @return bool
    *   Returns true if succeeded.
@@ -288,7 +297,8 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
     string $path,
     array $annotations,
     string $source_ref = 'master',
-    bool $clear_cache = TRUE
+    bool $clear_cache = TRUE,
+    Hpa $hpa = NULL
   );
 
   /**
