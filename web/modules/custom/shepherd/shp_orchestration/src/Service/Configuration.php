@@ -8,9 +8,7 @@ use Drupal\shp_custom\Service\Environment;
 use Drupal\shp_custom\Service\Site;
 
 /**
- * Class Configuration.
- *
- * @package Drupal\shp_orchestration\Service
+ * A service for interacting with environment configuration.
  */
 class Configuration {
 

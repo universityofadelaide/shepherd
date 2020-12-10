@@ -8,7 +8,7 @@ use Drupal\shp_custom\Service\Site as SiteEntity;
 use Drupal\shp_orchestration\OrchestrationProviderPluginManager;
 
 /**
- * Class Site.
+ * A service for interacting with site entities.
  */
 class Site extends EntityActionBase {
 
@@ -87,12 +87,14 @@ class Site extends EntityActionBase {
    *   True on success.
    */
   public function deleted(NodeInterface $site) {
-    $project = $this->siteEntity->getProject($site);
-    return $this->orchestrationProviderPlugin->deletedSite(
-      $project->getTitle(),
-      $site->field_shp_short_name->value,
-      $site->id()
-    );
+    if ($project = $this->siteEntity->getProject($site)) {
+      return $this->orchestrationProviderPlugin->deletedSite(
+        $project->getTitle(),
+        $site->field_shp_short_name->value,
+        $site->id()
+      );
+    }
+    return FALSE;
   }
 
 }

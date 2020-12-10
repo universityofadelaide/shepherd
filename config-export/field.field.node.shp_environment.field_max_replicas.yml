@@ -1,0 +1,23 @@
+uuid: 09353200-71a9-4e25-ad07-7c06e8053850
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_max_replicas
+    - node.type.shp_environment
+id: node.shp_environment.field_max_replicas
+field_name: field_max_replicas
+entity_type: node
+bundle: shp_environment
+label: 'Max Replicas'
+description: 'The maximum number of replicas applied to the Horizontal Pod Autoscaler.'
+required: false
+translatable: false
+default_value: 2
+default_value_callback: ''
+settings:
+  min: 1
+  max: 12
+  prefix: ''
+  suffix: ''
+field_type: integer
