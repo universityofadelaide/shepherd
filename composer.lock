@@ -6370,16 +6370,16 @@
         },
         {
             "name": "universityofadelaide/shepherd-drupal-scaffold",
-            "version": "4.0.7",
+            "version": "4.1.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/universityofadelaide/shepherd-drupal-scaffold.git",
-                "reference": "f6e587aa8bff08a3590c65367d9c6d3c62430375"
+                "reference": "5e45f60f46c1a0018d7fba86957764d0aba0ed0b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/universityofadelaide/shepherd-drupal-scaffold/zipball/f6e587aa8bff08a3590c65367d9c6d3c62430375",
-                "reference": "f6e587aa8bff08a3590c65367d9c6d3c62430375",
+                "url": "https://api.github.com/repos/universityofadelaide/shepherd-drupal-scaffold/zipball/5e45f60f46c1a0018d7fba86957764d0aba0ed0b",
+                "reference": "5e45f60f46c1a0018d7fba86957764d0aba0ed0b",
                 "shasum": ""
             },
             "require": {
@@ -6387,7 +6387,7 @@
                 "composer/semver": "^1.4",
                 "drupal-composer/drupal-scaffold": "^2.2",
                 "php": ">=7.0",
-                "symfony/filesystem": "~3.0"
+                "symfony/filesystem": "~3.0 || ^4.0"
             },
             "type": "composer-plugin",
             "extra": {
@@ -6403,7 +6403,7 @@
                 "GPL-2.0+"
             ],
             "description": "Composer Plugin for updating the Shepherd Drupal tools.",
-            "time": "2020-11-25T03:00:01+00:00"
+            "time": "2020-12-10T23:06:53+00:00"
         },
         {
             "name": "webflo/drupal-finder",
