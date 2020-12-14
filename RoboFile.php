@@ -68,21 +68,4 @@ class RoboFile extends RoboFileBase {
     }
   }
 
-  /**
-   * Set the owner and group of all files in the files dir to the web user.
-   *
-   * TESTING FOR TRAVIS.
-   */
-  public function buildSetFilesOwner() {
-    $publicDir = getenv('PUBLIC_DIR') ?: $this->file_public_path;
-    $privateDir = getenv('PRIVATE_DIR') ?: $this->file_private_path;
-    $tmpDir = getenv('TMP_DIR') ?: $this->file_temp_path;
-    foreach ([$publicDir, $privateDir, $tmpDir] as $path) {
-      $this->say("Ensuring all directories exist.");
-      $this->_exec("mkdir -p $path");
-      $this->say("Setting directory permissions.");
-      $this->setPermissions($path, '0775');
-    }
-  }
-
 }
