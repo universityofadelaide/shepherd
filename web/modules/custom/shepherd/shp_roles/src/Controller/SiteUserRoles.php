@@ -10,7 +10,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 /**
- * Class SiteUserRoles.
+ * Maps roles to site users.
  */
 class SiteUserRoles implements ContainerInjectionInterface {
 

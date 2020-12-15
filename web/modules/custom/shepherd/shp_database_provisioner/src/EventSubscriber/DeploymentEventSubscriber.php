@@ -10,7 +10,7 @@ use Drupal\token\TokenInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
- * Class DeploymentEventSubscriber.
+ * Subscribes to deployment events.
  */
 class DeploymentEventSubscriber implements EventSubscriberInterface {
 
@@ -75,7 +75,9 @@ class DeploymentEventSubscriber implements EventSubscriberInterface {
     $site = $event->getSite();
     $environment = $event->getEnvironment();
 
-    $populate_command = str_replace(["\r\n", "\n", "\r"], ' && ', trim($this->config->get('populate_command')));
+    $populate_command = str_replace(
+      ["\r\n", "\n", "\r"], ' && ', trim($this->config->get('populate_command'))
+    );
     $populate_command = $this->token->replace($populate_command, ['project' => $project]);
 
     if (!empty($project->field_shp_default_sql->target_id)) {

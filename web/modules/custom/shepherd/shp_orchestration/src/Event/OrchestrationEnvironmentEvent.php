@@ -7,7 +7,7 @@ use Drupal\shp_orchestration\OrchestrationProviderInterface;
 use Symfony\Component\EventDispatcher\Event;
 
 /**
- * Class OrchestrationEnvironmentEvent.
+ * Event fired during orchestration of an environment.
  */
 class OrchestrationEnvironmentEvent extends Event {
 

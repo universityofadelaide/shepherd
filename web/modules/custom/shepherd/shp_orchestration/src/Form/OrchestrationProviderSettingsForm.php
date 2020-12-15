@@ -9,9 +9,7 @@ use Drupal\shp_orchestration\OrchestrationProviderPluginManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Class OrchestrationProviderSettingsForm.
- *
- * @package Drupal\shp_orchestration\Form
+ * Settings form for orchestration providers.
  */
 class OrchestrationProviderSettingsForm extends ConfigFormBase {
 

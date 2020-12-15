@@ -1,0 +1,20 @@
+uuid: 70e2c0f2-2ecb-42de-a249-b0309f432711
+langcode: en
+status: true
+dependencies:
+  module:
+    - node
+id: node.field_min_replicas
+field_name: field_min_replicas
+entity_type: node
+type: integer
+settings:
+  unsigned: false
+  size: normal
+module: core
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

@@ -1,0 +1,4 @@
+name: Shepherd Cache Backend Test
+type: module
+description: Cache backend testing module.
+package: Testing

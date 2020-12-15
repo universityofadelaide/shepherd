@@ -9,7 +9,6 @@ use Drupal\Core\Render\Renderer;
 use Drupal\shp_custom\Service\StringGenerator;
 use Drupal\shp_database_provisioner\Service\Provisioner;
 use Drupal\shp_orchestration\OrchestrationProviderPluginManagerInterface;
-use mysqli;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -185,7 +184,7 @@ class SettingsForm extends ConfigFormBase {
     // Attempt to create a test user and notify user if there's a problem.
     $privileged_password = $this->orchestrationProvider->getSecret($form_state->getValue(['secret']),
       'DATABASE_PASSWORD');
-    $db = new mysqli(
+    $db = new \mysqli(
       $form_state->getValue(['host']),
       $form_state->getValue(['user']),
       $privileged_password,

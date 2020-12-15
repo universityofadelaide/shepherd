@@ -7,7 +7,9 @@ use Drupal\Core\Controller\ControllerBase;
 use Drupal\node\Entity\Node;
 
 /**
- * Class SiteLocalTaskController.
+ * Custom access for various routes.
+ *
+ * @TODO Why is this extending ControllerBase?
  */
 class SiteLocalTaskController extends ControllerBase {
 

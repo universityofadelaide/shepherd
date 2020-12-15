@@ -8,9 +8,7 @@ use Drupal\shp_custom\Service\Site as SiteEntity;
 use Drupal\shp_orchestration\OrchestrationProviderPluginManager;
 
 /**
- * Class Status.
- *
- * @package Drupal\shp_orchestration\Service
+ * A service for reporting the status of environments.
  */
 class Status {
 
