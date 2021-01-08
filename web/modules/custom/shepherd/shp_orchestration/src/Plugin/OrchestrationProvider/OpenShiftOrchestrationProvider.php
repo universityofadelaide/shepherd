@@ -320,7 +320,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       $this->messenger->addStatus(t('Image unavailable, deployment and cron jobs cannot be completed.'));
     }
 
-    // @todo - make port a var and great .. so great .. yuge!
+    // @todo make port a var and great .. so great .. yuge!
     $port = 8080;
     try {
       $this->client->createService($deployment_name, $deployment_name, $port, $port, $deployment_name);
@@ -486,7 +486,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
 
     try {
       // Scale the pods to zero, then delete the pod creators.
-      // @todo - placing the logic here .. as its not clear what level of logic we should place in client.
+      // @todo placing the logic here .. as its not clear what level of logic we should place in client.
       $deploymentConfigs = $this->client->getDeploymentConfigs('app=' . $deployment_name);
       foreach ($deploymentConfigs['items'] as $deploymentConfig) {
         $this->client->updateDeploymentConfig($deploymentConfig['metadata']['name'], $deploymentConfig, [
@@ -555,7 +555,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
 
     $environment_deployment_name = self::generateDeploymentName($environment_id);
 
-    // @todo - remove the hardcoded ports.
+    // @todo remove the hardcoded ports.
     $port = 8080;
 
     if (!$this->client->getService($site_deployment_name)) {
@@ -579,7 +579,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
 
     $result = $this->client->updateService($site_deployment_name, $environment_deployment_name);
     if ($result && $clear_cache) {
-      // @todo - Remove drush call, it relates to a project type rather than all projects.
+      // @todo Remove drush call, it relates to a project type rather than all projects.
       $this->executeJob(
         $project_name,
         $short_name,
@@ -609,7 +609,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
    * {@inheritdoc}
    */
   public function updatedSite() {
-    // TODO: Implement updateSite() method.
+    // @todo Implement updateSite() method.
   }
 
   /**
@@ -1154,7 +1154,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
   /**
    * Format an array of environment variables ready to pass to OpenShift.
    *
-   * @todo - move this into the client?
+   * @todo move this into the client?
    *
    * @param array $environment_variables
    *   An array of environment variables to be set for the pod.
@@ -1288,7 +1288,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
   /**
    * Format an array of build data ready to pass to OpenShift.
    *
-   * @todo - move this into the client?
+   * @todo move this into the client?
    *
    * @param string $source_ref
    *   The source tag/branch/commit.
@@ -1322,8 +1322,8 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
    *
    * PVC's that already exist will not be created/updated.
    *
-   * @todo - move this into the client?
-   * @todo - make storage size configurable
+   * @todo move this into the client?
+   * @todo make storage size configurable
    *
    * @param string $project_name
    *   The name of the project being deployed.
