@@ -8,6 +8,7 @@
         {"type": "composer", "url": "https://packages.drupal.org/8"}
     ],
     "require": {
+        "php":                                           "^7.4",
         "composer-plugin-api":                           "^1.0",
         "composer/installers":                           "^1.2",
         "cweagans/composer-patches":                     "~1.0",
@@ -49,7 +50,7 @@
         "bin-dir": "bin/",
         "sort-packages": true,
         "platform": {
-            "php": "7.2.0"
+            "php": "7.4.0"
         }
     },
     "autoload": {

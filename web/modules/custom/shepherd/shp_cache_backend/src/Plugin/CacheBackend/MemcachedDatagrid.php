@@ -39,18 +39,18 @@ class MemcachedDatagrid extends CacheBackendBase {
   /**
    * The JGD config file.
    *
-   * TODO: make this name configurable?
-   *
    * @var string
+   *
+   * @todo make this name configurable?
    */
   protected $jdgConfigFile = 'standalone.xml';
 
   /**
    * The config map name.
    *
-   * TODO: make this name configurable?
-   *
    * @var string
+   *
+   * @todo make this name configurable?
    */
   protected $configMapName = 'datagrid-config';
 
@@ -64,9 +64,9 @@ class MemcachedDatagrid extends CacheBackendBase {
   /**
    * The pod selector used in network policies.
    *
-   * TODO: make this name configurable?
-   *
    * @var string
+   *
+   * @todo make this name configurable?
    */
   protected $datagridSelector = 'datagrid-app';
 

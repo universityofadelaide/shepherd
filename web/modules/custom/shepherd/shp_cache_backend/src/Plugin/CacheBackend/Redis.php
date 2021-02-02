@@ -32,7 +32,7 @@ class Redis extends CacheBackendBase {
    * {@inheritdoc}
    */
   public function onEnvironmentCreate(NodeInterface $environment) {
-    // @todo: move this function somewhere else?
+    // @todo move this function somewhere else?
     $deployment_name = OpenShiftOrchestrationProvider::generateDeploymentName($environment->id());
     $redis_name = $deployment_name . '-redis';
     $redis_port = 6379;

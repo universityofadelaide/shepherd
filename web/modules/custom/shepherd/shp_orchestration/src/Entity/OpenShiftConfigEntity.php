@@ -7,7 +7,7 @@ use Drupal\Core\Config\Entity\ConfigEntityBase;
 /**
  * Defines the OpenShiftConfigEntity.
  *
- * TODO: Delete this entity type when shp_cache_backend is rolled out.
+ * @todo Delete this entity type when shp_cache_backend is rolled out.
  *
  * @ConfigEntityType(
  *   id = "openshift",

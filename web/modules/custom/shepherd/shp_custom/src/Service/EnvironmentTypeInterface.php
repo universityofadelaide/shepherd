@@ -27,7 +27,7 @@ interface EnvironmentTypeInterface {
    *
    * There can be only one promoted term.
    *
-   * @todo: Make configurable in UI.
+   * @todo Make configurable in UI.
    *
    * @return \Drupal\Core\Entity\EntityInterface|false
    *   The promoted term.
@@ -39,7 +39,7 @@ interface EnvironmentTypeInterface {
    *
    * There can be only one demoted term.
    *
-   * @todo: Make configurable in UI.
+   * @todo Make configurable in UI.
    *
    * @return \Drupal\Core\Entity\EntityInterface|false
    *   The demoted term.
