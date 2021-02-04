@@ -37,18 +37,4 @@ class OrchestrationProvider extends Plugin {
    */
   public $description;
 
-  /**
-   * Name of schema.
-   *
-   * @var string
-   */
-  public $schema;
-
-  /**
-   * The id of the related configuration entity.
-   *
-   * @var string
-   */
-  public $config_entity_id;
-
 }

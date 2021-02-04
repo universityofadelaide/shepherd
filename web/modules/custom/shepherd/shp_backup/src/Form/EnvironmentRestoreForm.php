@@ -86,7 +86,10 @@ class EnvironmentRestoreForm extends FormBase {
    *   Translated markup.
    */
   public function getPageTitle(NodeInterface $site, NodeInterface $environment) {
-    return t('Restore environment - @site_title : @environment_title', ['@site_title' => $site->getTitle(), '@environment_title' => $environment->getTitle()]);
+    return t('Restore environment - @site_title : @environment_title', [
+      '@site_title' => $site->getTitle(),
+      '@environment_title' => $environment->getTitle(),
+    ]);
   }
 
   /**

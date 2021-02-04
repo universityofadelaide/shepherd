@@ -1,0 +1,25 @@
+uuid: e47fcf80-e4a9-4743-ba8a-984709f58bd4
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_cache_backend
+    - node.type.shp_environment
+  module:
+    - plugin
+id: node.shp_environment.field_cache_backend
+field_name: field_cache_backend
+entity_type: node
+bundle: shp_environment
+label: 'Cache backend'
+description: ''
+required: true
+translatable: false
+default_value:
+  -
+    plugin_id: redis
+    plugin_configuration: {  }
+    plugin_configuration_schema_id: plugin.plugin_configuration.cache_backend.redis
+default_value_callback: ''
+settings: {  }
+field_type: 'plugin:cache_backend'

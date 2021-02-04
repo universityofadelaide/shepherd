@@ -48,6 +48,9 @@ function shp_content_types_entity_bundle_field_info_alter(&$fields, EntityTypeIn
     if (isset($fields['field_shp_path'])) {
       $fields['field_shp_path']->addConstraint('Path', []);
     }
+    if (isset($fields['field_min_replicas'])) {
+      $fields['field_min_replicas']->addConstraint('Replicas', []);
+    }
   }
 }
 

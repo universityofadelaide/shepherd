@@ -129,7 +129,10 @@ class Backup {
     $operations['backup'] = [
       'title' => $this->t('Backup'),
       'weight' => 1,
-      'url' => Url::fromRoute('shp_backup.environment-backup-form', ['site' => $site, 'environment' => $environment]),
+      'url' => Url::fromRoute('shp_backup.environment-backup-form', [
+        'site' => $site,
+        'environment' => $environment,
+      ]),
       'attributes' => $modal_attributes,
     ];
 

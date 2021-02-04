@@ -5,7 +5,7 @@ namespace Drupal\shp_routes\Breadcrumb;
 use Drupal\shp_content_types\Breadcrumb\SitesBreadcrumbBuilder;
 
 /**
- * Class RoutesLocalTaskBreadcrumbBuilder.
+ * Extends custom Breadcrumb builder to add the Routes view.
  */
 class RoutesLocalTaskBreadcrumbBuilder extends SitesBreadcrumbBuilder {
 

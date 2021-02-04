@@ -3,6 +3,7 @@
 namespace Drupal\shp_custom\Service;
 
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\node\NodeInterface;
 
 /**
  * Environment type service.
@@ -36,6 +37,16 @@ class EnvironmentType implements EnvironmentTypeInterface {
   /**
    * {@inheritdoc}
    */
+  public function isPromotedEnvironment(NodeInterface $environment) {
+    if ($promoted_term = $this->getPromotedTerm()) {
+      return !$environment->field_shp_environment_type->isEmpty() && $environment->field_shp_environment_type->target_id === $promoted_term->id();
+    }
+    return FALSE;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function getPromotedTerm() {
     $ids = $this->taxonomyTerm->getQuery()
       ->condition('vid', 'shp_environment_types')
@@ -46,14 +57,7 @@ class EnvironmentType implements EnvironmentTypeInterface {
   }
 
   /**
-   * Load the term that is used for demoted environments (old production).
-   *
-   * There can be only one demoted term.
-   *
-   * @todo: Make configurable in UI.
-   *
-   * @return \Drupal\Core\Entity\EntityInterface|false
-   *   The demoted term.
+   * {@inheritdoc}
    */
   public function getDemotedTerm() {
     $ids = $this->taxonomyTerm->getQuery()

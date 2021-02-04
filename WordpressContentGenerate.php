@@ -6,7 +6,6 @@
  */
 
 use Drupal\node\Entity\Node;
-use Drupal\shp_orchestration\Entity\OpenShiftConfigEntity;
 use Drupal\taxonomy\Entity\Term;
 use Drupal\user\Entity\User;
 
@@ -42,26 +41,15 @@ $db_provisioner_config->set(
 $db_provisioner_config->save();
 
 $openshift_config = [
-    'endpoint'   => $openshift_url,
-    'token'      => $token,
-    'namespace'  => 'myproject',
-    'verify_tls' => FALSE,
-    'id'         => 'openshift',
+  'endpoint'   => $openshift_url,
+  'token'      => $token,
+  'namespace'  => 'myproject',
+  'verify_tls' => FALSE,
 ];
-
-// Configure OpenShift as orchestration provider.
-if ($openshift = OpenShiftConfigEntity::load('openshift')) {
-    // If config already exists, replace with current values.
-    foreach ($openshift_config as $key => $value) {
-        $openshift->set($key, $value);
-    }
-}
-else {
-    $openshift = OpenShiftConfigEntity::create($openshift_config);
-}
-$openshift->save();
-
 $orchestration_config = \Drupal::service('config.factory')->getEditable('shp_orchestration.settings');
+foreach ($openshift_config as $key => $value) {
+  $orchestration_config->set('connection.' . $key, $value);
+}
 $orchestration_config->set('selected_provider', 'openshift_orchestration_provider');
 $orchestration_config->save();
 
@@ -157,7 +145,10 @@ if (!$env = reset($nodes)) {
     'field_shp_site'             => [['target_id' => $site->id()]],
     'field_shp_update_on_image_change' => TRUE,
     'field_shp_cron_suspended'   => 1,
-    'field_shp_cron_jobs'        => []
+    'field_shp_cron_jobs'        => [],
+    'field_cache_backend'       => [
+      'plugin_id' => 'redis',
+    ],
   ]);
   $env->moderation_state->value = 'published';
   $env->save();
