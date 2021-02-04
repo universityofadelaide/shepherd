@@ -1,0 +1,27 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  creationTimestamp: null
+  name: manager-rolebinding
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: manager-role
+subjects:
+- kind: User
+  name: a1220743
+- kind: ServiceAccount
+  name: shepherd
+  namespace: shepherd-prd
+- kind: User
+  name: a1220517
+- kind: User
+  name: a1225500
+- kind: User
+  name: a1220693
+userNames:
+- a1220743
+- system:serviceaccount:shepherd-prd:shepherd
+- a1225500
+- a1220517
+- a1220693
