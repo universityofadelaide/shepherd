@@ -106,7 +106,7 @@ class Environment extends EntityActionBase {
   /**
    * Tell the active orchestration provider an environment was created.
    *
-   * @todo - Extract some of the logic out of this method, too large.
+   * @todo Extract some of the logic out of this method, too large.
    *
    * @param \Drupal\node\NodeInterface $node
    *   Node entity.
