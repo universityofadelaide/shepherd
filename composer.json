@@ -18,7 +18,7 @@
         "universityofadelaide/shepherd-drupal-scaffold": "^4.0",
         "wikimedia/composer-merge-plugin":               "^1.4",
         "drush/drush":                                   "9.*",
-        "drupal/core":                                   "^8.8",
+        "drupal/core":                                   "^8.9",
         "drupal/drush_cmi_tools":                        "dev-8.x-2.x",
         "drupal/entity_reference_revisions":             "1.*",
         "drupal/field_group":                            "1.*",
@@ -38,7 +38,7 @@
         "drupal/devel": "^2.1",
         "mglaman/phpstan-drupal": "^0.11.8",
         "phpstan/phpstan-deprecation-rules": "^0.11.2",
-        "drupal/core-dev": "^8.8",
+        "drupal/core-dev": "^8.9",
         "weitzman/drupal-test-traits": "^1.2"
     },
     "conflict": {
