@@ -1,5 +1,6 @@
 <?php
 
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\node\Entity\Node;
 
 /**
@@ -33,4 +34,16 @@ function ua_custom_shp_deployment_config(int $environment_id, array $deployment_
   }
 
   return $deployment_config;
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function ua_custom_form_node_shp_environment_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+//  $site = \Drupal::service('shp_custom.environment')->getSite($environment);
+//  $project = \Drupal::service('shp_custom.site')->getProject($site);
+  if ($site = $form['field_shp_site']['widget'][0]['target_id']['#default_value']) {
+    $project = \Drupal::service('shp_custom.site')->getProject($site);
+    $form['field_ua_force_https']['widget']['value']['#default_value'] = $project->field_ua_force_https->value;
+  }
 }
