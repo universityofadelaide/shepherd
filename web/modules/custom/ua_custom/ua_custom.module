@@ -1,0 +1,29 @@
+<?php
+
+/**
+ * Implements hook_shp_deployment_config().
+ */
+function ua_custom_shp_deployment_config(array $deployment_config) {
+  // Volumes.
+  $deployment_config['spec']['template']['spec']['volumes'][] = [
+    'configMap' => [
+      'defaultMode' => 292,
+      'name' => 'drupal-force-https',
+    ],
+    'name' => 'drupal-force-https'
+  ];
+
+  // Volume mounts.
+  $deployment_config['spec']['template']['spec']['containers'][0]['volumeMounts'][] = [
+    'mountPath' => '/code/web/index.php',
+    'name' => 'drupal-force-https',
+    'subPath' => 'index.php',
+  ];
+  $deployment_config['spec']['template']['spec']['containers'][0]['volumeMounts'][] = [
+    'mountPath' => '/code/web/sites/default/settings.local.php',
+    'name' => 'drupal-force-https',
+    'subPath' => 'settings.local.php',
+  ];
+
+  return $deployment_config;
+}
