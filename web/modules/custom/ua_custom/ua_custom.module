@@ -1,29 +1,36 @@
 <?php
 
+use Drupal\node\Entity\Node;
+
 /**
  * Implements hook_shp_deployment_config().
  */
-function ua_custom_shp_deployment_config(array $deployment_config) {
-  // Volumes.
-  $deployment_config['spec']['template']['spec']['volumes'][] = [
-    'configMap' => [
-      'defaultMode' => 292,
-      'name' => 'drupal-force-https',
-    ],
-    'name' => 'drupal-force-https'
-  ];
+function ua_custom_shp_deployment_config(int $environment_id, array $deployment_config) {
+  $environment = Node::load($environment_id);
 
-  // Volume mounts.
-  $deployment_config['spec']['template']['spec']['containers'][0]['volumeMounts'][] = [
-    'mountPath' => '/code/web/index.php',
-    'name' => 'drupal-force-https',
-    'subPath' => 'index.php',
-  ];
-  $deployment_config['spec']['template']['spec']['containers'][0]['volumeMounts'][] = [
-    'mountPath' => '/code/web/sites/default/settings.local.php',
-    'name' => 'drupal-force-https',
-    'subPath' => 'settings.local.php',
-  ];
+  // Check the force https setting and apply as required.
+  if ($environment->field_ua_force_https->value === '1') {
+    // Volumes.
+    $deployment_config['spec']['template']['spec']['volumes'][] = [
+      'configMap' => [
+        'defaultMode' => 292,
+        'name' => 'drupal-force-https',
+      ],
+      'name'   => 'drupal-force-https'
+    ];
+
+    // Volume mounts.
+    $deployment_config['spec']['template']['spec']['containers'][0]['volumeMounts'][] = [
+      'mountPath' => '/code/web/index.php',
+      'name'      => 'drupal-force-https',
+      'subPath'   => 'index.php',
+    ];
+    $deployment_config['spec']['template']['spec']['containers'][0]['volumeMounts'][] = [
+      'mountPath' => '/code/web/sites/default/settings.local.php',
+      'name'      => 'drupal-force-https',
+      'subPath'   => 'settings.local.php',
+    ];
+  }
 
   return $deployment_config;
 }
