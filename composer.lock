@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "40ee379414478724c71555ecdf900852",
+    "content-hash": "05ecafbf3a1db67c48a09baed936992d",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -2378,9 +2378,6 @@
             },
             "type": "drupal-module",
             "extra": {
-                "branch-alias": {
-                    "dev-1.x": "1.x-dev"
-                },
                 "drupal": {
                     "version": "8.x-1.0",
                     "datestamp": "1510352885",
@@ -2408,18 +2405,18 @@
                     "homepage": "https://www.drupal.org/user/591438"
                 },
                 {
-                    "name": "swentel",
-                    "homepage": "https://www.drupal.org/user/107403"
+                    "name": "nils.destoop",
+                    "homepage": "https://www.drupal.org/user/361625"
                 },
                 {
-                    "name": "zuuperman",
-                    "homepage": "https://www.drupal.org/user/361625"
+                    "name": "swentel",
+                    "homepage": "https://www.drupal.org/user/107403"
                 }
             ],
             "description": "Provides the field_group module.",
             "homepage": "https://www.drupal.org/project/field_group",
             "support": {
-                "source": "http://cgit.drupalcode.org/field_group"
+                "source": "https://git.drupalcode.org/project/field_group"
             }
         },
         {
@@ -2570,7 +2567,7 @@
             "description": "This module provides an hook for Drupal Watchdog that directs log messages to php://stdout or php://stderr for better log handling with Docker.",
             "homepage": "https://www.drupal.org/project/log_stdout",
             "support": {
-                "source": "http://cgit.drupalcode.org/log_stdout",
+                "source": "https://git.drupalcode.org/project/log_stdout",
                 "issues": "https://www.drupal.org/project/issues/log_stdout",
                 "irc": "irc://irc.freenode.org/drupal-support"
             }
@@ -2718,7 +2715,7 @@
             "description": "Redirect anonymous users from 403 Access Denied pages to the /user/login page.",
             "homepage": "https://www.drupal.org/project/r4032login",
             "support": {
-                "source": "http://cgit.drupalcode.org/r4032login"
+                "source": "https://git.drupalcode.org/project/r4032login"
             }
         },
         {
@@ -2792,13 +2789,10 @@
                 "shasum": "f5e02603165866af5c1a2fbb7e78368b55560484"
             },
             "require": {
-                "drupal/core": "~8.0"
+                "drupal/core": "^8 || ^9"
             },
             "type": "drupal-module",
             "extra": {
-                "branch-alias": {
-                    "dev-1.x": "1.x-dev"
-                },
                 "drupal": {
                     "version": "8.x-1.1",
                     "datestamp": "1572984185",
@@ -6702,16 +6696,16 @@
         },
         {
             "name": "universityofadelaide/openshift-client",
-            "version": "dev-develop",
+            "version": "dev-route-object",
             "source": {
                 "type": "git",
                 "url": "https://github.com/universityofadelaide/openshift-client.git",
-                "reference": "a0f5b59222ececd4a0e57093c271ac4f4e675847"
+                "reference": "4dd2c80fc2bfd3a167e9f4501c7c2b39def5ee04"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/universityofadelaide/openshift-client/zipball/a0f5b59222ececd4a0e57093c271ac4f4e675847",
-                "reference": "a0f5b59222ececd4a0e57093c271ac4f4e675847",
+                "url": "https://api.github.com/repos/universityofadelaide/openshift-client/zipball/4dd2c80fc2bfd3a167e9f4501c7c2b39def5ee04",
+                "reference": "4dd2c80fc2bfd3a167e9f4501c7c2b39def5ee04",
                 "shasum": ""
             },
             "require": {
@@ -6744,7 +6738,7 @@
                 }
             ],
             "description": "Simple OpenShift client for PHP.",
-            "time": "2020-12-08T21:59:34+00:00"
+            "time": "2021-03-25T05:17:37+00:00"
         },
         {
             "name": "universityofadelaide/shepherd-drupal-scaffold",
@@ -7648,9 +7642,9 @@
             "authors": [
                 {
                     "name": "Franck Nijhof",
-                    "role": "Developer / IT Manager",
                     "email": "franck.nijhof@dealerdirect.com",
-                    "homepage": "http://www.frenck.nl"
+                    "homepage": "http://www.frenck.nl",
+                    "role": "Developer / IT Manager"
                 }
             ],
             "description": "PHP_CodeSniffer Standards Composer Installer Plugin",
@@ -9397,6 +9391,20 @@
                 "MIT"
             ],
             "description": "PHPStan - PHP Static Analysis Tool",
+            "funding": [
+                {
+                    "url": "https://github.com/ondrejmirtes",
+                    "type": "github"
+                },
+                {
+                    "url": "https://www.patreon.com/phpstan",
+                    "type": "patreon"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/phpstan/phpstan",
+                    "type": "tidelift"
+                }
+            ],
             "time": "2020-10-12T14:33:05+00:00"
         },
         {
