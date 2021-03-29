@@ -269,8 +269,6 @@ class Environment extends EntityActionBase {
       $node->id(),
       $node->toUrl('canonical', ['absolute' => TRUE])->toString(),
       $project->field_shp_builder_image->value,
-      $node->field_shp_domain->value,
-      $node->field_shp_path->value,
       $project->field_shp_git_repository->value,
       $node->field_shp_git_reference->value,
       $project->field_shp_build_secret->value,
@@ -281,9 +279,9 @@ class Environment extends EntityActionBase {
       $secrets,
       $probes,
       $cron_jobs,
-      [],
       $backup_schedule,
       $backup_retention,
+      $this->getRouteForEnvironment($node),
       $this->getHpaForEnvironment($node)
     );
 
@@ -366,21 +364,19 @@ class Environment extends EntityActionBase {
     $promoted_term = $this->environmentType->getPromotedTerm();
 
     // Extract and transform the annotations from the environment type.
-    $annotations = $promoted_term ? $promoted_term->field_shp_annotations->getValue() : [];
-    $annotations = array_combine(
-      array_column($annotations, 'key'),
-      array_column($annotations, 'value')
-    );
+//    $annotations = $promoted_term ? $promoted_term->field_shp_annotations->getValue() : [];
+//    $annotations = array_combine(
+//      array_column($annotations, 'key'),
+//      array_column($annotations, 'value')
+//    );
     $result = $this->orchestrationProviderPlugin->promotedEnvironment(
       $project->title->value,
       $site->field_shp_short_name->value,
       $site->id(),
       $environment->id(),
-      $site->field_shp_domain->value,
-      $site->field_shp_path->value,
-      $annotations,
       $environment->field_shp_git_reference->value,
       $clear_cache,
+      $this->getRouteForEnvironment($environment),
       $this->getHpaForEnvironment($environment)
     );
 
@@ -514,14 +510,24 @@ class Environment extends EntityActionBase {
     /** @var \UniversityOfAdelaide\OpenShift\Objects\Route $route */
     $route = Route::create();
 
-    $name = OpenShiftOrchestrationProvider::generateDeploymentName($environment->id());
-    $labels = ['app' => $name];
-    $route->setName($name)
+    // Production routes are tied to the site id and non-prod to environment id.
+    $service_name = OpenShiftOrchestrationProvider::generateDeploymentName($environment->id());
+    $promoted_term = $this->environmentType->getPromotedTerm();
+    if ($environment->field_shp_environment_type->target_id === $promoted_term->id()) {
+      $site = $environment->field_shp_site->getEntity();
+      $route_name = OpenShiftOrchestrationProvider::generateDeploymentName($site->id());
+    }
+    else {
+      $route_name = $service_name;
+    }
+
+    $labels = ['app' => $route_name];
+    $route->setName($route_name)
       ->setLabels($labels)
       ->setInsecureEdgeTerminationPolicy('Allow')
       ->setTermination('edge')
       ->setToKind('Service')
-      ->setToName($name);
+      ->setToName($service_name);
 
     $environment_type = $this->environmentService->getEnvironmentType($environment);
     // Extract and transform the annotations from the environment type.

@@ -558,7 +558,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     }
 
     if (!$this->client->getRoute($site_deployment_name)) {
-      $this->client->createRoute($site_deployment_name, $site_deployment_name, $domain, $path, $annotations);
+      $this->client->createRoute($route);
     }
 
     if ($hpa && !$this->client->getHpa($environment_deployment_name)) {
