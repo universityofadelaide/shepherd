@@ -166,7 +166,7 @@ class Environment extends EntityActionBase {
 
     $storage_class = '';
     if ($project->field_shp_storage_class->target_id) {
-      $storage_class = Term::load($project->field_shp_storage_class->target_id)->label();
+      $storage_class = $project->field_shp_storage_class->entity->label();
     }
 
     $backup_schedule = !$environment_type->field_shp_backup_schedule->isEmpty() ? $environment_type->field_shp_backup_schedule->value : '';
@@ -190,7 +190,7 @@ class Environment extends EntityActionBase {
       $cron_jobs,
       $backup_schedule,
       $backup_retention,
-      $this->getRouteForEnvironment($node)
+      $this->getRouteForEnvironment($node, $environment_type)
     );
 
     if (!$node->field_cache_backend->isEmpty()) {
@@ -255,10 +255,10 @@ class Environment extends EntityActionBase {
 
     $storage_class = '';
     if ($project->field_shp_storage_class->target_id) {
-      $storage_class = Term::load($project->field_shp_storage_class->target_id)->label();
+      $storage_class = $project->field_shp_storage_class->entity->label();
     }
 
-    $environment_type = Term::load($node->field_shp_environment_type->target_id);
+    $environment_type = $this->environmentService->getEnvironmentType($node);
     $backup_schedule = !$environment_type->field_shp_backup_schedule->isEmpty() ? $environment_type->field_shp_backup_schedule->value : '';
     $backup_retention = !$environment_type->field_shp_backup_retention->isEmpty() ? $environment_type->field_shp_backup_retention->value : '';
 
@@ -281,7 +281,7 @@ class Environment extends EntityActionBase {
       $cron_jobs,
       $backup_schedule,
       $backup_retention,
-      $this->getRouteForEnvironment($node),
+      $this->getRouteForEnvironment($node, $environment_type),
       $this->getHpaForEnvironment($node)
     );
 
@@ -363,12 +363,6 @@ class Environment extends EntityActionBase {
     // Load the taxonomy term that has protect enabled.
     $promoted_term = $this->environmentType->getPromotedTerm();
 
-    // Extract and transform the annotations from the environment type.
-//    $annotations = $promoted_term ? $promoted_term->field_shp_annotations->getValue() : [];
-//    $annotations = array_combine(
-//      array_column($annotations, 'key'),
-//      array_column($annotations, 'value')
-//    );
     $result = $this->orchestrationProviderPlugin->promotedEnvironment(
       $project->title->value,
       $site->field_shp_short_name->value,
@@ -376,7 +370,7 @@ class Environment extends EntityActionBase {
       $environment->id(),
       $environment->field_shp_git_reference->value,
       $clear_cache,
-      $this->getRouteForEnvironment($environment),
+      $this->getRouteForEnvironment($environment, $promoted_term),
       $this->getHpaForEnvironment($environment)
     );
 
@@ -502,23 +496,24 @@ class Environment extends EntityActionBase {
    *
    * @param \Drupal\node\NodeInterface $environment
    *   Environment entity.
+   * @param \Drupal\taxonomy\Entity\Term $term
+   *   Environment type.
    *
    * @return \UniversityOfAdelaide\OpenShift\Objects\Route
    *   The Route object
    */
-  protected function getRouteForEnvironment(NodeInterface $environment) {
+  protected function getRouteForEnvironment(NodeInterface $environment, Term $term) {
     /** @var \UniversityOfAdelaide\OpenShift\Objects\Route $route */
     $route = Route::create();
 
     // Production routes are tied to the site id and non-prod to environment id.
-    $service_name = OpenShiftOrchestrationProvider::generateDeploymentName($environment->id());
+    $route_name = OpenShiftOrchestrationProvider::generateDeploymentName($environment->id());
     $promoted_term = $this->environmentType->getPromotedTerm();
-    if ($environment->field_shp_environment_type->target_id === $promoted_term->id()) {
-      $site = $environment->field_shp_site->getEntity();
+    $route_type = 'environment';
+    if ($term->id() === $promoted_term->id()) {
+      $site = $this->environmentService->getSite($environment);
       $route_name = OpenShiftOrchestrationProvider::generateDeploymentName($site->id());
-    }
-    else {
-      $route_name = $service_name;
+      $route_type = 'site';
     }
 
     $labels = ['app' => $route_name];
@@ -527,22 +522,22 @@ class Environment extends EntityActionBase {
       ->setInsecureEdgeTerminationPolicy('Allow')
       ->setTermination('edge')
       ->setToKind('Service')
-      ->setToName($service_name);
+      ->setToName($route_name);
 
-    $environment_type = $this->environmentService->getEnvironmentType($environment);
-    // Extract and transform the annotations from the environment type.
-    $annotations = $environment_type ? $environment_type->field_shp_annotations->getValue() : [];
+    // Extract and transform the annotations from the provided environment type.
+    $annotations = $term ? $term->field_shp_annotations->getValue() : [];
     $annotations = array_combine(
       array_column($annotations, 'key'),
       array_column($annotations, 'value')
     );
     $route->setAnnotations($annotations);
 
-    if (!$environment->field_shp_domain->isEmpty()) {
-      $route->setHost($environment->field_shp_domain->value);
+    // Use site domain and path when promoted term, otherwise environment.
+    if (!${$route_type}->field_shp_domain->isEmpty()) {
+      $route->setHost(${$route_type}->field_shp_domain->value);
     }
-    if (!$environment->field_shp_path->isEmpty()) {
-      $route->setPath($environment->field_shp_path->value);
+    if (!${$route_type}->field_shp_path->isEmpty()) {
+      $route->setPath(${$route_type}->field_shp_path->value);
     }
 
     return $route;

@@ -17,8 +17,8 @@ use UniversityOfAdelaide\OpenShift\Objects\Backups\Database;
 use UniversityOfAdelaide\OpenShift\Objects\Backups\Restore;
 use UniversityOfAdelaide\OpenShift\Objects\Backups\ScheduledBackup;
 use UniversityOfAdelaide\OpenShift\Objects\Hpa;
-use UniversityOfAdelaide\OpenShift\Objects\Label;
 use UniversityOfAdelaide\OpenShift\Objects\Route;
+use UniversityOfAdelaide\OpenShift\Objects\Label;
 
 /**
  * The openshift orchestration provider.
