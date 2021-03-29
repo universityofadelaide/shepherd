@@ -18,6 +18,7 @@ use UniversityOfAdelaide\OpenShift\Objects\Backups\Restore;
 use UniversityOfAdelaide\OpenShift\Objects\Backups\ScheduledBackup;
 use UniversityOfAdelaide\OpenShift\Objects\Hpa;
 use UniversityOfAdelaide\OpenShift\Objects\Label;
+use UniversityOfAdelaide\OpenShift\Objects\Route;
 
 /**
  * The openshift orchestration provider.
@@ -242,8 +243,6 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     string $environment_id,
     string $environment_url,
     string $builder_image,
-    string $domain,
-    string $path,
     string $source_repo,
     string $source_ref = 'master',
     string $source_secret = NULL,
@@ -254,9 +253,9 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     array $secrets = [],
     array $probes = [],
     array $cron_jobs = [],
-    array $annotations = [],
     string $backup_schedule = '',
-    int $backup_retention = 0
+    int $backup_retention = 0,
+    Route $route = NULL
   ) {
     // @todo Refactor this. _The complexity is too damn high!_
     $sanitised_project_name = self::sanitise($project_name);
@@ -324,7 +323,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     $port = 8080;
     try {
       $this->client->createService($deployment_name, $deployment_name, $port, $port, $deployment_name);
-      $this->client->createRoute($deployment_name, $deployment_name, $domain, $path, $annotations);
+      $this->client->createRoute($route);
     }
     catch (ClientException $e) {
       $this->exceptionHandler->handleClientException($e);
@@ -377,8 +376,6 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     string $environment_id,
     string $environment_url,
     string $builder_image,
-    string $domain,
-    string $path,
     string $source_repo,
     string $source_ref = 'master',
     string $source_secret = NULL,
@@ -389,9 +386,9 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     array $secrets = [],
     array $probes = [],
     array $cron_jobs = [],
-    array $annotations = [],
     string $backup_schedule = '',
     int $backup_retention = 0,
+    Route $route = NULL,
     Hpa $hpa = NULL
   ) {
     // @todo Refactor this too. Not DRY enough.
@@ -544,11 +541,9 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     string $short_name,
     int $site_id,
     int $environment_id,
-    string $domain,
-    string $path,
-    array $annotations,
     string $source_ref = 'master',
     bool $clear_cache = TRUE,
+    Route $route = NULL,
     Hpa $hpa = NULL
   ) {
     $site_deployment_name = self::generateDeploymentName($site_id);

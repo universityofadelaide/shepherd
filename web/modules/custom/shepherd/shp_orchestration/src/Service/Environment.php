@@ -12,10 +12,12 @@ use Drupal\shp_orchestration\Event\OrchestrationEnvironmentEvent;
 use Drupal\shp_orchestration\Event\OrchestrationEvents;
 use Drupal\shp_orchestration\ExceptionHandler;
 use Drupal\shp_orchestration\OrchestrationProviderPluginManager;
+use Drupal\shp_orchestration\Plugin\OrchestrationProvider\OpenShiftOrchestrationProvider;
 use Drupal\taxonomy\Entity\Term;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use UniversityOfAdelaide\OpenShift\ClientException;
 use UniversityOfAdelaide\OpenShift\Objects\Hpa;
+use UniversityOfAdelaide\OpenShift\Objects\Route;
 
 /**
  * A service for interacting with environment entities.
@@ -167,13 +169,6 @@ class Environment extends EntityActionBase {
       $storage_class = Term::load($project->field_shp_storage_class->target_id)->label();
     }
 
-    // Extract and transform the annotations from the environment type.
-    $annotations = $environment_type ? $environment_type->field_shp_annotations->getValue() : [];
-    $annotations = array_combine(
-      array_column($annotations, 'key'),
-      array_column($annotations, 'value')
-    );
-
     $backup_schedule = !$environment_type->field_shp_backup_schedule->isEmpty() ? $environment_type->field_shp_backup_schedule->value : '';
     $backup_retention = !$environment_type->field_shp_backup_retention->isEmpty() ? $environment_type->field_shp_backup_retention->value : 2;
     $environment = $this->orchestrationProviderPlugin->createdEnvironment(
@@ -183,8 +178,6 @@ class Environment extends EntityActionBase {
       $node->id(),
       $node->toUrl('canonical', ['absolute' => TRUE])->toString(),
       $project->field_shp_builder_image->value,
-      $node->field_shp_domain->value,
-      $node->field_shp_path->value,
       $project->field_shp_git_repository->value,
       $node->field_shp_git_reference->value,
       $project->field_shp_build_secret->value,
@@ -195,9 +188,9 @@ class Environment extends EntityActionBase {
       $secrets,
       $probes,
       $cron_jobs,
-      $annotations,
       $backup_schedule,
-      $backup_retention
+      $backup_retention,
+      $this->getRouteForEnvironment($node)
     );
 
     if (!$node->field_cache_backend->isEmpty()) {
@@ -497,6 +490,7 @@ class Environment extends EntityActionBase {
    *   The HPA object
    */
   protected function getHpaForEnvironment(NodeInterface $environment) {
+    /** @var \UniversityOfAdelaide\OpenShift\Objects\Hpa $hpa */
     $hpa = Hpa::create();
     if (!$environment->field_min_replicas->isEmpty()) {
       $hpa->setMinReplicas($environment->field_min_replicas->value);
@@ -505,6 +499,47 @@ class Environment extends EntityActionBase {
       $hpa->setMaxReplicas($environment->field_max_replicas->value);
     }
     return $hpa;
+  }
+
+  /**
+   * Constructs an Route object for an environment.
+   *
+   * @param \Drupal\node\NodeInterface $environment
+   *   Environment entity.
+   *
+   * @return \UniversityOfAdelaide\OpenShift\Objects\Route
+   *   The Route object
+   */
+  protected function getRouteForEnvironment(NodeInterface $environment) {
+    /** @var \UniversityOfAdelaide\OpenShift\Objects\Route $route */
+    $route = Route::create();
+
+    $name = OpenShiftOrchestrationProvider::generateDeploymentName($environment->id());
+    $labels = ['app' => $name];
+    $route->setName($name)
+      ->setLabels($labels)
+      ->setInsecureEdgeTerminationPolicy('Allow')
+      ->setTermination('edge')
+      ->setToKind('Service')
+      ->setToName($name);
+
+    $environment_type = $this->environmentService->getEnvironmentType($environment);
+    // Extract and transform the annotations from the environment type.
+    $annotations = $environment_type ? $environment_type->field_shp_annotations->getValue() : [];
+    $annotations = array_combine(
+      array_column($annotations, 'key'),
+      array_column($annotations, 'value')
+    );
+    $route->setAnnotations($annotations);
+
+    if (!$environment->field_shp_domain->isEmpty()) {
+      $route->setHost($environment->field_shp_domain->value);
+    }
+    if (!$environment->field_shp_path->isEmpty()) {
+      $route->setPath($environment->field_shp_path->value);
+    }
+
+    return $route;
   }
 
 }

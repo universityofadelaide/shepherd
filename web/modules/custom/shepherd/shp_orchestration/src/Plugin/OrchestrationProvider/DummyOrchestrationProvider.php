@@ -6,6 +6,7 @@ use Drupal\shp_orchestration\OrchestrationProviderBase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use UniversityOfAdelaide\OpenShift\Objects\Backups\Backup;
 use UniversityOfAdelaide\OpenShift\Objects\Hpa;
+use UniversityOfAdelaide\OpenShift\Objects\Route;
 
 /**
  * A mock orchestration provider.
@@ -63,8 +64,6 @@ class DummyOrchestrationProvider extends OrchestrationProviderBase {
     string $environment_id,
     string $environment_url,
     string $builder_image,
-    string $domain,
-    string $path,
     string $source_repo,
     string $source_ref = 'master',
     string $source_secret = NULL,
@@ -75,9 +74,9 @@ class DummyOrchestrationProvider extends OrchestrationProviderBase {
     array $secrets = [],
     array $probes = [],
     array $cron_jobs = [],
-    array $annotations = [],
     string $backup_schedule = '',
-    int $backup_retention = 0
+    int $backup_retention = 0,
+    Route $route = NULL
   ) {
     return TRUE;
   }
@@ -92,8 +91,6 @@ class DummyOrchestrationProvider extends OrchestrationProviderBase {
     string $environment_id,
     string $environment_url,
     string $builder_image,
-    string $domain,
-    string $path,
     string $source_repo,
     string $source_ref = 'master',
     string $source_secret = NULL,
@@ -104,9 +101,9 @@ class DummyOrchestrationProvider extends OrchestrationProviderBase {
     array $secrets = [],
     array $probes = [],
     array $cron_jobs = [],
-    array $annotations = [],
     string $backup_schedule = '',
     int $backup_retention = 0,
+    Route $route = NULL,
     Hpa $hpa = NULL
   ) {
     return TRUE;
@@ -140,11 +137,9 @@ class DummyOrchestrationProvider extends OrchestrationProviderBase {
     string $short_name,
     int $site_id,
     int $environment_id,
-    string $domain,
-    string $path,
-    array $annotations,
     string $source_ref = 'master',
     bool $clear_cache = TRUE,
+    Route $route = NULL,
     Hpa $hpa = NULL
   ) {
     return TRUE;
