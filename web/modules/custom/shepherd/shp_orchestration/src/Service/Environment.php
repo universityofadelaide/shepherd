@@ -510,7 +510,7 @@ class Environment extends EntityActionBase {
     $route_name = OpenShiftOrchestrationProvider::generateDeploymentName($environment->id());
     $promoted_term = $this->environmentType->getPromotedTerm();
     $route_type = 'environment';
-    if ($term && $term->id() === $promoted_term->id()) {
+    if ($term && $promoted_term && $term->id() === $promoted_term->id()) {
       $site = $this->environmentService->getSite($environment);
       $route_name = OpenShiftOrchestrationProvider::generateDeploymentName($site->id());
       $route_type = 'site';
