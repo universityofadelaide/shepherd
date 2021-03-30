@@ -12,10 +12,12 @@ use Drupal\shp_orchestration\Event\OrchestrationEnvironmentEvent;
 use Drupal\shp_orchestration\Event\OrchestrationEvents;
 use Drupal\shp_orchestration\ExceptionHandler;
 use Drupal\shp_orchestration\OrchestrationProviderPluginManager;
+use Drupal\shp_orchestration\Plugin\OrchestrationProvider\OpenShiftOrchestrationProvider;
 use Drupal\taxonomy\Entity\Term;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use UniversityOfAdelaide\OpenShift\ClientException;
 use UniversityOfAdelaide\OpenShift\Objects\Hpa;
+use UniversityOfAdelaide\OpenShift\Objects\Route;
 
 /**
  * A service for interacting with environment entities.
@@ -164,15 +166,8 @@ class Environment extends EntityActionBase {
 
     $storage_class = '';
     if ($project->field_shp_storage_class->target_id) {
-      $storage_class = Term::load($project->field_shp_storage_class->target_id)->label();
+      $storage_class = $project->field_shp_storage_class->entity->label();
     }
-
-    // Extract and transform the annotations from the environment type.
-    $annotations = $environment_type ? $environment_type->field_shp_annotations->getValue() : [];
-    $annotations = array_combine(
-      array_column($annotations, 'key'),
-      array_column($annotations, 'value')
-    );
 
     $backup_schedule = !$environment_type->field_shp_backup_schedule->isEmpty() ? $environment_type->field_shp_backup_schedule->value : '';
     $backup_retention = !$environment_type->field_shp_backup_retention->isEmpty() ? $environment_type->field_shp_backup_retention->value : 2;
@@ -183,8 +178,6 @@ class Environment extends EntityActionBase {
       $node->id(),
       $node->toUrl('canonical', ['absolute' => TRUE])->toString(),
       $project->field_shp_builder_image->value,
-      $node->field_shp_domain->value,
-      $node->field_shp_path->value,
       $project->field_shp_git_repository->value,
       $node->field_shp_git_reference->value,
       $project->field_shp_build_secret->value,
@@ -195,9 +188,9 @@ class Environment extends EntityActionBase {
       $secrets,
       $probes,
       $cron_jobs,
-      $annotations,
       $backup_schedule,
-      $backup_retention
+      $backup_retention,
+      $this->getRouteForEnvironment($node, $environment_type)
     );
 
     if (!$node->field_cache_backend->isEmpty()) {
@@ -262,10 +255,10 @@ class Environment extends EntityActionBase {
 
     $storage_class = '';
     if ($project->field_shp_storage_class->target_id) {
-      $storage_class = Term::load($project->field_shp_storage_class->target_id)->label();
+      $storage_class = $project->field_shp_storage_class->entity->label();
     }
 
-    $environment_type = Term::load($node->field_shp_environment_type->target_id);
+    $environment_type = $this->environmentService->getEnvironmentType($node);
     $backup_schedule = !$environment_type->field_shp_backup_schedule->isEmpty() ? $environment_type->field_shp_backup_schedule->value : '';
     $backup_retention = !$environment_type->field_shp_backup_retention->isEmpty() ? $environment_type->field_shp_backup_retention->value : '';
 
@@ -276,8 +269,6 @@ class Environment extends EntityActionBase {
       $node->id(),
       $node->toUrl('canonical', ['absolute' => TRUE])->toString(),
       $project->field_shp_builder_image->value,
-      $node->field_shp_domain->value,
-      $node->field_shp_path->value,
       $project->field_shp_git_repository->value,
       $node->field_shp_git_reference->value,
       $project->field_shp_build_secret->value,
@@ -288,9 +279,9 @@ class Environment extends EntityActionBase {
       $secrets,
       $probes,
       $cron_jobs,
-      [],
       $backup_schedule,
       $backup_retention,
+      $this->getRouteForEnvironment($node, $environment_type),
       $this->getHpaForEnvironment($node)
     );
 
@@ -372,22 +363,14 @@ class Environment extends EntityActionBase {
     // Load the taxonomy term that has protect enabled.
     $promoted_term = $this->environmentType->getPromotedTerm();
 
-    // Extract and transform the annotations from the environment type.
-    $annotations = $promoted_term ? $promoted_term->field_shp_annotations->getValue() : [];
-    $annotations = array_combine(
-      array_column($annotations, 'key'),
-      array_column($annotations, 'value')
-    );
     $result = $this->orchestrationProviderPlugin->promotedEnvironment(
       $project->title->value,
       $site->field_shp_short_name->value,
       $site->id(),
       $environment->id(),
-      $site->field_shp_domain->value,
-      $site->field_shp_path->value,
-      $annotations,
       $environment->field_shp_git_reference->value,
       $clear_cache,
+      $this->getRouteForEnvironment($environment, $promoted_term),
       $this->getHpaForEnvironment($environment)
     );
 
@@ -497,6 +480,7 @@ class Environment extends EntityActionBase {
    *   The HPA object
    */
   protected function getHpaForEnvironment(NodeInterface $environment) {
+    /** @var \UniversityOfAdelaide\OpenShift\Objects\Hpa $hpa */
     $hpa = Hpa::create();
     if (!$environment->field_min_replicas->isEmpty()) {
       $hpa->setMinReplicas($environment->field_min_replicas->value);
@@ -505,6 +489,58 @@ class Environment extends EntityActionBase {
       $hpa->setMaxReplicas($environment->field_max_replicas->value);
     }
     return $hpa;
+  }
+
+  /**
+   * Constructs an Route object for an environment.
+   *
+   * @param \Drupal\node\NodeInterface $environment
+   *   Environment entity.
+   * @param \Drupal\taxonomy\Entity\Term $term
+   *   Environment type.
+   *
+   * @return \UniversityOfAdelaide\OpenShift\Objects\Route
+   *   The Route object
+   */
+  protected function getRouteForEnvironment(NodeInterface $environment, Term $term) {
+    /** @var \UniversityOfAdelaide\OpenShift\Objects\Route $route */
+    $route = Route::create();
+
+    // Production routes are tied to the site id and non-prod to environment id.
+    $route_name = OpenShiftOrchestrationProvider::generateDeploymentName($environment->id());
+    $promoted_term = $this->environmentType->getPromotedTerm();
+    $route_type = 'environment';
+    if ($term && $promoted_term && $term->id() === $promoted_term->id()) {
+      $site = $this->environmentService->getSite($environment);
+      $route_name = OpenShiftOrchestrationProvider::generateDeploymentName($site->id());
+      $route_type = 'site';
+    }
+
+    $labels = ['app' => $route_name];
+    $route->setName($route_name)
+      ->setLabels($labels)
+      ->setInsecureEdgeTerminationPolicy('Allow')
+      ->setTermination('edge')
+      ->setToKind('Service')
+      ->setToName($route_name);
+
+    // Extract and transform the annotations from the provided environment type.
+    $annotations = $term ? $term->field_shp_annotations->getValue() : [];
+    $annotations = array_combine(
+      array_column($annotations, 'key'),
+      array_column($annotations, 'value')
+    );
+    $route->setAnnotations($annotations);
+
+    // Use site domain and path when promoted term, otherwise environment.
+    if (!${$route_type}->field_shp_domain->isEmpty()) {
+      $route->setHost(${$route_type}->field_shp_domain->value);
+    }
+    if (!${$route_type}->field_shp_path->isEmpty()) {
+      $route->setPath(${$route_type}->field_shp_path->value);
+    }
+
+    return $route;
   }
 
 }
