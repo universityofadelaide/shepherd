@@ -293,7 +293,8 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     );
 
     // Allow other modules to modify a deployment config before creation.
-    $deployment_config = \Drupal::moduleHandler()->invokeAll('shp_deployment_config', [$environment_id, $deployment_config]);
+    $new_deployment_config = \Drupal::moduleHandler()->invokeAll('shp_deployment_config', [$environment_id, $deployment_config]);
+    $deployment_config = $new_deployment_config ?: $deployment_config;
 
     try {
       $this->client->createDeploymentConfig($deployment_config);
