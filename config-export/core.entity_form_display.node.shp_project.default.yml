@@ -21,6 +21,7 @@ dependencies:
     - field.field.node.shp_project.field_shp_readiness_probe_type
     - field.field.node.shp_project.field_shp_secrets
     - field.field.node.shp_project.field_shp_storage_class
+    - field.field.node.shp_project.field_ua_force_https
     - node.type.shp_project
   module:
     - content_moderation
@@ -34,7 +35,7 @@ third_party_settings:
         - group_shp_liveness
         - group_shp_readiness
       parent_name: ''
-      weight: 7
+      weight: 8
       format_type: tabs
       format_settings:
         label: Probes
@@ -79,7 +80,7 @@ third_party_settings:
         - field_shp_memory_request
         - field_shp_memory_limit
       parent_name: ''
-      weight: 8
+      weight: 9
       format_type: details
       format_settings:
         id: ''
@@ -91,7 +92,7 @@ third_party_settings:
       children:
         - field_shp_env_vars
       parent_name: ''
-      weight: 9
+      weight: 10
       format_type: details
       format_settings:
         id: ''
@@ -156,6 +157,8 @@ content:
       description_placeholder: ''
       size: 60
       placeholder: ''
+      description_label: Description
+      description_rows: 5
     third_party_settings: {  }
     type: key_value_textfield
     region: content
@@ -246,6 +249,13 @@ content:
     settings: {  }
     third_party_settings: {  }
     type: options_select
+    region: content
+  field_ua_force_https:
+    weight: 7
+    settings:
+      display_label: true
+    third_party_settings: {  }
+    type: boolean_checkbox
     region: content
   moderation_state:
     type: moderation_state_default
