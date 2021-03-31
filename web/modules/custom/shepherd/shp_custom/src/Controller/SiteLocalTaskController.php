@@ -9,7 +9,7 @@ use Drupal\node\Entity\Node;
 /**
  * Custom access for various routes.
  *
- * @TODO Why is this extending ControllerBase?
+ * @todo Why is this extending ControllerBase?
  */
 class SiteLocalTaskController extends ControllerBase {
 

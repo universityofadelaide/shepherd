@@ -1,0 +1,47 @@
+<?php
+
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\node\Entity\Node;
+
+/**
+ * Implements hook_shp_deployment_config().
+ */
+function ua_custom_shp_deployment_config(int $environment_id, array $deployment_config) {
+  $environment = Node::load($environment_id);
+
+  // Check the force https setting and apply as required.
+  if ($environment->field_ua_force_https->value === '1') {
+    // Volumes.
+    $deployment_config['spec']['template']['spec']['volumes'][] = [
+      'configMap' => [
+        'defaultMode' => 292,
+        'name' => 'drupal-force-https',
+      ],
+      'name'   => 'drupal-force-https'
+    ];
+
+    // Volume mounts.
+    $deployment_config['spec']['template']['spec']['containers'][0]['volumeMounts'][] = [
+      'mountPath' => '/code/web/index.php',
+      'name'      => 'drupal-force-https',
+      'subPath'   => 'index.php',
+    ];
+    $deployment_config['spec']['template']['spec']['containers'][0]['volumeMounts'][] = [
+      'mountPath' => '/code/web/sites/default/settings.local.php',
+      'name'      => 'drupal-force-https',
+      'subPath'   => 'settings.local.php',
+    ];
+  }
+
+  return $deployment_config;
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function ua_custom_form_node_shp_environment_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  if ($site = $form['field_shp_site']['widget'][0]['target_id']['#default_value']) {
+    $project = \Drupal::service('shp_custom.site')->getProject($site);
+    $form['field_ua_force_https']['widget']['value']['#default_value'] = $project->field_ua_force_https->value;
+  }
+}

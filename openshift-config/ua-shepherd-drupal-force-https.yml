@@ -1,0 +1,58 @@
+apiVersion: v1
+data:
+  index.php: |-
+    <?php
+
+    /**
+     * @file
+     * The PHP page that serves all page requests on a Drupal installation.
+     *
+     * All Drupal code is released under the GNU General Public License.
+     * See COPYRIGHT.txt and LICENSE.txt files in the "core" directory.
+     */
+
+    use Drupal\Core\DrupalKernel;
+    use Symfony\Component\HttpFoundation\Request;
+
+    if ($_SERVER['HTTP_X_FORWARDED_PROTO'] === 'http') {
+      $_SERVER['HTTP_FORWARDED'] = str_replace('proto=http', 'proto=https', $_SERVER['HTTP_FORWARDED']);
+      $_SERVER['HTTP_X_FORWARDED_PROTO'] = 'https';
+      $_SERVER['HTTP_X_FORWARDED_PORT'] = '443';
+    }
+
+    $autoloader = require_once 'autoload.php';
+
+    $kernel = new DrupalKernel('prod', $autoloader);
+
+    $request = Request::createFromGlobals();
+    $response = $kernel->handle($request);
+    $response->send();
+
+    $kernel->terminate($request, $response);
+  settings.local.php: |
+    <?php
+    $_SERVER['HTTPS'] = 'on';
+    $_SERVER['SERVER_PORT'] = 443;
+    // $settings['reverse_proxy'] = FALSE;
+
+    if ($_SERVER['HTTP_X_FORWARDED_PROTO'] === 'http') {
+      $_SERVER['HTTP_FORWARDED'] = str_replace('proto=http', 'proto=https', $_SERVER['HTTP_FORWARDED']);
+      $_SERVER['HTTP_X_FORWARDED_PROTO'] = 'https';
+      $_SERVER['HTTP_X_FORWARDED_PORT'] = '443';
+    }
+
+    $settings['reverse_proxy_addresses'] = [
+      '10.230.13.1',
+      '10.230.13.11',
+      '10.235.0.1',
+      '10.235.2.1',
+      '10.235.4.1',
+      '10.235.6.1',
+      '10.235.8.1',
+    ];
+    unset($settings['reverse_proxy_header']);
+kind: ConfigMap
+metadata:
+  app: shepherd
+  name: drupal-force-https
+

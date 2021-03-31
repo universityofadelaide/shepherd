@@ -1,0 +1,23 @@
+uuid: db9bb64c-eb92-45df-b405-5e0827ab7a2e
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_ua_force_https
+    - node.type.shp_project
+id: node.shp_project.field_ua_force_https
+field_name: field_ua_force_https
+entity_type: node
+bundle: shp_project
+label: 'Force https'
+description: ''
+required: false
+translatable: true
+default_value:
+  -
+    value: 0
+default_value_callback: ''
+settings:
+  on_label: 'On'
+  off_label: 'Off'
+field_type: boolean

@@ -17,6 +17,7 @@ use UniversityOfAdelaide\OpenShift\Objects\Backups\Database;
 use UniversityOfAdelaide\OpenShift\Objects\Backups\Restore;
 use UniversityOfAdelaide\OpenShift\Objects\Backups\ScheduledBackup;
 use UniversityOfAdelaide\OpenShift\Objects\Hpa;
+use UniversityOfAdelaide\OpenShift\Objects\Route;
 use UniversityOfAdelaide\OpenShift\Objects\Label;
 
 /**
@@ -242,8 +243,6 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     string $environment_id,
     string $environment_url,
     string $builder_image,
-    string $domain,
-    string $path,
     string $source_repo,
     string $source_ref = 'master',
     string $source_secret = NULL,
@@ -254,9 +253,9 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     array $secrets = [],
     array $probes = [],
     array $cron_jobs = [],
-    array $annotations = [],
     string $backup_schedule = '',
-    int $backup_retention = 0
+    int $backup_retention = 0,
+    Route $route = NULL
   ) {
     // @todo Refactor this. _The complexity is too damn high!_
     $sanitised_project_name = self::sanitise($project_name);
@@ -293,6 +292,10 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       $probes
     );
 
+    // Allow other modules to modify a deployment config before creation.
+    $new_deployment_config = \Drupal::moduleHandler()->invokeAll('shp_deployment_config', [$environment_id, $deployment_config]);
+    $deployment_config = $new_deployment_config ?: $deployment_config;
+
     try {
       $this->client->createDeploymentConfig($deployment_config);
     }
@@ -320,11 +323,11 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       $this->messenger->addStatus(t('Image unavailable, deployment and cron jobs cannot be completed.'));
     }
 
-    // @todo - make port a var and great .. so great .. yuge!
+    // @todo make port a var and great .. so great .. yuge!
     $port = 8080;
     try {
       $this->client->createService($deployment_name, $deployment_name, $port, $port, $deployment_name);
-      $this->client->createRoute($deployment_name, $deployment_name, $domain, $path, $annotations);
+      $this->client->createRoute($route);
     }
     catch (ClientException $e) {
       $this->exceptionHandler->handleClientException($e);
@@ -377,8 +380,6 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     string $environment_id,
     string $environment_url,
     string $builder_image,
-    string $domain,
-    string $path,
     string $source_repo,
     string $source_ref = 'master',
     string $source_secret = NULL,
@@ -389,9 +390,9 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     array $secrets = [],
     array $probes = [],
     array $cron_jobs = [],
-    array $annotations = [],
     string $backup_schedule = '',
     int $backup_retention = 0,
+    Route $route = NULL,
     Hpa $hpa = NULL
   ) {
     // @todo Refactor this too. Not DRY enough.
@@ -486,7 +487,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
 
     try {
       // Scale the pods to zero, then delete the pod creators.
-      // @todo - placing the logic here .. as its not clear what level of logic we should place in client.
+      // @todo placing the logic here .. as its not clear what level of logic we should place in client.
       $deploymentConfigs = $this->client->getDeploymentConfigs('app=' . $deployment_name);
       foreach ($deploymentConfigs['items'] as $deploymentConfig) {
         $this->client->updateDeploymentConfig($deploymentConfig['metadata']['name'], $deploymentConfig, [
@@ -544,18 +545,16 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     string $short_name,
     int $site_id,
     int $environment_id,
-    string $domain,
-    string $path,
-    array $annotations,
     string $source_ref = 'master',
     bool $clear_cache = TRUE,
+    Route $route = NULL,
     Hpa $hpa = NULL
   ) {
     $site_deployment_name = self::generateDeploymentName($site_id);
 
     $environment_deployment_name = self::generateDeploymentName($environment_id);
 
-    // @todo - remove the hardcoded ports.
+    // @todo remove the hardcoded ports.
     $port = 8080;
 
     if (!$this->client->getService($site_deployment_name)) {
@@ -563,7 +562,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     }
 
     if (!$this->client->getRoute($site_deployment_name)) {
-      $this->client->createRoute($site_deployment_name, $site_deployment_name, $domain, $path, $annotations);
+      $this->client->createRoute($route);
     }
 
     if ($hpa && !$this->client->getHpa($environment_deployment_name)) {
@@ -579,7 +578,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
 
     $result = $this->client->updateService($site_deployment_name, $environment_deployment_name);
     if ($result && $clear_cache) {
-      // @todo - Remove drush call, it relates to a project type rather than all projects.
+      // @todo Remove drush call, it relates to a project type rather than all projects.
       $this->executeJob(
         $project_name,
         $short_name,
@@ -609,7 +608,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
    * {@inheritdoc}
    */
   public function updatedSite() {
-    // TODO: Implement updateSite() method.
+    // @todo Implement updateSite() method.
   }
 
   /**
@@ -1174,7 +1173,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
   /**
    * Format an array of environment variables ready to pass to OpenShift.
    *
-   * @todo - move this into the client?
+   * @todo move this into the client?
    *
    * @param array $environment_variables
    *   An array of environment variables to be set for the pod.
@@ -1308,7 +1307,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
   /**
    * Format an array of build data ready to pass to OpenShift.
    *
-   * @todo - move this into the client?
+   * @todo move this into the client?
    *
    * @param string $source_ref
    *   The source tag/branch/commit.
@@ -1342,8 +1341,8 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
    *
    * PVC's that already exist will not be created/updated.
    *
-   * @todo - move this into the client?
-   * @todo - make storage size configurable
+   * @todo move this into the client?
+   * @todo make storage size configurable
    *
    * @param string $project_name
    *   The name of the project being deployed.

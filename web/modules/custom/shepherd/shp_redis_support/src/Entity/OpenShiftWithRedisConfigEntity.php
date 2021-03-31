@@ -7,7 +7,7 @@ use Drupal\shp_orchestration\Entity\OpenShiftConfigEntity;
 /**
  * Defines the OpenShiftWithRedisConfigEntity.
  *
- * TODO: Delete this entity type when shp_cache_backend is rolled out.
+ * @todo Delete this entity type when shp_cache_backend is rolled out.
  *
  * @ConfigEntityType(
  *   id = "openshift_with_redis",
