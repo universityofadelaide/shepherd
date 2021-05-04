@@ -754,6 +754,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
 
     // Existing schedule, update it.
     $schedule_obj->setSchedule($schedule);
+    $schedule_obj->setRetention($retention);
     try {
       return $this->client->updateSchedule($schedule_obj);
     }
