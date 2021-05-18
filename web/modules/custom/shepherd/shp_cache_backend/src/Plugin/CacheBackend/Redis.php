@@ -158,6 +158,7 @@ class Redis extends CacheBackendBase {
       ],
       'spec' => [
         'replicas' => 1,
+        'revisionHistoryLimit' => 1,
         'selector' => array_key_exists('labels', $data) ? array_merge($data['labels'], ['name' => $redis_name]) : [],
         'strategy' => [
           'type' => 'Rolling',
