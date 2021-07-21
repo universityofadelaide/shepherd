@@ -256,6 +256,20 @@ class DummyOrchestrationProvider extends OrchestrationProviderBase {
   /**
    * {@inheritdoc}
    */
+  public function syncEnvironments(string $site_id, string $from_env, string $to_env) {
+    return TRUE;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getSyncsForSite(string $site_id) {
+    return TRUE;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function executeJob(
     string $project_name,
     string $short_name,

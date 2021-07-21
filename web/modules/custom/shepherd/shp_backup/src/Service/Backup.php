@@ -6,7 +6,10 @@ use Drupal\Component\Serialization\Json;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\Url;
+use Drupal\node\Entity\Node;
 use Drupal\node\NodeInterface;
+use Drupal\shp_custom\Service\Environment;
+use Drupal\shp_custom\Service\EnvironmentType;
 use Drupal\shp_orchestration\OrchestrationProviderPluginManagerInterface;
 
 /**
@@ -26,13 +29,33 @@ class Backup {
   protected $orchestrationProvider;
 
   /**
+   * The environment type service.
+   *
+   * @var \Drupal\shp_custom\Service\EnvironmentType
+   */
+  protected $environmentType;
+
+  /**
+   * The environment service.
+   *
+   * @var \Drupal\shp_custom\Service\Environment
+   */
+  protected $environmentService;
+
+  /**
    * Backup constructor.
    *
    * @param \Drupal\shp_orchestration\OrchestrationProviderPluginManagerInterface $pluginManager
    *   The orchestration provider plugin manager.
+   * @param \Drupal\shp_custom\Service\EnvironmentType $environmentType
+   *   The environment type service.
+   * @param \Drupal\shp_custom\Service\Environment $environmentService
+   *   The environment service.
    */
-  public function __construct(OrchestrationProviderPluginManagerInterface $pluginManager) {
+  public function __construct(OrchestrationProviderPluginManagerInterface $pluginManager, EnvironmentType $environmentType, Environment $environmentService) {
     $this->orchestrationProvider = $pluginManager->getProviderInstance();
+    $this->environmentType = $environmentType;
+    $this->environmentService = $environmentService;
   }
 
   /**
@@ -75,13 +98,11 @@ class Backup {
    *   The backup object, or false.
    */
   public function createBackup(NodeInterface $site, NodeInterface $environment, string $friendly_name = '') {
-    $result = $this->orchestrationProvider->backupEnvironment(
+    return $this->orchestrationProvider->backupEnvironment(
       $site->id(),
       $environment->id(),
       $friendly_name
     );
-
-    return $result;
   }
 
   /**
@@ -97,13 +118,57 @@ class Backup {
    */
   public function restore(string $backup_name, NodeInterface $environment) {
     $site = $environment->field_shp_site->entity;
-    $result = $this->orchestrationProvider->restoreEnvironment(
+    return $this->orchestrationProvider->restoreEnvironment(
       $backup_name,
       $site->id(),
       $environment->id()
     );
+  }
 
-    return $result;
+  /**
+   * Upgrades an environment by provisioning a new one and issuing a sync.
+   *
+   * @param \Drupal\node\NodeInterface $site
+   *   The site.
+   * @param \Drupal\node\NodeInterface $environment
+   *   The environment.
+   * @param string $version
+   *   The version to upgrade to.
+   *
+   * @return \Drupal\node\NodeInterface|bool
+   *   The new environment if successful, else FALSE.
+   */
+  public function upgrade(NodeInterface $site, NodeInterface $environment, $version) {
+    $demoted_term = $this->environmentType->getDemotedTerm();
+    $new_environment = Node::create([
+      'type' => 'shp_environment',
+      'field_shp_site' => $site->id(),
+      'field_shp_git_reference' => $version,
+      'field_shp_environment_type' => $demoted_term->id(),
+      'field_cache_backend' => [
+        'plugin_id' => $environment->field_cache_backend->plugin_id,
+      ],
+      'field_shp_domain' => $this->environmentService->getUniqueDomainForSite($site, $demoted_term),
+      'field_shp_path' => $site->field_shp_path->value,
+      'field_shp_cron_jobs' => $environment->field_shp_cron_jobs->getValue(),
+      // @todo filter out memcache env vars.
+      'field_shp_env_vars' => $environment->field_shp_env_vars->getValue(),
+      'field_shp_cpu_limit' => $environment->field_shp_cpu_limit->value,
+      'field_shp_cpu_request' => $environment->field_shp_cpu_request->value,
+      'field_shp_memory_limit' => $environment->field_shp_memory_limit->value,
+      'field_shp_memory_request' => $environment->field_shp_memory_request->value,
+      'field_max_replicas' => $environment->field_max_replicas->value,
+      'field_min_replicas' => $environment->field_min_replicas->value,
+      'field_shp_secrets' => $environment->field_shp_secrets->value,
+    ]);
+    $new_environment->save();
+    $result = $this->orchestrationProvider->syncEnvironments(
+      $site->id(),
+      $environment->id(),
+      $new_environment->id(),
+    );
+
+    return $result ? $new_environment : FALSE;
   }
 
   /**
@@ -136,11 +201,24 @@ class Backup {
       'attributes' => $modal_attributes,
     ];
 
-    if (($environment_term = $entity->field_shp_environment_type->entity) && !$environment_term->field_shp_protect->value) {
+    // Allow restores on non-prod environments.
+    if (!$this->environmentType->isPromotedEnvironment($entity)) {
       $operations['restore'] = [
         'title'      => $this->t('Restore'),
         'weight'     => 2,
         'url'        => Url::fromRoute('shp_backup.environment-restore-form', [
+          'site'        => $site,
+          'environment' => $environment,
+        ]),
+        'attributes' => $modal_attributes,
+      ];
+    }
+    // Allow upgrade on prod environments.
+    else {
+      $operations['upgrade'] = [
+        'title'      => $this->t('Upgrade'),
+        'weight'     => 2,
+        'url'        => Url::fromRoute('shp_backup.environment-upgrade-form', [
           'site'        => $site,
           'environment' => $environment,
         ]),

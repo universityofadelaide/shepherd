@@ -606,6 +606,32 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
   public function getRestoresForSite(string $site_id);
 
   /**
+   * Backup an environment.
+   *
+   * @param string $site_id
+   *   Site node id.
+   * @param string $from_env
+   *   Environment node id to backup.
+   * @param string $to_env
+   *   Environment node id to restore.
+   *
+   * @return object|bool
+   *   Returns a sync object if successful, otherwise false.
+   */
+  public function syncEnvironments(string $site_id, string $from_env, string $to_env);
+
+  /**
+   * Get a list of syncs for a site.
+   *
+   * @param string $site_id
+   *   The site node id.
+   *
+   * @return object|bool
+   *   The list of syncs.
+   */
+  public function getSyncsForSite(string $site_id);
+
+  /**
    * Execute a job.
    *
    * @param string $project_name
