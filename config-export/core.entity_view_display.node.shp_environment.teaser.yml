@@ -23,6 +23,7 @@ dependencies:
     - field.field.node.shp_environment.field_shp_secrets
     - field.field.node.shp_environment.field_shp_site
     - field.field.node.shp_environment.field_shp_update_on_image_change
+    - field.field.node.shp_environment.field_skip_db_prepop
     - node.type.shp_environment
   module:
     - user
@@ -61,3 +62,4 @@ hidden:
   field_shp_secrets: true
   field_shp_site: true
   field_shp_update_on_image_change: true
+  field_skip_db_prepop: true

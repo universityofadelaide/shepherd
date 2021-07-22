@@ -71,9 +71,13 @@ class DeploymentEventSubscriber implements EventSubscriberInterface {
   public function databasePopulate(OrchestrationEnvironmentEvent $event) {
     $orchestration_provider = $event->getOrchestrationProvider();
 
+    $environment = $event->getEnvironment();
+    // Skip database population if flagged on the environment.
+    if ($environment->hasField('field_skip_db_prepop') && $environment->field_skip_db_prepop->value) {
+      return;
+    }
     $project = $event->getProject();
     $site = $event->getSite();
-    $environment = $event->getEnvironment();
 
     $populate_command = str_replace(
       ["\r\n", "\n", "\r"], ' && ', trim($this->config->get('populate_command'))

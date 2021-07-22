@@ -160,6 +160,7 @@ class Backup {
       'field_max_replicas' => $environment->field_max_replicas->value,
       'field_min_replicas' => $environment->field_min_replicas->value,
       'field_shp_secrets' => $environment->field_shp_secrets->value,
+      'field_skip_db_prepop' => TRUE,
     ]);
     $new_environment->save();
     $result = $this->orchestrationProvider->syncEnvironments(
