@@ -865,7 +865,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       ->setRestoreVolumes(['shared' => self::generateSharedPvcName($restoreDeploymentName)])
       ->setBackupDatabases([$this->generateDatabaseFromDeploymentName($backupDeploymentName)])
       ->setRestoreDatabases([$this->generateDatabaseFromDeploymentName($restoreDeploymentName)])
-      ->setName(sprintf('%s-sync-%s-%s', $backupDeploymentName, $restoreDeploymentName, date('YmdHis')))
+      ->setName(sprintf('%s-%s-%s', $backupDeploymentName, $restoreDeploymentName, date('YmdHis')))
       ->setLabel(Label::create('site', $site_id));
     try {
       return $this->client->createSync($sync);
