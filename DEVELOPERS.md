@@ -54,7 +54,7 @@ minishift config set memory 4096
 minishift config set cpus 4
 ```
 
-Start Minishift, ready for the next step. 
+Start Minishift, ready for the next step.
 ```bash
 minishift start
 ```
@@ -262,6 +262,13 @@ discover the OpenShift client dependency.
   ```bash
   ./dsh
   bin/drush -r /code/web cset shp_orchestration.openshift.openshift token ${NEW_TOKEN}
+  ```
+- If you get the following error when creating content: `An error occurred while communicating with OpenShift. cURL error 28: Failed to connect to 192.168.99.105 port 8443`
+
+  This can be due to a network collision with other docker networks.
+  Make sure all other containers are stopped, and then:
+  ```bash
+  docker network prune -f
   ```
 
 ## Working with OpenShift
