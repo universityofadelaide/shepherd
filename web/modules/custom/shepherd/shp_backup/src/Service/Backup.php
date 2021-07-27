@@ -214,18 +214,16 @@ class Backup {
         'attributes' => $modal_attributes,
       ];
     }
-    // Allow upgrade on prod environments.
-    else {
-      $operations['upgrade'] = [
-        'title'      => $this->t('Upgrade'),
-        'weight'     => 2,
-        'url'        => Url::fromRoute('shp_backup.environment-upgrade-form', [
-          'site'        => $site,
-          'environment' => $environment,
-        ]),
-        'attributes' => $modal_attributes,
-      ];
-    }
+    // Allow upgrade on all environments.
+    $operations['upgrade'] = [
+      'title'      => $this->t('Upgrade'),
+      'weight'     => 2,
+      'url'        => Url::fromRoute('shp_backup.environment-upgrade-form', [
+        'site'        => $site,
+        'environment' => $environment,
+      ]),
+      'attributes' => $modal_attributes,
+    ];
   }
 
 }
