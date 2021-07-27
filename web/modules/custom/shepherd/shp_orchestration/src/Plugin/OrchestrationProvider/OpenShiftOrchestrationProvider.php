@@ -16,6 +16,7 @@ use UniversityOfAdelaide\OpenShift\Objects\Backups\Backup;
 use UniversityOfAdelaide\OpenShift\Objects\Backups\Database;
 use UniversityOfAdelaide\OpenShift\Objects\Backups\Restore;
 use UniversityOfAdelaide\OpenShift\Objects\Backups\ScheduledBackup;
+use UniversityOfAdelaide\OpenShift\Objects\Backups\Sync;
 use UniversityOfAdelaide\OpenShift\Objects\Hpa;
 use UniversityOfAdelaide\OpenShift\Objects\Route;
 use UniversityOfAdelaide\OpenShift\Objects\Label;
@@ -842,6 +843,45 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
   public function getRestoresForSite(string $site_id) {
     try {
       return $this->client->listRestore(Label::create('site', $site_id));
+    }
+    catch (ClientException $e) {
+      $this->exceptionHandler->handleClientException($e);
+      return FALSE;
+    }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function syncEnvironments(string $site_id, string $from_env, string $to_env) {
+    $backupDeploymentName = self::generateDeploymentName($from_env);
+    $restoreDeploymentName = self::generateDeploymentName($to_env);
+    /** @var \UniversityOfAdelaide\OpenShift\Objects\Backups\Sync $sync */
+    $sync = Sync::create()
+      ->setSite($site_id)
+      ->setBackupEnv($from_env)
+      ->setRestoreEnv($to_env)
+      ->setBackupVolumes(['shared' => self::generateSharedPvcName($backupDeploymentName)])
+      ->setRestoreVolumes(['shared' => self::generateSharedPvcName($restoreDeploymentName)])
+      ->setBackupDatabases([$this->generateDatabaseFromDeploymentName($backupDeploymentName)])
+      ->setRestoreDatabases([$this->generateDatabaseFromDeploymentName($restoreDeploymentName)])
+      ->setName(sprintf('%s-%s-%s', $backupDeploymentName, $restoreDeploymentName, date('YmdHis')))
+      ->setLabel(Label::create('site', $site_id));
+    try {
+      return $this->client->createSync($sync);
+    }
+    catch (ClientException $e) {
+      $this->exceptionHandler->handleClientException($e);
+      return FALSE;
+    }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getSyncsForSite(string $site_id) {
+    try {
+      return $this->client->listSync(Label::create('site', $site_id));
     }
     catch (ClientException $e) {
       $this->exceptionHandler->handleClientException($e);
