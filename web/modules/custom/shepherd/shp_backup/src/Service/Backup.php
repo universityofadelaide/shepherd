@@ -140,7 +140,6 @@ class Backup {
    */
   public function upgrade(NodeInterface $site, NodeInterface $environment, $version) {
     $demoted_term = $this->environmentType->getDemotedTerm();
-    $env_vars = $environment->field_shp_env_vars->getValue();
     $ignore_env_vars = [
       'REDIS_ENABLED',
       'REDIS_HOST',
@@ -148,13 +147,6 @@ class Backup {
       'MEMCACHE_ENABLED',
       'MEMCACHE_HOST',
     ];
-    $envs = array_reduce($env_vars, function ($carry, $env_var) use ($ignore_env_vars) {
-      if (in_array($env_var['key'], $ignore_env_vars, TRUE)) {
-        return $carry;
-      }
-      $carry[] = $env_var;
-      return $carry;
-    }, []);
     $new_environment = Node::create([
       'type' => 'shp_environment',
       'status' => 1,
@@ -167,7 +159,9 @@ class Backup {
       'field_shp_domain' => $this->environmentService->getUniqueDomainForSite($site, $demoted_term),
       'field_shp_path' => $site->field_shp_path->value,
       'field_shp_cron_jobs' => $environment->field_shp_cron_jobs->getValue(),
-      'field_shp_env_vars' => $envs,
+      'field_shp_env_vars' => array_filter($environment->field_shp_env_vars->getValue(), function ($env_var) use ($ignore_env_vars) {
+        return !in_array($env_var['key'], $ignore_env_vars, TRUE);
+      }),
       'field_shp_cpu_limit' => $environment->field_shp_cpu_limit->value,
       'field_shp_cpu_request' => $environment->field_shp_cpu_request->value,
       'field_shp_memory_limit' => $environment->field_shp_memory_limit->value,
