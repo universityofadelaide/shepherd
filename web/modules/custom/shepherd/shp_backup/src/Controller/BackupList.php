@@ -77,9 +77,16 @@ class BackupList extends ListControllerBase {
           ],
         ],
       ];
+      $backup_type = $this->t('Scheduled');
+      if ($backup->isManual()) {
+        $backup_type = $this->t('Manual');
+      }
+      if ($backup->isSync()) {
+        $backup_type = $this->t('Sync');
+      }
       $table['#rows'][] = [
         $backup->getFriendlyName(),
-        $backup->isManual() ? $this->t('Manual') : $this->t('Scheduled'),
+        $backup_type,
         $environment ? $this->environmentService->getEnvironmentLink($environment, FALSE)->toString() : $this->t('Deleted'),
         Phase::getFriendlyPhase($backup->getPhase()),
         $backup->getStartTimestamp() ? $this->formatDate($backup->getStartTimestamp()) : $this->t('N/A'),
