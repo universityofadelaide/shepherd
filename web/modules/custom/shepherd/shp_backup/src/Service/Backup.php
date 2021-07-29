@@ -149,7 +149,7 @@ class Backup {
     ];
     $new_environment = Node::create([
       'type' => 'shp_environment',
-      'status' => 1,
+      'moderation_state' => 'published',
       'field_shp_site' => $site->id(),
       'field_shp_git_reference' => $version,
       'field_shp_environment_type' => $demoted_term->id(),
