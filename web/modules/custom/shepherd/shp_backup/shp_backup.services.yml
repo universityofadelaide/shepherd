@@ -1,4 +1,4 @@
 services:
   shp_backup.backup:
     class: Drupal\shp_backup\Service\Backup
-    arguments: ['@plugin.manager.orchestration_provider']
+    arguments: ['@plugin.manager.orchestration_provider', '@shp_custom.environment_type', '@shp_custom.environment']

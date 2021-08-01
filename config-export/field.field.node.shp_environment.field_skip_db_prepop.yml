@@ -1,0 +1,23 @@
+uuid: 77c9d11f-7524-4f52-b1c2-e7919aaa1087
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_skip_db_prepop
+    - node.type.shp_environment
+id: node.shp_environment.field_skip_db_prepop
+field_name: field_skip_db_prepop
+entity_type: node
+bundle: shp_environment
+label: 'Skip database pre-population'
+description: 'Check this to skip database pre-population when creating this environment. Useful for when this environment will be restored to immediately.'
+required: false
+translatable: false
+default_value:
+  -
+    value: 0
+default_value_callback: ''
+settings:
+  on_label: 'On'
+  off_label: 'Off'
+field_type: boolean

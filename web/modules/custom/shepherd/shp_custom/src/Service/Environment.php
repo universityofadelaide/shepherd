@@ -15,6 +15,7 @@ use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\Url;
 use Drupal\node\NodeInterface;
+use Drupal\taxonomy\TermInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
@@ -211,18 +212,34 @@ class Environment {
     $site = $this->node->load($values['field_shp_site'][0]['target_id']);
     $taxonomy_term = $this->taxonomyTerm->load($values['field_shp_environment_type'][0]['target_id']);
 
-    // Ahh the rarely seen in the wild - do-while loop!
-    $count = 0;
-    do {
-      $path_value = $site->field_shp_path->value;
-      $domain_value = $site->field_shp_short_name->value . '-' . $count++ . '.' . $taxonomy_term->field_shp_base_domain->value;
-    } while (!$this->validateEnvironmentNameUniqueness($domain_value));
+    $path_value = $site->field_shp_path->value;
+    $domain_value = $this->getUniqueDomainForSite($site, $taxonomy_term);
 
     // We have the unique values. W00t.
     $ajax_response->addCommand(new InvokeCommand('#edit-field-shp-domain-0-value', 'val', [$domain_value]));
     $ajax_response->addCommand(new InvokeCommand('#edit-field-shp-path-0-value', 'val', [$path_value]));
 
     return $ajax_response;
+  }
+
+  /**
+   * Gets a unique domain value for a given site.
+   *
+   * @param \Drupal\node\NodeInterface $site
+   *   The site node.
+   * @param \Drupal\taxonomy\TermInterface $environment_type
+   *   The environment type term.
+   *
+   * @return string
+   *   A unique domain.
+   */
+  public function getUniqueDomainForSite(NodeInterface $site, TermInterface $environment_type) {
+    // Ahh the rarely seen in the wild - do-while loop!
+    $count = 0;
+    do {
+      $domain_value = $site->field_shp_short_name->value . '-' . $count++ . '.' . $environment_type->field_shp_base_domain->value;
+    } while (!$this->validateEnvironmentNameUniqueness($domain_value));
+    return $domain_value;
   }
 
   /**
