@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "40ee379414478724c71555ecdf900852",
+    "content-hash": "44528d0722d067f33c6598d332ce5576",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -2934,6 +2934,79 @@
             "support": {
                 "source": "https://git.drupalcode.org/project/variationcache",
                 "issues": "https://drupal.org/project/issues/variationcache"
+            }
+        },
+        {
+            "name": "drupal/views_bulk_operations",
+            "version": "4.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://git.drupalcode.org/project/views_bulk_operations.git",
+                "reference": "4.0.0"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://ftp.drupal.org/files/projects/views_bulk_operations-4.0.0.zip",
+                "reference": "4.0.0",
+                "shasum": "d5bb4afeaaead0b8ebc7dd9e1fc6aac464aff4b1"
+            },
+            "require": {
+                "drupal/core": "^8.8 || ^9"
+            },
+            "require-dev": {
+                "drush/drush": "^10"
+            },
+            "suggest": {
+                "drush/drush": "^9 || ^10"
+            },
+            "type": "drupal-module",
+            "extra": {
+                "drupal": {
+                    "version": "4.0.0",
+                    "datestamp": "1625650987",
+                    "security-coverage": {
+                        "status": "covered",
+                        "message": "Covered by Drupal's security advisory policy"
+                    }
+                },
+                "drush": {
+                    "services": {
+                        "drush.services.yml": "^9 || ^10"
+                    }
+                }
+            },
+            "notification-url": "https://packages.drupal.org/8/downloads",
+            "license": [
+                "GPL-2.0-or-later"
+            ],
+            "authors": [
+                {
+                    "name": "Marcin Grabias",
+                    "homepage": "https://www.drupal.org/u/graber"
+                },
+                {
+                    "name": "Jon Pugh",
+                    "homepage": "https://www.drupal.org/user/17028"
+                },
+                {
+                    "name": "bojanz",
+                    "homepage": "https://www.drupal.org/user/86106"
+                },
+                {
+                    "name": "infojunkie",
+                    "homepage": "https://www.drupal.org/user/48424"
+                },
+                {
+                    "name": "joelpittet",
+                    "homepage": "https://www.drupal.org/user/160302"
+                }
+            ],
+            "description": "Adds an ability to perform bulk operations on selected entities from view results. Provides an API to create such operations.",
+            "homepage": "https://www.drupal.org/project/views_bulk_operations",
+            "support": {
+                "source": "https://git.drupalcode.org/project/views_bulk_operations/-/tree/8.x-3.x",
+                "issues": "https://www.drupal.org/project/issues/views_bulk_operations?version=8.x",
+                "docs": "https://www.drupal.org/docs/8/modules/views-bulk-operations-vbo"
             }
         },
         {
@@ -6736,12 +6809,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/universityofadelaide/openshift-client.git",
-                "reference": "76f4051b20ec20148349091c8963817615d85af9"
+                "reference": "072f6238badec63c5c14d5787a37ec2b574704df"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/universityofadelaide/openshift-client/zipball/76f4051b20ec20148349091c8963817615d85af9",
-                "reference": "76f4051b20ec20148349091c8963817615d85af9",
+                "url": "https://api.github.com/repos/universityofadelaide/openshift-client/zipball/072f6238badec63c5c14d5787a37ec2b574704df",
+                "reference": "072f6238badec63c5c14d5787a37ec2b574704df",
                 "shasum": ""
             },
             "require": {
@@ -6774,7 +6847,7 @@
                 }
             ],
             "description": "Simple OpenShift client for PHP.",
-            "time": "2021-07-26T21:44:03+00:00"
+            "time": "2021-08-01T17:23:51+00:00"
         },
         {
             "name": "universityofadelaide/shepherd-drupal-scaffold",
@@ -11130,10 +11203,10 @@
     "aliases": [],
     "minimum-stability": "dev",
     "stability-flags": {
-        "universityofadelaide/openshift-client": 20,
         "drupal/drush_cmi_tools": 20,
         "drupal/group": 5,
-        "drupal/route_condition": 10
+        "drupal/route_condition": 10,
+        "universityofadelaide/openshift-client": 20
     },
     "prefer-stable": true,
     "prefer-lowest": false,

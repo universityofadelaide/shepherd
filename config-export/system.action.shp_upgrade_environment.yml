@@ -1,0 +1,12 @@
+uuid: 05ebc0f3-2b07-49bc-b46d-08a9ced62224
+langcode: en
+status: true
+dependencies:
+  module:
+    - shp_backup
+id: shp_upgrade_environment
+label: 'Upgrade environment'
+type: node
+plugin: shp_upgrade_environment
+configuration:
+  version: master
