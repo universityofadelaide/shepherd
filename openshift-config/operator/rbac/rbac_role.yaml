@@ -204,6 +204,96 @@ rules:
   - patch
   - delete
 - apiGroups:
+  - extension.shepherd
+  resources:
+  - syncs
+  verbs:
+  - get
+  - list
+  - watch
+  - create
+  - update
+  - patch
+  - delete
+- apiGroups:
+  - extension.shepherd
+  resources:
+  - syncs/status
+  verbs:
+  - get
+  - update
+  - patch
+- apiGroups:
+  - extension.shepherd
+  resources:
+  - backups
+  verbs:
+  - get
+  - list
+  - watch
+  - create
+  - update
+  - patch
+  - delete
+- apiGroups:
+  - extension.shepherd
+  resources:
+  - backups/status
+  verbs:
+  - get
+  - update
+  - patch
+- apiGroups:
+  - extension.shepherd
+  resources:
+  - backups/finalizers
+  verbs:
+  - get
+  - list
+  - watch
+  - create
+  - update
+  - patch
+  - delete
+- apiGroups:
+  - apps.openshift.io
+  resources:
+  - deploymentconfigs
+  verbs:
+  - get
+- apiGroups:
+  - extension.shepherd
+  resources:
+  - restores
+  verbs:
+  - get
+  - list
+  - watch
+  - create
+  - update
+  - patch
+  - delete
+- apiGroups:
+  - extension.shepherd
+  resources:
+  - restores/status
+  verbs:
+  - get
+  - update
+  - patch
+- apiGroups:
+  - extension.shepherd
+  resources:
+  - restores/finalizers
+  verbs:
+  - get
+  - list
+  - watch
+  - create
+  - update
+  - patch
+  - delete
+- apiGroups:
   - admissionregistration.k8s.io
   resources:
   - mutatingwebhookconfigurations
