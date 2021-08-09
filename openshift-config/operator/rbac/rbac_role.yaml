@@ -226,6 +226,18 @@ rules:
 - apiGroups:
   - extension.shepherd
   resources:
+  - syncs/finalizers
+  verbs:
+  - get
+  - list
+  - watch
+  - create
+  - update
+  - patch
+  - delete
+- apiGroups:
+  - extension.shepherd
+  resources:
   - backups
   verbs:
   - get
