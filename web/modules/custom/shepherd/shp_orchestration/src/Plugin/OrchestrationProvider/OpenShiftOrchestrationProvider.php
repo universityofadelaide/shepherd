@@ -879,6 +879,19 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
   /**
    * {@inheritdoc}
    */
+  public function getSyncs() {
+    try {
+      return $this->client->listSync();
+    }
+    catch (ClientException $e) {
+      $this->exceptionHandler->handleClientException($e);
+      return FALSE;
+    }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function getSyncsForSite(string $site_id) {
     try {
       return $this->client->listSync(Label::create('site', $site_id));
