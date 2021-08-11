@@ -139,7 +139,7 @@ display:
               empty_column: false
               responsive: ''
             field_shp_site:
-              sortable: true
+              sortable: false
               default_sort_order: asc
               align: ''
               separator: ''
@@ -487,7 +487,7 @@ display:
           exclude: false
           alter:
             alter_text: true
-            text: "{% if field_shp_environment_type == 'Production' %}\r\n{{ field_shp_domain_2 }}{{ field_shp_path }}\r\n{% else %}\r\n{{ field_shp_domain }}{{ field_shp_path_1 }}\r\n{% endif %}"
+            text: "{% if field_shp_environment_type == 'Prd' %}\r\n{{ field_shp_domain_2 }}{{ field_shp_path }}\r\n{% else %}\r\n{{ field_shp_domain }}{{ field_shp_path_1 }}\r\n{% endif %}"
             make_link: true
             path: 'https://{{ field_shp_domain_2 }}{{ field_shp_path }}'
             absolute: false
