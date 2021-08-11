@@ -6,6 +6,7 @@ dependencies:
     - core.entity_view_mode.node.teaser
     - field.storage.node.field_shp_environment_type
     - node.type.shp_backup
+    - workflows.workflow.shepherd
   module:
     - content_moderation
     - node
@@ -417,15 +418,16 @@ display:
           expose:
             operator_limit_selection: false
             operator_list: {  }
-        moderation_state:
-          id: moderation_state
-          table: content_moderation_state_field_data
+        moderation_state_1:
+          id: moderation_state_1
+          table: node_field_data
           field: moderation_state
-          relationship: moderation_state
+          relationship: none
           group_type: group
           admin_label: ''
-          operator: '!='
-          value: archived
+          operator: 'not in'
+          value:
+            shepherd-archived: shepherd-archived
           group: 1
           exposed: false
           expose:
@@ -434,15 +436,15 @@ display:
             description: ''
             use_operator: false
             operator: ''
+            operator_limit_selection: false
+            operator_list: {  }
             identifier: ''
             required: false
             remember: false
             multiple: false
             remember_roles:
               authenticated: authenticated
-            placeholder: ''
-            operator_limit_selection: false
-            operator_list: {  }
+            reduce: false
           is_grouped: false
           group_info:
             label: ''
@@ -455,40 +457,28 @@ display:
             default_group: All
             default_group_multiple: {  }
             group_items: {  }
-          entity_type: content_moderation_state
-          entity_field: moderation_state
-          plugin_id: string
-      sorts:
-        created:
-          id: created
-          table: node_field_data
-          field: created
-          order: DESC
           entity_type: node
-          entity_field: created
-          plugin_id: date
+          plugin_id: moderation_state_filter
+      sorts:
+        nid:
+          id: nid
+          table: node_field_data
+          field: nid
           relationship: none
           group_type: group
           admin_label: ''
+          order: DESC
           exposed: false
           expose:
             label: ''
-          granularity: second
+          entity_type: node
+          entity_field: nid
+          plugin_id: standard
       title: ''
       header: {  }
       footer: {  }
       empty: {  }
-      relationships:
-        moderation_state:
-          id: moderation_state
-          table: node_field_data
-          field: moderation_state
-          relationship: none
-          group_type: group
-          admin_label: 'Content moderation state'
-          required: true
-          entity_type: node
-          plugin_id: standard
+      relationships: {  }
       arguments:
         field_shp_site_target_id:
           id: field_shp_site_target_id
@@ -525,7 +515,7 @@ display:
           not: false
           plugin_id: numeric
       display_extenders: {  }
-      group_by: true
+      group_by: false
     cache_metadata:
       max-age: 0
       contexts:
@@ -537,6 +527,7 @@ display:
         - user.permissions
       tags:
         - 'config:field.storage.node.field_shp_environment_type'
+        - 'config:workflow_list'
   page_1:
     display_plugin: page
     id: page_1
@@ -565,3 +556,4 @@ display:
         - user.permissions
       tags:
         - 'config:field.storage.node.field_shp_environment_type'
+        - 'config:workflow_list'
