@@ -621,6 +621,14 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
   public function syncEnvironments(string $site_id, string $from_env, string $to_env);
 
   /**
+   * Get a list of all syncs.
+   *
+   * @return object|bool
+   *   The list of syncs.
+   */
+  public function getSyncs();
+
+  /**
    * Get a list of syncs for a site.
    *
    * @param string $site_id
