@@ -263,6 +263,13 @@ class DummyOrchestrationProvider extends OrchestrationProviderBase {
   /**
    * {@inheritdoc}
    */
+  public function getSyncs() {
+    return TRUE;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function getSyncsForSite(string $site_id) {
     return TRUE;
   }
