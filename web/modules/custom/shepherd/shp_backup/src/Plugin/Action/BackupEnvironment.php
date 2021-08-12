@@ -86,9 +86,7 @@ class BackupEnvironment extends EntityActionBase {
    * {@inheritdoc}
    */
   public function access($object, AccountInterface $account = NULL, $return_as_object = FALSE) {
-    /** @var \Drupal\Core\Access\AccessResultInterface $result */
-    $result = $object->access('update', $account, TRUE);
-    return $return_as_object ? $result : $result->isAllowed();
+    return $object->access('update', $account, $return_as_object);
   }
 
   /**

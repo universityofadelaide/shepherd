@@ -83,3 +83,10 @@ function shepherd_post_update_add_cache_backend(&$sandbox) {
     \Drupal::state()->delete('shp_orchestration_update_killswitch');
   }
 }
+
+/**
+ * Enable views_bulk_operations.
+ */
+function shepherd_post_update_enable_views_bulk_operations() {
+  \Drupal::service('module_installer')->install(['views_bulk_operations']);
+}
