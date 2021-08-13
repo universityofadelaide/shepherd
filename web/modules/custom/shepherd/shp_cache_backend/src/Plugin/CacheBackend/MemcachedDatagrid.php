@@ -343,6 +343,7 @@ class MemcachedDatagrid extends CacheBackendBase {
       ],
       'spec' => [
         'replicas' => $this->environmentType->isPromotedEnvironment($environment) ? 0 : 1,
+        'revisionHistoryLimit' => 1,
         'selector' => array_key_exists('labels', $data) ? array_merge($data['labels'], ['name' => $memcached_name]) : [],
         'strategy' => [
           'type' => 'Rolling',
