@@ -101,6 +101,12 @@ class UpgradeEnvironment extends ViewsBulkOperationsActionBase implements Plugin
       $this->messenger()->addError('No site found for @name.', ['@name' => $entity->label()]);
       return;
     }
+
+    // Set cache plugin from field default value.
+    /** @var \Drupal\Core\Field\FieldDefinitionInterface $cache_backend */
+    $cache_backend = $entity->field_cache_backend->getFieldDefinition();
+    $entity->field_cache_backend->setValue($cache_backend->getDefaultValue($entity));
+
     $this->backupService->upgrade($site, $entity, $this->configuration['version']);
   }
 
