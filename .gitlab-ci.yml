@@ -24,7 +24,7 @@ variables:
   PRIVATE_DIR: /shared/private
   TMP_DIR: /shared/tmp
   REDIS_ENABLED: 0
-  SHEPHERD_INSTALL_PROFILE: ua
+  SHEPHERD_INSTALL_PROFILE: shepherd
   SHEPHERD_SECRET_PATH: /code/private
   SHEPHERD_TOKEN: super-secret-token
   SITE_TITLE: WCMS D8
