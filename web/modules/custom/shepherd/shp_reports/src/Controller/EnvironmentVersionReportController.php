@@ -31,7 +31,7 @@ class EnvironmentVersionReportController extends ControllerBase {
   /**
    * Constructs a \Drupal\aggregator\Controller\AggregatorController object.
    *
-   * @param \Drupal\shp_orchestration\OrchestrationProviderPluginManagerInterface $orchestration_provider_plugin_manager
+   * @param \Drupal\shp_orchestration\OrchestrationProviderInterface $orchestration_provider_plugin_manager
    *   Orchestration provider plugin.
    * @param \Drupal\shp_custom\Service\Environment $environment
    *   Environment service.
