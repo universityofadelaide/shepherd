@@ -1,5 +1,6 @@
 <?php
 
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\node\Entity\Node;
 
@@ -43,5 +44,17 @@ function ua_custom_form_node_shp_environment_form_alter(&$form, FormStateInterfa
   if ($site = $form['field_shp_site']['widget'][0]['target_id']['#default_value']) {
     $project = \Drupal::service('shp_custom.site')->getProject($site);
     $form['field_ua_force_https']['widget']['value']['#default_value'] = $project->field_ua_force_https->value;
+  }
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_presave().
+ */
+function ua_custom_node_presave(EntityInterface $entity) {
+  // If it's an environment save and has the sync flag, force some settings.
+  if ($entity->bundle() === 'shp_environment' && $entity->shp_sync_environment) {
+    $site = $entity->field_shp_site->entity;
+    $project = \Drupal::service('shp_custom.site')->getProject($site);
+    $entity->field_ua_force_https->value = $project->field_ua_force_https->value;
   }
 }

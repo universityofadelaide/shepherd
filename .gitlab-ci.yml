@@ -24,7 +24,7 @@ variables:
   PRIVATE_DIR: /shared/private
   TMP_DIR: /shared/tmp
   REDIS_ENABLED: 0
-  SHEPHERD_INSTALL_PROFILE: ua
+  SHEPHERD_INSTALL_PROFILE: shepherd
   SHEPHERD_SECRET_PATH: /code/private
   SHEPHERD_TOKEN: super-secret-token
   SITE_TITLE: WCMS D8
@@ -64,6 +64,7 @@ build:
     - ./bin/robo build:install
     - ./bin/robo config:import-plus
     - ./bin/robo dev:cache-rebuild
+    - ./bin/drush en shp_cache_backend_test -y
     - apache2 &
     - sleep ${SLEEP_TIME:-0}
     - ./bin/phpunit --stop-on-failure --testsuite kernel
