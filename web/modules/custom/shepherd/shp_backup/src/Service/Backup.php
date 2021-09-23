@@ -170,6 +170,8 @@ class Backup {
       'field_min_replicas' => $environment->field_min_replicas->value,
       'field_shp_secrets' => $environment->field_shp_secrets->value,
       'field_skip_db_prepop' => TRUE,
+      // Set a flag that isn't saved, but can be checked in presave hooks.
+      'shp_sync_environment' => TRUE,
     ]);
     $new_environment->save();
     $result = $this->orchestrationProvider->syncEnvironments(

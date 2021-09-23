@@ -139,6 +139,12 @@ class EnvironmentUpgradeForm extends FormBase {
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $site = $form_state->get('site');
     $environment = $form_state->get('environment');
+
+    // Set cache plugin from field default value.
+    /** @var \Drupal\Core\Field\FieldDefinitionInterface $cache_backend */
+    $cache_backend = $environment->field_cache_backend->getFieldDefinition();
+    $environment->field_cache_backend->setValue($cache_backend->getDefaultValue($environment));
+
     if ($new_env = $this->backup->upgrade($site, $environment, $form_state->getValue('version'))) {
       $this->messenger->addStatus($this->t('Upgrade has been queued, new environment is being synced %title', [
         '%title' => $new_env->getTitle(),
