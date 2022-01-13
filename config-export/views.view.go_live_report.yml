@@ -3,7 +3,9 @@ langcode: en
 status: true
 dependencies:
   config:
+    - field.storage.node.field_shp_domain
     - field.storage.node.field_shp_go_live_date
+    - field.storage.node.field_shp_path
     - node.type.shp_environment
     - system.menu.admin
     - taxonomy.vocabulary.shp_environment_types
@@ -227,6 +229,132 @@ display:
           separator: ', '
           field_api_classes: false
           plugin_id: field
+        field_shp_domain:
+          id: field_shp_domain
+          table: node__field_shp_domain
+          field: field_shp_domain
+          relationship: field_shp_site
+          group_type: group
+          admin_label: ''
+          label: Domain
+          exclude: true
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: true
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: value
+          type: string
+          settings:
+            link_to_entity: false
+          group_column: value
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 0
+          delta_offset: 0
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
+          plugin_id: field
+        field_shp_path:
+          id: field_shp_path
+          table: node__field_shp_path
+          field: field_shp_path
+          relationship: field_shp_site
+          group_type: group
+          admin_label: ''
+          label: Url
+          exclude: false
+          alter:
+            alter_text: true
+            text: '{{ field_shp_domain }}{{ field_shp_path }}'
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: true
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: value
+          type: string
+          settings:
+            link_to_entity: false
+          group_column: value
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 0
+          delta_offset: 0
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
+          plugin_id: field
       filters:
         status:
           id: status
@@ -427,7 +555,7 @@ display:
           plugin_id: standard
       arguments: {  }
       display_extenders: {  }
-      title: 'Site go-live report'
+      title: 'Site go-live with url report'
     cache_metadata:
       max-age: -1
       contexts:
@@ -438,7 +566,9 @@ display:
         - 'user.node_grants:view'
         - user.permissions
       tags:
+        - 'config:field.storage.node.field_shp_domain'
         - 'config:field.storage.node.field_shp_go_live_date'
+        - 'config:field.storage.node.field_shp_path'
   page_1:
     display_plugin: page
     id: page_1
@@ -466,7 +596,31 @@ display:
         - 'user.node_grants:view'
         - user.permissions
       tags:
+        - 'config:field.storage.node.field_shp_domain'
         - 'config:field.storage.node.field_shp_go_live_date'
+        - 'config:field.storage.node.field_shp_path'
+  page_2:
+    display_plugin: page
+    id: page_2
+    display_title: 'Site domain and path report'
+    position: 3
+    display_options:
+      display_extenders: {  }
+      display_description: ''
+      path: admin/reports/site-domain-path-report
+    cache_metadata:
+      max-age: -1
+      contexts:
+        - 'languages:language_content'
+        - 'languages:language_interface'
+        - url.query_args
+        - user
+        - 'user.node_grants:view'
+        - user.permissions
+      tags:
+        - 'config:field.storage.node.field_shp_domain'
+        - 'config:field.storage.node.field_shp_go_live_date'
+        - 'config:field.storage.node.field_shp_path'
   rest_export_1:
     display_plugin: rest_export
     id: rest_export_1
@@ -485,4 +639,6 @@ display:
         - 'user.node_grants:view'
         - user.permissions
       tags:
+        - 'config:field.storage.node.field_shp_domain'
         - 'config:field.storage.node.field_shp_go_live_date'
+        - 'config:field.storage.node.field_shp_path'
