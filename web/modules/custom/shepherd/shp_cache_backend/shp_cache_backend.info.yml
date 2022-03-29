@@ -1,7 +1,7 @@
 name: 'Shepherd Cache Backends'
 type: module
 description: 'Provides integration to different cache backends.'
-core: 8.x
+core_version_requirement: ^9
 package: Shepherd
 dependencies:
   - plugin:plugin
