@@ -33,7 +33,7 @@ class RoboFile extends RoboFileBase {
   /**
    * {@inheritdoc}
    */
-  public function build() {
+  public function build(): void {
     parent::build();
     $this->say("To provide default content for shepherd, use robo dev:drupal-content-generate or robo dev:wordpress-content-generate");
   }

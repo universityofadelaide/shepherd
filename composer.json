@@ -9,38 +9,35 @@
     ],
     "require": {
         "php": "^7.4",
-        "composer-plugin-api": "^1.0",
+        "composer-plugin-api": "^2.0",
         "composer/installers": "^1.2",
         "cweagans/composer-patches": "~1.0",
-        "drupal-composer/drupal-scaffold": "^2.2",
-        "drupal/core": "^8.9",
-        "drupal/drush_cmi_tools": "dev-8.x-2.x",
+        "drupal/core": "^9.3",
+        "drupal/core-composer-scaffold": "^9.3",
         "drupal/entity_reference_revisions": "1.*",
-        "drupal/field_group": "1.*",
-        "drupal/group": "1.*@RC",
+        "drupal/field_group": "3.*",
+        "drupal/group": "1.*",
         "drupal/key_value_field": "1.*",
         "drupal/log_stdout": "1.*",
-        "drupal/plugin": "^2.6",
-        "drupal/r4032login": "1.*",
-        "drupal/redis": "1.*",
-        "drupal/route_condition": "^1.0@beta",
+        "drupal/memcache": "^2.0",
+        "drupal/plugin": "^2.9",
+        "drupal/r4032login": "2.*",
+        "drupal/route_condition": "^2.0",
         "drupal/token": "1.*",
         "drupal/views_bulk_operations": "^4.0",
-        "drush/drush": "9.*",
-        "predis/predis": "^1.1.1",
-        "universityofadelaide/openshift-client": "dev-develop",
-        "universityofadelaide/shepherd-drupal-scaffold": "^4.0",
+        "drush/drush": "11.*",
+        "universityofadelaide/openshift-client": "dev-update-deps",
+        "universityofadelaide/shepherd-drupal-scaffold": "^5.0",
         "webmozart/path-util": "^2.3",
-        "wikimedia/composer-merge-plugin": "^1.4",
-        "zaporylie/composer-drupal-optimizations": "^1.0"
+        "wikimedia/composer-merge-plugin": "^2.0"
     },
     "require-dev": {
-        "dealerdirect/phpcodesniffer-composer-installer": "^0.5.0",
-        "drupal/devel": "^2.1",
-        "mglaman/phpstan-drupal": "^0.11.8",
-        "phpstan/phpstan-deprecation-rules": "^0.11.2",
-        "drupal/core-dev": "^8.9",
-        "weitzman/drupal-test-traits": "^1.2"
+        "dealerdirect/phpcodesniffer-composer-installer": "^0.7.2",
+        "drupal/devel": "^4.1",
+        "mglaman/phpstan-drupal": "^1.1.13",
+        "phpstan/phpstan-deprecation-rules": "^1.0",
+        "drupal/core-dev": "^9.3",
+        "weitzman/drupal-test-traits": "^1.5"
     },
     "conflict": {
         "drupal/drupal": "*"
@@ -50,23 +47,24 @@
     "config": {
         "bin-dir": "bin/",
         "sort-packages": true,
+        "discard-changes": true,
         "platform": {
-            "php": "7.4.0"
+            "php": "7.4"
+        },
+        "allow-plugins": {
+            "dealerdirect/phpcodesniffer-composer-installer": true,
+            "composer/installers": true,
+            "cweagans/composer-patches": true,
+            "zaporylie/composer-drupal-optimizations": true,
+            "universityofadelaide/shepherd-drupal-scaffold": true,
+            "wikimedia/composer-merge-plugin": true,
+            "drupal/core-composer-scaffold": true
         }
     },
-    "autoload": {
-        "classmap": [
-            "scripts/composer/ScriptHandler.php",
-            "scripts/composer/Plugin.php"
-        ]
-    },
     "scripts": {
+        "shepherd-scaffold": "UniversityOfAdelaide\\ShepherdDrupalScaffold\\Plugin::scaffold",
         "post-install-cmd": [
-            "@composer drupal:scaffold",
-            "UniversityOfAdelaide\\Shepherd\\Plugin::scaffold"
-        ],
-        "post-update-cmd": [
-            "echo \"Checking out dsh that scaffold overrides\"; git checkout dsh"
+            "@shepherd-scaffold"
         ]
     },
     "extra": {
@@ -76,19 +74,18 @@
         },
         "installer-paths": {
             "web/core":                     ["type:drupal-core"],
+            "web/libraries/{$name}":        ["type:drupal-library"],
             "web/modules/contrib/{$name}":  ["type:drupal-module"],
             "web/profiles/contrib/{$name}": ["type:drupal-profile"],
             "web/themes/contrib/{$name}":   ["type:drupal-theme"],
-            "web/libraries/{$name}":        ["type:drupal-library"],
-            "web/drush/commands/{$name}":   ["type:drupal-drush"]
+            "drush/contrib/{$name}":        ["type:drupal-drush"]
         },
         "drupal-scaffold": {
-            "initial": {
-                "sites/default/default.services.yml": "sites/default/services.yml",
-                "sites/default/default.settings.php": "sites/default/settings.php"
-            },
+            "allowed-packages": [
+                "drupal/core"
+            ],
             "locations": {
-                "web-root": "web/"
+                "web-root": "./web/"
             }
         }
     }

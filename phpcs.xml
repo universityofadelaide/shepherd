@@ -9,7 +9,7 @@
   <!-- additional arguments -->
   <arg name="report" value="full"/>
   <!-- inherit from coder -->
-  <rule ref="./vendor/drupal/coder/coder_sniffer/Drupal"/>
+<!--  <rule ref="./vendor/drupal/coder/coder_sniffer/Drupal"/>-->
   <!-- Additional detailed sniff configuration -->
   <!-- You can determine sniff names by running with -s flag -->
   <!-- Example 1 - ignore Drupal.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
