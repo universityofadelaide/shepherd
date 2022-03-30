@@ -3,38 +3,25 @@
 # `set +e` is used to continue on errors throughout this script.
 set -euo pipefail
 
-# Ensure script is NOT running inside a container - must be run from host.
-if [ -f /.dockerenv ]; then
-  echo "Inception error - you can't run $0 within a docker container."
-  exit
-fi
-
-# Used as the prefix for docker networking, container naming and nginx hostname.
+# Used as the prefix for docker networking and container naming.
 export PROJECT=$(basename ${PWD})
 # docker-compose stopped stripping chars from project name in 1.21.0.
 export DOCKER_COMPOSE_VERSION=$(docker-compose -v | awk '{print $3}' | rev | cut -c 2- | rev)
 function version { echo "$@" | awk -F. '{ printf("%d%03d%03d%03d\n", $1,$2,$3,$4); }'; }
 if [ $(version ${DOCKER_COMPOSE_VERSION}) -lt $(version "1.21.0") ]; then
-  export PROJECT=$(echo ${PROJECT} | sed 's/[-_]//g')
+  error "Please update docker-compose to >=1.21.0."
 fi
 
-# Determine the OS type of the host machine.
-if [ "$(uname)" == "Darwin" ]; then
-  HOST_TYPE='mac'
-  export DOCKER_COMPOSE_FILE='docker-compose.osx.yml'
-else
+# Set some env vars we use in our slightly modified docker-compose files.
+export HOST_SSH_AUTH_SOCK_DIR=$(dirname ${SSH_AUTH_SOCK})
+export CONTAINER_SSH_AUTH_SOCK=/ssh/$(basename ${SSH_AUTH_SOCK})
+
+if [ ${GITLAB_CI:-false} == "true" ]; then
   HOST_TYPE='linux'
-  export DOCKER_COMPOSE_FILE='docker-compose.linux.yml'
+  export DOCKER_COMPOSE_FILE='docker-compose.ci.yml'
+else
+  export DOCKER_COMPOSE_FILE='docker-compose.osx.yml'
 fi
-
-# Ultimately permit overriding repo docker-compose.yml with custom file.
-if [ -f docker-compose.yml ]; then
-  export DOCKER_COMPOSE_FILE='docker-compose.yml'
-fi
-
-# Set user variables
-export USER_ID=$(id -u ${USER})
-export GROUP_ID=$(id -g ${USER})
 
 # Setup some functions to output warnings.
 notice() {
@@ -49,12 +36,102 @@ error() {
   printf "\e[31;01m$1\e[39;49;00m\n"
 }
 
+# Ensure script is NOT running inside a container - must be run from host.
+if [ -f /.dockerenv ]; then
+  error "Inception error - you can't run $0 within a docker container."
+  exit 1
+fi
+
+dsh_openshift_init() {
+  # Password for the mysql server.
+  SUPER_SECRET_PASSWORD=super-secret-password
+
+  # Path to ssh key with no passphrase.
+  : "${BUILD_KEY:=$HOME/.ssh/id_rsa}"
+
+  # Are we logged in as local developer, if not, bail!
+  if [[ $(oc whoami) != "developer" ]]; then
+    error "You are not logged in as developer, exiting for safety reasons."
+    error "Please login to your local development OpenShift"
+    exit 1
+  fi
+
+  # Setup a new mysql server, expose it and group the services.
+  if ! oc get svc mariadb > /dev/null 2>&1; then
+    oc new-app mariadb MYSQL_ROOT_PASSWORD=${SUPER_SECRET_PASSWORD} -l db=shepherd
+    # Doesn't quite work
+    oc expose service/mariadb
+    # Fails if you try.
+    #oc annotate svc mysql-external "service.alpha.openshift.io/dependencies=[{\"name\": \"mariadb\", \"kind\": \"Service\"}]"
+  fi
+
+  # Setup the database password in an OpenShift secret.
+  if ! oc get secret privileged-db-password > /dev/null 2>&1; then
+    oc create secret generic privileged-db-password --from-literal=DATABASE_PASSWORD=${SUPER_SECRET_PASSWORD}
+  fi
+
+  # Setup the restic password in an OpenShift secret.
+  if ! oc get secret shepherd-restic-secret > /dev/null 2>&1; then
+    oc create secret generic shepherd-restic-secret --from-literal=password=${SUPER_SECRET_PASSWORD}
+  fi
+
+  # Setup the restic PVC for storing backups
+  if ! oc get pvc restic-repository > /dev/null 2>&1; then
+    oc apply -f ./openshift-config/shepherd-restic-repo-pvc.yml
+  fi
+
+  # Import jboss datagrid image.
+  if ! oc get imagestream jboss-datagrid73-openshift > /dev/null 2>&1; then
+    oc import-image jboss-datagrid73-openshift --from='registry.access.redhat.com/jboss-datagrid-7/datagrid73-openshift' --confirm
+  fi
+
+  # Setup datagrid config
+  if ! oc get configmap datagrid-config > /dev/null 2>&1; then
+    # Fails with:
+    # error: unable to recognize "openshift-config/datagrid/jdg-allow-8778.yml": no matches for kind "NetworkPolicy" in version "extensions/v1beta1"
+    oc apply -f ./openshift-config/datagrid
+  fi
+
+  # Add local ssh key as build-key secret if it exists and has no passphrase.
+  if ! oc get secret build-key > /dev/null 2>&1 && [ -f "${BUILD_KEY}" ] && ! grep -q ENCRYPTED "${BUILD_KEY}"; then
+    oc create secret generic build-key --from-file=ssh-privatekey="${BUILD_KEY}"
+  else
+    echo "build-key passwordless secret not created, builds will likely be broken."
+  fi
+
+  # Create a permanent token that shepherd can use to talk to OpenShift.
+  if ! oc get serviceaccount shepherd > /dev/null 2>&1; then
+    oc create serviceaccount shepherd
+    oc policy add-role-to-user admin system:serviceaccount:myproject:shepherd
+  fi
+
+  # Retrieve the service account token and the minishift ip.
+  SERVICE_ACCOUNT=$(oc describe serviceaccount shepherd | grep Token | awk '{ print $2 }')
+
+  # Now set the things that we need in the dsh shell.
+  TOKEN=$(oc describe secret ${SERVICE_ACCOUNT} | grep "token:" | awk '{ print $2 }')
+  if [ "${OPENSHIFT_TYPE}" == "minishift" ]; then
+    OPENSHIFT_IP=$(minishift ip)
+    OPENSHIFT_DOMAIN="${OPENSHIFT_IP}.nip.io"
+    OPENSHIFT_URL="https://${OPENSHIFT_IP}:8443"
+    DB_HOST="mysql-myproject.${OPENSHIFT_DOMAIN}"
+    DB_PORT=$(oc get service mysql-external --no-headers | sed 's/.*:\([0-9]*\).*/\1/')
+  else
+    OPENSHIFT_IP=$(oc status | grep 'server https' | sed 's/.*https:\/\/\([0-9a-z\.]*\).*/\1/')
+    OPENSHIFT_DOMAIN="${OPENSHIFT_IP}.nip.io"
+    OPENSHIFT_URL="https://172.17.0.1:8443"
+    DB_HOST=172.17.0.1
+    DB_PORT=3306
+  fi
+}
+
 # Command: ./dsh start
 # Configures environment then brings up project using docker-compose.yml file.
 dsh_start() {
+  dsh_openshift_init
   notice "Starting project containers."
+  export URL="http://127.0.0.1:8000"
   docker-compose -f ${DOCKER_COMPOSE_FILE} up -d
-  export URL="http://127.0.0.1"
   notice "Please wait about 10 seconds for the database to settle.
 You can now access the site from ${URL}.
 Project files are available in /code, You may need to build and install your
@@ -68,29 +145,28 @@ dsh_shell() {
   dsh_start
 
   docker-compose -f ${DOCKER_COMPOSE_FILE} exec \
-   -e COLUMNS="$(tput cols)" \
-   -e LINES="$(tput lines)" \
-   web ${@:-./dsh_bash}
+    --env SSH_AUTH_SOCK=${CONTAINER_SSH_AUTH_SOCK} \
+    --env TOKEN=${TOKEN} \
+    --env DB_HOST=${DB_HOST} \
+    --env DB_PORT=${DB_PORT} \
+    --env OPENSHIFT_DOMAIN=${OPENSHIFT_DOMAIN} \
+    --env OPENSHIFT_URL=${OPENSHIFT_URL} \
+    --env COLUMNS="$(tput cols)" \
+    --env LINES="$(tput lines)" \
+    web ${@:-/bin/bash}
 }
 
 # Command: ./dsh stop
-# Stops project and brings down network after disconnecting nginx proxy.
+# Stops project and brings down network.
 dsh_stop() {
   notice "Stopping containers."
   docker-compose -f ${DOCKER_COMPOSE_FILE} stop
 }
 
-# Command: ./dsh down
-# Stops project, then takes down containers and removes volumes if possible.
-dsh_down() {
-  docker-compose -f ${DOCKER_COMPOSE_FILE} down -v
-}
-
 # Command: ./dsh purge
-# Stops project, then takes down containers, removes volumes and remove dev image.
+# Stops project, then takes down containers and removes volumes if possible.
 dsh_purge() {
-  dsh_down
-  docker rmi -f uofa/s2i-shepherd-drupal-dev
+  docker-compose -f ${DOCKER_COMPOSE_FILE} down -v
 }
 
 # Command: ./dsh status
@@ -105,119 +181,19 @@ dsh_logs() {
   docker-compose -f ${DOCKER_COMPOSE_FILE} logs -f web
 }
 
-dsh_project() {
-  set +e
-  if [ -f dsh.project ]; then
-    source dsh.project
-  fi
-  set -e
-}
-
 # Command: ./dsh pull
 # Fetches all images used by the project.
 dsh_pull() {
-  # docker-compose doesn't resolve sub-dependencies in Dockerfiles and that's ok.
+  # docker-compose doesn't resolve sub-dependencies in Dockerfiles.
+  docker pull uofa/s2i-shepherd-drupal
   docker-compose -f ${DOCKER_COMPOSE_FILE} pull --ignore-pull-failures
-  # Check for dependent image updates with --pull before building.
-  docker-compose -f ${DOCKER_COMPOSE_FILE} build --pull
-}
-
-# Command: ./dsh nfs
-# Sets up NFS integration for OSX.
-NFS_FILE=/etc/exports
-NFS_LINE="/Users -alldirs -mapall=${USER_ID}:${GROUP_ID} localhost"
-dsh_setup_nfs() {
-  if [ ${HOST_TYPE} != "mac" ]; then
-    echo "This script is OSX-only. Please do not run it on any other Unix."
-    exit 1
-  fi
-
-  if [[ $EUID -eq 0 ]]; then
-    echo "This script must NOT be run with sudo/root. Please re-run without sudo." 1>&2
-    exit 1
-  fi
-
-  echo ""
-  echo " +-----------------------------+"
-  echo " | Setup native NFS for Docker |"
-  echo " +-----------------------------+"
-  echo ""
-
-  echo "WARNING: This script will shut down running containers."
-  echo ""
-  echo -n "Do you wish to proceed? [y]: "
-  read decision
-
-  if [ "$decision" != "y" ]; then
-    echo "Exiting. No changes made."
-    exit 1
-  fi
-
-  echo ""
-
-  if ! docker ps > /dev/null 2>&1 ; then
-    echo "== Waiting for docker to start..."
-  fi
-
-  open -a Docker
-
-  while ! docker ps > /dev/null 2>&1 ; do sleep 2; done
-
-  echo "== Stopping running docker containers..."
-  docker-compose -f ${DOCKER_COMPOSE_FILE} down > /dev/null 2>&1
-  docker volume prune -f > /dev/null
-
-  osascript -e 'quit app "Docker"'
-
-  echo "== Resetting folder permissions..."
-  sudo chown -R "${USER_ID}:${GROUP_ID}" .
-
-  echo "== Setting up nfs..."
-  sudo cp /dev/null "$NFS_FILE"
-  grep -qF -- "$NFS_LINE" "$NFS_FILE" || sudo echo "$NFS_LINE" | sudo tee -a "$NFS_FILE" > /dev/null
-
-  LINE="nfs.server.mount.require_resv_port = 0"
-  FILE=/etc/nfs.conf
-  grep -qF -- "$LINE" "$FILE" || sudo echo "$LINE" | sudo tee -a "$FILE" > /dev/null
-
-  echo "== Restarting nfsd..."
-  sudo nfsd restart
-
-  echo "== Restarting docker..."
-  open -a Docker
-
-  while ! docker ps > /dev/null 2>&1 ; do sleep 2; done
-
-  echo ""
-  echo "SUCCESS! Now go run your containers 🐳"
-}
-
-# Command: ./dsh rnfs
-# Removes nfs setup.
-dsh_remove_nfs() {
-  if [ ${HOST_TYPE} != "mac" ]; then
-    echo "This script is OSX-only. Please do not run it on any other Unix."
-    exit 1
-  fi
-
-  if [[ $EUID -eq 0 ]]; then
-    echo "This script must NOT be run with sudo/root. Please re-run without sudo." 1>&2
-    exit 1
-  fi
-
-  echo "== Removing nfsd exports..."
-  sudo sed -i '' "/$(echo "$NFS_LINE" | sed 's/\//\\\//g')/d" ${NFS_FILE}
-  echo "== Restarting nfsd..."
-  sudo nfsd restart
-  echo "== Done"
+  docker-compose -f ${DOCKER_COMPOSE_FILE} build
 }
 
 dsh_help() {
   printf "\nUsage: dsh COMMAND\n\n
 Commands:\n
 \thelp\tShow this help.\n
-\tnfs\tSetup NFS for macOS.\n
-\trnfs\tRemove NFS for macOS.\n
 \tpurge\tPurge the docker containers, network and proxy and remove all data.\n
 \tshell\tStart a shell which is connected to the containers and can be used to run commands.\n
 \tstart\tStart the docker containers, network and proxy.\n
@@ -231,9 +207,6 @@ Commands can be shortened to their uniqe component, eg ./dsh sh is the same as .
 COMMAND=${1:-default}
 
 case ${COMMAND} in
-  dow*)
-    dsh_down
-    ;;
   e*)
     dsh_shell ${@:2}
     ;;
@@ -268,7 +241,7 @@ case ${COMMAND} in
     dsh_stop
     ;;
   *)
-    warning "Unknown command specified, defaulting to shell. For other options try:\n$0 [down|help|logs|purge|shell|start|status|stop].\n"
+    warning "Unknown command specified, defaulting to shell. For other options try:\n$0 [help|logs|purge|shell|start|status|stop].\n"
     dsh_shell
     ;;
 esac
