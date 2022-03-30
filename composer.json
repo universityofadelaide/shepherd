@@ -4,7 +4,7 @@
     "type": "project",
     "license": "MIT",
     "repositories": [
-        {"type": "git", "url": "https://github.com/previousnext/drush_cmi_tools.git"},
+        {"type": "git", "url": "git@github.com:universityofadelaide/shepherd-drupal-scaffold.git"},
         {"type": "composer", "url": "https://packages.drupal.org/8"}
     ],
     "require": {
@@ -12,6 +12,7 @@
         "composer-plugin-api": "^2.0",
         "composer/installers": "^1.2",
         "cweagans/composer-patches": "~1.0",
+        "drupal/config_ignore": "^2.3",
         "drupal/core": "^9.3",
         "drupal/core-composer-scaffold": "^9.3",
         "drupal/entity_reference_revisions": "1.*",
@@ -25,11 +26,10 @@
         "drupal/route_condition": "^2.0",
         "drupal/token": "1.*",
         "drupal/views_bulk_operations": "^4.0",
-        "drush/drush": "11.*",
+        "drush/drush": "^10",
         "universityofadelaide/openshift-client": "dev-update-deps",
         "universityofadelaide/shepherd-drupal-scaffold": "^5.0",
-        "webmozart/path-util": "^2.3",
-        "wikimedia/composer-merge-plugin": "^2.0"
+        "webmozart/path-util": "^2.3"
     },
     "require-dev": {
         "dealerdirect/phpcodesniffer-composer-installer": "^0.7.2",
@@ -37,6 +37,7 @@
         "mglaman/phpstan-drupal": "^1.1.13",
         "phpstan/phpstan-deprecation-rules": "^1.0",
         "drupal/core-dev": "^9.3",
+        "roave/security-advisories": "dev-latest",
         "weitzman/drupal-test-traits": "^1.5"
     },
     "conflict": {
@@ -55,10 +56,9 @@
             "dealerdirect/phpcodesniffer-composer-installer": true,
             "composer/installers": true,
             "cweagans/composer-patches": true,
-            "zaporylie/composer-drupal-optimizations": true,
             "universityofadelaide/shepherd-drupal-scaffold": true,
-            "wikimedia/composer-merge-plugin": true,
-            "drupal/core-composer-scaffold": true
+            "drupal/core-composer-scaffold": true,
+            "drupal-composer/drupal-scaffold": true
         }
     },
     "scripts": {
@@ -86,6 +86,13 @@
             ],
             "locations": {
                 "web-root": "./web/"
+            },
+            "file-mapping": {
+                "[web-root]/sites/default/settings.php": {
+                    "mode": "replace",
+                    "path": "web/sites/default/default.settings.php",
+                    "overwrite": false
+                }
             }
         }
     }

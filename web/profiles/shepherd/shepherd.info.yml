@@ -40,6 +40,8 @@ dependencies:
   - views_ui
 
   # Contributed modules
+  - config_filter
+  - config_ignore
   - drush_cmi_tools
   - entity_reference_revisions
   - field_group
@@ -52,6 +54,7 @@ dependencies:
   - r4032login
   - route_condition
   - token
+  - views_bulk_operations
 
   # Shepherd modules
   - shp_backup
