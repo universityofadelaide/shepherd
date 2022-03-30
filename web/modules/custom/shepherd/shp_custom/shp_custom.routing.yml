@@ -8,7 +8,7 @@ shp_custom.api_site_environments:
 shp_custom.add_project:
   path: '/projects/add'
   defaults:
-    _controller: '\Drupal\node\Controller\NodeController::add'
+    _entity_form: 'node.default'
     _title_callback: '\Drupal\node\Controller\NodeController::addPageTitle'
     node_type: shp_project
   requirements:
@@ -21,7 +21,7 @@ shp_custom.add_project:
 shp_custom.add_environment:
   path: '/site/{site_id}/environments/add'
   defaults:
-    _controller: '\Drupal\node\Controller\NodeController::add'
+    _entity_form: 'node.default'
     _title_callback: '\Drupal\node\Controller\NodeController::addPageTitle'
     node_type: shp_environment
   requirements:
@@ -36,7 +36,7 @@ shp_custom.add_environment:
 shp_custom.add_site:
   path: '/add'
   defaults:
-    _controller: '\Drupal\node\Controller\NodeController::add'
+    _entity_form: 'node.default'
     _title_callback: '\Drupal\node\Controller\NodeController::addPageTitle'
     node_type: shp_site
   requirements:
