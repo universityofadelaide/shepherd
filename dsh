@@ -4,20 +4,17 @@
 set -euo pipefail
 
 # Used as the prefix for docker networking and container naming.
-export PROJECT=$(basename ${PWD})
-# docker-compose stopped stripping chars from project name in 1.21.0.
-export DOCKER_COMPOSE_VERSION=$(docker-compose -v | awk '{print $3}' | rev | cut -c 2- | rev)
-function version { echo "$@" | awk -F. '{ printf("%d%03d%03d%03d\n", $1,$2,$3,$4); }'; }
-if [ $(version ${DOCKER_COMPOSE_VERSION}) -lt $(version "1.21.0") ]; then
-  error "Please update docker-compose to >=1.21.0."
-fi
+PROJECT=$(basename "${PWD}")
+export PROJECT
 
 # Set some env vars we use in our slightly modified docker-compose files.
-export HOST_SSH_AUTH_SOCK_DIR=$(dirname ${SSH_AUTH_SOCK})
-export CONTAINER_SSH_AUTH_SOCK=/ssh/$(basename ${SSH_AUTH_SOCK})
+HOST_SSH_AUTH_SOCK_DIR=$(dirname "${SSH_AUTH_SOCK}")
+export HOST_SSH_AUTH_SOCK_DIR
 
-if [ ${GITLAB_CI:-false} == "true" ]; then
-  HOST_TYPE='linux'
+CONTAINER_SSH_AUTH_SOCK=/ssh/$(basename "${SSH_AUTH_SOCK}")
+export CONTAINER_SSH_AUTH_SOCK
+
+if [ "${GITLAB_CI:-false}" == "true" ]; then
   export DOCKER_COMPOSE_FILE='docker-compose.ci.yml'
 else
   export DOCKER_COMPOSE_FILE='docker-compose.osx.yml'
@@ -25,15 +22,15 @@ fi
 
 # Setup some functions to output warnings.
 notice() {
-  printf "\e[32;01m$1\e[39;49;00m\n"
+  printf "\e[32;01m%s\e[39;49;00m\n" "$1"
 }
 
 warning() {
-  printf "\e[33;01m$1\e[39;49;00m\n"
+  printf "\e[33;01m%s\e[39;49;00m\n" "$1"
 }
 
 error() {
-  printf "\e[31;01m$1\e[39;49;00m\n"
+  printf "\e[31;01m%s\e[39;49;00m\n" "$1"
 }
 
 # Ensure script is NOT running inside a container - must be run from host.
@@ -56,13 +53,14 @@ dsh_openshift_init() {
     exit 1
   fi
 
+  # Create new namespace/project for Openshift 4.x
+  oc new-project shepherd
+
   # Setup a new mysql server, expose it and group the services.
   if ! oc get svc mariadb > /dev/null 2>&1; then
     oc new-app mariadb MYSQL_ROOT_PASSWORD=${SUPER_SECRET_PASSWORD} -l db=shepherd
-    # Doesn't quite work
-    oc expose service/mariadb
-    # Fails if you try.
-    #oc annotate svc mysql-external "service.alpha.openshift.io/dependencies=[{\"name\": \"mariadb\", \"kind\": \"Service\"}]"
+    oc expose dc mariadb --type=LoadBalancer --name=mysql-external
+    oc annotate svc mysql-external "service.alpha.openshift.io/dependencies=[{\"name\": \"mariadb\", \"kind\": \"Service\"}]"
   fi
 
   # Setup the database password in an OpenShift secret.
@@ -80,15 +78,9 @@ dsh_openshift_init() {
     oc apply -f ./openshift-config/shepherd-restic-repo-pvc.yml
   fi
 
-  # Import jboss datagrid image.
-  if ! oc get imagestream jboss-datagrid73-openshift > /dev/null 2>&1; then
-    oc import-image jboss-datagrid73-openshift --from='registry.access.redhat.com/jboss-datagrid-7/datagrid73-openshift' --confirm
-  fi
-
   # Setup datagrid config
   if ! oc get configmap datagrid-config > /dev/null 2>&1; then
     # Fails with:
-    # error: unable to recognize "openshift-config/datagrid/jdg-allow-8778.yml": no matches for kind "NetworkPolicy" in version "extensions/v1beta1"
     oc apply -f ./openshift-config/datagrid
   fi
 
@@ -111,17 +103,10 @@ dsh_openshift_init() {
   # Now set the things that we need in the dsh shell.
   TOKEN=$(oc describe secret ${SERVICE_ACCOUNT} | grep "token:" | awk '{ print $2 }')
   if [ "${OPENSHIFT_TYPE}" == "minishift" ]; then
-    OPENSHIFT_IP=$(minishift ip)
-    OPENSHIFT_DOMAIN="${OPENSHIFT_IP}.nip.io"
-    OPENSHIFT_URL="https://${OPENSHIFT_IP}:8443"
+    OPENSHIFT_DOMAIN="apps-crc.testing"
+    OPENSHIFT_URL="https://api.crc.testing:6443"
     DB_HOST="mysql-myproject.${OPENSHIFT_DOMAIN}"
     DB_PORT=$(oc get service mysql-external --no-headers | sed 's/.*:\([0-9]*\).*/\1/')
-  else
-    OPENSHIFT_IP=$(oc status | grep 'server https' | sed 's/.*https:\/\/\([0-9a-z\.]*\).*/\1/')
-    OPENSHIFT_DOMAIN="${OPENSHIFT_IP}.nip.io"
-    OPENSHIFT_URL="https://172.17.0.1:8443"
-    DB_HOST=172.17.0.1
-    DB_PORT=3306
   fi
 }
 
@@ -144,8 +129,8 @@ Connecting via ./dsh shell and running robo build is a common next step."
 dsh_shell() {
   dsh_start
 
-  docker-compose -f ${DOCKER_COMPOSE_FILE} exec \
-    --env SSH_AUTH_SOCK=${CONTAINER_SSH_AUTH_SOCK} \
+  docker-compose -f "${DOCKER_COMPOSE_FILE}" exec \
+    --env SSH_AUTH_SOCK="${CONTAINER_SSH_AUTH_SOCK}" \
     --env TOKEN=${TOKEN} \
     --env DB_HOST=${DB_HOST} \
     --env DB_PORT=${DB_PORT} \
@@ -215,12 +200,6 @@ case ${COMMAND} in
     ;;
   l*)
     dsh_logs
-    ;;
-  nfs)
-    dsh_setup_nfs
-    ;;
-  rnfs)
-    dsh_remove_nfs
     ;;
   pul*)
     dsh_pull
