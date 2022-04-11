@@ -36,7 +36,7 @@ spec:
               value: '8888'
             - name: AB_ENABLE_PROMETHEUS
               value: 'true'
-          image: 172.30.1.1:5000/myproject/jboss-datagrid73-openshift:latest
+          image: jboss/infinispan-server:9.4.1.Final
           imagePullPolicy: Always
           livenessProbe:
             exec:
