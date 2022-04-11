@@ -10,35 +10,19 @@ if [ -f /.dockerenv ]; then
 fi
 
 openshift_start() {
-  docker run -d --name microshift --privileged -v microshift-data:/var/lib -p 6443:6443 quay.io/microshift/microshift-aio:latest
-  # Perform some slight shenanigans to get stuff working in microshift.
-  docker exec -it microshift oc adm new-project openshift-config
-  docker exec -it microshift yum -y install git podman python39 python39-pyyaml
-  docker exec -it microshift bash -c "cat /var/lib/microshift/resources/kubelet/config/config.yaml | python3 -c 'import sys, yaml, json
-json.dump(yaml.load(stream=sys.stdin, Loader=yaml.Loader), sys.stdout, indent=4)' > /var/lib/kubelet/config.json
-  "
-  docker exec -it microshift bash -c "cat <<EOF | oc apply -n openshift-config -f -
-apiVersion: config.openshift.io/v1
-kind: Image
-metadata:
-  name: cluster
-spec:
-  additionalTrustedCA:
-    name: \"openshift-service-ca.crt\"
-EOF"
-
+  crc setup
+  crc start
   echo "Wait a few seconds and then start shepherd with ./dsh"
 }
 
 openshift_stop() {
   ./dsh stop
-  docker stop microshift
+  crc stop
 }
 
 openshift_purge() {
   ./dsh purge
-  docker stop microshift
-  docker rm microshift
+  crc delete
 }
 
 COMMAND=${1:-default}
