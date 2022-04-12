@@ -11,8 +11,14 @@ fi
 
 openshift_start() {
   crc setup
+  echo "Starting CodeReady Containers."
+  echo "Expect 20+ minutes from fresh setup, 8+ minutes subsequent. Coffee?"
   crc start
-  echo "Wait a few seconds and then start shepherd with ./dsh"
+  echo "Logging in."
+  oc login -u developer https://api.crc.testing:6443
+  echo "Waiting a few seconds."
+  sleep 5
+  ./dsh
 }
 
 openshift_stop() {

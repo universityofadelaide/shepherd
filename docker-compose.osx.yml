@@ -1,3 +1,6 @@
+#
+# Note that development on OSX is not currently updated/supported.
+#
 version: '3'
 services:
   web:

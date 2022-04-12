@@ -14,7 +14,7 @@ $openshift_url = getenv("OPENSHIFT_URL") ?: 'https://192.168.99.100:8443';
 $example_repository = getenv("DRUPAL_EXAMPLE_REPOSITORY") ?:
     'https://github.com/universityofadelaide/shepherd-example-drupal.git';
 
-$database_host = getenv("DB_HOST") ?: 'mysql-myproject.' . $domain_name;
+$database_host = getenv("DB_HOST") ?: 'mysql-external.' . $domain_name;
 $database_port = getenv("DB_PORT") ?: '31632';
 
 // Check that required variables are actually set.
@@ -43,7 +43,7 @@ $db_provisioner_config->save();
 $openshift_config = [
   'endpoint'   => $openshift_url,
   'token'      => $token,
-  'namespace'  => 'myproject',
+  'namespace'  => 'shepherd',
   'verify_tls' => FALSE,
 ];
 $orchestration_config = \Drupal::service('config.factory')->getEditable('shp_orchestration.settings');
@@ -125,7 +125,7 @@ if (!$site = reset($nodes)) {
     'uid'                       => '1',
     'status'                    => 1,
     'title'                     => 'Drupal Test Site',
-    'field_shp_namespace'       => 'myproject',
+    'field_shp_namespace'       => 'shepherd',
     'field_shp_short_name'      => 'test',
     'field_shp_domain'          => 'test-live.' . $domain_name,
     'field_shp_git_default_ref' => 'master',

@@ -14,10 +14,13 @@ export HOST_SSH_AUTH_SOCK_DIR
 CONTAINER_SSH_AUTH_SOCK=/ssh/$(basename "${SSH_AUTH_SOCK}")
 export CONTAINER_SSH_AUTH_SOCK
 
+OPENSHIFT_IP="$(crc ip)"
+export OPENSHIFT_IP
+
 if [ "${GITLAB_CI:-false}" == "true" ]; then
   export DOCKER_COMPOSE_FILE='docker-compose.ci.yml'
 else
-  export DOCKER_COMPOSE_FILE='docker-compose.osx.yml'
+  export DOCKER_COMPOSE_FILE='docker-compose.linux.yml'
 fi
 
 # Setup some functions to output warnings.
@@ -54,9 +57,13 @@ dsh_openshift_init() {
   fi
 
   # Create new namespace/project for Openshift 4.x
-  oc new-project shepherd
+  echo "Ensuring shepherd project exists."
+  if ! oc get project shepherd > /dev/null 2>&1; then
+    oc new-project shepherd
+  fi
 
   # Setup a new mysql server, expose it and group the services.
+  echo "Ensuring mariadb service exists"
   if ! oc get svc mariadb > /dev/null 2>&1; then
     oc new-app mariadb MYSQL_ROOT_PASSWORD=${SUPER_SECRET_PASSWORD} -l db=shepherd
     oc expose dc mariadb --type=LoadBalancer --name=mysql-external
@@ -64,34 +71,42 @@ dsh_openshift_init() {
   fi
 
   # Setup the database password in an OpenShift secret.
+  echo "Ensuring database secret exists."
   if ! oc get secret privileged-db-password > /dev/null 2>&1; then
     oc create secret generic privileged-db-password --from-literal=DATABASE_PASSWORD=${SUPER_SECRET_PASSWORD}
   fi
 
   # Setup the restic password in an OpenShift secret.
+  echo "Ensuring restic secret exists."
   if ! oc get secret shepherd-restic-secret > /dev/null 2>&1; then
     oc create secret generic shepherd-restic-secret --from-literal=password=${SUPER_SECRET_PASSWORD}
   fi
 
   # Setup the restic PVC for storing backups
-  if ! oc get pvc restic-repository > /dev/null 2>&1; then
+    echo "Ensuring restic pvc exists."
+if ! oc get pvc restic-repository > /dev/null 2>&1; then
     oc apply -f ./openshift-config/shepherd-restic-repo-pvc.yml
   fi
 
   # Setup datagrid config
+  echo "Ensuring datagrid config exists."
   if ! oc get configmap datagrid-config > /dev/null 2>&1; then
     # Fails with:
     oc apply -f ./openshift-config/datagrid
   fi
 
   # Add local ssh key as build-key secret if it exists and has no passphrase.
-  if ! oc get secret build-key > /dev/null 2>&1 && [ -f "${BUILD_KEY}" ] && ! grep -q ENCRYPTED "${BUILD_KEY}"; then
-    oc create secret generic build-key --from-file=ssh-privatekey="${BUILD_KEY}"
-  else
-    echo "build-key passwordless secret not created, builds will likely be broken."
+  echo "Ensuring build secret exists."
+  if ! oc get secret build-key > /dev/null 2>&1; then
+    if [ -f "${BUILD_KEY}" ] && ! grep -q ENCRYPTED "${BUILD_KEY}"; then
+      oc create secret generic build-key --from-file=ssh-privatekey="${BUILD_KEY}"
+    else
+      echo "build-key passwordless secret not created, builds will likely be broken."
+    fi
   fi
 
   # Create a permanent token that shepherd can use to talk to OpenShift.
+  echo "Ensuring serviceaccount exists for token."
   if ! oc get serviceaccount shepherd > /dev/null 2>&1; then
     oc create serviceaccount shepherd
     oc policy add-role-to-user admin system:serviceaccount:myproject:shepherd
@@ -102,12 +117,10 @@ dsh_openshift_init() {
 
   # Now set the things that we need in the dsh shell.
   TOKEN=$(oc describe secret ${SERVICE_ACCOUNT} | grep "token:" | awk '{ print $2 }')
-  if [ "${OPENSHIFT_TYPE}" == "minishift" ]; then
-    OPENSHIFT_DOMAIN="apps-crc.testing"
-    OPENSHIFT_URL="https://api.crc.testing:6443"
-    DB_HOST="mysql-myproject.${OPENSHIFT_DOMAIN}"
-    DB_PORT=$(oc get service mysql-external --no-headers | sed 's/.*:\([0-9]*\).*/\1/')
-  fi
+  OPENSHIFT_DOMAIN="apps-crc.testing"
+  OPENSHIFT_URL="https://api.crc.testing:6443"
+  DB_HOST="mysql-external.${OPENSHIFT_DOMAIN}"
+  DB_PORT=$(oc get service mysql-external --no-headers | sed 's/.*:\([0-9]*\).*/\1/')
 }
 
 # Command: ./dsh start

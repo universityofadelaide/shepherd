@@ -37,6 +37,8 @@ services:
       # change to the web directory and create a symlink to the subpath name eg ln -s . subpath
       # WEB_PATH: /subpath
       XDEBUG_CONFIG: "remote_host=172.17.0.1"
+    extra_hosts:
+      - "api.crc.testing:${OPENSHIFT_IP:-192.168.130.11}"
     volumes:
       - .:/code
       - ./shared:/shared
