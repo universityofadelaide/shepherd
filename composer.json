@@ -61,6 +61,11 @@
             "drupal-composer/drupal-scaffold": true
         }
     },
+    "autoload": {
+        "psr-4": {
+            "UniversityOfAdelaide\\ShepherdDrupalScaffold\\actions\\": "scripts/composer/"
+        }
+    },
     "scripts": {
         "shepherd-scaffold": "UniversityOfAdelaide\\ShepherdDrupalScaffold\\Plugin::scaffold",
         "post-install-cmd": [
