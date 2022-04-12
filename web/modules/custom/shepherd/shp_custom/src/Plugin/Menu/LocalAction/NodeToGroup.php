@@ -15,7 +15,7 @@ class NodeToGroup extends WithDestination {
    * {@inheritdoc}
    */
   public function getRouteParameters(RouteMatchInterface $route_match) {
-    $parameters = isset($this->pluginDefinition['route_parameters']) ? $this->pluginDefinition['route_parameters'] : [];
+    $parameters = $this->pluginDefinition['route_parameters'] ?? [];
     $route = $this->routeProvider->getRouteByName($this->getRouteName());
     $variables = $route->compile()->getVariables();
 
