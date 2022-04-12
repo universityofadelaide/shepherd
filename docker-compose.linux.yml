@@ -1,4 +1,3 @@
-
 version: '3'
 services:
   web:
@@ -22,7 +21,7 @@ services:
       MEMCACHE_ENABLED: 0
       MEMCACHE_HOST: memcached
       PHP_IDE_CONFIG: serverName=${PROJECT}.${DOMAIN}
-      REDIS_ENABLED: 0
+      REDIS_ENABLED: 1
       REDIS_HOST: redis
       # REDIS_PASSWORD: testing
       SHEPHERD_INSTALL_PROFILE: shepherd
@@ -37,8 +36,6 @@ services:
       # change to the web directory and create a symlink to the subpath name eg ln -s . subpath
       # WEB_PATH: /subpath
       XDEBUG_CONFIG: "remote_host=172.17.0.1"
-    extra_hosts:
-      - "api.crc.testing:${OPENSHIFT_IP:-192.168.130.11}"
     volumes:
       - .:/code
       - ./shared:/shared
@@ -49,7 +46,7 @@ services:
   db:
     image: mariadb
     ports:
-      - "3306:3306"
+      - 3306:3306
     environment:
       MYSQL_DATABASE: drupal
       MYSQL_USER: user
@@ -61,10 +58,9 @@ services:
   mail:
     image: mailhog/mailhog
     ports:
-      - "8025:80"
+      - 8025:80
     environment:
       VIRTUAL_HOST: mail.${PROJECT}.${DOMAIN}
-      VIRTUAL_PORT: 8025
     networks:
       - default
 
@@ -72,19 +68,33 @@ services:
     image: redis:alpine
     command: |
       redis-server
-      --maxmemory 512mb
+      --maxmemory 512Mi
       --maxmemory-policy allkeys-lru
       --save ""
+    # --requirepass password
     networks:
       - default
 
   memcached:
-    image: memcached:alpine
+    image: jboss/infinispan-server:9.4.11.Final
+    ports:
+      - "9990:9990"
+    environment:
+      APP_USER: user
+      APP_PASS: pass
+      MGMT_USER: admin
+      MGMT_PASS: admin
+    entrypoint:
+      - docker-entrypoint.sh
+      - -c
+      - standalone-memcached.xml
+    volumes:
+      - ./docker/standalone-memcached.xml:/opt/jboss/infinispan-server/standalone/configuration/standalone-memcached.xml
     networks:
       - default
 
   selenium:
-    image: selenium/standalone-chrome:latest
+    image: selenium/standalone-chrome:3.141.59-oxygen
     volumes:
       - /dev/shm:/dev/shm
     networks:

@@ -36,7 +36,7 @@ spec:
               value: '8888'
             - name: AB_ENABLE_PROMETHEUS
               value: 'true'
-          image: jboss/infinispan-server:9.4.1.Final
+          image: 172.30.1.1:5000/myproject/jboss-datagrid73-openshift:latest
           imagePullPolicy: Always
           livenessProbe:
             exec:
@@ -61,7 +61,13 @@ spec:
               name: ping
               protocol: TCP
             - containerPort: 11211
-              name: mc-shepherd
+              name: mc-sheperd
+              protocol: TCP
+            - containerPort: 11311
+              name: mc-node61
+              protocol: TCP
+            - containerPort: 11314
+              name: node-8-mc
               protocol: TCP
           readinessProbe:
             exec:

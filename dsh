@@ -4,36 +4,43 @@
 set -euo pipefail
 
 # Used as the prefix for docker networking and container naming.
-PROJECT=$(basename "${PWD}")
-export PROJECT
+export PROJECT=$(basename ${PWD})
+# docker-compose stopped stripping chars from project name in 1.21.0.
+export DOCKER_COMPOSE_VERSION=$(docker-compose -v | awk '{print $3}' | rev | cut -c 2- | rev)
+function version { echo "$@" | awk -F. '{ printf("%d%03d%03d%03d\n", $1,$2,$3,$4); }'; }
+if [ $(version ${DOCKER_COMPOSE_VERSION}) -lt $(version "1.21.0") ]; then
+  error "Please update docker-compose to >=1.21.0."
+fi
 
 # Set some env vars we use in our slightly modified docker-compose files.
-HOST_SSH_AUTH_SOCK_DIR=$(dirname "${SSH_AUTH_SOCK}")
-export HOST_SSH_AUTH_SOCK_DIR
+export HOST_SSH_AUTH_SOCK_DIR=$(dirname ${SSH_AUTH_SOCK})
+export CONTAINER_SSH_AUTH_SOCK=/ssh/$(basename ${SSH_AUTH_SOCK})
 
-CONTAINER_SSH_AUTH_SOCK=/ssh/$(basename "${SSH_AUTH_SOCK}")
-export CONTAINER_SSH_AUTH_SOCK
-
-OPENSHIFT_IP="$(crc ip)"
-export OPENSHIFT_IP
-
-if [ "${GITLAB_CI:-false}" == "true" ]; then
+if [ ${GITLAB_CI:-false} == "true" ]; then
+  HOST_TYPE='linux'
   export DOCKER_COMPOSE_FILE='docker-compose.ci.yml'
 else
-  export DOCKER_COMPOSE_FILE='docker-compose.linux.yml'
+  # Determine the OS type of the host machine.
+  if [ "$(uname)" == "Darwin" ]; then
+    HOST_TYPE='mac'
+    export DOCKER_COMPOSE_FILE='docker-compose.osx.yml'
+  else
+    HOST_TYPE='linux'
+    export DOCKER_COMPOSE_FILE='docker-compose.linux.yml'
+  fi
 fi
 
 # Setup some functions to output warnings.
 notice() {
-  printf "\e[32;01m%s\e[39;49;00m\n" "$1"
+  printf "\e[32;01m$1\e[39;49;00m\n"
 }
 
 warning() {
-  printf "\e[33;01m%s\e[39;49;00m\n" "$1"
+  printf "\e[33;01m$1\e[39;49;00m\n"
 }
 
 error() {
-  printf "\e[31;01m%s\e[39;49;00m\n" "$1"
+  printf "\e[31;01m$1\e[39;49;00m\n"
 }
 
 # Ensure script is NOT running inside a container - must be run from host.
@@ -43,11 +50,35 @@ if [ -f /.dockerenv ]; then
 fi
 
 dsh_openshift_init() {
+  # Set default type of OpenShift installation if its not already set.
+  : ${OPENSHIFT_TYPE:=minishift}
+  # Set the default minishift driver.
+  : ${MINISHIFT_DRIVER:=xhyve}
+
   # Password for the mysql server.
   SUPER_SECRET_PASSWORD=super-secret-password
 
   # Path to ssh key with no passphrase.
-  : "${BUILD_KEY:=$HOME/.ssh/id_rsa}"
+  : ${BUILD_KEY:=$HOME/.ssh/id_rsa}
+
+  if [ "${OPENSHIFT_TYPE}" == "minishift" ]; then
+    # Exit if minishift isn't available.
+    if ! which minishift > /dev/null; then
+      error "Minishift not found, is it installed?"
+      exit 1
+    fi
+
+    # Perform/check setup.
+    if ! minishift status | grep "Running" > /dev/null; then
+
+      minishift start --vm-driver ${MINISHIFT_DRIVER}
+    fi
+
+    # Ensure oc command is available.
+    eval $(minishift oc-env)
+  else
+    notice "Using OpenShift in Docker."
+  fi
 
   # Are we logged in as local developer, if not, bail!
   if [[ $(oc whoami) != "developer" ]]; then
@@ -56,57 +87,56 @@ dsh_openshift_init() {
     exit 1
   fi
 
-  # Create new namespace/project for Openshift 4.x
-  echo "Ensuring shepherd project exists."
-  if ! oc get project shepherd > /dev/null 2>&1; then
-    oc new-project shepherd
+  # If using Minishift, then
+  if [ "${OPENSHIFT_TYPE}" == "minishift" ]; then
+    # Setup a new mysql server, expose it and group the services.
+    if ! oc get svc mariadb > /dev/null 2>&1; then
+      oc new-app mariadb MYSQL_ROOT_PASSWORD=${SUPER_SECRET_PASSWORD} -l db=shepherd
+      oc expose dc mariadb --type=LoadBalancer --name=mysql-external
+      oc annotate svc mysql-external "service.alpha.openshift.io/dependencies=[{\"name\": \"mariadb\", \"kind\": \"Service\"}]"
+    fi
+  else
+    notice "Not using Minishift, assuming mysql is available on port 3306."
   fi
 
-  # Setup a new mysql server, expose it and group the services.
-  echo "Ensuring mariadb service exists"
-  if ! oc get svc mariadb > /dev/null 2>&1; then
-    oc new-app mariadb MYSQL_ROOT_PASSWORD=${SUPER_SECRET_PASSWORD} -l db=shepherd
-    oc expose dc mariadb --type=LoadBalancer --name=mysql-external
-    oc annotate svc mysql-external "service.alpha.openshift.io/dependencies=[{\"name\": \"mariadb\", \"kind\": \"Service\"}]"
+  # Setup the redis configmap so redis starts.
+  if ! oc get configmap redis-config > /dev/null 2>&1; then
+    oc create -f redis-config.yml
   fi
 
   # Setup the database password in an OpenShift secret.
-  echo "Ensuring database secret exists."
   if ! oc get secret privileged-db-password > /dev/null 2>&1; then
     oc create secret generic privileged-db-password --from-literal=DATABASE_PASSWORD=${SUPER_SECRET_PASSWORD}
   fi
 
   # Setup the restic password in an OpenShift secret.
-  echo "Ensuring restic secret exists."
   if ! oc get secret shepherd-restic-secret > /dev/null 2>&1; then
     oc create secret generic shepherd-restic-secret --from-literal=password=${SUPER_SECRET_PASSWORD}
   fi
 
   # Setup the restic PVC for storing backups
-    echo "Ensuring restic pvc exists."
-if ! oc get pvc restic-repository > /dev/null 2>&1; then
+  if ! oc get pvc restic-repository > /dev/null 2>&1; then
     oc apply -f ./openshift-config/shepherd-restic-repo-pvc.yml
   fi
 
+  # Import jboss datagrid image.
+  if ! oc get imagestream jboss-datagrid73-openshift > /dev/null 2>&1; then
+    oc import-image jboss-datagrid73-openshift --from='registry.access.redhat.com/jboss-datagrid-7/datagrid73-openshift' --confirm
+  fi
+
   # Setup datagrid config
-  echo "Ensuring datagrid config exists."
   if ! oc get configmap datagrid-config > /dev/null 2>&1; then
-    # Fails with:
     oc apply -f ./openshift-config/datagrid
   fi
 
   # Add local ssh key as build-key secret if it exists and has no passphrase.
-  echo "Ensuring build secret exists."
-  if ! oc get secret build-key > /dev/null 2>&1; then
-    if [ -f "${BUILD_KEY}" ] && ! grep -q ENCRYPTED "${BUILD_KEY}"; then
-      oc create secret generic build-key --from-file=ssh-privatekey="${BUILD_KEY}"
-    else
-      echo "build-key passwordless secret not created, builds will likely be broken."
-    fi
+  if ! oc get secret build-key > /dev/null 2>&1 && [ -f ${BUILD_KEY} ] && ! grep -q ENCRYPTED ${BUILD_KEY}; then
+    oc create secret generic build-key --from-file=ssh-privatekey=${BUILD_KEY}
+  else
+    echo "build-key passwordless secret not created, builds will likely be broken."
   fi
 
   # Create a permanent token that shepherd can use to talk to OpenShift.
-  echo "Ensuring serviceaccount exists for token."
   if ! oc get serviceaccount shepherd > /dev/null 2>&1; then
     oc create serviceaccount shepherd
     oc policy add-role-to-user admin system:serviceaccount:myproject:shepherd
@@ -117,10 +147,19 @@ if ! oc get pvc restic-repository > /dev/null 2>&1; then
 
   # Now set the things that we need in the dsh shell.
   TOKEN=$(oc describe secret ${SERVICE_ACCOUNT} | grep "token:" | awk '{ print $2 }')
-  OPENSHIFT_DOMAIN="apps-crc.testing"
-  OPENSHIFT_URL="https://api.crc.testing:6443"
-  DB_HOST="mysql-external.${OPENSHIFT_DOMAIN}"
-  DB_PORT=$(oc get service mysql-external --no-headers | sed 's/.*:\([0-9]*\).*/\1/')
+  if [ "${OPENSHIFT_TYPE}" == "minishift" ]; then
+    OPENSHIFT_IP=$(minishift ip)
+    OPENSHIFT_DOMAIN="${OPENSHIFT_IP}.nip.io"
+    OPENSHIFT_URL="https://${OPENSHIFT_IP}:8443"
+    DB_HOST="mysql-myproject.${OPENSHIFT_DOMAIN}"
+    DB_PORT=$(oc get service mysql-external --no-headers | sed 's/.*:\([0-9]*\).*/\1/')
+  else
+    OPENSHIFT_IP=$(oc status | grep 'server https' | sed 's/.*https:\/\/\([0-9a-z\.]*\).*/\1/')
+    OPENSHIFT_DOMAIN="${OPENSHIFT_IP}.nip.io"
+    OPENSHIFT_URL="https://172.17.0.1:8443"
+    DB_HOST=172.17.0.1
+    DB_PORT=3306
+  fi
 }
 
 # Command: ./dsh start
@@ -142,8 +181,8 @@ Connecting via ./dsh shell and running robo build is a common next step."
 dsh_shell() {
   dsh_start
 
-  docker-compose -f "${DOCKER_COMPOSE_FILE}" exec \
-    --env SSH_AUTH_SOCK="${CONTAINER_SSH_AUTH_SOCK}" \
+  docker-compose -f ${DOCKER_COMPOSE_FILE} exec \
+    --env SSH_AUTH_SOCK=${CONTAINER_SSH_AUTH_SOCK} \
     --env TOKEN=${TOKEN} \
     --env DB_HOST=${DB_HOST} \
     --env DB_PORT=${DB_PORT} \
@@ -188,6 +227,96 @@ dsh_pull() {
   docker-compose -f ${DOCKER_COMPOSE_FILE} build
 }
 
+# Command: ./dsh nfs
+# Sets up NFS integration for OSX.
+NFS_FILE=/etc/exports
+NFS_LINE="/Users -alldirs -mapall=$(id -u):$(id -g) localhost"
+dsh_setup_nfs() {
+  if [ ${HOST_TYPE} != "mac" ]; then
+    echo "This script is OSX-only. Please do not run it on any other Unix."
+    exit 1
+  fi
+
+  if [[ $EUID -eq 0 ]]; then
+    echo "This script must NOT be run with sudo/root. Please re-run without sudo." 1>&2
+    exit 1
+  fi
+
+  echo ""
+  echo " +-----------------------------+"
+  echo " | Setup native NFS for Docker |"
+  echo " +-----------------------------+"
+  echo ""
+
+  echo "WARNING: This script will shut down running containers."
+  echo ""
+  echo -n "Do you wish to proceed? [y]: "
+  read decision
+
+  if [ "$decision" != "y" ]; then
+    echo "Exiting. No changes made."
+    exit 1
+  fi
+
+  echo ""
+
+  if ! docker ps > /dev/null 2>&1 ; then
+    echo "== Waiting for docker to start..."
+  fi
+
+  open -a Docker
+
+  while ! docker ps > /dev/null 2>&1 ; do sleep 2; done
+
+  echo "== Stopping running docker containers..."
+  docker-compose -f ${DOCKER_COMPOSE_FILE} down > /dev/null 2>&1
+  docker volume prune -f > /dev/null
+
+  osascript -e 'quit app "Docker"'
+
+  echo "== Resetting folder permissions..."
+  sudo chown -R "$(id -u)":"$(id -g)" .
+
+  echo "== Setting up nfs..."
+  sudo cp /dev/null "$NFS_FILE"
+  grep -qF -- "$NFS_LINE" "$NFS_FILE" || sudo echo "$NFS_LINE" | sudo tee -a "$NFS_FILE" > /dev/null
+
+  LINE="nfs.server.mount.require_resv_port = 0"
+  FILE=/etc/nfs.conf
+  grep -qF -- "$LINE" "$FILE" || sudo echo "$LINE" | sudo tee -a "$FILE" > /dev/null
+
+  echo "== Restarting nfsd..."
+  sudo nfsd restart
+
+  echo "== Restarting docker..."
+  open -a Docker
+
+  while ! docker ps > /dev/null 2>&1 ; do sleep 2; done
+
+  echo ""
+  echo "SUCCESS! Now go run your containers 🐳"
+}
+
+# Command: ./dsh rnfs
+# Removes nfs setup.
+dsh_remove_nfs() {
+  if [ ${HOST_TYPE} != "mac" ]; then
+    echo "This script is OSX-only. Please do not run it on any other Unix."
+    exit 1
+  fi
+
+  if [[ $EUID -eq 0 ]]; then
+    echo "This script must NOT be run with sudo/root. Please re-run without sudo." 1>&2
+    exit 1
+  fi
+
+  echo "== Removing nfsd exports..."
+  sudo sed -i '' "/$(echo "$NFS_LINE" | sed 's/\//\\\//g')/d" ${NFS_FILE}
+  echo "== Restarting nfsd..."
+  sudo nfsd restart
+  echo "== Done"
+}
+
 dsh_help() {
   printf "\nUsage: dsh COMMAND\n\n
 Commands:\n
@@ -213,6 +342,12 @@ case ${COMMAND} in
     ;;
   l*)
     dsh_logs
+    ;;
+  nfs)
+    dsh_setup_nfs
+    ;;
+  rnfs)
+    dsh_remove_nfs
     ;;
   pul*)
     dsh_pull

@@ -14,7 +14,7 @@ $openshift_url = getenv("OPENSHIFT_URL") ?: 'https://192.168.99.100:8443';
 $example_repository = getenv("DRUPAL_EXAMPLE_REPOSITORY") ?:
     'https://github.com/universityofadelaide/shepherd-example-drupal.git';
 
-$database_host = getenv("DB_HOST") ?: 'mysql-external.' . $domain_name;
+$database_host = getenv("DB_HOST") ?: 'mysql-myproject.' . $domain_name;
 $database_port = getenv("DB_PORT") ?: '31632';
 
 // Check that required variables are actually set.
@@ -43,7 +43,7 @@ $db_provisioner_config->save();
 $openshift_config = [
   'endpoint'   => $openshift_url,
   'token'      => $token,
-  'namespace'  => 'shepherd',
+  'namespace'  => 'myproject',
   'verify_tls' => FALSE,
 ];
 $orchestration_config = \Drupal::service('config.factory')->getEditable('shp_orchestration.settings');
@@ -56,17 +56,17 @@ $orchestration_config->save();
 // Force reload the orchestration plugin to clear the static cache.
 Drupal::service('plugin.manager.orchestration_provider')->getProviderInstance(TRUE);
 
-if (!$development = taxonomy_term_load_multiple_by_name('Dev', 'shp_environment_types')) {
+if (!$development = taxonomy_term_load_multiple_by_name('Development', 'shp_environment_types')) {
   $development_env = Term::create([
     'vid'                   => 'shp_environment_types',
-    'name'                  => 'Dev',
+    'name'                  => 'Development',
     'field_shp_base_domain' => $domain_name,
   ]);
   $development_env->save();
 
   $production_env = Term::create([
     'vid'  => 'shp_environment_types',
-    'name' => 'Prd',
+    'name' => 'Production',
     'field_shp_base_domain' => $domain_name,
     'field_shp_protect' => TRUE,
     'field_shp_update_go_live' => TRUE,
@@ -125,7 +125,7 @@ if (!$site = reset($nodes)) {
     'uid'                       => '1',
     'status'                    => 1,
     'title'                     => 'Drupal Test Site',
-    'field_shp_namespace'       => 'shepherd',
+    'field_shp_namespace'       => 'myproject',
     'field_shp_short_name'      => 'test',
     'field_shp_domain'          => 'test-live.' . $domain_name,
     'field_shp_git_default_ref' => 'master',

@@ -9,26 +9,30 @@ if [ -f /.dockerenv ]; then
   exit
 fi
 
+BASE_DIR="/openshift/uni-shepherd"
+export OPENSHIFT=$(ip addr show docker0 | grep "inet\b" | awk '{print $2}' | cut -d/ -f1)
+
 openshift_start() {
-  crc setup
-  echo "Starting CodeReady Containers."
-  echo "Expect 20+ minutes from fresh setup, 8+ minutes subsequent. Coffee?"
-  crc start
-  echo "Logging in."
-  oc login -u developer https://api.crc.testing:6443
-  echo "Waiting a few seconds."
-  sleep 5
-  ./dsh
+  # By default oc runs the same version of OpenShift as itself.
+  if [ $(oc version | grep "^oc v" | awk '{print $2}' | awk -F '.' '{print $2}') -lt "10" ]; then
+    oc cluster up --host-data-dir=${BASE_DIR} --public-hostname=${OPENSHIFT}
+  else
+    oc cluster up --base-dir=${BASE_DIR} --public-hostname=${OPENSHIFT}
+  fi
+  echo "Now start shepherd with ./dsh"
 }
 
 openshift_stop() {
   ./dsh stop
-  crc stop
+  oc cluster down
 }
 
 openshift_purge() {
   ./dsh purge
-  crc delete
+  oc cluster down
+  sudo rm -rf ${BASE_DIR}
+  sudo mkdir -p ${BASE_DIR}
+  sudo chown ${USER}:${USER} -R ${BASE_DIR}
 }
 
 COMMAND=${1:-default}
