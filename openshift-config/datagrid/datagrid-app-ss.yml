@@ -61,13 +61,7 @@ spec:
               name: ping
               protocol: TCP
             - containerPort: 11211
-              name: mc-sheperd
-              protocol: TCP
-            - containerPort: 11311
-              name: mc-node61
-              protocol: TCP
-            - containerPort: 11314
-              name: node-8-mc
+              name: mc-shepherd
               protocol: TCP
           readinessProbe:
             exec:
