@@ -39,7 +39,6 @@ web/sites/*/services.local.yml
 dsh
 dsh_bash
 RoboFileBase.php
-/docker/
 .php_cs.cache
 .DS_Store
 .bash_history
