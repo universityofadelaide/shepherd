@@ -18,10 +18,10 @@ services:
       DATABASE_USER: user
       DATABASE_PASSWORD: password
       HASH_SALT: random-hash
-      MEMCACHE_ENABLED: 0
+      MEMCACHE_ENABLED: 1
       MEMCACHE_HOST: memcached
       PHP_IDE_CONFIG: serverName=${PROJECT}.${DOMAIN}
-      REDIS_ENABLED: 1
+      REDIS_ENABLED: 0
       REDIS_HOST: redis
       # REDIS_PASSWORD: testing
       SHEPHERD_INSTALL_PROFILE: shepherd
