@@ -42,7 +42,6 @@ dependencies:
   # Contributed modules
   - config_filter
   - config_ignore
-  - drush_cmi_tools
   - entity_reference_revisions
   - field_group
   - gnode
