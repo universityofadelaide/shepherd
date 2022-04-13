@@ -40,7 +40,6 @@ dependencies:
   - views_ui
 
   # Contributed modules
-  - config_filter
   - config_ignore
   - entity_reference_revisions
   - field_group
