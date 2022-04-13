@@ -13,8 +13,8 @@ entity_type: taxonomy_term
 type: key_value
 settings:
   key_max_length: 255
-  max_length: 255
   key_is_ascii: false
+  max_length: 255
   is_ascii: false
   case_sensitive: false
 module: key_value_field

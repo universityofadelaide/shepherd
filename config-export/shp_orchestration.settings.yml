@@ -1,4 +1,9 @@
 _core:
   default_config_hash: VqK3B1yO8uDA-vNNPfYtzDFnKyngazUHWFm9B-qzB4s
-selected_provider: dummy_orchestration_provider
+selected_provider: openshift_orchestration_provider
+connection:
+  endpoint: 'https://172.17.0.1:8443'
+  token: ***REMOVED***
+  namespace: myproject
+  verify_tls: false
 queued_operations: true

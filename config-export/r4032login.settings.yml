@@ -1,3 +1,6 @@
+_core:
+  default_config_hash: mxtw4e4xU9JhI4I-zBlL-b9NX0_QQ_ERLaKuPS2Am1A
+langcode: en
 display_denied_message: true
 access_denied_message: 'Access denied. You must log in to view this page.'
 access_denied_message_type: error
@@ -7,6 +10,3 @@ default_redirect_code: 302
 destination_parameter_override: ''
 match_noredirect_pages: ''
 redirect_to_destination: true
-langcode: en
-_core:
-  default_config_hash: mxtw4e4xU9JhI4I-zBlL-b9NX0_QQ_ERLaKuPS2Am1A

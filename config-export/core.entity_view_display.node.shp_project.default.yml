@@ -35,146 +35,146 @@ bundle: shp_project
 mode: default
 content:
   field_shp_build_secret:
-    weight: 3
+    type: string
     label: above
     settings:
       link_to_entity: false
     third_party_settings: {  }
-    type: string
+    weight: 3
     region: content
   field_shp_builder_image:
-    weight: 2
+    type: string
     label: above
     settings:
       link_to_entity: false
     third_party_settings: {  }
-    type: string
+    weight: 2
     region: content
   field_shp_cpu_limit:
-    weight: 15
+    type: string
     label: above
     settings:
       link_to_entity: false
     third_party_settings: {  }
-    type: string
+    weight: 15
     region: content
   field_shp_cpu_request:
-    weight: 14
+    type: string
     label: above
     settings:
       link_to_entity: false
     third_party_settings: {  }
-    type: string
+    weight: 14
     region: content
   field_shp_default_sql:
-    weight: 7
+    type: file_default
     label: above
     settings:
       use_description_as_link_text: true
     third_party_settings: {  }
-    type: file_default
+    weight: 7
     region: content
   field_shp_env_vars:
-    weight: 5
+    type: key_value
     label: above
     settings:
       value_only: false
     third_party_settings: {  }
-    type: key_value
+    weight: 5
     region: content
   field_shp_git_default_ref:
-    weight: 1
+    type: string
     label: above
     settings:
       link_to_entity: false
     third_party_settings: {  }
-    type: string
+    weight: 1
     region: content
   field_shp_git_repository:
-    weight: 0
+    type: string
     label: above
     settings:
       link_to_entity: false
     third_party_settings: {  }
-    type: string
+    weight: 0
     region: content
   field_shp_liveness_probe_params:
-    weight: 10
+    type: basic_string
     label: above
     settings: {  }
     third_party_settings: {  }
-    type: basic_string
+    weight: 10
     region: content
   field_shp_liveness_probe_port:
-    weight: 12
+    type: number_integer
     label: above
     settings:
       thousand_separator: ''
       prefix_suffix: true
     third_party_settings: {  }
-    type: number_integer
+    weight: 12
     region: content
   field_shp_liveness_probe_type:
-    weight: 8
+    type: list_default
     label: above
     settings: {  }
     third_party_settings: {  }
-    type: list_default
+    weight: 8
     region: content
   field_shp_memory_limit:
-    weight: 17
+    type: string
     label: above
     settings:
       link_to_entity: false
     third_party_settings: {  }
-    type: string
+    weight: 17
     region: content
   field_shp_memory_request:
-    weight: 16
+    type: string
     label: above
     settings:
       link_to_entity: false
     third_party_settings: {  }
-    type: string
+    weight: 16
     region: content
   field_shp_readiness_probe_params:
-    weight: 11
+    type: basic_string
     label: above
     settings: {  }
     third_party_settings: {  }
-    type: basic_string
+    weight: 11
     region: content
   field_shp_readiness_probe_port:
-    weight: 13
+    type: number_integer
     label: above
     settings:
       thousand_separator: ''
       prefix_suffix: true
     third_party_settings: {  }
-    type: number_integer
+    weight: 13
     region: content
   field_shp_readiness_probe_type:
-    weight: 9
+    type: list_default
     label: above
     settings: {  }
     third_party_settings: {  }
-    type: list_default
+    weight: 9
     region: content
   field_shp_secrets:
-    weight: 6
+    type: string
     label: above
     settings:
       link_to_entity: false
     third_party_settings: {  }
-    type: string
+    weight: 6
     region: content
   field_shp_storage_class:
-    weight: 4
+    type: entity_reference_label
     label: above
     settings:
       link: true
     third_party_settings: {  }
-    type: entity_reference_label
+    weight: 4
     region: content
 hidden:
   links: true
