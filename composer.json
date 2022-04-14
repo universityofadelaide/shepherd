@@ -33,10 +33,11 @@
     },
     "require-dev": {
         "dealerdirect/phpcodesniffer-composer-installer": "^0.7.2",
+        "drupal/core-dev": "^9.3",
         "drupal/devel": "^4.1",
         "mglaman/phpstan-drupal": "^1.1.13",
+        "phpspec/prophecy-phpunit": "^2",
         "phpstan/phpstan-deprecation-rules": "^1.0",
-        "drupal/core-dev": "^9.3",
         "roave/security-advisories": "dev-latest",
         "weitzman/drupal-test-traits": "^1.5"
     },
