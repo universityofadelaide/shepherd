@@ -14,7 +14,7 @@ function shp_backup_uninstall() {
   // @todo forum.install hook_uninstall() - see if this is a better approach.
   $config_storage = \Drupal::service('config.storage');
 
-  $dir = dir(drupal_get_path('module', 'shp_backup') . '/config/install');
+  $dir = dir(\Drupal::service('extension.path.resolver')->getPath('module', 'shp_backup') . '/config/install');
   while (FALSE !== ($entry = $dir->read())) {
     if (!in_array($entry, ['.', '..'])) {
       $config_storage->delete(rtrim($entry, '.yml'));

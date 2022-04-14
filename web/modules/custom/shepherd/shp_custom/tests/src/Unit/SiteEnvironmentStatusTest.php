@@ -54,7 +54,7 @@ class SiteEnvironmentStatusTest extends UnitTestCase {
     $this->resultRow->_entity = $nodeInterface;
 
     $shpOrchestrationStatus = $this->getMockBuilder('Drupal\shp_orchestration\Service\Status')
-      ->setMethods(['get'])
+      ->onlyMethods(['get'])
       ->disableOriginalConstructor()
       ->getMock();
 

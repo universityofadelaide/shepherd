@@ -42,7 +42,7 @@ function shp_database_provisioner_tokens($type, $tokens, array $data, array $opt
       case 'public-filename':
         if (isset($data['project'])) {
           if (($file_id = $data['project']->field_shp_default_sql->target_id) && $file = File::load($file_id)) {
-            $replacements[$original] = file_create_url($file->getFileUri());
+            $replacements[$original] = \Drupal::service('file_url_generator')->generateAbsoluteString($file->getFileUri());
           }
         }
         break;
