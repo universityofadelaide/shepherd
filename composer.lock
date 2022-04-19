@@ -1344,16 +1344,16 @@
         },
         {
             "name": "drupal/core",
-            "version": "9.3.9",
+            "version": "9.3.11",
             "source": {
                 "type": "git",
                 "url": "https://github.com/drupal/core.git",
-                "reference": "86b0c4496e20ae7f945e9a7f0404fafe191ab774"
+                "reference": "b8978dd6a4639bdc0930a6eb7791afffcd931a1b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/drupal/core/zipball/86b0c4496e20ae7f945e9a7f0404fafe191ab774",
-                "reference": "86b0c4496e20ae7f945e9a7f0404fafe191ab774",
+                "url": "https://api.github.com/repos/drupal/core/zipball/b8978dd6a4639bdc0930a6eb7791afffcd931a1b",
+                "reference": "b8978dd6a4639bdc0930a6eb7791afffcd931a1b",
                 "shasum": ""
             },
             "require": {
@@ -1595,13 +1595,13 @@
             ],
             "description": "Drupal is an open source content management platform powering millions of websites and applications.",
             "support": {
-                "source": "https://github.com/drupal/core/tree/9.3.9"
+                "source": "https://github.com/drupal/core/tree/9.3.11"
             },
-            "time": "2022-03-21T21:21:58+00:00"
+            "time": "2022-04-14T00:39:08+00:00"
         },
         {
             "name": "drupal/core-composer-scaffold",
-            "version": "9.3.9",
+            "version": "9.3.11",
             "source": {
                 "type": "git",
                 "url": "https://github.com/drupal/core-composer-scaffold.git",
@@ -1645,7 +1645,7 @@
                 "drupal"
             ],
             "support": {
-                "source": "https://github.com/drupal/core-composer-scaffold/tree/9.3.9"
+                "source": "https://github.com/drupal/core-composer-scaffold/tree/9.3.11"
             },
             "time": "2022-02-24T17:40:56+00:00"
         },
@@ -8702,7 +8702,7 @@
         },
         {
             "name": "drupal/core-dev",
-            "version": "9.3.9",
+            "version": "9.3.11",
             "source": {
                 "type": "git",
                 "url": "https://github.com/drupal/core-dev.git",
@@ -8746,7 +8746,7 @@
             ],
             "description": "require-dev dependencies from drupal/drupal; use in addition to drupal/core-recommended to run tests from drupal/core.",
             "support": {
-                "source": "https://github.com/drupal/core-dev/tree/9.3.9"
+                "source": "https://github.com/drupal/core-dev/tree/9.3.11"
             },
             "time": "2021-11-30T05:41:29+00:00"
         },
@@ -9014,16 +9014,16 @@
         },
         {
             "name": "instaclick/php-webdriver",
-            "version": "1.4.11",
+            "version": "1.4.13",
             "source": {
                 "type": "git",
                 "url": "https://github.com/instaclick/php-webdriver.git",
-                "reference": "608e8b20a9072f84cac4f2fddb4420893d69eb83"
+                "reference": "623eb02be728185110587e4259780e5f7f9f3983"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/instaclick/php-webdriver/zipball/608e8b20a9072f84cac4f2fddb4420893d69eb83",
-                "reference": "608e8b20a9072f84cac4f2fddb4420893d69eb83",
+                "url": "https://api.github.com/repos/instaclick/php-webdriver/zipball/623eb02be728185110587e4259780e5f7f9f3983",
+                "reference": "623eb02be728185110587e4259780e5f7f9f3983",
                 "shasum": ""
             },
             "require": {
@@ -9071,9 +9071,9 @@
             ],
             "support": {
                 "issues": "https://github.com/instaclick/php-webdriver/issues",
-                "source": "https://github.com/instaclick/php-webdriver/tree/1.4.11"
+                "source": "https://github.com/instaclick/php-webdriver/tree/1.4.13"
             },
-            "time": "2022-03-30T01:28:33+00:00"
+            "time": "2022-04-15T10:40:37+00:00"
         },
         {
             "name": "justinrainbow/json-schema",
@@ -9147,16 +9147,16 @@
         },
         {
             "name": "mglaman/phpstan-drupal",
-            "version": "1.1.15",
+            "version": "1.1.16",
             "source": {
                 "type": "git",
                 "url": "https://github.com/mglaman/phpstan-drupal.git",
-                "reference": "b934beb8b591b609d7c8ca4abbb3d5e6035273ae"
+                "reference": "2c72ac675e5630e1f421adb1bf4e6546310d6b05"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mglaman/phpstan-drupal/zipball/b934beb8b591b609d7c8ca4abbb3d5e6035273ae",
-                "reference": "b934beb8b591b609d7c8ca4abbb3d5e6035273ae",
+                "url": "https://api.github.com/repos/mglaman/phpstan-drupal/zipball/2c72ac675e5630e1f421adb1bf4e6546310d6b05",
+                "reference": "2c72ac675e5630e1f421adb1bf4e6546310d6b05",
                 "shasum": ""
             },
             "require": {
@@ -9175,6 +9175,7 @@
                 "phpstan/phpstan-deprecation-rules": "^1.0",
                 "phpstan/phpstan-strict-rules": "^1.0",
                 "phpunit/phpunit": "^6.5 || ^7.5 || ^8.0 || ^9",
+                "slevomat/coding-standard": "^7.1",
                 "squizlabs/php_codesniffer": "^3.3",
                 "symfony/phpunit-bridge": "^3.4.3 || ^4.4 || ^5.4 || ^6.0"
             },
@@ -9207,7 +9208,8 @@
                 },
                 "phpstan": {
                     "includes": [
-                        "extension.neon"
+                        "extension.neon",
+                        "rules.neon"
                     ]
                 }
             },
@@ -9232,7 +9234,7 @@
             "description": "Drupal extension and rules for PHPStan",
             "support": {
                 "issues": "https://github.com/mglaman/phpstan-drupal/issues",
-                "source": "https://github.com/mglaman/phpstan-drupal/tree/1.1.15"
+                "source": "https://github.com/mglaman/phpstan-drupal/tree/1.1.16"
             },
             "funding": [
                 {
@@ -9248,7 +9250,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2022-04-06T21:05:13+00:00"
+            "time": "2022-04-13T20:19:23+00:00"
         },
         {
             "name": "mikey179/vfsstream",
@@ -9752,16 +9754,16 @@
         },
         {
             "name": "phpstan/phpdoc-parser",
-            "version": "1.4.3",
+            "version": "1.4.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpdoc-parser.git",
-                "reference": "34545bb30a6f8bd86cfa371dbd42140a657bbf0d"
+                "reference": "d8e9fd97ca11f2f24fc1aafbcfb1f78bce762267"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpdoc-parser/zipball/34545bb30a6f8bd86cfa371dbd42140a657bbf0d",
-                "reference": "34545bb30a6f8bd86cfa371dbd42140a657bbf0d",
+                "url": "https://api.github.com/repos/phpstan/phpdoc-parser/zipball/d8e9fd97ca11f2f24fc1aafbcfb1f78bce762267",
+                "reference": "d8e9fd97ca11f2f24fc1aafbcfb1f78bce762267",
                 "shasum": ""
             },
             "require": {
@@ -9790,22 +9792,22 @@
             "description": "PHPDoc parser with support for nullable, intersection and generic types",
             "support": {
                 "issues": "https://github.com/phpstan/phpdoc-parser/issues",
-                "source": "https://github.com/phpstan/phpdoc-parser/tree/1.4.3"
+                "source": "https://github.com/phpstan/phpdoc-parser/tree/1.4.4"
             },
-            "time": "2022-04-08T11:30:34+00:00"
+            "time": "2022-04-14T12:24:06+00:00"
         },
         {
             "name": "phpstan/phpstan",
-            "version": "1.5.4",
+            "version": "1.5.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpstan.git",
-                "reference": "bbf68cae24f6dc023c607ea0f87da55dd9d55c2b"
+                "reference": "799dd8c2d2c9c704bb55d2078078cb970cf0f6d1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/bbf68cae24f6dc023c607ea0f87da55dd9d55c2b",
-                "reference": "bbf68cae24f6dc023c607ea0f87da55dd9d55c2b",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/799dd8c2d2c9c704bb55d2078078cb970cf0f6d1",
+                "reference": "799dd8c2d2c9c704bb55d2078078cb970cf0f6d1",
                 "shasum": ""
             },
             "require": {
@@ -9831,7 +9833,7 @@
             "description": "PHPStan - PHP Static Analysis Tool",
             "support": {
                 "issues": "https://github.com/phpstan/phpstan/issues",
-                "source": "https://github.com/phpstan/phpstan/tree/1.5.4"
+                "source": "https://github.com/phpstan/phpstan/tree/1.5.6"
             },
             "funding": [
                 {
@@ -9851,7 +9853,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2022-04-03T12:39:00+00:00"
+            "time": "2022-04-15T11:13:37+00:00"
         },
         {
             "name": "phpstan/phpstan-deprecation-rules",
@@ -10406,12 +10408,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Roave/SecurityAdvisories.git",
-                "reference": "370b357e26aeed8d2b450026954eda969b2db0dc"
+                "reference": "dad1e44d86f958c5be9c5f355c9554ce22f1b1a7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/370b357e26aeed8d2b450026954eda969b2db0dc",
-                "reference": "370b357e26aeed8d2b450026954eda969b2db0dc",
+                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/dad1e44d86f958c5be9c5f355c9554ce22f1b1a7",
+                "reference": "dad1e44d86f958c5be9c5f355c9554ce22f1b1a7",
                 "shasum": ""
             },
             "conflict": {
@@ -10654,7 +10656,7 @@
                 "phpoffice/phpspreadsheet": "<1.16",
                 "phpseclib/phpseclib": "<2.0.31|>=3,<3.0.7",
                 "phpservermon/phpservermon": "<=3.5.2",
-                "phpunit/phpunit": "<4.8.28|>=5,<5.6.3",
+                "phpunit/phpunit": ">=4.8.19,<4.8.28|>=5,<5.6.3",
                 "phpwhois/phpwhois": "<=4.2.5",
                 "phpxmlrpc/extras": "<0.6.1",
                 "pimcore/data-hub": "<1.2.4",
@@ -10880,7 +10882,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2022-04-13T14:08:56+00:00"
+            "time": "2022-04-14T16:08:49+00:00"
         },
         {
             "name": "sebastian/cli-parser",
