@@ -76,20 +76,7 @@ services:
       - default
 
   memcached:
-    image: jboss/infinispan-server:9.4.11.Final
-    ports:
-      - "9990:9990"
-    environment:
-      APP_USER: user
-      APP_PASS: pass
-      MGMT_USER: admin
-      MGMT_PASS: admin
-    entrypoint:
-      - docker-entrypoint.sh
-      - -c
-      - standalone-memcached.xml
-    volumes:
-      - ./docker/standalone-memcached.xml:/opt/jboss/infinispan-server/standalone/configuration/standalone-memcached.xml
+    image: memcached:alpine
     networks:
       - default
 
