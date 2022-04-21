@@ -5,47 +5,51 @@ shp_custom.api_site_environments:
   methods: [GET]
   requirements:
     _permission: 'shp access environment'
+
 shp_custom.add_project:
-  path: '/projects/add'
+  path: '/projects/add/{node_type}'
   defaults:
     _entity_form: 'node.default'
     _title_callback: '\Drupal\node\Controller\NodeController::addPageTitle'
-    node_type: shp_project
   requirements:
     _node_add_access: 'node:shp_project'
   options:
     _node_operation_route: TRUE
     parameters:
       node_type:
+        type: entity:node_type
         with_config_overrides: TRUE
+
 shp_custom.add_environment:
-  path: '/site/{site_id}/environments/add'
+  path: '/site/{site_id}/environments/add/{node_type}'
   defaults:
     _entity_form: 'node.default'
     _title_callback: '\Drupal\node\Controller\NodeController::addPageTitle'
-    node_type: shp_environment
   requirements:
     _node_add_access: 'node:shp_environment'
   options:
     _node_operation_route: TRUE
     parameters:
-      node_type:
-        with_config_overrides: TRUE
       site_id:
         type: 'entity:node'
+      node_type:
+        type: entity:node_type
+        with_config_overrides: TRUE
+
 shp_custom.add_site:
-  path: '/add'
+  path: '/add/{node_type}'
   defaults:
     _entity_form: 'node.default'
     _title_callback: '\Drupal\node\Controller\NodeController::addPageTitle'
-    node_type: shp_site
   requirements:
     _node_add_access: 'node:shp_site'
   options:
     _node_operation_route: TRUE
     parameters:
       node_type:
+        type: entity:node_type
         with_config_overrides: TRUE
+
 shp_custom.admin_config_shepherd:
   path: '/admin/config/shepherd'
   defaults:
@@ -53,6 +57,7 @@ shp_custom.admin_config_shepherd:
     _title: 'Shepherd'
   requirements:
     _permission: 'access administration pages'
+
 shp_custom.environment-promote-form:
   path: '/site/{site}/environment/{environment}/promote'
   defaults:
