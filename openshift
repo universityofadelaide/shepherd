@@ -13,9 +13,8 @@ BASE_DIR="/openshift/uni-shepherd"
 export OPENSHIFT=$(ip addr show docker0 | grep "inet\b" | awk '{print $2}' | cut -d/ -f1)
 
 openshift_start() {
-  # By default oc runs the same version of OpenShift as itself.
-  if [ $(oc version | grep "^oc v" | awk '{print $2}' | awk -F '.' '{print $2}') -lt "10" ]; then
-    oc cluster up --host-data-dir=${BASE_DIR} --public-hostname=${OPENSHIFT}
+  if [ "${OPENSHIFT_TYPE}" == "minishift" ]; then
+    minishift start
   else
     oc cluster up --base-dir=${BASE_DIR} --public-hostname=${OPENSHIFT}
   fi
@@ -24,15 +23,24 @@ openshift_start() {
 
 openshift_stop() {
   ./dsh stop
-  oc cluster down
+  if [ "${OPENSHIFT_TYPE}" == "minishift" ]; then
+    minishift stop
+  else
+    oc cluster down
+  fi
 }
 
 openshift_purge() {
   ./dsh purge
-  oc cluster down
-  sudo rm -rf ${BASE_DIR}
-  sudo mkdir -p ${BASE_DIR}
-  sudo chown ${USER}:${USER} -R ${BASE_DIR}
+  if [ "${OPENSHIFT_TYPE}" == "minishift" ]; then
+    minishift stop
+    minishift delete
+  else
+    oc cluster down
+    sudo rm -rf ${BASE_DIR}
+    sudo mkdir -p ${BASE_DIR}
+    sudo chown ${USER}:${USER} -R ${BASE_DIR}
+  fi
 }
 
 COMMAND=${1:-default}
