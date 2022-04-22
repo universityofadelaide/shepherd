@@ -1344,16 +1344,16 @@
         },
         {
             "name": "drupal/core",
-            "version": "9.3.11",
+            "version": "9.3.12",
             "source": {
                 "type": "git",
                 "url": "https://github.com/drupal/core.git",
-                "reference": "b8978dd6a4639bdc0930a6eb7791afffcd931a1b"
+                "reference": "ed6af33093f66a9c5048d02f9f2c326ad0e7e90c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/drupal/core/zipball/b8978dd6a4639bdc0930a6eb7791afffcd931a1b",
-                "reference": "b8978dd6a4639bdc0930a6eb7791afffcd931a1b",
+                "url": "https://api.github.com/repos/drupal/core/zipball/ed6af33093f66a9c5048d02f9f2c326ad0e7e90c",
+                "reference": "ed6af33093f66a9c5048d02f9f2c326ad0e7e90c",
                 "shasum": ""
             },
             "require": {
@@ -1595,13 +1595,13 @@
             ],
             "description": "Drupal is an open source content management platform powering millions of websites and applications.",
             "support": {
-                "source": "https://github.com/drupal/core/tree/9.3.11"
+                "source": "https://github.com/drupal/core/tree/9.3.12"
             },
-            "time": "2022-04-14T00:39:08+00:00"
+            "time": "2022-04-20T14:25:27+00:00"
         },
         {
             "name": "drupal/core-composer-scaffold",
-            "version": "9.3.11",
+            "version": "9.3.12",
             "source": {
                 "type": "git",
                 "url": "https://github.com/drupal/core-composer-scaffold.git",
@@ -1645,7 +1645,7 @@
                 "drupal"
             ],
             "support": {
-                "source": "https://github.com/drupal/core-composer-scaffold/tree/9.3.11"
+                "source": "https://github.com/drupal/core-composer-scaffold/tree/9.3.12"
             },
             "time": "2022-02-24T17:40:56+00:00"
         },
@@ -8702,7 +8702,7 @@
         },
         {
             "name": "drupal/core-dev",
-            "version": "9.3.11",
+            "version": "9.3.12",
             "source": {
                 "type": "git",
                 "url": "https://github.com/drupal/core-dev.git",
@@ -8746,7 +8746,7 @@
             ],
             "description": "require-dev dependencies from drupal/drupal; use in addition to drupal/core-recommended to run tests from drupal/core.",
             "support": {
-                "source": "https://github.com/drupal/core-dev/tree/9.3.11"
+                "source": "https://github.com/drupal/core-dev/tree/9.3.12"
             },
             "time": "2021-11-30T05:41:29+00:00"
         },
@@ -9014,16 +9014,16 @@
         },
         {
             "name": "instaclick/php-webdriver",
-            "version": "1.4.13",
+            "version": "1.4.14",
             "source": {
                 "type": "git",
                 "url": "https://github.com/instaclick/php-webdriver.git",
-                "reference": "623eb02be728185110587e4259780e5f7f9f3983"
+                "reference": "200b8df772b74d604bebf25ef42ad6f8ee6380a9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/instaclick/php-webdriver/zipball/623eb02be728185110587e4259780e5f7f9f3983",
-                "reference": "623eb02be728185110587e4259780e5f7f9f3983",
+                "url": "https://api.github.com/repos/instaclick/php-webdriver/zipball/200b8df772b74d604bebf25ef42ad6f8ee6380a9",
+                "reference": "200b8df772b74d604bebf25ef42ad6f8ee6380a9",
                 "shasum": ""
             },
             "require": {
@@ -9031,8 +9031,8 @@
                 "php": ">=5.3.2"
             },
             "require-dev": {
-                "phpunit/phpunit": "^4.8",
-                "satooshi/php-coveralls": "^1.0||^2.0"
+                "phpunit/phpunit": "^8.5 || ^9.5",
+                "satooshi/php-coveralls": "^1.0 || ^2.0"
             },
             "type": "library",
             "extra": {
@@ -9071,9 +9071,9 @@
             ],
             "support": {
                 "issues": "https://github.com/instaclick/php-webdriver/issues",
-                "source": "https://github.com/instaclick/php-webdriver/tree/1.4.13"
+                "source": "https://github.com/instaclick/php-webdriver/tree/1.4.14"
             },
-            "time": "2022-04-15T10:40:37+00:00"
+            "time": "2022-04-19T02:06:59+00:00"
         },
         {
             "name": "justinrainbow/json-schema",
@@ -9798,16 +9798,16 @@
         },
         {
             "name": "phpstan/phpstan",
-            "version": "1.5.6",
+            "version": "1.5.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpstan.git",
-                "reference": "799dd8c2d2c9c704bb55d2078078cb970cf0f6d1"
+                "reference": "7fb7e2e1e9f3d59a26a413b2d3d5e47f0edb75ac"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/799dd8c2d2c9c704bb55d2078078cb970cf0f6d1",
-                "reference": "799dd8c2d2c9c704bb55d2078078cb970cf0f6d1",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/7fb7e2e1e9f3d59a26a413b2d3d5e47f0edb75ac",
+                "reference": "7fb7e2e1e9f3d59a26a413b2d3d5e47f0edb75ac",
                 "shasum": ""
             },
             "require": {
@@ -9833,7 +9833,7 @@
             "description": "PHPStan - PHP Static Analysis Tool",
             "support": {
                 "issues": "https://github.com/phpstan/phpstan/issues",
-                "source": "https://github.com/phpstan/phpstan/tree/1.5.6"
+                "source": "https://github.com/phpstan/phpstan/tree/1.5.7"
             },
             "funding": [
                 {
@@ -9853,7 +9853,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2022-04-15T11:13:37+00:00"
+            "time": "2022-04-20T12:20:27+00:00"
         },
         {
             "name": "phpstan/phpstan-deprecation-rules",
