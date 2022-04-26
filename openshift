@@ -15,6 +15,7 @@ export OPENSHIFT=$(ip addr show docker0 | grep "inet\b" | awk '{print $2}' | cut
 openshift_start() {
   if [ "${OPENSHIFT_TYPE}" == "minishift" ]; then
     minishift start
+    if ! virsh net-list | grep default > /dev/null; then virsh net-start default; fi
   else
     oc cluster up --base-dir=${BASE_DIR} --public-hostname=${OPENSHIFT}
   fi
