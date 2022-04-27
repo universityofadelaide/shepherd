@@ -53,6 +53,7 @@ dependencies:
   - redis
   - route_condition
   - token
+  - views_bulk_operations
 
   # Shepherd modules
   - shp_backup
