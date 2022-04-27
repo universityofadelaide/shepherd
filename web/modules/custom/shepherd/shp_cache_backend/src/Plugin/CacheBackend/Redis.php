@@ -98,7 +98,7 @@ class Redis extends CacheBackendBase {
    */
   protected function generateImageStream() {
     $image_stream = [
-      'apiVersion' => 'v1',
+      'apiVersion' => 'image.openshift.io/v1',
       'kind' => 'ImageStream',
       'metadata' => [
         'name' => 'redis',
@@ -150,7 +150,7 @@ class Redis extends CacheBackendBase {
     $redis_conf = $deployment_name . '-config';
 
     $redis_deployment_config = [
-      'apiVersion' => 'v1',
+      'apiVersion' => 'apps.openshift.io/v1',
       'kind' => 'DeploymentConfig',
       'metadata' => [
         'name' => $redis_name,
@@ -189,7 +189,7 @@ class Redis extends CacheBackendBase {
                     ],
                     'ports' => [
                       [
-                        'containerPort' => $redis_port,
+                        'containerPort' => (int) $redis_port,
                       ],
                     ],
                     'readinessProbe' => [

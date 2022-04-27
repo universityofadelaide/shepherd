@@ -263,7 +263,7 @@ class MemcachedDatagrid extends CacheBackendBase {
    */
   protected function generateImageStream() {
     return [
-      'apiVersion' => 'v1',
+      'apiVersion' => 'image.openshift.io/v1',
       'kind' => 'ImageStream',
       'metadata' => [
         'name' => 'memcached',
@@ -335,7 +335,7 @@ class MemcachedDatagrid extends CacheBackendBase {
    */
   protected function generateDeploymentConfig(NodeInterface $environment, string $memcached_name, string $memcached_port, array $data) {
     $config = [
-      'apiVersion' => 'v1',
+      'apiVersion' => 'apps.openshift.io/v1',
       'kind' => 'DeploymentConfig',
       'metadata' => [
         'name' => $memcached_name,
@@ -381,7 +381,7 @@ class MemcachedDatagrid extends CacheBackendBase {
                 'ports' => [
                   [
                     'name' => 'memcache',
-                    'containerPort' => $memcached_port,
+                    'containerPort' => (int) $memcached_port,
                   ],
                 ],
                 'resources' => [
