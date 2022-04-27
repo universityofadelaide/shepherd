@@ -27,7 +27,7 @@
         "drupal/token": "1.*",
         "drupal/views_bulk_operations": "^4.0",
         "drush/drush": "^10",
-        "universityofadelaide/openshift-client": "dev-update-deps",
+        "universityofadelaide/openshift-client": "dev-openshift-4.x",
         "universityofadelaide/shepherd-drupal-scaffold": "^5.0",
         "webmozart/path-util": "^2.3"
     },
@@ -60,6 +60,9 @@
             "universityofadelaide/shepherd-drupal-scaffold": true,
             "drupal/core-composer-scaffold": true,
             "drupal-composer/drupal-scaffold": true
+        },
+        "preferred-install": {
+            "universityofadelaide/*": "source"
         }
     },
     "autoload": {
@@ -75,17 +78,6 @@
     },
     "extra": {
         "composer-exit-on-patch-failure": true,
-        "patchLevel": {
-            "drupal/core": "-p2"
-        },
-        "installer-paths": {
-            "web/core":                     ["type:drupal-core"],
-            "web/libraries/{$name}":        ["type:drupal-library"],
-            "web/modules/contrib/{$name}":  ["type:drupal-module"],
-            "web/profiles/contrib/{$name}": ["type:drupal-profile"],
-            "web/themes/contrib/{$name}":   ["type:drupal-theme"],
-            "drush/contrib/{$name}":        ["type:drupal-drush"]
-        },
         "drupal-scaffold": {
             "allowed-packages": [
                 "drupal/core"
@@ -100,6 +92,17 @@
                     "overwrite": false
                 }
             }
+        },
+        "installer-paths": {
+            "web/core":                     ["type:drupal-core"],
+            "web/libraries/{$name}":        ["type:drupal-library"],
+            "web/modules/contrib/{$name}":  ["type:drupal-module"],
+            "web/profiles/contrib/{$name}": ["type:drupal-profile"],
+            "web/themes/contrib/{$name}":   ["type:drupal-theme"],
+            "drush/contrib/{$name}":        ["type:drupal-drush"]
+        },
+        "patchLevel": {
+            "drupal/core": "-p2"
         }
     }
 }
