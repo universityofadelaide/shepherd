@@ -488,7 +488,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       $deploymentConfigs = $this->client->getDeploymentConfigs('app=' . $deployment_name);
       foreach ($deploymentConfigs['items'] as $deploymentConfig) {
         $this->client->updateDeploymentConfig($deploymentConfig['metadata']['name'], $deploymentConfig, [
-          'apiVersion' => 'v1',
+          'apiVersion' => 'apps.openshift.io/v1',
           'kind' => 'DeploymentConfig',
           'spec' => [
             'replicas' => 0,
