@@ -28,10 +28,10 @@ bundle: shp_project
 mode: teaser
 content:
   links:
-    weight: 100
-    region: content
     settings: {  }
     third_party_settings: {  }
+    weight: 100
+    region: content
 hidden:
   field_shp_build_secret: true
   field_shp_builder_image: true

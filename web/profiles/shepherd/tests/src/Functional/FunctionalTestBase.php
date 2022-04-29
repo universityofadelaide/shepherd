@@ -3,7 +3,6 @@
 namespace Drupal\Tests\shepherd\Functional;
 
 use Drupal\FunctionalTests\AssertLegacyTrait;
-use Drupal\Tests\PhpunitCompatibilityTrait;
 use Drupal\Tests\RandomGeneratorTrait;
 use Drupal\Tests\UiHelperTrait;
 use Drupal\Tests\shepherd\Traits\ContentCreationTrait;
@@ -24,7 +23,6 @@ class FunctionalTestBase extends TestCase {
   use AssertLegacyTrait;
   use DrupalTrait;
   use GoutteTrait;
-  use PhpunitCompatibilityTrait;
   use UiHelperTrait;
   use NodeCreationTrait {
     getNodeByTitle as drupalGetNodeByTitle;

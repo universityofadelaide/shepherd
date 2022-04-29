@@ -3,7 +3,7 @@ package: Shepherd
 type: profile
 description: 'Shepherd site orchestrator install profile.'
 version: VERSION
-core: 8.x
+core_version_requirement: ^9
 dependencies:
   - basic_auth
   - big_pipe
@@ -40,17 +40,16 @@ dependencies:
   - views_ui
 
   # Contributed modules
-  - drush_cmi_tools
-  - entity_reference
+  - config_ignore
   - entity_reference_revisions
   - field_group
   - gnode
   - group
   - key_value_field
   - log_stdout
+  - memcache
   - plugin
   - r4032login
-  - redis
   - route_condition
   - token
   - views_bulk_operations

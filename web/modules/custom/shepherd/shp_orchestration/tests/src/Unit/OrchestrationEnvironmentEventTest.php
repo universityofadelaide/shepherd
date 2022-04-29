@@ -83,7 +83,7 @@ class OrchestrationEnvironmentEventTest extends UnitTestCase {
     $this->deploymentNameMock = 'MyTestDeployment';
 
     $this->siteMock = $this->getMockBuilder('Drupal\node\Entity\Node')
-      ->setMethods(['id'])
+      ->onlyMethods(['id'])
       ->disableOriginalConstructor()
       ->getMock();
     $this->siteMock->expects($this->any())
@@ -91,7 +91,7 @@ class OrchestrationEnvironmentEventTest extends UnitTestCase {
       ->willReturn('Site node mock');
 
     $this->environmentMock = $this->getMockBuilder('Drupal\node\Entity\Node')
-      ->setMethods(['id'])
+      ->onlyMethods(['id'])
       ->disableOriginalConstructor()
       ->getMock();
     $this->environmentMock->expects($this->any())
@@ -99,7 +99,7 @@ class OrchestrationEnvironmentEventTest extends UnitTestCase {
       ->willReturn('Environment node mock');
 
     $this->projectMock = $this->getMockBuilder('Drupal\node\Entity\Node')
-      ->setMethods(['id'])
+      ->onlyMethods(['id'])
       ->disableOriginalConstructor()
       ->getMock();
     $this->projectMock->expects($this->any())
@@ -171,7 +171,7 @@ class OrchestrationEnvironmentEventTest extends UnitTestCase {
    */
   public function testEnvironmentVariables() {
     $this->orchestrationEvents->setEnvironmentVariables($this->testEnvironmentVariables);
-    $this->assertArrayEquals($this->testEnvironmentVariables, $this->orchestrationEvents->getEnvironmentVariables());
+    $this->assertEquals($this->testEnvironmentVariables, $this->orchestrationEvents->getEnvironmentVariables());
   }
 
 }

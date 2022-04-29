@@ -20,20 +20,7 @@ class RoboFile extends RoboFileBase {
   /**
    * {@inheritdoc}
    */
-  public function __construct() {
-    parent::__construct();
-    if ($root = getenv('SHEPHERD_ROOT')) {
-      $this->configDir = $root . '/config-export';
-      $this->configInstallDir = $root . '/config-install';
-      $this->configDeleteList = $root . '/drush/config-delete.yml';
-      $this->configIgnoreList = $root . '/drush/config-ignore.yml';
-    }
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function build() {
+  public function build(): void {
     parent::build();
     $this->say("To provide default content for shepherd, use robo dev:drupal-content-generate or robo dev:wordpress-content-generate");
   }

@@ -39,7 +39,6 @@ web/sites/*/services.local.yml
 dsh
 dsh_bash
 RoboFileBase.php
-/docker/
 .php_cs.cache
 .DS_Store
 .bash_history
@@ -62,3 +61,11 @@ dsh_proxy.conf
 # Ignore OSX specific folders
 shared
 openshift.local.clusterup
+
+docker-compose.linux.yml
+docker-compose.osx.yml
+phpcs.xml
+RoboFile.php
+docker/Dockerfile
+docker/xdebug.ini
+docker/php_custom.ini

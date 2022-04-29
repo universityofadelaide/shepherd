@@ -2,11 +2,11 @@ langcode: en
 status: true
 dependencies:
   theme:
-    - classy
-id: classy_page_title
-theme: classy
-region: content
-weight: -50
+    - seven
+id: seven_page_title
+theme: seven
+region: header
+weight: -5
 provider: null
 plugin: page_title_block
 settings:
