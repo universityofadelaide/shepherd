@@ -92,6 +92,13 @@
             ],
             "locations": {
                 "web-root": "./web/"
+            },
+            "file-mapping": {
+                "[web-root]/sites/default/settings.php": {
+                    "mode": "replace",
+                    "path": "web/sites/default/default.settings.php",
+                    "overwrite": false
+                }
             }
         }
     }
