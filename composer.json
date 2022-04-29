@@ -99,6 +99,13 @@
             ],
             "locations": {
                 "web-root": "./web/"
+            },
+            "file-mapping": {
+                "[web-root]/sites/default/settings.php": {
+                    "mode": "replace",
+                    "path": "web/core/assets/scaffold/files/default.settings.php",
+                    "overwrite": false
+                }
             }
         }
     }
