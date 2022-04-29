@@ -1,7 +1,7 @@
 name: 'Shepherd backup'
 type: module
 description: 'Provides ability to backup and restore deployed sites.'
-core: 8.x
+core_version_requirement: ^9
 package: Shepherd
 dependencies:
   - shp_content_types

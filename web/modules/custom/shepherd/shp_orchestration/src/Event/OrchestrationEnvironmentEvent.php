@@ -4,7 +4,7 @@ namespace Drupal\shp_orchestration\Event;
 
 use Drupal\node\NodeInterface;
 use Drupal\shp_orchestration\OrchestrationProviderInterface;
-use Symfony\Component\EventDispatcher\Event;
+use Symfony\Contracts\EventDispatcher\Event;
 
 /**
  * Event fired during orchestration of an environment.

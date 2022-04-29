@@ -1,0 +1,9 @@
+ignored_config_entities:
+  - core.extension
+  - 'block.block.*'
+  - shp_backup.settings
+  - shp_database_provisioner.settings
+  - shp_orchestration.settings
+  - shp_redis_support.openshift_with_redis.openshift_with_redis
+  - system.site
+  - 'shp_orchestration.openshift.*'

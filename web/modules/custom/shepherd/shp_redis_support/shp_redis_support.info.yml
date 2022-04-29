@@ -1,7 +1,7 @@
 name: 'Shepherd redis support'
 type: module
 description: 'Provides an option to deploy redis with an environment.'
-core: 8.x
+core_version_requirement: ^9
 package: Shepherd
 dependencies:
   - shp_content_types

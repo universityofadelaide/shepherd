@@ -19,20 +19,20 @@ required: false
 translatable: true
 default_value:
   -
-    key: SHEPHERD_INSTALL_PROFILE
     value: standard
+    key: SHEPHERD_INSTALL_PROFILE
     description: 'The machine name of the Drupal installation profile.'
   -
-    key: PUBLIC_DIR
     value: /shared/public
+    key: PUBLIC_DIR
     description: 'Public files directory.'
   -
-    key: PRIVATE_DIR
     value: /shared/private
+    key: PRIVATE_DIR
     description: 'Private files directory.'
   -
-    key: TMP_DIR
     value: /shared/tmp
+    key: TMP_DIR
     description: 'Temporary files directory.'
 default_value_callback: ''
 settings: {  }

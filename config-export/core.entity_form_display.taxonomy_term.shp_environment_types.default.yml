@@ -20,56 +20,56 @@ bundle: shp_environment_types
 mode: default
 content:
   field_shp_annotations:
+    type: key_value_textfield
     weight: 4
+    region: content
     settings:
-      key_label: Key
+      size: 60
+      placeholder: ''
       key_size: 60
       key_placeholder: ''
-      value_label: Value
-      size: 60
-      placeholder: ''
-      description_placeholder: ''
       description_enabled: false
+      description_placeholder: ''
+      key_label: Key
+      value_label: Value
     third_party_settings: {  }
-    type: key_value_textfield
-    region: content
   field_shp_backup_retention:
-    weight: 6
-    settings:
-      placeholder: ''
-    third_party_settings: {  }
     type: number
+    weight: 6
     region: content
+    settings:
+      placeholder: ''
+    third_party_settings: {  }
   field_shp_backup_schedule:
+    type: string_textfield
     weight: 5
+    region: content
     settings:
       size: 60
       placeholder: ''
     third_party_settings: {  }
-    type: string_textfield
-    region: content
   field_shp_base_domain:
+    type: string_textfield
     weight: 1
+    region: content
     settings:
       size: 60
       placeholder: ''
     third_party_settings: {  }
-    type: string_textfield
-    region: content
   field_shp_protect:
+    type: boolean_checkbox
     weight: 2
+    region: content
     settings:
       display_label: true
     third_party_settings: {  }
-    type: boolean_checkbox
-    region: content
   field_shp_update_go_live:
+    type: boolean_checkbox
     weight: 3
+    region: content
     settings:
       display_label: true
     third_party_settings: {  }
-    type: boolean_checkbox
-    region: content
   name:
     type: string_textfield
     weight: 0
@@ -80,10 +80,10 @@ content:
     third_party_settings: {  }
   status:
     type: boolean_checkbox
-    settings:
-      display_label: true
     weight: 7
     region: content
+    settings:
+      display_label: true
     third_party_settings: {  }
 hidden:
   description: true

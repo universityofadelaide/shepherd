@@ -40,9 +40,9 @@ class RandomStringGeneratorTest extends UnitTestCase {
     // Function by default generates 20 length.
     $generated = $this->stringGeneratorService->generateRandomString();
     $this->assertEquals(20, strlen($generated));
-    $this->assertRegExp('/[0-9]/', $generated);
-    $this->assertRegExp('/[a-z]/', $generated);
-    $this->assertNotRegExp('/[A-Z]/', $generated);
+    $this->assertMatchesRegularExpression('/[0-9]/', $generated);
+    $this->assertMatchesRegularExpression('/[a-z]/', $generated);
+    $this->assertDoesNotMatchRegularExpression('/[A-Z]/', $generated);
 
     $generated = $this->stringGeneratorService->generateRandomString(0);
     $this->assertEquals(0, strlen($generated));
@@ -52,25 +52,25 @@ class RandomStringGeneratorTest extends UnitTestCase {
 
     $generated = $this->stringGeneratorService->generateRandomString(20000);
     $this->assertEquals(20000, strlen($generated));
-    $this->assertRegExp('/[0-9]/', $generated);
-    $this->assertRegExp('/[a-z]/', $generated);
-    $this->assertNotRegExp('/[A-Z]/', $generated);
+    $this->assertMatchesRegularExpression('/[0-9]/', $generated);
+    $this->assertMatchesRegularExpression('/[a-z]/', $generated);
+    $this->assertDoesNotMatchRegularExpression('/[A-Z]/', $generated);
 
     $generated = $this->stringGeneratorService->generateRandomString(100, StringGenerator::NUMERIC);
-    $this->assertRegExp('/[0-9]/', $generated);
-    $this->assertNotRegExp('/[a-zA-Z]/', $generated);
+    $this->assertMatchesRegularExpression('/[0-9]/', $generated);
+    $this->assertDoesNotMatchRegularExpression('/[a-zA-Z]/', $generated);
 
     $generated = $this->stringGeneratorService->generateRandomString(100, StringGenerator::LOWERCASE);
-    $this->assertRegExp('/[a-z]/', $generated);
-    $this->assertNotRegExp('/[0-9A-Z]/', $generated);
+    $this->assertMatchesRegularExpression('/[a-z]/', $generated);
+    $this->assertDoesNotMatchRegularExpression('/[0-9A-Z]/', $generated);
 
     $generated = $this->stringGeneratorService->generateRandomString(100, StringGenerator::UPPERCASE);
-    $this->assertRegExp('/[A-Z]/', $generated);
-    $this->assertNotRegExp('/[0-9a-z]/', $generated);
+    $this->assertMatchesRegularExpression('/[A-Z]/', $generated);
+    $this->assertDoesNotMatchRegularExpression('/[0-9a-z]/', $generated);
 
     $generated = $this->stringGeneratorService->generateRandomString(100, StringGenerator::SPECIAL);
-    $this->assertRegExp('/[!@#$%^&*()]/', $generated);
-    $this->assertNotRegExp('/[0-9a-zA-Z]/', $generated);
+    $this->assertMatchesRegularExpression('/[!@#$%^&*()]/', $generated);
+    $this->assertDoesNotMatchRegularExpression('/[0-9a-zA-Z]/', $generated);
   }
 
   /**
@@ -82,7 +82,7 @@ class RandomStringGeneratorTest extends UnitTestCase {
     // Function by default generates 20 length.
     $generated = $this->stringGeneratorService->generateRandomPassword();
     $this->assertEquals(20, strlen($generated));
-    $this->assertRegExp('/[0-9a-zA-Z!@#$%^&*()]/', $generated);
+    $this->assertMatchesRegularExpression('/[0-9a-zA-Z!@#$%^&*()]/', $generated);
     // Check that we aren't generating identical passwords..
     $this->assertNotEquals($generated, $this->stringGeneratorService->generateRandomPassword());
 
@@ -94,7 +94,7 @@ class RandomStringGeneratorTest extends UnitTestCase {
 
     $generated = $this->stringGeneratorService->generateRandomPassword(20000);
     $this->assertEquals(20000, strlen($generated));
-    $this->assertRegExp('/[0-9a-zA-Z!@#$%^&*()]/', $generated);
+    $this->assertMatchesRegularExpression('/[0-9a-zA-Z!@#$%^&*()]/', $generated);
   }
 
 }

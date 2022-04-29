@@ -1,0 +1,41 @@
+uuid: d344f5ff-5370-4f4e-9bfe-a0c81be10505
+langcode: en
+status: true
+dependencies:
+  config:
+    - views.view.shp_user_groups
+  module:
+    - route_condition
+    - user
+    - views
+  theme:
+    - seven
+id: shp_user_groups
+theme: seven
+region: content
+weight: 2
+provider: null
+plugin: 'views_block:shp_user_groups-block_1'
+settings:
+  id: 'views_block:shp_user_groups-block_1'
+  label: ''
+  label_display: visible
+  provider: views
+  context_mapping: {  }
+  views_label: ''
+  items_per_page: none
+visibility:
+  route:
+    id: route
+    negate: false
+    context_mapping: {  }
+    routes: entity.user.canonical
+  user_role:
+    id: user_role
+    negate: false
+    context_mapping:
+      user: '@user.current_user_context:current_user'
+    roles:
+      administrator: administrator
+      shp_site_administrator: shp_site_administrator
+      shp_online_consultant: shp_online_consultant

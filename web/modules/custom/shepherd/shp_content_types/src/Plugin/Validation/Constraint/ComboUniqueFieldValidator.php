@@ -34,10 +34,12 @@ class ComboUniqueFieldValidator extends ConstraintValidator {
     foreach ($constraint->fields as $field) {
       $query->condition($field, $entity->get($field)->value);
     }
-    $value_taken = (bool) $query
+    $query
+      ->accessCheck(TRUE)
       ->range(0, 1)
-      ->count()
-      ->execute();
+      ->count();
+
+    $value_taken = (bool) $query->execute();
 
     if ($value_taken) {
       $this->context->addViolation(

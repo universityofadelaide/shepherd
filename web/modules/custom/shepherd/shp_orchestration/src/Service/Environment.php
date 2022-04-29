@@ -380,6 +380,7 @@ class Environment extends EntityActionBase {
 
     // Demote all current prod environments - for this site!
     $old_promoted = \Drupal::entityQuery('node')
+      ->accessCheck(FALSE)
       ->condition('field_shp_site', $site->id())
       ->condition('field_shp_environment_type', $promoted_term->id())
       ->condition('nid', $environment->id(), '<>')

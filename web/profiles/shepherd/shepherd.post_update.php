@@ -90,3 +90,10 @@ function shepherd_post_update_add_cache_backend(&$sandbox) {
 function shepherd_post_update_enable_views_bulk_operations() {
   \Drupal::service('module_installer')->install(['views_bulk_operations']);
 }
+
+/**
+ * Enable config_ignore.
+ */
+function shepherd_post_update_enable_config_ignore() {
+  \Drupal::service('module_installer')->install(['config_ignore']);
+}

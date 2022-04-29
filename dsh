@@ -130,10 +130,12 @@ dsh_openshift_init() {
   fi
 
   # Add local ssh key as build-key secret if it exists and has no passphrase.
-  if ! oc get secret build-key > /dev/null 2>&1 && [ -f ${BUILD_KEY} ] && ! grep -q ENCRYPTED ${BUILD_KEY}; then
-    oc create secret generic build-key --from-file=ssh-privatekey=${BUILD_KEY}
-  else
-    echo "build-key passwordless secret not created, builds will likely be broken."
+  if ! oc get secret build-key > /dev/null 2>&1; then
+    if [ -f ${BUILD_KEY} ] && ! grep -q ENCRYPTED ${BUILD_KEY}; then
+      oc create secret generic build-key --from-file=ssh-privatekey=${BUILD_KEY}
+    else
+      echo "build-key passwordless secret not created, builds will likely be broken."
+    fi
   fi
 
   # Create a permanent token that shepherd can use to talk to OpenShift.
@@ -200,10 +202,17 @@ dsh_stop() {
   docker-compose -f ${DOCKER_COMPOSE_FILE} stop
 }
 
-# Command: ./dsh purge
+# Command: ./dsh down
 # Stops project, then takes down containers and removes volumes if possible.
-dsh_purge() {
+dsh_down() {
   docker-compose -f ${DOCKER_COMPOSE_FILE} down -v
+}
+
+# Command: ./dsh purge
+# Stops project, then takes down containers, removes volumes and remove dev image.
+dsh_purge() {
+  dsh_down
+  docker rmi -f uofa/s2i-shepherd-drupal-dev
 }
 
 # Command: ./dsh status

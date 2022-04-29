@@ -1,7 +1,7 @@
 name: 'Shepherd orchestration'
 type: module
 description: 'Provides orchestration functionality specific to the Shepherd project.'
-core: 8.x
+core_version_requirement: ^9
 package: Shepherd
 dependencies:
   - shp_content_types
