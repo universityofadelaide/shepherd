@@ -28,6 +28,11 @@ use Drupal\Core\Config\Entity\ConfigEntityBase;
  *   },
  *   links = {
  *    "edit-form" = "/admin/config/system/shepherd/orchestration/provider_settings"
+ *   },
+ *   config_export = {
+ *     "id",
+ *     "endpoint",
+ *     "namespace",
  *   }
  * )
  */

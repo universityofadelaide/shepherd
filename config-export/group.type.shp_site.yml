@@ -7,6 +7,7 @@ _core:
 id: shp_site
 label: Site
 description: 'A group of this type is automatically created and associated when a site is added.'
+new_revision: true
 creator_membership: false
 creator_wizard: true
 creator_roles: {  }

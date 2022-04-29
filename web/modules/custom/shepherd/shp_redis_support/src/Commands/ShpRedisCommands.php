@@ -72,6 +72,7 @@ class ShpRedisCommands extends DrushCommands {
     if (empty($environments)) {
       $storage = $this->entityTypeManager->getStorage('node');
       $env_ids = $storage->getQuery()
+        ->accessCheck(FALSE)
         ->condition('type', 'shp_environment')
         ->execute();
 

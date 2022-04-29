@@ -46,6 +46,17 @@ class SiteEnvironmentsController extends ControllerBase {
   /**
    * Retrieves site environments status via orchestrationProvider.
    *
+   * @todo This api response function isn't actually finished.
+   *
+   * 1. It will get the memcache/redis instance as well as the drupal node.
+   * 2. The $response array is built without any way of identifying either.
+   * 3. The built response was erased each loop.
+   * 4. It appears to have been created with the response from
+   *    getDeploymentConfigs, but then partially changed.
+   * 5. see extractDeploymentConfigStatus() in the OpenShift provider.
+   * 6. Leaving it returning nonsense (as before), but at least no errors.
+   * 7. Checked on prod, and always returns empty array '[]' there.
+   *
    * @param \Drupal\node\NodeInterface $node
    *   The site node entity.
    *
@@ -56,20 +67,18 @@ class SiteEnvironmentsController extends ControllerBase {
     $site_id = $node->id();
     $status = $this->orchestrationProvider->getSiteEnvironmentsStatus($site_id);
     $response = [];
-    foreach ($status['items'] as $deploymentConfigs) {
-      $deployment_status = $deploymentConfigs['status']['conditions'][0];
-      $response = [];
-      if (strtolower($deployment_status['status']) === 'false' && $deployment_status['type'] === "Available") {
+    foreach ($status as $deploymentConfigs) {
+      if ($deploymentConfigs['running'] === FALSE && $deploymentConfigs['available_pods'] === 0) {
         // @todo Determine why status is false. What information to display ?
-        $response[]['status'] = "Building";
+        $response[]['status'] = "Building or Scaled Down";
       }
-      elseif (strtolower($deployment_status['status']) === 'true' && $deployment_status['type'] === "Available") {
+      elseif ($deploymentConfigs['running'] === TRUE && $deploymentConfigs['available_pods'] >= 1) {
         $response[]['status'] = "Running";
       }
       else {
         // @todo What states end up here ?
         // Give a developer friendly message.
-        $response[]['status'] = $deployment_status['message'];
+        $response[]['status'] = 'Unknown status';
       }
     }
 
