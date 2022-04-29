@@ -27,7 +27,7 @@
         "drupal/token": "1.*",
         "drupal/views_bulk_operations": "^4.0",
         "drush/drush": "^10",
-        "universityofadelaide/openshift-client": "dev-update-deps",
+        "universityofadelaide/openshift-client": "dev-develop",
         "universityofadelaide/shepherd-drupal-scaffold": "^5.0",
         "webmozart/path-util": "^2.3"
     },

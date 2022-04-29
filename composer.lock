@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "8ac37ebdfa68bf912a0bbb4bf46a5943",
+    "content-hash": "6a575735db6a5ed6e3ebbdc822b77e97",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -7061,16 +7061,16 @@
         },
         {
             "name": "universityofadelaide/openshift-client",
-            "version": "dev-update-deps",
+            "version": "dev-develop",
             "source": {
                 "type": "git",
                 "url": "https://github.com/universityofadelaide/openshift-client.git",
-                "reference": "250df2633927f2e6d15c7baba5aee7ad90d09b18"
+                "reference": "076bc7545f1f0f998b61d7a6c905c607e6e30951"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/universityofadelaide/openshift-client/zipball/250df2633927f2e6d15c7baba5aee7ad90d09b18",
-                "reference": "250df2633927f2e6d15c7baba5aee7ad90d09b18",
+                "url": "https://api.github.com/repos/universityofadelaide/openshift-client/zipball/076bc7545f1f0f998b61d7a6c905c607e6e30951",
+                "reference": "076bc7545f1f0f998b61d7a6c905c607e6e30951",
                 "shasum": ""
             },
             "require": {
@@ -7083,6 +7083,7 @@
                 "php-coveralls/php-coveralls": "~2.5",
                 "phpunit/phpunit": "~9.5"
             },
+            "default-branch": true,
             "type": "library",
             "autoload": {
                 "psr-4": {
@@ -7106,9 +7107,9 @@
             "description": "Simple OpenShift client for PHP.",
             "support": {
                 "issues": "https://github.com/universityofadelaide/openshift-client/issues",
-                "source": "https://github.com/universityofadelaide/openshift-client/tree/update-deps"
+                "source": "https://github.com/universityofadelaide/openshift-client/tree/develop"
             },
-            "time": "2022-03-21T15:08:06+00:00"
+            "time": "2022-04-29T06:05:31+00:00"
         },
         {
             "name": "universityofadelaide/shepherd-drupal-scaffold",
