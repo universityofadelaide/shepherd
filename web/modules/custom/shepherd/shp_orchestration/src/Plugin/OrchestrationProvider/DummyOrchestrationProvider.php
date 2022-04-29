@@ -3,9 +3,13 @@
 namespace Drupal\shp_orchestration\Plugin\OrchestrationProvider;
 
 use Drupal\shp_orchestration\OrchestrationProviderBase;
+use Symfony\Component\DependencyInjection\ContainerInterface;
+use UniversityOfAdelaide\OpenShift\Objects\Backups\Backup;
+use UniversityOfAdelaide\OpenShift\Objects\Hpa;
+use UniversityOfAdelaide\OpenShift\Objects\Route;
 
 /**
- * DummyOrchestrationProvider.
+ * A mock orchestration provider.
  *
  * @OrchestrationProvider(
  *   id = "dummy_orchestration_provider",
@@ -20,6 +24,13 @@ class DummyOrchestrationProvider extends OrchestrationProviderBase {
    */
   public function __construct(array $configuration, $plugin_id, $plugin_definition) {
     // Don't bother calling parent constructor.
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+    return new static($configuration, $plugin_id, $plugin_definition);
   }
 
   /**
@@ -53,8 +64,6 @@ class DummyOrchestrationProvider extends OrchestrationProviderBase {
     string $environment_id,
     string $environment_url,
     string $builder_image,
-    string $domain,
-    string $path,
     string $source_repo,
     string $source_ref = 'master',
     string $source_secret = NULL,
@@ -65,7 +74,9 @@ class DummyOrchestrationProvider extends OrchestrationProviderBase {
     array $secrets = [],
     array $probes = [],
     array $cron_jobs = [],
-    array $annotations = []
+    string $backup_schedule = '',
+    int $backup_retention = 0,
+    Route $route = NULL
   ) {
     return TRUE;
   }
@@ -80,8 +91,6 @@ class DummyOrchestrationProvider extends OrchestrationProviderBase {
     string $environment_id,
     string $environment_url,
     string $builder_image,
-    string $domain,
-    string $path,
     string $source_repo,
     string $source_ref = 'master',
     string $source_secret = NULL,
@@ -92,7 +101,10 @@ class DummyOrchestrationProvider extends OrchestrationProviderBase {
     array $secrets = [],
     array $probes = [],
     array $cron_jobs = [],
-    array $annotations = []
+    string $backup_schedule = '',
+    int $backup_retention = 0,
+    Route $route = NULL,
+    Hpa $hpa = NULL
   ) {
     return TRUE;
   }
@@ -126,7 +138,9 @@ class DummyOrchestrationProvider extends OrchestrationProviderBase {
     int $site_id,
     int $environment_id,
     string $source_ref = 'master',
-    bool $clear_cache = TRUE
+    bool $clear_cache = TRUE,
+    Route $route = NULL,
+    Hpa $hpa = NULL
   ) {
     return TRUE;
   }
@@ -139,8 +153,7 @@ class DummyOrchestrationProvider extends OrchestrationProviderBase {
     string $short_name,
     int $site_id,
     string $domain,
-    string $path,
-    array $annotations = []
+    string $path
   ) {
     return TRUE;
   }
@@ -166,27 +179,99 @@ class DummyOrchestrationProvider extends OrchestrationProviderBase {
   /**
    * {@inheritdoc}
    */
-  public function backupEnvironment(
-    string $project_name,
-    string $short_name,
-    string $environment_id,
-    string $source_ref = 'master',
-    string $commands = ''
-  ) {
+  public function getBackup(string $name) {
+    return TRUE;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function updateBackup(Backup $backup) {
+    return TRUE;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function deleteBackup(string $name) {
+    return TRUE;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function backupEnvironment(string $site_id, string $environment_id, string $friendly_name = '') {
     return [];
   }
 
   /**
    * {@inheritdoc}
    */
-  public function restoreEnvironment(
-    string $project_name,
-    string $short_name,
-    string $environment_id,
-    string $source_ref = 'master',
-    string $commands = ''
-  ) {
-    return [];
+  public function environmentScheduleBackupCreate(string $site_id, string $environment_id, string $schedule, int $retention) {
+    return TRUE;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function environmentScheduleBackupUpdate(string $site_id, string $environment_id, string $schedule, int $retention) {
+    return TRUE;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function environmentScheduleBackupDelete(string $environment_id) {
+    return TRUE;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getBackupsForSite(string $site_id) {
+    return TRUE;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getBackupsForEnvironment(string $environment_id) {
+    return TRUE;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function restoreEnvironment(string $backup_name, string $site_id, string $environment_id) {
+    return TRUE;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getRestoresForSite(string $site_id) {
+    return TRUE;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function syncEnvironments(string $site_id, string $from_env, string $to_env) {
+    return TRUE;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getSyncs() {
+    return TRUE;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getSyncsForSite(string $site_id) {
+    return TRUE;
   }
 
   /**

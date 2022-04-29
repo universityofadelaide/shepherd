@@ -6,8 +6,6 @@
  */
 
 use Drupal\node\Entity\Node;
-use Drupal\shp_orchestration\Entity\OpenShiftConfigEntity;
-use Drupal\shp_redis_support\Entity\OpenShiftWithRedisConfigEntity;
 use Drupal\taxonomy\Entity\Term;
 use Drupal\user\Entity\User;
 
@@ -43,43 +41,32 @@ $db_provisioner_config->set(
 $db_provisioner_config->save();
 
 $openshift_config = [
-    'endpoint'   => $openshift_url,
-    'token'      => $token,
-    'namespace'  => 'myproject',
-    'verify_tls' => FALSE,
-    'id'         => 'openshift',
+  'endpoint'   => $openshift_url,
+  'token'      => $token,
+  'namespace'  => 'myproject',
+  'verify_tls' => FALSE,
 ];
-
-// Configure OpenShift as orchestration provider.
-if ($openshift = OpenShiftConfigEntity::load('openshift')) {
-    // If config already exists, replace with current values.
-    foreach ($openshift_config as $key => $value) {
-        $openshift->set($key, $value);
-    }
-}
-else {
-    $openshift = OpenShiftConfigEntity::create($openshift_config);
-}
-$openshift->save();
-
 $orchestration_config = \Drupal::service('config.factory')->getEditable('shp_orchestration.settings');
+foreach ($openshift_config as $key => $value) {
+  $orchestration_config->set('connection.' . $key, $value);
+}
 $orchestration_config->set('selected_provider', 'openshift_orchestration_provider');
 $orchestration_config->save();
 
 // Force reload the orchestration plugin to clear the static cache.
 Drupal::service('plugin.manager.orchestration_provider')->getProviderInstance(TRUE);
 
-if (!$development = taxonomy_term_load_multiple_by_name('Development', 'shp_environment_types')) {
+if (!$development = taxonomy_term_load_multiple_by_name('Dev', 'shp_environment_types')) {
   $development_env = Term::create([
     'vid'                   => 'shp_environment_types',
-    'name'                  => 'Development',
+    'name'                  => 'Dev',
     'field_shp_base_domain' => $domain_name,
   ]);
   $development_env->save();
 
   $production_env = Term::create([
     'vid'  => 'shp_environment_types',
-    'name' => 'Production',
+    'name' => 'Prd',
     'field_shp_base_domain' => $domain_name,
     'field_shp_protect' => TRUE,
     'field_shp_update_go_live' => TRUE,
@@ -105,7 +92,9 @@ if (!$project = reset($nodes)) {
     'field_shp_git_repository' => [['value' => $example_repository]],
     'field_shp_builder_image'  => [['value' => 'uofa/s2i-shepherd-wordpress']],
     'field_shp_build_secret'   => [['value' => 'build-key']],
-    'field_shp_env_vars'       => [],
+    'field_shp_env_vars'       => [
+      ['key' => 'PUBLIC_DIR', 'value' => '/shared/public'],
+    ],
   ]);
   $project->save();
 }
@@ -156,7 +145,10 @@ if (!$env = reset($nodes)) {
     'field_shp_site'             => [['target_id' => $site->id()]],
     'field_shp_update_on_image_change' => TRUE,
     'field_shp_cron_suspended'   => 1,
-    'field_shp_cron_jobs'        => []
+    'field_shp_cron_jobs'        => [],
+    'field_cache_backend'       => [
+      'plugin_id' => 'redis',
+    ],
   ]);
   $env->moderation_state->value = 'published';
   $env->save();
@@ -180,4 +172,3 @@ if (!$oc_user) {
 /** @var \Drupal\group\Entity\GroupInterface $project_group */
 $project_group = \Drupal::service('shp_content_types.group_manager')->load($project);
 $project_group->addMember($oc_user, ['group_roles' => ['shp_project-online-consulta']]);
-

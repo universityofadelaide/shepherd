@@ -1,0 +1,19 @@
+uuid: 11b771e4-1afd-4527-938d-2c5baebde447
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.taxonomy_term.field_shp_backup_schedule
+    - taxonomy.vocabulary.shp_environment_types
+id: taxonomy_term.shp_environment_types.field_shp_backup_schedule
+field_name: field_shp_backup_schedule
+entity_type: taxonomy_term
+bundle: shp_environment_types
+label: 'Backup schedule'
+description: 'Optionally set a backup schedule for this type of environment. This needs to be in crontab format, e.g "0 0 * * *" to run backups every night at midnight. <strong>Clear this value to delete scheduled backups for all environments of this type</strong>'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

@@ -2,19 +2,25 @@
 
 namespace Drupal\shp_orchestration\Service;
 
+use Drupal\Core\Config\ConfigFactory;
 use Drupal\node\Entity\Node;
 use Drupal\node\NodeInterface;
-use Drupal\shp_custom\Service\Environment as EnvironmentEntity;
+use Drupal\shp_custom\Service\Environment as EnvironmentService;
 use Drupal\shp_custom\Service\EnvironmentTypeInterface;
 use Drupal\shp_custom\Service\Site as SiteEntity;
 use Drupal\shp_orchestration\Event\OrchestrationEnvironmentEvent;
 use Drupal\shp_orchestration\Event\OrchestrationEvents;
+use Drupal\shp_orchestration\ExceptionHandler;
 use Drupal\shp_orchestration\OrchestrationProviderPluginManager;
+use Drupal\shp_orchestration\Plugin\OrchestrationProvider\OpenShiftOrchestrationProvider;
 use Drupal\taxonomy\Entity\Term;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use UniversityOfAdelaide\OpenShift\ClientException;
+use UniversityOfAdelaide\OpenShift\Objects\Hpa;
+use UniversityOfAdelaide\OpenShift\Objects\Route;
 
 /**
- * Class Environment.
+ * A service for interacting with environment entities.
  */
 class Environment extends EntityActionBase {
 
@@ -30,14 +36,14 @@ class Environment extends EntityActionBase {
    *
    * @var \Drupal\shp_custom\Service\Environment|\Drupal\shp_orchestration\Service\Environment
    */
-  protected $environmentEntity;
+  protected $environmentService;
 
   /**
    * Site service.
    *
    * @var \Drupal\shp_custom\Service\Site
    */
-  protected $siteEntity;
+  protected $siteService;
 
   /**
    * Event dispatcher.
@@ -55,6 +61,20 @@ class Environment extends EntityActionBase {
   protected $environmentType;
 
   /**
+   * The config factory.
+   *
+   * @var \Drupal\Core\Config\ConfigFactory
+   */
+  protected $configFactory;
+
+  /**
+   * The orchestration exception handler.
+   *
+   * @var \Drupal\shp_orchestration\ExceptionHandler
+   */
+  protected $exceptionHandler;
+
+  /**
    * Shepherd constructor.
    *
    * @param \Drupal\shp_orchestration\OrchestrationProviderPluginManager $orchestrationProviderPluginManager
@@ -69,20 +89,26 @@ class Environment extends EntityActionBase {
    *   Event dispatcher.
    * @param \Drupal\shp_custom\Service\EnvironmentTypeInterface $environmentType
    *   Environment type service.
+   * @param \Drupal\Core\Config\ConfigFactory $configFactory
+   *   The config factory.
+   * @param \Drupal\shp_orchestration\ExceptionHandler $exceptionHandler
+   *   The exception handler service.
    */
-  public function __construct(OrchestrationProviderPluginManager $orchestrationProviderPluginManager, Configuration $configuration, EnvironmentEntity $environment, SiteEntity $site, EventDispatcherInterface $event_dispatcher, EnvironmentTypeInterface $environmentType) {
+  public function __construct(OrchestrationProviderPluginManager $orchestrationProviderPluginManager, Configuration $configuration, EnvironmentService $environment, SiteEntity $site, EventDispatcherInterface $event_dispatcher, EnvironmentTypeInterface $environmentType, ConfigFactory $configFactory, ExceptionHandler $exceptionHandler) {
     parent::__construct($orchestrationProviderPluginManager);
     $this->configuration = $configuration;
-    $this->environmentEntity = $environment;
-    $this->siteEntity = $site;
+    $this->environmentService = $environment;
+    $this->siteService = $site;
     $this->eventDispatcher = $event_dispatcher;
     $this->environmentType = $environmentType;
+    $this->configFactory = $configFactory;
+    $this->exceptionHandler = $exceptionHandler;
   }
 
   /**
    * Tell the active orchestration provider an environment was created.
    *
-   * @todo - Extract some of the logic out of this method, too large.
+   * @todo Extract some of the logic out of this method, too large.
    *
    * @param \Drupal\node\NodeInterface $node
    *   Node entity.
@@ -94,12 +120,12 @@ class Environment extends EntityActionBase {
    * @throws \Drupal\Core\Entity\EntityMalformedException
    */
   public function created(NodeInterface $node) {
-    $site = $this->environmentEntity->getSite($node);
-    $project = $this->siteEntity->getProject($site);
+    $site = $this->environmentService->getSite($node);
+    $project = $this->siteService->getProject($site);
     if (!isset($project) || !isset($site)) {
       return FALSE;
     }
-    $environment_type = $this->environmentEntity->getEnvironmentType($node);
+    $environment_type = $this->environmentService->getEnvironmentType($node);
 
     $probes = $this->buildProbes($project);
     $cron_jobs = $this->buildCronJobs($node);
@@ -140,16 +166,11 @@ class Environment extends EntityActionBase {
 
     $storage_class = '';
     if ($project->field_shp_storage_class->target_id) {
-      $storage_class = Term::load($project->field_shp_storage_class->target_id)->label();
+      $storage_class = $project->field_shp_storage_class->entity->label();
     }
 
-    // Extract and transform the annotations from the environment type.
-    $annotations = $environment_type ? $environment_type->field_shp_annotations->getValue() : [];
-    $annotations = array_combine(
-      array_column($annotations, 'key'),
-      array_column($annotations, 'value')
-    );
-
+    $backup_schedule = !$environment_type->field_shp_backup_schedule->isEmpty() ? $environment_type->field_shp_backup_schedule->value : '';
+    $backup_retention = !$environment_type->field_shp_backup_retention->isEmpty() ? $environment_type->field_shp_backup_retention->value : 2;
     $environment = $this->orchestrationProviderPlugin->createdEnvironment(
       $project->getTitle(),
       $site->field_shp_short_name->value,
@@ -157,8 +178,6 @@ class Environment extends EntityActionBase {
       $node->id(),
       $node->toUrl('canonical', ['absolute' => TRUE])->toString(),
       $project->field_shp_builder_image->value,
-      $node->field_shp_domain->value,
-      $node->field_shp_path->value,
       $project->field_shp_git_repository->value,
       $node->field_shp_git_reference->value,
       $project->field_shp_build_secret->value,
@@ -169,16 +188,28 @@ class Environment extends EntityActionBase {
       $secrets,
       $probes,
       $cron_jobs,
-      $annotations
+      $backup_schedule,
+      $backup_retention,
+      $this->getRouteForEnvironment($node, $environment_type)
     );
+
+    if (!$node->field_cache_backend->isEmpty()) {
+      /** @var \Drupal\shp_cache_backend\Plugin\CacheBackendInterface $cache_backend */
+      $cache_backend = $node->field_cache_backend->first()->getContainedPluginInstance();
+      try {
+        $cache_backend->onEnvironmentCreate($node);
+      }
+      catch (ClientException $e) {
+        $this->exceptionHandler->handleClientException($e);
+      }
+    }
 
     // Allow other modules to react to the Environment creation.
     $event = new OrchestrationEnvironmentEvent($this->orchestrationProviderPlugin, $deployment_name, $site, $node, $project);
     $this->eventDispatcher->dispatch(OrchestrationEvents::CREATED_ENVIRONMENT, $event);
 
     // If this is a production environment, promote it immediately.
-    $environment_term = Term::load($node->field_shp_environment_type->target_id);
-    if ($environment_term->field_shp_protect->value == TRUE) {
+    if ($this->environmentType->isPromotedEnvironment($node)) {
       $this->promoted($site, $node, TRUE, FALSE);
     }
 
@@ -197,9 +228,12 @@ class Environment extends EntityActionBase {
    * @throws \Drupal\Core\Entity\EntityMalformedException
    */
   public function updated(NodeInterface $node) {
-    $site = $this->environmentEntity->getSite($node);
-    $project = $this->siteEntity->getProject($site);
-    if (!isset($project) || !isset($site)) {
+    $site = $this->environmentService->getSite($node);
+    if (!isset($site)) {
+      return FALSE;
+    }
+    $project = $this->siteService->getProject($site);
+    if (!isset($project)) {
       return FALSE;
     }
 
@@ -221,8 +255,12 @@ class Environment extends EntityActionBase {
 
     $storage_class = '';
     if ($project->field_shp_storage_class->target_id) {
-      $storage_class = Term::load($project->field_shp_storage_class->target_id)->label();
+      $storage_class = $project->field_shp_storage_class->entity->label();
     }
+
+    $environment_type = $this->environmentService->getEnvironmentType($node);
+    $backup_schedule = !$environment_type->field_shp_backup_schedule->isEmpty() ? $environment_type->field_shp_backup_schedule->value : '';
+    $backup_retention = !$environment_type->field_shp_backup_retention->isEmpty() ? $environment_type->field_shp_backup_retention->value : '';
 
     $environment_updated = $this->orchestrationProviderPlugin->updatedEnvironment(
       $project->getTitle(),
@@ -231,8 +269,6 @@ class Environment extends EntityActionBase {
       $node->id(),
       $node->toUrl('canonical', ['absolute' => TRUE])->toString(),
       $project->field_shp_builder_image->value,
-      $node->field_shp_domain->value,
-      $node->field_shp_path->value,
       $project->field_shp_git_repository->value,
       $node->field_shp_git_reference->value,
       $project->field_shp_build_secret->value,
@@ -242,7 +278,11 @@ class Environment extends EntityActionBase {
       $env_vars,
       $secrets,
       $probes,
-      $cron_jobs
+      $cron_jobs,
+      $backup_schedule,
+      $backup_retention,
+      $this->getRouteForEnvironment($node, $environment_type),
+      $this->getHpaForEnvironment($node)
     );
 
     // Allow other modules to react to the Environment update.
@@ -262,9 +302,12 @@ class Environment extends EntityActionBase {
    *   True on success. False otherwise.
    */
   public function deleted(NodeInterface $node) {
-    $site = $this->environmentEntity->getSite($node);
-    $project = $this->siteEntity->getProject($site);
-    if (!isset($project) || !isset($site)) {
+    $site = $this->environmentService->getSite($node);
+    if (!$site) {
+      return FALSE;
+    }
+    $project = $this->siteService->getProject($site);
+    if (!$project) {
       return FALSE;
     }
 
@@ -279,6 +322,17 @@ class Environment extends EntityActionBase {
     // Allow other modules to react to the Environment deletion.
     $event = new OrchestrationEnvironmentEvent($this->orchestrationProviderPlugin, $deployment_name);
     $this->eventDispatcher->dispatch(OrchestrationEvents::DELETED_ENVIRONMENT, $event);
+
+    if (!$node->field_cache_backend->isEmpty()) {
+      /** @var \Drupal\shp_cache_backend\Plugin\CacheBackendInterface $cache_backend */
+      $cache_backend = $node->field_cache_backend->first()->getContainedPluginInstance();
+      try {
+        $cache_backend->onEnvironmentDelete($node);
+      }
+      catch (ClientException $e) {
+        $this->exceptionHandler->handleClientException($e);
+      }
+    }
 
     return $result;
   }
@@ -301,10 +355,13 @@ class Environment extends EntityActionBase {
    * @throws \Drupal\Core\Entity\EntityStorageException
    */
   public function promoted(NodeInterface $site, NodeInterface $environment, bool $exclusive, bool $clear_cache = TRUE) {
-    $project = $this->siteEntity->getProject($site);
+    $project = $this->siteService->getProject($site);
     if (!isset($project) || !isset($site)) {
       return FALSE;
     }
+
+    // Load the taxonomy term that has protect enabled.
+    $promoted_term = $this->environmentType->getPromotedTerm();
 
     $result = $this->orchestrationProviderPlugin->promotedEnvironment(
       $project->title->value,
@@ -312,14 +369,14 @@ class Environment extends EntityActionBase {
       $site->id(),
       $environment->id(),
       $environment->field_shp_git_reference->value,
-      $clear_cache
+      $clear_cache,
+      $this->getRouteForEnvironment($environment, $promoted_term),
+      $this->getHpaForEnvironment($environment)
     );
 
     // @todo everything is exclusive for now, implement non-exclusive?
-
     // Load a non protected term.
     $demoted_term = $this->environmentType->getDemotedTerm();
-    $promoted_term = $this->environmentType->getPromotedTerm();
 
     // Demote all current prod environments - for this site!
     $old_promoted = \Drupal::entityQuery('node')
@@ -329,14 +386,38 @@ class Environment extends EntityActionBase {
       ->execute();
     foreach ($old_promoted as $nid) {
       $node = Node::load($nid);
-      $node->field_shp_environment_type = [['target_id' => $demoted_term->id()]];
+      $node->field_shp_environment_type = $demoted_term->id();
       $node->save();
+
+      // Run any cache backend demotion functions.
+      if (!$node->field_cache_backend->isEmpty()) {
+        /** @var \Drupal\shp_cache_backend\Plugin\CacheBackendInterface $cache_backend */
+        $cache_backend = $node->field_cache_backend->first()->getContainedPluginInstance();
+        try {
+          $cache_backend->onEnvironmentDemotion($node);
+        }
+        catch (ClientException $e) {
+          $this->exceptionHandler->handleClientException($e);
+        }
+      }
     }
 
     // Finally Update the environment that was promoted if we need to.
-    if ($environment->field_shp_environment_type->target_id != $promoted_term->id()) {
+    if (!$this->environmentType->isPromotedEnvironment($environment)) {
       $environment->field_shp_environment_type = [['target_id' => $promoted_term->id()]];
       $environment->save();
+    }
+
+    // Run any cache-backend promotion functions.
+    if (!$environment->field_cache_backend->isEmpty()) {
+      /** @var \Drupal\shp_cache_backend\Plugin\CacheBackendInterface $cache_backend */
+      $cache_backend = $environment->field_cache_backend->first()->getContainedPluginInstance();
+      try {
+        $cache_backend->onEnvironmentPromote($environment);
+      }
+      catch (ClientException $e) {
+        $this->exceptionHandler->handleClientException($e);
+      }
     }
 
     return $result;
@@ -380,13 +461,86 @@ class Environment extends EntityActionBase {
     $cron_jobs = [];
 
     foreach ($environment->field_shp_cron_jobs as $job) {
-      $cron_jobs[$job->name] = [
+      $cron_jobs[] = [
         'cmd' => $job->value,
         'schedule' => $job->key,
       ];
     }
 
     return $cron_jobs;
+  }
+
+  /**
+   * Constructs an HPA object for an environment.
+   *
+   * @param \Drupal\node\NodeInterface $environment
+   *   Environment entity.
+   *
+   * @return \UniversityOfAdelaide\OpenShift\Objects\Hpa
+   *   The HPA object
+   */
+  protected function getHpaForEnvironment(NodeInterface $environment) {
+    /** @var \UniversityOfAdelaide\OpenShift\Objects\Hpa $hpa */
+    $hpa = Hpa::create();
+    if (!$environment->field_min_replicas->isEmpty()) {
+      $hpa->setMinReplicas($environment->field_min_replicas->value);
+    }
+    if (!$environment->field_max_replicas->isEmpty()) {
+      $hpa->setMaxReplicas($environment->field_max_replicas->value);
+    }
+    return $hpa;
+  }
+
+  /**
+   * Constructs an Route object for an environment.
+   *
+   * @param \Drupal\node\NodeInterface $environment
+   *   Environment entity.
+   * @param \Drupal\taxonomy\Entity\Term $term
+   *   Environment type.
+   *
+   * @return \UniversityOfAdelaide\OpenShift\Objects\Route
+   *   The Route object
+   */
+  protected function getRouteForEnvironment(NodeInterface $environment, Term $term) {
+    /** @var \UniversityOfAdelaide\OpenShift\Objects\Route $route */
+    $route = Route::create();
+
+    // Production routes are tied to the site id and non-prod to environment id.
+    $route_name = OpenShiftOrchestrationProvider::generateDeploymentName($environment->id());
+    $promoted_term = $this->environmentType->getPromotedTerm();
+    $route_type = 'environment';
+    if ($term && $promoted_term && $term->id() === $promoted_term->id()) {
+      $site = $this->environmentService->getSite($environment);
+      $route_name = OpenShiftOrchestrationProvider::generateDeploymentName($site->id());
+      $route_type = 'site';
+    }
+
+    $labels = ['app' => $route_name];
+    $route->setName($route_name)
+      ->setLabels($labels)
+      ->setInsecureEdgeTerminationPolicy('Allow')
+      ->setTermination('edge')
+      ->setToKind('Service')
+      ->setToName($route_name);
+
+    // Extract and transform the annotations from the provided environment type.
+    $annotations = $term ? $term->field_shp_annotations->getValue() : [];
+    $annotations = array_combine(
+      array_column($annotations, 'key'),
+      array_column($annotations, 'value')
+    );
+    $route->setAnnotations($annotations);
+
+    // Use site domain and path when promoted term, otherwise environment.
+    if (!${$route_type}->field_shp_domain->isEmpty()) {
+      $route->setHost(${$route_type}->field_shp_domain->value);
+    }
+    if (!${$route_type}->field_shp_path->isEmpty()) {
+      $route->setPath(${$route_type}->field_shp_path->value);
+    }
+
+    return $route;
   }
 
 }

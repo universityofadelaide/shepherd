@@ -7,9 +7,7 @@ use Drupal\group\Plugin\GroupContentEnablerManagerInterface;
 use Drupal\node\NodeInterface;
 
 /**
- * Class SiteGroupManager.
- *
- * @package Drupal\shp_content_types\Service
+ * Manages group content.
  */
 class GroupManager {
 
@@ -50,7 +48,7 @@ class GroupManager {
    *   The corresponding group.
    */
   public function create(NodeInterface $node) {
-    /* @var $group \Drupal\group\Entity\GroupInterface */
+    /** @var \Drupal\group\Entity\GroupInterface $group */
     $group = $this->entityTypeManager
       ->getStorage('group')
       ->create([

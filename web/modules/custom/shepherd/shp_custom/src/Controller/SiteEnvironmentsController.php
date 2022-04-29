@@ -38,7 +38,7 @@ class SiteEnvironmentsController extends ControllerBase {
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container) {
-    return new static (
+    return new static(
       $container->get('plugin.manager.orchestration_provider')
     );
   }
@@ -60,14 +60,14 @@ class SiteEnvironmentsController extends ControllerBase {
       $deployment_status = $deploymentConfigs['status']['conditions'][0];
       $response = [];
       if (strtolower($deployment_status['status']) === 'false' && $deployment_status['type'] === "Available") {
-        // @todo - Determine why status is false. What information to display ?
+        // @todo Determine why status is false. What information to display ?
         $response[]['status'] = "Building";
       }
       elseif (strtolower($deployment_status['status']) === 'true' && $deployment_status['type'] === "Available") {
         $response[]['status'] = "Running";
       }
       else {
-        // @todo - What states end up here ?
+        // @todo What states end up here ?
         // Give a developer friendly message.
         $response[]['status'] = $deployment_status['message'];
       }

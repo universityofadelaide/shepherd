@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\Tests\shp_custom;
+namespace Drupal\Tests\shp_custom\Unit;
 
 use Drupal\shp_custom\Plugin\views\field\SiteEnvironmentStatus;
 use Drupal\Tests\UnitTestCase;
@@ -77,23 +77,43 @@ class SiteEnvironmentStatusTest extends UnitTestCase {
   public function testRender() {
     // When running with available pods, 'Running'.
     $this->mockStatus = ['running' => TRUE, 'available_pods' => 1];
-    $this->assertArraySubset(['environment_status' => ['#plain_text' => 'Running']], $this->siteEnvironmentStatus->render($this->resultRow));
+
+    $result = $this->siteEnvironmentStatus->render($this->resultRow);
+    $this->assertArrayHasKey('environment_status', $result);
+    $this->assertArrayHasKey('#plain_text', $result['environment_status']);
+    $this->assertEquals('Running', $result['environment_status']['#plain_text']);
+
     $this->mockStatus = ['running' => TRUE, 'available_pods' => 10];
-    $this->assertArraySubset(['environment_status' => ['#plain_text' => 'Running']], $this->siteEnvironmentStatus->render($this->resultRow));
+    $result = $this->siteEnvironmentStatus->render($this->resultRow);
+    $this->assertArrayHasKey('environment_status', $result);
+    $this->assertArrayHasKey('#plain_text', $result['environment_status']);
+    $this->assertEquals('Running', $result['environment_status']['#plain_text']);
 
     // When running with 0 pods, 'Building'.
     $this->mockStatus = ['running' => TRUE, 'available_pods' => 0];
-    $this->assertArraySubset(['environment_status' => ['#plain_text' => 'Building']], $this->siteEnvironmentStatus->render($this->resultRow));
+    $result = $this->siteEnvironmentStatus->render($this->resultRow);
+    $this->assertArrayHasKey('environment_status', $result);
+    $this->assertArrayHasKey('#plain_text', $result['environment_status']);
+    $this->assertEquals('Building', $result['environment_status']['#plain_text']);
 
     // When not running, 0 pods, 'Stopped'.
     $this->mockStatus = ['running' => FALSE, 'available_pods' => 0];
-    $this->assertArraySubset(['environment_status' => ['#plain_text' => 'Stopped']], $this->siteEnvironmentStatus->render($this->resultRow));
+    $result = $this->siteEnvironmentStatus->render($this->resultRow);
+    $this->assertArrayHasKey('environment_status', $result);
+    $this->assertArrayHasKey('#plain_text', $result['environment_status']);
+    $this->assertEquals('Stopped', $result['environment_status']['#plain_text']);
 
     // When not running, but pods are up, 'Failed'.
     $this->mockStatus = ['running' => FALSE, 'available_pods' => 1];
-    $this->assertArraySubset(['environment_status' => ['#plain_text' => 'Failed']], $this->siteEnvironmentStatus->render($this->resultRow));
+    $result = $this->siteEnvironmentStatus->render($this->resultRow);
+    $this->assertArrayHasKey('environment_status', $result);
+    $this->assertArrayHasKey('#plain_text', $result['environment_status']);
+    $this->assertEquals('Failed', $result['environment_status']['#plain_text']);
     $this->mockStatus = ['running' => FALSE, 'available_pods' => 10];
-    $this->assertArraySubset(['environment_status' => ['#plain_text' => 'Failed']], $this->siteEnvironmentStatus->render($this->resultRow));
+    $result = $this->siteEnvironmentStatus->render($this->resultRow);
+    $this->assertArrayHasKey('environment_status', $result);
+    $this->assertArrayHasKey('#plain_text', $result['environment_status']);
+    $this->assertEquals('Failed', $result['environment_status']['#plain_text']);
   }
 
 }

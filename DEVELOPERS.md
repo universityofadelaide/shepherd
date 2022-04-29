@@ -82,6 +82,8 @@ Putting these into ~/.bashrc is recommended for ongoing development.
   `export OPENSHIFT_TYPE=openshift`
 * Set the domain for accessing shepherd to the ip of local docker
   `export DOMAIN=$(ip addr show docker0 | grep "inet\b" | awk '{print $2}' | cut -d/ -f1).nip.io`
+* Set the default minishift vm driver.
+  `export MINISHIFT_DRIVER=virtualbox`
 * Start the oc cluster with `./openshift start`.
 * Now run the ./dsh etc commands as per normal.
 
@@ -110,6 +112,8 @@ check that MariaDB is running before executing the next command.
 robo dev:drupal-content-generate
 robo dev:wordpress-content-generate
 ```
+
+Follow the *Configure Backup/Restore operators* section in [INSTALL.md](INSTALL.md) to set up Backup/Restore functionality.
 
 Thats it; visit the OpenShift web interface to see a build running and a
 deployment ready to occur when the build finishes.
@@ -258,6 +262,13 @@ discover the OpenShift client dependency.
   ```bash
   ./dsh
   bin/drush -r /code/web cset shp_orchestration.openshift.openshift token ${NEW_TOKEN}
+  ```
+- If you get the following error when creating content: `An error occurred while communicating with OpenShift. cURL error 28: Failed to connect to 192.168.99.105 port 8443`
+
+  This can be due to a network collision with other docker networks.
+  Make sure all other containers are stopped, and then:
+  ```bash
+  docker network prune -f
   ```
 
 ## Working with OpenShift

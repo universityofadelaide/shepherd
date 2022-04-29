@@ -9,12 +9,13 @@ use Drupal\Core\DependencyInjection\DependencySerializationTrait;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Link;
 use Drupal\Core\Render\Element;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\Url;
 use Drupal\node\NodeInterface;
-use Drupal\taxonomy\Entity\Term;
+use Drupal\taxonomy\TermInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
@@ -106,7 +107,7 @@ class Environment {
     $this->taxonomyTerm = $this->entityTypeManager->getStorage('taxonomy_term');
     $this->currentUser = $currentUser;
     $this->site = $site;
-    // @todo - too many cross dependencies on this service, causing install failures. Fix.
+    // @todo too many cross dependencies on this service, causing install failures. Fix.
     // Pull statically for now.
     $this->orchestrationProvider = \Drupal::service('plugin.manager.orchestration_provider')->getProviderInstance();
   }
@@ -120,7 +121,7 @@ class Environment {
    *   Form State.
    */
   public function formAlter(array &$form, FormStateInterface $form_state) {
-    // @todo - Set this permission to something more granular.
+    // @todo Set this permission to something more granular.
     $access = $this->currentUser->hasPermission('administer nodes');
     $this->setSiteField($form, $access);
     $this->setBranchField($form, $form_state);
@@ -211,18 +212,34 @@ class Environment {
     $site = $this->node->load($values['field_shp_site'][0]['target_id']);
     $taxonomy_term = $this->taxonomyTerm->load($values['field_shp_environment_type'][0]['target_id']);
 
-    // Ahh the rarely seen in the wild - do-while loop!
-    $count = 0;
-    do {
-      $path_value = $site->field_shp_path->value;
-      $domain_value = $site->field_shp_short_name->value . '-' . $count++ . '.' . $taxonomy_term->field_shp_base_domain->value;
-    } while (!$this->validateEnvironmentNameUniqueness($domain_value));
+    $path_value = $site->field_shp_path->value;
+    $domain_value = $this->getUniqueDomainForSite($site, $taxonomy_term);
 
     // We have the unique values. W00t.
     $ajax_response->addCommand(new InvokeCommand('#edit-field-shp-domain-0-value', 'val', [$domain_value]));
     $ajax_response->addCommand(new InvokeCommand('#edit-field-shp-path-0-value', 'val', [$path_value]));
 
     return $ajax_response;
+  }
+
+  /**
+   * Gets a unique domain value for a given site.
+   *
+   * @param \Drupal\node\NodeInterface $site
+   *   The site node.
+   * @param \Drupal\taxonomy\TermInterface $environment_type
+   *   The environment type term.
+   *
+   * @return string
+   *   A unique domain.
+   */
+  public function getUniqueDomainForSite(NodeInterface $site, TermInterface $environment_type) {
+    // Ahh the rarely seen in the wild - do-while loop!
+    $count = 0;
+    do {
+      $domain_value = $site->field_shp_short_name->value . '-' . $count++ . '.' . $environment_type->field_shp_base_domain->value;
+    } while (!$this->validateEnvironmentNameUniqueness($domain_value));
+    return $domain_value;
   }
 
   /**
@@ -234,9 +251,10 @@ class Environment {
    *   Entity to apply operations to.
    */
   public function operationsLinksAlter(array &$operations, EntityInterface $entity) {
-    $site = $entity->field_shp_site->target_id;
-    $environment = $entity->id();
-    $environment_term = Term::load($entity->field_shp_environment_type->target_id);
+    if (!$site = $this->getSite($entity)) {
+      return;
+    }
+    $environment_term = $this->getEnvironmentType($entity);
 
     // If its not a protected environment, it can be promoted.
     if (!$environment_term->field_shp_protect->value) {
@@ -244,7 +262,7 @@ class Environment {
         'title'      => $this->t('Promote'),
         'weight'     => 1,
         'url'        => Url::fromRoute('shp_custom.environment-promote-form',
-          ['site' => $site, 'environment' => $environment]),
+          ['site' => $site->id(), 'environment' => $entity->id()]),
         // Render form in a modal window.
         'attributes' => [
           'class'               => ['button', 'use-ajax'],
@@ -257,35 +275,17 @@ class Environment {
       ];
     }
 
-    $site = $entity->field_shp_site->entity;
-    $project = $site->field_shp_project->entity;
-
-    $terminal = $this->orchestrationProvider->getTerminalUrl(
-      $project->getTitle(),
-      $site->field_shp_short_name->value,
-      $entity->id()
-    );
-
-    $logs = $this->orchestrationProvider->getLogUrl(
-      $project->getTitle(),
-      $site->field_shp_short_name->value,
-      $entity->id()
-    );
-
-    if ($terminal) {
-      $operations['terminal'] = [
-        'title'      => $this->t('Terminal'),
-        'weight'     => 9,
-        'url'        => $terminal,
-      ];
-    }
-
-    if ($logs) {
-      $operations['logs'] = [
-        'title'     => $this->t('Logs'),
-        'weight'    => 4,
-        'url'       => $logs,
-      ];
+    $site = $this->getSite($entity);
+    if ($site) {
+      $project = $this->site->getProject($site);
+      if ($project) {
+        if ($terminal_link = $this->getTerminalLink($entity, $project, $site)) {
+          $operations['terminal'] = $terminal_link;
+        }
+        if ($log_link = $this->getLogLink($entity, $project, $site)) {
+          $operations['log'] = $log_link;
+        }
+      }
     }
 
     // Process copied from getDefaultOperations()
@@ -295,6 +295,64 @@ class Environment {
         $operations[$key]['query'] = ['destination' => $destination];
       }
     }
+  }
+
+  /**
+   * Generate the link for the web terminal UI.
+   *
+   * @param \Drupal\Core\Entity\EntityInterface $entity
+   *   Environment entity.
+   * @param \Drupal\Core\Entity\EntityInterface $project
+   *   Project entity.
+   * @param \Drupal\Core\Entity\EntityInterface $site
+   *   Site entity.
+   *
+   * @return array
+   *   Renderable link.
+   */
+  protected function getTerminalLink(EntityInterface $entity, EntityInterface $project, EntityInterface $site): array {
+    $terminal = $this->orchestrationProvider->getTerminalUrl(
+      $project->getTitle(),
+      $site->field_shp_short_name->value,
+      $entity->id()
+    );
+    if ($terminal) {
+      return [
+        'title' => $this->t('Terminal'),
+        'weight' => 9,
+        'url' => $terminal,
+      ];
+    }
+    return [];
+  }
+
+  /**
+   * Generate the link for the web log UI.
+   *
+   * @param \Drupal\Core\Entity\EntityInterface $entity
+   *   Environment entity.
+   * @param \Drupal\Core\Entity\EntityInterface $project
+   *   Project entity.
+   * @param \Drupal\Core\Entity\EntityInterface $site
+   *   Site entity.
+   *
+   * @return array
+   *   Renderable link.
+   */
+  protected function getLogLink(EntityInterface $entity, EntityInterface $project, EntityInterface $site): array {
+    $logs = $this->orchestrationProvider->getLogUrl(
+      $project->getTitle(),
+      $site->field_shp_short_name->value,
+      $entity->id()
+    );
+    if ($logs) {
+      return [
+        'title' => $this->t('Logs'),
+        'weight' => 4,
+        'url' => $logs,
+      ];
+    }
+    return [];
   }
 
   /**
@@ -332,6 +390,37 @@ class Environment {
   }
 
   /**
+   * Get the link to an environment.
+   *
+   * @param \Drupal\node\NodeInterface $environment
+   *   The environment node.
+   * @param bool $render
+   *   Whether to render the link or not.
+   *
+   * @return \Drupal\Core\Link|array|null
+   *   A renderable link to the environment, null if it doesn't exist.
+   */
+  public function getEnvironmentLink(NodeInterface $environment, $render = TRUE) {
+    $environment_term = $this->getEnvironmentType($environment);
+    if (!$environment_term) {
+      return NULL;
+    }
+
+    // If its a protected environment, its production, show that url.
+    if ($environment_term->field_shp_protect->value) {
+      $site = $environment->field_shp_site->first()->entity;
+      $domain_and_path = rtrim($site->field_shp_domain->value . $site->field_shp_path->value, '/');
+      $link = Link::fromTextAndUrl($domain_and_path, Url::fromUri('//' . $domain_and_path));
+      return $render ? $link->toRenderable() : $link;
+    }
+    else {
+      $domain_and_path = rtrim($environment->field_shp_domain->value . $environment->field_shp_path->value, '/');
+      $link = Link::fromTextAndUrl($domain_and_path, Url::fromUri('//' . $domain_and_path));
+      return $render ? $link->toRenderable() : $link;
+    }
+  }
+
+  /**
    * Replace any tokens from default field values.
    *
    * @param array $form
@@ -365,4 +454,5 @@ class Environment {
 
     return !count($results);
   }
+
 }

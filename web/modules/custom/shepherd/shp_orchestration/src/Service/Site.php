@@ -8,7 +8,7 @@ use Drupal\shp_custom\Service\Site as SiteEntity;
 use Drupal\shp_orchestration\OrchestrationProviderPluginManager;
 
 /**
- * Class Site.
+ * A service for interacting with site entities.
  */
 class Site extends EntityActionBase {
 
@@ -54,23 +54,12 @@ class Site extends EntityActionBase {
   public function created(NodeInterface $site) {
     $project = $this->siteEntity->getProject($site);
 
-    // Load the taxonomy term that has protect enabled.
-    $promoted_term = $this->environmentType->getPromotedTerm();
-
-    // Extract and transform the annotations from the environment type.
-    $annotations = $promoted_term ? $promoted_term->field_shp_annotations->getValue() : [];
-    $annotations = array_combine(
-      array_column($annotations, 'key'),
-      array_column($annotations, 'value')
-    );
-
     return $this->orchestrationProviderPlugin->createdSite(
       $project->getTitle(),
       $site->field_shp_short_name->value,
       $site->id(),
       $site->field_shp_domain->value,
-      $site->field_shp_path->value,
-      $annotations
+      $site->field_shp_path->value
     );
   }
 
@@ -98,12 +87,14 @@ class Site extends EntityActionBase {
    *   True on success.
    */
   public function deleted(NodeInterface $site) {
-    $project = $this->siteEntity->getProject($site);
-    return $this->orchestrationProviderPlugin->deletedSite(
-      $project->getTitle(),
-      $site->field_shp_short_name->value,
-      $site->id()
-    );
+    if ($project = $this->siteEntity->getProject($site)) {
+      return $this->orchestrationProviderPlugin->deletedSite(
+        $project->getTitle(),
+        $site->field_shp_short_name->value,
+        $site->id()
+      );
+    }
+    return FALSE;
   }
 
 }

@@ -7,8 +7,6 @@
 
 use Drupal\user\Entity\User;
 use Drupal\user\RoleInterface;
-use Drupal\field\Entity\FieldStorageConfig;
-use Drupal\field\Entity\FieldConfig;
 
 /**
  * Implements hook_install().
@@ -39,10 +37,10 @@ function shepherd_install() {
   \Drupal::service('router.builder')->rebuildIfNeeded();
 
   // Group module restricts access to content based on their memberships.
-  user_role_grant_permissions(RoleInterface::AUTHENTICATED_ID, array(
+  user_role_grant_permissions(RoleInterface::AUTHENTICATED_ID, [
     'access content',
     'access toolbar',
-  ));
+  ]);
 
   // Enable the admin theme.
   \Drupal::configFactory()->getEditable('node.settings')->set('use_admin_theme', TRUE)->save(TRUE);
@@ -60,4 +58,14 @@ function shepherd_install() {
 
   // Do a node access rebuild, there will be zero/one node, so no need to batch.
   node_access_rebuild(FALSE);
+}
+
+/**
+ * Remove old backup settings and active job queue related things.
+ */
+function shepherd_update_8001() {
+  \Drupal::configFactory()->getEditable('shp_backup.settings')->delete();
+
+  \Drupal::database()->delete('key_value')->condition('name', 'shp_job.%', 'LIKE')->execute();
+  \Drupal::queue('shp_orchestration_job_queue')->deleteQueue();
 }

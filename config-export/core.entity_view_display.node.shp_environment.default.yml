@@ -3,6 +3,12 @@ langcode: en
 status: true
 dependencies:
   config:
+    - field.field.node.shp_environment.field_cache_backend
+    - field.field.node.shp_environment.field_max_replicas
+    - field.field.node.shp_environment.field_min_replicas
+    - field.field.node.shp_environment.field_newrelic_enabled
+    - field.field.node.shp_environment.field_shp_cpu_limit
+    - field.field.node.shp_environment.field_shp_cpu_request
     - field.field.node.shp_environment.field_shp_cron_jobs
     - field.field.node.shp_environment.field_shp_cron_suspended
     - field.field.node.shp_environment.field_shp_deployment_name
@@ -10,13 +16,17 @@ dependencies:
     - field.field.node.shp_environment.field_shp_env_vars
     - field.field.node.shp_environment.field_shp_environment_type
     - field.field.node.shp_environment.field_shp_git_reference
+    - field.field.node.shp_environment.field_shp_memory_limit
+    - field.field.node.shp_environment.field_shp_memory_request
     - field.field.node.shp_environment.field_shp_path
     - field.field.node.shp_environment.field_shp_secrets
     - field.field.node.shp_environment.field_shp_site
     - field.field.node.shp_environment.field_shp_update_on_image_change
+    - field.field.node.shp_environment.field_skip_db_prepop
     - node.type.shp_environment
   module:
     - key_value_field
+    - plugin
     - user
 _core:
   default_config_hash: Kczgsjembq0rQwGbXJUErfHx2CTDgLgq6Nkd2Ij_9jg
@@ -30,6 +40,57 @@ content:
     region: content
     settings: {  }
     third_party_settings: {  }
+  field_cache_backend:
+    weight: 16
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    type: plugin_label
+    region: content
+  field_max_replicas:
+    weight: 19
+    label: above
+    settings:
+      thousand_separator: ''
+      prefix_suffix: true
+    third_party_settings: {  }
+    type: number_integer
+    region: content
+  field_min_replicas:
+    weight: 18
+    label: above
+    settings:
+      thousand_separator: ''
+      prefix_suffix: true
+    third_party_settings: {  }
+    type: number_integer
+    region: content
+  field_newrelic_enabled:
+    weight: 17
+    label: above
+    settings:
+      format: default
+      format_custom_false: ''
+      format_custom_true: ''
+    third_party_settings: {  }
+    type: boolean
+    region: content
+  field_shp_cpu_limit:
+    weight: 12
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    type: string
+    region: content
+  field_shp_cpu_request:
+    weight: 13
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    type: string
+    region: content
   field_shp_cron_jobs:
     weight: 11
     label: above
@@ -88,6 +149,22 @@ content:
     third_party_settings: {  }
     type: string
     region: content
+  field_shp_memory_limit:
+    weight: 14
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    type: string
+    region: content
+  field_shp_memory_request:
+    weight: 15
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    type: string
+    region: content
   field_shp_path:
     weight: 3
     label: inline
@@ -115,6 +192,16 @@ content:
   field_shp_update_on_image_change:
     weight: 8
     label: inline
+    settings:
+      format: default
+      format_custom_false: ''
+      format_custom_true: ''
+    third_party_settings: {  }
+    type: boolean
+    region: content
+  field_skip_db_prepop:
+    weight: 20
+    label: above
     settings:
       format: default
       format_custom_false: ''

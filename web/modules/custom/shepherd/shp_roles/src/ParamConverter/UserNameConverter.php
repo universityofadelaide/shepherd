@@ -6,7 +6,6 @@ use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\ParamConverter\EntityConverter;
 use Drupal\Core\ParamConverter\ParamNotConvertedException;
 use Drupal\Core\TypedData\TranslatableInterface;
-use Drupal\user\Entity\User;
 use Symfony\Component\Routing\Route;
 
 /**
@@ -40,7 +39,7 @@ class UserNameConverter extends EntityConverter {
       $entity_type_id = 'user';
       if (strpos($definition['type'], '{') !== FALSE) {
         $entity_type_slug = substr($entity_type_id, 1, -1);
-        return $name != $entity_type_slug && in_array($entity_type_slug, $route->compile()->getVariables(), TRUE);
+        return $name !== $entity_type_slug && in_array($entity_type_slug, $route->compile()->getVariables(), TRUE);
       }
       return $this->entityManager->hasDefinition($entity_type_id);
     }

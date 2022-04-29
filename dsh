@@ -52,6 +52,8 @@ fi
 dsh_openshift_init() {
   # Set default type of OpenShift installation if its not already set.
   : ${OPENSHIFT_TYPE:=minishift}
+  # Set the default minishift driver.
+  : ${MINISHIFT_DRIVER:=xhyve}
 
   # Password for the mysql server.
   SUPER_SECRET_PASSWORD=super-secret-password
@@ -67,8 +69,9 @@ dsh_openshift_init() {
     fi
 
     # Perform/check setup.
-    if [ "$(minishift status)" != "Running" ]; then
-      minishift start
+    if ! minishift status | grep "Running" > /dev/null; then
+
+      minishift start --vm-driver ${MINISHIFT_DRIVER}
     fi
 
     # Ensure oc command is available.
@@ -87,7 +90,7 @@ dsh_openshift_init() {
   # If using Minishift, then
   if [ "${OPENSHIFT_TYPE}" == "minishift" ]; then
     # Setup a new mysql server, expose it and group the services.
-    if ! oc get svc mysql > /dev/null 2>&1; then
+    if ! oc get svc mariadb > /dev/null 2>&1; then
       oc new-app mariadb MYSQL_ROOT_PASSWORD=${SUPER_SECRET_PASSWORD} -l db=shepherd
       oc expose dc mariadb --type=LoadBalancer --name=mysql-external
       oc annotate svc mysql-external "service.alpha.openshift.io/dependencies=[{\"name\": \"mariadb\", \"kind\": \"Service\"}]"
@@ -106,9 +109,31 @@ dsh_openshift_init() {
     oc create secret generic privileged-db-password --from-literal=DATABASE_PASSWORD=${SUPER_SECRET_PASSWORD}
   fi
 
+  # Setup the restic password in an OpenShift secret.
+  if ! oc get secret shepherd-restic-secret > /dev/null 2>&1; then
+    oc create secret generic shepherd-restic-secret --from-literal=password=${SUPER_SECRET_PASSWORD}
+  fi
+
+  # Setup the restic PVC for storing backups
+  if ! oc get pvc restic-repository > /dev/null 2>&1; then
+    oc apply -f ./openshift-config/shepherd-restic-repo-pvc.yml
+  fi
+
+  # Import jboss datagrid image.
+  if ! oc get imagestream jboss-datagrid73-openshift > /dev/null 2>&1; then
+    oc import-image jboss-datagrid73-openshift --from='registry.access.redhat.com/jboss-datagrid-7/datagrid73-openshift' --confirm
+  fi
+
+  # Setup datagrid config
+  if ! oc get configmap datagrid-config > /dev/null 2>&1; then
+    oc apply -f ./openshift-config/datagrid
+  fi
+
   # Add local ssh key as build-key secret if it exists and has no passphrase.
   if ! oc get secret build-key > /dev/null 2>&1 && [ -f ${BUILD_KEY} ] && ! grep -q ENCRYPTED ${BUILD_KEY}; then
     oc create secret generic build-key --from-file=ssh-privatekey=${BUILD_KEY}
+  else
+    echo "build-key passwordless secret not created, builds will likely be broken."
   fi
 
   # Create a permanent token that shepherd can use to talk to OpenShift.
@@ -156,18 +181,7 @@ Connecting via ./dsh shell and running robo build is a common next step."
 dsh_shell() {
   dsh_start
 
-  # Run the shell as the current user, avoiding permission issues.
-  if ! docker-compose -f ${DOCKER_COMPOSE_FILE} exec web id -u ${USER} > /dev/null 2>&1; then
-    notice "Setting up user $USER on web container."
-    # Add user with local $USER name to container.
-    docker-compose -f ${DOCKER_COMPOSE_FILE} exec web adduser --disabled-password --uid ${UID} \
-      --gecos ${USER} --home /home/${USER} ${USER} > /dev/null
-    # Allow sudo without password for user.
-    docker-compose -f ${DOCKER_COMPOSE_FILE} exec web /bin/bash -c "echo '${USER} ALL=(ALL) NOPASSWD: ALL' > /etc/sudoers.d/${USER}"
-  fi
-
   docker-compose -f ${DOCKER_COMPOSE_FILE} exec \
-    -u ${USER} \
     --env SSH_AUTH_SOCK=${CONTAINER_SSH_AUTH_SOCK} \
     --env TOKEN=${TOKEN} \
     --env DB_HOST=${DB_HOST} \
@@ -207,7 +221,10 @@ dsh_logs() {
 # Command: ./dsh pull
 # Fetches all images used by the project.
 dsh_pull() {
-  docker-compose -f ${DOCKER_COMPOSE_FILE} pull
+  # docker-compose doesn't resolve sub-dependencies in Dockerfiles.
+  docker pull uofa/s2i-shepherd-drupal
+  docker-compose -f ${DOCKER_COMPOSE_FILE} pull --ignore-pull-failures
+  docker-compose -f ${DOCKER_COMPOSE_FILE} build
 }
 
 # Command: ./dsh nfs

@@ -4,6 +4,12 @@ status: true
 dependencies:
   config:
     - core.entity_view_mode.node.teaser
+    - field.field.node.shp_environment.field_cache_backend
+    - field.field.node.shp_environment.field_max_replicas
+    - field.field.node.shp_environment.field_min_replicas
+    - field.field.node.shp_environment.field_newrelic_enabled
+    - field.field.node.shp_environment.field_shp_cpu_limit
+    - field.field.node.shp_environment.field_shp_cpu_request
     - field.field.node.shp_environment.field_shp_cron_jobs
     - field.field.node.shp_environment.field_shp_cron_suspended
     - field.field.node.shp_environment.field_shp_deployment_name
@@ -11,9 +17,13 @@ dependencies:
     - field.field.node.shp_environment.field_shp_env_vars
     - field.field.node.shp_environment.field_shp_environment_type
     - field.field.node.shp_environment.field_shp_git_reference
+    - field.field.node.shp_environment.field_shp_memory_limit
+    - field.field.node.shp_environment.field_shp_memory_request
     - field.field.node.shp_environment.field_shp_path
+    - field.field.node.shp_environment.field_shp_secrets
     - field.field.node.shp_environment.field_shp_site
     - field.field.node.shp_environment.field_shp_update_on_image_change
+    - field.field.node.shp_environment.field_skip_db_prepop
     - node.type.shp_environment
   module:
     - user
@@ -24,10 +34,21 @@ targetEntityType: node
 bundle: shp_environment
 mode: teaser
 content:
+  content_moderation_control:
+    weight: -20
+    settings: {  }
+    third_party_settings: {  }
+    region: content
   links:
     weight: 100
     region: content
 hidden:
+  field_cache_backend: true
+  field_max_replicas: true
+  field_min_replicas: true
+  field_newrelic_enabled: true
+  field_shp_cpu_limit: true
+  field_shp_cpu_request: true
   field_shp_cron_jobs: true
   field_shp_cron_suspended: true
   field_shp_deployment_name: true
@@ -35,6 +56,10 @@ hidden:
   field_shp_env_vars: true
   field_shp_environment_type: true
   field_shp_git_reference: true
+  field_shp_memory_limit: true
+  field_shp_memory_request: true
   field_shp_path: true
+  field_shp_secrets: true
   field_shp_site: true
   field_shp_update_on_image_change: true
+  field_skip_db_prepop: true

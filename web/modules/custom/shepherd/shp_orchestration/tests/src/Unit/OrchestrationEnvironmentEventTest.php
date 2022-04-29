@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\Tests\shp_orchestration;
+namespace Drupal\Tests\shp_orchestration\Unit;
 
 use Drupal\shp_orchestration\Event\OrchestrationEnvironmentEvent;
 use Drupal\Tests\UnitTestCase;

@@ -86,7 +86,10 @@ class EnvironmentRestoreForm extends FormBase {
    *   Translated markup.
    */
   public function getPageTitle(NodeInterface $site, NodeInterface $environment) {
-    return t('Restore environment - @site_title : @environment_title', ['@site_title' => $site->getTitle(), '@environment_title' => $environment->getTitle()]);
+    return t('Restore environment - @site_title : @environment_title', [
+      '@site_title' => $site->getTitle(),
+      '@environment_title' => $environment->getTitle(),
+    ]);
   }
 
   /**
@@ -96,18 +99,29 @@ class EnvironmentRestoreForm extends FormBase {
     $form_state->set('site', $site);
     $form_state->set('environment', $environment);
 
-    $backups = $this->backup->getAll($site);
+    /** @var \UniversityOfAdelaide\OpenShift\Objects\Backups\BackupList $backup_list */
+    if (!$backup_list = $this->backup->getAllForSite($site)) {
+      return [
+        '#markup' => "<p>An error occurred while communicating with OpenShift.</p>",
+      ];
+    }
+
+    if (!$backup_list->hasBackups()) {
+      return [
+        '#markup' => "<p>There are no backups available for this environment.</p>",
+      ];
+    }
 
     $backup_options = [];
 
-    foreach ($backups as $backup) {
-      $backup_options[$backup->nid] = $backup->_entity->title->value;
+    foreach ($backup_list->getCompletedBackupsByStartTime('ASC') as $backup) {
+      $backup_options[$backup->getName()] = $backup->getFriendlyName();
     }
 
     $build = [
       'backup' => [
         '#type' => 'select',
-        '#title' => $this->t('Backup path'),
+        '#title' => $this->t('Backup to restore from'),
         '#options' => $backup_options,
         '#required' => TRUE,
       ],
@@ -125,33 +139,24 @@ class EnvironmentRestoreForm extends FormBase {
 
   /**
    * {@inheritdoc}
-   *
-   * @todo Shepherd: Completely refactor restore for shepherd.
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
-    $form_state->cleanValues();
-
+    /** @var \Drupal\node\NodeInterface $site */
     $site = $form_state->get('site');
     $environment = $form_state->get('environment');
 
-    $backup = $this->entityTypeManager->getStorage('node')->load($form_state->getValue('backup'));
-
-    // Set the backup to restore from.
-    $status = $this->backup->restore($backup, $environment);
-
-    if ($status) {
+    if ($this->backup->restore($form_state->getValue('backup'), $environment)) {
       $this->messenger->addStatus($this->t('Restore has been queued for %title', [
         '%title' => $environment->getTitle(),
       ]));
     }
     else {
-      $this->messenger->addError($this->t('Restore failed. Could not find any instances for %title',
-        [
-          '%title' => $environment->getTitle(),
-        ]));
+      $this->messenger->addError($this->t('Restore failed for %title', [
+        '%title' => $environment->getTitle(),
+      ]));
     }
 
-    $form_state->setRedirect("entity.node.canonical", ['node' => $site->id()]);
+    $form_state->setRedirectUrl($site->toUrl());
   }
 
 }

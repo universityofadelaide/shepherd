@@ -18,7 +18,7 @@ oc new-project shepherd-openshift
 ```
 
 ### Create a secret 
-The `shepherd-openshift.yml` configuration file will construct the necessary objects for running Shepherd. Before you can run the script a SSH-Auth secret called `build-key` needs to be created so Shepherd can be cloned from GitHub. This can be done via the UI `/console/project/{project-name}/create-secret` and clicking on the create secret button OR via `oc` command line tool :
+The `./openshift-config/shepherd-openshift.yml` configuration file will construct the necessary objects for running Shepherd. Before you can run the script a SSH-Auth secret called `build-key` needs to be created so Shepherd can be cloned from GitHub. This can be done via the UI `/console/project/{project-name}/create-secret` and clicking on the create secret button OR via `oc` command line tool :
 
 ```bash
 oc create secret generic build-key --from-file=ssh-privatekey={key_file}
@@ -31,7 +31,7 @@ oc create secret generic build-key --from-file=ssh-privatekey={key_file}
 Login as admin and Import the Shepherd OpenShift deployment template globally
 ```bash
 oc login -u system:admin
-oc create -f shepherd-openshift.yml -n openshift
+oc create -f ./openshift-config/shepherd-openshift.yml -n openshift
 ```
 You can now click Add to project in the OpenShift ui to deploy Shepherd directly.
 
@@ -99,12 +99,18 @@ oc create secret generic privileged-db-password --from-literal=DATABASE_PASSWORD
 ```
 [Read more about secrets](https://docs.openshift.com/container-platform/latest/dev_guide/secrets.html).
 
+#### Configure Backup/Restore operators
+
+Shepherd uses custom Kubernetes objects for backup and restore operations. These are developed and managed by https://github.com/universityofadelaide/shepherd-operator
+
+Follow the documentation there to install the manifests and run the operators.
+
 ### Configure environment types
 
 When environments are created you declare a type of environment the entity belongs to. An environment type is a taxonomy that describes it's name,
 base domain (The base domain is used to populate urls) and delete protection (protects entitys grouped with this environment type from deletion).
 This grouping will logically define your environment(s) when you deploy on a site : e.g dev, uat, prd. You can define the environment types as per your
-organisations workflow. In this instance we will create 3 environment types : `Development`, `UAT` and `Production`.
+organisations workflow. In this instance we will create 3 environment types : `Dev`, `UAT` and `Prd`.
 
 To create the environment types:
 `/admin/structure/taxonomy/manage/shp_environment_types/overview` click the add term button.

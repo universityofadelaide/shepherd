@@ -9,7 +9,7 @@ use Drupal\Core\Link;
 use Drupal\node\Entity\Node;
 
 /**
- * Class SitesBreadcrumbBuilder.
+ * Adds breadcrumbs for Site and Environment content types and views.
  */
 class SitesBreadcrumbBuilder implements BreadcrumbBuilderInterface {
 

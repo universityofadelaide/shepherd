@@ -13,9 +13,7 @@ use Drupal\node\Entity\Node;
 use Drupal\node\NodeInterface;
 
 /**
- * Class Site.
- *
- * @package Drupal\shp_custom\Service
+ * A service for interacting with Site entities.
  */
 class Site {
 
@@ -218,13 +216,9 @@ class Site {
    *   Project node.
    */
   public function getProject(NodeInterface $site) {
-    if (isset($site->field_shp_project->target_id)) {
+    if (!$site->field_shp_project->isEmpty()) {
       /** @var \Drupal\node\NodeInterface $project */
-      return $site->get('field_shp_project')
-        ->first()
-        ->get('entity')
-        ->getTarget()
-        ->getValue();
+      return $site->field_shp_project->entity;
     }
 
     return FALSE;

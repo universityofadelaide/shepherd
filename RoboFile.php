@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file
  * Contains \Robo\RoboFile.
@@ -21,7 +22,12 @@ class RoboFile extends RoboFileBase {
    */
   public function __construct() {
     parent::__construct();
-    // Put project specific overrides here, below the parent constructor.
+    if ($root = getenv('SHEPHERD_ROOT')) {
+      $this->configDir = $root . '/config-export';
+      $this->configInstallDir = $root . '/config-install';
+      $this->configDeleteList = $root . '/drush/config-delete.yml';
+      $this->configIgnoreList = $root . '/drush/config-ignore.yml';
+    }
   }
 
   /**
@@ -42,10 +48,23 @@ class RoboFile extends RoboFileBase {
     }
   }
 
+  /**
+   * Create default WP content for the Shepherd.
+   */
   public function devWordpressContentGenerate() {
     $virtual_host = getenv("VIRTUAL_HOST");
     if (!empty($virtual_host)) {
       $this->_exec("$this->drush_cmd scr WordpressContentGenerate.php --uri=$virtual_host");
+    }
+  }
+
+  /**
+   * Create a dev login link.
+   */
+  public function devLogin() {
+    $virtual_host = getenv("VIRTUAL_HOST");
+    if (!empty($virtual_host)) {
+      $this->_exec("$this->drush_cmd --uri=$virtual_host uli");
     }
   }
 

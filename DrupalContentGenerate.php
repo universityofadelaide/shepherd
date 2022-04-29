@@ -6,8 +6,6 @@
  */
 
 use Drupal\node\Entity\Node;
-use Drupal\shp_orchestration\Entity\OpenShiftConfigEntity;
-use Drupal\shp_redis_support\Entity\OpenShiftWithRedisConfigEntity;
 use Drupal\taxonomy\Entity\Term;
 use Drupal\user\Entity\User;
 
@@ -47,54 +45,28 @@ $openshift_config = [
   'token'      => $token,
   'namespace'  => 'myproject',
   'verify_tls' => FALSE,
-  'id'         => 'openshift',
 ];
-
-// Configure OpenShift as orchestration provider.
-if ($openshift = OpenShiftConfigEntity::load('openshift')) {
-  // If config already exists, replace with current values.
-  foreach ($openshift_config as $key => $value) {
-    $openshift->set($key, $value);
-  }
-}
-else {
-  $openshift = OpenShiftConfigEntity::create($openshift_config);
-}
-$openshift->save();
-
-// Update settings to create a redis enabled version of the endpoint.
-$openshift_config['id'] = 'openshift_with_redis';
-
-// Configure OpenShift as orchestration provider.
-if ($openshift = OpenShiftWithRedisConfigEntity::load('openshift_with_redis')) {
-  // If config already exists, replace with current values.
-  foreach ($openshift_config as $key => $value) {
-    $openshift->set($key, $value);
-  }
-}
-else {
-  $openshift = OpenShiftWithRedisConfigEntity::create($openshift_config);
-}
-$openshift->save();
-
 $orchestration_config = \Drupal::service('config.factory')->getEditable('shp_orchestration.settings');
-$orchestration_config->set('selected_provider', 'openshift_with_redis');
+foreach ($openshift_config as $key => $value) {
+  $orchestration_config->set('connection.' . $key, $value);
+}
+$orchestration_config->set('selected_provider', 'openshift_orchestration_provider');
 $orchestration_config->save();
 
 // Force reload the orchestration plugin to clear the static cache.
 Drupal::service('plugin.manager.orchestration_provider')->getProviderInstance(TRUE);
 
-if (!$development = taxonomy_term_load_multiple_by_name('Development', 'shp_environment_types')) {
+if (!$development = taxonomy_term_load_multiple_by_name('Dev', 'shp_environment_types')) {
   $development_env = Term::create([
     'vid'                   => 'shp_environment_types',
-    'name'                  => 'Development',
+    'name'                  => 'Dev',
     'field_shp_base_domain' => $domain_name,
   ]);
   $development_env->save();
 
   $production_env = Term::create([
     'vid'  => 'shp_environment_types',
-    'name' => 'Production',
+    'name' => 'Prd',
     'field_shp_base_domain' => $domain_name,
     'field_shp_protect' => TRUE,
     'field_shp_update_go_live' => TRUE,
@@ -131,6 +103,10 @@ if (!$project = reset($nodes)) {
     'field_shp_readiness_probe_port' => [['value' => '8080']],
     'field_shp_liveness_probe_type' => [['value' => 'tcpSocket']],
     'field_shp_liveness_probe_port' => [['value' => '8080']],
+    'field_shp_cpu_request'    => [['value' => '500m']],
+    'field_shp_cpu_limit'      => [['value' => '1000m']],
+    'field_shp_memory_request' => [['value' => '256Mi']],
+    'field_shp_memory_limit'   => [['value' => '512Mi']],
   ]);
   $project->save();
 }
@@ -174,7 +150,7 @@ if (!$env = reset($nodes)) {
     'uid'                        => '1',
     'status'                     => 1,
     'title'                      => 'Drupal test environment',
-    'field_shp_domain'           => 'drupal-test-development.' . $domain_name,
+    'field_shp_domain'           => 'test-0.' . $domain_name,
     'field_shp_path'             => $site->field_shp_path->value,
     'field_shp_environment_type' => [['target_id' => $development_env->id()]],
     'field_shp_git_reference'    => 'master',
@@ -183,7 +159,14 @@ if (!$env = reset($nodes)) {
     'field_shp_cron_suspended'   => 1,
     'field_shp_cron_jobs'        => [
       ['key' => '*/30 * * * *', 'value' => 'cd /code; drush -r /code/web cron || true'],
-    ]
+    ],
+    'field_shp_cpu_request'    => [['value' => '500m']],
+    'field_shp_cpu_limit'      => [['value' => '1000m']],
+    'field_shp_memory_request' => [['value' => '256Mi']],
+    'field_shp_memory_limit'   => [['value' => '512Mi']],
+    'field_cache_backend'      => [
+      'plugin_id' => 'redis',
+    ],
   ]);
   $env->moderation_state->value = 'published';
   $env->save();

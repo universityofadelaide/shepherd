@@ -1,0 +1,19 @@
+uuid: e741258e-ca73-48b9-b421-eedcff342511
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_shp_cpu_limit
+    - node.type.shp_environment
+id: node.shp_environment.field_shp_cpu_limit
+field_name: field_shp_cpu_limit
+entity_type: node
+bundle: shp_environment
+label: 'Cpu limit'
+description: 'The limit cannot be lower than the request. E.g. 200m'
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

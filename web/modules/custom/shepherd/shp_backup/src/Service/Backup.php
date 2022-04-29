@@ -3,18 +3,14 @@
 namespace Drupal\shp_backup\Service;
 
 use Drupal\Component\Serialization\Json;
-use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityInterface;
-use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\Url;
 use Drupal\node\Entity\Node;
 use Drupal\node\NodeInterface;
+use Drupal\shp_custom\Service\Environment;
+use Drupal\shp_custom\Service\EnvironmentType;
 use Drupal\shp_orchestration\OrchestrationProviderPluginManagerInterface;
-use Drupal\shp_orchestration\Service\ActiveJobManager;
-use Drupal\taxonomy\Entity\Term;
-use Drupal\token\TokenInterface;
-use Drupal\views\Views;
 
 /**
  * Provides a service for accessing the backups.
@@ -26,41 +22,6 @@ class Backup {
   use StringTranslationTrait;
 
   /**
-   * Backup settings.
-   *
-   * @var \Drupal\Core\Config\Config|\Drupal\Core\Config\ImmutableConfig
-   */
-  protected $config;
-
-  /**
-   * Used to retrieve config.
-   *
-   * @var \Drupal\Core\Config\ConfigFactory
-   */
-  protected $configFactory;
-
-  /**
-   * Used to expand tokens from config into usable strings.
-   *
-   * @var \Drupal\token\Token
-   */
-  protected $token;
-
-  /**
-   * Entity type manager.
-   *
-   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
-   */
-  protected $entityTypeManager;
-
-  /**
-   * The active job manager service.
-   *
-   * @var \Drupal\shp_orchestration\Service\ActiveJobManager
-   */
-  protected $activeJobManager;
-
-  /**
    * The orchestration provider plugin manager.
    *
    * @var \Drupal\shp_orchestration\OrchestrationProviderInterface
@@ -68,196 +29,158 @@ class Backup {
   protected $orchestrationProvider;
 
   /**
+   * The environment type service.
+   *
+   * @var \Drupal\shp_custom\Service\EnvironmentType
+   */
+  protected $environmentType;
+
+  /**
+   * The environment service.
+   *
+   * @var \Drupal\shp_custom\Service\Environment
+   */
+  protected $environmentService;
+
+  /**
    * Backup constructor.
    *
-   * @param \Drupal\Core\Config\ConfigFactoryInterface $configFactory
-   *   Config factory.
-   * @param \Drupal\token\TokenInterface $token
-   *   Token service.
-   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entityTypeManager
-   *   Entity type manager.
-   * @param \Drupal\shp_orchestration\Service\ActiveJobManager $activeJobManager
-   *   Active job manager.
    * @param \Drupal\shp_orchestration\OrchestrationProviderPluginManagerInterface $pluginManager
    *   The orchestration provider plugin manager.
+   * @param \Drupal\shp_custom\Service\EnvironmentType $environmentType
+   *   The environment type service.
+   * @param \Drupal\shp_custom\Service\Environment $environmentService
+   *   The environment service.
    */
-  public function __construct(ConfigFactoryInterface $configFactory, TokenInterface $token, EntityTypeManagerInterface $entityTypeManager, ActiveJobManager $activeJobManager, OrchestrationProviderPluginManagerInterface $pluginManager) {
-    $this->configFactory = $configFactory;
-    $this->config = $this->configFactory->get('shp_backup.settings');
-    $this->token = $token;
-    $this->entityTypeManager = $entityTypeManager;
-    $this->activeJobManager = $activeJobManager;
+  public function __construct(OrchestrationProviderPluginManagerInterface $pluginManager, EnvironmentType $environmentType, Environment $environmentService) {
     $this->orchestrationProvider = $pluginManager->getProviderInstance();
+    $this->environmentType = $environmentType;
+    $this->environmentService = $environmentService;
   }
 
   /**
-   * Gets a sorted list of backups for all the environments of a site.
+   * Gets a list of backups for all the environments of a site.
    *
    * @param \Drupal\node\NodeInterface $site
    *   Site node to retrieve the list of backups for.
    *
-   * @return array
-   *   An array of backup folders.
+   * @return \UniversityOfAdelaide\OpenShift\Objects\Backups\BackupList|bool
+   *   The backup list if successful otherwise false.
    */
-  public function getAll(NodeInterface $site) {
+  public function getAllForSite(NodeInterface $site) {
+    return $this->orchestrationProvider->getBackupsForSite($site->id());
+  }
 
-    // @todo watch out for access control. Use EQ instead.
-    $view = Views::getView('shp_site_backups');
-    $view->setArguments(['site' => $site->id()]);
-    $view->render();
-    $backups = $view->result;
-
-    return $backups;
+  /**
+   * Gets a list of backups for an environment.
+   *
+   * @param \Drupal\node\NodeInterface $environment
+   *   Environment node to retrieve the list of backups for.
+   *
+   * @return \UniversityOfAdelaide\OpenShift\Objects\Backups\BackupList|bool
+   *   The backup list if successful otherwise false.
+   */
+  public function getAllForEnvironment(NodeInterface $environment) {
+    return $this->orchestrationProvider->getBackupsForEnvironment($environment->id());
   }
 
   /**
    * Create a backup node for a given site and environment.
    *
+   * @param \Drupal\node\NodeInterface $site
+   *   The site the environment blongs to.
    * @param \Drupal\node\NodeInterface $environment
    *   The environment to create the backup node for.
-   * @param string $title
-   *   The title to use for the backup node.
+   * @param string $friendly_name
+   *   An optional friendly name to set on the backup.
    *
-   * @return \Drupal\Core\Entity\EntityInterface|static
-   *   The backup entity.
+   * @return \UniversityOfAdelaide\OpenShift\Objects\Backups\Backup|bool
+   *   The backup object, or false.
    */
-  public function createNode(NodeInterface $environment, $title = NULL) {
-    if (!isset($title)) {
-
-      // @todo Inject the service.
-      $config = \Drupal::config('shp_backup.settings');
-      $title = $this->token->replace($config->get('backup_title'), ['environment' => $environment]);
-    }
-    // Create a backup node.
-    $backup = Node::create([
-      'type'                     => 'shp_backup',
-      'langcode'                 => 'en',
-      // @todo Inject the service.
-      'uid'                      => \Drupal::currentUser()->id(),
-      'status'                   => 1,
-      'title'                    => $title,
-      'field_shp_backup_path'    => [['value' => '']],
-      'field_shp_site'           => [['target_id' => $environment->field_shp_site->target_id]],
-      'field_shp_environment'    => [['target_id' => $environment->id()]],
-    ]);
-    // Store the path for this backup in the backup node.
-    $backup->set('field_shp_backup_path', $this->token->replace('[shepherd:backup-path]', ['backup' => $backup]));
-    $backup->save();
-
-    return $backup;
-  }
-
-  /**
-   * Create a backup for a backup node.
-   *
-   * @param \Drupal\node\NodeInterface $backup
-   *   The environment to backup.
-   *
-   * @return bool
-   *   True on success.
-   */
-  public function create(NodeInterface $backup) {
-    $node_storage = $this->entityTypeManager->getStorage('node');
-    $site = $node_storage->load($backup->field_shp_site->target_id);
-    $environment = $node_storage->load($backup->field_shp_environment->target_id);
-    $project = $node_storage->load($site->field_shp_project->target_id);
-
-    if (empty($site) || empty($environment) || empty($project)) {
-      // User has deleted something, we can't proceed, so return FALSE early
-      // & Un-publish the backup entry as a simple indicator that it borked.
-      \Drupal::logger('shp_backup')->error('Unable to create backup, one of the following nodes is missing. Site: %site, Environment: %environment, Project: %project', [
-        '%site' => $backup->field_shp_site->target_id,
-        '%environment' => $backup->field_shp_environment->target_id,
-        '%project' => (isset($site) ? $site->field_shp_project->target_id : ''),
-      ]);
-      $backup->set('status', 0);
-      $backup->save();
-      return FALSE;
-    }
-
-    $project_name = $project->title->value;
-
-    $backup_command = str_replace(["\r\n", "\n", "\r"], ' && ', trim($this->config->get('backup_command')));
-    $backup_command = $this->token->replace($backup_command, ['backup' => $backup]);
-
-    $result = $this->orchestrationProvider->backupEnvironment(
-      $project_name,
-      $site->field_shp_short_name->value,
+  public function createBackup(NodeInterface $site, NodeInterface $environment, string $friendly_name = '') {
+    return $this->orchestrationProvider->backupEnvironment(
+      $site->id(),
       $environment->id(),
-      $environment->field_shp_git_reference->value,
-      $backup_command
+      $friendly_name
     );
-
-    return $result;
   }
 
   /**
    * Restore a backup for a given instance.
    *
-   * @param \Drupal\node\NodeInterface $backup
-   *   The backup to restore.
+   * @param string $backup_name
+   *   The name of the backup to restore.
    * @param \Drupal\node\NodeInterface $environment
    *   The environment to restore.
    *
    * @return bool
    *   True on success.
    */
-  public function restore(NodeInterface $backup, NodeInterface $environment) {
-    $node_storage = $this->entityTypeManager->getStorage('node');
-    $site = $node_storage->load($backup->field_shp_site->target_id);
-    $project = $node_storage->load($site->field_shp_project->target_id);
-    $project_name = $project->title->value;
-
-    if (empty($site) || empty($environment) || empty($project)) {
-      // User has deleted something, we can't proceed, so return FALSE early.
-      \Drupal::logger('shp_restore')->error('Unable to restore from backup, one of the following nodes is missing. Site: %site, Environment: %environment, Project: %project', [
-        '%site' => $backup->field_shp_site->target_id,
-        '%environment' => $environment,
-        '%project' => (isset($site) ? $site->field_shp_project->target_id : ''),
-      ]);
-      return FALSE;
-    }
-
-    $restore_command = str_replace(["\r\n", "\n", "\r"], ' && ', trim($this->config->get('restore_command')));
-    $restore_command = $this->token->replace($restore_command, ['backup' => $backup]);
-
-    $result = $this->orchestrationProvider->restoreEnvironment(
-      $project_name,
-      $site->field_shp_short_name->value,
-      $environment->id(),
-      $environment->field_shp_git_reference->value,
-      $restore_command
+  public function restore(string $backup_name, NodeInterface $environment) {
+    $site = $environment->field_shp_site->entity;
+    return $this->orchestrationProvider->restoreEnvironment(
+      $backup_name,
+      $site->id(),
+      $environment->id()
     );
-
-    return $result;
   }
 
   /**
-   * Check if a job has completed.
+   * Upgrades an environment by provisioning a new one and issuing a sync.
    *
-   * @param \stdClass $job
-   *   The job.
+   * @param \Drupal\node\NodeInterface $site
+   *   The site.
+   * @param \Drupal\node\NodeInterface $environment
+   *   The environment.
+   * @param string $version
+   *   The version to upgrade to.
    *
-   * @return bool
-   *   True if finished, otherwise false.
+   * @return \Drupal\node\NodeInterface|bool
+   *   The new environment if successful, else FALSE.
    */
-  public function isComplete(\stdClass $job) {
-    // @todo Check backup and restore.
-    $complete = FALSE;
-    switch ($job->queueWorker) {
-      case 'shp_backup':
-      case 'shp_restore':
-        // @todo Fix OpenShift specific structure leaking here.
-        $provider_job = $this->orchestrationProvider->getJob($job->name);
-        $complete = $provider_job['status']['conditions'][0]['type'] == 'Complete'
-          && $provider_job['status']['conditions'][0]['status'] == 'True';
+  public function upgrade(NodeInterface $site, NodeInterface $environment, $version) {
+    $demoted_term = $this->environmentType->getDemotedTerm();
+    $ignore_env_vars = [
+      'REDIS_ENABLED',
+      'REDIS_HOST',
+      'REDIS_PREFIX',
+      'MEMCACHE_ENABLED',
+      'MEMCACHE_HOST',
+    ];
+    $new_environment = Node::create([
+      'type' => 'shp_environment',
+      'moderation_state' => 'published',
+      'field_shp_site' => $site->id(),
+      'field_shp_git_reference' => $version,
+      'field_shp_environment_type' => $demoted_term->id(),
+      'field_cache_backend' => [
+        'plugin_id' => $environment->field_cache_backend->plugin_id,
+      ],
+      'field_shp_domain' => $this->environmentService->getUniqueDomainForSite($site, $demoted_term),
+      'field_shp_path' => $site->field_shp_path->value,
+      'field_shp_cron_jobs' => $environment->field_shp_cron_jobs->getValue(),
+      'field_shp_env_vars' => array_filter($environment->field_shp_env_vars->getValue(), function ($env_var) use ($ignore_env_vars) {
+        return !in_array($env_var['key'], $ignore_env_vars, TRUE);
+      }),
+      'field_shp_cpu_limit' => $environment->field_shp_cpu_limit->value,
+      'field_shp_cpu_request' => $environment->field_shp_cpu_request->value,
+      'field_shp_memory_limit' => $environment->field_shp_memory_limit->value,
+      'field_shp_memory_request' => $environment->field_shp_memory_request->value,
+      'field_max_replicas' => $environment->field_max_replicas->value,
+      'field_min_replicas' => $environment->field_min_replicas->value,
+      'field_shp_secrets' => $environment->field_shp_secrets->value,
+      'field_skip_db_prepop' => TRUE,
+      // Set a flag that isn't saved, but can be checked in presave hooks.
+      'shp_sync_environment' => TRUE,
+    ]);
+    $new_environment->save();
+    $result = $this->orchestrationProvider->syncEnvironments(
+      $site->id(),
+      $environment->id(),
+      $new_environment->id(),
+    );
 
-        // @todo Check if job successful?
-        // $succeeded = $provider_job['status']['succeeded'] == '1';
-        break;
-    }
-
-    return $complete;
+    return $result ? $new_environment : FALSE;
   }
 
   /**
@@ -272,40 +195,46 @@ class Backup {
     $site = $entity->field_shp_site->target_id;
     $environment = $entity->id();
 
+    $modal_attributes = [
+      'class' => ['button', 'use-ajax'],
+      'data-dialog-type' => 'modal',
+      'data-dialog-options' => Json::encode([
+        'width' => '50%',
+        'height' => '50%',
+      ]),
+    ];
     $operations['backup'] = [
       'title' => $this->t('Backup'),
       'weight' => 1,
-      'url' => Url::fromRoute('shp_backup.environment-backup-form',
-        ['site' => $site, 'environment' => $environment]),
-      // Render form in a modal window.
-      'attributes' => [
-        'class' => ['button', 'use-ajax'],
-        'data-dialog-type' => 'modal',
-        'data-dialog-options' => Json::encode(['width' => '50%', 'height' => '50%']),
-      ],
+      'url' => Url::fromRoute('shp_backup.environment-backup-form', [
+        'site' => $site,
+        'environment' => $environment,
+      ]),
+      'attributes' => $modal_attributes,
     ];
 
-    if ($environment_term = Term::load($entity->field_shp_environment_type->target_id)) {
-      if (!$environment_term->field_shp_protect->value) {
-        $operations['restore'] = [
-          'title'      => $this->t('Restore'),
-          'weight'     => 2,
-          'url'        => Url::fromRoute('shp_backup.environment-restore-form', [
-            'site'        => $site,
-            'environment' => $environment,
-          ]),
-          // Render form in a modal window.
-          'attributes' => [
-            'class'               => ['button', 'use-ajax'],
-            'data-dialog-type'    => 'modal',
-            'data-dialog-options' => Json::encode([
-              'width'  => '50%',
-              'height' => '50%',
-            ]),
-          ],
-        ];
-      }
+    // Allow restores on non-prod environments.
+    if (!$this->environmentType->isPromotedEnvironment($entity)) {
+      $operations['restore'] = [
+        'title'      => $this->t('Restore'),
+        'weight'     => 2,
+        'url'        => Url::fromRoute('shp_backup.environment-restore-form', [
+          'site'        => $site,
+          'environment' => $environment,
+        ]),
+        'attributes' => $modal_attributes,
+      ];
     }
+    // Allow upgrade on all environments.
+    $operations['upgrade'] = [
+      'title'      => $this->t('Upgrade'),
+      'weight'     => 2,
+      'url'        => Url::fromRoute('shp_backup.environment-upgrade-form', [
+        'site'        => $site,
+        'environment' => $environment,
+      ]),
+      'attributes' => $modal_attributes,
+    ];
   }
 
 }

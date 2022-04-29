@@ -20,6 +20,7 @@ permissions:
   - 'edit any shp_site content'
   - 'edit own comments'
   - 'post comments'
+  - 'shp bulk backup'
   - 'skip comment approval'
   - 'use environment transition published'
   - 'use environment transition published_archive'

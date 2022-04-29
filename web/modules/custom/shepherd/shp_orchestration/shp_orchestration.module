@@ -7,6 +7,7 @@
 
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\node\NodeInterface;
+use Drupal\shp_orchestration\ShpOrchestrationHooks;
 
 /**
  * Implements hook_ENTITY_TYPE_insert().
@@ -31,6 +32,11 @@ function shp_orchestration_node_insert(NodeInterface $node) {
  * Implements hook_ENTITY_TYPE_update().
  */
 function shp_orchestration_node_update(NodeInterface $node) {
+  // Don't do anything if the killswitch is set, this allows us to do node
+  // updates without triggering OpenShift changes.
+  if (\Drupal::state()->get('shp_orchestration_update_killswitch', FALSE)) {
+    return;
+  }
   switch ($node->bundle()) {
     case 'shp_site':
       \Drupal::service('shp_orchestration.site')->updated($node);
@@ -104,21 +110,7 @@ function shp_orchestration_shp_project_form_validate(array $form, FormStateInter
  * Implements hook_shp_env_vars().
  */
 function shp_orchestration_shp_env_vars(NodeInterface $environment) {
-  /** @var Drupal\Node\NodeInterface $site */
-  $site = $environment->field_shp_site
-    ->first()
-    ->get('entity')
-    ->getTarget()
-    ->getValue();
-
-  // Generate default environment variables.
-  $env_vars = [
-    'SHEPHERD_SITE_ID' => $site->id(),
-    'SHEPHERD_URL' => \Drupal::service('router.request_context')->getCompleteBaseUrl(),
-    // @todo Ensure deployment secret has SHEPHERD_TOKEN set.
-    'SHEPHERD_TOKEN_FILE' => '/etc/secret/SHEPHERD_TOKEN',
-    'WEB_PATH' => $environment->field_shp_path->value,
-  ];
-
-  return $env_vars;
+  /** @var ShpOrchestrationHooks $hooks */
+  $hooks = \Drupal::classResolver(ShpOrchestrationHooks::class);
+  return $hooks->shpEnvVars($environment);
 }

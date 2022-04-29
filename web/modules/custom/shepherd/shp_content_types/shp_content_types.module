@@ -48,6 +48,9 @@ function shp_content_types_entity_bundle_field_info_alter(&$fields, EntityTypeIn
     if (isset($fields['field_shp_path'])) {
       $fields['field_shp_path']->addConstraint('Path', []);
     }
+    if (isset($fields['field_min_replicas'])) {
+      $fields['field_min_replicas']->addConstraint('Replicas', []);
+    }
   }
 }
 
@@ -100,9 +103,9 @@ function shp_content_types_node_delete(NodeInterface $node) {
  * Implements hook_form_alter().
  */
 function shp_content_types_form_node_form_alter(&$form, FormStateInterface $form_state, $form_id) {
-  // Match the node add and node edit forms
+  // Match the node add and node edit forms.
   if (stristr($form_id, 'node_shp_project')) {
-    // Switch which fields are shown based on the Liveness probe type
+    // Switch which fields are shown based on the Liveness probe type.
     $form['field_shp_liveness_probe_params']['#states'] = [
       'invisible' => [
         ':input[name="field_shp_liveness_probe_type"]' => [
@@ -118,7 +121,7 @@ function shp_content_types_form_node_form_alter(&$form, FormStateInterface $form
       ],
     ];
 
-    // Switch which fields are shown based on the Readiness probe type
+    // Switch which fields are shown based on the Readiness probe type.
     $form['field_shp_readiness_probe_params']['#states'] = [
       'invisible' => [
         ':input[name="field_shp_readiness_probe_type"]' => [

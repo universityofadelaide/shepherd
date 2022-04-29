@@ -48,13 +48,16 @@ dependencies:
   - group
   - key_value_field
   - log_stdout
+  - plugin
   - r4032login
   - redis
   - route_condition
   - token
+  - views_bulk_operations
 
   # Shepherd modules
   - shp_backup
+  - shp_cache_backend
   - shp_content_types
   - shp_custom
   - shp_database_provisioner

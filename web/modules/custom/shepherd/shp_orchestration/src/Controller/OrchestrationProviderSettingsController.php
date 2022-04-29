@@ -10,22 +10,43 @@ use Drupal\shp_orchestration\OrchestrationProviderPluginManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Class OrchestrationProviderSettingsController.
- *
- * @package Drupal\shp_orchestration\Controller
+ * A controller for modifying provider settings.
  */
 class OrchestrationProviderSettingsController extends ControllerBase {
 
+  /**
+   * Orchestration provider manager.
+   *
+   * @var \Drupal\shp_orchestration\OrchestrationProviderPluginManagerInterface
+   */
   protected $orchestrationProviderManager;
 
+  /**
+   * Entity type manager.
+   *
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
+   */
   protected $entityTypeManager;
 
+  /**
+   * Config factory.
+   *
+   * @var \Drupal\Core\Config\ConfigFactoryInterface
+   */
   protected $configFactory;
 
+  /**
+   * Provider plugin.
+   *
+   * @var array
+   */
   protected $selectedProviderPlugin;
 
-  protected $providerConfigEntities;
-
+  /**
+   * Entity form builder.
+   *
+   * @var \Drupal\Core\Entity\EntityFormBuilderInterface
+   */
   protected $entityFormBuilder;
 
   /**
@@ -58,7 +79,7 @@ class OrchestrationProviderSettingsController extends ControllerBase {
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container) {
-    return new static (
+    return new static(
       $container->get('config.factory'),
       $container->get('plugin.manager.orchestration_provider'),
       $container->get('entity_type.manager'),

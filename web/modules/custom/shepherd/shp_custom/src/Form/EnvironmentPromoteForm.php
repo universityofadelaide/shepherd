@@ -6,7 +6,6 @@ use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Link;
 use Drupal\Core\Messenger\MessengerInterface;
-use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\Url;
 use Drupal\node\NodeInterface;
 use Drupal\shp_custom\Service\Site;
@@ -21,8 +20,6 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * @package Drupal\shp_custom\Form
  */
 class EnvironmentPromoteForm extends FormBase {
-
-  use StringTranslationTrait;
 
   /**
    * Shepherd orchestration environment.
@@ -99,7 +96,6 @@ class EnvironmentPromoteForm extends FormBase {
     $form_state->set('environment', $environment);
 
     // @todo Lookup existing prod and list on this form.
-
     $form['site'] = [
       '#type' => 'item',
       '#title' => $this->t('Site'),
@@ -109,7 +105,7 @@ class EnvironmentPromoteForm extends FormBase {
       '#type' => 'item',
       '#title' => $this->t('Production url'),
       'url' => Link::fromTextAndUrl(
-        $site->field_shp_domain->value,
+        $site->field_shp_domain->value . $site->field_shp_path->value,
         Url::fromUri('//' . $site->field_shp_domain->value . $site->field_shp_path->value))->toRenderable(),
     ];
     $form['promote_environment'] = [
@@ -126,13 +122,12 @@ class EnvironmentPromoteForm extends FormBase {
     ];
 
     // @todo everything is exclusive for now, implement non-exclusive?
-    // I.e. exlcusive means routing traffic to more than one deployment.
-    //$form['exclusive'] = [
-    //  '#title' => $this->t('Make this environment the exclusive destination?'),
-    //  '#type' => 'checkbox',
-    //  '#default_value' => FALSE,
-    //];
-
+    // I.e. exclusive means routing traffic to more than one deployment.
+    // $form['exclusive'] = [
+    // '#title' => $this->t('Make this environment the exclusive destination?'),
+    // '#type' => 'checkbox',
+    // '#default_value' => FALSE,
+    // ];
     $form['actions'] = [
       '#type' => 'actions',
       'submit' => [
@@ -152,7 +147,8 @@ class EnvironmentPromoteForm extends FormBase {
 
     $site = $form_state->get('site');
     $environment = $form_state->get('environment');
-    $exclusive = TRUE; // $form_state->getValue('exclusive');
+    // $form_state->getValue('exclusive');
+    $exclusive = TRUE;
 
     if ($this->environment->promoted($site, $environment, $exclusive)) {
       $this->messenger->addStatus($this->t('Promoted %environment for %site successfully', [

@@ -3,11 +3,12 @@
 namespace Drupal\shp_orchestration;
 
 use Drupal\Component\Plugin\PluginInspectionInterface;
+use UniversityOfAdelaide\OpenShift\Objects\Backups\Backup;
+use UniversityOfAdelaide\OpenShift\Objects\Hpa;
+use UniversityOfAdelaide\OpenShift\Objects\Route;
 
 /**
- * Interface OrchestrationProviderInterface.
- *
- * @package Drupal\shp_orchestration
+ * Defines an interface for orchestration providers.
  */
 interface OrchestrationProviderInterface extends PluginInspectionInterface {
 
@@ -93,10 +94,6 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
    *   Absolute url for the environment.
    * @param string $builder_image
    *   An s2i-enabled image to use to build (and run) the source code.
-   * @param string $domain
-   *   The domain associated with the environment.
-   * @param string $path
-   *   The path associated with the environment.
    * @param string $source_repo
    *   Source code git repository.
    * @param string $source_ref
@@ -117,8 +114,12 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
    *   Details of the liveness/readiness probe to use for this deployment.
    * @param array $cron_jobs
    *   An array of cron jobs associated with this environment.
-   * @param array $annotations
-   *   An array of route annotations.
+   * @param string $backup_schedule
+   *   A schedule to run automated backups on, leave blank to disable.
+   * @param int $backup_retention
+   *   The number of scheduled backups to retain.
+   * @param \UniversityOfAdelaide\OpenShift\Objects\Route|null $route
+   *   A Route to create, or NULL if one shouldn't be created.
    *
    * @return bool
    *   Returns true if succeeded.
@@ -130,8 +131,6 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
     string $environment_id,
     string $environment_url,
     string $builder_image,
-    string $domain,
-    string $path,
     string $source_repo,
     string $source_ref = 'master',
     string $source_secret = NULL,
@@ -142,7 +141,9 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
     array $secrets = [],
     array $probes = [],
     array $cron_jobs = [],
-    array $annotations = []
+    string $backup_schedule = '',
+    int $backup_retention = 0,
+    Route $route = NULL
   );
 
   /**
@@ -160,10 +161,6 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
    *   Absolute url for the environment.
    * @param string $builder_image
    *   An s2i-enabled image to use to build (and run) the source code.
-   * @param string $domain
-   *   The domain associated with the environment.
-   * @param string $path
-   *   The path associated with the environment.
    * @param string $source_repo
    *   Source code git repository.
    * @param string $source_ref
@@ -184,8 +181,14 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
    *   Details of the liveness/readiness probe to use for this deployment.
    * @param array $cron_jobs
    *   An array of cron jobs associated with this environment.
-   * @param array $annotations
-   *   An array of route annotations.
+   * @param string $backup_schedule
+   *   A schedule to run automated backups on, leave blank to disable.
+   * @param int $backup_retention
+   *   The number of scheduled backups to retain.
+   * @param \UniversityOfAdelaide\OpenShift\Objects\Route|null $route
+   *   A Route to create, or NULL if one shouldn't be created.
+   * @param \UniversityOfAdelaide\OpenShift\Objects\Hpa|null $hpa
+   *   An HPA to create, or NULL if one shouldn't be created.
    *
    * @return bool
    *   Returns true if succeeded.
@@ -197,8 +200,6 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
     string $environment_id,
     string $environment_url,
     string $builder_image,
-    string $domain,
-    string $path,
     string $source_repo,
     string $source_ref = 'master',
     string $source_secret = NULL,
@@ -209,7 +210,10 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
     array $secrets = [],
     array $probes = [],
     array $cron_jobs = [],
-    array $annotations = []
+    string $backup_schedule = '',
+    int $backup_retention = 0,
+    Route $route = NULL,
+    Hpa $hpa = NULL
   );
 
   /**
@@ -261,6 +265,10 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
    *   Source code git ref, defaults to 'master'.
    * @param bool $clear_cache
    *   Execute a cache clear job after promotion?
+   * @param \UniversityOfAdelaide\OpenShift\Objects\Route|null $route
+   *   A Route to create, or NULL if one shouldn't be created.
+   * @param \UniversityOfAdelaide\OpenShift\Objects\Hpa|null $hpa
+   *   An HPA to create, or NULL if one shouldn't be created.
    *
    * @return bool
    *   Returns true if succeeded.
@@ -271,7 +279,9 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
     int $site_id,
     int $environment_id,
     string $source_ref = 'master',
-    bool $clear_cache = TRUE
+    bool $clear_cache = TRUE,
+    Route $route = NULL,
+    Hpa $hpa = NULL
   );
 
   /**
@@ -287,13 +297,11 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
    *   The domain name of the site.
    * @param string $path
    *   The path of the site.
-   * @param array $annotations
-   *   An array of route annotations.
    *
    * @return bool
    *   Returns true if succeeded.
    */
-  public function createdSite(string $project_name, string $short_name, int $site_id, string $domain_name, string $path, array $annotations = []);
+  public function createdSite(string $project_name, string $short_name, int $site_id, string $domain_name, string $path);
 
   /**
    * Handles a site being updated.
@@ -457,54 +465,179 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
   );
 
   /**
+   * Get a backup.
+   *
+   * @param string $name
+   *   The backup name.
+   *
+   * @return \UniversityOfAdelaide\OpenShift\Objects\Backups\Backup|bool
+   *   Returns a backup object if successful, otherwise false.
+   */
+  public function getBackup(string $name);
+
+  /**
+   * Update a backup.
+   *
+   * @param \UniversityOfAdelaide\OpenShift\Objects\Backups\Backup $backup
+   *   The backup.
+   *
+   * @return \UniversityOfAdelaide\OpenShift\Objects\Backups\Backup|bool
+   *   Returns a backup object if successful, otherwise false.
+   */
+  public function updateBackup(Backup $backup);
+
+  /**
+   * Delete a backup.
+   *
+   * @param string $name
+   *   The backup name.
+   *
+   * @return bool
+   *   Returns true if succeeded.
+   */
+  public function deleteBackup(string $name);
+
+  /**
    * Backup an environment.
    *
-   * @param string $project_name
-   *   Name of the project.
-   * @param string $short_name
-   *   Short name of the site.
+   * @param string $site_id
+   *   Site node id.
    * @param string $environment_id
    *   Environment node id.
-   * @param string $source_ref
-   *   Source code git ref, defaults to 'master'.
-   * @param string $commands
-   *   Commands to run to perform the backup.
+   * @param string $friendly_name
+   *   An optional friendly name for the backup.
    *
-   * @return array|bool
-   *   Returns a response body if successful, otherwise false.
+   * @return object|bool
+   *   Returns a backup object if successful, otherwise false.
    */
-  public function backupEnvironment(
-    string $project_name,
-    string $short_name,
-    string $environment_id,
-    string $source_ref = 'master',
-    string $commands = ''
-  );
+  public function backupEnvironment(string $site_id, string $environment_id, string $friendly_name = '');
+
+  /**
+   * Schedules backups for an environment.
+   *
+   * @param string $site_id
+   *   Site node id.
+   * @param string $environment_id
+   *   Environment node id.
+   * @param string $schedule
+   *   A cron expression defining when to run the backups.
+   * @param int $retention
+   *   The number of scheduled backups to retain.
+   *
+   * @return object|bool
+   *   Returns a schedule object if successful, otherwise false.
+   */
+  public function environmentScheduleBackupCreate(string $site_id, string $environment_id, string $schedule, int $retention);
+
+  /**
+   * Updates the backup schedule for an environment.
+   *
+   * @param string $site_id
+   *   Site node id.
+   * @param string $environment_id
+   *   Environment node id.
+   * @param string $schedule
+   *   A cron expression defining when to run the backups.
+   * @param int $retention
+   *   The number of scheduled backups to retain.
+   *
+   * @return object|bool
+   *   Returns the schedule object if successful, otherwise false.
+   */
+  public function environmentScheduleBackupUpdate(string $site_id, string $environment_id, string $schedule, int $retention);
+
+  /**
+   * Deletes the backup schedule for an environment.
+   *
+   * @param string $environment_id
+   *   Environment node id.
+   *
+   * @return bool
+   *   Returns if it was successful or not.
+   */
+  public function environmentScheduleBackupDelete(string $environment_id);
+
+  /**
+   * Get a list of backups for a site.
+   *
+   * @param string $site_id
+   *   The site node id.
+   *
+   * @return object|bool
+   *   The list of backups.
+   */
+  public function getBackupsForSite(string $site_id);
+
+  /**
+   * Get a list of backups for an environment.
+   *
+   * @param string $environment_id
+   *   The environment node id.
+   *
+   * @return object|bool
+   *   The list of backups.
+   */
+  public function getBackupsForEnvironment(string $environment_id);
 
   /**
    * Restore an environment.
    *
-   * @param string $project_name
-   *   Name of the project.
-   * @param string $short_name
-   *   Short name of the site.
+   * @param string $backup_name
+   *   Name of the backup.
+   * @param string $site_id
+   *   Site node id.
    * @param string $environment_id
    *   Environment node id.
-   * @param string $source_ref
-   *   Source code git ref, defaults to 'master'.
-   * @param string $commands
-   *   Commands to run to perform the backup.
    *
    * @return array|bool
    *   Returns a response body if successful, otherwise false.
    */
-  public function restoreEnvironment(
-    string $project_name,
-    string $short_name,
-    string $environment_id,
-    string $source_ref = 'master',
-    string $commands = ''
-  );
+  public function restoreEnvironment(string $backup_name, string $site_id, string $environment_id);
+
+  /**
+   * Get a list of restores for a site.
+   *
+   * @param string $site_id
+   *   The site node id.
+   *
+   * @return object|bool
+   *   The list of restores.
+   */
+  public function getRestoresForSite(string $site_id);
+
+  /**
+   * Backup an environment.
+   *
+   * @param string $site_id
+   *   Site node id.
+   * @param string $from_env
+   *   Environment node id to backup.
+   * @param string $to_env
+   *   Environment node id to restore.
+   *
+   * @return object|bool
+   *   Returns a sync object if successful, otherwise false.
+   */
+  public function syncEnvironments(string $site_id, string $from_env, string $to_env);
+
+  /**
+   * Get a list of all syncs.
+   *
+   * @return object|bool
+   *   The list of syncs.
+   */
+  public function getSyncs();
+
+  /**
+   * Get a list of syncs for a site.
+   *
+   * @param string $site_id
+   *   The site node id.
+   *
+   * @return object|bool
+   *   The list of syncs.
+   */
+  public function getSyncsForSite(string $site_id);
 
   /**
    * Execute a job.

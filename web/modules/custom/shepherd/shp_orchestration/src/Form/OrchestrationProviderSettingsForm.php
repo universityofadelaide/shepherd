@@ -2,19 +2,22 @@
 
 namespace Drupal\shp_orchestration\Form;
 
-use Drupal\Component\Plugin\PluginManagerInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\shp_orchestration\OrchestrationProviderPluginManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Class OrchestrationProviderSettingsForm.
- *
- * @package Drupal\shp_orchestration\Form
+ * Settings form for orchestration providers.
  */
 class OrchestrationProviderSettingsForm extends ConfigFormBase {
 
+  /**
+   * The OS provider manager.
+   *
+   * @var \Drupal\shp_orchestration\OrchestrationProviderPluginManagerInterface
+   */
   protected $orchestrationProviderManager;
 
   /**
@@ -22,10 +25,10 @@ class OrchestrationProviderSettingsForm extends ConfigFormBase {
    *
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
    *   ConfigFactoryInterface.
-   * @param \Drupal\Component\Plugin\PluginManagerInterface $orchestration_provider_manager
+   * @param \Drupal\shp_orchestration\OrchestrationProviderPluginManagerInterface $orchestration_provider_manager
    *   PluginManagerInterface.
    */
-  public function __construct(ConfigFactoryInterface $config_factory, PluginManagerInterface $orchestration_provider_manager) {
+  public function __construct(ConfigFactoryInterface $config_factory, OrchestrationProviderPluginManagerInterface $orchestration_provider_manager) {
     parent::__construct($config_factory);
     $this->orchestrationProviderManager = $orchestration_provider_manager;
   }
@@ -34,7 +37,7 @@ class OrchestrationProviderSettingsForm extends ConfigFormBase {
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container) {
-    return new static (
+    return new static(
       $container->get('config.factory'),
       $container->get('plugin.manager.orchestration_provider')
     );
@@ -82,6 +85,52 @@ class OrchestrationProviderSettingsForm extends ConfigFormBase {
       $form['provider']['#options'][$id] = $plugin['name'];
     }
 
+    $form['connection'] = [
+      '#type' => 'details',
+      '#title' => $this->t('Connection'),
+      '#open' => FALSE,
+      '#tree' => TRUE,
+    ];
+    $form['connection']['endpoint'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('Endpoint'),
+      '#default_value' => $config->get('connection.endpoint'),
+      '#required' => TRUE,
+    ];
+    $form['connection']['verify_tls'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Verify TLS'),
+      '#default_value' => $config->get('connection.verify_tls'),
+    ];
+    $form['connection']['token'] = [
+      '#type' => 'textarea',
+      '#title' => $this->t('Token'),
+      '#default_value' => $config->get('connection.token'),
+      '#attributes' => ['autocomplete' => 'off'],
+      '#required' => TRUE,
+    ];
+    $form['connection']['namespace'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('Project'),
+      '#default_value' => $config->get('connection.namespace'),
+      '#description' => $this->t("The OpenShift project to use."),
+      '#required' => FALSE,
+    ];
+    $form['connection']['uid'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('User ID'),
+      '#description' => $this->t("The default user id containers should run as."),
+      '#default_value' => $config->get('connection.uid'),
+      '#required' => FALSE,
+    ];
+    $form['connection']['gid'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('Group ID'),
+      '#description' => $this->t("The default group id containers should run as."),
+      '#default_value' => $config->get('connection.gid'),
+      '#required' => FALSE,
+    ];
+
     return parent::buildForm($form, $form_state);
   }
 
@@ -93,6 +142,7 @@ class OrchestrationProviderSettingsForm extends ConfigFormBase {
     $config = $this->config('shp_orchestration.settings');
     $config->set('selected_provider', $form_state->getValue('provider'));
     $config->set('queued_operations', $form_state->getValue('queued_operations'));
+    $config->set('connection', $form_state->getValue('connection'));
     $config->save();
     parent::submitForm($form, $form_state);
   }

@@ -15,6 +15,7 @@ shp_backup.environment-backup-form:
     _permission: 'shp access environment wizard'
     site: ^[0-9]+
     environment: ^[0-9]+
+
 shp_backup.environment-restore-form:
   path: '/site/{site}/environment/{environment}/restore'
   defaults:
@@ -32,11 +33,92 @@ shp_backup.environment-restore-form:
     _permission: 'shp access environment wizard'
     site: ^[0-9]+
     environment: ^[0-9]+
-shp_backup.settings:
-  path: '/admin/config/shepherd/backup'
-  defaults:
-    _form: '\Drupal\shp_backup\Form\SettingsForm'
-    _title: 'Backup'
-  requirements:
-    _permission: 'administer account settings'
 
+shp_backup.backup-delete-form:
+  path: '/site/{site}/backup/{backupName}/delete'
+  defaults:
+    _form: '\Drupal\shp_backup\Form\BackupDeleteForm'
+    _title_callback: '\Drupal\shp_backup\Form\BackupDeleteForm::getPageTitle'
+    _title: 'Delete backup'
+  options:
+    parameters:
+      site:
+        type: entity:node
+  requirements:
+    _permission: 'shp access environment wizard'
+    site: ^[0-9]+
+
+shp_backup.backup-edit-form:
+  path: '/site/{site}/backup/{backupName}/edit'
+  defaults:
+    _form: '\Drupal\shp_backup\Form\BackupEditForm'
+    _title_callback: '\Drupal\shp_backup\Form\BackupEditForm::getPageTitle'
+    _title: 'Edit backup'
+  options:
+    parameters:
+      site:
+        type: entity:node
+  requirements:
+    _permission: 'shp access environment wizard'
+    site: ^[0-9]+
+
+shp_backup.environment-upgrade-form:
+  path: '/site/{site}/environment/{environment}/upgrade'
+  defaults:
+    _form: '\Drupal\shp_backup\Form\EnvironmentUpgradeForm'
+    _title_callback: '\Drupal\shp_backup\Form\EnvironmentUpgradeForm::getPageTitle'
+    _title: 'Upgrade environment'
+  options:
+    parameters:
+      site:
+        type: entity:node
+      environment:
+        type: entity:node
+    no_cache: TRUE
+  requirements:
+    _permission: 'shp access environment wizard'
+    site: ^[0-9]+
+    environment: ^[0-9]+
+
+shp_backup.backups:
+  path: '/site/{node}/backups'
+  defaults:
+    _controller: '\Drupal\shp_backup\Controller\BackupList::list'
+    _title: 'Backup list'
+  options:
+    no_cache: TRUE
+  requirements:
+    _permission: 'shp access environment wizard'
+    _custom_access: '\Drupal\shp_custom\Controller\SiteLocalTaskController::checkAccess'
+
+shp_backup.restores:
+  path: '/site/{node}/restores'
+  defaults:
+    _controller: '\Drupal\shp_backup\Controller\RestoreList::list'
+    _title: 'Restore list'
+  options:
+    no_cache: TRUE
+  requirements:
+    _permission: 'shp access environment wizard'
+    _custom_access: '\Drupal\shp_custom\Controller\SiteLocalTaskController::checkAccess'
+
+shp_backup.syncs_global:
+  path: '/syncs'
+  defaults:
+    _controller: '\Drupal\shp_backup\Controller\SyncGlobalList::list'
+    _title: 'Sync list'
+  options:
+    no_cache: TRUE
+  requirements:
+    _permission: 'shp view backups'
+
+shp_backup.syncs:
+  path: '/site/{node}/syncs'
+  defaults:
+    _controller: '\Drupal\shp_backup\Controller\SyncList::list'
+    _title: 'Sync list'
+  options:
+    no_cache: TRUE
+  requirements:
+    _permission: 'shp access environment wizard'
+    _custom_access: '\Drupal\shp_custom\Controller\SiteLocalTaskController::checkAccess'

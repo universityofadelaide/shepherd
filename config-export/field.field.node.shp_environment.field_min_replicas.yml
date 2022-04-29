@@ -1,0 +1,23 @@
+uuid: 58d4c31d-544a-45d3-bdc7-640648a9b988
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_min_replicas
+    - node.type.shp_environment
+id: node.shp_environment.field_min_replicas
+field_name: field_min_replicas
+entity_type: node
+bundle: shp_environment
+label: 'Min Replicas'
+description: 'The minimum number of replicas applied to the Horizontal Pod Autoscaler.'
+required: false
+translatable: false
+default_value: 1
+default_value_callback: ''
+settings:
+  min: 1
+  max: 12
+  prefix: ''
+  suffix: ''
+field_type: integer
