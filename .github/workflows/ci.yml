@@ -1,0 +1,78 @@
+#
+# GitHub workflow for Shepherd testing.
+#
+name: Shepherd testing
+
+on:
+  push:
+    branches:
+      - openshift-4.x
+      - develop
+
+env:
+  COMPOSER_MEMORY_LIMIT: -1
+  SIMPLETEST_DB: sqlite://tmp/site.sqlite
+  SIMPLETEST_BASE_URL: "http://127.0.0.1:8080"
+  SQLITE_DATABASE: $SIMPLETEST_DB
+  DTT_BASE_URL: "http://127.0.0.1:8080"
+  DTT_MINK_DRIVER_ARGS: '["chrome", null, "http://127.0.0.1:4444/wd/hub"]'
+  # Output directories
+  BROWSERTEST_OUTPUT_DIRECTORY: /tmp/browser_output
+  PRIVATE_DIR: /tmp/private
+  PUBLIC_DIR: /tmp/public
+  TMP_DIR: /tmp
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        php-versions: ['7.4']
+        composer-channel: ['stable']
+        include:
+          - php-versions: '7.4'
+            composer-channel: stable
+    steps:
+      - name: Dump matrix context
+        env:
+          MATRIX_CONTEXT: ${{ toJSON(matrix) }}
+        run: echo "$MATRIX_CONTEXT"
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-versions }}
+          extensions: gd, pdo_sqlite, sqlite3
+
+      - name: Start ChromeDriver
+        run: |
+          google-chrome --version
+          xvfb-run --server-args="-screen 0, 1280x720x24" --auto-servernum \
+          chromedriver --port=4444 --url-base=/wd/hub &> /tmp/chromedriver.log &
+
+      - name: Update composer
+        run: composer --verbose self-update --${{ matrix.composer-channel }}
+
+      - name: Set current branch in environment
+        run: echo "BRANCH=${GITHUB_REF##*/}" >> $GITHUB_ENV
+
+      - name: Update using composer.
+        run: composer install
+
+      - name: Ensure directories for filesystem exist
+        run: mkdir -p $PRIVATE_DIR $PUBLIC_DIR $TMP_DIR $BROWSERTEST_OUTPUT_DIRECTORY
+
+      - name: Perform a standard installation
+        run: ./vendor/bin/drush -v site:install shepherd --account-mail admin@example.com --account-name admin --account-pass password --site-name 'Drupal site' --site-mail site@example.com --yes --db-url=$SIMPLETEST_DB
+
+      - name: Install modules for tests
+        run: ./vendor/bin/drush pm-enable shp_cache_backend_test--yes
+
+      - run: ./vendor/bin/drush runserver $SIMPLETEST_BASE_URL &
+
+      - run: until curl -s $SIMPLETEST_BASE_URL; do true; done > /dev/null
+
+      - name: Run unit tests to verify the testing setup.
+        run: ./vendor/bin/phpunit
