@@ -26,6 +26,10 @@ else
   export DOCKER_COMPOSE_FILE='docker-compose.linux.yml'
 fi
 
+if [ ! -f .env ]; then
+  touch .env
+fi
+
 # Setup some functions to output warnings.
 notice() {
   printf "\e[32;01m%s\e[39;49;00m\n" "$1"
@@ -86,8 +90,8 @@ dsh_openshift_init() {
   fi
 
   # Setup the restic PVC for storing backups
-    echo "Ensuring restic pvc exists."
-if ! oc get pvc restic-repository > /dev/null 2>&1; then
+  echo "Ensuring restic pvc exists."
+  if ! oc get pvc restic-repository > /dev/null 2>&1; then
     oc apply -f ./openshift-config/shepherd-restic-repo-pvc.yml
   fi
 
@@ -131,7 +135,7 @@ if ! oc get pvc restic-repository > /dev/null 2>&1; then
 dsh_start() {
   dsh_openshift_init
   notice "Starting project containers."
-  export URL="http://127.0.0.1:8000"
+  export URL="http://${PROJECT}.${DOMAIN}:8000"
   docker-compose -f ${DOCKER_COMPOSE_FILE} up -d
   notice "Please wait about 10 seconds for the database to settle.
 You can now access the site from ${URL}.
@@ -192,16 +196,19 @@ dsh_pull() {
 }
 
 dsh_help() {
-  printf "\nUsage: dsh COMMAND\n\n
-Commands:\n
-\thelp\tShow this help.\n
-\tpurge\tPurge the docker containers, network and proxy and remove all data.\n
-\tshell\tStart a shell which is connected to the containers and can be used to run commands.\n
-\tstart\tStart the docker containers, network and proxy.\n
-\tstatus\tShow the status of this projects containers.\n
-\tstop\tStop the docker containers, network and proxy, but keep data for a re-start.\n
-\nIf no command is given, shell is the default.\n
-Commands can be shortened to their uniqe component, eg ./dsh sh is the same as ./dsh shell.\n\n"
+  printf "\nUsage: dsh COMMAND\n
+Commands:
+\texec\tExecute a command in the docker shell.
+\thelp\tShow this help.
+\tlogs\tShow the docker logs.
+\tpull\tPull the latest docker images down.
+\tpurge\tPurge the docker containers, network and proxy and remove all data.
+\tshell\tStart a shell which is connected to the containers and can be used to run commands.
+\tstart\tStart the docker containers, network and proxy.
+\tstatus\tShow the status of this projects containers.
+\tstop\tStop the docker containers, network and proxy, but keep data for a re-start.
+\nIf no command is given, shell is the default.
+Commands can be shortened to their unique component, eg ./dsh sh is the same as ./dsh shell.\n\n"
 }
 
 # Set a default command to show usage when no arguments provided.
@@ -236,7 +243,8 @@ case ${COMMAND} in
     dsh_stop
     ;;
   *)
-    warning "Unknown command specified, defaulting to shell. For other options try:\n$0 [help|logs|purge|shell|start|status|stop].\n"
+    warning "Unknown command specified, defaulting to shell. For other options try:"
+    warning "$0 [help|logs|purge|shell|start|status|stop]."
     dsh_shell
     ;;
 esac
