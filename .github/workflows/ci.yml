@@ -35,6 +35,7 @@ jobs:
           - php-versions: '7.4'
             composer-channel: stable
     steps:
+      - uses: actions/checkout@v2
       - name: Dump matrix context
         env:
           MATRIX_CONTEXT: ${{ toJSON(matrix) }}
