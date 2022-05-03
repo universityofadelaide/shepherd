@@ -36,43 +36,46 @@ jobs:
             composer-channel: stable
     steps:
       - uses: actions/checkout@v2
-      - name: Dump matrix context
+      - name: Dump matrix context.
         env:
           MATRIX_CONTEXT: ${{ toJSON(matrix) }}
         run: echo "$MATRIX_CONTEXT"
 
-      - name: Setup PHP
+      - name: Setup PHP.
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php-versions }}
           extensions: gd, pdo_sqlite, sqlite3
 
-      - name: Start ChromeDriver
+      - name: Start ChromeDriver.
         run: |
           google-chrome --version
           xvfb-run --server-args="-screen 0, 1280x720x24" --auto-servernum \
           chromedriver --port=4444 --url-base=/wd/hub &> /tmp/chromedriver.log &
 
-      - name: Update composer
+      - name: Update composer.
         run: composer --verbose self-update --${{ matrix.composer-channel }}
 
-      - name: Set current branch in environment
+      - name: Set current branch in environment.
         run: echo "BRANCH=${GITHUB_REF##*/}" >> $GITHUB_ENV
 
-      - name: Add HTTP basic auth credentials
+      - name: Add HTTP basic auth credentials.
         run: echo '${{ secrets.COMPOSER_AUTH_JSON }}' > auth.json
 
       - name: Update using composer.
         run: composer install
 
-      - name: Ensure directories for filesystem exist
+      - name: Ensure directories for filesystem exist.
         run: mkdir -p $PRIVATE_DIR $PUBLIC_DIR $TMP_DIR $BROWSERTEST_OUTPUT_DIRECTORY
 
       - name: Replace the standard settings.php with the ci one.
         run: cp web/sites/default/ci.settings.php web/sites/default/settings.php
 
-      - name: Perform a standard installation
+      - name: Perform a standard installation.
         run: ./bin/drush -v site:install shepherd --account-mail admin@example.com --account-name admin --account-pass password --site-name 'Drupal site' --site-mail site@example.com --yes --db-url=$SIMPLETEST_DB
+
+      - name: Import existing config.
+        run: ./bin/robo config:import-plus
 
       - name: Install modules for tests
         run: ./bin/drush pm-enable shp_cache_backend_test --yes
