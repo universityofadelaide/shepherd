@@ -69,14 +69,14 @@ jobs:
         run: mkdir -p $PRIVATE_DIR $PUBLIC_DIR $TMP_DIR $BROWSERTEST_OUTPUT_DIRECTORY
 
       - name: Perform a standard installation
-        run: ./vendor/bin/drush -v site:install shepherd --account-mail admin@example.com --account-name admin --account-pass password --site-name 'Drupal site' --site-mail site@example.com --yes --db-url=$SIMPLETEST_DB
+        run: ./bin/drush -v site:install shepherd --account-mail admin@example.com --account-name admin --account-pass password --site-name 'Drupal site' --site-mail site@example.com --yes --db-url=$SIMPLETEST_DB
 
       - name: Install modules for tests
-        run: ./vendor/bin/drush pm-enable shp_cache_backend_test--yes
+        run: ./bin/drush pm-enable shp_cache_backend_test--yes
 
-      - run: ./vendor/bin/drush runserver $SIMPLETEST_BASE_URL &
+      - run: ./bin/drush runserver $SIMPLETEST_BASE_URL &
 
       - run: until curl -s $SIMPLETEST_BASE_URL; do true; done > /dev/null
 
       - name: Run unit tests to verify the testing setup.
-        run: ./vendor/bin/phpunit
+        run: ./bin/phpunit
