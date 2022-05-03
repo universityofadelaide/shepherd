@@ -17,10 +17,10 @@ env:
   DTT_BASE_URL: "http://127.0.0.1:8080"
   DTT_MINK_DRIVER_ARGS: '["chrome", null, "http://127.0.0.1:4444/wd/hub"]'
   # Output directories
-  BROWSERTEST_OUTPUT_DIRECTORY: /tmp/browser_output
-  PRIVATE_DIR: /tmp/private
-  PUBLIC_DIR: /tmp/public
-  TMP_DIR: /tmp
+  BROWSERTEST_OUTPUT_DIRECTORY: tmp/browser_output
+  PRIVATE_DIR: tmp/private
+  PUBLIC_DIR: tmp/public
+  TMP_DIR: tmp
 
 jobs:
   build:
@@ -51,7 +51,7 @@ jobs:
         run: |
           google-chrome --version
           xvfb-run --server-args="-screen 0, 1280x720x24" --auto-servernum \
-          chromedriver --port=4444 --url-base=/wd/hub &> /tmp/chromedriver.log &
+          chromedriver --port=4444 --url-base=/wd/hub &> tmp/chromedriver.log &
 
       - name: Update composer
         run: composer --verbose self-update --${{ matrix.composer-channel }}
