@@ -13,7 +13,7 @@ env:
   COMPOSER_MEMORY_LIMIT: -1
   SIMPLETEST_DB: sqlite://tmp/site.sqlite
   SIMPLETEST_BASE_URL: "http://127.0.0.1:8080"
-  SQLITE_DATABASE: $SIMPLETEST_DB
+  SQLITE_DATABASE: tmp/site.sqlite
   DTT_BASE_URL: "http://127.0.0.1:8080"
   DTT_MINK_DRIVER_ARGS: '["chrome", null, "http://127.0.0.1:4444/wd/hub"]'
   # Output directories
