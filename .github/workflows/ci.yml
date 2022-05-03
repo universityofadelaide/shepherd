@@ -75,7 +75,7 @@ jobs:
         run: ./bin/drush -v site:install shepherd --account-mail admin@example.com --account-name admin --account-pass password --site-name 'Drupal site' --site-mail site@example.com --yes --db-url=$SIMPLETEST_DB
 
       - name: Install modules for tests
-        run: ./bin/drush pm-enable shp_cache_backend_test--yes
+        run: ./bin/drush pm-enable shp_cache_backend_test --yes
 
       - run: ./bin/drush runserver $SIMPLETEST_BASE_URL &
 
