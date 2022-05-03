@@ -68,6 +68,9 @@ jobs:
       - name: Ensure directories for filesystem exist
         run: mkdir -p $PRIVATE_DIR $PUBLIC_DIR $TMP_DIR $BROWSERTEST_OUTPUT_DIRECTORY
 
+      - name: Replace the standard settings.php with the ci one.
+        run: cp web/sites/default/ci.settings.php web/sites/default/settings.php
+
       - name: Perform a standard installation
         run: ./bin/drush -v site:install shepherd --account-mail admin@example.com --account-name admin --account-pass password --site-name 'Drupal site' --site-mail site@example.com --yes --db-url=$SIMPLETEST_DB
 

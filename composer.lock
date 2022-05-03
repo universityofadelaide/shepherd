@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c9c40457e92425e6554a9da0c1df69a3",
+    "content-hash": "eb098279809533ac3032bab33d1354ea",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -7162,11 +7162,11 @@
         },
         {
             "name": "universityofadelaide/shepherd-drupal-scaffold",
-            "version": "dev-sqlite-support",
+            "version": "5.2.0",
             "source": {
                 "type": "git",
                 "url": "git@github.com:universityofadelaide/shepherd-drupal-scaffold.git",
-                "reference": "8f54a264497aee4a0ab7ad58d6cb86238fc784fc"
+                "reference": "ca8fdbc22d8d45b203f19bc4a8d472b10c51feab"
             },
             "require": {
                 "composer-plugin-api": "^2",
@@ -7191,7 +7191,7 @@
                 "GPL-2.0+"
             ],
             "description": "Composer Plugin for updating the Shepherd Drupal tools.",
-            "time": "2022-05-03T04:09:11+00:00"
+            "time": "2021-11-23T08:01:12+00:00"
         },
         {
             "name": "webflo/drupal-finder",
@@ -12602,7 +12602,6 @@
     "minimum-stability": "dev",
     "stability-flags": {
         "universityofadelaide/openshift-client": 20,
-        "universityofadelaide/shepherd-drupal-scaffold": 20,
         "roave/security-advisories": 20
     },
     "prefer-stable": true,
