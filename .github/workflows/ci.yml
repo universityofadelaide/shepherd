@@ -59,6 +59,9 @@ jobs:
       - name: Set current branch in environment
         run: echo "BRANCH=${GITHUB_REF##*/}" >> $GITHUB_ENV
 
+      - name: Add HTTP basic auth credentials
+        run: echo '${{ secrets.COMPOSER_AUTH_JSON }}' > auth.json
+
       - name: Update using composer.
         run: composer install
 
