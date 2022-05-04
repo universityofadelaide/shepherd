@@ -7207,7 +7207,7 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.adelaide.edu.au:drupal-modules/ua_shp_ldap.git",
-                "reference": "6714967b33e630b8b1ca70a72adf1c958c0e2e7d"
+                "reference": "dcec00d042a1254920d430a08d7745044d367e1d"
             },
             "default-branch": true,
             "type": "drupal-module",
@@ -7215,7 +7215,7 @@
                 "GPL-2.0+"
             ],
             "description": "Provides user integration with LDAP for Shepherd.",
-            "time": "2017-09-28T00:45:31+00:00"
+            "time": "2022-05-04T04:56:10+00:00"
         },
         {
             "name": "universityofadelaide/openshift-client",
