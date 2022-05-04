@@ -42,7 +42,6 @@ dependencies:
   # Contributed modules
   - cas
   - config_ignore
-  - entity_reference
   - entity_reference_revisions
   - field_group
   - gnode
