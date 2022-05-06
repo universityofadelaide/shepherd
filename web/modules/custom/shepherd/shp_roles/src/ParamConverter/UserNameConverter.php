@@ -24,7 +24,7 @@ class UserNameConverter extends EntityConverter {
       // If the entity type is translatable, ensure we return the proper
       // translation object for the current context.
       if ($entity instanceof EntityInterface && $entity instanceof TranslatableInterface) {
-        $entity = $this->entityTypeManager->getTranslationFromContext($entity, NULL, ['operation' => 'entity_upcast']);
+        $entity = $this->entityRepository->getTranslationFromContext($entity, NULL, ['operation' => 'entity_upcast']);
       }
       // Per interface, param converters return NULL when not found.
       return $entity ?: NULL;
