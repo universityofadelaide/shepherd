@@ -34,8 +34,11 @@ openshift_purge() {
 COMMAND=${1:-default}
 
 case ${COMMAND} in
-  sta*)
+  star*)
     openshift_start
+    ;;
+  stat*)
+    crc status
     ;;
   sto*)
     openshift_stop
@@ -44,7 +47,7 @@ case ${COMMAND} in
     openshift_purge
     ;;
   *)
-    printf "Unknown command specified. Try:\n$0 [start|stop|purge].\n"
+    printf "Unknown command specified. Try:\n$0 [start|status|stop|purge].\n"
     exit 0
     ;;
 esac
