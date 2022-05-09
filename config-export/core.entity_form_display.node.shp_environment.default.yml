@@ -37,11 +37,11 @@ third_party_settings:
         - field_shp_domain
         - field_shp_path
       label: 'Domain and Path'
+      region: hidden
       parent_name: ''
       weight: 3
       format_type: details
       format_settings:
-        label: 'Domain and Path'
         classes: ''
         id: domain_and_path
         open: true
@@ -62,11 +62,11 @@ third_party_settings:
         - field_shp_memory_request
         - field_shp_memory_limit
       label: Advanced
+      region: hidden
       parent_name: ''
       weight: 5
       format_type: details
       format_settings:
-        label: Advanced
         classes: ''
         id: advanced
         open: false
