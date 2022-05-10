@@ -5,6 +5,7 @@ module:
   block: 0
   block_content: 0
   breakpoint: 0
+  cas: 0
   ckeditor: 0
   comment: 0
   config: 0
@@ -59,6 +60,8 @@ module:
   token: 0
   toolbar: 0
   tour: 0
+  ua_ldap: 0
+  ua_shp_ldap: 0
   user: 0
   variationcache: 0
   views_bulk_operations: 0
