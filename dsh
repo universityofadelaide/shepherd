@@ -120,7 +120,8 @@ dsh_openshift_init() {
   fi
 
   # Creating additional service accounts for namespace manipulation.
-  for i in {1..5} ; do
+  echo "Ensuring serviceaccounts exist for provisioning."
+  for i in {0..4} ; do
     if ! oc get serviceaccount "$(printf 'shepherd-prd-provisioner-00%02d' $i)" > /dev/null 2>&1; then
       oc create serviceaccount "$(printf 'shepherd-prd-provisioner-00%02d' $i)"
       oc policy add-role-to-user admin system:serviceaccount:shepherd:shepherd

@@ -52,7 +52,7 @@ class ServiceAccountRandomSelection {
     }
 
     /** @var \Drupal\shp_service_accounts\Entity\ServiceAccount */
-    $serviceAccount = array_values($serviceAccountList)[rand(0, $entries - 1)];
+    $serviceAccount = array_values($serviceAccountList)[random_int(0, $entries - 1)];
     return $serviceAccount;
   }
 
