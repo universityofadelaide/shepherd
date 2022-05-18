@@ -119,6 +119,14 @@ dsh_openshift_init() {
     oc policy add-role-to-user admin system:serviceaccount:shepherd:shepherd
   fi
 
+  # Creating additional service accounts for namespace manipulation.
+  for i in {1..5} ; do
+    if ! oc get serviceaccount "$(printf 'shepherd-prd-provisioner-00%02d' $i)" > /dev/null 2>&1; then
+      oc create serviceaccount "$(printf 'shepherd-prd-provisioner-00%02d' $i)"
+      oc policy add-role-to-user admin system:serviceaccount:shepherd:shepherd
+    fi
+  done
+
   # Retrieve the service account token and the minishift ip.
   SERVICE_ACCOUNT=$(oc describe serviceaccount shepherd | grep Token | awk '{ print $2 }')
 
