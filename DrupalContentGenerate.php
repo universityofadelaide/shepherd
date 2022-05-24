@@ -85,12 +85,15 @@ else {
 for ($i = 0; $i <= 4; $i++) {
   $label = sprintf("shepherd-prd-provisioner-00%02d", $i);
   $id = sprintf("shepherd_prd_provisioner_00%02d", $i);
+
+  // This is pretty horrid, but there is no oc command in the dsh shell.
+  $token = trim(file_get_contents("../.$label.token"));
   $account = ServiceAccount::create()
     ->set('label', $label)
     ->set('id', $id)
     ->set('status', TRUE)
     ->set('description', "Test provisioner $i")
-    ->set('token', 'Later')
+    ->set('token', $token)
     ->save();
 }
 

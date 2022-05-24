@@ -50,6 +50,9 @@ oc get bc -o=go-template='{{range .items}}{{.metadata.name}}{{"\n"}}{{end}}' | g
 warning "Deleting image stream."
 oc get imagestream -o=go-template='{{range .items}}{{.metadata.name}}{{"\n"}}{{end}}' | grep example | xargs -n1 -t oc delete imagestream
 
+warning "Deleting service accounts."
+oc get sa -o=go-template='{{range .items}}{{.metadata.name}}{{"\n"}}{{end}}' | grep shepherd-prd-provisioner | xargs -n1 -t oc delete sa
+
 echo ""
-notice "Performing robo build && robo dev:drupal-content-generate should now work."
+notice "Performing dsh stop, dsh start, robo build && robo dev:drupal-content-generate should now work."
 echo ""
