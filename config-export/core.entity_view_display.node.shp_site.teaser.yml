@@ -4,6 +4,7 @@ status: true
 dependencies:
   config:
     - core.entity_view_mode.node.teaser
+    - field.field.node.shp_site.field_shp_service_account
     - field.field.node.shp_site.field_shp_domain
     - field.field.node.shp_site.field_shp_go_live_date
     - field.field.node.shp_site.field_shp_path
@@ -36,6 +37,7 @@ content:
     weight: 10
     region: content
 hidden:
+  field_shp_service_account: true
   field_shp_authoriser_id: true
   field_shp_cpu_limit: true
   field_shp_cpu_request: true

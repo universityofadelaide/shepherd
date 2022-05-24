@@ -3,6 +3,7 @@ langcode: en
 status: true
 dependencies:
   config:
+    - field.field.node.shp_site.field_shp_service_account
     - field.field.node.shp_site.field_shp_domain
     - field.field.node.shp_site.field_shp_go_live_date
     - field.field.node.shp_site.field_shp_path
@@ -25,6 +26,14 @@ content:
     settings: {  }
     third_party_settings: {  }
     weight: 0
+    region: content
+  field_shp_service_account:
+    type: string
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 7
     region: content
   field_shp_domain:
     type: string
