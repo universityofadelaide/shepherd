@@ -43,7 +43,7 @@ class Site extends EntityActionBase {
   }
 
   /**
-   * Tell the active orchestration provider a project was created.
+   * Tell the active orchestration provider a site was created.
    *
    * @param \Drupal\node\NodeInterface $site
    *   Site.
@@ -54,17 +54,23 @@ class Site extends EntityActionBase {
   public function created(NodeInterface $site) {
     $project = $this->siteEntity->getProject($site);
 
-    return $this->orchestrationProviderPlugin->createdSite(
+    $serviceAccount = $this->orchestrationProviderPlugin->createdSite(
       $project->getTitle(),
       $site->field_shp_short_name->value,
       $site->id(),
       $site->field_shp_domain->value,
       $site->field_shp_path->value
     );
+
+    // This is saving which partway through the insert. Explosive?
+    $site->field_shp_service_account->value = $serviceAccount->label();
+    $site->save();
+
+    return TRUE;
   }
 
   /**
-   * Tell the active orchestration provider a project was updated.
+   * Tell the active orchestration provider a site was updated.
    *
    * @param \Drupal\node\NodeInterface $site
    *   Site.
@@ -78,7 +84,7 @@ class Site extends EntityActionBase {
   }
 
   /**
-   * Tell the active orchestration provider a project was deleted.
+   * Tell the active orchestration provider a site was deleted.
    *
    * @param \Drupal\node\NodeInterface $site
    *   Site.

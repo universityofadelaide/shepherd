@@ -42,7 +42,8 @@ use Drupal\shp_service_accounts\ServiceAccountInterface;
  *   config_export = {
  *     "id",
  *     "label",
- *     "description"
+ *     "description",
+ *     "token"
  *   }
  * )
  */

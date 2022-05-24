@@ -139,6 +139,10 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     $formatted_env_vars = $this->formatEnvVars($environment_variables);
 
     try {
+      // Set the namespace and token to the shepherd ones.
+      $this->client->setNamespace($this->config->get('connection.namespace'));
+      $this->client->setToken($this->config->get('connection.token'));
+
       $image_stream = $this->client->generateImageStreamConfig($sanitised_project_name);
       $this->client->createImageStream($image_stream);
       $this->createBuildConfig($build_config_name, $source_ref, $source_repo, $builder_image, $source_secret, $image_stream_tag, $formatted_env_vars);
@@ -169,6 +173,10 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     ];
 
     try {
+      // Set the namespace and token to the shepherd ones.
+      $this->client->setNamespace($this->config->get('connection.namespace'));
+      $this->client->setToken($this->config->get('connection.token'));
+
       $this->client->updateBuildConfig(
         $sanitised_name . '-' . $source_ref,
         $source_secret,
@@ -212,6 +220,10 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
    *   Created or already exists = TRUE. Fail = FALSE.
    */
   protected function createBuildConfig(string $build_config_name, string $source_ref, string $source_repo, string $builder_image, string $source_secret, string $image_stream_tag, array $formatted_env_vars) {
+    // Set the namespace and token to the shepherd ones.
+    $this->client->setNamespace($this->config->get('connection.namespace'));
+    $this->client->setToken($this->config->get('connection.token'));
+
     // Create build config if it doesn't exist.
     if (!$this->client->getBuildConfig($build_config_name)) {
       $build_data = $this->formatBuildData($source_ref, $source_repo, $builder_image, $formatted_env_vars);
@@ -282,6 +294,15 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       $site_id,
       $environment_id
     );
+
+    // Retrieve, then set the namespace and token to the site ones.
+    $this->client->setNamespace($this->config->get('connection.namespace'));
+    $this->client->setToken($this->config->get('connection.token'));
+
+    $serviceAccount = \Drupal::service('shp_service_accounts')->getServiceAccount($site_id);
+    $token = $serviceAccount->get('token');
+    $secret = $this->client->getSecret($token);
+    $this->client->setToken($secret);
 
     $deployment_config = $this->client->generateDeploymentConfig(
       $deployment_name,
@@ -598,7 +619,8 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     string $domain,
     string $path
   ) {
-    return TRUE;
+    // For multiple service account selectors, this should change.
+    return \Drupal::service('shp_service_accounts')->getRandomServiceAccount();
   }
 
   /**
@@ -975,6 +997,10 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
    */
   public function getSecret(string $name, string $key = NULL) {
     try {
+      // Set the namespace and token to the shepherd ones.
+      $this->client->setNamespace($this->config->get('connection.namespace'));
+      $this->client->setToken($this->config->get('connection.token'));
+
       $secret = $this->client->getSecret($name);
     }
     catch (ClientException $e) {
@@ -995,6 +1021,10 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
    */
   public function createSecret(string $name, array $data) {
     try {
+      // Set the namespace and token to the shepherd ones.
+      $this->client->setNamespace($this->config->get('connection.namespace'));
+      $this->client->setToken($this->config->get('connection.token'));
+
       return $this->client->createSecret($name, $data);
     }
     catch (ClientException $e) {
@@ -1008,6 +1038,10 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
    */
   public function updateSecret(string $name, array $data) {
     try {
+      // Set the namespace and token to the shepherd ones.
+      $this->client->setNamespace($this->config->get('connection.namespace'));
+      $this->client->setToken($this->config->get('connection.token'));
+
       return $this->client->updateSecret($name, $data);
     }
     catch (ClientException $e) {
@@ -1188,6 +1222,8 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
    */
   protected function generateOpenShiftPodUrl(string $pod_name, string $view) {
     $endpoint = $this->config->get('connection.endpoint');
+
+    /* @todo This will need to change */
     $namespace = $this->config->get('connection.namespace');
 
     return Url::fromUri($endpoint . '/console/project/' . $namespace . '/browse/pods/' . $pod_name, [
