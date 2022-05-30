@@ -122,10 +122,10 @@ dsh_openshift_init() {
   # Creating additional service accounts for namespace manipulation.
   echo "Ensuring serviceaccounts exist for provisioning."
   for i in {0..4} ; do
-    SA=$(printf 'shepherd-prd-provisioner-00%02d' $i)
+    SA=$(printf 'shepherd-prd-provisioner-00%02d' "$i")
     if ! oc get serviceaccount "${SA}" > /dev/null 2>&1; then
       oc create serviceaccount "${SA}"
-      oc policy add-role-to-user admin "${SA}"
+      oc policy add-role-to-user admin system:serviceaccount:shepherd:"${SA}"
 
       # This is pretty horrid, but there is no oc command in the dsh shell.
       oc describe serviceaccount "${SA}" | grep Token | awk '{ print $2 }' > ".${SA}.token"
