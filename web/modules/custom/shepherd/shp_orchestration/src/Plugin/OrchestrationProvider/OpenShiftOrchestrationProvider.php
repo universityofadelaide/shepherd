@@ -139,9 +139,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     $formatted_env_vars = $this->formatEnvVars($environment_variables);
 
     try {
-      // Set the namespace and token to the shepherd ones.
-      $this->client->setNamespace($this->config->get('connection.namespace'));
-      $this->client->setToken($this->config->get('connection.token'));
+      $this->setSiteConfig();
 
       $image_stream = $this->client->generateImageStreamConfig($sanitised_project_name);
       $this->client->createImageStream($image_stream);
@@ -173,9 +171,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     ];
 
     try {
-      // Set the namespace and token to the shepherd ones.
-      $this->client->setNamespace($this->config->get('connection.namespace'));
-      $this->client->setToken($this->config->get('connection.token'));
+      $this->setSiteConfig();
 
       $this->client->updateBuildConfig(
         $sanitised_name . '-' . $source_ref,
@@ -220,9 +216,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
    *   Created or already exists = TRUE. Fail = FALSE.
    */
   protected function createBuildConfig(string $build_config_name, string $source_ref, string $source_repo, string $builder_image, string $source_secret, string $image_stream_tag, array $formatted_env_vars) {
-    // Set the namespace and token to the shepherd ones.
-    $this->client->setNamespace($this->config->get('connection.namespace'));
-    $this->client->setToken($this->config->get('connection.token'));
+    $this->setSiteConfig();
 
     // Create build config if it doesn't exist.
     if (!$this->client->getBuildConfig($build_config_name)) {
@@ -295,14 +289,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       $environment_id
     );
 
-    // Retrieve, then set the namespace and token to the site ones.
-    $this->client->setNamespace($this->config->get('connection.namespace'));
-    $this->client->setToken($this->config->get('connection.token'));
-
-    $serviceAccount = \Drupal::service('shp_service_accounts')->getServiceAccount($site_id);
-    $token = $serviceAccount->get('token');
-    $secret = $this->client->getSecret($token);
-    $this->client->setToken($secret);
+    $this->setSiteConfig($site_id, $short_name);
 
     $deployment_config = $this->client->generateDeploymentConfig(
       $deployment_name,
@@ -429,6 +416,9 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       $site_id,
       $environment_id
     );
+
+    $this->setSiteConfig($site_id);
+
     $this->client->updateDeploymentConfig($deployment_name, $deployment_config, [
       'spec' => [
         'template' => [
@@ -494,6 +484,34 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
   }
 
   /**
+   * Helper function to set the namespace and token before calling the api.
+   *
+   * @param int|null $site_id
+   *   The site which dictates which service account quota will be used.
+   * @param string|null $short_name
+   *   The short name of the site which is used to construct the namespace.
+   */
+  private function setSiteConfig(int $site_id = NULL, string $short_name = NULL) {
+    // Retrieve, then set the namespace and token to the site ones.
+    $this->client->setNamespace($this->config->get('connection.namespace'));
+    $this->client->setToken($this->config->get('connection.token'));
+
+    // Return now if no site id passed.
+    if (!$site_id) {
+      return;
+    }
+
+    // Retrieve the service account associated with this site.
+    $serviceAccount = \Drupal::service('shp_service_accounts')->getServiceAccount($site_id);
+    $token = $serviceAccount->get('token');
+    $secret = $this->getSecret($token);
+    $this->client->setToken($secret['token']);
+
+    // Retrieve the namespace associated with this site.
+    $this->client->setNamespace('shp-' . $short_name);
+  }
+
+  /**
    * {@inheritdoc}
    */
   public function deletedEnvironment(
@@ -502,6 +520,8 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     string $environment_id
   ) {
     $deployment_name = self::generateDeploymentName($environment_id);
+
+    // @todo $this->setSiteConfig($site_id);
 
     try {
       // Scale the pods to zero, then delete the pod creators.
@@ -568,6 +588,9 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     Route $route = NULL,
     Hpa $hpa = NULL
   ) {
+
+    $this->setSiteConfig($site_id);
+
     $site_deployment_name = self::generateDeploymentName($site_id);
 
     $environment_deployment_name = self::generateDeploymentName($environment_id);
@@ -616,11 +639,11 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     string $project_name,
     string $short_name,
     int $site_id,
-    string $domain,
+    string $domain_name,
     string $path
   ) {
-    // For multiple service account selectors, this should change.
-    return \Drupal::service('shp_service_accounts')->getRandomServiceAccount();
+    // Create a project/namespace for the new site.
+    return $this->client->createProjectRequest($short_name);
   }
 
   /**
@@ -638,6 +661,8 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     string $short_name,
     int $site_id
   ) {
+    $this->setSiteConfig($site_id);
+
     $deployment_name = self::generateDeploymentName($site_id);
 
     $this->client->deleteService($deployment_name);

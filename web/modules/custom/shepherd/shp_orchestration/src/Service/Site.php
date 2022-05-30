@@ -54,7 +54,7 @@ class Site extends EntityActionBase {
   public function created(NodeInterface $site) {
     $project = $this->siteEntity->getProject($site);
 
-    $serviceAccount = $this->orchestrationProviderPlugin->createdSite(
+    $this->orchestrationProviderPlugin->createdSite(
       $project->getTitle(),
       $site->field_shp_short_name->value,
       $site->id(),
@@ -62,8 +62,10 @@ class Site extends EntityActionBase {
       $site->field_shp_path->value
     );
 
-    // This is saving which partway through the insert. Explosive?
+    // @todo This should be done in an event in shp_service_accounts?
+    $serviceAccount = \Drupal::service('shp_service_accounts')->getRandomServiceAccount();
     $site->field_shp_service_account->value = $serviceAccount->label();
+
     $site->save();
 
     return TRUE;
