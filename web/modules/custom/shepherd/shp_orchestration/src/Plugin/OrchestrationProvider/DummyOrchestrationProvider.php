@@ -60,8 +60,8 @@ class DummyOrchestrationProvider extends OrchestrationProviderBase {
   public function createdEnvironment(
     string $project_name,
     string $short_name,
-    string $site_id,
-    string $environment_id,
+    int $site_id,
+    int $environment_id,
     string $environment_url,
     string $builder_image,
     string $source_repo,
@@ -115,7 +115,8 @@ class DummyOrchestrationProvider extends OrchestrationProviderBase {
   public function deletedEnvironment(
     string $project_name,
     string $short_name,
-    string $environment_id
+    int $site_id,
+    int $environment_id
   ) {
     return TRUE;
   }
@@ -303,21 +304,21 @@ class DummyOrchestrationProvider extends OrchestrationProviderBase {
   /**
    * {@inheritdoc}
    */
-  public function getSecret(string $name, string $key = NULL) {
+  public function getSecret(int $site_id, string $name, string $key = NULL) {
     return $key ? 'secret' : ['secret'];
   }
 
   /**
    * {@inheritdoc}
    */
-  public function createSecret(string $name, array $data) {
+  public function createSecret(int $site_id, string $name, array $data) {
     return ['secret'];
   }
 
   /**
    * {@inheritdoc}
    */
-  public function updateSecret(string $name, array $data) {
+  public function updateSecret(int $site_id, string $name, array $data) {
     return ['secret'];
   }
 

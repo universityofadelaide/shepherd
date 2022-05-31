@@ -9,6 +9,7 @@ use Drupal\node\Entity\Node;
 use Drupal\shp_custom\Service\StringGenerator;
 use Drupal\shp_orchestration\ExceptionHandler;
 use Drupal\shp_orchestration\OrchestrationProviderBase;
+use Drupal\shp_orchestration\Traits\TokenNamespaceTrait;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use UniversityOfAdelaide\OpenShift\Client as OpenShiftClient;
 use UniversityOfAdelaide\OpenShift\ClientException;
@@ -31,6 +32,8 @@ use UniversityOfAdelaide\OpenShift\Objects\Label;
  * )
  */
 class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
+
+  use TokenNamespaceTrait;
 
   /**
    * Define keys used for MySQL connectivity by the backup operator.
@@ -139,7 +142,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     $formatted_env_vars = $this->formatEnvVars($environment_variables);
 
     try {
-      $this->setSiteConfig();
+      $this->setSiteConfig(0);
 
       $image_stream = $this->client->generateImageStreamConfig($sanitised_project_name);
       $this->client->createImageStream($image_stream);
@@ -171,7 +174,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     ];
 
     try {
-      $this->setSiteConfig();
+      $this->setSiteConfig(0);
 
       $this->client->updateBuildConfig(
         $sanitised_name . '-' . $source_ref,
@@ -216,8 +219,6 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
    *   Created or already exists = TRUE. Fail = FALSE.
    */
   protected function createBuildConfig(string $build_config_name, string $source_ref, string $source_repo, string $builder_image, string $source_secret, string $image_stream_tag, array $formatted_env_vars) {
-    $this->setSiteConfig();
-
     // Create build config if it doesn't exist.
     if (!$this->client->getBuildConfig($build_config_name)) {
       $build_data = $this->formatBuildData($source_ref, $source_repo, $builder_image, $formatted_env_vars);
@@ -246,8 +247,8 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
   public function createdEnvironment(
     string $project_name,
     string $short_name,
-    string $site_id,
-    string $environment_id,
+    int $site_id,
+    int $environment_id,
     string $environment_url,
     string $builder_image,
     string $source_repo,
@@ -272,6 +273,8 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     $build_config_name = $sanitised_project_name . '-' . $sanitised_source_ref;
     $formatted_env_vars = $this->formatEnvVars($environment_variables, $deployment_name);
 
+    $this->setSiteConfig($site_id, $short_name);
+
     // Tell, don't ask (to create a build config).
     $this->createBuildConfig($build_config_name, $source_ref, $source_repo, $builder_image, $source_secret, $image_stream_tag, $formatted_env_vars);
 
@@ -288,8 +291,6 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       $site_id,
       $environment_id
     );
-
-    $this->setSiteConfig($site_id, $short_name);
 
     $deployment_config = $this->client->generateDeploymentConfig(
       $deployment_name,
@@ -405,6 +406,8 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     $deployment_config = $this->client->getDeploymentConfig($deployment_name);
     $formatted_env_vars = $this->formatEnvVars($environment_variables, $deployment_name);
 
+    $this->setSiteConfig($site_id);
+
     if (!$this->setupVolumes($project_name, $deployment_name, $storage_class)) {
       return FALSE;
     }
@@ -416,8 +419,6 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       $site_id,
       $environment_id
     );
-
-    $this->setSiteConfig($site_id);
 
     $this->client->updateDeploymentConfig($deployment_name, $deployment_config, [
       'spec' => [
@@ -488,11 +489,11 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
    *
    * @param int|null $site_id
    *   The site which dictates which service account quota will be used.
-   * @param string|null $short_name
-   *   The short name of the site which is used to construct the namespace.
+   *
+   * @throws \UniversityOfAdelaide\OpenShift\ClientException
    */
-  private function setSiteConfig(int $site_id = NULL, string $short_name = NULL) {
-    // Retrieve, then set the namespace and token to the site ones.
+  private function setSiteConfig(int $site_id = NULL) {
+    // If called with no parameters, set the defaults to shepherd.
     $this->client->setNamespace($this->config->get('connection.namespace'));
     $this->client->setToken($this->config->get('connection.token'));
 
@@ -501,14 +502,8 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       return;
     }
 
-    // Retrieve the service account associated with this site.
-    $serviceAccount = \Drupal::service('shp_service_accounts')->getServiceAccount($site_id);
-    $token = $serviceAccount->get('token');
-    $secret = $this->getSecret($token);
-    $this->client->setToken($secret['token']);
-
-    // Retrieve the namespace associated with this site.
-    $this->client->setNamespace('shp-' . $short_name);
+    $this->client->setToken($this->setSiteToken($site_id));
+    $this->client->setNamespace($this->setSiteNamespace($site_id));
   }
 
   /**
@@ -517,11 +512,12 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
   public function deletedEnvironment(
     string $project_name,
     string $short_name,
-    string $environment_id
+    int $site_id,
+    int $environment_id
   ) {
     $deployment_name = self::generateDeploymentName($environment_id);
 
-    // @todo $this->setSiteConfig($site_id);
+    $this->setSiteConfig($site_id);
 
     try {
       // Scale the pods to zero, then delete the pod creators.
@@ -565,6 +561,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
   public function archivedEnvironment(
     int $environment_id
   ) {
+    // @todo - This is all broken, input is an int, not an object, remove?
     $site = Node::load($environment_id->field_shp_site->target_id);
     $project = Node::load($site->field_shp_project->target_id);
 
@@ -1020,12 +1017,10 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
   /**
    * {@inheritdoc}
    */
-  public function getSecret(string $name, string $key = NULL) {
-    try {
-      // Set the namespace and token to the shepherd ones.
-      $this->client->setNamespace($this->config->get('connection.namespace'));
-      $this->client->setToken($this->config->get('connection.token'));
+  public function getSecret(int $site_id, string $name, string $key = NULL) {
+    $this->setSiteConfig($site_id);
 
+    try {
       $secret = $this->client->getSecret($name);
     }
     catch (ClientException $e) {
@@ -1044,12 +1039,10 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
   /**
    * {@inheritdoc}
    */
-  public function createSecret(string $name, array $data) {
-    try {
-      // Set the namespace and token to the shepherd ones.
-      $this->client->setNamespace($this->config->get('connection.namespace'));
-      $this->client->setToken($this->config->get('connection.token'));
+  public function createSecret(int $site_id, string $name, array $data) {
+    $this->setSiteConfig($site_id);
 
+    try {
       return $this->client->createSecret($name, $data);
     }
     catch (ClientException $e) {
@@ -1061,12 +1054,10 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
   /**
    * {@inheritdoc}
    */
-  public function updateSecret(string $name, array $data) {
-    try {
-      // Set the namespace and token to the shepherd ones.
-      $this->client->setNamespace($this->config->get('connection.namespace'));
-      $this->client->setToken($this->config->get('connection.token'));
+  public function updateSecret(int $site_id, string $name, array $data) {
+    $this->setSiteConfig($site_id);
 
+    try {
       return $this->client->updateSecret($name, $data);
     }
     catch (ClientException $e) {

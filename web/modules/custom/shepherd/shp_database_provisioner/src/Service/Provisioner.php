@@ -108,7 +108,7 @@ class Provisioner {
     $port = $config->get('port');
     $options = $config->get('options');
     // Save the credentials in a secret for use by the environment.
-    if (!$this->setSecret($host, $port, $database, $username, $password,
+    if (!$this->setSecret($site->id(), $host, $port, $database, $username, $password,
       $deployment_name)) {
       // @todo Handle errors.
       return FALSE;
@@ -116,7 +116,7 @@ class Provisioner {
 
     // Fetch privileged database password from orchestration secret store.
     $privileged_username = $config->get('user');
-    $privileged_password = $this->orchestrationProviderPlugin->getSecret($config->get('secret'),
+    $privileged_password = $this->orchestrationProviderPlugin->getSecret(0, $config->get('secret'),
       'DATABASE_PASSWORD');
     $db = new \mysqli($host, $privileged_username, $privileged_password, NULL,
       $port, NULL);
@@ -145,6 +145,7 @@ class Provisioner {
    *   Secret data on success otherwise false.
    */
   public function setSecret(
+    int $site_id,
     string $host,
     string $port,
     string $database,
@@ -163,11 +164,11 @@ class Provisioner {
     ];
 
     // Create or update the secret as needed.
-    if ($env_secret = $this->orchestrationProviderPlugin->getSecret($deployment_name)) {
-      return $this->orchestrationProviderPlugin->updateSecret($deployment_name,
+    if ($env_secret = $this->orchestrationProviderPlugin->getSecret($site_id, $deployment_name)) {
+      return $this->orchestrationProviderPlugin->updateSecret($site_id, $deployment_name,
         array_merge($env_secret, $secret_data));
     }
-    return $this->orchestrationProviderPlugin->createSecret($deployment_name,
+    return $this->orchestrationProviderPlugin->createSecret($site_id, $deployment_name,
       $secret_data);
   }
 
