@@ -273,7 +273,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     $build_config_name = $sanitised_project_name . '-' . $sanitised_source_ref;
     $formatted_env_vars = $this->formatEnvVars($environment_variables, $deployment_name);
 
-    $this->setSiteConfig($site_id, $short_name);
+    $this->setSiteConfig($site_id);
 
     // Tell, don't ask (to create a build config).
     $this->createBuildConfig($build_config_name, $source_ref, $source_repo, $builder_image, $source_secret, $image_stream_tag, $formatted_env_vars);
@@ -494,15 +494,18 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
    */
   private function setSiteConfig(int $site_id = NULL) {
     // If called with no parameters, set the defaults to shepherd.
-    $this->client->setNamespace($this->config->get('connection.namespace'));
     $this->client->setToken($this->config->get('connection.token'));
+    $this->client->setNamespace($this->config->get('connection.namespace'));
 
     // Return now if no site id passed.
     if (!$site_id) {
       return;
     }
 
+    // Retrieve the token first from the shepherd namespace.
     $this->client->setToken($this->setSiteToken($site_id));
+
+    // Then we can change to the sites namespace.
     $this->client->setNamespace($this->setSiteNamespace($site_id));
   }
 
@@ -639,7 +642,10 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     string $domain_name,
     string $path
   ) {
-    // Create a project/namespace for the new site.
+    // Set the auth to be the site token.
+    $this->setSiteConfig($site_id);
+
+    // Now Create a project/namespace for the new site.
     return $this->client->createProjectRequest($short_name);
   }
 
@@ -1070,6 +1076,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
    * {@inheritdoc}
    */
   public function getSiteEnvironmentsStatus(string $site_id) {
+    $this->setSiteConfig($site_id);
     try {
       $deployment_configs = $this->client->getDeploymentConfigs('site_id=' . $site_id);
     }
@@ -1091,6 +1098,9 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
    * {@inheritdoc}
    */
   public function getEnvironmentStatus(string $project_name, string $short_name, string $environment_id) {
+
+    $environment = Node::load($environment_id);
+    $this->setSiteConfig($environment->field_shp_site->entity->id());
 
     $deployment_name = self::generateDeploymentName($environment_id);
 

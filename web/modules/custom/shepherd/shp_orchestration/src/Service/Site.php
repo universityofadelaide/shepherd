@@ -54,6 +54,12 @@ class Site extends EntityActionBase {
   public function created(NodeInterface $site) {
     $project = $this->siteEntity->getProject($site);
 
+    // @todo This should be done in an event in shp_service_accounts?
+    $serviceAccount = \Drupal::service('shp_service_accounts')->getRandomServiceAccount();
+    $site->field_shp_service_account->value = $serviceAccount->label();
+
+    $site->save();
+
     $this->orchestrationProviderPlugin->createdSite(
       $project->getTitle(),
       $site->field_shp_short_name->value,
@@ -61,12 +67,6 @@ class Site extends EntityActionBase {
       $site->field_shp_domain->value,
       $site->field_shp_path->value
     );
-
-    // @todo This should be done in an event in shp_service_accounts?
-    $serviceAccount = \Drupal::service('shp_service_accounts')->getRandomServiceAccount();
-    $site->field_shp_service_account->value = $serviceAccount->label();
-
-    $site->save();
 
     return TRUE;
   }

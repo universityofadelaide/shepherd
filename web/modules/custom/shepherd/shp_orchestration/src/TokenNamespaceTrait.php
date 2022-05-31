@@ -28,7 +28,7 @@ trait TokenNamespaceTrait {
   }
 
   /**
-   * Set the site project/namespace.
+   * Set the site namespace.
    *
    * @param int $site_id
    *   The site which dictates which service account quota will be used.
