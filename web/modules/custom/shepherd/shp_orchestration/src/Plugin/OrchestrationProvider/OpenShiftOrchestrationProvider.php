@@ -9,7 +9,7 @@ use Drupal\node\Entity\Node;
 use Drupal\shp_custom\Service\StringGenerator;
 use Drupal\shp_orchestration\ExceptionHandler;
 use Drupal\shp_orchestration\OrchestrationProviderBase;
-use Drupal\shp_orchestration\Traits\TokenNamespaceTrait;
+use Drupal\shp_orchestration\TokenNamespaceTrait;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use UniversityOfAdelaide\OpenShift\Client as OpenShiftClient;
 use UniversityOfAdelaide\OpenShift\ClientException;

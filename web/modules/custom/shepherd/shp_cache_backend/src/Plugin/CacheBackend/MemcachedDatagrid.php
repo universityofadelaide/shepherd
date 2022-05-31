@@ -7,7 +7,7 @@ use Drupal\node\NodeInterface;
 use Drupal\shp_cache_backend\Plugin\CacheBackendBase;
 use Drupal\shp_custom\Service\EnvironmentType;
 use Drupal\shp_orchestration\Plugin\OrchestrationProvider\OpenShiftOrchestrationProvider;
-use Drupal\shp_orchestration\Traits\TokenNamespaceTrait;
+use Drupal\shp_orchestration\TokenNamespaceTrait;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use UniversityOfAdelaide\OpenShift\Client;
 use UniversityOfAdelaide\OpenShift\Objects\ConfigMap;
