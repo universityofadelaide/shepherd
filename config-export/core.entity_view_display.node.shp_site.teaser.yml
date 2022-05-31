@@ -37,7 +37,6 @@ content:
     weight: 10
     region: content
 hidden:
-  field_shp_service_account: true
   field_shp_authoriser_id: true
   field_shp_cpu_limit: true
   field_shp_cpu_request: true
@@ -47,6 +46,7 @@ hidden:
   field_shp_memory_request: true
   field_shp_path: true
   field_shp_project: true
+  field_shp_service_account: true
   field_shp_short_name: true
   field_shp_site_log: true
   field_tags: true

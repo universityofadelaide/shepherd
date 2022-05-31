@@ -22,14 +22,6 @@ targetEntityType: node
 bundle: shp_site
 mode: default
 content:
-  field_shp_service_account:
-    type: string_textfield
-    weight: 26
-    region: content
-    settings:
-      size: 60
-      placeholder: ''
-    third_party_settings: {  }
   field_shp_domain:
     type: string_textfield
     weight: 2
@@ -51,6 +43,14 @@ content:
     weight: 4
     region: content
     settings: {  }
+    third_party_settings: {  }
+  field_shp_service_account:
+    type: string_textfield
+    weight: 26
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
     third_party_settings: {  }
   field_shp_short_name:
     type: string_textfield
