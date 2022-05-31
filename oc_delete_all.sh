@@ -44,14 +44,23 @@ oc get route -o=go-template='{{range .items}}{{.metadata.name}}{{"\n"}}{{end}}' 
 warning "Deleting pvc's."
 oc get pvc -o=go-template='{{range .items}}{{.metadata.name}}{{"\n"}}{{end}}' | grep node | xargs -n1 -t oc delete pvc
 
+warning "Deleting secrets."
+oc get imagestream -o=go-template='{{range .items}}{{.metadata.name}}{{"\n"}}{{end}}' | grep node | xargs -n1 -t oc delete secrets
+
 warning "Deleting build config."
 oc get bc -o=go-template='{{range .items}}{{.metadata.name}}{{"\n"}}{{end}}' | grep example-master | xargs -n1 -t oc delete bc
 
 warning "Deleting image stream."
 oc get imagestream -o=go-template='{{range .items}}{{.metadata.name}}{{"\n"}}{{end}}' | grep example | xargs -n1 -t oc delete imagestream
 
+
 warning "Deleting service accounts."
 oc get sa -o=go-template='{{range .items}}{{.metadata.name}}{{"\n"}}{{end}}' | grep shepherd-prd-provisioner | xargs -n1 -t oc delete sa
+
+warning "Deleting shp-test project."
+oc login -u kubeadmin
+oc delete project shp-test
+oc login -u developer
 
 echo ""
 notice "Performing dsh stop, dsh start, robo build && robo dev:drupal-content-generate should now work."
