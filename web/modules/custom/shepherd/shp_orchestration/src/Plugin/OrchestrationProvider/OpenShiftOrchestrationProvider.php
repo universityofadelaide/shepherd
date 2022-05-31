@@ -503,10 +503,10 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     }
 
     // Retrieve the token first from the shepherd namespace.
-    $this->client->setToken($this->setSiteToken($site_id));
+    $this->client->setToken($this->getSiteToken($site_id));
 
     // Then we can change to the sites namespace.
-    $this->client->setNamespace($this->setSiteNamespace($site_id));
+    $this->client->setNamespace($this->getSiteNamespace($site_id));
   }
 
   /**

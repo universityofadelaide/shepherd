@@ -143,8 +143,8 @@ class MemcachedDatagrid extends CacheBackendBase {
    * {@inheritdoc}
    */
   public function onEnvironmentPromote(NodeInterface $environment) {
-    $this->client->setToken($this->setSiteToken($environment->field_shp_site->entity->id()));
-    $this->client->setNamespace($this->setSiteNamespace($environment->field_shp_site->entity->id()));
+    $this->client->setToken($this->getSiteToken($environment->field_shp_site->entity->id()));
+    $this->client->setNamespace($this->getSiteNamespace($environment->field_shp_site->entity->id()));
 
     $memcached_name = self::getMemcachedDeploymentName($environment);
     // Scale the memcached deployment to 0 when the environment is promoted.
@@ -159,8 +159,8 @@ class MemcachedDatagrid extends CacheBackendBase {
    * {@inheritdoc}
    */
   public function onEnvironmentDemotion(NodeInterface $environment) {
-    $this->client->setToken($this->setSiteToken($environment->field_shp_site->entity->id()));
-    $this->client->setNamespace($this->setSiteNamespace($environment->field_shp_site->entity->id()));
+    $this->client->setToken($this->getSiteToken($environment->field_shp_site->entity->id()));
+    $this->client->setNamespace($this->getSiteNamespace($environment->field_shp_site->entity->id()));
 
     $memcached_name = self::getMemcachedDeploymentName($environment);
     // Scale the memcached deployment to 1 when the environment is demoted.
@@ -261,8 +261,8 @@ class MemcachedDatagrid extends CacheBackendBase {
    *   The environment.
    */
   protected function generateMemcachedDeployment(NodeInterface $environment) {
-    $this->client->setToken($this->setSiteToken($environment->field_shp_site->entity->id()));
-    $this->client->setNamespace($this->setSiteNamespace($environment->field_shp_site->entity->id()));
+    $this->client->setToken($this->getSiteToken($environment->field_shp_site->entity->id()));
+    $this->client->setNamespace($this->getSiteNamespace($environment->field_shp_site->entity->id()));
 
     $memcachedDeploymentName = self::getMemcachedDeploymentName($environment);
     $deploymentName = OpenShiftOrchestrationProvider::generateDeploymentName($environment->id());
