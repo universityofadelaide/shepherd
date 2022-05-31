@@ -40,6 +40,8 @@ dependencies:
   - views_ui
 
   # Contributed modules
+  - admin_toolbar
+  - admin_toolbar_tools
   - config_ignore
   - entity_reference_revisions
   - field_group
