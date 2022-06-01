@@ -57,6 +57,13 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
   protected $client;
 
   /**
+   * Site that we are working with.
+   *
+   * @var int;
+   */
+  protected $siteId;
+
+  /**
    * Shepherd custom string generator.
    *
    * @var \Drupal\shp_custom\Service\StringGenerator
@@ -142,6 +149,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     $formatted_env_vars = $this->formatEnvVars($environment_variables);
 
     try {
+      $storedSite = $this->getSiteId();
       $this->setSiteConfig(0);
 
       $image_stream = $this->client->generateImageStreamConfig($sanitised_project_name);
@@ -152,6 +160,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       $this->exceptionHandler->handleClientException($e);
       return FALSE;
     }
+    $this->setSiteConfig($storedSite);
     return TRUE;
   }
 
@@ -174,6 +183,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     ];
 
     try {
+      $storedSite = $this->getSiteId();
       $this->setSiteConfig(0);
 
       $this->client->updateBuildConfig(
@@ -187,6 +197,8 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       $this->exceptionHandler->handleClientException($e);
       return FALSE;
     }
+
+    $this->setSiteConfig($storedSite);
     return TRUE;
   }
 
@@ -365,9 +377,16 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
    * @throws \UniversityOfAdelaide\OpenShift\ClientException
    */
   protected function getImageStreamImage(string $sanitised_project_name, string $sanitised_source_ref) {
+    // Image streams are in the shepherd project, store and switch back.
+    $storedSite = $this->getSiteId();
+    $this->setSiteConfig(0);
     // Retrieve image stream that will be used for this site. There is only a
     // tiny chance it will be different to the deployment config image.
     $image_stream = $this->client->getImageStream($sanitised_project_name);
+
+    // Switch the site info back.
+    $this->setSiteConfig($storedSite);
+
     if (is_array($image_stream) && isset($image_stream['status']['tags'])) {
       // Look through the image stream tags to find the one being deployed.
       foreach ($image_stream['status']['tags'] as $index => $images) {
@@ -377,6 +396,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
         }
       }
     }
+
     return FALSE;
   }
 
@@ -407,10 +427,10 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
   ) {
     // @todo Refactor this too. Not DRY enough.
     $deployment_name = self::generateDeploymentName($environment_id);
-    $deployment_config = $this->client->getDeploymentConfig($deployment_name);
     $formatted_env_vars = $this->formatEnvVars($environment_variables, $deployment_name);
 
     $this->setSiteConfig($site_id);
+    $deployment_config = $this->client->getDeploymentConfig($deployment_name);
 
     if (!$this->setupVolumes($project_name, $deployment_name, $storage_class)) {
       return FALSE;
@@ -511,6 +531,19 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
 
     // Then we can change to the sites namespace.
     $this->client->setNamespace($this->getSiteNamespace($site_id));
+
+    // Finally, store the newly activated siteId in case.
+    $this->siteId = $site_id;
+  }
+
+  /**
+   * Helper function to retrieve the site id thats currently set.
+   *
+   * @return int
+   *   The currently set site id.
+   */
+  private function getSiteId() {
+    return $this->siteId;
   }
 
   /**
@@ -1267,26 +1300,26 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
   }
 
   /**
-   * Generates a url to a specific pod and view in OpenShift.
+   * Generate url to a specific pod and view in OpenShift.
    *
    * @param string $pod_name
    *   Pod name.
    * @param string $view
    *   View/tab to display.
    *
-   * @return string
+   * @return \Drupal\Core\Url
    *   Url.
    */
   protected function generateOpenShiftPodUrl(string $pod_name, string $view) {
     $endpoint = $this->config->get('connection.endpoint');
 
-    /* @todo This will need to change */
-    $namespace = $this->config->get('connection.namespace');
+    // @todo fix for deployed version, store web ui or remove this all.
+    $endpoint = str_replace('api.crc', 'console-openshift-console.apps-crc', $endpoint);
+    $endpoint = str_replace(':6443', '', $endpoint);
 
-    return Url::fromUri($endpoint . '/console/project/' . $namespace . '/browse/pods/' . $pod_name, [
-      'query' => [
-        'tab' => $view,
-      ],
+    $namespace = $this->getSiteNamespace($this->getSiteId());
+
+    return Url::fromUri($endpoint . '/k8s/ns/' . $namespace . '/pods/' . $pod_name . '/' . $view, [
       'attributes' => [
         'target' => '_blank',
       ],
