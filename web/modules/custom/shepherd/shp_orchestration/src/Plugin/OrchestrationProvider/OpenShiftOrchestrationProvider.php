@@ -274,10 +274,14 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     $build_config_name = $sanitised_project_name . '-' . $sanitised_source_ref;
     $formatted_env_vars = $this->formatEnvVars($environment_variables, $deployment_name);
 
-    $this->setSiteConfig($site_id);
+    // Ensure in the shepherd project.
+    $this->setSiteConfig(0);
 
     // Tell, don't ask (to create a build config).
     $this->createBuildConfig($build_config_name, $source_ref, $source_repo, $builder_image, $source_secret, $image_stream_tag, $formatted_env_vars);
+
+    // Now we need to use the site project.
+    $this->setSiteConfig($site_id);
 
     // Setup all the volumes that might be mounted.
     $volumes = $this->generateVolumeData($project_name, $deployment_name, $secrets);
@@ -647,10 +651,15 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     $this->setSiteConfig($site_id);
 
     // Now Create a project/namespace for the new site.
-    $this->client->createProjectRequest($this->buildProjectName($short_name));
+    $projectName = $this->buildProjectName($short_name);
+    $this->client->createProjectRequest($projectName);
 
     // @todo This works for local dev, but what to do here eh?
     $this->createRoleBinding('developer', 'admin');
+
+    // Lastly, allow the new project to pull from the shepherd project.
+    $this->setSiteConfig(0);
+    $this->createRoleBinding('default', 'system:image-puller', 'system:image-puller', $projectName);
   }
 
   /**
@@ -660,14 +669,16 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
    *   The user being granted the role.
    * @param string $role
    *   The role being granted.
+   * @param string|null $projectName
+   *   The proje
    */
-  public function createRoleBinding(string $user, string $role) {
+  public function createRoleBinding(string $user, string $role, string $projectName = NULL) {
     $roleBindingName = implode('-', [
       $user, $role,
       $this->stringGenerator->generateRandomString(5),
     ]);
 
-    $this->client->createRoleBinding($user, $role, $roleBindingName);
+    $this->client->createRoleBinding($user, $role, $roleBindingName, $projectName);
   }
 
   /**
