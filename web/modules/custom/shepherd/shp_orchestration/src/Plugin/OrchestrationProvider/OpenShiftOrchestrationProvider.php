@@ -646,7 +646,27 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     $this->setSiteConfig($site_id);
 
     // Now Create a project/namespace for the new site.
-    return $this->client->createProjectRequest($short_name);
+    $this->client->createProjectRequest($this->buildProjectName($short_name));
+
+    // @todo - This works for local dev, but what to do here, eh.
+    $this->createRoleBinding('developer', 'admin');
+  }
+
+  /**
+   * Construct a unique role name but with some meaningful aspects.
+   *
+   * @param string $user
+   *   The user being granted the role.
+   * @param string $role
+   *   The role being granted.
+   */
+  public function createRoleBinding(string $user, string $role) {
+    $roleBindingName = implode('-', [
+      $user, $role,
+      $this->stringGenerator->generateRandomString(5),
+    ]);
+
+    $this->client->createRoleBinding($user, $role, $roleBindingName);
   }
 
   /**

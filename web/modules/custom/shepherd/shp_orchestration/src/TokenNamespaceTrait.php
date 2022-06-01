@@ -36,9 +36,22 @@ trait TokenNamespaceTrait {
   private function getSiteNamespace(int $site_id) {
     // Set the namespace associated with the site.
     $site = Node::load($site_id);
-    $short_name = $site->field_shp_short_name->value;
+    $shortName = $site->field_shp_short_name->value;
 
-    return 'shp-' . $short_name;
+    return $this->buildProjectName($shortName);
+  }
+
+  /**
+   * Very simple helper so constructing the project name is in on place.
+   *
+   * @param string $shortName
+   *   The short name of the project.
+   *
+   * @return string
+   *   The 'shepherdified name'.
+   */
+  private function buildProjectName($shortName) {
+    return 'shp-' . $shortName;
   }
 
 }
