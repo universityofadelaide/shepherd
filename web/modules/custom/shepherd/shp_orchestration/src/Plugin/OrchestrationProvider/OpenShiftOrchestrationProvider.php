@@ -220,7 +220,8 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
    */
   protected function createBuildConfig(string $build_config_name, string $source_ref, string $source_repo, string $builder_image, string $source_secret, string $image_stream_tag, array $formatted_env_vars) {
     // Create build config if it doesn't exist.
-    if (!$this->client->getBuildConfig($build_config_name)) {
+    $buildConfig = $this->client->getBuildConfig($build_config_name);
+    if ($buildConfig['code'] === 404) {
       $build_data = $this->formatBuildData($source_ref, $source_repo, $builder_image, $formatted_env_vars);
 
       $build_config = $this->client->generateBuildConfig(
@@ -648,7 +649,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     // Now Create a project/namespace for the new site.
     $this->client->createProjectRequest($this->buildProjectName($short_name));
 
-    // @todo - This works for local dev, but what to do here, eh.
+    // @todo This works for local dev, but what to do here eh?
     $this->createRoleBinding('developer', 'admin');
   }
 
