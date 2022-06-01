@@ -220,8 +220,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
    */
   protected function createBuildConfig(string $build_config_name, string $source_ref, string $source_repo, string $builder_image, string $source_secret, string $image_stream_tag, array $formatted_env_vars) {
     // Create build config if it doesn't exist.
-    $buildConfig = $this->client->getBuildConfig($build_config_name);
-    if ($buildConfig['code'] === 404) {
+    if (!$this->client->getBuildConfig($build_config_name)) {
       $build_data = $this->formatBuildData($source_ref, $source_repo, $builder_image, $formatted_env_vars);
 
       $build_config = $this->client->generateBuildConfig(
