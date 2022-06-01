@@ -29,15 +29,6 @@ class OpenShiftClientFactory {
   public function getClient() {
     $settings = $this->configFactory->get('shp_orchestration.settings');
 
-//    try {
-//      $serviceAccount = \Drupal::service('shp_service_accounts.random')
-//        ->getServiceAccount();
-//      $token = $serviceAccount->get('token');
-//    }
-//    catch (\Exception $e) {
-//      $token = $settings->get('connection.token');
-//    }
-
     $client = new OpenShiftClient(
       $settings->get('connection.endpoint'),
       $settings->get('connection.verify_tls')
