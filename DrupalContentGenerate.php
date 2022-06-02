@@ -106,7 +106,7 @@ if (!$project = reset($nodes)) {
     'langcode'                 => 'en',
     'uid'                      => '1',
     'status'                   => 1,
-    'title'                    => 'Example',
+    'title'                    => 'Drupal example',
     'field_shp_git_repository' => [['value' => $example_repository]],
     'field_shp_builder_image'  => [['value' => 'uofa/s2i-shepherd-drupal']],
     'field_shp_build_secret'   => [['value' => 'build-key']],
