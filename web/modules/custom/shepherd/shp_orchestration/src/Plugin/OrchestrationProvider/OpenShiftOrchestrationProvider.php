@@ -57,9 +57,9 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
   protected $client;
 
   /**
-   * Site that we are working with.
+   * Site that we are currently working with.
    *
-   * @var int;
+   * @var int
    */
   protected $siteId;
 
@@ -702,7 +702,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
    * @param string $role
    *   The role being granted.
    * @param string|null $projectName
-   *   The proje
+   *   The projects name.
    */
   public function createRoleBinding(string $user, string $role, string $projectName = NULL) {
     $roleBindingName = implode('-', [
