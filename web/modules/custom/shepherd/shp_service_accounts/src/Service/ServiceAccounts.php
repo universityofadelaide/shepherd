@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Drupal\shp_service_accounts\Service;
 
 use Drupal\Core\Entity\EntityTypeManager;
+use Drupal\shp_service_account\Exception\NoServiceAccountException;
+use Drupal\shp_service_account\Exception\SiteNotFoundException;
 use Drupal\shp_service_accounts\Entity\ServiceAccount;
 
 /**
@@ -46,7 +48,7 @@ class ServiceAccounts {
     $site = $this->entityTypeManager->getStorage('node')->load($siteId);
 
     if (!$site) {
-      throw new \Exception("Site not found.");
+      throw new SiteNotFoundException("Site not found.");
     }
 
     if (!isset($site->field_shp_service_account->value)) {
@@ -78,7 +80,7 @@ class ServiceAccounts {
 
     $entries = count($serviceAccountList);
     if ($entries == 0) {
-      throw new \Exception("No service accounts defined.");
+      throw new NoServiceAccountException("No service accounts defined.");
     }
 
     /** @var \Drupal\shp_service_accounts\Entity\ServiceAccount */
@@ -105,7 +107,7 @@ class ServiceAccounts {
     ]);
 
     if (count($serviceAccountList) > 1) {
-      throw new \Exception("Multiple matching service accounts.");
+      throw new NoServiceAccountException("Multiple matching service accounts.");
     }
 
     return reset($serviceAccountList);
