@@ -723,11 +723,12 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
   /**
    * {@inheritdoc}
    */
-  public function deletedSite(
+  public function preDeleteSite(
     string $project_name,
     string $short_name,
     int $site_id
   ) {
+    // @todo need to do these things _before_ the site is deleted now.
     $this->setSiteConfig($site_id);
 
     $deployment_name = self::generateDeploymentName($site_id);

@@ -319,6 +319,9 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
   /**
    * Handles a site being deleted.
    *
+   * Has to be done before the actual site node is deleted to have the
+   * required information to delete the associated objects.
+   *
    * @param string $project_name
    *   The project that is being deployed on the site.
    * @param string $short_name
@@ -329,7 +332,7 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
    * @return bool
    *   Returns true if succeeded.
    */
-  public function deletedSite(string $project_name, string $short_name, int $site_id);
+  public function preDeleteSite(string $project_name, string $short_name, int $site_id);
 
   /**
    * Retrieves the metadata on a stored secret.

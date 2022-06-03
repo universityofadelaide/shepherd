@@ -169,7 +169,7 @@ class DummyOrchestrationProvider extends OrchestrationProviderBase {
   /**
    * {@inheritdoc}
    */
-  public function deletedSite(
+  public function preDeleteSite(
     string $project_name,
     string $short_name,
     int $site_id

@@ -94,9 +94,9 @@ class Site extends EntityActionBase {
    * @return bool
    *   True on success.
    */
-  public function deleted(NodeInterface $site) {
+  public function predelete(NodeInterface $site) {
     if ($project = $this->siteEntity->getProject($site)) {
-      return $this->orchestrationProviderPlugin->deletedSite(
+      return $this->orchestrationProviderPlugin->preDeleteSite(
         $project->getTitle(),
         $site->field_shp_short_name->value,
         $site->id()
