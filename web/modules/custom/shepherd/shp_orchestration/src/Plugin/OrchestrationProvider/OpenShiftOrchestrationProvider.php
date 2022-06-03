@@ -728,13 +728,14 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     string $short_name,
     int $site_id
   ) {
-    // @todo need to do these things _before_ the site is deleted now.
     $this->setSiteConfig($site_id);
 
     $deployment_name = self::generateDeploymentName($site_id);
 
     $this->client->deleteService($deployment_name);
     $this->client->deleteRoute($deployment_name);
+
+    $this->client->deleteProject($this->buildProjectName($short_name));
   }
 
   /**
