@@ -691,7 +691,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
 
     // Lastly, allow the new project to pull from the shepherd project.
     $this->setSiteConfig(0);
-    $this->createRoleBinding('default', 'system:image-puller', 'system:image-puller', $projectName);
+    $this->createRoleBinding('default', 'system:image-puller', $projectName);
   }
 
   /**
