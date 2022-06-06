@@ -2,10 +2,10 @@
 
 namespace Drupal\shp_orchestration;
 
-use Drupal\node\Entity\Node;
-
 /**
  * Trait to provide a way to easily build token and namespace values.
+ *
+ * Means we need to use service methods and not injection ;-(
  */
 trait TokenNamespaceTrait {
 
@@ -22,7 +22,7 @@ trait TokenNamespaceTrait {
     $serviceAccount = \Drupal::service('shp_service_accounts')->getServiceAccount($site_id);
     $token = $serviceAccount->get('token');
 
-    // Use lower level functions so we don't need site_id.
+    // Use lower level functions so we don't need site_id here.
     $secret = $this->client->getSecret($token);
     return base64_decode($secret['data']['token']);
   }
@@ -34,8 +34,8 @@ trait TokenNamespaceTrait {
    *   The site which dictates which service account quota will be used.
    */
   private function getSiteNamespace(int $site_id) {
-    // Set the namespace associated with the site.
-    $site = Node::load($site_id);
+    // Get the namespace associated with the site.
+    $site = \Drupal::service('entity_type.manager')->getStorage('node')->load($site_id);
     $shortName = $site->field_shp_short_name->value;
 
     return $this->buildProjectName($shortName);

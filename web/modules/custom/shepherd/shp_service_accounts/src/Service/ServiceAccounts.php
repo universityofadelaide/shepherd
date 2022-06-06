@@ -12,7 +12,7 @@ use Drupal\shp_service_accounts\Entity\ServiceAccount;
 /**
  * Implement a simple random selector for the service account selection.
  */
-class ServiceAccounts {
+class ServiceAccounts implements ServiceAccountsInterface {
 
   /**
    * Storage for the injected variable.
@@ -22,26 +22,14 @@ class ServiceAccounts {
   protected EntityTypeManagerInterface $entityTypeManager;
 
   /**
-   * Constuctor to store the injected variables.
-   *
-   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entityTypeManager
-   *   The injected entity type manager.
+   * {@inheritdoc}
    */
   public function __construct(EntityTypeManagerInterface $entityTypeManager) {
     $this->entityTypeManager = $entityTypeManager;
   }
 
   /**
-   * Retrieve the list of service accounts and return a random one.
-   *
-   * Random as otherwise we need to keep track of the most recently
-   * used one, wrap around, etc.
-   *
-   * @throws \Exception
-   *   If there are no service accounts defined.
-   *
-   * @return \Drupal\shp_service_accounts\Entity\ServiceAccount|null
-   *   The ServiceAccount or NULL
+   * {@inheritdoc}
    */
   public function getServiceAccount($siteId): ?ServiceAccount {
     /** @var \Drupal\node\Entity\Node $site */
@@ -62,16 +50,7 @@ class ServiceAccounts {
   }
 
   /**
-   * Retrieve the list of service accounts and return a random one.
-   *
-   * Random as otherwise we need to keep track of the most recently
-   * used one, wrap around, etc.
-   *
-   * @throws \Exception
-   *   If there are no service accounts defined.
-   *
-   * @return \Drupal\shp_service_accounts\Entity\ServiceAccount|null
-   *   The ServiceAccount or NULL
+   * {@inheritdoc}
    */
   public function getRandomServiceAccount(): ?ServiceAccount {
     $serviceAccountList = $this->entityTypeManager->getStorage('service_account')->loadByProperties([
@@ -89,16 +68,7 @@ class ServiceAccounts {
   }
 
   /**
-   * Retrieve the list of service accounts and return a random one.
-   *
-   * Random as otherwise we need to keep track of the most recently
-   * used one, wrap around, etc.
-   *
-   * @throws \Exception
-   *   If there are no service accounts defined.
-   *
-   * @return \Drupal\shp_service_accounts\Entity\ServiceAccount|null
-   *   The ServiceAccount or NULL
+   * {@inheritdoc}
    */
   public function getServiceAccountByName($serviceAccountName): ?ServiceAccount {
     $serviceAccountList = $this->entityTypeManager->getStorage('service_account')->loadByProperties([
@@ -110,7 +80,9 @@ class ServiceAccounts {
       throw new NoServiceAccountException("Multiple matching service accounts.");
     }
 
-    return reset($serviceAccountList);
+    /** @var \Drupal\shp_service_accounts\Entity\ServiceAccount */
+    $serviceAccount = reset($serviceAccountList);
+    return $serviceAccount;
   }
 
 }
