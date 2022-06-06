@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\shp_service_accounts\Service;
 
-use Drupal\Core\Entity\EntityTypeManager;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\shp_service_account\Exception\NoServiceAccountException;
 use Drupal\shp_service_account\Exception\SiteNotFoundException;
 use Drupal\shp_service_accounts\Entity\ServiceAccount;
@@ -19,15 +19,15 @@ class ServiceAccounts {
    *
    * @var \Drupal\Core\Entity\EntityTypeManager
    */
-  protected EntityTypeManager $entityTypeManager;
+  protected EntityTypeManagerInterface $entityTypeManager;
 
   /**
    * Constuctor to store the injected variables.
    *
-   * @param \Drupal\Core\Entity\EntityTypeManager $entityTypeManager
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entityTypeManager
    *   The injected entity type manager.
    */
-  public function __construct(EntityTypeManager $entityTypeManager) {
+  public function __construct(EntityTypeManagerInterface $entityTypeManager) {
     $this->entityTypeManager = $entityTypeManager;
   }
 
