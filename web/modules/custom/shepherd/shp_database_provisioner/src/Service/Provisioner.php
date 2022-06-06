@@ -128,6 +128,8 @@ class Provisioner {
   /**
    * Create or update environment secret with database info and credentials.
    *
+   * @param int $site_id
+   *   The site that the secret is associated with.
    * @param string $host
    *   Database host name.
    * @param string $port
