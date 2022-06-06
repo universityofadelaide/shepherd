@@ -36,8 +36,19 @@ spec:
               value: '8888'
             - name: AB_ENABLE_PROMETHEUS
               value: 'true'
-          image: jboss/infinispan-server:9.4.11.Final
+          image: 172.30.1.1:5000/myproject/jboss-datagrid73-openshift:latest
           imagePullPolicy: Always
+          livenessProbe:
+            exec:
+              command:
+                - /bin/bash
+                - -c
+                - /opt/datagrid/bin/livenessProbe.sh
+            failureThreshold: 3
+            initialDelaySeconds: 60
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
           name: datagrid-app
           ports:
             - containerPort: 8778
@@ -52,6 +63,16 @@ spec:
             - containerPort: 11211
               name: mc-shepherd
               protocol: TCP
+          readinessProbe:
+            exec:
+              command:
+                - /bin/bash
+                - -c
+                - /opt/datagrid/bin/readinessProbe.sh
+            failureThreshold: 3
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
           resources:
             limits:
               cpu: 500m
