@@ -86,9 +86,9 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
    *   Name of the project.
    * @param string $short_name
    *   Short name of the site.
-   * @param string $site_id
+   * @param int $site_id
    *   Unique id of the site.
-   * @param string $environment_id
+   * @param int $environment_id
    *   Unique id of the environment.
    * @param string $environment_url
    *   Absolute url for the environment.
@@ -127,8 +127,8 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
   public function createdEnvironment(
     string $project_name,
     string $short_name,
-    string $site_id,
-    string $environment_id,
+    int $site_id,
+    int $environment_id,
     string $environment_url,
     string $builder_image,
     string $source_repo,
@@ -225,7 +225,9 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
    *   Name of the project.
    * @param string $short_name
    *   Short name of the site.
-   * @param string $environment_id
+   * @param int $site_id
+   *   Unique id of the site.
+   * @param int $environment_id
    *   Unique id of the environment.
    *
    * @return bool
@@ -234,11 +236,14 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
   public function deletedEnvironment(
     string $project_name,
     string $short_name,
-    string $environment_id
+    int $site_id,
+    int $environment_id
   );
 
   /**
    * Archive the environment in the orchestration provider.
+   *
+   * Unused, see nodeUpdate() in NodeOperations.php in shp_custom.
    *
    * @param int $environment_id
    *   Unique id of the environment.
@@ -314,6 +319,9 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
   /**
    * Handles a site being deleted.
    *
+   * Has to be done before the actual site node is deleted to have the
+   * required information to delete the associated objects.
+   *
    * @param string $project_name
    *   The project that is being deployed on the site.
    * @param string $short_name
@@ -324,11 +332,13 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
    * @return bool
    *   Returns true if succeeded.
    */
-  public function deletedSite(string $project_name, string $short_name, int $site_id);
+  public function preDeleteSite(string $project_name, string $short_name, int $site_id);
 
   /**
    * Retrieves the metadata on a stored secret.
    *
+   * @param int $site_id
+   *   The site id.
    * @param string $name
    *   Secret name.
    * @param string $key
@@ -337,11 +347,13 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
    * @return array|string|bool
    *   Returns the secret array if successful, the value of the key, or false.
    */
-  public function getSecret(string $name, string $key = NULL);
+  public function getSecret(int $site_id, string $name, string $key = NULL);
 
   /**
    * Creates a secret.
    *
+   * @param int $site_id
+   *   The site id.
    * @param string $name
    *   The name of the secret to be stored.
    * @param array $data
@@ -350,11 +362,13 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
    * @return array|bool
    *   Returns the secret array if successful, otherwise false.
    */
-  public function createSecret(string $name, array $data);
+  public function createSecret(int $site_id, string $name, array $data);
 
   /**
    * Updates a secret.
    *
+   * @param int $site_id
+   *   The site id.
    * @param string $name
    *   The name of the secret to be updated.
    * @param array $data
@@ -363,7 +377,7 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
    * @return array|bool
    *   Returns the secret metadata if successful.
    */
-  public function updateSecret(string $name, array $data);
+  public function updateSecret(int $site_id, string $name, array $data);
 
   /**
    * Generates a deployment name from Shepherd node id.

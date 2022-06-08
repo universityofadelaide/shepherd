@@ -1,5 +1,7 @@
 module:
   shp_database_provisioner: -1
+  admin_toolbar: 0
+  admin_toolbar_tools: 0
   basic_auth: 0
   big_pipe: 0
   block: 0
@@ -53,6 +55,7 @@ module:
   shp_orchestration: 0
   shp_redis_support: 0
   shp_roles: 0
+  shp_service_accounts: 0
   system: 0
   taxonomy: 0
   text: 0

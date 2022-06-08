@@ -136,14 +136,14 @@ class Environment extends EntityActionBase {
     // environment. Create the secret if it doesn't exist.
     // @todo Replace with generated Shepherd auth token.
     $shepherd_token = 'super-secret-token';
-    if ($env_secret = $this->orchestrationProviderPlugin->getSecret($deployment_name)) {
-      $secret_result = $this->orchestrationProviderPlugin->updateSecret(
+    if ($env_secret = $this->orchestrationProviderPlugin->getSecret($site->id(), $deployment_name)) {
+      $secret_result = $this->orchestrationProviderPlugin->updateSecret($site->id(),
         $deployment_name,
         array_merge($env_secret, ['SHEPHERD_TOKEN' => $shepherd_token])
       );
     }
     else {
-      $secret_result = $this->orchestrationProviderPlugin->createSecret(
+      $secret_result = $this->orchestrationProviderPlugin->createSecret($site->id(),
         $deployment_name,
         ['SHEPHERD_TOKEN' => $shepherd_token]
       );
@@ -316,6 +316,7 @@ class Environment extends EntityActionBase {
     $result = $this->orchestrationProviderPlugin->deletedEnvironment(
       $project->title->value,
       $site->field_shp_short_name->value,
+      $site->id(),
       $node->id()
     );
 

@@ -69,6 +69,11 @@ dsh_openshift_init() {
     oc new-project shepherd
   fi
 
+  echo "Ensuring/switching to the shepherd project."
+  if [[ $(oc project -q) != "shepherd" ]]; then
+    oc project shepherd
+  fi
+
   # Setup a new mysql server, expose it and group the services.
   echo "Ensuring mariadb service exists"
   if ! oc get svc mariadb > /dev/null 2>&1; then
@@ -117,7 +122,30 @@ dsh_openshift_init() {
   if ! oc get serviceaccount shepherd > /dev/null 2>&1; then
     oc create serviceaccount shepherd
     oc policy add-role-to-user admin system:serviceaccount:shepherd:shepherd
+    oc policy add-role-to-user self-provisioner system:serviceaccount:shepherd:shepherd
+    oc login -u kubeadmin
+    oc adm policy add-cluster-role-to-user admin system:serviceaccount:shepherd:shepherd
+    oc adm policy add-cluster-role-to-user self-provisioner system:serviceaccount:shepherd:shepherd
+    oc login -u developer
   fi
+
+  # Creating additional service accounts for namespace manipulation.
+  echo "Ensuring serviceaccounts exist for provisioning."
+  for i in {0..4} ; do
+    SA=$(printf 'shepherd-prd-provisioner-00%02d' "$i")
+    if ! oc get serviceaccount "${SA}" > /dev/null 2>&1; then
+      oc create serviceaccount "${SA}"
+      oc policy add-role-to-user admin system:serviceaccount:shepherd:"${SA}"
+      oc policy add-role-to-user self-provisioner system:serviceaccount:shepherd:"${SA}"
+      oc login -u kubeadmin
+      oc adm policy add-cluster-role-to-user admin system:serviceaccount:shepherd:"${SA}"
+      oc adm policy add-cluster-role-to-user self-provisioner system:serviceaccount:shepherd:"${SA}"
+      oc login -u developer
+
+      # This is pretty horrid, but there is no oc command in the dsh shell.
+      oc describe serviceaccount "${SA}" | grep Token | awk '{ print $2 }' > ".${SA}.token"
+    fi
+  done
 
   # Retrieve the service account token and the minishift ip.
   SERVICE_ACCOUNT=$(oc describe serviceaccount shepherd | grep Token | awk '{ print $2 }')

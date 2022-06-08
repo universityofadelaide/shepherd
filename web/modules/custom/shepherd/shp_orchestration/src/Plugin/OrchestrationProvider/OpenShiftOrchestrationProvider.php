@@ -9,6 +9,7 @@ use Drupal\node\Entity\Node;
 use Drupal\shp_custom\Service\StringGenerator;
 use Drupal\shp_orchestration\ExceptionHandler;
 use Drupal\shp_orchestration\OrchestrationProviderBase;
+use Drupal\shp_orchestration\TokenNamespaceTrait;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use UniversityOfAdelaide\OpenShift\Client as OpenShiftClient;
 use UniversityOfAdelaide\OpenShift\ClientException;
@@ -32,6 +33,8 @@ use UniversityOfAdelaide\OpenShift\Objects\Label;
  */
 class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
 
+  use TokenNamespaceTrait;
+
   /**
    * Define keys used for MySQL connectivity by the backup operator.
    *
@@ -52,6 +55,13 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
    *   PHP OpenShift client.
    */
   protected $client;
+
+  /**
+   * Site that we are currently working with.
+   *
+   * @var int
+   */
+  protected $siteId;
 
   /**
    * Shepherd custom string generator.
@@ -139,6 +149,9 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     $formatted_env_vars = $this->formatEnvVars($environment_variables);
 
     try {
+      $storedSite = $this->getSiteId();
+      $this->setSiteConfig(0);
+
       $image_stream = $this->client->generateImageStreamConfig($sanitised_project_name);
       $this->client->createImageStream($image_stream);
       $this->createBuildConfig($build_config_name, $source_ref, $source_repo, $builder_image, $source_secret, $image_stream_tag, $formatted_env_vars);
@@ -147,6 +160,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       $this->exceptionHandler->handleClientException($e);
       return FALSE;
     }
+    $this->setSiteConfig($storedSite);
     return TRUE;
   }
 
@@ -169,6 +183,9 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     ];
 
     try {
+      $storedSite = $this->getSiteId();
+      $this->setSiteConfig(0);
+
       $this->client->updateBuildConfig(
         $sanitised_name . '-' . $source_ref,
         $source_secret,
@@ -180,6 +197,8 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       $this->exceptionHandler->handleClientException($e);
       return FALSE;
     }
+
+    $this->setSiteConfig($storedSite);
     return TRUE;
   }
 
@@ -240,8 +259,8 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
   public function createdEnvironment(
     string $project_name,
     string $short_name,
-    string $site_id,
-    string $environment_id,
+    int $site_id,
+    int $environment_id,
     string $environment_url,
     string $builder_image,
     string $source_repo,
@@ -266,8 +285,14 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     $build_config_name = $sanitised_project_name . '-' . $sanitised_source_ref;
     $formatted_env_vars = $this->formatEnvVars($environment_variables, $deployment_name);
 
+    // Ensure in the shepherd project.
+    $this->setSiteConfig(0);
+
     // Tell, don't ask (to create a build config).
     $this->createBuildConfig($build_config_name, $source_ref, $source_repo, $builder_image, $source_secret, $image_stream_tag, $formatted_env_vars);
+
+    // Now we need to use the site project.
+    $this->setSiteConfig($site_id);
 
     // Setup all the volumes that might be mounted.
     $volumes = $this->generateVolumeData($project_name, $deployment_name, $secrets);
@@ -352,9 +377,16 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
    * @throws \UniversityOfAdelaide\OpenShift\ClientException
    */
   protected function getImageStreamImage(string $sanitised_project_name, string $sanitised_source_ref) {
+    // Image streams are in the shepherd project, store and switch back.
+    $storedSite = $this->getSiteId();
+    $this->setSiteConfig(0);
     // Retrieve image stream that will be used for this site. There is only a
     // tiny chance it will be different to the deployment config image.
     $image_stream = $this->client->getImageStream($sanitised_project_name);
+
+    // Switch the site info back.
+    $this->setSiteConfig($storedSite);
+
     if (is_array($image_stream) && isset($image_stream['status']['tags'])) {
       // Look through the image stream tags to find the one being deployed.
       foreach ($image_stream['status']['tags'] as $index => $images) {
@@ -364,6 +396,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
         }
       }
     }
+
     return FALSE;
   }
 
@@ -394,8 +427,10 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
   ) {
     // @todo Refactor this too. Not DRY enough.
     $deployment_name = self::generateDeploymentName($environment_id);
-    $deployment_config = $this->client->getDeploymentConfig($deployment_name);
     $formatted_env_vars = $this->formatEnvVars($environment_variables, $deployment_name);
+
+    $this->setSiteConfig($site_id);
+    $deployment_config = $this->client->getDeploymentConfig($deployment_name);
 
     if (!$this->setupVolumes($project_name, $deployment_name, $storage_class)) {
       return FALSE;
@@ -408,6 +443,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       $site_id,
       $environment_id
     );
+
     $this->client->updateDeploymentConfig($deployment_name, $deployment_config, [
       'spec' => [
         'template' => [
@@ -473,14 +509,55 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
   }
 
   /**
+   * Helper function to set the namespace and token before calling the api.
+   *
+   * @param int|null $site_id
+   *   The site which dictates which service account quota will be used.
+   *
+   * @throws \UniversityOfAdelaide\OpenShift\ClientException
+   */
+  private function setSiteConfig(int $site_id = NULL) {
+    // If called with no parameters, set the defaults to shepherd.
+    $this->client->setToken($this->config->get('connection.token'));
+    $this->client->setNamespace($this->config->get('connection.namespace'));
+
+    // Return now if no site id passed.
+    if (!$site_id) {
+      return;
+    }
+
+    // Retrieve the token first from the shepherd namespace.
+    $this->client->setToken($this->getSiteToken($site_id));
+
+    // Then we can change to the sites namespace.
+    $this->client->setNamespace($this->getSiteNamespace($site_id));
+
+    // Finally, store the newly activated siteId in case.
+    $this->siteId = $site_id;
+  }
+
+  /**
+   * Helper function to retrieve the site id thats currently set.
+   *
+   * @return int
+   *   The currently set site id.
+   */
+  private function getSiteId() {
+    return $this->siteId;
+  }
+
+  /**
    * {@inheritdoc}
    */
   public function deletedEnvironment(
     string $project_name,
     string $short_name,
-    string $environment_id
+    int $site_id,
+    int $environment_id
   ) {
     $deployment_name = self::generateDeploymentName($environment_id);
+
+    $this->setSiteConfig($site_id);
 
     try {
       // Scale the pods to zero, then delete the pod creators.
@@ -524,6 +601,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
   public function archivedEnvironment(
     int $environment_id
   ) {
+    // @todo - This is all broken, input is an int, not an object, remove?
     $site = Node::load($environment_id->field_shp_site->target_id);
     $project = Node::load($site->field_shp_project->target_id);
 
@@ -547,6 +625,9 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     Route $route = NULL,
     Hpa $hpa = NULL
   ) {
+
+    $this->setSiteConfig($site_id);
+
     $site_deployment_name = self::generateDeploymentName($site_id);
 
     $environment_deployment_name = self::generateDeploymentName($environment_id);
@@ -595,10 +676,41 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     string $project_name,
     string $short_name,
     int $site_id,
-    string $domain,
+    string $domain_name,
     string $path
   ) {
-    return TRUE;
+    // Set the auth to be the site token.
+    $this->setSiteConfig($site_id);
+
+    // Now Create a project/namespace for the new site.
+    $projectName = $this->buildProjectName($short_name);
+    $this->client->createProjectRequest($projectName);
+
+    // @todo This works for local dev, but what to do here eh?
+    $this->createRoleBinding('developer', 'admin');
+
+    // Lastly, allow the new project to pull from the shepherd project.
+    $this->setSiteConfig(0);
+    $this->createRoleBinding('default', 'system:image-puller', $projectName);
+  }
+
+  /**
+   * Construct a unique role name but with some meaningful aspects.
+   *
+   * @param string $user
+   *   The user being granted the role.
+   * @param string $role
+   *   The role being granted.
+   * @param string|null $projectName
+   *   The projects name.
+   */
+  public function createRoleBinding(string $user, string $role, string $projectName = NULL) {
+    $roleBindingName = implode('-', [
+      $user, $role,
+      $this->stringGenerator->generateRandomString(5),
+    ]);
+
+    $this->client->createRoleBinding($user, $role, $roleBindingName, $projectName);
   }
 
   /**
@@ -611,15 +723,19 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
   /**
    * {@inheritdoc}
    */
-  public function deletedSite(
+  public function preDeleteSite(
     string $project_name,
     string $short_name,
     int $site_id
   ) {
+    $this->setSiteConfig($site_id);
+
     $deployment_name = self::generateDeploymentName($site_id);
 
     $this->client->deleteService($deployment_name);
     $this->client->deleteRoute($deployment_name);
+
+    $this->client->deleteProject($this->buildProjectName($short_name));
   }
 
   /**
@@ -973,7 +1089,9 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
   /**
    * {@inheritdoc}
    */
-  public function getSecret(string $name, string $key = NULL) {
+  public function getSecret(int $site_id, string $name, string $key = NULL) {
+    $this->setSiteConfig($site_id);
+
     try {
       $secret = $this->client->getSecret($name);
     }
@@ -993,7 +1111,9 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
   /**
    * {@inheritdoc}
    */
-  public function createSecret(string $name, array $data) {
+  public function createSecret(int $site_id, string $name, array $data) {
+    $this->setSiteConfig($site_id);
+
     try {
       return $this->client->createSecret($name, $data);
     }
@@ -1006,7 +1126,9 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
   /**
    * {@inheritdoc}
    */
-  public function updateSecret(string $name, array $data) {
+  public function updateSecret(int $site_id, string $name, array $data) {
+    $this->setSiteConfig($site_id);
+
     try {
       return $this->client->updateSecret($name, $data);
     }
@@ -1020,6 +1142,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
    * {@inheritdoc}
    */
   public function getSiteEnvironmentsStatus(string $site_id) {
+    $this->setSiteConfig($site_id);
     try {
       $deployment_configs = $this->client->getDeploymentConfigs('site_id=' . $site_id);
     }
@@ -1041,6 +1164,9 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
    * {@inheritdoc}
    */
   public function getEnvironmentStatus(string $project_name, string $short_name, string $environment_id) {
+
+    $environment = Node::load($environment_id);
+    $this->setSiteConfig($environment->field_shp_site->entity->id());
 
     $deployment_name = self::generateDeploymentName($environment_id);
 
@@ -1176,24 +1302,26 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
   }
 
   /**
-   * Generates a url to a specific pod and view in OpenShift.
+   * Generate url to a specific pod and view in OpenShift.
    *
    * @param string $pod_name
    *   Pod name.
    * @param string $view
    *   View/tab to display.
    *
-   * @return string
+   * @return \Drupal\Core\Url
    *   Url.
    */
   protected function generateOpenShiftPodUrl(string $pod_name, string $view) {
     $endpoint = $this->config->get('connection.endpoint');
-    $namespace = $this->config->get('connection.namespace');
 
-    return Url::fromUri($endpoint . '/console/project/' . $namespace . '/browse/pods/' . $pod_name, [
-      'query' => [
-        'tab' => $view,
-      ],
+    // @todo fix for deployed version, store web ui or remove this all.
+    $endpoint = str_replace('api.crc', 'console-openshift-console.apps-crc', $endpoint);
+    $endpoint = str_replace(':6443', '', $endpoint);
+
+    $namespace = $this->getSiteNamespace($this->getSiteId());
+
+    return Url::fromUri($endpoint . '/k8s/ns/' . $namespace . '/pods/' . $pod_name . '/' . $view, [
       'attributes' => [
         'target' => '_blank',
       ],

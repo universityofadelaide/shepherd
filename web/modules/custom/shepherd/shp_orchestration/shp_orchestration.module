@@ -53,14 +53,21 @@ function shp_orchestration_node_update(NodeInterface $node) {
 }
 
 /**
+ * Implements hook_ENTITY_TYPE_predelete().
+ */
+function shp_orchestration_node_predelete(NodeInterface $node) {
+  switch ($node->bundle()) {
+    case 'shp_site':
+      \Drupal::service('shp_orchestration.site')->predelete($node);
+      break;
+  }
+}
+
+/**
  * Implements hook_ENTITY_TYPE_delete().
  */
 function shp_orchestration_node_delete(NodeInterface $node) {
   switch ($node->bundle()) {
-    case 'shp_site':
-      \Drupal::service('shp_orchestration.site')->deleted($node);
-      break;
-
     case 'shp_project':
       \Drupal::service('shp_orchestration.project')->deleted($node);
       break;

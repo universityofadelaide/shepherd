@@ -185,7 +185,7 @@ class Site {
     $form['title']['widget'][0]['value']['#id'] = 'edit-title';
     $form['field_shp_short_name']['widget'][0]['value']['#type'] = 'machine_name';
     $form['field_shp_short_name']['widget'][0]['value']['#machine_name'] = [
-      'exists' => ['shp_custom_generate_unique_short_name'],
+      'exists' => [$this, 'validateShortNameUniqueness'],
       'source' => ['title', 'widget', '0', 'value'],
       'replace_pattern' => '[^a-z0-9-]+',
       'replace' => '-',
@@ -203,7 +203,7 @@ class Site {
    */
   public function validateShortNameUniqueness($short_name) {
     $results = $this->loadEntitiesByFieldValue('shp_site', 'field_shp_short_name', $short_name);
-    return !count($results);
+    return (bool) count($results);
   }
 
   /**

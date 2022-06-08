@@ -43,7 +43,7 @@ class Site extends EntityActionBase {
   }
 
   /**
-   * Tell the active orchestration provider a project was created.
+   * Tell the active orchestration provider a site was created.
    *
    * @param \Drupal\node\NodeInterface $site
    *   Site.
@@ -54,17 +54,25 @@ class Site extends EntityActionBase {
   public function created(NodeInterface $site) {
     $project = $this->siteEntity->getProject($site);
 
-    return $this->orchestrationProviderPlugin->createdSite(
+    // @todo This should be done in an event in shp_service_accounts?
+    $serviceAccount = \Drupal::service('shp_service_accounts')->getRandomServiceAccount();
+    $site->field_shp_service_account->value = $serviceAccount->label();
+
+    $site->save();
+
+    $this->orchestrationProviderPlugin->createdSite(
       $project->getTitle(),
       $site->field_shp_short_name->value,
       $site->id(),
       $site->field_shp_domain->value,
       $site->field_shp_path->value
     );
+
+    return TRUE;
   }
 
   /**
-   * Tell the active orchestration provider a project was updated.
+   * Tell the active orchestration provider a site was updated.
    *
    * @param \Drupal\node\NodeInterface $site
    *   Site.
@@ -78,7 +86,7 @@ class Site extends EntityActionBase {
   }
 
   /**
-   * Tell the active orchestration provider a project was deleted.
+   * Tell the active orchestration provider a site was deleted.
    *
    * @param \Drupal\node\NodeInterface $site
    *   Site.
@@ -86,9 +94,9 @@ class Site extends EntityActionBase {
    * @return bool
    *   True on success.
    */
-  public function deleted(NodeInterface $site) {
+  public function predelete(NodeInterface $site) {
     if ($project = $this->siteEntity->getProject($site)) {
-      return $this->orchestrationProviderPlugin->deletedSite(
+      return $this->orchestrationProviderPlugin->preDeleteSite(
         $project->getTitle(),
         $site->field_shp_short_name->value,
         $site->id()
