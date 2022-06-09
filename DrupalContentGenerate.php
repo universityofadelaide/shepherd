@@ -148,6 +148,8 @@ if (!$site = reset($nodes)) {
     'field_shp_git_default_ref' => 'master',
     'field_shp_path'            => '/',
     'field_shp_project'         => [['target_id' => $project->id()]],
+    'field_shp_storage_class'   => 'gold',
+    'field_shp_storage_amount'  => 5,
   ]);
   $site->moderation_state->value = 'published';
   $site->save();
