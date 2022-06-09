@@ -64,6 +64,18 @@ if (!$development = $etm->getStorage('taxonomy_term')->loadByProperties(['vid' =
     'vid'                   => 'shp_environment_types',
     'name'                  => 'Dev',
     'field_shp_base_domain' => $domain_name,
+    'field_shp_annotations' => [
+      [
+        'key' => 'haproxy.router.openshift.io/ip_whitelist',
+        'value' => '129.127.0.0/16 10.0.0.0/8',
+      ],
+    ],
+    'field_shp_labels' => [
+      [
+        'key' => 'type',
+        'value' => 'internal',
+      ],
+    ],
   ]);
   $development_env->save();
 
@@ -73,6 +85,12 @@ if (!$development = $etm->getStorage('taxonomy_term')->loadByProperties(['vid' =
     'field_shp_base_domain' => $domain_name,
     'field_shp_protect' => TRUE,
     'field_shp_update_go_live' => TRUE,
+    'field_shp_labels' => [
+      [
+        'key' => 'type',
+        'value' => 'external',
+      ],
+    ],
   ]);
   $production_env->save();
 }
