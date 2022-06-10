@@ -13,7 +13,7 @@ openshift_start() {
   crc setup
   echo "Starting CodeReady Containers."
   echo "Expect 20+ minutes from fresh setup, 8+ minutes subsequent. Coffee?"
-  crc start
+  crc start -n 1.1.1.1
   echo "Logging in."
   oc login -u developer https://api.crc.testing:6443
   echo "Waiting a few seconds."
