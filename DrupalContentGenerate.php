@@ -81,6 +81,19 @@ else {
   echo "Taxonomy already setup.\n";
 }
 
+// Create a storage class.
+if (!$storage = $etm->getStorage('taxonomy_term')->loadByProperties(['vid' => 'Gold'])) {
+  $storage = Term::create([
+    'vid' => 'shp_storage_class',
+    'name' => 'gold',
+  ]);
+  $storage->save();
+}
+else {
+  $storage = reset($storage);
+  echo "Storage class already setup.\n";
+}
+
 // Create config entities for the service accounts.
 for ($i = 0; $i <= 4; $i++) {
   $label = sprintf("shepherd-prd-provisioner-00%02d", $i);
@@ -125,6 +138,9 @@ if (!$project = reset($nodes)) {
     'field_shp_cpu_limit'      => [['value' => '1000m']],
     'field_shp_memory_request' => [['value' => '256Mi']],
     'field_shp_memory_limit'   => [['value' => '512Mi']],
+    // Can't use this with OpenShift Local :-(
+    // 'field_shp_storage_class'  => [['target_id' => $storage->id()]],
+    'field_shp_backup_size'    => 5,
   ]);
   $project->save();
 }
@@ -148,8 +164,9 @@ if (!$site = reset($nodes)) {
     'field_shp_git_default_ref' => 'master',
     'field_shp_path'            => '/',
     'field_shp_project'         => [['target_id' => $project->id()]],
-    'field_shp_storage_class'   => 'gold',
-    'field_shp_storage_amount'  => 5,
+    // Can't use this with OpenShift Local :-(
+    // 'field_shp_storage_class'   => [['target_id' => $storage->id()]],
+    'field_shp_storage_size'  => 5,
   ]);
   $site->moderation_state->value = 'published';
   $site->save();
