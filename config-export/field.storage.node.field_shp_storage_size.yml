@@ -4,8 +4,8 @@ status: true
 dependencies:
   module:
     - node
-id: node.field_shp_storage_amount
-field_name: field_shp_storage_amount
+id: node.field_shp_storage_size
+field_name: field_shp_storage_size
 entity_type: node
 type: integer
 settings:

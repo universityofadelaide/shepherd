@@ -3,10 +3,10 @@ langcode: en
 status: true
 dependencies:
   config:
-    - field.storage.node.field_shp_storage_amount
+    - field.storage.node.field_shp_storage_size
     - node.type.shp_site
-id: node.shp_site.field_shp_storage_amount
-field_name: field_shp_storage_amount
+id: node.shp_site.field_shp_storage_size
+field_name: field_shp_storage_size
 entity_type: node
 bundle: shp_site
 label: 'Storage amount'
