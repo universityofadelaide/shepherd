@@ -9,9 +9,9 @@ id: node.shp_site.field_shp_storage_size
 field_name: field_shp_storage_size
 entity_type: node
 bundle: shp_site
-label: 'Storage amount'
-description: 'Enter the required storage amount for this site. Each environment will claim this amount of storage, so please do not choose more than required.'
-required: false
+label: 'Storage size'
+description: 'Enter the required storage size for this site. Each environment will claim this amount of storage, so please do not choose more than required.'
+required: true
 translatable: false
 default_value:
   -
