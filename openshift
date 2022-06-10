@@ -29,6 +29,13 @@ openshift_stop() {
 openshift_purge() {
   ./dsh purge
   crc delete
+  echo "Cleaning up serviceaccount temp files."
+  for i in {0..4} ; do
+    SA=$(printf 'shepherd-prd-provisioner-00%02d' "$i")
+    if [ -f ".${SA}.token" ]; then
+      rm ".${SA}.token"
+    fi
+  done
 }
 
 COMMAND=${1:-default}
