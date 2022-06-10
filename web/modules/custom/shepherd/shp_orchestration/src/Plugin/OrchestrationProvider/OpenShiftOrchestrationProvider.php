@@ -268,6 +268,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     string $source_secret = NULL,
     string $storage_class = '',
     int $storage_size = 3,
+    int $backup_size = 3,
     bool $update_on_image_change = FALSE,
     bool $cron_suspended = FALSE,
     array $environment_variables = [],
@@ -297,7 +298,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
 
     // Setup all the volumes that might be mounted.
     $volumes = $this->generateVolumeData($project_name, $deployment_name, $secrets);
-    if (!$this->setupVolumes($project_name, $deployment_name, $storage_class, $storage_size)) {
+    if (!$this->setupVolumes($project_name, $deployment_name, $storage_class, $storage_size, $backup_size)) {
       return FALSE;
     }
 
@@ -416,6 +417,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     string $source_secret = NULL,
     string $storage_class = '',
     int $storage_size = 3,
+    int $backup_size = 3,
     bool $update_on_image_change = FALSE,
     bool $cron_suspended = FALSE,
     array $environment_variables = [],
@@ -434,7 +436,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     $this->setSiteConfig($site_id);
     $deployment_config = $this->client->getDeploymentConfig($deployment_name);
 
-    if (!$this->setupVolumes($project_name, $deployment_name, $storage_class, $storage_size)) {
+    if (!$this->setupVolumes($project_name, $deployment_name, $storage_class, $storage_size, $backup_size)) {
       return FALSE;
     }
 
@@ -1513,7 +1515,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
    * @return bool
    *   Whether setting up the PVC's succeeded or not.
    */
-  protected function setupVolumes(string $project_name, string $deployment_name, string $storage_class, int $storage_size) {
+  protected function setupVolumes(string $project_name, string $deployment_name, string $storage_class, int $storage_size, int $backup_size) {
     $shared_pvc_name = self::generateSharedPvcName($deployment_name);
     $backup_pvc_name = self::generateBackupPvcName($project_name);
 
@@ -1543,7 +1545,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
         $this->client->createPersistentVolumeClaim(
           $backup_pvc_name,
           'ReadWriteMany',
-          $storage_size . 'Gi',
+          $backup_size . 'Gi',
           $deployment_name,
           $storage_class
         );
@@ -1552,7 +1554,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
         $this->client->updatePersistentVolumeClaim(
           $backup_pvc_name,
           'ReadWriteMany',
-          $storage_size . 'Gi',
+          $backup_size . 'Gi',
           $deployment_name,
           $storage_class
         );
