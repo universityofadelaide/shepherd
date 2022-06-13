@@ -3,9 +3,17 @@
 namespace Drupal\Tests\shp_cache_backend\Unit;
 
 use Drupal\Core\Config\ImmutableConfig;
+use Drupal\Core\DependencyInjection\ContainerBuilder;
+use Drupal\Core\Entity\EntityStorageInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Field\FieldItemListInterface;
+use Drupal\node\Entity\Node;
 use Drupal\node\NodeInterface;
+use Drupal\node\NodeStorageInterface;
 use Drupal\shp_cache_backend\Plugin\CacheBackend\MemcachedDatagrid;
 use Drupal\shp_custom\Service\EnvironmentType;
+use Drupal\shp_service_accounts\Entity\ServiceAccount;
+use Drupal\shp_service_accounts\Service\ServiceAccountsInterface;
 use Drupal\Tests\UnitTestCase;
 use UniversityOfAdelaide\OpenShift\Client;
 use UniversityOfAdelaide\OpenShift\Objects\ConfigMap;
@@ -31,7 +39,7 @@ class MemcachedDatagridCacheBackendTest extends UnitTestCase {
   /**
    * A mock OS client.
    *
-   * @var \UniversityOfAdelaide\OpenShift\Client|\PHPUnit_Framework_MockObject_MockObject
+   * @var \UniversityOfAdelaide\OpenShift\Client|\PHPUnit\Framework\MockObject\MockObject
    */
   protected $client;
 
@@ -45,7 +53,7 @@ class MemcachedDatagridCacheBackendTest extends UnitTestCase {
   /**
    * A mock environment node.
    *
-   * @var \Drupal\node\NodeInterface|\PHPUnit_Framework_MockObject_MockObject
+   * @var \Drupal\node\NodeInterface|\PHPUnit\Framework\MockObject\MockObject
    */
   protected $environment;
 
@@ -68,14 +76,87 @@ class MemcachedDatagridCacheBackendTest extends UnitTestCase {
       ->method('id')
       ->willReturn(123);
     $this->environment->field_shp_site = new \stdClass();
+
+    $this->site = $this->createMock(NodeInterface::class);
+    $this->site->expects($this->any())
+      ->method('id')
+      ->willReturn(456);
+
+    $this->environment->field_shp_site->entity = $this->site;
     $this->environment->field_shp_site->target_id = 456;
     $this->client = $this->createMock(Client::class);
     $config = $this->createMock(ImmutableConfig::class);
     $config->expects($this->any())
       ->method('get')
       ->willReturn('mynamespace');
+
+    $secret = [
+      'data' => [
+        'token' => 'Ym9id2FzaGVyZQo=',
+      ],
+    ];
+    $this->client->method('getSecret')
+      ->willReturn($secret);
+
     $this->environmentType = $this->createMock(EnvironmentType::class);
     $this->plugin = new MemcachedDatagrid([], 'test', [], $this->client, $config, $this->environmentType);
+
+    // Provide a mock service container, for the services our module uses.
+    $container = new ContainerBuilder();
+    $container->set('shp_service_accounts', $this->getServiceAccountsMock());
+    $container->set('entity_type.manager', $this->getEntityTypeManagerMock());
+    \Drupal::setContainer($container);
+  }
+
+  /**
+   * Creates and returns a mock for service accounts service.
+   */
+  protected function getServiceAccountsMock() {
+    $serviceAccountsMock = $this->getMockBuilder(ServiceAccountsInterface::class)
+      ->disableOriginalConstructor()
+      ->getMock();
+
+    $serviceAccountsMock->method('getServiceAccount')
+      ->will($this->returnValue(
+        new ServiceAccount([
+          'id' => 1,
+          'title' => 'Doesnt matter 1',
+          'status' => TRUE,
+          'token' => 'ooohspecialtoken',
+        ], 'service_account')));
+
+    return $serviceAccountsMock;
+  }
+
+  protected function getEntityTypeManagerMock() {
+    $fieldShortNameMock = $this->getMockBuilder(FieldItemListInterface::class)
+      ->disableOriginalConstructor()
+      ->getMock();
+    $fieldShortNameMock->expects($this->any())
+      ->method('__get')
+      ->with('value')
+      ->willReturn('wedontactuallycare');
+
+    $nodeMock = $this->getMockBuilder(Node::class)
+      ->disableOriginalConstructor()
+      ->getMock();
+    $nodeMock->expects($this->any())
+      ->method('__get')
+      ->with('field_shp_short_name')
+      ->willReturn($fieldShortNameMock);
+
+    $nodeStorage = $this->createMock(NodeStorageInterface::class);
+    $nodeStorage->expects($this->any())
+      ->method('load')
+      ->willReturn($nodeMock);
+
+    $entityTypeManager = $this->createMock(EntityTypeManagerInterface::class);
+    $entityTypeManager->expects($this->any())
+      ->method('getStorage')
+      ->with('node')
+      ->willReturn($nodeStorage);
+
+    return $entityTypeManager;
   }
 
   /**

@@ -41,6 +41,8 @@ dependencies:
 
   # Contributed modules
   - cas
+  - admin_toolbar
+  - admin_toolbar_tools
   - config_ignore
   - entity_reference_revisions
   - field_group
@@ -62,8 +64,9 @@ dependencies:
   - shp_custom
   - shp_database_provisioner
   - shp_orchestration
-  - shp_roles
   - shp_redis_support
+  - shp_roles
+  - shp_service_accounts
 
   # UA shepherd integrations
   - ua_ldap

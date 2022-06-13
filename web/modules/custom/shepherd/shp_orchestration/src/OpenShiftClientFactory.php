@@ -28,13 +28,11 @@ class OpenShiftClientFactory {
    */
   public function getClient() {
     $settings = $this->configFactory->get('shp_orchestration.settings');
-    $client = new OpenShiftClient(
+
+    return new OpenShiftClient(
       $settings->get('connection.endpoint'),
-      $settings->get('connection.token'),
-      $settings->get('connection.namespace'),
       $settings->get('connection.verify_tls')
     );
-    return $client;
   }
 
 }

@@ -60,7 +60,9 @@ class Status {
    */
   public function get(NodeInterface $environment) {
     $site = $this->environmentEntity->getSite($environment);
-    $project = $this->siteEntity->getProject($site);
+    if (!$project = $this->siteEntity->getProject($site)) {
+      return [];
+    }
     return $this->orchestrationProviderPlugin->getEnvironmentStatus($project->getTitle(), $site->field_shp_short_name->value, $environment->id());
   }
 

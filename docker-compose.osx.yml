@@ -38,6 +38,8 @@ services:
       SITE_ADMIN_PASSWORD: password
       VIRTUAL_HOST: 127.0.0.1:8000
       XDEBUG_CONFIG: "remote_host=host.docker.internal"
+    env_file:
+      - .env
     volumes:
       - nfsmount:/code
       - ./shared:/shared

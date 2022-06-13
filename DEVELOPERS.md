@@ -6,7 +6,6 @@
 * [Repository guide](#repository-details)
 * [Shepherd development](#working-with-shepherd)
 * [Troubleshooting](#troubleshooting)
-* [Using Minishift](#working-with-minishift)
 
 ## What is provided
 Once setup for development, it is possible to almost fully emulate a production deployment:
@@ -28,10 +27,7 @@ Not similar to a production deployment:
 ## Prerequisites
 
 ### All systems
-* Either [Minishift](https://www.openshift.org/minishift/) virtual machine - which
-  provides an OpenShift cluster for local development or
-* [OpenShift](https://github.com/openshift/origin/blob/release-3.11/docs/cluster_up_down.md)
-  running in docker - rather than in a virtual machine.
+* [Code Ready Containers](https://developers.redhat.com/products/openshift-local/overview)
 * [oc](https://github.com/openshift/origin/releases) command line tool enables
   interaction with the OpenShift cluster.
 * PHP 7+
@@ -40,72 +36,34 @@ Not similar to a production deployment:
 * An ssh key for builds that is *not* password protected.
 
 ### macOS
-Additional tools are required for development on `macOS`. `docker for mac`
-will work and the `./dsh` script has built in support for nfs setup for mac.
-* [Docker for Mac](https://www.docker.com/docker-mac)
+No longer supported for development.
 
-### Minishift configuration (recommended for macOS only)
-Minishift provides an OpenShift environment that Shepherd can use to deploy sites.
+### OpenShift in Code Ready Containers.
+This is the only supported single node/local development environment for OpenShift
+4.x. OpenShift will directly provide the Shepherd deployed sites on port 80/443.
 
-Increase memory from the default 2048M & increase cpus to more than the default,
-if you have spare cores.
-```bash
-minishift config set memory 4096
-minishift config set cpus 4
-```
-
-Start Minishift, ready for the next step.
-```bash
-minishift start
-```
-
-Either add the Minishift oc command to your $PATH temporarily or
-```bash
-eval $(minishift oc-env)
-```
-
-Alternatively, permanently add oc command to /usr/local/bin that is packaged
-with Minishift.
-```bash
-sudo ln -sf $(find ~/.minishift -name oc -type f | head -1) /usr/local/bin/
-```
-
-### OpenShift in Docker configuration (Linux only)
-OpenShift itself can provide an environment that Shepherd can use to deploy sites.
-OpenShift will directlly provide the Shepherd deployed sites on port 80/443.
-
-This setup is considerably faster and the recommended development method, but
-does require Linux and configuring a few things before running `./dsh`.
+This requires Linux and configuring a few things before running `./dsh`.
 Putting these into ~/.bashrc is recommended for ongoing development.
 
-* Set the OPENSHIFT_TYPE env var to something other than 'minishift'
-  `export OPENSHIFT_TYPE=openshift`
-* Set the domain for accessing shepherd to the ip of local docker
-  `export DOMAIN=$(ip addr show docker0 | grep "inet\b" | awk '{print $2}' | cut -d/ -f1).nip.io`
-* Set the default minishift vm driver.
-  `export MINISHIFT_DRIVER=virtualbox`
-* Start the oc cluster with `./openshift start`.
+* Start the Code Ready Containers cluster with `./openshift start`.
 * Now run the ./dsh etc commands as per normal.
 
 ## Quickstart
-Before proceeding, please configure either Minishift or OpenShift in Docker as above.
+Before proceeding, please configure either OpenShift with Code Ready Containers as above.
 ```bash
 # Setup
 composer install
 
-# Bring up containers, runs any configuration tasks
-./dsh start
-
-# Drop into a utility shell ( this creates a ssh-agent container for macOS )
+# Bring up containers, runs any configuration tasks, drop into the shell.
 ./dsh
 
 # Build Shepherd
 robo build
 ```
 
-Login to the Shepherd UI with `xdg-open http://${DOMAIN}:8000`
+Login to the Shepherd UI with `xdg-open http://shepherd.172.17.0.1:8000`
 
-Login to OpenShift Web UI with `xdg-open https://${OPENSHIFT}:8443` using the developer:developer credentials and
+Login to OpenShift Web UI with `xdg-open https://console-openshift-console.apps-crc.testing` using the developer:developer credentials and
 check that MariaDB is running before executing the next command.
 
 ```bash
@@ -117,14 +75,6 @@ Follow the *Configure Backup/Restore operators* section in [INSTALL.md](INSTALL.
 
 Thats it; visit the OpenShift web interface to see a build running and a
 deployment ready to occur when the build finishes.
-
-For Minishift, the URL to the OpenShift web interface can be found in the
-terminal log when Minishift starts. Alternatively, execute the following
-command to open the Minishift console in a browser.
-
-```bash
-minishift console
-```
 
 ## Repository details
 
@@ -248,15 +198,9 @@ discover the OpenShift client dependency.
   web/sites/default directory.
 - `composer update` will NOT overwrite/update `/web/sites/default/settings.php`.
   if you require it to be updated, remove the file first and it will be re-created.
-- If you receive a `connection refused` error when running `minishift start`
-  the DNS settings out of the box for minishift are incorrect.
-- Change to a working DNS server .. try google :
-  ```bash
-  minishift ssh "echo 'nameserver 8.8.8.8' | sudo tee /etc/resolv.conf"
-  ```
 - Test connection to API:
   ```bash
-  curl --insecure -H "Authorization: Bearer $(oc login -u developer -p developer >/dev/null && oc whoami -t)" $(minishift console --url)/oapi/v1
+  curl --insecure -H "Authorization: Bearer $(oc login -u developer -p developer >/dev/null && oc whoami -t)" https://api.crc.testing:6443/apis/authorization.openshift.io/v1
   ```
 - Updating OpenShift auth token in the dsh shell:
   ```bash
@@ -274,18 +218,13 @@ discover the OpenShift client dependency.
 ## Working with OpenShift
 
 ### Purging without destroying OpenShift itself
-Purging all the example generated content on OpenShift. This removes everything with the example namespace that was generated with
+Purging all the example generated content on OpenShift. This removes everything with a name like 'node' or 'example' that that was generated with
 the robo dev:drupal-content-generate command.
 ```bash
-name=example; for type in is dc bc svc pvc route pods cronjobs jobs secrets; do for item in $(oc get "${type}" | grep ${name} | awk '{ print $1 }'); do oc delete ${type} ${item}; done; done
+./oc_delete_all.sh
 ```
 
 ### Destroy and re-create OpenShift and ALL deployed test sites.
-
-macOS
-```bash
-minishift delete
-```
 
 Linux
 ```bash

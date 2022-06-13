@@ -3,6 +3,7 @@ langcode: en
 status: true
 dependencies:
   config:
+    - field.field.node.shp_site.field_shp_service_account
     - field.field.node.shp_site.field_shp_domain
     - field.field.node.shp_site.field_shp_go_live_date
     - field.field.node.shp_site.field_shp_path
@@ -14,7 +15,6 @@ dependencies:
     - workflows.workflow.shepherd
   module:
     - content_moderation
-    - field_group
 _core:
   default_config_hash: FinZYNGu0yFzoXJxA-82sbSH2Z1zz6CnHg8Zy7zZYmE
 id: node.shp_site.default
@@ -43,6 +43,14 @@ content:
     weight: 4
     region: content
     settings: {  }
+    third_party_settings: {  }
+  field_shp_service_account:
+    type: string_textfield
+    weight: 26
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
     third_party_settings: {  }
   field_shp_short_name:
     type: string_textfield

@@ -3,6 +3,7 @@
 namespace Drupal\Tests\shp_content_types\Functional;
 
 use Drupal\Tests\shepherd\Functional\FunctionalTestBase;
+use Drupal\Tests\shepherd\Traits\ConfigCreationTrait;
 
 /**
  * Tests environment constraints.
@@ -10,6 +11,8 @@ use Drupal\Tests\shepherd\Functional\FunctionalTestBase;
  * @group shp_content_types
  */
 class EnvironmentConstraintsTest extends FunctionalTestBase {
+
+  use ConfigCreationTrait;
 
   /**
    * {@inheritdoc}
@@ -25,6 +28,15 @@ class EnvironmentConstraintsTest extends FunctionalTestBase {
   public function testReplicasConstraint() {
     // Login to avoid moderation_state violations.
     $this->drupalLogin($this->createAdmin());
+
+    // Ensure some service accounts exist.
+    $this->createServiceAccount([
+      'id' => 1,
+      'title' => 'Doesnt matter',
+      'status' => TRUE,
+      'token' => 'Holy lightning batman',
+    ]);
+
     $env = $this->createEnvironment([
       'field_min_replicas' => 4,
       'field_max_replicas' => 2,
