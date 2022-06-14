@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "32ee26595ee0f2ef64172b4005262971",
+    "content-hash": "1490ccff00e6e93e7f2f4e0606bf5eac",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -7232,16 +7232,16 @@
         },
         {
             "name": "universityofadelaide/openshift-client",
-            "version": "dev-2500-route-promotion-label",
+            "version": "dev-openshift-4.x",
             "source": {
                 "type": "git",
                 "url": "https://github.com/universityofadelaide/openshift-client.git",
-                "reference": "27ef10c9793d9bfbf09968fa0774c7a4f2a701a5"
+                "reference": "19b3a0f795bacd9773a8ed589ef88fdd300561b7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/universityofadelaide/openshift-client/zipball/27ef10c9793d9bfbf09968fa0774c7a4f2a701a5",
-                "reference": "27ef10c9793d9bfbf09968fa0774c7a4f2a701a5",
+                "url": "https://api.github.com/repos/universityofadelaide/openshift-client/zipball/19b3a0f795bacd9773a8ed589ef88fdd300561b7",
+                "reference": "19b3a0f795bacd9773a8ed589ef88fdd300561b7",
                 "shasum": ""
             },
             "require": {
@@ -7277,9 +7277,9 @@
             "description": "Simple OpenShift client for PHP.",
             "support": {
                 "issues": "https://github.com/universityofadelaide/openshift-client/issues",
-                "source": "https://github.com/universityofadelaide/openshift-client/tree/2500-route-promotion-label"
+                "source": "https://github.com/universityofadelaide/openshift-client/tree/openshift-4.x"
             },
-            "time": "2022-06-10T07:54:49+00:00"
+            "time": "2022-06-14T02:06:37+00:00"
         },
         {
             "name": "universityofadelaide/shepherd-drupal-scaffold",
