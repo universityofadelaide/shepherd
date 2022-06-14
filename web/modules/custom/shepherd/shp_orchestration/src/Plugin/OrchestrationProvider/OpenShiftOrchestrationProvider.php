@@ -1537,6 +1537,8 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
    *   Storage class name.
    * @param int $storage_size
    *   Storage size.
+   * @param int $backup_size
+   *   Backup size.
    *
    * @return bool
    *   Whether setting up the PVC's succeeded or not.

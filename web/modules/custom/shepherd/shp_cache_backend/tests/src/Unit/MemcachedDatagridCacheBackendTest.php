@@ -4,7 +4,6 @@ namespace Drupal\Tests\shp_cache_backend\Unit;
 
 use Drupal\Core\Config\ImmutableConfig;
 use Drupal\Core\DependencyInjection\ContainerBuilder;
-use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\node\Entity\Node;
@@ -128,6 +127,9 @@ class MemcachedDatagridCacheBackendTest extends UnitTestCase {
     return $serviceAccountsMock;
   }
 
+  /**
+   * Mock of the entity type manager to return a node.
+   */
   protected function getEntityTypeManagerMock() {
     $fieldShortNameMock = $this->getMockBuilder(FieldItemListInterface::class)
       ->disableOriginalConstructor()

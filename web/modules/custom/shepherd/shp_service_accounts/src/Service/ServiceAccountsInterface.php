@@ -7,6 +7,9 @@ namespace Drupal\shp_service_accounts\Service;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\shp_service_accounts\Entity\ServiceAccount;
 
+/**
+ * Provides an interface for the Service Accounts service.
+ */
 interface ServiceAccountsInterface {
 
   /**
