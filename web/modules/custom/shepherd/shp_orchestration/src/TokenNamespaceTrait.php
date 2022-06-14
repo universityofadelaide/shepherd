@@ -22,7 +22,7 @@ trait TokenNamespaceTrait {
     $serviceAccount = \Drupal::service('shp_service_accounts')->getServiceAccount($site_id);
     $token = $serviceAccount->get('token');
 
-    // Use lower level functions so we don't need site_id here.
+    // Use lower level functions, so we don't need site_id here.
     $secret = $this->client->getSecret($token);
     return base64_decode($secret['data']['token']);
   }

@@ -3,6 +3,7 @@ langcode: en
 status: true
 dependencies:
   config:
+    - field.field.node.shp_project.field_shp_backup_size
     - field.field.node.shp_project.field_shp_build_secret
     - field.field.node.shp_project.field_shp_builder_image
     - field.field.node.shp_project.field_shp_cpu_limit
@@ -106,6 +107,13 @@ targetEntityType: node
 bundle: shp_project
 mode: default
 content:
+  field_shp_backup_size:
+    type: number
+    weight: 31
+    region: content
+    settings:
+      placeholder: ''
+    third_party_settings: {  }
   field_shp_build_secret:
     type: string_textfield
     weight: 2

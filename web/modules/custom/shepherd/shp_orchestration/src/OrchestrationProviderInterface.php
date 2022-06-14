@@ -102,6 +102,10 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
    *   The secret to use when pulling and building the source git repository.
    * @param string $storage_class
    *   The storage class to use when provisioning the PVC.
+   * @param int $storage_size
+   *   The amount of storage to claim with the PVC.
+   * @param int $backup_size
+   *   The amount of backup storage to claim with the PVC.
    * @param bool $update_on_image_change
    *   Whether to automatically rollout update to this environment.
    * @param bool $cron_suspended
@@ -135,6 +139,8 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
     string $source_ref = 'master',
     string $source_secret = NULL,
     string $storage_class = '',
+    int $storage_size = 3,
+    int $backup_size = 3,
     bool $update_on_image_change = FALSE,
     bool $cron_suspended = FALSE,
     array $environment_variables = [],
@@ -169,6 +175,10 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
    *   The secret to use when pulling and building the source git repository.
    * @param string $storage_class
    *   The storage class to use when provisioning the PVC.
+   * @param int $storage_size
+   *   The amount of storage to claim with the PVC.
+   * @param int $backup_size
+   *   The amount of backup storage to claim with the PVC.
    * @param bool $update_on_image_change
    *   Whether to automatically rollout update to this environment.
    * @param bool $cron_suspended
@@ -204,6 +214,8 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
     string $source_ref = 'master',
     string $source_secret = NULL,
     string $storage_class = '',
+    int $storage_size = 3,
+    int $backup_size = 3,
     bool $update_on_image_change = FALSE,
     bool $cron_suspended = FALSE,
     array $environment_variables = [],
