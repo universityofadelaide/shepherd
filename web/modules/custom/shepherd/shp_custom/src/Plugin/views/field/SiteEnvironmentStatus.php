@@ -60,18 +60,24 @@ class SiteEnvironmentStatus extends FieldPluginBase implements ContainerFactoryP
   public function render(ResultRow $values) {
     // How do we get the status.
     // Use the orchestration provider to get the plugin.
-    $environments_status = $this->shpOrchestrationStatus->get($values->_entity);
+    if (!$environments_status = $this->shpOrchestrationStatus->get($values->_entity)) {
+      return $this->buildRenderArray('Failed');
+    }
 
-    // Is the environment running ?
-    // @todo This is _very_ OpenShift specific.
     if ($environments_status['running']) {
       // If pods are available its running else its building.
-      $status = ($environments_status['available_pods'] > 0) ? 'Running' : 'Building';
+      return $this->buildRenderArray(($environments_status['available_pods'] > 0) ? 'Running' : 'Building');
     }
     else {
       // If pods attempting to run but status is false, the state is broken.
-      $status = ($environments_status['available_pods'] === 0) ? 'Stopped' : 'Failed';
+      return $this->buildRenderArray(($environments_status['available_pods'] === 0) ? 'Stopped' : 'Failed');
     }
+  }
+
+  /**
+   * Helper to construct the array to return.
+   */
+  private function buildRenderArray($status) {
     $build['environment_status'] = [
       '#plain_text' => $status,
       // @todo figure out cache tags for views field plugins.

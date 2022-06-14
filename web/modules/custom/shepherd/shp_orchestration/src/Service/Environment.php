@@ -182,6 +182,8 @@ class Environment extends EntityActionBase {
       $node->field_shp_git_reference->value,
       $project->field_shp_build_secret->value,
       $storage_class,
+      $site->field_shp_storage_size->value,
+      $project->field_shp_backup_size->value,
       $node->field_shp_update_on_image_change->value,
       $node->field_shp_cron_suspended->value,
       $env_vars,
@@ -273,6 +275,8 @@ class Environment extends EntityActionBase {
       $node->field_shp_git_reference->value,
       $project->field_shp_build_secret->value,
       $storage_class,
+      $site->field_shp_storage_size->value,
+      $project->field_shp_backup_size->value,
       $node->field_shp_update_on_image_change->value,
       $node->field_shp_cron_suspended->value,
       $env_vars,
@@ -494,7 +498,7 @@ class Environment extends EntityActionBase {
   }
 
   /**
-   * Constructs an Route object for an environment.
+   * Constructs a Route object for an environment.
    *
    * @param \Drupal\node\NodeInterface $environment
    *   Environment entity.
@@ -518,9 +522,7 @@ class Environment extends EntityActionBase {
       $route_type = 'site';
     }
 
-    $labels = ['app' => $route_name];
     $route->setName($route_name)
-      ->setLabels($labels)
       ->setInsecureEdgeTerminationPolicy('Allow')
       ->setTermination('edge')
       ->setToKind('Service')
@@ -533,6 +535,15 @@ class Environment extends EntityActionBase {
       array_column($annotations, 'value')
     );
     $route->setAnnotations($annotations);
+
+    // Extract and transform the labels from the provided environment type.
+    $labels = $term ? $term->field_shp_labels->getValue() : [];
+    $labels = array_combine(
+      array_column($labels, 'key'),
+      array_column($labels, 'value')
+    );
+    $labels['app'] = $route_name;
+    $route->setLabels($labels);
 
     // Use site domain and path when promoted term, otherwise environment.
     if (!${$route_type}->field_shp_domain->isEmpty()) {

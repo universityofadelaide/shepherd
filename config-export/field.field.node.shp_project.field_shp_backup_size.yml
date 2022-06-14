@@ -1,0 +1,25 @@
+uuid: df096d4e-1c80-42cd-9731-296ac9f54ceb
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_shp_backup_size
+    - node.type.shp_project
+id: node.shp_project.field_shp_backup_size
+field_name: field_shp_backup_size
+entity_type: node
+bundle: shp_project
+label: 'Backup size'
+description: ''
+required: true
+translatable: false
+default_value:
+  -
+    value: 5
+default_value_callback: ''
+settings:
+  min: 3
+  max: 20
+  prefix: ''
+  suffix: Gi
+field_type: integer

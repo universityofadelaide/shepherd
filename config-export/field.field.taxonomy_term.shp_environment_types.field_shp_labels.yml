@@ -1,0 +1,21 @@
+uuid: 30aa672f-d944-4c53-8147-0d41a949b81b
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.taxonomy_term.field_shp_labels
+    - taxonomy.vocabulary.shp_environment_types
+  module:
+    - key_value_field
+id: taxonomy_term.shp_environment_types.field_shp_labels
+field_name: field_shp_labels
+entity_type: taxonomy_term
+bundle: shp_environment_types
+label: Labels
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: key_value

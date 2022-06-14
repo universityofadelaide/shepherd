@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "2dc2d2686fdc194389b38eb065d2ea2e",
+    "content-hash": "9f29dabfeb8f45c88a7ee24269a36956",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -7390,16 +7390,16 @@
         },
         {
             "name": "universityofadelaide/openshift-client",
-            "version": "dev-SAPP-2505-multiple-service-accounts",
+            "version": "dev-openshift-4.x",
             "source": {
                 "type": "git",
                 "url": "https://github.com/universityofadelaide/openshift-client.git",
-                "reference": "11c099fcaf9bb921fc117bd7996e66e6f546d289"
+                "reference": "19b3a0f795bacd9773a8ed589ef88fdd300561b7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/universityofadelaide/openshift-client/zipball/11c099fcaf9bb921fc117bd7996e66e6f546d289",
-                "reference": "11c099fcaf9bb921fc117bd7996e66e6f546d289",
+                "url": "https://api.github.com/repos/universityofadelaide/openshift-client/zipball/19b3a0f795bacd9773a8ed589ef88fdd300561b7",
+                "reference": "19b3a0f795bacd9773a8ed589ef88fdd300561b7",
                 "shasum": ""
             },
             "require": {
@@ -7435,9 +7435,9 @@
             "description": "Simple OpenShift client for PHP.",
             "support": {
                 "issues": "https://github.com/universityofadelaide/openshift-client/issues",
-                "source": "https://github.com/universityofadelaide/openshift-client/tree/SAPP-2505-multiple-service-accounts"
+                "source": "https://github.com/universityofadelaide/openshift-client/tree/openshift-4.x"
             },
-            "time": "2022-06-03T06:12:29+00:00"
+            "time": "2022-06-14T02:06:37+00:00"
         },
         {
             "name": "universityofadelaide/shepherd-drupal-scaffold",

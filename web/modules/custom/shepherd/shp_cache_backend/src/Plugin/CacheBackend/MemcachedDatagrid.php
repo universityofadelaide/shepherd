@@ -446,8 +446,8 @@ class MemcachedDatagrid extends CacheBackendBase {
    * {@inheritdoc}
    */
   public function onEnvironmentDelete(NodeInterface $environment) {
-    $this->client->setNamespace($this->config->get('connection.namespace'));
     $this->client->setToken($this->config->get('connection.token'));
+    $this->client->setNamespace($this->config->get('connection.namespace'));
 
     $deployment_name = OpenShiftOrchestrationProvider::generateDeploymentName($environment->id());
     $service_name = self::getMemcacheServiceName($deployment_name);
@@ -504,7 +504,10 @@ class MemcachedDatagrid extends CacheBackendBase {
     $statefulSet->setSpec($spec);
     $this->client->updateStatefulset($statefulSet);
 
-    // Delete the memcached deployment.
+    // Delete the memcached deployment from the sites project.
+    $site = $environment->field_shp_site->entity->id();
+    $this->client->setToken($this->getSiteToken($site));
+    $this->client->setNamespace($this->getSiteNamespace($site));
     $memcached_name = self::getMemcachedDeploymentName($environment);
     if ($this->client->getService($memcached_name)) {
       $this->client->deleteService($memcached_name);

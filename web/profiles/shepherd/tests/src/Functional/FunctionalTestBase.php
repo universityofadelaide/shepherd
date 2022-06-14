@@ -2,7 +2,6 @@
 
 namespace Drupal\Tests\shepherd\Functional;
 
-use Drupal\FunctionalTests\AssertLegacyTrait;
 use Drupal\Tests\RandomGeneratorTrait;
 use Drupal\Tests\UiHelperTrait;
 use Drupal\Tests\shepherd\Traits\ContentCreationTrait;
@@ -20,7 +19,6 @@ use weitzman\DrupalTestTraits\GoutteTrait;
  */
 class FunctionalTestBase extends TestCase {
 
-  use AssertLegacyTrait;
   use DrupalTrait;
   use GoutteTrait;
   use UiHelperTrait;
@@ -52,14 +50,14 @@ class FunctionalTestBase extends TestCase {
    *
    * @var string
    */
-  protected $databasePrefix;
+  protected string $databasePrefix;
 
   /**
    * Config to reset.
    *
    * @var array
    */
-  protected $resetConfig = [];
+  protected array $resetConfig = [];
 
   /**
    * {@inheritdoc}
@@ -92,7 +90,7 @@ class FunctionalTestBase extends TestCase {
   /**
    * Override \Drupal\Tests\UiHelperTrait::prepareRequest().
    *
-   * Since it generatesan error, and does nothing useful for DTT.
+   * Since it generates an error, and does nothing useful for DTT.
    *
    * @see https://www.drupal.org/node/2246725
    */

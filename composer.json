@@ -34,7 +34,7 @@
         "drush/drush": "^10",
         "ua-drupal-modules/ua_ldap": "dev-develop",
         "ua-drupal-modules/ua_shp_ldap": "dev-develop",
-        "universityofadelaide/openshift-client": "dev-SAPP-2505-multiple-service-accounts",
+        "universityofadelaide/openshift-client": "dev-openshift-4.x",
         "universityofadelaide/shepherd-drupal-scaffold": "^5.2",
         "webmozart/path-util": "^2.3"
     },

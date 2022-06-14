@@ -34,7 +34,7 @@ trait UserCreationTrait {
    *   The user.
    */
   protected function createUserAndCleanup(array $roles, array $values = []) {
-    $password = user_password();
+    $password = \Drupal::service('password_generator')->generate();
 
     $values += [
       'name' => trim(preg_replace('/[^A-Za-z0-9 \-]/', '', $this->randomString())),

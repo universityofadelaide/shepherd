@@ -4,6 +4,7 @@ status: true
 dependencies:
   config:
     - core.entity_view_mode.node.teaser
+    - field.field.node.shp_project.field_shp_backup_size
     - field.field.node.shp_project.field_shp_build_secret
     - field.field.node.shp_project.field_shp_builder_image
     - field.field.node.shp_project.field_shp_cpu_limit
@@ -39,6 +40,7 @@ content:
     weight: 100
     region: content
 hidden:
+  field_shp_backup_size: true
   field_shp_build_secret: true
   field_shp_builder_image: true
   field_shp_cpu_limit: true

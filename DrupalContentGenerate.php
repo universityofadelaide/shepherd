@@ -64,6 +64,18 @@ if (!$development = $etm->getStorage('taxonomy_term')->loadByProperties(['vid' =
     'vid'                   => 'shp_environment_types',
     'name'                  => 'Dev',
     'field_shp_base_domain' => $domain_name,
+    'field_shp_annotations' => [
+      [
+        'key' => 'haproxy.router.openshift.io/ip_whitelist',
+        'value' => '129.127.0.0/16 10.0.0.0/8',
+      ],
+    ],
+    'field_shp_labels' => [
+      [
+        'key' => 'type',
+        'value' => 'internal',
+      ],
+    ],
   ]);
   $development_env->save();
 
@@ -73,12 +85,31 @@ if (!$development = $etm->getStorage('taxonomy_term')->loadByProperties(['vid' =
     'field_shp_base_domain' => $domain_name,
     'field_shp_protect' => TRUE,
     'field_shp_update_go_live' => TRUE,
+    'field_shp_labels' => [
+      [
+        'key' => 'type',
+        'value' => 'external',
+      ],
+    ],
   ]);
   $production_env->save();
 }
 else {
   $development_env = reset($development);
   echo "Taxonomy already setup.\n";
+}
+
+// Create a storage class.
+if (!$storage = $etm->getStorage('taxonomy_term')->loadByProperties(['vid' => 'Gold'])) {
+  $storage = Term::create([
+    'vid' => 'shp_storage_class',
+    'name' => 'gold',
+  ]);
+  $storage->save();
+}
+else {
+  $storage = reset($storage);
+  echo "Storage class already setup.\n";
 }
 
 // Create config entities for the service accounts.
@@ -125,6 +156,9 @@ if (!$project = reset($nodes)) {
     'field_shp_cpu_limit'      => [['value' => '1000m']],
     'field_shp_memory_request' => [['value' => '256Mi']],
     'field_shp_memory_limit'   => [['value' => '512Mi']],
+    // Can't use this with OpenShift Local :-(
+    // 'field_shp_storage_class'  => [['target_id' => $storage->id()]],
+    'field_shp_backup_size'    => 5,
   ]);
   $project->save();
 }
@@ -148,6 +182,9 @@ if (!$site = reset($nodes)) {
     'field_shp_git_default_ref' => 'master',
     'field_shp_path'            => '/',
     'field_shp_project'         => [['target_id' => $project->id()]],
+    // Can't use this with OpenShift Local :-(
+    // 'field_shp_storage_class'   => [['target_id' => $storage->id()]],
+    'field_shp_storage_size'  => 5,
   ]);
   $site->moderation_state->value = 'published';
   $site->save();
