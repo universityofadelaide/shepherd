@@ -52,6 +52,12 @@ jobs:
       - name: Update composer.
         run: composer --verbose self-update --${{ matrix.composer-channel }}
 
+      - name: Disable xdebug.
+        run: ./bin/robo dev:xdebug-disable
+
+      - name: Linting.
+        run: ./bin/robo lint:php
+
       - name: Set current branch in environment.
         run: echo "BRANCH=${GITHUB_REF##*/}" >> $GITHUB_ENV
 
