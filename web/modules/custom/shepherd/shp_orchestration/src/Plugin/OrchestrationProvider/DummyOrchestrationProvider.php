@@ -302,6 +302,13 @@ class DummyOrchestrationProvider extends OrchestrationProviderBase {
   /**
    * {@inheritdoc}
    */
+  public function getEnvironmentVersions() {
+    return [];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function getSecret(int $site_id, string $name, string $key = NULL) {
     return $key ? 'secret' : ['secret'];
   }

@@ -1093,6 +1093,32 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
   /**
    * {@inheritdoc}
    */
+  public function getPods() {
+    return $this->client->getPods();
+  }
+
+  /**
+   * Retrieve the environment versions.
+   *
+   * @return array
+   *   An array of environment versions keyed by node id.
+   */
+  public function getEnvironmentVersions() {
+    $pods = $this->getPods();
+    $environments = [];
+    foreach ($pods['items'] as $pod) {
+      if (isset($pod['metadata']['labels']['environment_id'], $pod['metadata']['ownerReferences'][0]['kind']) &&
+        $pod['metadata']['ownerReferences'][0]['kind'] === 'ReplicationController') {
+        $environments[$pod['metadata']['labels']['environment_id']] =
+          $pod['metadata']['labels']['version'] ?? '';
+      }
+    }
+    return $environments;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function getSecret(int $site_id, string $name, string $key = NULL) {
     $this->setSiteConfig($site_id);
 

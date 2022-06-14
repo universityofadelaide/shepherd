@@ -27,7 +27,7 @@ Not similar to a production deployment:
 ## Prerequisites
 
 ### All systems
-* [Code Ready Containers](https://developers.redhat.com/products/openshift-local/overview)
+* [Red Hat OpenShift Local](https://developers.redhat.com/products/openshift-local/overview)
 * [oc](https://github.com/openshift/origin/releases) command line tool enables
   interaction with the OpenShift cluster.
 * PHP 7+
