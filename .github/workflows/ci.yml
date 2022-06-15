@@ -52,12 +52,6 @@ jobs:
       - name: Update composer.
         run: composer --verbose self-update --${{ matrix.composer-channel }}
 
-      - name: PHPCS Linting.
-        run: ./bin/phpcs
-
-      - name: PHPStan Code analysis.
-        run: ./php/phpstan analyze --no-progress
-
       - name: Set current branch in environment.
         run: echo "BRANCH=${GITHUB_REF##*/}" >> $GITHUB_ENV
 
@@ -66,6 +60,12 @@ jobs:
 
       - name: Update using composer.
         run: composer install
+
+      - name: PHPCS Linting.
+        run: ./bin/phpcs
+
+      - name: PHPStan Code analysis.
+        run: ./php/phpstan analyze --no-progress
 
       - name: Ensure directories for filesystem exist.
         run: mkdir -p $PRIVATE_DIR $PUBLIC_DIR $TMP_DIR $BROWSERTEST_OUTPUT_DIRECTORY
