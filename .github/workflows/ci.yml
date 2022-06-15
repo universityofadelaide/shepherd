@@ -65,7 +65,7 @@ jobs:
         run: ./bin/phpcs
 
       - name: PHPStan Code analysis.
-        run: ./php/phpstan analyze --no-progress
+        run: ./bin/phpstan analyze --no-progress
 
       - name: Ensure directories for filesystem exist.
         run: mkdir -p $PRIVATE_DIR $PUBLIC_DIR $TMP_DIR $BROWSERTEST_OUTPUT_DIRECTORY
