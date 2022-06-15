@@ -58,7 +58,7 @@ jobs:
       - name: Add HTTP basic auth credentials.
         run: echo '${{ secrets.COMPOSER_AUTH_JSON }}' > auth.json
 
-      - name: Update using composer.
+      - name: Install using composer.
         run: composer install
 
       - name: PHPCS Linting.
