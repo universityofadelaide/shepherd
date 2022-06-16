@@ -57,6 +57,7 @@ module:
   shp_redis_support: 0
   shp_roles: 0
   shp_service_accounts: 0
+  sqlite: 0
   system: 0
   taxonomy: 0
   text: 0
