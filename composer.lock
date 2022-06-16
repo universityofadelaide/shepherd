@@ -7310,7 +7310,7 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.adelaide.edu.au:drupal-modules/ua_ldap.git",
-                "reference": "f2e27b486fff051b1c735be001e8d6ad8aefbbdd"
+                "reference": "d7ee9fccb3dc2292906c6c6ebaf84400715d464b"
             },
             "require": {
                 "zendframework/zend-ldap": "^2.5.1"
@@ -7321,7 +7321,7 @@
                 "GPL-2.0-or-later"
             ],
             "description": "Provides configuration and services to interact with LDAP.",
-            "time": "2020-12-22T03:28:35+00:00"
+            "time": "2022-06-16T01:19:38+00:00"
         },
         {
             "name": "ua-drupal-modules/ua_shp_ldap",
@@ -7329,7 +7329,7 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.adelaide.edu.au:drupal-modules/ua_shp_ldap.git",
-                "reference": "dcec00d042a1254920d430a08d7745044d367e1d"
+                "reference": "d7fd951847323f10c3be461f3c6906abe3860601"
             },
             "default-branch": true,
             "type": "drupal-module",
@@ -7337,7 +7337,7 @@
                 "GPL-2.0+"
             ],
             "description": "Provides user integration with LDAP for Shepherd.",
-            "time": "2022-05-04T04:56:10+00:00"
+            "time": "2022-06-16T01:20:33+00:00"
         },
         {
             "name": "universityofadelaide/openshift-client",
