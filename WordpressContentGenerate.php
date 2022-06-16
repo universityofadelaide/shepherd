@@ -15,7 +15,7 @@ $config = \Drupal::configFactory();
 $domain_name = getenv("OPENSHIFT_DOMAIN") ?: '192.168.99.100.nip.io';
 $openshift_url = getenv("OPENSHIFT_URL") ?: 'https://192.168.99.100:8443';
 $example_repository = getenv("DRUPAL_EXAMPLE_REPOSITORY") ?:
-  'https://github.com/universityofadelaide/shepherd-example-drupal.git';
+  'https://github.com/universityofadelaide/shepherd-example-wordpress.git';
 
 $database_host = getenv("DB_HOST") ?: 'mysql-external.' . $domain_name;
 $database_port = getenv("DB_PORT") ?: '31632';
