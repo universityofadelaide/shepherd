@@ -64,12 +64,13 @@ if (!$development = $etm->getStorage('taxonomy_term')->loadByProperties(['vid' =
     'vid'                   => 'shp_environment_types',
     'name'                  => 'Dev',
     'field_shp_base_domain' => $domain_name,
-    'field_shp_annotations' => [
-      [
-        'key' => 'haproxy.router.openshift.io/ip_whitelist',
-        'value' => '129.127.0.0/16 10.0.0.0/8',
-      ],
-    ],
+    // Example, no longer used.
+    //'field_shp_annotations' => [
+    //  [
+    //    'key' => 'haproxy.router.openshift.io/ip_whitelist',
+    //    'value' => '129.127.0.0/16 10.0.0.0/8',
+    //  ],
+    //],
     'field_shp_labels' => [
       [
         'key' => 'type',
@@ -112,20 +113,25 @@ else {
   echo "Storage class already setup.\n";
 }
 
-// Create config entities for the service accounts.
-for ($i = 0; $i <= 4; $i++) {
-  $label = sprintf("shepherd-prd-provisioner-00%02d", $i);
-  $id = sprintf("shepherd_prd_provisioner_00%02d", $i);
+// Create config entities for the service accounts if they don't exist.
+if (!$service_accounts = $etm->getStorage('service_account')->loadByProperties([])) {
+  for ($i = 0; $i <= 4; $i++) {
+    $label = sprintf("shepherd-prd-provisioner-00%02d", $i);
+    $id = sprintf("shepherd_prd_provisioner_00%02d", $i);
 
-  // This is pretty horrid, but there is no oc command in the dsh shell.
-  $token = trim(file_get_contents("../.$label.token"));
-  $account = ServiceAccount::create()
-    ->set('label', $label)
-    ->set('id', $id)
-    ->set('status', TRUE)
-    ->set('description', "Test provisioner $i")
-    ->set('token', $token)
-    ->save();
+    // This is pretty horrid, but there is no oc command in the dsh shell.
+    $token = trim(file_get_contents("../.$label.token"));
+    $account = ServiceAccount::create()
+      ->set('label', $label)
+      ->set('id', $id)
+      ->set('status', TRUE)
+      ->set('description', "Test provisioner $i")
+      ->set('token', $token)
+      ->save();
+  }
+}
+else {
+  echo "Service accounts already setup.\n";
 }
 
 $nodes = $etm->getStorage('node')
