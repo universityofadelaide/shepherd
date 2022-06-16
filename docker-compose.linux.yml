@@ -83,7 +83,7 @@ services:
       - default
 
   selenium:
-    image: selenium/standalone-chrome:3.141.59-oxygen
+    image: selenium/standalone-chrome:99.0
     volumes:
       - /dev/shm:/dev/shm
     networks:
