@@ -1,0 +1,32 @@
+# This file is for deprecation testing only.
+# More info available at: https://glamanate.com/blog/testing-your-drupal-code-base-deprecated-code-usage-phpstan
+parameters:
+  # customRulesetUsed turns on the extensions in 'includes' section.
+  customRulesetUsed: true
+  reportUnmatchedIgnoredErrors: false
+  paths:
+    - web/modules/custom/
+    - web/profiles/shepherd
+  excludePaths:
+    - *Test.php
+    - *TestBase.php
+  fileExtensions:
+    - module
+    - theme
+    - profile
+  ignoreErrors:
+    # We need mglaman/phpstan-drupal extension, but not its rules, add more to
+    # this ignore list as the project defines more.
+    - '#\Drupal calls should be avoided in classes, use dependency injection instead#'
+    - '#Plugin definitions cannot be altered.#'
+    - '#Missing cache backend declaration for performance.#'
+    - '#Plugin manager has cache backend specified but does not declare cache tags.#'
+    - '#cache tag might be unclear and does not contain the cache key in it.#'
+    # Core incorrectly types range as NULL only.
+    - '#\QueryInterface::range\(\) expects null, int given.#'
+    # https://github.com/mglaman/phpstan-drupal/issues/31:
+    # ServiceProvider classes are not autoloaded.
+    - '#ServiceProvider was not found while trying to analyse it#'
+includes:
+  - vendor/mglaman/phpstan-drupal/extension.neon
+  - vendor/phpstan/phpstan-deprecation-rules/rules.neon
