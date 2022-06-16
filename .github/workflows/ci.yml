@@ -67,6 +67,9 @@ jobs:
       - name: PHPStan Code analysis.
         run: ./bin/phpstan analyze --no-progress
 
+      - name: PHPStan deprecations analysis.
+        run: ./bin/phpstan analyse --no-progress -c phpstan-deprecations.neon
+
       - name: Ensure directories for filesystem exist.
         run: mkdir -p $PRIVATE_DIR $PUBLIC_DIR $TMP_DIR $BROWSERTEST_OUTPUT_DIRECTORY
 

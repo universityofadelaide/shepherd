@@ -1,40 +1,42 @@
-image: uofa/s2i-shepherd-drupal:latest
+image: uofa/s2i-shepherd-drupal:composer2
 services:
   - alias: db
-    name:  centos/mariadb-102-centos7
+    name:  quay.io/centos7/mariadb-103-centos7
   - alias: mail
     name:  mailhog/mailhog:latest
   - alias: selenium
-    name:  selenium/standalone-chrome:latest
+    name:  selenium/standalone-chrome:99.0
 
 variables:
   # build directory.
-  GIT_CLONE_PATH: "$CI_BUILDS_DIR"
   HOME: "$CI_BUILDS_DIR"
   # "db" env vars.
+  DATABASE_HOST: db
   MYSQL_DATABASE: drupal
   MYSQL_USER: user
   MYSQL_PASSWORD: password
   MYSQL_ROOT_PASSWORD: super-secret-password
   # "app" env vars.
-  BROWSERTEST_OUTPUT_DIRECTORY: "${CI_BUILDS_DIR}web/sites/simpletest/browser_output"
-  APPLICATION_ROOT: "${CI_BUILDS_DIR}web"
+  BROWSERTEST_OUTPUT_DIRECTORY: "${CI_PROJECT_DIR}/web/sites/simpletest/browser_output"
+  APPLICATION_ROOT: "${CI_PROJECT_DIR}/web"
+  # Consumed by settings.php:
   HASH_SALT: random-hash
   PUBLIC_DIR: /shared/public
   PRIVATE_DIR: /shared/private
   TMP_DIR: /shared/tmp
-  REDIS_ENABLED: 0
-  SHEPHERD_INSTALL_PROFILE: ua
+  REDIS_ENABLED: "0"
+  SHEPHERD_INSTALL_PROFILE: shepherd
   SHEPHERD_SECRET_PATH: /code/private
   SHEPHERD_TOKEN: super-secret-token
-  SITE_TITLE: WCMS D8
+  SITE_TITLE: Shepherd test site
   SITE_MAIL: site@example.com
   SITE_ADMIN_EMAIL: admin@example.com
   SITE_ADMIN_USERNAME: admin
   SITE_ADMIN_PASSWORD: password
-  KUBERNETES_SERVICE_ACCOUNT_OVERWRITE: dev-gitlab-runner-build
 
 build:
+  tags:
+    - openshift
   artifacts:
     paths:
       - ${BROWSERTEST_OUTPUT_DIRECTORY}
@@ -44,26 +46,33 @@ build:
     - master
     - develop
   script:
-    # Debug the user and groups.
-    - id
+    # Set the hostname for selenium tests.
+    - export SIMPLETEST_BASE_URL="http://$(ip a | grep global | awk '{ print $2 }' | cut -d'/' -f1):8080"
+    - export DTT_BASE_URL="http://$(ip a | grep global | awk '{ print $2 }' | cut -d'/' -f1):8080"
     # Use https clone URLs.
     - git config --global url."https://${COMPOSER_USER}:${COMPOSER_TOKEN}@gitlab.adelaide.edu.au/".insteadOf "git@gitlab.adelaide.edu.au:"
     - git config --global url."https://github.com/".insteadOf 'git@github.com:'
-    - composer global require hirak/prestissimo
     # Setup.
     - composer --ignore-platform-reqs --no-progress install
     - ./bin/robo dev:xdebug-disable
     # Linting
     - ./bin/robo lint:php
+    # If phpstan is too picky about a check, then ignore it in phpstan.neon.
+    - ./bin/phpstan analyse --no-progress -c phpstan-deprecations.neon
     - ./bin/phpunit --testsuite unit --stop-on-failure
     - mkdir -p ${PUBLIC_DIR} ${PRIVATE_DIR} ${TMP_DIR} ${BROWSERTEST_OUTPUT_DIRECTORY}
-    - chmod +w ${APPLICATION_ROOT}/sites/default ${BROWSERTEST_OUTPUT_DIRECTORY}
+    - chmod +w ${BROWSERTEST_OUTPUT_DIRECTORY}
+    # Symlink things from the build directory to /code where we expect them.
     - ln -sf ${PUBLIC_DIR} ${APPLICATION_ROOT}/sites/default/files
-    - cp ${APPLICATION_ROOT}/sites/default/ci.settings.php ${APPLICATION_ROOT}/sites/default/settings.local.php
+    - directories=("web" "config-export" "config-import" "config-install" "private")
+    - for i in "${directories[@]}"; do ln -sf ${CI_PROJECT_DIR}/$i /code/$i; done
+    # Setup a simple settings.local.php for testing.
+    - echo "<?php \$config['system.logging']['error_level'] = 'verbose'; \$settings['skip_permissions_hardening'] = TRUE; \$settings['extension_discovery_scan_tests'] = TRUE;" > ${APPLICATION_ROOT}/sites/default/settings.local.php
     # Build the site.
     - ./bin/robo build:install
     - ./bin/robo config:import-plus
     - ./bin/robo dev:cache-rebuild
+    - ./bin/drush en shp_cache_backend_test -y
     - apache2 &
     - sleep ${SLEEP_TIME:-0}
     - ./bin/phpunit --stop-on-failure --testsuite kernel
