@@ -58,8 +58,14 @@ jobs:
       - name: Add HTTP basic auth credentials.
         run: echo '${{ secrets.COMPOSER_AUTH_JSON }}' > auth.json
 
-      - name: Update using composer.
+      - name: Install using composer.
         run: composer install
+
+      - name: PHPCS Linting.
+        run: ./bin/phpcs
+
+      - name: PHPStan Code analysis.
+        run: ./bin/phpstan analyze --no-progress
 
       - name: Ensure directories for filesystem exist.
         run: mkdir -p $PRIVATE_DIR $PUBLIC_DIR $TMP_DIR $BROWSERTEST_OUTPUT_DIRECTORY
