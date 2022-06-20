@@ -233,49 +233,49 @@ class DummyOrchestrationProvider extends OrchestrationProviderBase {
   /**
    * {@inheritdoc}
    */
-  public function getBackupsForSite(string $site_id) {
+  public function getBackupsForSite(int $site_id) {
     return TRUE;
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getBackupsForEnvironment(string $environment_id) {
+  public function getBackupsForEnvironment(int $site_id, int $environment_id) {
     return TRUE;
   }
 
   /**
    * {@inheritdoc}
    */
-  public function restoreEnvironment(string $backup_name, string $site_id, string $environment_id) {
+  public function restoreEnvironment(string $backup_name, int $site_id, int $environment_id) {
     return TRUE;
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getRestoresForSite(string $site_id) {
+  public function getRestoresForSite(int $site_id) {
     return TRUE;
   }
 
   /**
    * {@inheritdoc}
    */
-  public function syncEnvironments(string $site_id, string $from_env, string $to_env) {
+  public function syncEnvironments(int $site_id, int $from_env, int $to_env) {
     return TRUE;
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getSyncs() {
+  public function getSyncs(int $site_id) {
     return TRUE;
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getSyncsForSite(string $site_id) {
+  public function getSyncsForSite(int $site_id) {
     return TRUE;
   }
 
@@ -362,28 +362,28 @@ class DummyOrchestrationProvider extends OrchestrationProviderBase {
   /**
    * {@inheritdoc}
    */
-  public function getEnvironmentUrl(string $project_name, string $short_name, string $environment_id) {
+  public function getEnvironmentUrl(int $site_id, int $environment_id) {
     return [];
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getTerminalUrl(string $project_name, string $short_name, string $environment_id) {
+  public function getTerminalUrl(int $site_id, int $environment_id) {
     return [];
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getLogUrl(string $project_name, string $short_name, string $environment_id) {
+  public function getLogUrl(int $site_id, int $environment_id) {
     return [];
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getEnvironmentStatus(string $project_name, string $short_name, string $environment_id) {
+  public function getEnvironmentStatus(int $site_id, int $environment_id) {
     return FALSE;
   }
 
