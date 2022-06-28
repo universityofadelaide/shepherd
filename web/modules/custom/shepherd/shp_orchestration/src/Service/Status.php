@@ -63,7 +63,7 @@ class Status {
     if (!$project = $this->siteEntity->getProject($site)) {
       return [];
     }
-    return $this->orchestrationProviderPlugin->getEnvironmentStatus($project->getTitle(), $site->field_shp_short_name->value, $environment->id());
+    return $this->orchestrationProviderPlugin->getEnvironmentStatus($site->id(), $environment->id());
   }
 
 }

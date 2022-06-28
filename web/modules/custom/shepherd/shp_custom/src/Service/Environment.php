@@ -256,7 +256,7 @@ class Environment {
     }
     $environment_term = $this->getEnvironmentType($entity);
 
-    // If its not a protected environment, it can be promoted.
+    // If it's not a protected environment, it can be promoted.
     if (!$environment_term->field_shp_protect->value) {
       $operations['promote'] = [
         'title'      => $this->t('Promote'),
@@ -279,10 +279,10 @@ class Environment {
     if ($site) {
       $project = $this->site->getProject($site);
       if ($project) {
-        if ($terminal_link = $this->getTerminalLink($entity, $project, $site)) {
+        if ($terminal_link = $this->getTerminalLink($entity, $site)) {
           $operations['terminal'] = $terminal_link;
         }
-        if ($log_link = $this->getLogLink($entity, $project, $site)) {
+        if ($log_link = $this->getLogLink($entity, $site)) {
           $operations['log'] = $log_link;
         }
       }
@@ -302,18 +302,15 @@ class Environment {
    *
    * @param \Drupal\Core\Entity\EntityInterface $entity
    *   Environment entity.
-   * @param \Drupal\Core\Entity\EntityInterface $project
-   *   Project entity.
    * @param \Drupal\Core\Entity\EntityInterface $site
    *   Site entity.
    *
    * @return array
    *   Renderable link.
    */
-  protected function getTerminalLink(EntityInterface $entity, EntityInterface $project, EntityInterface $site): array {
+  protected function getTerminalLink(EntityInterface $entity, EntityInterface $site): array {
     $terminal = $this->orchestrationProvider->getTerminalUrl(
-      $project->getTitle(),
-      $site->field_shp_short_name->value,
+      $site->id(),
       $entity->id()
     );
     if ($terminal) {
@@ -331,18 +328,15 @@ class Environment {
    *
    * @param \Drupal\Core\Entity\EntityInterface $entity
    *   Environment entity.
-   * @param \Drupal\Core\Entity\EntityInterface $project
-   *   Project entity.
    * @param \Drupal\Core\Entity\EntityInterface $site
    *   Site entity.
    *
    * @return array
    *   Renderable link.
    */
-  protected function getLogLink(EntityInterface $entity, EntityInterface $project, EntityInterface $site): array {
+  protected function getLogLink(EntityInterface $entity, EntityInterface $site): array {
     $logs = $this->orchestrationProvider->getLogUrl(
-      $project->getTitle(),
-      $site->field_shp_short_name->value,
+      $site->id(),
       $entity->id()
     );
     if ($logs) {

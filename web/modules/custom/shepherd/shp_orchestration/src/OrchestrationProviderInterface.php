@@ -417,77 +417,65 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
   /**
    * Get the status of a given environment.
    *
-   * @param string $project_name
-   *   Name of the project.
-   * @param string $short_name
-   *   Short name of the site.
-   * @param string $environment_id
+   * @param int $site_id
+   *   Site id to observe.
+   * @param int $environment_id
    *   Environment node id.
    *
    * @return array|bool
    *   Returns the given environment status, or false.
    */
   public function getEnvironmentStatus(
-    string $project_name,
-    string $short_name,
-    string $environment_id
+    int $site_id,
+    int $environment_id
   );
 
   /**
    * Retrieves the url for a given environment.
    *
-   * @param string $project_name
-   *   Name of the project.
-   * @param string $short_name
-   *   Short name of the site.
-   * @param string $environment_id
+   * @param int $site_id
+   *   Site id to observe.
+   * @param int $environment_id
    *   Environment node id.
    *
    * @return \Drupal\Core\Url|bool
    *   Returns environment url, or false.
    */
   public function getEnvironmentUrl(
-    string $project_name,
-    string $short_name,
-    string $environment_id
+    int $site_id,
+    int $environment_id
   );
 
   /**
    * Retrieves the direct terminal access url for a given environment.
    *
-   * @param string $project_name
-   *   Name of the project.
-   * @param string $short_name
-   *   Short name of the site.
-   * @param string $environment_id
+   * @param int $site_id
+   *   Site id to observe.
+   * @param int $environment_id
    *   Environment node id.
    *
    * @return \Drupal\Core\Url|bool
    *   Returns environment url, or false.
    */
   public function getTerminalUrl(
-    string $project_name,
-    string $short_name,
-    string $environment_id
+    int $site_id,
+    int $environment_id
   );
 
   /**
    * Retrieves the direct log access url for a given environment.
    *
-   * @param string $project_name
-   *   Name of the project.
-   * @param string $short_name
-   *   Short name of the site.
-   * @param string $environment_id
+   * @param int $site_id
+   *   Site id to observe.
+   * @param int $environment_id
    *   Environment node id.
    *
    * @return \Drupal\Core\Url|bool
    *   Returns environment url, or false.
    */
   public function getLogUrl(
-    string $project_name,
-    string $short_name,
-    string $environment_id
+    int $site_id,
+    int $environment_id
   );
 
   /**
@@ -586,84 +574,89 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
   /**
    * Get a list of backups for a site.
    *
-   * @param string $site_id
+   * @param int $site_id
    *   The site node id.
    *
    * @return object|bool
    *   The list of backups.
    */
-  public function getBackupsForSite(string $site_id);
+  public function getBackupsForSite(int $site_id);
 
   /**
    * Get a list of backups for an environment.
    *
-   * @param string $environment_id
+   * @param int $site_id
+   *   The site node id.
+   * @param int $environment_id
    *   The environment node id.
    *
    * @return object|bool
    *   The list of backups.
    */
-  public function getBackupsForEnvironment(string $environment_id);
+  public function getBackupsForEnvironment(int $site_id, int $environment_id);
 
   /**
    * Restore an environment.
    *
    * @param string $backup_name
    *   Name of the backup.
-   * @param string $site_id
+   * @param int $site_id
    *   Site node id.
-   * @param string $environment_id
+   * @param int $environment_id
    *   Environment node id.
    *
    * @return array|bool
    *   Returns a response body if successful, otherwise false.
    */
-  public function restoreEnvironment(string $backup_name, string $site_id, string $environment_id);
+  public function restoreEnvironment(string $backup_name, int $site_id, int $environment_id);
 
   /**
    * Get a list of restores for a site.
    *
-   * @param string $site_id
+   * @param int $site_id
    *   The site node id.
    *
    * @return object|bool
    *   The list of restores.
    */
-  public function getRestoresForSite(string $site_id);
+  public function getRestoresForSite(int $site_id);
 
   /**
    * Backup an environment.
    *
-   * @param string $site_id
+   * @param int $site_id
    *   Site node id.
-   * @param string $from_env
+   * @param int $from_env
    *   Environment node id to backup.
-   * @param string $to_env
+   * @param int $to_env
    *   Environment node id to restore.
    *
    * @return object|bool
    *   Returns a sync object if successful, otherwise false.
    */
-  public function syncEnvironments(string $site_id, string $from_env, string $to_env);
+  public function syncEnvironments(int $site_id, int $from_env, int $to_env);
 
   /**
    * Get a list of all syncs.
    *
-   * @return object|bool
-   *   The list of syncs.
-   */
-  public function getSyncs();
-
-  /**
-   * Get a list of syncs for a site.
-   *
-   * @param string $site_id
+   * @param int $site_id
    *   The site node id.
    *
    * @return object|bool
    *   The list of syncs.
    */
-  public function getSyncsForSite(string $site_id);
+  public function getSyncs(int $site_id);
+
+  /**
+   * Get a list of syncs for a site.
+   *
+   * @param int $site_id
+   *   The site node id.
+   *
+   * @return object|bool
+   *   The list of syncs.
+   */
+  public function getSyncsForSite(int $site_id);
 
   /**
    * Execute a job.

@@ -930,21 +930,23 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
   /**
    * {@inheritdoc}
    */
-  public function getBackupsForSite(string $site_id) {
+  public function getBackupsForSite(int $site_id) {
+    $this->setSiteConfig($site_id);
     return $this->getBackupsByLabel(Label::create('site', $site_id));
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getBackupsForEnvironment(string $environment_id) {
+  public function getBackupsForEnvironment(int $site_id, int $environment_id) {
     return $this->getBackupsByLabel(Label::create('environment', $environment_id));
   }
 
   /**
    * {@inheritdoc}
    */
-  public function restoreEnvironment(string $backup_name, string $site_id, string $environment_id) {
+  public function restoreEnvironment(string $backup_name, int $site_id, int $environment_id) {
+    $this->setSiteConfig($site_id);
     $deployment_name = self::generateDeploymentName($environment_id);
     /** @var \UniversityOfAdelaide\OpenShift\Objects\Backups\Restore $restore */
     $restore = Restore::create()
@@ -966,7 +968,8 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
   /**
    * {@inheritdoc}
    */
-  public function getRestoresForSite(string $site_id) {
+  public function getRestoresForSite(int $site_id) {
+    $this->setSiteConfig($site_id);
     try {
       return $this->client->listRestore(Label::create('site', $site_id));
     }
@@ -979,7 +982,8 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
   /**
    * {@inheritdoc}
    */
-  public function syncEnvironments(string $site_id, string $from_env, string $to_env) {
+  public function syncEnvironments(int $site_id, int $from_env, int $to_env) {
+    $this->setSiteConfig($site_id);
     $backupDeploymentName = self::generateDeploymentName($from_env);
     $restoreDeploymentName = self::generateDeploymentName($to_env);
     /** @var \UniversityOfAdelaide\OpenShift\Objects\Backups\Sync $sync */
@@ -1005,7 +1009,8 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
   /**
    * {@inheritdoc}
    */
-  public function getSyncs() {
+  public function getSyncs(int $site_id) {
+    $this->setSiteConfig($site_id);
     try {
       return $this->client->listSync();
     }
@@ -1018,7 +1023,8 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
   /**
    * {@inheritdoc}
    */
-  public function getSyncsForSite(string $site_id) {
+  public function getSyncsForSite(int $site_id) {
+    $this->setSiteConfig($site_id);
     try {
       return $this->client->listSync(Label::create('site', $site_id));
     }
@@ -1193,11 +1199,8 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
   /**
    * {@inheritdoc}
    */
-  public function getEnvironmentStatus(string $project_name, string $short_name, string $environment_id) {
-
-    $environment = Node::load($environment_id);
-    $this->setSiteConfig($environment->field_shp_site->entity->id());
-
+  public function getEnvironmentStatus(int $site_id, int $environment_id) {
+    $this->setSiteConfig($site_id);
     $deployment_name = self::generateDeploymentName($environment_id);
 
     try {
@@ -1238,7 +1241,8 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
   /**
    * {@inheritdoc}
    */
-  public function getEnvironmentUrl(string $project_name, string $short_name, string $environment_id) {
+  public function getEnvironmentUrl(int $site_id, int $environment_id) {
+    $this->setSiteConfig($site_id);
     $deployment_name = self::generateDeploymentName($environment_id);
 
     try {
@@ -1257,7 +1261,8 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
   /**
    * {@inheritdoc}
    */
-  public function getTerminalUrl(string $project_name, string $short_name, string $environment_id) {
+  public function getTerminalUrl(int $site_id, int $environment_id) {
+    $this->setSiteConfig($site_id);
     $deployment_name = self::generateDeploymentName($environment_id);
 
     try {
@@ -1288,7 +1293,8 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
   /**
    * {@inheritdoc}
    */
-  public function getLogUrl(string $project_name, string $short_name, string $environment_id) {
+  public function getLogUrl(int $site_id, int $environment_id) {
+    $this->setSiteConfig($site_id);
     $deployment_name = self::generateDeploymentName($environment_id);
 
     try {

@@ -21,6 +21,9 @@ fi
 warning "Deleting shp-test project"
 oc delete project shp-test
 
+warning "Deleting shp-wordpress-test project"
+oc delete project shp-wordpress-test
+
 warning "Deleting shepherd project"
 oc delete project shepherd
 
