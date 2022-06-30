@@ -21,8 +21,6 @@ objects:
 - apiVersion: v1
   kind: Service
   metadata:
-    annotations:
-      service.alpha.openshift.io/dependencies: '[{"name":"shepherd-redis-svc","kind":"Service"}]'
     labels:
       app: shepherd
     name: shepherd-web-svc
@@ -51,25 +49,6 @@ objects:
       app: shepherd
     name: shepherd-web-is
 - apiVersion: v1
-  kind: ImageStream
-  metadata:
-    labels:
-      app: shepherd
-    name: shepherd-redis-is
-  spec:
-    lookupPolicy:
-      local: false
-    tags:
-      - annotations:
-          openshift.io/imported-from: 'redis:alpine'
-        from:
-          kind: DockerImage
-          name: 'redis:alpine'
-        importPolicy: {}
-        name: alpine
-        referencePolicy:
-          type: Source
-- apiVersion: v1
   kind: BuildConfig
   metadata:
     labels:
@@ -87,7 +66,7 @@ objects:
         uri: ${SOURCE_REPOSITORY_URL}
       type: Git
       secrets:
-      - destinationDir: .
+      - destinationDir: /code
         secret:
           name: ${SOURCE_SECRET}
       sourceSecret:
@@ -96,7 +75,7 @@ objects:
       sourceStrategy:
         from:
           kind: DockerImage
-          name: uofa/s2i-shepherd-drupal
+          name: uofa/s2i-shepherd-drupal:composer2
         pullSecret:
           name: ${SOURCE_SECRET}
         forcePull: true
@@ -124,7 +103,7 @@ objects:
       app: shepherd
     name: shepherd-web-shared
   spec:
-    storageClassName: gold
+    storageClassName: bronze
     accessModes:
       - ReadWriteMany
     resources:
@@ -174,9 +153,9 @@ objects:
             value: /shared/public
           - name: TMP_DIR
             value: /shared/tmp
-          - name: REDIS_ENABLED
-            value: '1'
-          - name: REDIS_HOST
+          - name: MEMCACHE_ENABLED
+            value: ${MEMCACHE_ENABLED}
+          - name: MEMCACHE_HOST
             value: ${REDIS_HOST}
           - name: SHEPHERD_INSTALL_PROFILE
             value: ${SHEPHERD_INSTALL_PROFILE}
@@ -215,60 +194,6 @@ objects:
           name: 'shepherd-web-is:latest'
       type: ImageChange
     - type: ConfigChange
-- apiVersion: v1
-  kind: Service
-  metadata:
-    labels:
-      app: shepherd
-    name: shepherd-redis-svc
-  spec:
-    ports:
-    - name: redis
-      port: 6379
-      targetPort: 6379
-    selector:
-      name: shepherd-redis-dc
-- apiVersion: v1
-  kind: DeploymentConfig
-  metadata:
-    labels:
-      app: shepherd
-    name: shepherd-redis-dc
-  spec:
-    replicas: 1
-    selector:
-      name: shepherd-redis-dc
-    strategy:
-      type: Rolling
-    template:
-      metadata:
-        labels:
-          name: shepherd-redis-dc
-        name: shepherd-redis-dc
-      spec:
-        containers:
-          - image: 'redis:alpine'
-            imagePullPolicy: Always
-            name: shepherd-redis
-            ports:
-              - containerPort: 6379
-            resources: {}
-            volumeMounts:
-              - mountPath: /data
-                name: shepherd-redis-volume
-        volumes:
-          - emptyDir: {}
-            name: shepherd-redis-volume
-    triggers:
-      - type: ConfigChange
-      - imageChangeParams:
-          automatic: true
-          containerNames:
-            - shepherd-redis
-          from:
-            kind: ImageStreamTag
-            name: 'shepherd-redis-is:alpine'
-        type: ImageChange
 parameters:
   - name: SOURCE_REPOSITORY_URL
     description: The URL of the repository with your application source code.
@@ -277,18 +202,13 @@ parameters:
   - name: SOURCE_REPOSITORY_REF
     description: Set this to a branch name, tag or other ref of your repository if you are not using the default branch.
     required: true
-    value: develop
+    value: openshift-4.x
   - name: SOURCE_SECRET
     description: Enter the name of the pre-created passwordless secret that allows you to checkout from gitlab.
     required: true
     value: build-key
   - name: MEMORY_LIMIT_WEB
     description: Maximum amount of memory the web container can use.
-    required: true
-    value: 1024Mi
-  - name: MEMORY_LIMIT_MYSQL
-    description: Maximum amount of memory the MySQL container can use.
-    displayName: Memory Limit (MySQL)
     required: true
     value: 1024Mi
   - name: APPLICATION_DOMAIN
@@ -310,14 +230,14 @@ parameters:
   - name: DATABASE_PASSWORD_FILE
     required: true
     value: /etc/secret/DATABASE_PASSWORD
-  - name: REDIS_ENABLED
+  - name: MEMCACHE_ENABLED
     description: Set to '1' for enabled, or '0' for disabled.
     required: true
     value: '1'
-  - name: REDIS_HOST
+  - name: MEMCACHE_HOST
     description: The host to use as a redis cache.
     required: true
-    value: 'shepherd-redis-svc'
+    value: 'memcached'
   - name: SHEPHERD_INSTALL_PROFILE
     description: The Drupal install profile to use.
     required: true
