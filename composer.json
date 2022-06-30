@@ -4,8 +4,8 @@
     "type": "project",
     "license": "MIT",
     "repositories": [
-        {"type": "vcs", "url": "git@gitlab.adelaide.edu.au:drupal-modules/ua_ldap.git"},
-        {"type": "vcs", "url": "git@gitlab.adelaide.edu.au:drupal-modules/ua_shp_ldap.git"},
+        {"type": "vcs", "url": "https://gitlab.adelaide.edu.au/drupal-modules/ua_ldap.git"},
+        {"type": "vcs", "url": "https://gitlab.adelaide.edu.au/drupal-modules/ua_shp_ldap.git"},
         {"type": "vcs", "url": "https://github.com/universityofadelaide/shepherd-drupal-scaffold.git"},
         {"type": "composer", "url": "https://packages.drupal.org/8"}
     ],
