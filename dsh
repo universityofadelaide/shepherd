@@ -143,7 +143,8 @@ dsh_openshift_init() {
       oc login -u developer
 
       # This is pretty horrid, but there is no oc command in the dsh shell.
-      oc describe serviceaccount "${SA}" | grep Token | awk '{ print $2 }' > ".${SA}.token"
+      oc get secret $(oc describe sa ${SA} |\
+        grep Token | awk '{ print $2 }') -o json | jq -r '.data.token' | base64 -d > ".${SA}.token"
     fi
   done
 
