@@ -19,12 +19,9 @@ trait TokenNamespaceTrait {
    */
   private function getSiteToken(int $site_id) {
     // Retrieve the service account associated with this site.
-    $serviceAccount = \Drupal::service('shp_service_accounts')->getServiceAccount($site_id);
-    $token = $serviceAccount->get('token');
-
-    // Use lower level functions, so we don't need site_id here.
-    $secret = $this->client->getSecret($token);
-    return base64_decode($secret['data']['token']);
+    return \Drupal::service('shp_service_accounts')
+      ->getServiceAccount($site_id)
+      ->get('token');
   }
 
   /**
@@ -35,14 +32,18 @@ trait TokenNamespaceTrait {
    */
   private function getSiteNamespace(int $site_id) {
     // Get the namespace associated with the site.
-    $site = \Drupal::service('entity_type.manager')->getStorage('node')->load($site_id);
+    $site = \Drupal::service('entity_type.manager')
+      ->getStorage('node')
+      ->load($site_id);
     $shortName = $site->field_shp_short_name->value;
 
     return $this->buildProjectName($shortName);
   }
 
   /**
-   * Very simple helper so constructing the project name is in on place.
+   * Very simple helper so constructing the project name is in one place.
+   *
+   * @todo make configurable through the UI?
    *
    * @param string $shortName
    *   The short name of the project.
