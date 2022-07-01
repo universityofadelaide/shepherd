@@ -13,6 +13,7 @@ use Drupal\shp_orchestration\TokenNamespaceTrait;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use UniversityOfAdelaide\OpenShift\Client as OpenShiftClient;
 use UniversityOfAdelaide\OpenShift\ClientException;
+use UniversityOfAdelaide\OpenShift\Objects\Annotation;
 use UniversityOfAdelaide\OpenShift\Objects\Backups\Backup;
 use UniversityOfAdelaide\OpenShift\Objects\Backups\Database;
 use UniversityOfAdelaide\OpenShift\Objects\Backups\Restore;
@@ -785,6 +786,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
    * {@inheritdoc}
    */
   public function backupEnvironment(string $site_id, string $environment_id, string $friendly_name = '') {
+    $this->setSiteConfig($site_id);
     $deployment_name = self::generateDeploymentName($environment_id);
     /** @var \UniversityOfAdelaide\OpenShift\Objects\Backups\Backup $backup */
     $backup = Backup::create()
@@ -795,7 +797,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       ->setLabel(Label::create(Backup::MANUAL_LABEL, TRUE))
       ->setName(sprintf('%s-backup-%s', $deployment_name, date('YmdHis')));
     if (!empty($friendly_name)) {
-      $backup->setAnnotation(Backup::FRIENDLY_NAME_ANNOTATION, $friendly_name);
+      $backup->setAnnotation(Annotation::create(Backup::FRIENDLY_NAME_ANNOTATION, $friendly_name));
     }
     try {
       return $this->client->createBackup($backup);
