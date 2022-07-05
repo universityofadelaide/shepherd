@@ -697,6 +697,11 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     // Lastly, allow the new project to pull from the shepherd project.
     $this->setSiteConfig(0);
     $this->createRoleBinding('default', 'system:image-puller', $projectName);
+
+    // Try and set up the backup role binding.
+    $serviceAccount = \Drupal::service('shp_service_accounts')->getServiceAccount($site_id);
+    $saName = $serviceAccount->get('label');
+    $this->createRoleBinding($saName, 'shepherd-operator-manager', $projectName);
   }
 
   /**
