@@ -21,7 +21,7 @@ abstract class CacheBackendBase extends PluginBase implements ContainerFactoryPl
   protected $client;
 
   /**
-   * Redis constructor.
+   * Cache backend constructor.
    *
    * @param array $configuration
    *   A configuration array containing information about the plugin instance.
