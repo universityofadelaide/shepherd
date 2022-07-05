@@ -120,11 +120,9 @@ dsh_openshift_init() {
   # Create a permanent token that shepherd can use to talk to OpenShift.
   echo "Ensuring serviceaccount exists for token."
   if ! oc get serviceaccount shepherd > /dev/null 2>&1; then
-    oc create serviceaccount shepherd
-    oc policy add-role-to-user admin system:serviceaccount:shepherd:shepherd
-    oc policy add-role-to-user self-provisioner system:serviceaccount:shepherd:shepherd
     oc login -u kubeadmin
-    oc adm policy add-cluster-role-to-user admin system:serviceaccount:shepherd:shepherd
+    oc create serviceaccount shepherd
+    oc adm policy add-cluster-role-to-user cluster-admin system:serviceaccount:shepherd:shepherd
     oc adm policy add-cluster-role-to-user self-provisioner system:serviceaccount:shepherd:shepherd
     oc login -u developer
   fi
@@ -134,11 +132,9 @@ dsh_openshift_init() {
   for i in {0..4} ; do
     SA=$(printf 'shepherd-prd-provisioner-00%02d' "$i")
     if ! oc get serviceaccount "${SA}" > /dev/null 2>&1; then
-      oc create serviceaccount "${SA}"
-      oc policy add-role-to-user admin system:serviceaccount:shepherd:"${SA}"
-      oc policy add-role-to-user self-provisioner system:serviceaccount:shepherd:"${SA}"
       oc login -u kubeadmin
-      oc adm policy add-cluster-role-to-user admin system:serviceaccount:shepherd:"${SA}"
+      oc create serviceaccount "${SA}"
+      oc adm policy add-cluster-role-to-user cluster-admin system:serviceaccount:shepherd:"${SA}"
       oc adm policy add-cluster-role-to-user self-provisioner system:serviceaccount:shepherd:"${SA}"
       oc login -u developer
 
