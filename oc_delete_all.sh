@@ -18,15 +18,22 @@ if [[ "$(oc whoami)" != "developer" ]]; then
   exit 1
 fi
 
-warning "Deleting shp-test project"
-oc delete project shp-test
+if oc get project shp-test > /dev/null 2>&1; then
+  warning "Deleting shp-test project"
+  oc delete project shp-test
+fi
 
-warning "Deleting shp-wordpress-test project"
-oc delete project shp-wordpress-test
+if oc get project shp-wordpress-test > /dev/null 2>&1; then
+  warning "Deleting shp-wordpress-test project"
+  oc delete project shp-wordpress-test
+fi
 
-warning "Deleting shepherd project"
-oc delete project shepherd
+if oc get project shepherd > /dev/null 2>&1; then
+  warning "Deleting shepherd project"
+  oc delete project shepherd
+fi
 
 echo ""
-notice "Performing dsh stop, dsh start, robo build && robo dev:drupal-content-generate should now work."
+notice "Resource deletions requested, allow a few seconds for things to complete."
+notice "Performing dsh stop, dsh start, robo build && robo dev:drupal-content-generate should then work."
 echo ""

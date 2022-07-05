@@ -45,6 +45,7 @@ RoboFileBase.php
 /.composer/
 /.console/
 /.drush/
+/.php/
 /bin/
 /console/
 /private/
@@ -58,9 +59,10 @@ dsh_proxy.conf
 *.tar.gz
 /web/sites/simpletest
 
-# Ignore OSX specific folders
+# Ignore Shepherd specific things
 shared
 openshift.local.clusterup
+.shepherd-prd-provisioner-*
 
 docker-compose.linux.yml
 docker-compose.osx.yml
