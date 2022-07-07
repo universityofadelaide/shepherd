@@ -54,7 +54,6 @@ module:
   shp_content_types: 0
   shp_custom: 0
   shp_orchestration: 0
-  shp_redis_support: 0
   shp_roles: 0
   shp_service_accounts: 0
   sqlite: 0

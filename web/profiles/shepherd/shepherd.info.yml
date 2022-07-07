@@ -63,7 +63,6 @@ dependencies:
   - shp_custom
   - shp_database_provisioner
   - shp_orchestration
-  - shp_redis_support
   - shp_roles
   - shp_service_accounts
 

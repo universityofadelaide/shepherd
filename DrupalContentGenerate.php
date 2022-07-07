@@ -149,7 +149,7 @@ if (!$project = reset($nodes)) {
     'field_shp_build_secret'   => [['value' => 'build-key']],
     'field_shp_env_vars'       => [
       ['key' => 'SHEPHERD_INSTALL_PROFILE', 'value' => 'standard'],
-      ['key' => 'REDIS_ENABLED', 'value' => '0'],
+      ['key' => 'MEMCACHE_ENABLED', 'value' => '0'],
       ['key' => 'PUBLIC_DIR', 'value' => '/shared/public'],
       ['key' => 'PRIVATE_DIR', 'value' => '/shared/private'],
       ['key' => 'TMP_DIR', 'value' => '/shared/tmp'],

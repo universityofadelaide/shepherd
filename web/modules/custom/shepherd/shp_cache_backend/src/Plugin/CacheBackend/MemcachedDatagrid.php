@@ -13,7 +13,7 @@ use UniversityOfAdelaide\OpenShift\Client;
 use UniversityOfAdelaide\OpenShift\Objects\ConfigMap;
 
 /**
- * Provides Redis integration.
+ * Provides memcache integration.
  *
  * @CacheBackend(
  *   id = "memcached_datagrid",
@@ -80,7 +80,7 @@ class MemcachedDatagrid extends CacheBackendBase {
   protected $datagridSelector = 'datagrid-app';
 
   /**
-   * Redis constructor.
+   * Memcache constructor.
    *
    * @param array $configuration
    *   A configuration array containing information about the plugin instance.
@@ -319,7 +319,7 @@ class MemcachedDatagrid extends CacheBackendBase {
   }
 
   /**
-   * Format the redis deploy data.
+   * Format the memcache deploy data.
    *
    * @param string $name
    *   The name of the deployment config.
@@ -348,9 +348,9 @@ class MemcachedDatagrid extends CacheBackendBase {
    * @param \Drupal\node\NodeInterface $environment
    *   The environment.
    * @param string $memcached_name
-   *   Redis name.
+   *   Memcache name.
    * @param string $memcached_port
-   *   Redis port.
+   *   Memcache port.
    * @param array $data
    *   Array of data for labels.
    *
