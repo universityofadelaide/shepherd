@@ -63,7 +63,7 @@ content:
     region: content
   field_shp_service_account:
     type: string
-    label: above
+    label: inline
     settings:
       link_to_entity: false
     third_party_settings: {  }
@@ -79,7 +79,7 @@ content:
     region: content
   field_shp_storage_size:
     type: number_integer
-    label: above
+    label: inline
     settings:
       thousand_separator: ''
       prefix_suffix: true
