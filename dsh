@@ -7,6 +7,9 @@ set -euo pipefail
 PROJECT=$(basename "${PWD}")
 export PROJECT
 
+DOMAIN=${DOMAIN:-"172.17.0.1.nip.io"}
+export DOMAIN
+
 # Set some env vars we use in our slightly modified docker-compose files.
 HOST_SSH_AUTH_SOCK_DIR=$(dirname "${SSH_AUTH_SOCK}")
 export HOST_SSH_AUTH_SOCK_DIR
@@ -78,7 +81,7 @@ dsh_openshift_init() {
   echo "Ensuring mariadb service exists"
   if ! oc get svc mariadb > /dev/null 2>&1; then
     oc new-app mariadb MYSQL_ROOT_PASSWORD=${SUPER_SECRET_PASSWORD} -l db=shepherd
-    oc expose dc mariadb --type=LoadBalancer --name=mysql-external
+    oc expose service mariadb --generator=service/v2 --type=LoadBalancer --name=mysql-external
     oc annotate svc mysql-external "service.alpha.openshift.io/dependencies=[{\"name\": \"mariadb\", \"kind\": \"Service\"}]"
   fi
 
@@ -151,7 +154,7 @@ dsh_openshift_init() {
   TOKEN=$(oc describe secret ${SERVICE_ACCOUNT} | grep "token:" | awk '{ print $2 }')
   OPENSHIFT_DOMAIN="apps-crc.testing"
   OPENSHIFT_URL="https://api.crc.testing:6443"
-  DB_HOST="mysql-external.${OPENSHIFT_DOMAIN}"
+  DB_HOST="mysql-external-shepherd.${OPENSHIFT_DOMAIN}"
   DB_PORT=$(oc get service mysql-external --no-headers | sed 's/.*:\([0-9]*\).*/\1/')
 }
 
