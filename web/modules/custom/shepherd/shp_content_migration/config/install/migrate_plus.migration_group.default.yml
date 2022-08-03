@@ -1,0 +1,15 @@
+langcode: en
+id: default
+status: true
+label: Default migration
+source_type: Drupal 9
+shared_configuration:
+  source:
+    key: migrate
+
+dependencies:
+  enforced:
+    module:
+      - migrate
+      - migrate_plus
+      - migrate_tools
