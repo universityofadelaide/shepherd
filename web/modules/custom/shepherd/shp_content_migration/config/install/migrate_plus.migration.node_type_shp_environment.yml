@@ -37,7 +37,11 @@ process:
   field_shp_memory_request: field_shp_memory_request
   field_shp_path: field_shp_path
   field_shp_secrets: field_shp_secrets
-  field_shp_site: field_shp_site
+  field_shp_site:
+    plugin: migration_lookup
+    source: field_shp_site
+    migration: node_type_shp_site
+
   field_shp_update_on_image_change: field_shp_update_on_image_change
   field_skip_db_prepop: field_skip_db_prepop
 

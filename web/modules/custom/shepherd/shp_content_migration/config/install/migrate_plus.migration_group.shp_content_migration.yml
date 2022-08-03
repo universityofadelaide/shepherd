@@ -1,7 +1,7 @@
 langcode: en
-id: default
+id: shp_content_migration
 status: true
-label: Default migration
+label: Shepherd content migration
 source_type: Drupal 9
 shared_configuration:
   source:
