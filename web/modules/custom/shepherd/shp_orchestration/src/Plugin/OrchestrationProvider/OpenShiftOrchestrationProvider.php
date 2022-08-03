@@ -667,8 +667,8 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     // @todo This works for local dev, but what to do here eh?
     $this->createRoleBinding('developer', 'admin');
 
-    // Create a RoleBinding so Shepherd can perform operations in the Project/Namespace
-    // from a consistent ServiceAccount.
+    // Create a RoleBinding so Shepherd can perform operations in the
+    // Project/Namespace from a consistent ServiceAccount.
     // @todo, Make these params dynamic.
     $this->createRoleBinding("shepherd", "admin", "shepherd");
 
