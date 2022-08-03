@@ -85,6 +85,10 @@ dsh_openshift_init() {
     oc annotate svc mysql-external "service.alpha.openshift.io/dependencies=[{\"name\": \"mariadb\", \"kind\": \"Service\"}]"
   fi
 
+  # Setup a new minio server, expose it and group the services.
+  echo "Ensuring minio service exists"
+  oc apply -f deploy/local/minio/
+
   # Setup the database password in an OpenShift secret.
   echo "Ensuring database secret exists."
   if ! oc get secret privileged-db-password > /dev/null 2>&1; then
