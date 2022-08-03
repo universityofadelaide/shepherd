@@ -58,13 +58,6 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
   protected $client;
 
   /**
-   * Site that we are currently working with.
-   *
-   * @var int
-   */
-  protected $siteId;
-
-  /**
    * Shepherd custom string generator.
    *
    * @var \Drupal\shp_custom\Service\StringGenerator
@@ -150,7 +143,6 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     $formatted_env_vars = $this->formatEnvVars($environment_variables);
 
     try {
-      $storedSite = $this->getSiteId();
       $this->setSiteConfig(0);
 
       $image_stream = $this->client->generateImageStreamConfig($sanitised_project_name);
@@ -161,7 +153,6 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       $this->exceptionHandler->handleClientException($e);
       return FALSE;
     }
-    $this->setSiteConfig($storedSite);
     return TRUE;
   }
 
@@ -184,7 +175,6 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     ];
 
     try {
-      $storedSite = $this->getSiteId();
       $this->setSiteConfig(0);
 
       $this->client->updateBuildConfig(
@@ -199,7 +189,6 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       return FALSE;
     }
 
-    $this->setSiteConfig($storedSite);
     return TRUE;
   }
 
@@ -381,14 +370,10 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
    */
   protected function getImageStreamImage(string $sanitised_project_name, string $sanitised_source_ref) {
     // Image streams are in the shepherd project, store and switch back.
-    $storedSite = $this->getSiteId();
     $this->setSiteConfig(0);
     // Retrieve image stream that will be used for this site. There is only a
     // tiny chance it will be different to the deployment config image.
     $image_stream = $this->client->getImageStream($sanitised_project_name);
-
-    // Switch the site info back.
-    $this->setSiteConfig($storedSite);
 
     if (is_array($image_stream) && isset($image_stream['status']['tags'])) {
       // Look through the image stream tags to find the one being deployed.
@@ -516,39 +501,24 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
   /**
    * Helper function to set the namespace and token before calling the api.
    *
-   * @param int|null $site_id
+   * @param int $site_id
    *   The site which dictates which service account quota will be used.
    *
    * @throws \UniversityOfAdelaide\OpenShift\ClientException
    */
-  private function setSiteConfig(int $site_id = NULL) {
-    // If called with no parameters, set the defaults to shepherd.
-    $this->client->setToken($this->config->get('connection.token'));
-    $this->client->setNamespace($this->config->get('connection.namespace'));
+  private function setSiteConfig(int $site_id = 0) {
 
-    // Return now if no site id passed.
+    // For almost everything, we'll be using the shepherd token.
+    $this->client->setToken($this->config->get('connection.token'));
+
+    // If called with no parameters, set the default namespace to shepherd.
     if (!$site_id) {
+      $this->client->setNamespace($this->config->get('connection.namespace'));
       return;
     }
 
-    // Retrieve the token first from the shepherd namespace.
-    $this->client->setToken($this->getSiteToken($site_id));
-
-    // Then we can change to the sites namespace.
+    // Otherwise set to the site namespace.
     $this->client->setNamespace($this->getSiteNamespace($site_id));
-
-    // Finally, store the newly activated siteId in case.
-    $this->siteId = $site_id;
-  }
-
-  /**
-   * Helper function to retrieve the site id thats currently set.
-   *
-   * @return int
-   *   The currently set site id.
-   */
-  private function getSiteId() {
-    return $this->siteId;
   }
 
   /**
@@ -686,6 +656,9 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
   ) {
     // Set the auth to be the site token.
     $this->setSiteConfig($site_id);
+
+    // In this case, override the shepherd token with a provisioner token.
+    $this->client->setToken($this->getSiteToken($site_id));
 
     // Now Create a project/namespace for the new site.
     $projectName = $this->buildProjectName($short_name);
@@ -1284,7 +1257,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
         // Return the first running, non-job container.
         if ($this->isWebPod($details)) {
           $pod_name = $pods['items'][0]['metadata']['name'];
-          return $this->generateOpenShiftPodUrl($pod_name, 'terminal');
+          return $this->generateOpenShiftPodUrl($site_id, $pod_name, 'terminal');
         }
       }
     }
@@ -1316,7 +1289,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
         // Return the first running, non-job container.
         if ($this->isWebPod($details)) {
           $pod_name = $pods['items'][0]['metadata']['name'];
-          return $this->generateOpenShiftPodUrl($pod_name, 'logs');
+          return $this->generateOpenShiftPodUrl($site_id, $pod_name, 'logs');
         }
       }
     }
@@ -1347,6 +1320,8 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
   /**
    * Generate url to a specific pod and view in OpenShift.
    *
+   * @param int $site_id
+   *   Site id to create a url for.
    * @param string $pod_name
    *   Pod name.
    * @param string $view
@@ -1355,14 +1330,14 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
    * @return \Drupal\Core\Url
    *   Url.
    */
-  protected function generateOpenShiftPodUrl(string $pod_name, string $view) {
+  protected function generateOpenShiftPodUrl(int $site_id, string $pod_name, string $view) {
     $endpoint = $this->config->get('connection.endpoint');
 
     // @todo fix for deployed version, store web ui or remove this all.
     $endpoint = str_replace('api.crc', 'console-openshift-console.apps-crc', $endpoint);
     $endpoint = str_replace(':6443', '', $endpoint);
 
-    $namespace = $this->getSiteNamespace($this->getSiteId());
+    $namespace = $this->getSiteNamespace($site_id);
 
     return Url::fromUri($endpoint . '/k8s/ns/' . $namespace . '/pods/' . $pod_name . '/' . $view, [
       'attributes' => [
