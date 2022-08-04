@@ -146,10 +146,21 @@ dsh_openshift_init() {
       oc login -u developer
 
       # This is pretty horrid, but there is no oc command in the dsh shell.
-      oc get secret $(oc describe sa ${SA} |\
-        grep Token | awk '{ print $2 }') -o json | jq -r '.data.token' | base64 -d > ".${SA}.token"
+      oc get secret "$(oc describe sa ${SA} | grep Token | awk '{ print $2 }')" \
+         -o json | jq -r '.data.token' | base64 -d > ".${SA}.token"
     fi
   done
+
+  if grep "\"auth\":\"<AUTH>\"" openshift-config/shepherd-operator/config/manager/secret.yml  > /dev/null 2>&1; then
+    error "Set github token in openshift-config/shepherd-operator/config/manager/secret.yml"
+    exit 1
+  fi
+
+  CMD=$(crc console --credentials | grep kubeadmin | cut -d"'" -f2); ${CMD}
+  oc apply -f openshift-config/shepherd-operator/config/manager/namespace.yml
+  oc apply -f openshift-config/shepherd-operator/config/crd/bases/
+  oc apply -f openshift-config/shepherd-operator/config/rbac/
+  CMD=$(crc console --credentials | grep developer | cut -d"'" -f2); ${CMD}
 
   # Retrieve the service account token and the minishift ip.
   SERVICE_ACCOUNT=$(oc describe serviceaccount shepherd | grep Token | awk '{ print $2 }')
