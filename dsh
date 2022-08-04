@@ -56,6 +56,9 @@ dsh_openshift_init() {
   # Password for the mysql server.
   SUPER_SECRET_PASSWORD=super-secret-password
 
+  ADMIN_LOGIN=$(crc console --credentials | grep kubeadmin | cut -d"'" -f2)
+  DEV_LOGIN=$(crc console --credentials | grep developer | cut -d"'" -f2)
+
   # Path to ssh key with no passphrase.
   : "${BUILD_KEY:=$HOME/.ssh/id_rsa}"
 
@@ -127,11 +130,11 @@ dsh_openshift_init() {
   # Create a permanent token that shepherd can use to talk to OpenShift.
   echo "Ensuring serviceaccount exists for token."
   if ! oc get serviceaccount shepherd > /dev/null 2>&1; then
-    oc login -u kubeadmin
+    ${ADMIN_LOGIN}
     oc create serviceaccount shepherd
     oc adm policy add-cluster-role-to-user cluster-admin system:serviceaccount:shepherd:shepherd
     oc adm policy add-cluster-role-to-user self-provisioner system:serviceaccount:shepherd:shepherd
-    oc login -u developer
+    ${DEV_LOGIN}
   fi
 
   # Creating additional service accounts for namespace manipulation.
@@ -139,11 +142,11 @@ dsh_openshift_init() {
   for i in {0..4} ; do
     SA=$(printf 'shepherd-prd-provisioner-00%02d' "$i")
     if ! oc get serviceaccount "${SA}" > /dev/null 2>&1; then
-      oc login -u kubeadmin
+      ${ADMIN_LOGIN}
       oc create serviceaccount "${SA}"
       oc adm policy add-cluster-role-to-user cluster-admin system:serviceaccount:shepherd:"${SA}"
       oc adm policy add-cluster-role-to-user self-provisioner system:serviceaccount:shepherd:"${SA}"
-      oc login -u developer
+      ${DEV_LOGIN}
 
       # This is pretty horrid, but there is no oc command in the dsh shell.
       oc get secret "$(oc describe sa ${SA} | grep Token | awk '{ print $2 }')" \
@@ -156,13 +159,13 @@ dsh_openshift_init() {
     exit 1
   fi
 
-  CMD=$(crc console --credentials | grep kubeadmin | cut -d"'" -f2); ${CMD}
+  ${ADMIN_LOGIN}
   oc apply -f deploy/rbac/
   oc apply -f deploy/local/operator/
   oc apply -f deploy/local/operator/config/manager
   oc apply -f deploy/local/operator/config/crd/bases
   oc apply -f deploy/local/operator/config/rbac
-  CMD=$(crc console --credentials | grep developer | cut -d"'" -f2); ${CMD}
+  ${DEV_LOGIN}
 
   # Retrieve the service account token and the minishift ip.
   SERVICE_ACCOUNT=$(oc describe serviceaccount shepherd | grep Token | awk '{ print $2 }')
