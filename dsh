@@ -159,6 +159,9 @@ dsh_openshift_init() {
   CMD=$(crc console --credentials | grep kubeadmin | cut -d"'" -f2); ${CMD}
   oc apply -f deploy/rbac/
   oc apply -f deploy/local/operator/
+  oc apply -f deploy/local/operator/config/manager
+  oc apply -f deploy/local/operator/config/crd/bases
+  oc apply -f deploy/local/operator/config/rbac
   CMD=$(crc console --credentials | grep developer | cut -d"'" -f2); ${CMD}
 
   # Retrieve the service account token and the minishift ip.
