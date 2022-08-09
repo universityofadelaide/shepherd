@@ -18,14 +18,14 @@ if [[ "$(oc whoami)" != "developer" ]]; then
   exit 1
 fi
 
-if oc get project shp-test > /dev/null 2>&1; then
-  warning "Deleting shp-test project"
-  oc delete project shp-test
+if oc get project shp-2 > /dev/null 2>&1; then
+  warning "Deleting shp-2 project"
+  oc delete project shp-2
 fi
 
-if oc get project shp-wordpress-test > /dev/null 2>&1; then
-  warning "Deleting shp-wordpress-test project"
-  oc delete project shp-wordpress-test
+if oc get project shp-3 > /dev/null 2>&1; then
+  warning "Deleting shp-3 project"
+  oc delete project shp-3
 fi
 
 if oc get project shepherd > /dev/null 2>&1; then
