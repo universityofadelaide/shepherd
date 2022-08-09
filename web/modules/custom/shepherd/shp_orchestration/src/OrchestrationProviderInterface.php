@@ -336,15 +336,13 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
    *
    * @param string $project_name
    *   The project that is being deployed on the site.
-   * @param string $short_name
-   *   The short name of the site.
    * @param int $site_id
    *   The site id.
    *
    * @return bool
    *   Returns true if succeeded.
    */
-  public function preDeleteSite(string $project_name, string $short_name, int $site_id);
+  public function preDeleteSite(string $project_name, int $site_id);
 
   /**
    * Retrieves the metadata on a stored secret.

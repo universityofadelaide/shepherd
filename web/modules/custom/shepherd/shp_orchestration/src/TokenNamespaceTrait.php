@@ -35,24 +35,23 @@ trait TokenNamespaceTrait {
     $site = \Drupal::service('entity_type.manager')
       ->getStorage('node')
       ->load($site_id);
-    $shortName = $site->field_shp_short_name->value;
 
-    return $this->buildProjectName($shortName);
+    return $this->buildProjectName($site->id());
   }
 
   /**
    * Very simple helper so constructing the project name is in one place.
    *
-   * @todo make configurable through the UI?
-   *
-   * @param string $shortName
+   * @param int $site_id
    *   The short name of the project.
    *
    * @return string
    *   The 'shepherdified name'.
    */
-  private function buildProjectName($shortName) {
-    return 'shp-' . $shortName;
+  private function buildProjectName($site_id): string {
+    $settings = \Drupal::configFactory()->get('shp_orchestration.settings');
+    $prefix = $settings->get('site_deploy_prefix') ?? 'shp-';
+    return $prefix . $site_id;
   }
 
 }

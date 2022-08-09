@@ -304,6 +304,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       $deployment_name,
       $image_stream_tag,
       $sanitised_project_name,
+      $this->config->get('connection.namespace'),
       $update_on_image_change,
       $volumes,
       $deploy_data,
@@ -321,7 +322,11 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     // Get the volumes and include the backups this time.
     $cron_volumes = $this->generateVolumeData($project_name, $deployment_name, $secrets, TRUE);
 
+    // Image streams are in the shepherd project.
+    $this->setSiteConfig(0);
     $image = $this->getImageStreamImage($sanitised_project_name, $sanitised_source_ref);
+    $this->setSiteConfig($site_id);
+
     if ($image) {
       $this->createCronJobs(
         $deployment_name,
@@ -369,8 +374,6 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
    * @throws \UniversityOfAdelaide\OpenShift\ClientException
    */
   protected function getImageStreamImage(string $sanitised_project_name, string $sanitised_source_ref) {
-    // Image streams are in the shepherd project, store and switch back.
-    $this->setSiteConfig(0);
     // Retrieve image stream that will be used for this site. There is only a
     // tiny chance it will be different to the deployment config image.
     $image_stream = $this->client->getImageStream($sanitised_project_name);
@@ -661,7 +664,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     $this->client->setToken($this->getSiteToken($site_id));
 
     // Now Create a project/namespace for the new site.
-    $projectName = $this->buildProjectName($short_name);
+    $projectName = $this->buildProjectName($site_id);
     $this->client->createProjectRequest($projectName);
 
     // @todo This works for local dev, but what to do here eh?
@@ -708,7 +711,6 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
    */
   public function preDeleteSite(
     string $project_name,
-    string $short_name,
     int $site_id
   ) {
     $this->setSiteConfig($site_id);
@@ -718,7 +720,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     $this->client->deleteService($deployment_name);
     $this->client->deleteRoute($deployment_name);
 
-    $this->client->deleteProject($this->buildProjectName($short_name));
+    $this->client->deleteProject($this->buildProjectName($site_id));
   }
 
   /**
