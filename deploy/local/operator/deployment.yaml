@@ -20,7 +20,7 @@ spec:
         - /manager
         args:
         - --leader-elect
-        image: ghcr.io/universityofadelaide/shepherd-operator:v3.0.0-alpha4
+        image: ghcr.io/universityofadelaide/shepherd-operator:v3.0.0-alpha5
         name: manager
         env:
           - name: SHEPHERD_OPERATOR_BACKUP_CPU
