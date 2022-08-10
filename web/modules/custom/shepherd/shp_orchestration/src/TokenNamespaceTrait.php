@@ -25,21 +25,6 @@ trait TokenNamespaceTrait {
   }
 
   /**
-   * Get/build the namespace from the sites shortname.
-   *
-   * @param int $site_id
-   *   The site which dictates which service account quota will be used.
-   */
-  private function getSiteNamespace(int $site_id) {
-    // Get the namespace associated with the site.
-    $site = \Drupal::service('entity_type.manager')
-      ->getStorage('node')
-      ->load($site_id);
-
-    return $this->buildProjectName($site->id());
-  }
-
-  /**
    * Very simple helper so constructing the project name is in one place.
    *
    * @param int $site_id
@@ -48,9 +33,8 @@ trait TokenNamespaceTrait {
    * @return string
    *   The 'shepherdified name'.
    */
-  private function buildProjectName($site_id): string {
-    $settings = \Drupal::configFactory()->get('shp_orchestration.settings');
-    $prefix = $settings->get('site_deploy_prefix') ?? 'shp-';
+  private function buildProjectName(int $site_id): string {
+    $prefix = $this->config->get('site_deploy_prefix') ?? 'shp-';
     return $prefix . $site_id;
   }
 

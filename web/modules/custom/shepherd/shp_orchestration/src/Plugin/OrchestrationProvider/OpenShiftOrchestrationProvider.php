@@ -521,7 +521,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     }
 
     // Otherwise set to the site namespace.
-    $this->client->setNamespace($this->getSiteNamespace($site_id));
+    $this->client->setNamespace($this->buildProjectName($site_id));
   }
 
   /**
@@ -1339,7 +1339,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     $endpoint = str_replace('api.crc', 'console-openshift-console.apps-crc', $endpoint);
     $endpoint = str_replace(':6443', '', $endpoint);
 
-    $namespace = $this->getSiteNamespace($site_id);
+    $namespace = $this->buildProjectName($site_id);
 
     return Url::fromUri($endpoint . '/k8s/ns/' . $namespace . '/pods/' . $pod_name . '/' . $view, [
       'attributes' => [
