@@ -175,7 +175,6 @@ class DummyOrchestrationProvider extends OrchestrationProviderBase {
    */
   public function preDeleteSite(
     string $project_name,
-    string $short_name,
     int $site_id
   ) {
     return TRUE;

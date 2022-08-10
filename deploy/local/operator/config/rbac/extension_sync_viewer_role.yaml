@@ -1,0 +1,20 @@
+# permissions for end users to view syncs.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: shepherd-operator-sync-viewer
+rules:
+- apiGroups:
+  - extension.shepherd
+  resources:
+  - syncs
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - extension.shepherd
+  resources:
+  - syncs/status
+  verbs:
+  - get
