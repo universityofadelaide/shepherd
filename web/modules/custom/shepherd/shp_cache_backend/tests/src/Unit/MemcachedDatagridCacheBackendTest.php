@@ -87,7 +87,11 @@ class MemcachedDatagridCacheBackendTest extends UnitTestCase {
     $config = $this->createMock(ImmutableConfig::class);
     $config->expects($this->any())
       ->method('get')
-      ->willReturn('mynamespace');
+      ->willReturnMap([
+        ['connection.token', 'mytoken'],
+        ['connection.namespace', 'mynamespace'],
+        ['site_deploy_prefix', 'test-'],
+      ]);
 
     $secret = [
       'data' => [

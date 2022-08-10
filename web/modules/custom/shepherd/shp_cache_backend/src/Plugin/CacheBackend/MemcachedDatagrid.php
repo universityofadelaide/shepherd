@@ -144,7 +144,7 @@ class MemcachedDatagrid extends CacheBackendBase {
    */
   public function onEnvironmentPromote(NodeInterface $environment) {
     $this->client->setToken($this->getSiteToken($environment->field_shp_site->entity->id()));
-    $this->client->setNamespace($this->getSiteNamespace($environment->field_shp_site->entity->id()));
+    $this->client->setNamespace($this->buildProjectName($environment->field_shp_site->entity->id()));
 
     $memcached_name = self::getMemcachedDeploymentName($environment);
     // Scale the memcached deployment to 0 when the environment is promoted.
@@ -160,7 +160,7 @@ class MemcachedDatagrid extends CacheBackendBase {
    */
   public function onEnvironmentDemotion(NodeInterface $environment) {
     $this->client->setToken($this->getSiteToken($environment->field_shp_site->entity->id()));
-    $this->client->setNamespace($this->getSiteNamespace($environment->field_shp_site->entity->id()));
+    $this->client->setNamespace($this->buildProjectName($environment->field_shp_site->entity->id()));
 
     $memcached_name = self::getMemcachedDeploymentName($environment);
     // Scale the memcached deployment to 1 when the environment is demoted.
@@ -262,7 +262,7 @@ class MemcachedDatagrid extends CacheBackendBase {
    */
   protected function generateMemcachedDeployment(NodeInterface $environment) {
     $this->client->setToken($this->getSiteToken($environment->field_shp_site->entity->id()));
-    $this->client->setNamespace($this->getSiteNamespace($environment->field_shp_site->entity->id()));
+    $this->client->setNamespace($this->buildProjectName($environment->field_shp_site->entity->id()));
 
     $memcachedDeploymentName = self::getMemcachedDeploymentName($environment);
     $deploymentName = OpenShiftOrchestrationProvider::generateDeploymentName($environment->id());
@@ -507,7 +507,7 @@ class MemcachedDatagrid extends CacheBackendBase {
     // Delete the memcached deployment from the sites project.
     $site = $environment->field_shp_site->entity->id();
     $this->client->setToken($this->getSiteToken($site));
-    $this->client->setNamespace($this->getSiteNamespace($site));
+    $this->client->setNamespace($this->buildProjectName($site));
     $memcached_name = self::getMemcachedDeploymentName($environment);
     if ($this->client->getService($memcached_name)) {
       $this->client->deleteService($memcached_name);

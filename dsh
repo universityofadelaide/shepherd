@@ -7,6 +7,9 @@ set -euo pipefail
 PROJECT=$(basename "${PWD}")
 export PROJECT
 
+DOMAIN=${DOMAIN:-"172.17.0.1.nip.io"}
+export DOMAIN
+
 # Set some env vars we use in our slightly modified docker-compose files.
 HOST_SSH_AUTH_SOCK_DIR=$(dirname "${SSH_AUTH_SOCK}")
 export HOST_SSH_AUTH_SOCK_DIR
@@ -53,6 +56,9 @@ dsh_openshift_init() {
   # Password for the mysql server.
   SUPER_SECRET_PASSWORD=super-secret-password
 
+  ADMIN_LOGIN=$(crc console --credentials | grep kubeadmin | cut -d"'" -f2)
+  DEV_LOGIN=$(crc console --credentials | grep developer | cut -d"'" -f2)
+
   # Path to ssh key with no passphrase.
   : "${BUILD_KEY:=$HOME/.ssh/id_rsa}"
 
@@ -78,9 +84,13 @@ dsh_openshift_init() {
   echo "Ensuring mariadb service exists"
   if ! oc get svc mariadb > /dev/null 2>&1; then
     oc new-app mariadb MYSQL_ROOT_PASSWORD=${SUPER_SECRET_PASSWORD} -l db=shepherd
-    oc expose dc mariadb --type=LoadBalancer --name=mysql-external
+    oc expose service mariadb --generator=service/v2 --type=LoadBalancer --name=mysql-external
     oc annotate svc mysql-external "service.alpha.openshift.io/dependencies=[{\"name\": \"mariadb\", \"kind\": \"Service\"}]"
   fi
+
+  # Setup a new minio server, expose it and group the services.
+  echo "Ensuring minio service exists"
+  oc apply -f deploy/local/minio/
 
   # Setup the database password in an OpenShift secret.
   echo "Ensuring database secret exists."
@@ -120,11 +130,11 @@ dsh_openshift_init() {
   # Create a permanent token that shepherd can use to talk to OpenShift.
   echo "Ensuring serviceaccount exists for token."
   if ! oc get serviceaccount shepherd > /dev/null 2>&1; then
-    oc login -u kubeadmin
+    ${ADMIN_LOGIN}
     oc create serviceaccount shepherd
     oc adm policy add-cluster-role-to-user cluster-admin system:serviceaccount:shepherd:shepherd
     oc adm policy add-cluster-role-to-user self-provisioner system:serviceaccount:shepherd:shepherd
-    oc login -u developer
+    ${DEV_LOGIN}
   fi
 
   # Creating additional service accounts for namespace manipulation.
@@ -132,17 +142,30 @@ dsh_openshift_init() {
   for i in {0..4} ; do
     SA=$(printf 'shepherd-prd-provisioner-00%02d' "$i")
     if ! oc get serviceaccount "${SA}" > /dev/null 2>&1; then
-      oc login -u kubeadmin
+      ${ADMIN_LOGIN}
       oc create serviceaccount "${SA}"
       oc adm policy add-cluster-role-to-user cluster-admin system:serviceaccount:shepherd:"${SA}"
       oc adm policy add-cluster-role-to-user self-provisioner system:serviceaccount:shepherd:"${SA}"
-      oc login -u developer
+      ${DEV_LOGIN}
 
       # This is pretty horrid, but there is no oc command in the dsh shell.
-      oc get secret $(oc describe sa ${SA} |\
-        grep Token | awk '{ print $2 }') -o json | jq -r '.data.token' | base64 -d > ".${SA}.token"
+      oc get secret "$(oc describe sa ${SA} | grep Token | awk '{ print $2 }')" \
+         -o json | jq -r '.data.token' | base64 -d > ".${SA}.token"
     fi
   done
+
+  if grep "\"auth\":\"<AUTH>\"" deploy/local/operator/config/manager/secret.yml  > /dev/null 2>&1; then
+    error "Set github token in deploy/local/operator/config/manager/secret.yml"
+    exit 1
+  fi
+
+  ${ADMIN_LOGIN}
+  oc apply -f deploy/rbac/
+  oc apply -f deploy/local/operator/
+  oc apply -f deploy/local/operator/config/manager
+  oc apply -f deploy/local/operator/config/crd/bases
+  oc apply -f deploy/local/operator/config/rbac
+  ${DEV_LOGIN}
 
   # Retrieve the service account token and the minishift ip.
   SERVICE_ACCOUNT=$(oc describe serviceaccount shepherd | grep Token | awk '{ print $2 }')
@@ -151,7 +174,7 @@ dsh_openshift_init() {
   TOKEN=$(oc describe secret ${SERVICE_ACCOUNT} | grep "token:" | awk '{ print $2 }')
   OPENSHIFT_DOMAIN="apps-crc.testing"
   OPENSHIFT_URL="https://api.crc.testing:6443"
-  DB_HOST="mysql-external.${OPENSHIFT_DOMAIN}"
+  DB_HOST="mysql-external-shepherd.${OPENSHIFT_DOMAIN}"
   DB_PORT=$(oc get service mysql-external --no-headers | sed 's/.*:\([0-9]*\).*/\1/')
 }
 

@@ -28,8 +28,7 @@ Not similar to a production deployment:
 
 ### All systems
 * [Red Hat OpenShift Local](https://developers.redhat.com/products/openshift-local/overview)
-* [oc](https://github.com/openshift/origin/releases) command line tool enables
-  interaction with the OpenShift cluster.
+* OpenShift Command Line Tool (oc) - Download from the local OpenShift portal site once provisioned.
 * PHP 7+
 * [Composer](https://getcomposer.org/)
 * [Docker](https://www.docker.com/)
@@ -53,6 +52,8 @@ Before proceeding, please configure either OpenShift with Code Ready Containers 
 ```bash
 # Setup
 composer install
+# Alernatively.... Keep in mind permissions will need to be checked
+docker run --rm --interactive -v ${HOME}/.ssh/id_rsa:/root/.ssh/id_rsa --tty --volume ${PWD}:/app composer install
 
 # Bring up containers, runs any configuration tasks, drop into the shell.
 ./dsh

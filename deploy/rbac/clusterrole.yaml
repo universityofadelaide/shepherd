@@ -1,0 +1,29 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: shepherd
+rules:
+  - apiGroups:
+      - extension.shepherd
+    resources:
+      - backups
+      - backupscheduleds
+      - restores
+      - syncs
+    verbs:
+      - create
+      - delete
+      - get
+      - list
+      - patch
+      - update
+      - watch
+  - apiGroups:
+      - extension.shepherd
+    resources:
+      - backups/status
+      - backupscheduleds/status
+      - restores/status
+      - syncs/status
+    verbs:
+      - get
