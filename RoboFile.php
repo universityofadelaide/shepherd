@@ -22,7 +22,8 @@ class RoboFile extends RoboFileBase {
    */
   public function build(): void {
     parent::build();
-    $this->say("To provide default content for shepherd, use robo dev:drupal-content-generate or robo dev:wordpress-content-generate");
+    $this->say("To provide default content for shepherd, commands have been added:");
+    $this->say("robo dev:wcms-content-generate, dev:drupal-content-generate and dev:wordpress-content-generate");
   }
 
   /**
@@ -42,6 +43,17 @@ class RoboFile extends RoboFileBase {
     $virtual_host = getenv("VIRTUAL_HOST");
     if (!empty($virtual_host)) {
       $this->_exec("$this->drush_cmd scr WordpressContentGenerate.php --uri=$virtual_host");
+    }
+  }
+
+  /**
+   * Create default WCMS content for the Shepherd.
+   */
+  public function devWcmsContentGenerate() {
+    $virtual_host = getenv("VIRTUAL_HOST");
+    if (!empty($virtual_host)) {
+      $this->_exec("$this->drush_cmd scr WcmsContentGenerate.php --uri=$virtual_host");
+      $this->say('For proper deployment, edit the project and attach the default wcms sql.');
     }
   }
 
