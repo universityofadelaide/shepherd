@@ -106,7 +106,7 @@ function shp_orchestration_shp_project_form_validate(array $form, FormStateInter
   $orchestration_provider_plugin = \Drupal::service('plugin.manager.orchestration_provider')
     ->getProviderInstance();
 
-  $response = $orchestration_provider_plugin->getSecret($secret_name);
+  $response = $orchestration_provider_plugin->getSecret(0, $secret_name);
   // The client will respond FALSE if the status code doesn't return a 200.
   if ($response === FALSE) {
     $form_state->setErrorByName('field_shp_build_secret', t('Secret: @secret_name does not exist.', ['@secret_name' => $secret_name]));
