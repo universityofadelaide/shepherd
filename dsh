@@ -147,8 +147,8 @@ dsh_openshift_init() {
     fi
   done
 
-  if grep "\"auth\":\"<AUTH>\"" deploy/local/operator/config/manager/secret.yml  > /dev/null 2>&1; then
-    error "Set github token in deploy/local/operator/config/manager/secret.yml"
+  if grep "\"auth\":\"<AUTH>\"" deploy/local/operator/secret.yaml > /dev/null 2>&1; then
+    error "Set github token in deploy/local/operator/secret.yaml"
     exit 1
   fi
 
