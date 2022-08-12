@@ -46,7 +46,7 @@ $db_provisioner_config->save();
 $openshift_config = [
   'endpoint'   => $openshift_url,
   'token'      => $token,
-  'namespace'  => 'shepherd',
+  'namespace'  => 'shepherd-uat',
   'verify_tls' => FALSE,
 ];
 $orchestration_config = $config->getEditable('shp_orchestration.settings');
@@ -116,8 +116,8 @@ else {
 // Create config entities for the service accounts if they don't exist.
 if (!$service_accounts = $etm->getStorage('service_account')->loadByProperties([])) {
   for ($i = 0; $i <= 4; $i++) {
-    $label = sprintf("shepherd-prd-provisioner-00%02d", $i);
-    $id = sprintf("shepherd_prd_provisioner_00%02d", $i);
+    $label = sprintf("shepherd-uat-provisioner-00%02d", $i);
+    $id = sprintf("shepherd_uat_provisioner_00%02d", $i);
 
     // This is pretty horrid, but there is no oc command in the dsh shell.
     $token = trim(file_get_contents("../.$label.token"));
@@ -182,7 +182,6 @@ if (!$site = reset($nodes)) {
     'uid'                       => '1',
     'status'                    => 1,
     'title'                     => 'Drupal test site',
-    'field_shp_namespace'       => 'shepherd',
     'field_shp_short_name'      => 'test',
     'field_shp_domain'          => 'test-live.' . $domain_name,
     'field_shp_git_default_ref' => 'master',

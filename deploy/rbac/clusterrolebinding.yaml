@@ -9,4 +9,4 @@ roleRef:
 subjects:
   - kind: ServiceAccount
     name: shepherd
-    namespace: shepherd
+    namespace: shepherd-uat

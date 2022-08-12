@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: operator
-  namespace: shepherd
+  namespace: shepherd-uat
 spec:
   selector:
     matchLabels:

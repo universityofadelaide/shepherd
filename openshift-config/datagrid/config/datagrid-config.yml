@@ -350,4 +350,5 @@ data:
     </server>
 kind: ConfigMap
 metadata:
+  namespace: shepherd-uat-datagrid
   name: datagrid-config

@@ -1,6 +1,7 @@
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
+  namespace: shepherd-uat-datagrid
   name: jdg-allow-8888
 spec:
   ingress:

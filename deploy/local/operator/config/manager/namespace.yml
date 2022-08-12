@@ -1,6 +1,10 @@
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: shepherd-operator
+  annotations:
+    openshift.io/description: ""
+    openshift.io/display-name: ""
+    openshift.io/requester: developer
+  name: shepherd-uat-operator
   labels:
     control-plane: controller-manager
