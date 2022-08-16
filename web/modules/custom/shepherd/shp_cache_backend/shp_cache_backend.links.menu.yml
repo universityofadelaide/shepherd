@@ -1,0 +1,5 @@
+shp_cache_backend.settings:
+  title: 'Cache backend settings'
+  parent: shp_custom.admin_config_shepherd
+  description: 'Configure the cache backend settings.'
+  route_name: shp_cache_backend.settings

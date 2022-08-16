@@ -116,6 +116,13 @@ class OrchestrationProviderSettingsForm extends ConfigFormBase {
       '#description' => $this->t("The OpenShift project to use."),
       '#required' => FALSE,
     ];
+    $form['connection']['site_deploy_prefix'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('Site (Openshift Project) deploy prefix'),
+      '#default_value' => $config->get('connection.site_deploy_prefix'),
+      '#description' => $this->t("The prefix for newly deployed sites which are Openshift Projects."),
+      '#required' => FALSE,
+    ];
     $form['connection']['uid'] = [
       '#type' => 'textfield',
       '#title' => $this->t('User ID'),
