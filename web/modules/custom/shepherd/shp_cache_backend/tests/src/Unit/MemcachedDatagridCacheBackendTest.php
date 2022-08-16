@@ -85,7 +85,7 @@ class MemcachedDatagridCacheBackendTest extends UnitTestCase {
     $this->client = $this->createMock(Client::class);
     $configFactory = $this->getConfigFactoryStub([
       'shp_cache_backend.settings' => [
-        'namespace' => 'shepherd-uat-datagrid',
+        'namespace' => 'shepherd-dev-datagrid',
       ],
       'shp_orchestration.settings' => [
         'connection.token' => 'mytoken',

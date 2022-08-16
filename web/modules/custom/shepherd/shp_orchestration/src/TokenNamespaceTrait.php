@@ -34,7 +34,7 @@ trait TokenNamespaceTrait {
    *   The 'shepherdified name'.
    */
   private function buildProjectName(int $site_id): string {
-    $prefix = $this->config->get('connection.site_deploy_prefix') ?? 'shp-uat-';
+    $prefix = $this->config->get('connection.site_deploy_prefix') ?? 'shepherd-dev';
     return $prefix . $site_id;
   }
 
