@@ -44,10 +44,11 @@ $db_provisioner_config->set(
 $db_provisioner_config->save();
 
 $openshift_config = [
-  'endpoint'   => $openshift_url,
-  'token'      => $token,
-  'namespace'  => 'shepherd',
-  'verify_tls' => FALSE,
+  'endpoint'           => $openshift_url,
+  'token'              => $token,
+  'namespace'          => 'shepherd-dev',
+  'site_deploy_prefix' => 'shepherd-dev-',
+  'verify_tls'         => FALSE,
 ];
 $orchestration_config = $config->getEditable('shp_orchestration.settings');
 foreach ($openshift_config as $key => $value) {
@@ -56,10 +57,15 @@ foreach ($openshift_config as $key => $value) {
 $orchestration_config->set('selected_provider', 'openshift_orchestration_provider');
 $orchestration_config->save();
 
+// Set datagrid cache config.
+$cache_config = $config->getEditable('shp_cache_backend.settings');
+$cache_config->set('namespace', 'shepherd-dev-datagrid');
+$cache_config->save();
+
 // Force reload the orchestration plugin to clear the static cache.
 Drupal::service('plugin.manager.orchestration_provider')->getProviderInstance(TRUE);
 
-if (!$development = $etm->getStorage('taxonomy_term')->loadByProperties(['vid' => 'Dev'])) {
+if (!$development = $etm->getStorage('taxonomy_term')->loadByProperties(['name' => 'Dev'])) {
   $development_env = Term::create([
     'vid'                   => 'shp_environment_types',
     'name'                  => 'Dev',
@@ -101,7 +107,7 @@ else {
 }
 
 // Create a storage class.
-if (!$storage = $etm->getStorage('taxonomy_term')->loadByProperties(['vid' => 'Gold'])) {
+if (!$storage = $etm->getStorage('taxonomy_term')->loadByProperties(['name' => 'Gold'])) {
   $storage = Term::create([
     'vid' => 'shp_storage_class',
     'name' => 'gold',
@@ -116,8 +122,8 @@ else {
 // Create config entities for the service accounts if they don't exist.
 if (!$service_accounts = $etm->getStorage('service_account')->loadByProperties([])) {
   for ($i = 0; $i <= 4; $i++) {
-    $label = sprintf("shepherd-prd-provisioner-00%02d", $i);
-    $id = sprintf("shepherd_prd_provisioner_00%02d", $i);
+    $label = sprintf("shepherd-dev-provisioner-00%02d", $i);
+    $id = sprintf("shepherd_dev_provisioner_00%02d", $i);
 
     // This is pretty horrid, but there is no oc command in the dsh shell.
     $token = trim(file_get_contents("../.$label.token"));
@@ -196,7 +202,7 @@ else {
 }
 
 $nodes = $etm->getStorage('node')
-  ->loadByProperties(['field_shp_domain' => 'wordpress-test-development.' . $domain_name]);
+  ->loadByProperties(['field_shp_domain' => 'wordpress-test-0.' . $domain_name]);
 
 if (!$env = reset($nodes)) {
   $env = Node::create([
@@ -205,7 +211,7 @@ if (!$env = reset($nodes)) {
     'uid'                        => '1',
     'status'                     => 1,
     'title'                      => 'Wordpress test environment',
-    'field_shp_domain'           => 'wordpress-test-development.' . $domain_name,
+    'field_shp_domain'           => 'wordpress-test-0.' . $domain_name,
     'field_shp_path'             => $site->field_shp_path->value,
     'field_shp_environment_type' => [['target_id' => $development_env->id()]],
     'field_shp_git_reference'    => 'master',

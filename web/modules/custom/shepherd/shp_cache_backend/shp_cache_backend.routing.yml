@@ -1,0 +1,7 @@
+shp_cache_backend.settings:
+  path: '/admin/config/shepherd/cache-backend'
+  defaults:
+    _form: '\Drupal\shp_cache_backend\Form\DatagridPluginSettingsForm'
+    _title: 'Cache backend settings'
+  requirements:
+    _permission: 'administer account settings'
