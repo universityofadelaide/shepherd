@@ -2,7 +2,6 @@
 
 namespace Drupal\Tests\shp_cache_backend\Unit;
 
-use Drupal\Core\Config\ImmutableConfig;
 use Drupal\Core\DependencyInjection\ContainerBuilder;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Field\FieldItemListInterface;
@@ -84,14 +83,16 @@ class MemcachedDatagridCacheBackendTest extends UnitTestCase {
     $this->environment->field_shp_site->entity = $this->site;
     $this->environment->field_shp_site->target_id = 456;
     $this->client = $this->createMock(Client::class);
-    $config = $this->createMock(ImmutableConfig::class);
-    $config->expects($this->any())
-      ->method('get')
-      ->willReturnMap([
-        ['connection.token', 'mytoken'],
-        ['connection.namespace', 'mynamespace'],
-        ['site_deploy_prefix', 'test-'],
-      ]);
+    $configFactory = $this->getConfigFactoryStub([
+      'shp_cache_backend.settings' => [
+        'namespace' => 'shepherd-uat-datagrid',
+      ],
+      'shp_orchestration.settings' => [
+        'connection.token' => 'mytoken',
+        'connection.namespace' => 'mynamespace',
+        'connection.site_deploy_prefix' => 'test-',
+      ],
+    ]);
 
     $secret = [
       'data' => [
@@ -102,7 +103,7 @@ class MemcachedDatagridCacheBackendTest extends UnitTestCase {
       ->willReturn($secret);
 
     $this->environmentType = $this->createMock(EnvironmentType::class);
-    $this->plugin = new MemcachedDatagrid([], 'test', [], $this->client, $config, $this->environmentType);
+    $this->plugin = new MemcachedDatagrid([], 'test', [], $this->client, $configFactory, $this->environmentType);
 
     // Provide a mock service container, for the services our module uses.
     $container = new ContainerBuilder();
@@ -174,10 +175,11 @@ class MemcachedDatagridCacheBackendTest extends UnitTestCase {
     $this->environmentType->expects($this->once())
       ->method('isPromotedEnvironment')
       ->willReturn($isPromoted);
+    $envVars = $this->plugin->getEnvironmentVariables($this->environment);
     $this->assertEquals([
       'MEMCACHE_ENABLED' => '1',
       'MEMCACHE_HOST' => $host,
-    ], $this->plugin->getEnvironmentVariables($this->environment));
+    ], $envVars);
   }
 
   /**

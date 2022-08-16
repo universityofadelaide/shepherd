@@ -2,7 +2,7 @@
 
 namespace Drupal\shp_cache_backend\Plugin\CacheBackend;
 
-use Drupal\Core\Config\ConfigFactory;
+use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\node\NodeInterface;
 use Drupal\shp_cache_backend\Plugin\CacheBackendBase;
 use Drupal\shp_custom\Service\EnvironmentType;
@@ -102,12 +102,12 @@ class MemcachedDatagrid extends CacheBackendBase {
    * @param \Drupal\shp_custom\Service\EnvironmentType $environmentType
    *   Environment type.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, Client $client, ConfigFactory $config, EnvironmentType $environmentType) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, Client $client, ConfigFactoryInterface $config, EnvironmentType $environmentType) {
     parent::__construct($configuration, $plugin_id, $plugin_definition, $client);
-    $this->namespace = $config->get('connection.namespace');
     $this->environmentType = $environmentType;
     $this->config = $config->get('shp_orchestration.settings');
     $this->cacheConfig = $config->get('shp_cache_backend.settings');
+    $this->namespace = $this->config->get('connection.namespace');
   }
 
   /**
