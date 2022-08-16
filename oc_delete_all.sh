@@ -18,29 +18,29 @@ if [[ "$(oc whoami)" != "developer" ]]; then
   exit 1
 fi
 
-if oc get project shp-uat-2 > /dev/null 2>&1; then
-  warning "Deleting shp-uat-2 project"
-  oc delete project shp-uat-2
+if oc get project shepherd-dev-2 > /dev/null 2>&1; then
+  warning "Deleting shepherd-dev-2 project"
+  oc delete project shepherd-dev-2
 fi
 
-if oc get project shp-uat-3 > /dev/null 2>&1; then
-  warning "Deleting shp-uat-3 project"
-  oc delete project shp-uat-3
+if oc get project shepherd-dev-5 > /dev/null 2>&1; then
+  warning "Deleting shepherd-dev-5 project"
+  oc delete project shepherd-dev-5
 fi
 
-if oc get project shepherd-uat > /dev/null 2>&1; then
-  warning "Deleting shepherd-uat project"
-  oc delete project shepherd-uat
+if oc get project shepherd-dev-datagrid > /dev/null 2>&1; then
+  warning "Deleting shepherd-dev-datagrid project"
+  oc delete project shepherd-dev-datagrid
 fi
 
-if oc get project shepherd-uat-datagrid > /dev/null 2>&1; then
-  warning "Deleting shepherd-uat-datagrid project"
-  oc delete project shepherd-uat-datagrid
+if oc get project shepherd-dev-operator > /dev/null 2>&1; then
+  warning "Deleting shepherd-dev-operator project"
+  oc delete project shepherd-dev-operator
 fi
 
-if oc get project shepherd-uat-operator > /dev/null 2>&1; then
-  warning "Deleting shepherd-uat-operator project"
-  oc delete project shepherd-uat-operator
+if oc get project shepherd-dev > /dev/null 2>&1; then
+  warning "Deleting shepherd-dev project"
+  oc delete project shepherd-dev
 fi
 
 echo ""

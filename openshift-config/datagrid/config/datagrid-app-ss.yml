@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  namespace: shepherd-uat-datagrid
+  namespace: shepherd-dev-datagrid
   labels:
     app: datagrid73-basic
     application: datagrid-app

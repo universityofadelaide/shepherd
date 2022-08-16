@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: operator
-  namespace: shepherd-uat
+  namespace: shepherd-dev
 spec:
   selector:
     matchLabels:
@@ -32,7 +32,7 @@ spec:
           - name: SHEPHERD_OPERATOR_BACKUP_MYSQL_IMAGE
             value: "skpr/mtk-mysql"
           - name: SHEPHERD_OPERATOR_BACKUP_AWS_ENDPOINT
-            value: "http://minio.shepherd.svc.cluster.local:9000"
+            value: "http://minio.shepherd-dev.svc.cluster.local:9000"
           - name: SHEPHERD_OPERATOR_BACKUP_AWS_BUCKET_NAME
             value: "local"
           - name: SHEPHERD_OPERATOR_BACKUP_AWS_IMAGE
@@ -50,7 +50,7 @@ spec:
           - name: SHEPHERD_OPERATOR_RESTORE_MYSQL_IMAGE
             value: "skpr/mtk-mysql"
           - name: SHEPHERD_OPERATOR_RESTORE_AWS_ENDPOINT
-            value: "http://minio.shepherd.svc.cluster.local:9000"
+            value: "http://minio.shepherd-dev.svc.cluster.local:9000"
           - name: SHEPHERD_OPERATOR_RESTORE_AWS_BUCKET_NAME
             value: "local"
           - name: SHEPHERD_OPERATOR_RESTORE_AWS_IMAGE
@@ -80,7 +80,7 @@ spec:
           requests:
             cpu: 10m
             memory: 64Mi
-      serviceAccountName: shepherd
+      serviceAccountName: shepherd-sa
       terminationGracePeriodSeconds: 10
       imagePullSecrets:
         - name: dockerconfigjson-github-com

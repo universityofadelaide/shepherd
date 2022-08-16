@@ -70,20 +70,20 @@ dsh_openshift_init() {
   fi
 
   # Create new namespace/project for Openshift 4.x
-  echo "Ensuring shepherd-uat project exists."
-  if ! oc get project shepherd-uat > /dev/null 2>&1; then
-    oc new-project shepherd-uat
+  echo "Ensuring shepherd-dev project exists."
+  if ! oc get project shepherd-dev > /dev/null 2>&1; then
+    oc new-project shepherd-dev
   fi
 
-  echo "Ensuring/switching to the shepherd-uat project."
-  if [[ $(oc project -q) != "shepherd-uat" ]]; then
-    oc project shepherd-uat
+  echo "Ensuring/switching to the shepherd-dev project."
+  if [[ $(oc project -q) != "shepherd-dev" ]]; then
+    oc project shepherd-dev
   fi
 
   # Setup a new mysql server, expose it and group the services.
   echo "Ensuring mariadb service exists"
   if ! oc get svc mariadb > /dev/null 2>&1; then
-    oc new-app mariadb MYSQL_ROOT_PASSWORD=${SUPER_SECRET_PASSWORD} -l db=shepherd-uat
+    oc new-app mariadb MYSQL_ROOT_PASSWORD=${SUPER_SECRET_PASSWORD} -l db=shepherd-dev
     oc expose service mariadb --generator=service/v2 --type=LoadBalancer --name=mysql-external
     oc annotate svc mysql-external "service.alpha.openshift.io/dependencies=[{\"name\": \"mariadb\", \"kind\": \"Service\"}]"
   fi
@@ -100,8 +100,8 @@ dsh_openshift_init() {
 
   # Setup the restic password in an OpenShift secret.
   echo "Ensuring restic secret exists."
-  if ! oc get secret shepherd-uat-restic-secret > /dev/null 2>&1; then
-    oc create secret generic shepherd-uat-restic-secret --from-literal=password=${SUPER_SECRET_PASSWORD}
+  if ! oc get secret shepherd-dev-restic-secret > /dev/null 2>&1; then
+    oc create secret generic shepherd-dev-restic-secret --from-literal=password=${SUPER_SECRET_PASSWORD}
   fi
 
   # Setup the restic PVC for storing backups
@@ -120,25 +120,25 @@ dsh_openshift_init() {
     fi
   fi
 
-  # Create a permanent token that shepherd-uat can use to talk to OpenShift.
+  # Create a permanent token that shepherd-dev can use to talk to OpenShift.
   echo "Ensuring serviceaccount exists for token."
-  if ! oc get serviceaccount shepherd-uat > /dev/null 2>&1; then
+  if ! oc get serviceaccount shepherd-sa > /dev/null 2>&1; then
     ${ADMIN_LOGIN}
-    oc create serviceaccount shepherd-uat
-    oc adm policy add-cluster-role-to-user cluster-admin system:serviceaccount:shepherd-uat:shepherd-uat
-    oc adm policy add-cluster-role-to-user self-provisioner system:serviceaccount:shepherd-uat:shepherd-uat
+    oc create serviceaccount shepherd-sa
+    oc adm policy add-cluster-role-to-user cluster-admin system:serviceaccount:shepherd-dev:shepherd-sa
+    oc adm policy add-cluster-role-to-user self-provisioner system:serviceaccount:shepherd-dev:shepherd-sa
     ${DEV_LOGIN}
   fi
 
   # Creating additional service accounts for namespace manipulation.
   echo "Ensuring serviceaccounts exist for provisioning."
   for i in {0..4} ; do
-    SA=$(printf 'shepherd-uat-provisioner-00%02d' "$i")
+    SA=$(printf 'shepherd-dev-provisioner-00%02d' "$i")
     if ! oc get serviceaccount "${SA}" > /dev/null 2>&1; then
       ${ADMIN_LOGIN}
       oc create serviceaccount "${SA}"
-      oc adm policy add-cluster-role-to-user cluster-admin system:serviceaccount:shepherd-uat:"${SA}"
-      oc adm policy add-cluster-role-to-user self-provisioner system:serviceaccount:shepherd-uat:"${SA}"
+      oc adm policy add-cluster-role-to-user cluster-admin system:serviceaccount:shepherd-dev:"${SA}"
+      oc adm policy add-cluster-role-to-user self-provisioner system:serviceaccount:shepherd-dev:"${SA}"
       ${DEV_LOGIN}
 
       # This is pretty horrid, but there is no oc command in the dsh shell.
@@ -154,9 +154,9 @@ dsh_openshift_init() {
 
   ${ADMIN_LOGIN}
   echo "Ensuring datagrid config exists."
-  if ! oc get project shepherd-uat-datagrid > /dev/null 2>&1; then
+  if ! oc get project shepherd-dev-datagrid > /dev/null 2>&1; then
     oc apply -f openshift-config/datagrid/namespace.yml
-    oc adm policy add-role-to-user admin developer -n shepherd-uat-datagrid
+    oc adm policy add-role-to-user admin developer -n shepherd-dev-datagrid
   fi
   ${DEV_LOGIN}
 
@@ -165,9 +165,9 @@ dsh_openshift_init() {
 
   ${ADMIN_LOGIN}
   echo "Ensuring backup operator config exists."
-  if ! oc get project shepherd-uat-operator > /dev/null 2>&1; then
+  if ! oc get project shepherd-dev-operator > /dev/null 2>&1; then
     oc apply -f deploy/local/operator/config/manager/namespace.yml
-    oc adm policy add-role-to-user admin developer -n shepherd-uat-operator
+    oc adm policy add-role-to-user admin developer -n shepherd-dev-operator
     oc apply -f deploy/rbac/
     oc apply -f deploy/local/operator/
     oc apply -f deploy/local/operator/config/manager
@@ -177,13 +177,13 @@ dsh_openshift_init() {
   ${DEV_LOGIN}
 
   # Retrieve the service account token and the minishift ip.
-  SERVICE_ACCOUNT=$(oc describe serviceaccount shepherd-uat | grep Token | awk '{ print $2 }')
+  SERVICE_ACCOUNT=$(oc describe serviceaccount shepherd-sa | grep Token | awk '{ print $2 }')
 
   # Now set the things that we need in the dsh shell.
   TOKEN=$(oc describe secret ${SERVICE_ACCOUNT} | grep "token:" | awk '{ print $2 }')
   OPENSHIFT_DOMAIN="apps-crc.testing"
   OPENSHIFT_URL="https://api.crc.testing:6443"
-  DB_HOST="mysql-external-shepherd-uat.${OPENSHIFT_DOMAIN}"
+  DB_HOST="mysql-external-shepherd-dev.${OPENSHIFT_DOMAIN}"
   DB_PORT=$(oc get service mysql-external --no-headers | sed 's/.*:\([0-9]*\).*/\1/')
 }
 

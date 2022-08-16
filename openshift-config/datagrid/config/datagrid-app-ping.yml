@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: Service
 metadata:
-  namespace: shepherd-uat-datagrid
+  namespace: shepherd-dev-datagrid
   annotations:
     service.alpha.kubernetes.io/tolerate-unready-endpoints: 'true'
   labels:
