@@ -41,7 +41,8 @@ $db_provisioner_config->save();
 $openshift_config = [
   'endpoint'   => $openshift_url,
   'token'      => $token,
-  'namespace'  => 'shepherd',
+  'namespace'          => 'shepherd-dev',
+  'site_deploy_prefix' => 'shepherd-dev-',
   'verify_tls' => FALSE,
 ];
 $orchestration_config = $config->getEditable('shp_orchestration.settings');
@@ -51,10 +52,15 @@ foreach ($openshift_config as $key => $value) {
 $orchestration_config->set('selected_provider', 'openshift_orchestration_provider');
 $orchestration_config->save();
 
+// Set datagrid cache config.
+$cache_config = $config->getEditable('shp_cache_backend.settings');
+$cache_config->set('namespace', 'shepherd-dev-datagrid');
+$cache_config->save();
+
 // Force reload the orchestration plugin to clear the static cache.
 Drupal::service('plugin.manager.orchestration_provider')->getProviderInstance(TRUE);
 
-if (!$development = $etm->getStorage('taxonomy_term')->loadByProperties(['vid' => 'Dev'])) {
+if (!$development = $etm->getStorage('taxonomy_term')->loadByProperties(['name' => 'Dev'])) {
   $development_env = Term::create([
     'vid'                   => 'shp_environment_types',
     'name'                  => 'Dev',
@@ -89,7 +95,7 @@ else {
 }
 
 // Create a storage class.
-if (!$storage = $etm->getStorage('taxonomy_term')->loadByProperties(['vid' => 'Gold'])) {
+if (!$storage = $etm->getStorage('taxonomy_term')->loadByProperties(['name' => 'Gold'])) {
   $storage = Term::create([
     'vid' => 'shp_storage_class',
     'name' => 'gold',
@@ -104,8 +110,8 @@ else {
 // Create config entities for the service accounts if they don't exist.
 if (!$service_accounts = $etm->getStorage('service_account')->loadByProperties([])) {
   for ($i = 0; $i <= 4; $i++) {
-    $label = sprintf("shepherd-prd-provisioner-00%02d", $i);
-    $id = sprintf("shepherd_prd_provisioner_00%02d", $i);
+    $label = sprintf("shepherd-dev-provisioner-00%02d", $i);
+    $id = sprintf("shepherd_dev_provisioner_00%02d", $i);
 
     // This is pretty horrid, but there is no oc command in the dsh shell.
     $token = trim(file_get_contents("../.$label.token"));
@@ -186,7 +192,7 @@ else {
   echo "Site already setup.\n";
 }
 
-$nodes = $stg->loadByProperties(['field_shp_domain' => 'uawcms-development.' . $domain_name]);
+$nodes = $stg->loadByProperties(['field_shp_domain' => 'uawcms-0.' . $domain_name]);
 
 if (!$env = reset($nodes)) {
   $env = Node::create([
