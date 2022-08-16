@@ -97,7 +97,7 @@ class MemcachedDatagrid extends CacheBackendBase {
    *   The plugin implementation definition.
    * @param \UniversityOfAdelaide\OpenShift\Client $client
    *   The OS Client.
-   * @param \Drupal\Core\Config\ConfigFactory $config
+   * @param \Drupal\Core\Config\ConfigFactoryInterface $config
    *   The orchestration config.
    * @param \Drupal\shp_custom\Service\EnvironmentType $environmentType
    *   Environment type.
