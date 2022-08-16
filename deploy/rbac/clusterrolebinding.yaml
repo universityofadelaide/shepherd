@@ -8,5 +8,5 @@ roleRef:
   name: shepherd
 subjects:
   - kind: ServiceAccount
-    name: shepherd
-    namespace: shepherd
+    name: shepherd-sa
+    namespace: shepherd-dev

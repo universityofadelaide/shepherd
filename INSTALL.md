@@ -58,8 +58,8 @@ New sites will randomly choose from one of these provisioner accounts when creat
 The accounts need to be created first, then added as service account config entities in the Shepherd UI.
 
 ```bash
-oc create serviceaccount shepherd-prd-provisioner-0001
-oc policy add-role-to-user admin system:serviceaccount:$(oc project -q):shepherd-prd-provisioner-0001
+oc create serviceaccount shepherd-dev-provisioner-0001
+oc policy add-role-to-user admin system:serviceaccount:$(oc project -q):shepherd-dev-provisioner-0001
 ```
 
 These examples are using 'admin' level rolebindings, which is unlikely to be correct for your cluster, but roughly what is required is:

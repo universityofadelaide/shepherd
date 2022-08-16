@@ -5,6 +5,6 @@ metadata:
     openshift.io/description: ""
     openshift.io/display-name: ""
     openshift.io/requester: developer
-  name: shepherd-dev-operator
+  name: shepherd-dev-datagrid
   labels:
-    control-plane: controller-manager
+    kubernetes.io/metadata.name: shepherd-dev-datagrid
