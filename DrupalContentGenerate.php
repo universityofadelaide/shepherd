@@ -43,11 +43,13 @@ $db_provisioner_config->set(
 );
 $db_provisioner_config->save();
 
+// Set orchestration provider config.
 $openshift_config = [
-  'endpoint'   => $openshift_url,
-  'token'      => $token,
-  'namespace'  => 'shepherd-uat',
-  'verify_tls' => FALSE,
+  'endpoint'           => $openshift_url,
+  'token'              => $token,
+  'namespace'          => 'shepherd-uat',
+  'site_deploy_prefix' => 'shp-local-',
+  'verify_tls'         => FALSE,
 ];
 $orchestration_config = $config->getEditable('shp_orchestration.settings');
 foreach ($openshift_config as $key => $value) {
@@ -55,6 +57,11 @@ foreach ($openshift_config as $key => $value) {
 }
 $orchestration_config->set('selected_provider', 'openshift_orchestration_provider');
 $orchestration_config->save();
+
+// Set datagrid cache config.
+$cache_config = $config->getEditable('shp_cache_backend.settings');
+$cache_config->set('namespace', 'shepherd-uat-datagrid');
+$cache_config->save();
 
 // Force reload the orchestration plugin to clear the static cache.
 Drupal::service('plugin.manager.orchestration_provider')->getProviderInstance(TRUE);
