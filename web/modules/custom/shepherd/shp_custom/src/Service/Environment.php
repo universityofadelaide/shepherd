@@ -130,6 +130,21 @@ class Environment {
   }
 
   /**
+   * Unless its a new environment, hide the db pre-populate field.
+   *
+   * @param array $form
+   *   Form render array.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   Form state.
+   */
+  public function checkHideDbPrepop(array &$form, FormStateInterface $form_state) {
+    $node = $form_state->getFormObject()->getEntity();
+    if (!$node->isNew()) {
+      $form['field_skip_db_prepop']['#access'] = FALSE;
+    }
+  }
+
+  /**
    * Set the default git branch from the project.
    *
    * @param array $form

@@ -37,9 +37,9 @@ third_party_settings:
         - field_shp_domain
         - field_shp_path
       label: 'Domain and Path'
-      region: hidden
+      region: content
       parent_name: ''
-      weight: 3
+      weight: 1
       format_type: details
       format_settings:
         classes: ''
@@ -62,9 +62,9 @@ third_party_settings:
         - field_shp_memory_request
         - field_shp_memory_limit
       label: Advanced
-      region: hidden
+      region: content
       parent_name: ''
-      weight: 5
+      weight: 7
       format_type: details
       format_settings:
         classes: ''
@@ -80,7 +80,7 @@ mode: default
 content:
   field_cache_backend:
     type: 'plugin_selector:plugin_select_list'
-    weight: 2
+    weight: 3
     region: content
     settings: {  }
     third_party_settings: {  }
@@ -170,7 +170,7 @@ content:
     third_party_settings: {  }
   field_shp_environment_type:
     type: options_select
-    weight: 1
+    weight: 2
     region: content
     settings: {  }
     third_party_settings: {  }
@@ -240,13 +240,13 @@ content:
     third_party_settings: {  }
   moderation_state:
     type: moderation_state_default
-    weight: 6
+    weight: 5
     region: content
     settings: {  }
     third_party_settings: {  }
   status:
     type: boolean_checkbox
-    weight: 7
+    weight: 6
     region: content
     settings:
       display_label: true

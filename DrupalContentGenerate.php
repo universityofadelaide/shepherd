@@ -11,11 +11,13 @@ use Drupal\user\Entity\User;
 use Drupal\shp_service_accounts\Entity\ServiceAccount;
 
 $etm = \Drupal::entityTypeManager();
+$stg = $etm->getStorage('node');
+$tstg = $etm->getStorage('taxonomy_term');
 $config = \Drupal::configFactory();
 $domain_name = getenv("OPENSHIFT_DOMAIN") ?: '192.168.99.100.nip.io';
 $openshift_url = getenv("OPENSHIFT_URL") ?: 'https://192.168.99.100:8443';
 $example_repository = getenv("DRUPAL_EXAMPLE_REPOSITORY") ?:
-    'https://github.com/universityofadelaide/shepherd-example-drupal.git';
+  'https://github.com/universityofadelaide/shepherd-example-drupal.git';
 
 $database_host = getenv("DB_HOST") ?: 'mysql-external.' . $domain_name;
 $database_port = getenv("DB_PORT") ?: '31632';
@@ -33,14 +35,8 @@ if (empty($token)) {
 
 // Set deployment database config.
 $db_provisioner_config = $config->getEditable('shp_database_provisioner.settings');
-$db_provisioner_config->set(
-  'host',
-  $database_host
-);
-$db_provisioner_config->set(
-  'port',
-  $database_port
-);
+$db_provisioner_config->set('host', $database_host);
+$db_provisioner_config->set('port', $database_port);
 $db_provisioner_config->save();
 
 // Set orchestration provider config.
@@ -66,7 +62,7 @@ $cache_config->save();
 // Force reload the orchestration plugin to clear the static cache.
 Drupal::service('plugin.manager.orchestration_provider')->getProviderInstance(TRUE);
 
-if (!$development = $etm->getStorage('taxonomy_term')->loadByProperties(['name' => 'Dev'])) {
+if (!$development = $tstg->loadByProperties(['name' => 'Dev'])) {
   $development_env = Term::create([
     'vid'                   => 'shp_environment_types',
     'name'                  => 'Dev',
@@ -108,7 +104,7 @@ else {
 }
 
 // Create a storage class.
-if (!$storage = $etm->getStorage('taxonomy_term')->loadByProperties(['name' => 'Gold'])) {
+if (!$storage = $tstg->loadByProperties(['name' => 'Gold'])) {
   $storage = Term::create([
     'vid' => 'shp_storage_class',
     'name' => 'gold',
@@ -141,8 +137,7 @@ else {
   echo "Service accounts already setup.\n";
 }
 
-$nodes = $etm->getStorage('node')
-  ->loadByProperties(['title' => 'Drupal example']);
+$nodes = $stg->loadByProperties(['title' => 'Drupal example']);
 
 if (!$project = reset($nodes)) {
   $project = Node::create([
@@ -179,8 +174,7 @@ else {
   echo "Project already setup.\n";
 }
 
-$nodes = $etm->getStorage('node')
-  ->loadByProperties(['title' => 'Drupal test site']);
+$nodes = $stg->loadByProperties(['title' => 'Drupal test site']);
 
 if (!$site = reset($nodes)) {
   $site = Node::create([
@@ -205,8 +199,7 @@ else {
   echo "Site already setup.\n";
 }
 
-$nodes = $etm->getStorage('node')
-  ->loadByProperties(['field_shp_domain' => 'test-0.' . $domain_name]);
+$nodes = $stg->loadByProperties(['field_shp_domain' => 'test-0.' . $domain_name]);
 
 if (!$env = reset($nodes)) {
   $env = Node::create([
