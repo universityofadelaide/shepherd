@@ -12,6 +12,7 @@ use Drupal\shp_service_accounts\Entity\ServiceAccount;
 
 $etm = \Drupal::entityTypeManager();
 $stg = $etm->getStorage('node');
+$tstg = $etm->getStorage('taxonomy_term');
 $config = \Drupal::configFactory();
 $domain_name = getenv("OPENSHIFT_DOMAIN") ?: '192.168.99.100.nip.io';
 $openshift_url = getenv("OPENSHIFT_URL") ?: 'https://192.168.99.100:8443';
@@ -60,7 +61,7 @@ $cache_config->save();
 // Force reload the orchestration plugin to clear the static cache.
 Drupal::service('plugin.manager.orchestration_provider')->getProviderInstance(TRUE);
 
-if (!$development = $etm->getStorage('taxonomy_term')->loadByProperties(['name' => 'Dev'])) {
+if (!$development = $tstg->loadByProperties(['name' => 'Dev'])) {
   $development_env = Term::create([
     'vid'                   => 'shp_environment_types',
     'name'                  => 'Dev',
@@ -95,7 +96,7 @@ else {
 }
 
 // Create a storage class.
-if (!$storage = $etm->getStorage('taxonomy_term')->loadByProperties(['name' => 'Gold'])) {
+if (!$storage = $tstg->loadByProperties(['name' => 'Gold'])) {
   $storage = Term::create([
     'vid' => 'shp_storage_class',
     'name' => 'gold',

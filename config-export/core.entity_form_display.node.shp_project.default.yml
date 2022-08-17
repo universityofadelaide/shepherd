@@ -173,8 +173,6 @@ content:
       description_rows: 5
       key_label: Key
       value_label: Value
-      description_label: Description
-      description_rows: 5
     third_party_settings: {  }
   field_shp_git_default_ref:
     type: string_textfield
