@@ -672,8 +672,8 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
 
     // Create a RoleBinding so Shepherd can perform operations in the
     // Project/Namespace from a consistent ServiceAccount.
-    // @todo, Make these params dynamic.
-    $this->createRoleBinding("shepherd", "admin", "shepherd");
+    // @todo, service account should also be dynamic.
+    $this->createRoleBinding("shepherd-sa", "admin", $this->config->get('connection.namespace'));
 
     // Lastly, allow the new project to pull from the shepherd project.
     $this->setSiteConfig(0);
