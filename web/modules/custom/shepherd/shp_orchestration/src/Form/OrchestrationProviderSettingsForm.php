@@ -139,10 +139,11 @@ class OrchestrationProviderSettingsForm extends ConfigFormBase {
     ];
     $form['connection']['admin_users'] = [
       '#type' => 'textarea',
-      '#title' => $this->t('Token'),
+      '#title' => $this->t('Additional admin users'),
       '#default_value' => $config->get('connection.admin_users'),
       '#attributes' => ['autocomplete' => 'off'],
       '#required' => TRUE,
+      '#description' => $this->t("Any additional users to add to new projects as admins. Usernames separated by comma, eg bob,jim,frank"),
     ];
 
     return parent::buildForm($form, $form_state);
