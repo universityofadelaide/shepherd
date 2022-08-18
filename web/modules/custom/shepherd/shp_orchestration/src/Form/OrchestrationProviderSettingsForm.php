@@ -137,6 +137,13 @@ class OrchestrationProviderSettingsForm extends ConfigFormBase {
       '#default_value' => $config->get('connection.gid'),
       '#required' => FALSE,
     ];
+    $form['connection']['admin_users'] = [
+      '#type' => 'textarea',
+      '#title' => $this->t('Token'),
+      '#default_value' => $config->get('connection.admin_users'),
+      '#attributes' => ['autocomplete' => 'off'],
+      '#required' => TRUE,
+    ];
 
     return parent::buildForm($form, $form_state);
   }

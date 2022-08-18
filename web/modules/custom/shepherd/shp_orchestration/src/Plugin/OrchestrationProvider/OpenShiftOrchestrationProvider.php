@@ -667,13 +667,39 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     $projectName = $this->buildProjectName($site_id);
     $this->client->createProjectRequest($projectName);
 
-    // @todo This works for local dev, but what to do here eh?
-    $this->createRoleBinding('developer', 'admin');
+    $connectionNamespace = $this->config->get('connection.namespace');
+
+    // @todo solve visibility for business users.
+    // Best we can do with no deep ldap/something integration
+    // is to assume that the current username matches.
+    $username = \Drupal::currentUser()->getAccountName();
+    if (!strlen($username) && $connectionNamespace == 'shepherd-dev') {
+      // No username? likely the setup script, but only do it for development.
+      $this->createRoleBinding('developer', 'admin');
+    }
+    else {
+      $this->createRoleBinding($username, 'admin');
+    }
+
+    // Also process any manually specified users.
+    if ($admin_users = $this->config->get('connection.admin_users')) {
+      foreach (explode(',', $admin_users) as $username) {
+        // We wont have access to check for users, so wrap in try/catch.
+        try {
+          $this->createRoleBinding($username, 'admin');
+        }
+        catch (ClientException $e) {
+          $this->messenger->addError(t('Unable to create rolebinding for :username',
+            [':username' => $username]
+          ));
+        }
+      }
+    }
 
     // Create a RoleBinding so Shepherd can perform operations in the
     // Project/Namespace from a consistent ServiceAccount.
-    // @todo, service account should also be dynamic.
-    $this->createRoleBinding("shepherd-sa", "admin", $this->config->get('connection.namespace'));
+    // @todo fix shepherd-sa service account to be dynamic.
+    $this->createRoleBinding("shepherd-sa", "admin", $connectionNamespace);
 
     // Lastly, allow the new project to pull from the shepherd project.
     $this->setSiteConfig(0);
