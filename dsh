@@ -3,6 +3,9 @@
 # `set +e` is used to continue on errors throughout this script.
 set -euo pipefail
 
+# Ensure using 4.10 oc client version.
+eval $(crc oc-env)
+
 # Used as the prefix for docker networking and container naming.
 PROJECT=$(basename "${PWD}")
 export PROJECT
