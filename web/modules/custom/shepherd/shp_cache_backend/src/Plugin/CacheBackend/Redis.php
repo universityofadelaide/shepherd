@@ -162,6 +162,16 @@ class Redis extends CacheBackendBase {
         'selector' => array_key_exists('labels', $data) ? array_merge($data['labels'], ['name' => $redis_name]) : [],
         'strategy' => [
           'type' => 'Rolling',
+          'resources' => [
+            'limits' => [
+              'cpu' => '200m',
+              'memory' => '256Mi',
+            ],
+            'requests' => [
+              'cpu' => '100m',
+              'memory' => '50Mi',
+            ],
+          ],
         ],
         'template' => [
           'metadata' => [
