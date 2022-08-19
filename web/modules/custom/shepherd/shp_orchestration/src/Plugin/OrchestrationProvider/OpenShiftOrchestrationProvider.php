@@ -134,11 +134,12 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
   /**
    * {@inheritdoc}
    */
-  public function createdProject(string $name, string $builder_image, string $source_repo, string $source_ref = 'master', string $source_secret = NULL, array $environment_variables = []) {
+  public function createdProject(int $project_id, string $name, string $builder_image, string $source_repo, string $source_ref = 'master', string $source_secret = NULL, array $environment_variables = []) {
     $sanitised_project_name = self::sanitise($name);
     $sanitised_source_ref = self::sanitise($source_ref);
     $image_stream_tag = $sanitised_project_name . ':' . $sanitised_source_ref;
     $build_config_name = $sanitised_project_name . '-' . $sanitised_source_ref;
+    $build_limits = $this->generateRequestLimits(NULL, $project_id);
 
     $formatted_env_vars = $this->formatEnvVars($environment_variables);
 
@@ -147,7 +148,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
 
       $image_stream = $this->client->generateImageStreamConfig($sanitised_project_name);
       $this->client->createImageStream($image_stream);
-      $this->createBuildConfig($build_config_name, $source_ref, $source_repo, $builder_image, $source_secret, $image_stream_tag, $formatted_env_vars);
+      $this->createBuildConfig($build_config_name, $source_ref, $source_repo, $builder_image, $source_secret, $image_stream_tag, $formatted_env_vars, $build_limits);
     }
     catch (ClientException $e) {
       $this->exceptionHandler->handleClientException($e);
@@ -159,8 +160,10 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
   /**
    * {@inheritdoc}
    */
-  public function updatedProject(string $name, string $builder_image, string $source_repo, string $source_ref = 'master', string $source_secret = NULL, array $environment_variables = []) {
+  public function updatedProject(int $project_id, string $name, string $builder_image, string $source_repo, string $source_ref = 'master', string $source_secret = NULL, array $environment_variables = []) {
     $sanitised_name = self::sanitise($name);
+
+    $build_limits = $this->generateRequestLimits(NULL, $project_id);
 
     // Package config for the client.
     $build_data = [
@@ -173,6 +176,8 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
         'name' => $builder_image,
       ],
     ];
+
+    $build_data = array_merge($build_data, $build_limits);
 
     try {
       $this->setSiteConfig(0);
@@ -216,14 +221,16 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
    *   Image stream tag.
    * @param array $formatted_env_vars
    *   Formatted env vars.
+   * @param array $limits
+   *   Cpu and memory limits.
    *
    * @return bool
    *   Created or already exists = TRUE. Fail = FALSE.
    */
-  protected function createBuildConfig(string $build_config_name, string $source_ref, string $source_repo, string $builder_image, string $source_secret, string $image_stream_tag, array $formatted_env_vars) {
+  protected function createBuildConfig(string $build_config_name, string $source_ref, string $source_repo, string $builder_image, string $source_secret, string $image_stream_tag, array $formatted_env_vars, array $limits) {
     // Create build config if it doesn't exist.
     if (!$this->client->getBuildConfig($build_config_name)) {
-      $build_data = $this->formatBuildData($source_ref, $source_repo, $builder_image, $formatted_env_vars);
+      $build_data = $this->formatBuildData($source_ref, $source_repo, $builder_image, $formatted_env_vars, $limits);
 
       $build_config = $this->client->generateBuildConfig(
         $build_config_name,
@@ -275,13 +282,14 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     $deployment_name = self::generateDeploymentName($environment_id);
     $image_stream_tag = $sanitised_project_name . ':' . $sanitised_source_ref;
     $build_config_name = $sanitised_project_name . '-' . $sanitised_source_ref;
+    $build_limits = $this->generateRequestLimits($environment_id);
     $formatted_env_vars = $this->formatEnvVars($environment_variables, $deployment_name);
 
     // Ensure in the shepherd project.
     $this->setSiteConfig(0);
 
     // Tell, don't ask (to create a build config).
-    $this->createBuildConfig($build_config_name, $source_ref, $source_repo, $builder_image, $source_secret, $image_stream_tag, $formatted_env_vars);
+    $this->createBuildConfig($build_config_name, $source_ref, $source_repo, $builder_image, $source_secret, $image_stream_tag, $formatted_env_vars, $build_limits);
 
     // Now we need to use the site project.
     $this->setSiteConfig($site_id);
@@ -439,6 +447,18 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
 
     $this->client->updateDeploymentConfig($deployment_name, $deployment_config, [
       'spec' => [
+        'strategy' => [
+          'resources' => [
+            'limits' => [
+              'cpu' => $deploy_data['cpu_limit'],
+              'memory' => $deploy_data['memory_limit'],
+            ],
+            'requests' => [
+              'cpu' => $deploy_data['cpu_request'],
+              'memory' => $deploy_data['memory_request'],
+            ],
+          ],
+        ],
         'template' => [
           'spec' => [
             'containers' => [
@@ -460,6 +480,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
         ],
       ],
     ]);
+
     // Update the HPA only if there is one.
     if ($this->client->getHpa($deployment_name)) {
       $hpa->setName($deployment_name);
@@ -1460,30 +1481,36 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       }
     }
 
-    $request_limits = $this->generateRequestLimits($environment_id);
-    $deploy_data = array_merge($deploy_data, $request_limits);
-
-    return $deploy_data;
+    $request_limits = $this->generateRequestLimits($environment_id, NULL);
+    return array_merge($deploy_data, $request_limits);
   }
 
   /**
    * Generate request limits.
    *
-   * @param int $environment_id
+   * @param int|null $environment_id
+   *   The ID of the environment being deployed.
+   * @param int|null $project_id
    *   The ID of the environment being deployed.
    *
    * @return array
    *   Array with cpu & memory request & limits.
    */
-  protected function generateRequestLimits(int $environment_id) {
+  protected function generateRequestLimits(int $environment_id = NULL, int $project_id = NULL) {
     $request_limits = [];
 
-    /** @var \Drupal\node\Entity\Node $environment */
-    $environment = Node::load($environment_id);
-    /** @var \Drupal\node\Entity\Node $site */
-    $site = $environment->field_shp_site->entity;
-    /** @var \Drupal\node\Entity\Node $project */
-    $project = $site->field_shp_project->entity;
+    if ($environment_id) {
+      /** @var \Drupal\node\Entity\Node $environment */
+      $environment = Node::load($environment_id);
+      /** @var \Drupal\node\Entity\Node $site */
+      $site = $environment->field_shp_site->entity;
+      /** @var \Drupal\node\Entity\Node $project */
+      $project = $site->field_shp_project->entity;
+    }
+    else {
+      /** @var \Drupal\node\Entity\Node $project */
+      $project = Node::load($project_id);
+    }
 
     $fields = [
       'field_shp_cpu_request'    => 'cpu_request',
@@ -1493,14 +1520,13 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     ];
 
     foreach ($fields as $field => $client_field) {
-      if (!$environment->{$field}->isEmpty()) {
+      if ($environment_id && !$environment->{$field}->isEmpty()) {
         $request_limits[$client_field] = $environment->{$field}->value;
         continue;
       }
 
       if (!$project->{$field}->isEmpty()) {
         $request_limits[$client_field] = $project->{$field}->value;
-        continue;
       }
 
     }
@@ -1521,13 +1547,19 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
    *   The builder image.
    * @param array $formatted_env_vars
    *   Environment variables.
+   * @param array $limits
+   *   Cpu and memory limits.
    *
    * @return array
    *   Build data.
    */
-  protected function formatBuildData(string $source_ref, string $source_repo, string $builder_image, array $formatted_env_vars = []) {
+  protected function formatBuildData(string $source_ref, string $source_repo, string $builder_image, array $formatted_env_vars = [], array $limits = []) {
     // Package config for the client.
     return [
+      'cpu_limit' => $limits['cpu_limit'],
+      'cpu_request' => $limits['cpu_request'],
+      'memory_limit' => $limits['memory_limit'],
+      'memory_request' => $limits['memory_request'],
       'git' => [
         'ref' => $source_ref,
         'uri' => $source_repo,

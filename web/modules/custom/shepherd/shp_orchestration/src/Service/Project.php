@@ -42,6 +42,7 @@ class Project extends EntityActionBase {
   public function created(NodeInterface $project) {
     $environment_variables = $this->configuration->getProjectEnvironmentVariables($project);
     return $this->orchestrationProviderPlugin->createdProject(
+      $project->id(),
       $project->getTitle(),
       $project->field_shp_builder_image->value,
       $project->field_shp_git_repository->value,
@@ -63,6 +64,7 @@ class Project extends EntityActionBase {
   public function updated(NodeInterface $project) {
     $environment_variables = $this->configuration->getProjectEnvironmentVariables($project);
     return $this->orchestrationProviderPlugin->updatedProject(
+      $project->id(),
       $project->getTitle(),
       $project->field_shp_builder_image->value,
       $project->field_shp_git_repository->value,

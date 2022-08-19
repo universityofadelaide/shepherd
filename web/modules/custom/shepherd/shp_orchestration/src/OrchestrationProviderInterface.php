@@ -15,6 +15,8 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
   /**
    * Creates artifacts in orchestration provider based on Shepherd project.
    *
+   * @param int $project_id
+   *   The project node id.
    * @param string $name
    *   Name of the project.
    * @param string $builder_image
@@ -32,6 +34,7 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
    *   Returns true if succeeded.
    */
   public function createdProject(
+    int $project_id,
     string $name,
     string $builder_image,
     string $source_repo,
@@ -43,6 +46,8 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
   /**
    * Updates artifacts in orchestration provider based on Shepherd project.
    *
+   * @param int $project_id
+   *   The project node id.
    * @param string $name
    *   Name of the project.
    * @param string $builder_image
@@ -60,6 +65,7 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
    *   Returns true if succeeded.
    */
   public function updatedProject(
+    int $project_id,
     string $name,
     string $builder_image,
     string $source_repo,
