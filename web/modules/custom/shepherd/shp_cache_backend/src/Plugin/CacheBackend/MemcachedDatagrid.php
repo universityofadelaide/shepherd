@@ -382,6 +382,16 @@ class MemcachedDatagrid extends CacheBackendBase {
         'selector' => array_key_exists('labels', $data) ? array_merge($data['labels'], ['name' => $memcached_name]) : [],
         'strategy' => [
           'type' => 'Rolling',
+          'resources' => [
+            'limits' => [
+              'cpu' => '100m',
+              'memory' => '128Mi',
+            ],
+            'requests' => [
+              'cpu' => '50m',
+              'memory' => '64Mi',
+            ],
+          ],
         ],
         'template' => [
           'metadata' => [
