@@ -1382,8 +1382,13 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
   protected function generateOpenShiftPodUrl(int $site_id, string $pod_name, string $view) {
     $endpoint = $this->config->get('connection.endpoint');
 
-    // @todo fix for deployed version, store web ui or remove this all.
-    $endpoint = str_replace('api.crc', 'console-openshift-console.apps-crc', $endpoint);
+    // This search/replace is for development.
+    $endpoint = str_replace('api.crc.', 'console-openshift-console.apps-crc.', $endpoint);
+
+    // This one is for production.
+    $endpoint = str_replace('api.', 'console-openshift-console.apps.', $endpoint);
+
+    // The port isn't used through the UI.
     $endpoint = str_replace(':6443', '', $endpoint);
 
     $namespace = $this->buildProjectName($site_id);
