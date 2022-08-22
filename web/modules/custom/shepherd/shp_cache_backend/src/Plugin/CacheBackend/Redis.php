@@ -147,7 +147,6 @@ class Redis extends CacheBackendBase {
    */
   protected function generateDeploymentConfig(string $deployment_name, string $redis_name, string $redis_port, array $data) {
     $redis_data = $deployment_name . '-data';
-    $redis_conf = $deployment_name . '-config';
 
     $redis_deployment_config = [
       'apiVersion' => 'apps.openshift.io/v1',
@@ -193,10 +192,6 @@ class Redis extends CacheBackendBase {
                         'port' => 6379,
                       ],
                     ],
-                    'command' => [
-                      '/usr/local/bin/docker-entrypoint.sh',
-                      '/usr/local/etc/redis/redis.conf',
-                    ],
                     'ports' => [
                       [
                         'containerPort' => (int) $redis_port,
@@ -229,11 +224,6 @@ class Redis extends CacheBackendBase {
                         'mountPath' => '/data',
                         'name' => $redis_data,
                       ],
-                      [
-                        'mountPath' => '/usr/local/etc/redis',
-                        'name' => $redis_conf,
-                      ],
-
                     ],
                   ],
                 ],
@@ -241,20 +231,7 @@ class Redis extends CacheBackendBase {
                 [
                   'name' => $redis_data,
                 ],
-                [
-                  'name' => $redis_conf,
-                  'configMap' => [
-                    'name' => 'redis-config',
-                    'items' => [
-                      [
-                        'key' => 'redis-config',
-                        'path' => 'redis.conf',
-                      ],
-                    ],
-                  ],
-                ],
               ],
-
             ],
         ],
         'triggers' => [
