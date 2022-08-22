@@ -67,19 +67,6 @@ if (!$development = $tstg->loadByProperties(['name' => 'Dev'])) {
     'vid'                   => 'shp_environment_types',
     'name'                  => 'Dev',
     'field_shp_base_domain' => $domain_name,
-    // Example, no longer used.
-    //'field_shp_annotations' => [
-    //  [
-    //    'key' => 'haproxy.router.openshift.io/ip_whitelist',
-    //    'value' => '129.127.0.0/16 10.0.0.0/8',
-    //  ],
-    //],
-    'field_shp_labels' => [
-      [
-        'key' => 'type',
-        'value' => 'internal',
-      ],
-    ],
   ]);
   $development_env->save();
 
