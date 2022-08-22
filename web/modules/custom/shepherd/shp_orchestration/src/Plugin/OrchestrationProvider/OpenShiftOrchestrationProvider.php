@@ -694,7 +694,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     // Best we can do with no deep ldap/something integration
     // is to assume that the current username matches.
     $username = \Drupal::currentUser()->getAccountName();
-    if (!strlen($username) && $connectionNamespace == 'shepherd-dev') {
+    if (($username == 'admin' || !strlen($username)) && $connectionNamespace == 'shepherd-dev') {
       // No username? likely the setup script, but only do it for development.
       $this->createRoleBinding('developer', 'admin');
     }
