@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: memcached-11211
+  namespace: shepherd-dev-datagrid
+spec:
+  ipFamilies:
+    - IPv4
+  sessionAffinity: None
+  selector:
+    app: infinispan-pod
+    clusterName: data-grid
+  type: ClusterIP
+  internalTrafficPolicy: Cluster
+  ports:
+    - name: memcached-11211
+      protocol: TCP
+      port: 11211
+      targetPort: 11211

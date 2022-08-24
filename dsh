@@ -160,11 +160,10 @@ dsh_openshift_init() {
   if ! oc get project shepherd-dev-datagrid > /dev/null 2>&1; then
     oc apply -f openshift-config/datagrid/namespace.yml
     oc adm policy add-role-to-user admin developer -n shepherd-dev-datagrid
+
+    notice "Please configure a Data Grid instance as per the docs in openshift-config/datagrid/supplemental/INSTALL.md"
   fi
   ${DEV_LOGIN}
-
-  # Setup datagrid config.
-  oc apply -f openshift-config/datagrid/config
 
   ${ADMIN_LOGIN}
   echo "Ensuring backup operator config exists."
