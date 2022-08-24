@@ -522,7 +522,6 @@ class MemcachedDatagridYml extends CacheBackendBase {
     foreach ($yml['infinispan']['server']['endpoints'] as $index => &$connector) {
       if (isset($connector['connectors'][$service_name]['memcachedConnector']['name'])
       && $connector['connectors'][$service_name]['memcachedConnector']['name'] == $name) {
-        //unset($yml['infinispan']['server']['endpoints'][$index]);
         unset($connector['connectors'][$service_name]);
       }
     }
