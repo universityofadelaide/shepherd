@@ -188,7 +188,7 @@ class MemcachedDatagridYml extends CacheBackendBase {
    * {@inheritdoc}
    */
   public function onEnvironmentCreate(NodeInterface $environment) {
-    // Datagrid is is its own project, but uses shepherd token.
+    // Data Grid is is its own project, but uses shepherd token.
     $this->client->setToken($this->config->get('connection.token'));
     $this->client->setNamespace($this->cacheConfig->get('namespace'));
 
@@ -230,22 +230,53 @@ class MemcachedDatagridYml extends CacheBackendBase {
     ];
 
     // Add the memcache-connector element.
-    $connector_subsystem = [
-      'memcached' => [
-        'memcachedConnector' => [
-          'cache' => $name,
-          'name' => $name,
-          'socketBinding' => $name,
-        ],
+    $service_config = [
+      'memcachedConnector' => [
+        'cache' => $name,
+        'name' => $name,
+        'socketBinding' => $name,
       ],
     ];
 
+    // Locate the cluster of memcache connectors.
+    $index = 0;
+    foreach ($yml['infinispan']['server']['endpoints'] as $index => $connectors) {
+      if (isset($connectors['memcachedConnector'])) {
+        break;
+      }
+    }
+
+    // If this is the first one, add in the section.
+    if (!$index) {
+      $yml['infinispan']['server']['endpoints'][] = [
+        'connectors' => [
+          'rest' => [
+            'restConnector' => [
+              'authentication' => [
+                'mechanisms' => 'BASIC',
+              ],
+            ],
+          ],
+          $service_name => $service_config,
+        ],
+        'securityRealm' => 'default',
+        'socketBinding' => 'default',
+      ];
+    }
+    else {
+      // Otherwise, just add the new service.
+      $yml['infinispan']['server']['endpoints'][$index]['connectors'][$service_name] = $service_config;
+    }
+
     $yml['infinispan']['server']['socketBindings']['socketBinding'][] = $socket_binding;
-    $yml['infinispan']['server']['endpoints'][]['connectors'] = $connector_subsystem;
 
     $yaml = new Dumper(2);
     $dumpedYaml = $yaml->dump($yml, PHP_INT_MAX, 0, SymfonyYaml::DUMP_EXCEPTION_ON_INVALID_TYPE | SymfonyYaml::DUMP_MULTI_LINE_LITERAL_BLOCK);
+
+    // Fixup random things that look different to what Data Grid wants.
     $dumpedYaml = preg_replace('/\-\n\s+/', '- ', $dumpedYaml);
+    $dumpedYaml = str_replace('authorization: {  }', 'authorization: {}', $dumpedYaml);
+
     $configMap->setDataKey($this->jdgConfigFile, $dumpedYaml);
     $this->client->updateConfigmap($configMap);
 
@@ -488,22 +519,30 @@ class MemcachedDatagridYml extends CacheBackendBase {
     }
     $name = self::getMemcacheName($environment);
 
+    foreach ($yml['infinispan']['server']['endpoints'] as $index => &$connector) {
+      if (isset($connector['connectors'][$service_name]['memcachedConnector']['name'])
+      && $connector['connectors'][$service_name]['memcachedConnector']['name'] == $name) {
+        //unset($yml['infinispan']['server']['endpoints'][$index]);
+        unset($connector['connectors'][$service_name]);
+      }
+    }
+
     foreach ($yml['infinispan']['server']['socketBindings']['socketBinding'] as $index => $binding) {
       if ($binding['name'] == $name) {
         unset($yml['infinispan']['server']['socketBindings']['socketBinding'][$index]);
       }
     }
 
-    foreach ($yml['infinispan']['server']['endpoints'] as $index => $connector) {
-      if (isset($connector['connectors']['memcached']['memcachedConnector']['name'])
-      && $connector['connectors']['memcached']['memcachedConnector']['name'] == $name) {
-        unset($yml['infinispan']['server']['endpoints'][$index]);
-      }
-    }
+    // Reindex array to avoid numeric indexes appearing in yaml.
+    $yml['infinispan']['server']['socketBindings']['socketBinding'] = array_values($yml['infinispan']['server']['socketBindings']['socketBinding']);
 
     $yaml = new Dumper(2);
     $dumpedYaml = $yaml->dump($yml, PHP_INT_MAX, 0, SymfonyYaml::DUMP_EXCEPTION_ON_INVALID_TYPE | SymfonyYaml::DUMP_MULTI_LINE_LITERAL_BLOCK);
+
+    // Fixup random things that look different to what Data Grid wants.
     $dumpedYaml = preg_replace('/\-\n\s+/', '- ', $dumpedYaml);
+    $dumpedYaml = str_replace('authorization: {  }', 'authorization: {}', $dumpedYaml);
+
     $configMap->setDataKey($this->jdgConfigFile, $dumpedYaml);
     $this->client->updateConfigmap($configMap);
 
@@ -547,13 +586,13 @@ class MemcachedDatagridYml extends CacheBackendBase {
   }
 
   /**
-   * Loads the XML from the datagrid config map.
+   * Loads the YML from the datagrid config map.
    *
    * @param \UniversityOfAdelaide\OpenShift\Objects\ConfigMap $configMap
    *   The config map.
    *
-   * @return bool|\SimpleXMLElement
-   *   An SimpleXMLElement, or FALSE on failure.
+   * @return array|bool
+   *   An array of yml structure, or FALSE on failure.
    */
   protected function loadYml(ConfigMap $configMap) {
     if (empty($configMap->getData()[$this->jdgConfigFile])) {
