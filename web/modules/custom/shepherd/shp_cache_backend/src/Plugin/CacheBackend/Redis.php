@@ -98,7 +98,7 @@ class Redis extends CacheBackendBase {
    */
   protected function generateImageStream() {
     $image_stream = [
-      'apiVersion' => 'v1',
+      'apiVersion' => 'image.openshift.io/v1',
       'kind' => 'ImageStream',
       'metadata' => [
         'name' => 'redis',
@@ -147,10 +147,9 @@ class Redis extends CacheBackendBase {
    */
   protected function generateDeploymentConfig(string $deployment_name, string $redis_name, string $redis_port, array $data) {
     $redis_data = $deployment_name . '-data';
-    $redis_conf = $deployment_name . '-config';
 
     $redis_deployment_config = [
-      'apiVersion' => 'v1',
+      'apiVersion' => 'apps.openshift.io/v1',
       'kind' => 'DeploymentConfig',
       'metadata' => [
         'name' => $redis_name,
@@ -162,6 +161,16 @@ class Redis extends CacheBackendBase {
         'selector' => array_key_exists('labels', $data) ? array_merge($data['labels'], ['name' => $redis_name]) : [],
         'strategy' => [
           'type' => 'Rolling',
+          'resources' => [
+            'limits' => [
+              'cpu' => '200m',
+              'memory' => '256Mi',
+            ],
+            'requests' => [
+              'cpu' => '100m',
+              'memory' => '50Mi',
+            ],
+          ],
         ],
         'template' => [
           'metadata' => [
@@ -183,13 +192,9 @@ class Redis extends CacheBackendBase {
                         'port' => 6379,
                       ],
                     ],
-                    'command' => [
-                      '/usr/local/bin/docker-entrypoint.sh',
-                      '/usr/local/etc/redis/redis.conf',
-                    ],
                     'ports' => [
                       [
-                        'containerPort' => $redis_port,
+                        'containerPort' => (int) $redis_port,
                       ],
                     ],
                     'readinessProbe' => [
@@ -219,11 +224,6 @@ class Redis extends CacheBackendBase {
                         'mountPath' => '/data',
                         'name' => $redis_data,
                       ],
-                      [
-                        'mountPath' => '/usr/local/etc/redis',
-                        'name' => $redis_conf,
-                      ],
-
                     ],
                   ],
                 ],
@@ -231,20 +231,7 @@ class Redis extends CacheBackendBase {
                 [
                   'name' => $redis_data,
                 ],
-                [
-                  'name' => $redis_conf,
-                  'configMap' => [
-                    'name' => 'redis-config',
-                    'items' => [
-                      [
-                        'key' => 'redis-config',
-                        'path' => 'redis.conf',
-                      ],
-                    ],
-                  ],
-                ],
               ],
-
             ],
         ],
         'triggers' => [

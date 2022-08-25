@@ -17,9 +17,9 @@ required: true
 translatable: false
 default_value:
   -
-    plugin_id: redis
+    plugin_id: memcached_datagrid
     plugin_configuration: {  }
-    plugin_configuration_schema_id: plugin.plugin_configuration.cache_backend.redis
+    plugin_configuration_schema_id: plugin.plugin_configuration.cache_backend.memcached_datagrid
 default_value_callback: ''
 settings: {  }
 field_type: 'plugin:cache_backend'

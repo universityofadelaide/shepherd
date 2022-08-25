@@ -1,6 +1,7 @@
 parameters:
 	paths:
 		- web/modules/custom/
+		- web/profiles/shepherd
 	customRulesetUsed: true
 	reportUnmatchedIgnoredErrors: false
 	# Ignore phpstan-drupal extension's rules.

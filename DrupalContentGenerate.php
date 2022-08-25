@@ -8,13 +8,18 @@
 use Drupal\node\Entity\Node;
 use Drupal\taxonomy\Entity\Term;
 use Drupal\user\Entity\User;
+use Drupal\shp_service_accounts\Entity\ServiceAccount;
 
+$etm = \Drupal::entityTypeManager();
+$stg = $etm->getStorage('node');
+$tstg = $etm->getStorage('taxonomy_term');
+$config = \Drupal::configFactory();
 $domain_name = getenv("OPENSHIFT_DOMAIN") ?: '192.168.99.100.nip.io';
 $openshift_url = getenv("OPENSHIFT_URL") ?: 'https://192.168.99.100:8443';
 $example_repository = getenv("DRUPAL_EXAMPLE_REPOSITORY") ?:
-    'https://github.com/universityofadelaide/shepherd-example-drupal.git';
+  'https://github.com/universityofadelaide/shepherd-example-drupal.git';
 
-$database_host = getenv("DB_HOST") ?: 'mysql-myproject.' . $domain_name;
+$database_host = getenv("DB_HOST") ?: 'mysql-external.' . $domain_name;
 $database_port = getenv("DB_PORT") ?: '31632';
 
 // Check that required variables are actually set.
@@ -29,47 +34,54 @@ if (empty($token)) {
 }
 
 // Set deployment database config.
-$db_provisioner_config = \Drupal::service('config.factory')->getEditable('shp_database_provisioner.settings');
-$db_provisioner_config->set(
-  'host',
-  $database_host
-);
-$db_provisioner_config->set(
-  'port',
-  $database_port
-);
+$db_provisioner_config = $config->getEditable('shp_database_provisioner.settings');
+$db_provisioner_config->set('host', $database_host);
+$db_provisioner_config->set('port', $database_port);
 $db_provisioner_config->save();
 
+// Set orchestration provider config.
 $openshift_config = [
-  'endpoint'   => $openshift_url,
-  'token'      => $token,
-  'namespace'  => 'myproject',
-  'verify_tls' => FALSE,
+  'endpoint'           => $openshift_url,
+  'token'              => $token,
+  'namespace'          => 'shepherd-dev',
+  'site_deploy_prefix' => 'shepherd-dev-',
+  'verify_tls'         => FALSE,
 ];
-$orchestration_config = \Drupal::service('config.factory')->getEditable('shp_orchestration.settings');
+$orchestration_config = $config->getEditable('shp_orchestration.settings');
 foreach ($openshift_config as $key => $value) {
   $orchestration_config->set('connection.' . $key, $value);
 }
 $orchestration_config->set('selected_provider', 'openshift_orchestration_provider');
 $orchestration_config->save();
 
+// Set datagrid cache config.
+$cache_config = $config->getEditable('shp_cache_backend.settings');
+$cache_config->set('namespace', 'shepherd-dev-datagrid');
+$cache_config->save();
+
 // Force reload the orchestration plugin to clear the static cache.
 Drupal::service('plugin.manager.orchestration_provider')->getProviderInstance(TRUE);
 
-if (!$development = taxonomy_term_load_multiple_by_name('Development', 'shp_environment_types')) {
+if (!$development = $tstg->loadByProperties(['name' => 'Dev'])) {
   $development_env = Term::create([
     'vid'                   => 'shp_environment_types',
-    'name'                  => 'Development',
+    'name'                  => 'Dev',
     'field_shp_base_domain' => $domain_name,
   ]);
   $development_env->save();
 
   $production_env = Term::create([
     'vid'  => 'shp_environment_types',
-    'name' => 'Production',
+    'name' => 'Prd',
     'field_shp_base_domain' => $domain_name,
     'field_shp_protect' => TRUE,
     'field_shp_update_go_live' => TRUE,
+    'field_shp_labels' => [
+      [
+        'key' => 'type',
+        'value' => 'external',
+      ],
+    ],
   ]);
   $production_env->save();
 }
@@ -78,9 +90,41 @@ else {
   echo "Taxonomy already setup.\n";
 }
 
-$nodes = \Drupal::entityTypeManager()
-    ->getStorage('node')
-    ->loadByProperties(['title' => 'Drupal example']);
+// Create a storage class.
+if (!$storage = $tstg->loadByProperties(['name' => 'Gold'])) {
+  $storage = Term::create([
+    'vid' => 'shp_storage_class',
+    'name' => 'gold',
+  ]);
+  $storage->save();
+}
+else {
+  $storage = reset($storage);
+  echo "Storage class already setup.\n";
+}
+
+// Create config entities for the service accounts if they don't exist.
+if (!$service_accounts = $etm->getStorage('service_account')->loadByProperties([])) {
+  for ($i = 0; $i <= 4; $i++) {
+    $label = sprintf("shepherd-dev-provisioner-00%02d", $i);
+    $id = sprintf("shepherd_dev_provisioner_00%02d", $i);
+
+    // This is pretty horrid, but there is no oc command in the dsh shell.
+    $token = trim(file_get_contents("../.$label.token"));
+    $account = ServiceAccount::create()
+      ->set('label', $label)
+      ->set('id', $id)
+      ->set('status', TRUE)
+      ->set('description', "Test provisioner $i")
+      ->set('token', $token)
+      ->save();
+  }
+}
+else {
+  echo "Service accounts already setup.\n";
+}
+
+$nodes = $stg->loadByProperties(['title' => 'Drupal example']);
 
 if (!$project = reset($nodes)) {
   $project = Node::create([
@@ -88,25 +132,28 @@ if (!$project = reset($nodes)) {
     'langcode'                 => 'en',
     'uid'                      => '1',
     'status'                   => 1,
-    'title'                    => 'Example',
+    'title'                    => 'Drupal example',
     'field_shp_git_repository' => [['value' => $example_repository]],
     'field_shp_builder_image'  => [['value' => 'uofa/s2i-shepherd-drupal']],
     'field_shp_build_secret'   => [['value' => 'build-key']],
     'field_shp_env_vars'       => [
       ['key' => 'SHEPHERD_INSTALL_PROFILE', 'value' => 'standard'],
-      ['key' => 'REDIS_ENABLED', 'value' => '0'],
+      ['key' => 'MEMCACHE_ENABLED', 'value' => '0'],
       ['key' => 'PUBLIC_DIR', 'value' => '/shared/public'],
       ['key' => 'PRIVATE_DIR', 'value' => '/shared/private'],
       ['key' => 'TMP_DIR', 'value' => '/shared/tmp'],
     ],
     'field_shp_readiness_probe_type' => [['value' => 'tcpSocket']],
-    'field_shp_readiness_probe_port' => [['value' => '8080']],
+    'field_shp_readiness_probe_port' => [['value' => 8080]],
     'field_shp_liveness_probe_type' => [['value' => 'tcpSocket']],
-    'field_shp_liveness_probe_port' => [['value' => '8080']],
+    'field_shp_liveness_probe_port' => [['value' => 8080]],
     'field_shp_cpu_request'    => [['value' => '500m']],
     'field_shp_cpu_limit'      => [['value' => '1000m']],
     'field_shp_memory_request' => [['value' => '256Mi']],
     'field_shp_memory_limit'   => [['value' => '512Mi']],
+    // Can't use this with OpenShift Local :-(
+    // 'field_shp_storage_class'  => [['target_id' => $storage->id()]],
+    'field_shp_backup_size'    => 5,
   ]);
   $project->save();
 }
@@ -114,9 +161,7 @@ else {
   echo "Project already setup.\n";
 }
 
-$nodes = \Drupal::entityTypeManager()
-    ->getStorage('node')
-    ->loadByProperties(['title' => 'Drupal test site']);
+$nodes = $stg->loadByProperties(['title' => 'Drupal test site']);
 
 if (!$site = reset($nodes)) {
   $site = Node::create([
@@ -124,13 +169,15 @@ if (!$site = reset($nodes)) {
     'langcode'                  => 'en',
     'uid'                       => '1',
     'status'                    => 1,
-    'title'                     => 'Drupal Test Site',
-    'field_shp_namespace'       => 'myproject',
+    'title'                     => 'Drupal test site',
     'field_shp_short_name'      => 'test',
     'field_shp_domain'          => 'test-live.' . $domain_name,
     'field_shp_git_default_ref' => 'master',
     'field_shp_path'            => '/',
     'field_shp_project'         => [['target_id' => $project->id()]],
+    // Can't use this with OpenShift Local :-(
+    // 'field_shp_storage_class'   => [['target_id' => $storage->id()]],
+    'field_shp_storage_size'  => 5,
   ]);
   $site->moderation_state->value = 'published';
   $site->save();
@@ -139,9 +186,7 @@ else {
   echo "Site already setup.\n";
 }
 
-$nodes = \Drupal::entityTypeManager()
-    ->getStorage('node')
-    ->loadByProperties(['field_shp_domain' => 'drupal-test-development.' . $domain_name]);
+$nodes = $stg->loadByProperties(['field_shp_domain' => 'test-0.' . $domain_name]);
 
 if (!$env = reset($nodes)) {
   $env = Node::create([
@@ -158,14 +203,17 @@ if (!$env = reset($nodes)) {
     'field_shp_update_on_image_change' => TRUE,
     'field_shp_cron_suspended'   => 1,
     'field_shp_cron_jobs'        => [
-      ['key' => '*/30 * * * *', 'value' => 'cd /code; drush -r /code/web cron || true'],
+      [
+        'key' => '*/30 * * * *',
+        'value' => 'cd /code; drush -r /code/web cron || true',
+      ],
     ],
     'field_shp_cpu_request'    => [['value' => '500m']],
     'field_shp_cpu_limit'      => [['value' => '1000m']],
     'field_shp_memory_request' => [['value' => '256Mi']],
     'field_shp_memory_limit'   => [['value' => '512Mi']],
     'field_cache_backend'      => [
-      'plugin_id' => 'redis',
+      'plugin_id' => 'memcached_datagrid',
     ],
   ]);
   $env->moderation_state->value = 'published';
@@ -175,7 +223,8 @@ else {
   echo "Environment already setup.\n";
 }
 
-$oc_user_result = \Drupal::entityTypeManager()->getStorage('user')->loadByProperties(['name' => 'oc']);
+$oc_user_result = $etm->getStorage('user')->loadByProperties(['name' => 'oc']);
+
 /** @var \Drupal\user\Entity\User $oc_user */
 $oc_user = $oc_user_result ? reset($oc_user_result) : FALSE;
 if (!$oc_user) {

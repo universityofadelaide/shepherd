@@ -3,6 +3,7 @@ langcode: en
 status: true
 dependencies:
   config:
+    - field.field.node.shp_project.field_shp_backup_size
     - field.field.node.shp_project.field_shp_build_secret
     - field.field.node.shp_project.field_shp_builder_image
     - field.field.node.shp_project.field_shp_cpu_limit
@@ -34,11 +35,11 @@ third_party_settings:
         - group_shp_liveness
         - group_shp_readiness
       label: Probes
+      region: content
       parent_name: ''
       weight: 7
       format_type: tabs
       format_settings:
-        label: Probes
         classes: ''
         id: ''
         direction: vertical
@@ -48,6 +49,7 @@ third_party_settings:
         - field_shp_liveness_probe_params
         - field_shp_liveness_probe_port
       label: 'Liveness probe'
+      region: content
       parent_name: group_shp_probes
       weight: 9
       format_type: tab
@@ -63,6 +65,7 @@ third_party_settings:
         - field_shp_readiness_probe_params
         - field_shp_readiness_probe_port
       label: 'Readiness probe'
+      region: content
       parent_name: group_shp_probes
       weight: 10
       format_type: tab
@@ -79,6 +82,7 @@ third_party_settings:
         - field_shp_memory_request
         - field_shp_memory_limit
       label: 'Limits & Requests'
+      region: content
       parent_name: ''
       weight: 8
       format_type: details
@@ -91,6 +95,7 @@ third_party_settings:
       children:
         - field_shp_env_vars
       label: 'Environment variables'
+      region: content
       parent_name: ''
       weight: 9
       format_type: details
@@ -106,6 +111,13 @@ targetEntityType: node
 bundle: shp_project
 mode: default
 content:
+  field_shp_backup_size:
+    type: number
+    weight: 13
+    region: content
+    settings:
+      placeholder: ''
+    third_party_settings: {  }
   field_shp_build_secret:
     type: string_textfield
     weight: 2
@@ -158,6 +170,8 @@ content:
       description_placeholder: ''
       key_label: Key
       value_label: Value
+      description_label: Description
+      description_rows: 5
     third_party_settings: {  }
   field_shp_git_default_ref:
     type: string_textfield
@@ -235,7 +249,7 @@ content:
     third_party_settings: {  }
   field_shp_secrets:
     type: string_textfield
-    weight: 11
+    weight: 10
     region: content
     settings:
       size: 60
@@ -249,13 +263,13 @@ content:
     third_party_settings: {  }
   moderation_state:
     type: moderation_state_default
-    weight: 12
+    weight: 11
     region: content
     settings: {  }
     third_party_settings: {  }
   status:
     type: boolean_checkbox
-    weight: 13
+    weight: 12
     region: content
     settings:
       display_label: true

@@ -63,7 +63,12 @@ class EntityOperations implements ContainerInjectionInterface {
       return;
     }
 
+    // @todo Bail if no schedule is set until the backup operator works.
     $schedule = trim($term->field_shp_backup_schedule->value);
+    if (empty($schedule)) {
+      return;
+    }
+
     $retention = trim($term->field_shp_backup_retention->value);
     $env_ids = $this->nodeStorage->getQuery()
       ->condition('field_shp_environment_type.target_id', $term->id())

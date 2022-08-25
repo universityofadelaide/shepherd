@@ -1,41 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- TODO set checkForUnintentionallyCoveredCode="true" once https://www.drupal.org/node/2626832 is resolved. -->
-<!-- PHPUnit expects functional tests to be run with either a privileged user
- or your current system user. See core/tests/README.md and
- https://www.drupal.org/node/2116263 for details.
--->
-<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" bootstrap="./web/core/tests/bootstrap.php" colors="true" beStrictAboutTestsThatDoNotTestAnything="true" beStrictAboutOutputDuringTests="true" beStrictAboutChangesToGlobalState="true" printerClass="\Drupal\Tests\Listeners\HtmlOutputPrinter" xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.3/phpunit.xsd">
+
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         bootstrap="./web/core/tests/bootstrap.php" colors="true"
+         beStrictAboutTestsThatDoNotTestAnything="true"
+         beStrictAboutOutputDuringTests="true"
+         beStrictAboutChangesToGlobalState="true"
+         beStrictAboutCoversAnnotation="false"
+         printerClass="\Drupal\Tests\Listeners\HtmlOutputPrinter"
+         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.3/phpunit.xsd">
   <coverage>
     <include>
       <directory>./web/modules/custom</directory>
-      <directory>./src</directory>
     </include>
     <exclude>
       <directory suffix="Test.php">./</directory>
       <directory suffix="TestBase.php">./</directory>
     </exclude>
   </coverage>
-  <!-- TODO set printerClass="\Drupal\Tests\Listeners\HtmlOutputPrinter" once
-   https://youtrack.jetbrains.com/issue/WI-24808 is resolved. Drupal provides a
-   result printer that links to the html output results for functional tests.
-   Unfortunately, this breaks the output of PHPStorm's PHPUnit runner. However, if
-   using the command line you can add
-   - -printerClass="\Drupal\Tests\Listeners\HtmlOutputPrinter" to use it (note
-   there should be no spaces between the hyphens).
-  -->
   <php>
-    <!-- Set error reporting to E_ALL. -->
+    <const name="BOOTSTRAP_IS_PHPUNIT" value="true"/>
     <ini name="error_reporting" value="32767"/>
     <ini name="memory_limit" value="-1"/>
     <env name="BROWSERTEST_OUTPUT_DIRECTORY" value="/code/web/sites/simpletest/browser_output"/>
+    <env name="DTT_HTML_OUTPUT_DIRECTORY" value="/code/web/sites/simpletest/browser_output" />
     <env name="SIMPLETEST_BASE_URL" value="http://127.0.0.1:8080"/>
-    <!-- See \weitzman\DrupalTestTraits\MinkSetup -->
     <env name="DTT_BASE_URL" value="http://127.0.0.1:8080"/>
-    <!-- See \weitzman\DrupalTestTraits\WebDriverSetup -->
-    <env name="DTT_MINK_DRIVER_ARGS" value="[&quot;chrome&quot;, { &quot;chromeOptions&quot;: { &quot;w3c&quot;: false } }, &quot;http://127.0.0.1:4444/wd/hub&quot;]"/>
-    <env name="SIMPLETEST_DB" value="mysql://user:password@127.0.0.1/drupal"/>
-    <const name="BOOTSTRAP_IS_PHPUNIT" value="true"/>
-    <!-- To disable deprecation testing completely set SYMFONY_DEPRECATIONS_HELPER value: 'disabled' -->
+    <env name="DTT_MINK_DRIVER_ARGS" value="[&quot;chrome&quot;, { &quot;chromeOptions&quot;: { &quot;w3c&quot;: false, &quot;args&quot;: [&quot;--disable-dev-shm-usage&quot;] } }, &quot;http://selenium:4444/wd/hub&quot;]"/>
+    <env name="SIMPLETEST_DB" value="mysql://user:password@db/drupal"/>
     <env name="SYMFONY_DEPRECATIONS_HELPER" value="disabled"/>
   </php>
   <testsuites>
@@ -56,6 +47,7 @@
       <directory>./web/profiles/custom/shepherd/*/tests/src/FunctionalJavascript</directory>
     </testsuite>
   </testsuites>
+
   <listeners>
     <listener class="\Drupal\Tests\Listeners\DrupalListener">
     </listener>
@@ -63,5 +55,5 @@
     <listener class="Symfony\Bridge\PhpUnit\SymfonyTestsListener">
     </listener>
   </listeners>
-  <!-- Filter for coverage reports. -->
+
 </phpunit>

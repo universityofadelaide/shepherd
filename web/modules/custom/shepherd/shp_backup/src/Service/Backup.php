@@ -81,7 +81,8 @@ class Backup {
    *   The backup list if successful otherwise false.
    */
   public function getAllForEnvironment(NodeInterface $environment) {
-    return $this->orchestrationProvider->getBackupsForEnvironment($environment->id());
+    $site = $environment->field_shp_site->entity;
+    return $this->orchestrationProvider->getBackupsForEnvironment($site, $environment->id());
   }
 
   /**

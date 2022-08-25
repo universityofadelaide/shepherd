@@ -7,6 +7,7 @@ dependencies:
     - field.field.taxonomy_term.shp_environment_types.field_shp_backup_retention
     - field.field.taxonomy_term.shp_environment_types.field_shp_backup_schedule
     - field.field.taxonomy_term.shp_environment_types.field_shp_base_domain
+    - field.field.taxonomy_term.shp_environment_types.field_shp_labels
     - field.field.taxonomy_term.shp_environment_types.field_shp_protect
     - field.field.taxonomy_term.shp_environment_types.field_shp_update_go_live
     - taxonomy.vocabulary.shp_environment_types
@@ -55,6 +56,22 @@ content:
     settings:
       size: 60
       placeholder: ''
+    third_party_settings: {  }
+  field_shp_labels:
+    type: key_value_textfield
+    weight: 8
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+      key_size: 60
+      key_placeholder: ''
+      description_enabled: true
+      description_placeholder: ''
+      key_label: Key
+      value_label: Value
+      description_label: Description
+      description_rows: 5
     third_party_settings: {  }
   field_shp_protect:
     type: boolean_checkbox

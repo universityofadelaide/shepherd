@@ -1,0 +1,25 @@
+uuid: 9e1659f0-35e8-47b8-a415-325f61dd1182
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_shp_storage_size
+    - node.type.shp_site
+id: node.shp_site.field_shp_storage_size
+field_name: field_shp_storage_size
+entity_type: node
+bundle: shp_site
+label: 'Storage size'
+description: 'Enter the required storage size for this site. Each environment will claim this amount of storage, so please do not choose more than required.'
+required: true
+translatable: false
+default_value:
+  -
+    value: 5
+default_value_callback: ''
+settings:
+  min: 3
+  max: 10
+  prefix: ''
+  suffix: Gi
+field_type: integer

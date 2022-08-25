@@ -1,0 +1,20 @@
+uuid: 79ee6d75-2ae9-4a15-8996-d1003b0bb341
+langcode: en
+status: true
+dependencies:
+  module:
+    - node
+id: node.field_shp_backup_size
+field_name: field_shp_backup_size
+entity_type: node
+type: integer
+settings:
+  unsigned: false
+  size: normal
+module: core
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

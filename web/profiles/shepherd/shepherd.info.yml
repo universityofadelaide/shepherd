@@ -40,6 +40,8 @@ dependencies:
   - views_ui
 
   # Contributed modules
+  - admin_toolbar
+  - admin_toolbar_tools
   - config_ignore
   - entity_reference_revisions
   - field_group
@@ -62,7 +64,7 @@ dependencies:
   - shp_database_provisioner
   - shp_orchestration
   - shp_roles
-  - shp_redis_support
+  - shp_service_accounts
 
 themes:
   - seven

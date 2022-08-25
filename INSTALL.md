@@ -5,19 +5,19 @@ This guide assumes a working knowledge of the [`oc`](https://docs.openshift.com/
 If you are looking for information on how to get a local development environment setup read the [Developers guide](DEVELOPERS.md)
 
 ## Prerequisites
- * A working OpenShift cluster. 
+ * A working OpenShift cluster.
  * `oc` command line tool installed
 
-### Create a project 
-Before deploying Shepherd to OpenShift, we must create a project. 
+### Create a project
+Before deploying Shepherd to OpenShift, we must create a project.
 
 ```
 # login with user credientals that have permissions to create new projects
-oc login 
+oc login
 oc new-project shepherd-openshift
 ```
 
-### Create a secret 
+### Create a secret
 The `./openshift-config/shepherd-openshift.yml` configuration file will construct the necessary objects for running Shepherd. Before you can run the script a SSH-Auth secret called `build-key` needs to be created so Shepherd can be cloned from GitHub. This can be done via the UI `/console/project/{project-name}/create-secret` and clicking on the create secret button OR via `oc` command line tool :
 
 ```bash
@@ -37,15 +37,45 @@ You can now click Add to project in the OpenShift ui to deploy Shepherd directly
 
 ### Deploy Shepherd from the command line.
 
-#### Create a Service Account for Shepherd
+#### Service Accounts
+There are some changes with the OpenShift 4.x branch of shepherd to support having multiple service accounts for provisioning.
+This is to ensure that quota setting and performance is consistent, regardless of how large the cluster gets.
+
+These instructions are for OpenShift Local, but would just need slight changes to work for your OpenShift administrator.
+
+#### Create the main Service Account for Shepherd
 Before we configure Shepherd to use OpenShift, we need to create a [Service Account](https://docs.openshift.com/container-platform/latest/dev_guide/service_accounts.html)
-that will allow us to to communicate to OpenShift.
+that will allow us to communicate to OpenShift.
 
 ```bash
 # Ensure that you are logged into OpenShift and using the project you deployed Shepherd on.
 oc create serviceaccount shepherd
 oc policy add-role-to-user admin system:serviceaccount:$(oc project -q):shepherd
 ```
+
+#### Create the 'provisioning' service accounts
+New sites will randomly choose from one of these provisioner accounts when creating the project and then will use that account for all subsequent environment deployments.
+The accounts need to be created first, then added as service account config entities in the Shepherd UI.
+
+```bash
+oc create serviceaccount shepherd-dev-provisioner-0001
+oc policy add-role-to-user admin system:serviceaccount:$(oc project -q):shepherd-dev-provisioner-0001
+```
+
+These examples are using 'admin' level rolebindings, which is unlikely to be correct for your cluster, but roughly what is required is:
+
+Main shepherd service account:
+ * Create imagestream
+ * Create buildconfig
+
+Provisioner accounts:
+ * Create/Update/Delete project and then with a created project:
+   * Create/Update/Delete rolebinding
+   * Create/Update/Delete pvc
+   * Create/Update/Delete deploymentconfig
+   * Create/Update/Delete cronjobs
+   * Create/Update/Delete service
+   * Create/Update/Delete route
 
 ### Configure Shepherd
 
@@ -70,7 +100,7 @@ Ensure the orchestration provider is enabled and queued operations is selected.
 ```bash
 # First get the service account
 SERVICE_ACCOUNT=$(oc describe serviceaccount shepherd | grep Token | awk '{ print $2 }')
-# Retrieve the token 
+# Retrieve the token
 TOKEN=$(oc describe secret ${SERVICE_ACCOUNT} | grep "token:" | awk '{ print $2 }')
 # Copy this into the token textarea.
 echo $TOKEN
@@ -80,7 +110,7 @@ echo $TOKEN
 
 Drupal requires a database to run and Shepherd triggers the provisioning of a database. Depending on your deployment requirements you may
 decide to run a database inside or outside of openshift. The database needs to be accessible by OpenShift and Shepherd.
-[Deploying MariaDB in OpenShift](#Deploying MariaDB in OpenShift ). 
+[Deploying MariaDB in OpenShift](#Deploying MariaDB in OpenShift ).
 
 Ensure that the provisioner is enabled.
 
@@ -115,12 +145,12 @@ organisations workflow. In this instance we will create 3 environment types : `D
 To create the environment types:
 `/admin/structure/taxonomy/manage/shp_environment_types/overview` click the add term button.
 
-### Configure cron jobs for Shepherd 
+### Configure cron jobs for Shepherd
 
-The next step is to configure cron jobs in OpenShift, once database and orchestration providers have been configured. These cron jobs will process the Shepherd job queue and run Drupal cron. The cron jobs are defined in the 
+The next step is to configure cron jobs in OpenShift, once database and orchestration providers have been configured. These cron jobs will process the Shepherd job queue and run Drupal cron. The cron jobs are defined in the
 `shepherd-openshift-cronjob.yml` configuration. First you should get the following parameters so they can be passed to the template :
 
-- SHEPHERD_WEB_IMAGESTREAM 
+- SHEPHERD_WEB_IMAGESTREAM
 
 The image stream provides a source for the built images, so that you can launch pods to serve the Shepherd application.
 To obtain the `SHEPHERD_WEB_IMAGESTREAM` first retrieve the internal docker registry ip address:
@@ -141,12 +171,12 @@ oc delete all -l app=shepherd
 oc delete pvc shepherd-web-shared
 ```
 
-### Deploying MariaDB in OpenShift 
+### Deploying MariaDB in OpenShift
 
-This is an example of deploying a MariaDB service in OpenShift for use with Shepherd. Alternatives to running a single MariaDB database instance in OpenShift include connecting to a MariaDB Galera cluster or some other MySQL compatible master/slave configuration. 
-However, this is the quickest option to get up and running.  
+This is an example of deploying a MariaDB service in OpenShift for use with Shepherd. Alternatives to running a single MariaDB database instance in OpenShift include connecting to a MariaDB Galera cluster or some other MySQL compatible master/slave configuration.
+However, this is the quickest option to get up and running.
 
-From the UI do the following : 
+From the UI do the following :
 - Select `Add to Project`
 - Select `Browse Catalog`
 - Select either `MariaDB (Persistent)` or `MariaDB (Ephemeral)`(Without persistance).
@@ -162,7 +192,7 @@ With the `oc` command tool do the following:
 oc expose dc mariadb --type=LoadBalancer --name=mariadb-external
 # Add an annotation to tie the services together
 oc annotate svc mariadb-external "service.alpha.openshift.io/dependencies=[{\"name\": \"mariadb\", \"kind\": \"Service\"}]"
-``` 
+```
 This will create an externally exposed service that will be provided with an external ip and port number. To view this:
 
 ```

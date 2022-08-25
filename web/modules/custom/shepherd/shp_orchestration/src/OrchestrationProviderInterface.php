@@ -15,6 +15,8 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
   /**
    * Creates artifacts in orchestration provider based on Shepherd project.
    *
+   * @param int $project_id
+   *   The project node id.
    * @param string $name
    *   Name of the project.
    * @param string $builder_image
@@ -32,6 +34,7 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
    *   Returns true if succeeded.
    */
   public function createdProject(
+    int $project_id,
     string $name,
     string $builder_image,
     string $source_repo,
@@ -43,6 +46,8 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
   /**
    * Updates artifacts in orchestration provider based on Shepherd project.
    *
+   * @param int $project_id
+   *   The project node id.
    * @param string $name
    *   Name of the project.
    * @param string $builder_image
@@ -60,6 +65,7 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
    *   Returns true if succeeded.
    */
   public function updatedProject(
+    int $project_id,
     string $name,
     string $builder_image,
     string $source_repo,
@@ -86,9 +92,9 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
    *   Name of the project.
    * @param string $short_name
    *   Short name of the site.
-   * @param string $site_id
+   * @param int $site_id
    *   Unique id of the site.
-   * @param string $environment_id
+   * @param int $environment_id
    *   Unique id of the environment.
    * @param string $environment_url
    *   Absolute url for the environment.
@@ -102,6 +108,10 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
    *   The secret to use when pulling and building the source git repository.
    * @param string $storage_class
    *   The storage class to use when provisioning the PVC.
+   * @param int $storage_size
+   *   The amount of storage to claim with the PVC.
+   * @param int $backup_size
+   *   The amount of backup storage to claim with the PVC.
    * @param bool $update_on_image_change
    *   Whether to automatically rollout update to this environment.
    * @param bool $cron_suspended
@@ -127,14 +137,16 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
   public function createdEnvironment(
     string $project_name,
     string $short_name,
-    string $site_id,
-    string $environment_id,
+    int $site_id,
+    int $environment_id,
     string $environment_url,
     string $builder_image,
     string $source_repo,
     string $source_ref = 'master',
     string $source_secret = NULL,
     string $storage_class = '',
+    int $storage_size = 3,
+    int $backup_size = 3,
     bool $update_on_image_change = FALSE,
     bool $cron_suspended = FALSE,
     array $environment_variables = [],
@@ -169,6 +181,10 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
    *   The secret to use when pulling and building the source git repository.
    * @param string $storage_class
    *   The storage class to use when provisioning the PVC.
+   * @param int $storage_size
+   *   The amount of storage to claim with the PVC.
+   * @param int $backup_size
+   *   The amount of backup storage to claim with the PVC.
    * @param bool $update_on_image_change
    *   Whether to automatically rollout update to this environment.
    * @param bool $cron_suspended
@@ -204,6 +220,8 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
     string $source_ref = 'master',
     string $source_secret = NULL,
     string $storage_class = '',
+    int $storage_size = 3,
+    int $backup_size = 3,
     bool $update_on_image_change = FALSE,
     bool $cron_suspended = FALSE,
     array $environment_variables = [],
@@ -225,7 +243,9 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
    *   Name of the project.
    * @param string $short_name
    *   Short name of the site.
-   * @param string $environment_id
+   * @param int $site_id
+   *   Unique id of the site.
+   * @param int $environment_id
    *   Unique id of the environment.
    *
    * @return bool
@@ -234,11 +254,14 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
   public function deletedEnvironment(
     string $project_name,
     string $short_name,
-    string $environment_id
+    int $site_id,
+    int $environment_id
   );
 
   /**
    * Archive the environment in the orchestration provider.
+   *
+   * Unused, see nodeUpdate() in NodeOperations.php in shp_custom.
    *
    * @param int $environment_id
    *   Unique id of the environment.
@@ -314,21 +337,24 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
   /**
    * Handles a site being deleted.
    *
+   * Has to be done before the actual site node is deleted to have the
+   * required information to delete the associated objects.
+   *
    * @param string $project_name
    *   The project that is being deployed on the site.
-   * @param string $short_name
-   *   The short name of the site.
    * @param int $site_id
    *   The site id.
    *
    * @return bool
    *   Returns true if succeeded.
    */
-  public function deletedSite(string $project_name, string $short_name, int $site_id);
+  public function preDeleteSite(string $project_name, int $site_id);
 
   /**
    * Retrieves the metadata on a stored secret.
    *
+   * @param int $site_id
+   *   The site id.
    * @param string $name
    *   Secret name.
    * @param string $key
@@ -337,11 +363,13 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
    * @return array|string|bool
    *   Returns the secret array if successful, the value of the key, or false.
    */
-  public function getSecret(string $name, string $key = NULL);
+  public function getSecret(int $site_id, string $name, string $key = NULL);
 
   /**
    * Creates a secret.
    *
+   * @param int $site_id
+   *   The site id.
    * @param string $name
    *   The name of the secret to be stored.
    * @param array $data
@@ -350,11 +378,13 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
    * @return array|bool
    *   Returns the secret array if successful, otherwise false.
    */
-  public function createSecret(string $name, array $data);
+  public function createSecret(int $site_id, string $name, array $data);
 
   /**
    * Updates a secret.
    *
+   * @param int $site_id
+   *   The site id.
    * @param string $name
    *   The name of the secret to be updated.
    * @param array $data
@@ -363,7 +393,7 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
    * @return array|bool
    *   Returns the secret metadata if successful.
    */
-  public function updateSecret(string $name, array $data);
+  public function updateSecret(int $site_id, string $name, array $data);
 
   /**
    * Generates a deployment name from Shepherd node id.
@@ -391,77 +421,65 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
   /**
    * Get the status of a given environment.
    *
-   * @param string $project_name
-   *   Name of the project.
-   * @param string $short_name
-   *   Short name of the site.
-   * @param string $environment_id
+   * @param int $site_id
+   *   Site id to observe.
+   * @param int $environment_id
    *   Environment node id.
    *
    * @return array|bool
    *   Returns the given environment status, or false.
    */
   public function getEnvironmentStatus(
-    string $project_name,
-    string $short_name,
-    string $environment_id
+    int $site_id,
+    int $environment_id
   );
 
   /**
    * Retrieves the url for a given environment.
    *
-   * @param string $project_name
-   *   Name of the project.
-   * @param string $short_name
-   *   Short name of the site.
-   * @param string $environment_id
+   * @param int $site_id
+   *   Site id to observe.
+   * @param int $environment_id
    *   Environment node id.
    *
    * @return \Drupal\Core\Url|bool
    *   Returns environment url, or false.
    */
   public function getEnvironmentUrl(
-    string $project_name,
-    string $short_name,
-    string $environment_id
+    int $site_id,
+    int $environment_id
   );
 
   /**
    * Retrieves the direct terminal access url for a given environment.
    *
-   * @param string $project_name
-   *   Name of the project.
-   * @param string $short_name
-   *   Short name of the site.
-   * @param string $environment_id
+   * @param int $site_id
+   *   Site id to observe.
+   * @param int $environment_id
    *   Environment node id.
    *
    * @return \Drupal\Core\Url|bool
    *   Returns environment url, or false.
    */
   public function getTerminalUrl(
-    string $project_name,
-    string $short_name,
-    string $environment_id
+    int $site_id,
+    int $environment_id
   );
 
   /**
    * Retrieves the direct log access url for a given environment.
    *
-   * @param string $project_name
-   *   Name of the project.
-   * @param string $short_name
-   *   Short name of the site.
-   * @param string $environment_id
+   * @param int $site_id
+   *   Site id to observe.
+   * @param int $environment_id
    *   Environment node id.
    *
    * @return \Drupal\Core\Url|bool
    *   Returns environment url, or false.
    */
   public function getLogUrl(
-    string $project_name,
-    string $short_name,
-    string $environment_id
+    int $site_id,
+    int $environment_id
   );
 
   /**
@@ -560,84 +578,89 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
   /**
    * Get a list of backups for a site.
    *
-   * @param string $site_id
+   * @param int $site_id
    *   The site node id.
    *
    * @return object|bool
    *   The list of backups.
    */
-  public function getBackupsForSite(string $site_id);
+  public function getBackupsForSite(int $site_id);
 
   /**
    * Get a list of backups for an environment.
    *
-   * @param string $environment_id
+   * @param int $site_id
+   *   The site node id.
+   * @param int $environment_id
    *   The environment node id.
    *
    * @return object|bool
    *   The list of backups.
    */
-  public function getBackupsForEnvironment(string $environment_id);
+  public function getBackupsForEnvironment(int $site_id, int $environment_id);
 
   /**
    * Restore an environment.
    *
    * @param string $backup_name
    *   Name of the backup.
-   * @param string $site_id
+   * @param int $site_id
    *   Site node id.
-   * @param string $environment_id
+   * @param int $environment_id
    *   Environment node id.
    *
    * @return array|bool
    *   Returns a response body if successful, otherwise false.
    */
-  public function restoreEnvironment(string $backup_name, string $site_id, string $environment_id);
+  public function restoreEnvironment(string $backup_name, int $site_id, int $environment_id);
 
   /**
    * Get a list of restores for a site.
    *
-   * @param string $site_id
+   * @param int $site_id
    *   The site node id.
    *
    * @return object|bool
    *   The list of restores.
    */
-  public function getRestoresForSite(string $site_id);
+  public function getRestoresForSite(int $site_id);
 
   /**
    * Backup an environment.
    *
-   * @param string $site_id
+   * @param int $site_id
    *   Site node id.
-   * @param string $from_env
+   * @param int $from_env
    *   Environment node id to backup.
-   * @param string $to_env
+   * @param int $to_env
    *   Environment node id to restore.
    *
    * @return object|bool
    *   Returns a sync object if successful, otherwise false.
    */
-  public function syncEnvironments(string $site_id, string $from_env, string $to_env);
+  public function syncEnvironments(int $site_id, int $from_env, int $to_env);
 
   /**
    * Get a list of all syncs.
    *
-   * @return object|bool
-   *   The list of syncs.
-   */
-  public function getSyncs();
-
-  /**
-   * Get a list of syncs for a site.
-   *
-   * @param string $site_id
+   * @param int $site_id
    *   The site node id.
    *
    * @return object|bool
    *   The list of syncs.
    */
-  public function getSyncsForSite(string $site_id);
+  public function getSyncs(int $site_id);
+
+  /**
+   * Get a list of syncs for a site.
+   *
+   * @param int $site_id
+   *   The site node id.
+   *
+   * @return object|bool
+   *   The list of syncs.
+   */
+  public function getSyncsForSite(int $site_id);
 
   /**
    * Execute a job.

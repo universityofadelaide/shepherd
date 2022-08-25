@@ -2,17 +2,18 @@
 
 namespace Drupal\shp_cache_backend\Plugin\CacheBackend;
 
-use Drupal\Core\Config\ImmutableConfig;
+use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\node\NodeInterface;
 use Drupal\shp_cache_backend\Plugin\CacheBackendBase;
 use Drupal\shp_custom\Service\EnvironmentType;
 use Drupal\shp_orchestration\Plugin\OrchestrationProvider\OpenShiftOrchestrationProvider;
+use Drupal\shp_orchestration\TokenNamespaceTrait;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use UniversityOfAdelaide\OpenShift\Client;
 use UniversityOfAdelaide\OpenShift\Objects\ConfigMap;
 
 /**
- * Provides Redis integration.
+ * Provides memcache integration.
  *
  * @CacheBackend(
  *   id = "memcached_datagrid",
@@ -20,6 +21,22 @@ use UniversityOfAdelaide\OpenShift\Objects\ConfigMap;
  * )
  */
 class MemcachedDatagrid extends CacheBackendBase {
+
+  use TokenNamespaceTrait;
+
+  /**
+   * The configuration for the client.
+   *
+   * @var string
+   */
+  protected $config;
+
+  /**
+   * The configuration for the cache plugin client.
+   *
+   * @var string
+   */
+  protected $cacheConfig;
 
   /**
    * The namespace objects are being created in.
@@ -70,7 +87,7 @@ class MemcachedDatagrid extends CacheBackendBase {
   protected $datagridSelector = 'datagrid-app';
 
   /**
-   * Redis constructor.
+   * Memcache constructor.
    *
    * @param array $configuration
    *   A configuration array containing information about the plugin instance.
@@ -80,15 +97,17 @@ class MemcachedDatagrid extends CacheBackendBase {
    *   The plugin implementation definition.
    * @param \UniversityOfAdelaide\OpenShift\Client $client
    *   The OS Client.
-   * @param \Drupal\Core\Config\ImmutableConfig $config
+   * @param \Drupal\Core\Config\ConfigFactoryInterface $config
    *   The orchestration config.
    * @param \Drupal\shp_custom\Service\EnvironmentType $environmentType
    *   Environment type.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, Client $client, ImmutableConfig $config, EnvironmentType $environmentType) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, Client $client, ConfigFactoryInterface $config, EnvironmentType $environmentType) {
     parent::__construct($configuration, $plugin_id, $plugin_definition, $client);
-    $this->namespace = $config->get('connection.namespace');
     $this->environmentType = $environmentType;
+    $this->config = $config->get('shp_orchestration.settings');
+    $this->cacheConfig = $config->get('shp_cache_backend.settings');
+    $this->namespace = $this->config->get('connection.namespace');
   }
 
   /**
@@ -100,7 +119,7 @@ class MemcachedDatagrid extends CacheBackendBase {
       $plugin_id,
       $plugin_definition,
       $container->get('shp_orchestration.client'),
-      $container->get('config.factory')->get('shp_orchestration.settings'),
+      $container->get('config.factory'),
       $container->get('shp_custom.environment_type')
     );
   }
@@ -132,6 +151,10 @@ class MemcachedDatagrid extends CacheBackendBase {
    * {@inheritdoc}
    */
   public function onEnvironmentPromote(NodeInterface $environment) {
+    $this->client->setToken($this->config->get('connection.token'));
+    /** @var \Drupal\node\Entity\Node $environment */
+    $this->client->setNamespace($this->buildProjectName($environment->field_shp_site->entity->id()));
+
     $memcached_name = self::getMemcachedDeploymentName($environment);
     // Scale the memcached deployment to 0 when the environment is promoted.
     if ($deployment_config = $this->client->getDeploymentConfig($memcached_name)) {
@@ -145,6 +168,10 @@ class MemcachedDatagrid extends CacheBackendBase {
    * {@inheritdoc}
    */
   public function onEnvironmentDemotion(NodeInterface $environment) {
+    $this->client->setToken($this->config->get('connection.token'));
+    /** @var \Drupal\node\Entity\Node $environment */
+    $this->client->setNamespace($this->buildProjectName($environment->field_shp_site->entity->id()));
+
     $memcached_name = self::getMemcachedDeploymentName($environment);
     // Scale the memcached deployment to 1 when the environment is demoted.
     if ($deployment_config = $this->client->getDeploymentConfig($memcached_name)) {
@@ -158,6 +185,10 @@ class MemcachedDatagrid extends CacheBackendBase {
    * {@inheritdoc}
    */
   public function onEnvironmentCreate(NodeInterface $environment) {
+    // Datagrid is is its own project, but uses shepherd token.
+    $this->client->setToken($this->config->get('connection.token'));
+    $this->client->setNamespace($this->cacheConfig->get('namespace'));
+
     $deployment_name = OpenShiftOrchestrationProvider::generateDeploymentName($environment->id());
     if (!$configMap = $this->client->getConfigmap($this->configMapName)) {
       return;
@@ -165,9 +196,6 @@ class MemcachedDatagrid extends CacheBackendBase {
     if (!$xml = $this->loadXml($configMap)) {
       return;
     }
-
-    // Generate the memcached deployment to be used on non-prod environments.
-    $this->generateMemcachedDeployment($environment);
 
     $name = self::getMemcacheName($environment);
     // Find the next port to use.
@@ -231,6 +259,9 @@ class MemcachedDatagrid extends CacheBackendBase {
     }
     $statefulSet->setSpec($spec);
     $this->client->updateStatefulset($statefulSet);
+
+    // Do this last as it needs to switch the client to the sites project.
+    $this->generateMemcachedDeployment($environment);
   }
 
   /**
@@ -240,6 +271,10 @@ class MemcachedDatagrid extends CacheBackendBase {
    *   The environment.
    */
   protected function generateMemcachedDeployment(NodeInterface $environment) {
+    /** @var \Drupal\node\Entity\Node $environment */
+    $this->client->setToken($this->getSiteToken($environment->field_shp_site->entity->id()));
+    $this->client->setNamespace($this->buildProjectName($environment->field_shp_site->entity->id()));
+
     $memcachedDeploymentName = self::getMemcachedDeploymentName($environment);
     $deploymentName = OpenShiftOrchestrationProvider::generateDeploymentName($environment->id());
     $memcachedPort = 11211;
@@ -263,7 +298,7 @@ class MemcachedDatagrid extends CacheBackendBase {
    */
   protected function generateImageStream() {
     return [
-      'apiVersion' => 'v1',
+      'apiVersion' => 'image.openshift.io/v1',
       'kind' => 'ImageStream',
       'metadata' => [
         'name' => 'memcached',
@@ -295,7 +330,7 @@ class MemcachedDatagrid extends CacheBackendBase {
   }
 
   /**
-   * Format the redis deploy data.
+   * Format the memcache deploy data.
    *
    * @param string $name
    *   The name of the deployment config.
@@ -324,9 +359,9 @@ class MemcachedDatagrid extends CacheBackendBase {
    * @param \Drupal\node\NodeInterface $environment
    *   The environment.
    * @param string $memcached_name
-   *   Redis name.
+   *   Memcache name.
    * @param string $memcached_port
-   *   Redis port.
+   *   Memcache port.
    * @param array $data
    *   Array of data for labels.
    *
@@ -335,7 +370,7 @@ class MemcachedDatagrid extends CacheBackendBase {
    */
   protected function generateDeploymentConfig(NodeInterface $environment, string $memcached_name, string $memcached_port, array $data) {
     $config = [
-      'apiVersion' => 'v1',
+      'apiVersion' => 'apps.openshift.io/v1',
       'kind' => 'DeploymentConfig',
       'metadata' => [
         'name' => $memcached_name,
@@ -347,6 +382,16 @@ class MemcachedDatagrid extends CacheBackendBase {
         'selector' => array_key_exists('labels', $data) ? array_merge($data['labels'], ['name' => $memcached_name]) : [],
         'strategy' => [
           'type' => 'Rolling',
+          'resources' => [
+            'limits' => [
+              'cpu' => '100m',
+              'memory' => '128Mi',
+            ],
+            'requests' => [
+              'cpu' => '50m',
+              'memory' => '64Mi',
+            ],
+          ],
         ],
         'template' => [
           'metadata' => [
@@ -381,7 +426,7 @@ class MemcachedDatagrid extends CacheBackendBase {
                 'ports' => [
                   [
                     'name' => 'memcache',
-                    'containerPort' => $memcached_port,
+                    'containerPort' => (int) $memcached_port,
                   ],
                 ],
                 'resources' => [
@@ -422,6 +467,9 @@ class MemcachedDatagrid extends CacheBackendBase {
    * {@inheritdoc}
    */
   public function onEnvironmentDelete(NodeInterface $environment) {
+    $this->client->setToken($this->config->get('connection.token'));
+    $this->client->setNamespace($this->config->get('connection.namespace'));
+
     $deployment_name = OpenShiftOrchestrationProvider::generateDeploymentName($environment->id());
     $service_name = self::getMemcacheServiceName($deployment_name);
     if ($this->client->getService($service_name)) {
@@ -477,7 +525,11 @@ class MemcachedDatagrid extends CacheBackendBase {
     $statefulSet->setSpec($spec);
     $this->client->updateStatefulset($statefulSet);
 
-    // Delete the memcached deployment.
+    // Delete the memcached deployment from the sites project.
+    /** @var \Drupal\node\Entity\Node $environment */
+    $site = $environment->field_shp_site->entity->id();
+    $this->client->setToken($this->getSiteToken($site));
+    $this->client->setNamespace($this->buildProjectName($site));
     $memcached_name = self::getMemcachedDeploymentName($environment);
     if ($this->client->getService($memcached_name)) {
       $this->client->deleteService($memcached_name);

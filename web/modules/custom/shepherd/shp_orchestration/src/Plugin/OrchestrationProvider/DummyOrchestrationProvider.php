@@ -36,14 +36,14 @@ class DummyOrchestrationProvider extends OrchestrationProviderBase {
   /**
    * {@inheritdoc}
    */
-  public function createdProject(string $name, string $builder_image, string $source_repo, string $source_ref = 'master', string $source_secret = NULL, array $environment_variables = []) {
+  public function createdProject(int $project_id, string $name, string $builder_image, string $source_repo, string $source_ref = 'master', string $source_secret = NULL, array $environment_variables = []) {
     return TRUE;
   }
 
   /**
    * {@inheritdoc}
    */
-  public function updatedProject(string $name, string $builder_image, string $source_repo, string $source_ref = 'master', string $source_secret = '', array $environment_variables = []) {
+  public function updatedProject(int $project_id, string $name, string $builder_image, string $source_repo, string $source_ref = 'master', string $source_secret = '', array $environment_variables = []) {
     return TRUE;
   }
 
@@ -60,14 +60,16 @@ class DummyOrchestrationProvider extends OrchestrationProviderBase {
   public function createdEnvironment(
     string $project_name,
     string $short_name,
-    string $site_id,
-    string $environment_id,
+    int $site_id,
+    int $environment_id,
     string $environment_url,
     string $builder_image,
     string $source_repo,
     string $source_ref = 'master',
     string $source_secret = NULL,
     string $storage_class = '',
+    int $storage_size = 3,
+    int $backup_size = 3,
     bool $update_on_image_change = FALSE,
     bool $cron_suspended = FALSE,
     array $environment_variables = [],
@@ -95,6 +97,8 @@ class DummyOrchestrationProvider extends OrchestrationProviderBase {
     string $source_ref = 'master',
     string $source_secret = NULL,
     string $storage_class = '',
+    int $storage_size = 3,
+    int $backup_size = 3,
     bool $update_on_image_change = FALSE,
     bool $cron_suspended = FALSE,
     array $environment_variables = [],
@@ -115,7 +119,8 @@ class DummyOrchestrationProvider extends OrchestrationProviderBase {
   public function deletedEnvironment(
     string $project_name,
     string $short_name,
-    string $environment_id
+    int $site_id,
+    int $environment_id
   ) {
     return TRUE;
   }
@@ -168,9 +173,8 @@ class DummyOrchestrationProvider extends OrchestrationProviderBase {
   /**
    * {@inheritdoc}
    */
-  public function deletedSite(
+  public function preDeleteSite(
     string $project_name,
-    string $short_name,
     int $site_id
   ) {
     return TRUE;
@@ -228,49 +232,49 @@ class DummyOrchestrationProvider extends OrchestrationProviderBase {
   /**
    * {@inheritdoc}
    */
-  public function getBackupsForSite(string $site_id) {
+  public function getBackupsForSite(int $site_id) {
     return TRUE;
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getBackupsForEnvironment(string $environment_id) {
+  public function getBackupsForEnvironment(int $site_id, int $environment_id) {
     return TRUE;
   }
 
   /**
    * {@inheritdoc}
    */
-  public function restoreEnvironment(string $backup_name, string $site_id, string $environment_id) {
+  public function restoreEnvironment(string $backup_name, int $site_id, int $environment_id) {
     return TRUE;
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getRestoresForSite(string $site_id) {
+  public function getRestoresForSite(int $site_id) {
     return TRUE;
   }
 
   /**
    * {@inheritdoc}
    */
-  public function syncEnvironments(string $site_id, string $from_env, string $to_env) {
+  public function syncEnvironments(int $site_id, int $from_env, int $to_env) {
     return TRUE;
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getSyncs() {
+  public function getSyncs(int $site_id) {
     return TRUE;
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getSyncsForSite(string $site_id) {
+  public function getSyncsForSite(int $site_id) {
     return TRUE;
   }
 
@@ -303,21 +307,28 @@ class DummyOrchestrationProvider extends OrchestrationProviderBase {
   /**
    * {@inheritdoc}
    */
-  public function getSecret(string $name, string $key = NULL) {
+  public function getEnvironmentVersions() {
+    return [];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getSecret(int $site_id, string $name, string $key = NULL) {
     return $key ? 'secret' : ['secret'];
   }
 
   /**
    * {@inheritdoc}
    */
-  public function createSecret(string $name, array $data) {
+  public function createSecret(int $site_id, string $name, array $data) {
     return ['secret'];
   }
 
   /**
    * {@inheritdoc}
    */
-  public function updateSecret(string $name, array $data) {
+  public function updateSecret(int $site_id, string $name, array $data) {
     return ['secret'];
   }
 
@@ -350,28 +361,28 @@ class DummyOrchestrationProvider extends OrchestrationProviderBase {
   /**
    * {@inheritdoc}
    */
-  public function getEnvironmentUrl(string $project_name, string $short_name, string $environment_id) {
+  public function getEnvironmentUrl(int $site_id, int $environment_id) {
     return [];
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getTerminalUrl(string $project_name, string $short_name, string $environment_id) {
+  public function getTerminalUrl(int $site_id, int $environment_id) {
     return [];
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getLogUrl(string $project_name, string $short_name, string $environment_id) {
+  public function getLogUrl(int $site_id, int $environment_id) {
     return [];
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getEnvironmentStatus(string $project_name, string $short_name, string $environment_id) {
+  public function getEnvironmentStatus(int $site_id, int $environment_id) {
     return FALSE;
   }
 

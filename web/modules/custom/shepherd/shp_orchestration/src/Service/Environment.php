@@ -136,14 +136,14 @@ class Environment extends EntityActionBase {
     // environment. Create the secret if it doesn't exist.
     // @todo Replace with generated Shepherd auth token.
     $shepherd_token = 'super-secret-token';
-    if ($env_secret = $this->orchestrationProviderPlugin->getSecret($deployment_name)) {
-      $secret_result = $this->orchestrationProviderPlugin->updateSecret(
+    if ($env_secret = $this->orchestrationProviderPlugin->getSecret($site->id(), $deployment_name)) {
+      $secret_result = $this->orchestrationProviderPlugin->updateSecret($site->id(),
         $deployment_name,
         array_merge($env_secret, ['SHEPHERD_TOKEN' => $shepherd_token])
       );
     }
     else {
-      $secret_result = $this->orchestrationProviderPlugin->createSecret(
+      $secret_result = $this->orchestrationProviderPlugin->createSecret($site->id(),
         $deployment_name,
         ['SHEPHERD_TOKEN' => $shepherd_token]
       );
@@ -182,6 +182,8 @@ class Environment extends EntityActionBase {
       $node->field_shp_git_reference->value,
       $project->field_shp_build_secret->value,
       $storage_class,
+      $site->field_shp_storage_size->value,
+      $project->field_shp_backup_size->value,
       $node->field_shp_update_on_image_change->value,
       $node->field_shp_cron_suspended->value,
       $env_vars,
@@ -273,6 +275,8 @@ class Environment extends EntityActionBase {
       $node->field_shp_git_reference->value,
       $project->field_shp_build_secret->value,
       $storage_class,
+      $site->field_shp_storage_size->value,
+      $project->field_shp_backup_size->value,
       $node->field_shp_update_on_image_change->value,
       $node->field_shp_cron_suspended->value,
       $env_vars,
@@ -316,6 +320,7 @@ class Environment extends EntityActionBase {
     $result = $this->orchestrationProviderPlugin->deletedEnvironment(
       $project->title->value,
       $site->field_shp_short_name->value,
+      $site->id(),
       $node->id()
     );
 
@@ -493,7 +498,7 @@ class Environment extends EntityActionBase {
   }
 
   /**
-   * Constructs an Route object for an environment.
+   * Constructs a Route object for an environment.
    *
    * @param \Drupal\node\NodeInterface $environment
    *   Environment entity.
@@ -517,9 +522,7 @@ class Environment extends EntityActionBase {
       $route_type = 'site';
     }
 
-    $labels = ['app' => $route_name];
     $route->setName($route_name)
-      ->setLabels($labels)
       ->setInsecureEdgeTerminationPolicy('Allow')
       ->setTermination('edge')
       ->setToKind('Service')
@@ -532,6 +535,15 @@ class Environment extends EntityActionBase {
       array_column($annotations, 'value')
     );
     $route->setAnnotations($annotations);
+
+    // Extract and transform the labels from the provided environment type.
+    $labels = $term ? $term->field_shp_labels->getValue() : [];
+    $labels = array_combine(
+      array_column($labels, 'key'),
+      array_column($labels, 'value')
+    );
+    $labels['app'] = $route_name;
+    $route->setLabels($labels);
 
     // Use site domain and path when promoted term, otherwise environment.
     if (!${$route_type}->field_shp_domain->isEmpty()) {

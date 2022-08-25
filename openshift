@@ -9,46 +9,43 @@ if [ -f /.dockerenv ]; then
   exit
 fi
 
-BASE_DIR="/openshift/uni-shepherd"
-export OPENSHIFT=$(ip addr show docker0 | grep "inet\b" | awk '{print $2}' | cut -d/ -f1)
-
 openshift_start() {
-  if [ "${OPENSHIFT_TYPE}" == "minishift" ]; then
-    minishift start
-    if ! virsh net-list | grep default > /dev/null; then virsh net-start default; fi
-  else
-    oc cluster up --base-dir=${BASE_DIR} --public-hostname=${OPENSHIFT}
-  fi
-  echo "Now start shepherd with ./dsh"
+  crc setup
+  echo "Starting CodeReady Containers."
+  echo "Expect 20+ minutes from fresh setup, 8+ minutes subsequent. Coffee?"
+  crc start -n 1.1.1.1 -b crc_libvirt_4.10.22_amd64.crcbundle
+  echo "Logging in."
+  oc login -u developer https://api.crc.testing:6443
+  echo "Waiting a few seconds."
+  sleep 5
+  ./dsh
 }
 
 openshift_stop() {
   ./dsh stop
-  if [ "${OPENSHIFT_TYPE}" == "minishift" ]; then
-    minishift stop
-  else
-    oc cluster down
-  fi
+  crc stop
 }
 
 openshift_purge() {
   ./dsh purge
-  if [ "${OPENSHIFT_TYPE}" == "minishift" ]; then
-    minishift stop
-    minishift delete
-  else
-    oc cluster down
-    sudo rm -rf ${BASE_DIR}
-    sudo mkdir -p ${BASE_DIR}
-    sudo chown ${USER}:${USER} -R ${BASE_DIR}
-  fi
+  crc delete
+  echo "Cleaning up serviceaccount temp files."
+  for i in {0..4} ; do
+    SA=$(printf 'shepherd-dev-provisioner-00%02d' "$i")
+    if [ -f ".${SA}.token" ]; then
+      rm ".${SA}.token"
+    fi
+  done
 }
 
 COMMAND=${1:-default}
 
 case ${COMMAND} in
-  sta*)
+  star*)
     openshift_start
+    ;;
+  stat*)
+    crc status
     ;;
   sto*)
     openshift_stop
@@ -57,7 +54,7 @@ case ${COMMAND} in
     openshift_purge
     ;;
   *)
-    printf "Unknown command specified. Try:\n$0 [start|stop|purge].\n"
+    printf "Unknown command specified. Try:\n$0 [start|status|stop|purge].\n"
     exit 0
     ;;
 esac
