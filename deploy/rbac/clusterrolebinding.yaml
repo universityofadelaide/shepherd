@@ -1,0 +1,12 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: shepherd
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: shepherd
+subjects:
+  - kind: ServiceAccount
+    name: shepherd-sa
+    namespace: shepherd-dev

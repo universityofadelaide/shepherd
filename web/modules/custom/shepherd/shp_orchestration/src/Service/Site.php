@@ -98,7 +98,6 @@ class Site extends EntityActionBase {
     if ($project = $this->siteEntity->getProject($site)) {
       return $this->orchestrationProviderPlugin->preDeleteSite(
         $project->getTitle(),
-        $site->field_shp_short_name->value,
         $site->id()
       );
     }

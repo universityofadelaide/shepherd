@@ -3,6 +3,9 @@
 # `set +e` is used to continue on errors throughout this script.
 set -euo pipefail
 
+# Ensure using 4.10 oc client version.
+eval $(crc oc-env)
+
 # Used as the prefix for docker networking and container naming.
 PROJECT=$(basename "${PWD}")
 export PROJECT
@@ -56,6 +59,9 @@ dsh_openshift_init() {
   # Password for the mysql server.
   SUPER_SECRET_PASSWORD=super-secret-password
 
+  ADMIN_LOGIN=$(crc console --credentials | grep kubeadmin | cut -d"'" -f2)
+  DEV_LOGIN=$(crc console --credentials | grep developer | cut -d"'" -f2)
+
   # Path to ssh key with no passphrase.
   : "${BUILD_KEY:=$HOME/.ssh/id_rsa}"
 
@@ -67,23 +73,27 @@ dsh_openshift_init() {
   fi
 
   # Create new namespace/project for Openshift 4.x
-  echo "Ensuring shepherd project exists."
-  if ! oc get project shepherd > /dev/null 2>&1; then
-    oc new-project shepherd
+  echo "Ensuring shepherd-dev project exists."
+  if ! oc get project shepherd-dev > /dev/null 2>&1; then
+    oc new-project shepherd-dev
   fi
 
-  echo "Ensuring/switching to the shepherd project."
-  if [[ $(oc project -q) != "shepherd" ]]; then
-    oc project shepherd
+  echo "Ensuring/switching to the shepherd-dev project."
+  if [[ $(oc project -q) != "shepherd-dev" ]]; then
+    oc project shepherd-dev
   fi
 
   # Setup a new mysql server, expose it and group the services.
   echo "Ensuring mariadb service exists"
   if ! oc get svc mariadb > /dev/null 2>&1; then
-    oc new-app mariadb MYSQL_ROOT_PASSWORD=${SUPER_SECRET_PASSWORD} -l db=shepherd
+    oc new-app mariadb MYSQL_ROOT_PASSWORD=${SUPER_SECRET_PASSWORD} -l db=shepherd-dev
     oc expose service mariadb --generator=service/v2 --type=LoadBalancer --name=mysql-external
     oc annotate svc mysql-external "service.alpha.openshift.io/dependencies=[{\"name\": \"mariadb\", \"kind\": \"Service\"}]"
   fi
+
+  # Setup a new minio server, expose it and group the services.
+  echo "Ensuring minio service exists"
+  oc apply -f deploy/local/minio/
 
   # Setup the database password in an OpenShift secret.
   echo "Ensuring database secret exists."
@@ -93,21 +103,14 @@ dsh_openshift_init() {
 
   # Setup the restic password in an OpenShift secret.
   echo "Ensuring restic secret exists."
-  if ! oc get secret shepherd-restic-secret > /dev/null 2>&1; then
-    oc create secret generic shepherd-restic-secret --from-literal=password=${SUPER_SECRET_PASSWORD}
+  if ! oc get secret shepherd-dev-restic-secret > /dev/null 2>&1; then
+    oc create secret generic shepherd-dev-restic-secret --from-literal=password=${SUPER_SECRET_PASSWORD}
   fi
 
   # Setup the restic PVC for storing backups
   echo "Ensuring restic pvc exists."
   if ! oc get pvc restic-repository > /dev/null 2>&1; then
     oc apply -f ./openshift-config/shepherd-restic-repo-pvc.yml
-  fi
-
-  # Setup datagrid config
-  echo "Ensuring datagrid config exists."
-  if ! oc get configmap datagrid-config > /dev/null 2>&1; then
-    # Fails with:
-    oc apply -f ./openshift-config/datagrid
   fi
 
   # Add local ssh key as build-key secret if it exists and has no passphrase.
@@ -120,41 +123,69 @@ dsh_openshift_init() {
     fi
   fi
 
-  # Create a permanent token that shepherd can use to talk to OpenShift.
+  # Create a permanent token that shepherd-dev can use to talk to OpenShift.
   echo "Ensuring serviceaccount exists for token."
-  if ! oc get serviceaccount shepherd > /dev/null 2>&1; then
-    oc login -u kubeadmin
-    oc create serviceaccount shepherd
-    oc adm policy add-cluster-role-to-user cluster-admin system:serviceaccount:shepherd:shepherd
-    oc adm policy add-cluster-role-to-user self-provisioner system:serviceaccount:shepherd:shepherd
-    oc login -u developer
+  if ! oc get serviceaccount shepherd-sa > /dev/null 2>&1; then
+    ${ADMIN_LOGIN}
+    oc create serviceaccount shepherd-sa
+    oc adm policy add-cluster-role-to-user cluster-admin system:serviceaccount:shepherd-dev:shepherd-sa
+    oc adm policy add-cluster-role-to-user self-provisioner system:serviceaccount:shepherd-dev:shepherd-sa
+    ${DEV_LOGIN}
   fi
 
   # Creating additional service accounts for namespace manipulation.
   echo "Ensuring serviceaccounts exist for provisioning."
   for i in {0..4} ; do
-    SA=$(printf 'shepherd-prd-provisioner-00%02d' "$i")
+    SA=$(printf 'shepherd-dev-provisioner-00%02d' "$i")
     if ! oc get serviceaccount "${SA}" > /dev/null 2>&1; then
-      oc login -u kubeadmin
+      ${ADMIN_LOGIN}
       oc create serviceaccount "${SA}"
-      oc adm policy add-cluster-role-to-user cluster-admin system:serviceaccount:shepherd:"${SA}"
-      oc adm policy add-cluster-role-to-user self-provisioner system:serviceaccount:shepherd:"${SA}"
-      oc login -u developer
+      oc adm policy add-cluster-role-to-user cluster-admin system:serviceaccount:shepherd-dev:"${SA}"
+      oc adm policy add-cluster-role-to-user self-provisioner system:serviceaccount:shepherd-dev:"${SA}"
+      ${DEV_LOGIN}
 
       # This is pretty horrid, but there is no oc command in the dsh shell.
-      oc get secret $(oc describe sa ${SA} |\
-        grep Token | awk '{ print $2 }') -o json | jq -r '.data.token' | base64 -d > ".${SA}.token"
+      oc get secret "$(oc describe sa ${SA} | grep Token | awk '{ print $2 }')" \
+         -o json | jq -r '.data.token' | base64 -d > ".${SA}.token"
     fi
   done
 
+  if grep "\"auth\":\"<AUTH>\"" deploy/local/operator/secret.yaml > /dev/null 2>&1; then
+    error "Set github token in deploy/local/operator/secret.yaml"
+    exit 1
+  fi
+
+  ${ADMIN_LOGIN}
+  echo "Ensuring datagrid config exists."
+  if ! oc get project shepherd-dev-datagrid > /dev/null 2>&1; then
+    oc apply -f openshift-config/datagrid/namespace.yml
+    oc adm policy add-role-to-user admin developer -n shepherd-dev-datagrid
+
+    notice "Please configure a Data Grid instance as per the docs in openshift-config/datagrid/supplemental/INSTALL.md"
+  fi
+  ${DEV_LOGIN}
+
+  ${ADMIN_LOGIN}
+  echo "Ensuring backup operator config exists."
+  if ! oc get project shepherd-dev-operator > /dev/null 2>&1; then
+    oc apply -f deploy/local/operator/config/manager/namespace.yml
+    oc adm policy add-role-to-user admin developer -n shepherd-dev-operator
+    oc apply -f deploy/rbac/
+    oc apply -f deploy/local/operator/
+    oc apply -f deploy/local/operator/config/manager
+    oc apply -f deploy/local/operator/config/crd/bases
+    oc apply -f deploy/local/operator/config/rbac
+  fi
+  ${DEV_LOGIN}
+
   # Retrieve the service account token and the minishift ip.
-  SERVICE_ACCOUNT=$(oc describe serviceaccount shepherd | grep Token | awk '{ print $2 }')
+  SERVICE_ACCOUNT=$(oc describe serviceaccount shepherd-sa | grep Token | awk '{ print $2 }')
 
   # Now set the things that we need in the dsh shell.
   TOKEN=$(oc describe secret ${SERVICE_ACCOUNT} | grep "token:" | awk '{ print $2 }')
   OPENSHIFT_DOMAIN="apps-crc.testing"
   OPENSHIFT_URL="https://api.crc.testing:6443"
-  DB_HOST="mysql-external-shepherd.${OPENSHIFT_DOMAIN}"
+  DB_HOST="mysql-external-shepherd-dev.${OPENSHIFT_DOMAIN}"
   DB_PORT=$(oc get service mysql-external --no-headers | sed 's/.*:\([0-9]*\).*/\1/')
 }
 

@@ -1,0 +1,86 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: operator
+  namespace: shepherd-dev
+spec:
+  selector:
+    matchLabels:
+      deployment: operator
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        deployment: operator
+    spec:
+      securityContext:
+        runAsNonRoot: true
+      containers:
+      - command:
+        - /manager
+        args:
+        - --leader-elect
+        image: ghcr.io/universityofadelaide/shepherd-operator:v3.0.0-alpha9
+        name: manager
+        env:
+          - name: SHEPHERD_OPERATOR_BACKUP_CPU
+            value: "500m"
+          - name: SHEPHERD_OPERATOR_BACKUP_MEMORY
+            value: "512Mi"
+          - name: SHEPHERD_OPERATOR_BACKUP_WORKING_DIR
+            value: "/home/shepherd"
+          - name: SHEPHERD_OPERATOR_BACKUP_MYSQL_IMAGE
+            value: "skpr/mtk-mysql"
+          - name: SHEPHERD_OPERATOR_BACKUP_AWS_ENDPOINT
+            value: "http://minio.shepherd-dev.svc.cluster.local:9000"
+          - name: SHEPHERD_OPERATOR_BACKUP_AWS_BUCKET_NAME
+            value: "local"
+          - name: SHEPHERD_OPERATOR_BACKUP_AWS_IMAGE
+            value: "docker.io/amazon/aws-cli:latest"
+          - name: SHEPHERD_OPERATOR_BACKUP_AWS_KEY_ID
+            value: "shepherd"
+          - name: SHEPHERD_OPERATOR_BACKUP_AWS_ACCESS_KEY
+            value: "password123"
+          - name: SHEPHERD_OPERATOR_RESTORE_CPU
+            value: "500m"
+          - name: SHEPHERD_OPERATOR_RESTORE_MEMORY
+            value: "512Mi"
+          - name: SHEPHERD_OPERATOR_RESTORE_WORKING_DIR
+            value: "/home/shepherd"
+          - name: SHEPHERD_OPERATOR_RESTORE_MYSQL_IMAGE
+            value: "skpr/mtk-mysql"
+          - name: SHEPHERD_OPERATOR_RESTORE_AWS_ENDPOINT
+            value: "http://minio.shepherd-dev.svc.cluster.local:9000"
+          - name: SHEPHERD_OPERATOR_RESTORE_AWS_BUCKET_NAME
+            value: "local"
+          - name: SHEPHERD_OPERATOR_RESTORE_AWS_IMAGE
+            value: "docker.io/amazon/aws-cli:latest"
+          - name: SHEPHERD_OPERATOR_RESTORE_AWS_KEY_ID
+            value: "shepherd"
+          - name: SHEPHERD_OPERATOR_RESTORE_AWS_ACCESS_KEY
+            value: "password123"
+        securityContext:
+          allowPrivilegeEscalation: false
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: 8081
+          initialDelaySeconds: 15
+          periodSeconds: 20
+        readinessProbe:
+          httpGet:
+            path: /readyz
+            port: 8081
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        resources:
+          limits:
+            cpu: 500m
+            memory: 128Mi
+          requests:
+            cpu: 10m
+            memory: 64Mi
+      serviceAccountName: shepherd-sa
+      terminationGracePeriodSeconds: 10
+      imagePullSecrets:
+        - name: dockerconfigjson-github-com

@@ -116,6 +116,13 @@ class OrchestrationProviderSettingsForm extends ConfigFormBase {
       '#description' => $this->t("The OpenShift project to use."),
       '#required' => FALSE,
     ];
+    $form['connection']['site_deploy_prefix'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('Site (Openshift Project) deploy prefix'),
+      '#default_value' => $config->get('connection.site_deploy_prefix'),
+      '#description' => $this->t("The prefix for newly deployed sites which are Openshift Projects."),
+      '#required' => FALSE,
+    ];
     $form['connection']['uid'] = [
       '#type' => 'textfield',
       '#title' => $this->t('User ID'),
@@ -129,6 +136,14 @@ class OrchestrationProviderSettingsForm extends ConfigFormBase {
       '#description' => $this->t("The default group id containers should run as."),
       '#default_value' => $config->get('connection.gid'),
       '#required' => FALSE,
+    ];
+    $form['connection']['admin_users'] = [
+      '#type' => 'textarea',
+      '#title' => $this->t('Additional admin users'),
+      '#default_value' => $config->get('connection.admin_users'),
+      '#attributes' => ['autocomplete' => 'off'],
+      '#required' => TRUE,
+      '#description' => $this->t("Any additional users to add to new projects as admins. Usernames separated by comma, eg bob,jim,frank"),
     ];
 
     return parent::buildForm($form, $form_state);

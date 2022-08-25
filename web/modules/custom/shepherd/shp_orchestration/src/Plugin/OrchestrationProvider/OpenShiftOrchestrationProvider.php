@@ -58,13 +58,6 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
   protected $client;
 
   /**
-   * Site that we are currently working with.
-   *
-   * @var int
-   */
-  protected $siteId;
-
-  /**
    * Shepherd custom string generator.
    *
    * @var \Drupal\shp_custom\Service\StringGenerator
@@ -141,35 +134,36 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
   /**
    * {@inheritdoc}
    */
-  public function createdProject(string $name, string $builder_image, string $source_repo, string $source_ref = 'master', string $source_secret = NULL, array $environment_variables = []) {
+  public function createdProject(int $project_id, string $name, string $builder_image, string $source_repo, string $source_ref = 'master', string $source_secret = NULL, array $environment_variables = []) {
     $sanitised_project_name = self::sanitise($name);
     $sanitised_source_ref = self::sanitise($source_ref);
     $image_stream_tag = $sanitised_project_name . ':' . $sanitised_source_ref;
     $build_config_name = $sanitised_project_name . '-' . $sanitised_source_ref;
+    $build_limits = $this->generateRequestLimits(NULL, $project_id);
 
     $formatted_env_vars = $this->formatEnvVars($environment_variables);
 
     try {
-      $storedSite = $this->getSiteId();
       $this->setSiteConfig(0);
 
       $image_stream = $this->client->generateImageStreamConfig($sanitised_project_name);
       $this->client->createImageStream($image_stream);
-      $this->createBuildConfig($build_config_name, $source_ref, $source_repo, $builder_image, $source_secret, $image_stream_tag, $formatted_env_vars);
+      $this->createBuildConfig($build_config_name, $source_ref, $source_repo, $builder_image, $source_secret, $image_stream_tag, $formatted_env_vars, $build_limits);
     }
     catch (ClientException $e) {
       $this->exceptionHandler->handleClientException($e);
       return FALSE;
     }
-    $this->setSiteConfig($storedSite);
     return TRUE;
   }
 
   /**
    * {@inheritdoc}
    */
-  public function updatedProject(string $name, string $builder_image, string $source_repo, string $source_ref = 'master', string $source_secret = NULL, array $environment_variables = []) {
+  public function updatedProject(int $project_id, string $name, string $builder_image, string $source_repo, string $source_ref = 'master', string $source_secret = NULL, array $environment_variables = []) {
     $sanitised_name = self::sanitise($name);
+
+    $build_limits = $this->generateRequestLimits(NULL, $project_id);
 
     // Package config for the client.
     $build_data = [
@@ -183,8 +177,9 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       ],
     ];
 
+    $build_data = array_merge($build_data, $build_limits);
+
     try {
-      $storedSite = $this->getSiteId();
       $this->setSiteConfig(0);
 
       $this->client->updateBuildConfig(
@@ -199,7 +194,6 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       return FALSE;
     }
 
-    $this->setSiteConfig($storedSite);
     return TRUE;
   }
 
@@ -227,14 +221,16 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
    *   Image stream tag.
    * @param array $formatted_env_vars
    *   Formatted env vars.
+   * @param array $limits
+   *   Cpu and memory limits.
    *
    * @return bool
    *   Created or already exists = TRUE. Fail = FALSE.
    */
-  protected function createBuildConfig(string $build_config_name, string $source_ref, string $source_repo, string $builder_image, string $source_secret, string $image_stream_tag, array $formatted_env_vars) {
+  protected function createBuildConfig(string $build_config_name, string $source_ref, string $source_repo, string $builder_image, string $source_secret, string $image_stream_tag, array $formatted_env_vars, array $limits) {
     // Create build config if it doesn't exist.
     if (!$this->client->getBuildConfig($build_config_name)) {
-      $build_data = $this->formatBuildData($source_ref, $source_repo, $builder_image, $formatted_env_vars);
+      $build_data = $this->formatBuildData($source_ref, $source_repo, $builder_image, $formatted_env_vars, $limits);
 
       $build_config = $this->client->generateBuildConfig(
         $build_config_name,
@@ -286,13 +282,14 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     $deployment_name = self::generateDeploymentName($environment_id);
     $image_stream_tag = $sanitised_project_name . ':' . $sanitised_source_ref;
     $build_config_name = $sanitised_project_name . '-' . $sanitised_source_ref;
+    $build_limits = $this->generateRequestLimits($environment_id);
     $formatted_env_vars = $this->formatEnvVars($environment_variables, $deployment_name);
 
     // Ensure in the shepherd project.
     $this->setSiteConfig(0);
 
     // Tell, don't ask (to create a build config).
-    $this->createBuildConfig($build_config_name, $source_ref, $source_repo, $builder_image, $source_secret, $image_stream_tag, $formatted_env_vars);
+    $this->createBuildConfig($build_config_name, $source_ref, $source_repo, $builder_image, $source_secret, $image_stream_tag, $formatted_env_vars, $build_limits);
 
     // Now we need to use the site project.
     $this->setSiteConfig($site_id);
@@ -315,6 +312,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       $deployment_name,
       $image_stream_tag,
       $sanitised_project_name,
+      $this->config->get('connection.namespace'),
       $update_on_image_change,
       $volumes,
       $deploy_data,
@@ -332,7 +330,11 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     // Get the volumes and include the backups this time.
     $cron_volumes = $this->generateVolumeData($project_name, $deployment_name, $secrets, TRUE);
 
+    // Image streams are in the shepherd project.
+    $this->setSiteConfig(0);
     $image = $this->getImageStreamImage($sanitised_project_name, $sanitised_source_ref);
+    $this->setSiteConfig($site_id);
+
     if ($image) {
       $this->createCronJobs(
         $deployment_name,
@@ -380,15 +382,9 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
    * @throws \UniversityOfAdelaide\OpenShift\ClientException
    */
   protected function getImageStreamImage(string $sanitised_project_name, string $sanitised_source_ref) {
-    // Image streams are in the shepherd project, store and switch back.
-    $storedSite = $this->getSiteId();
-    $this->setSiteConfig(0);
     // Retrieve image stream that will be used for this site. There is only a
     // tiny chance it will be different to the deployment config image.
     $image_stream = $this->client->getImageStream($sanitised_project_name);
-
-    // Switch the site info back.
-    $this->setSiteConfig($storedSite);
 
     if (is_array($image_stream) && isset($image_stream['status']['tags'])) {
       // Look through the image stream tags to find the one being deployed.
@@ -451,6 +447,18 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
 
     $this->client->updateDeploymentConfig($deployment_name, $deployment_config, [
       'spec' => [
+        'strategy' => [
+          'resources' => [
+            'limits' => [
+              'cpu' => $deploy_data['cpu_limit'],
+              'memory' => $deploy_data['memory_limit'],
+            ],
+            'requests' => [
+              'cpu' => $deploy_data['cpu_request'],
+              'memory' => $deploy_data['memory_request'],
+            ],
+          ],
+        ],
         'template' => [
           'spec' => [
             'containers' => [
@@ -472,6 +480,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
         ],
       ],
     ]);
+
     // Update the HPA only if there is one.
     if ($this->client->getHpa($deployment_name)) {
       $hpa->setName($deployment_name);
@@ -516,39 +525,24 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
   /**
    * Helper function to set the namespace and token before calling the api.
    *
-   * @param int|null $site_id
+   * @param int $site_id
    *   The site which dictates which service account quota will be used.
    *
    * @throws \UniversityOfAdelaide\OpenShift\ClientException
    */
-  private function setSiteConfig(int $site_id = NULL) {
-    // If called with no parameters, set the defaults to shepherd.
-    $this->client->setToken($this->config->get('connection.token'));
-    $this->client->setNamespace($this->config->get('connection.namespace'));
+  private function setSiteConfig(int $site_id = 0) {
 
-    // Return now if no site id passed.
+    // For almost everything, we'll be using the shepherd token.
+    $this->client->setToken($this->config->get('connection.token'));
+
+    // If called with no parameters, set the default namespace to shepherd.
     if (!$site_id) {
+      $this->client->setNamespace($this->config->get('connection.namespace'));
       return;
     }
 
-    // Retrieve the token first from the shepherd namespace.
-    $this->client->setToken($this->getSiteToken($site_id));
-
-    // Then we can change to the sites namespace.
-    $this->client->setNamespace($this->getSiteNamespace($site_id));
-
-    // Finally, store the newly activated siteId in case.
-    $this->siteId = $site_id;
-  }
-
-  /**
-   * Helper function to retrieve the site id thats currently set.
-   *
-   * @return int
-   *   The currently set site id.
-   */
-  private function getSiteId() {
-    return $this->siteId;
+    // Otherwise set to the site namespace.
+    $this->client->setNamespace($this->buildProjectName($site_id));
   }
 
   /**
@@ -687,21 +681,50 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     // Set the auth to be the site token.
     $this->setSiteConfig($site_id);
 
+    // In this case, override the shepherd token with a provisioner token.
+    $this->client->setToken($this->getSiteToken($site_id));
+
     // Now Create a project/namespace for the new site.
-    $projectName = $this->buildProjectName($short_name);
+    $projectName = $this->buildProjectName($site_id);
     $this->client->createProjectRequest($projectName);
 
-    // @todo This works for local dev, but what to do here eh?
-    $this->createRoleBinding('developer', 'admin');
+    $connectionNamespace = $this->config->get('connection.namespace');
+
+    // @todo solve visibility for business users.
+    // Best we can do with no deep ldap/something integration
+    // is to assume that the current username matches.
+    $username = \Drupal::currentUser()->getAccountName();
+    if (($username == 'admin' || !strlen($username)) && $connectionNamespace == 'shepherd-dev') {
+      // No username? likely the setup script, but only do it for development.
+      $this->createRoleBinding('developer', 'admin');
+    }
+    else {
+      $this->createRoleBinding($username, 'admin');
+    }
+
+    // Also process any manually specified users.
+    if ($admin_users = $this->config->get('connection.admin_users')) {
+      foreach (explode(',', $admin_users) as $username) {
+        // We wont have access to check for users, so wrap in try/catch.
+        try {
+          $this->createRoleBinding($username, 'admin');
+        }
+        catch (ClientException $e) {
+          $this->messenger->addError(t('Unable to create rolebinding for :username',
+            [':username' => $username]
+          ));
+        }
+      }
+    }
+
+    // Create a RoleBinding so Shepherd can perform operations in the
+    // Project/Namespace from a consistent ServiceAccount.
+    // @todo fix shepherd-sa service account to be dynamic.
+    $this->createRoleBinding("shepherd-sa", "admin", $connectionNamespace);
 
     // Lastly, allow the new project to pull from the shepherd project.
     $this->setSiteConfig(0);
     $this->createRoleBinding('default', 'system:image-puller', $projectName);
-
-    // Try and set up the backup role binding.
-    $serviceAccount = \Drupal::service('shp_service_accounts')->getServiceAccount($site_id);
-    $saName = $serviceAccount->get('label');
-    $this->createRoleBinding($saName, 'shepherd-operator-manager', $projectName);
   }
 
   /**
@@ -735,7 +758,6 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
    */
   public function preDeleteSite(
     string $project_name,
-    string $short_name,
     int $site_id
   ) {
     $this->setSiteConfig($site_id);
@@ -745,7 +767,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     $this->client->deleteService($deployment_name);
     $this->client->deleteRoute($deployment_name);
 
-    $this->client->deleteProject($this->buildProjectName($short_name));
+    $this->client->deleteProject($this->buildProjectName($site_id));
   }
 
   /**
@@ -1284,7 +1306,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
         // Return the first running, non-job container.
         if ($this->isWebPod($details)) {
           $pod_name = $pods['items'][0]['metadata']['name'];
-          return $this->generateOpenShiftPodUrl($pod_name, 'terminal');
+          return $this->generateOpenShiftPodUrl($site_id, $pod_name, 'terminal');
         }
       }
     }
@@ -1316,7 +1338,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
         // Return the first running, non-job container.
         if ($this->isWebPod($details)) {
           $pod_name = $pods['items'][0]['metadata']['name'];
-          return $this->generateOpenShiftPodUrl($pod_name, 'logs');
+          return $this->generateOpenShiftPodUrl($site_id, $pod_name, 'logs');
         }
       }
     }
@@ -1347,6 +1369,8 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
   /**
    * Generate url to a specific pod and view in OpenShift.
    *
+   * @param int $site_id
+   *   Site id to create a url for.
    * @param string $pod_name
    *   Pod name.
    * @param string $view
@@ -1355,14 +1379,19 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
    * @return \Drupal\Core\Url
    *   Url.
    */
-  protected function generateOpenShiftPodUrl(string $pod_name, string $view) {
+  protected function generateOpenShiftPodUrl(int $site_id, string $pod_name, string $view) {
     $endpoint = $this->config->get('connection.endpoint');
 
-    // @todo fix for deployed version, store web ui or remove this all.
-    $endpoint = str_replace('api.crc', 'console-openshift-console.apps-crc', $endpoint);
+    // This search/replace is for development.
+    $endpoint = str_replace('api.crc.', 'console-openshift-console.apps-crc.', $endpoint);
+
+    // This one is for production.
+    $endpoint = str_replace('api.', 'console-openshift-console.apps.', $endpoint);
+
+    // The port isn't used through the UI.
     $endpoint = str_replace(':6443', '', $endpoint);
 
-    $namespace = $this->getSiteNamespace($this->getSiteId());
+    $namespace = $this->buildProjectName($site_id);
 
     return Url::fromUri($endpoint . '/k8s/ns/' . $namespace . '/pods/' . $pod_name . '/' . $view, [
       'attributes' => [
@@ -1457,30 +1486,36 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       }
     }
 
-    $request_limits = $this->generateRequestLimits($environment_id);
-    $deploy_data = array_merge($deploy_data, $request_limits);
-
-    return $deploy_data;
+    $request_limits = $this->generateRequestLimits($environment_id, NULL);
+    return array_merge($deploy_data, $request_limits);
   }
 
   /**
    * Generate request limits.
    *
-   * @param int $environment_id
+   * @param int|null $environment_id
+   *   The ID of the environment being deployed.
+   * @param int|null $project_id
    *   The ID of the environment being deployed.
    *
    * @return array
    *   Array with cpu & memory request & limits.
    */
-  protected function generateRequestLimits(int $environment_id) {
+  protected function generateRequestLimits(int $environment_id = NULL, int $project_id = NULL) {
     $request_limits = [];
 
-    /** @var \Drupal\node\Entity\Node $environment */
-    $environment = Node::load($environment_id);
-    /** @var \Drupal\node\Entity\Node $site */
-    $site = $environment->field_shp_site->entity;
-    /** @var \Drupal\node\Entity\Node $project */
-    $project = $site->field_shp_project->entity;
+    if ($environment_id) {
+      /** @var \Drupal\node\Entity\Node $environment */
+      $environment = Node::load($environment_id);
+      /** @var \Drupal\node\Entity\Node $site */
+      $site = $environment->field_shp_site->entity;
+      /** @var \Drupal\node\Entity\Node $project */
+      $project = $site->field_shp_project->entity;
+    }
+    else {
+      /** @var \Drupal\node\Entity\Node $project */
+      $project = Node::load($project_id);
+    }
 
     $fields = [
       'field_shp_cpu_request'    => 'cpu_request',
@@ -1490,14 +1525,13 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     ];
 
     foreach ($fields as $field => $client_field) {
-      if (!$environment->{$field}->isEmpty()) {
+      if ($environment_id && !$environment->{$field}->isEmpty()) {
         $request_limits[$client_field] = $environment->{$field}->value;
         continue;
       }
 
       if (!$project->{$field}->isEmpty()) {
         $request_limits[$client_field] = $project->{$field}->value;
-        continue;
       }
 
     }
@@ -1518,13 +1552,19 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
    *   The builder image.
    * @param array $formatted_env_vars
    *   Environment variables.
+   * @param array $limits
+   *   Cpu and memory limits.
    *
    * @return array
    *   Build data.
    */
-  protected function formatBuildData(string $source_ref, string $source_repo, string $builder_image, array $formatted_env_vars = []) {
+  protected function formatBuildData(string $source_ref, string $source_repo, string $builder_image, array $formatted_env_vars = [], array $limits = []) {
     // Package config for the client.
     return [
+      'cpu_limit' => $limits['cpu_limit'],
+      'cpu_request' => $limits['cpu_request'],
+      'memory_limit' => $limits['memory_limit'],
+      'memory_request' => $limits['memory_request'],
       'git' => [
         'ref' => $source_ref,
         'uri' => $source_repo,

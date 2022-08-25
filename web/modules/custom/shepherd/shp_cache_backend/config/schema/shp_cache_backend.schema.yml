@@ -1,0 +1,7 @@
+shp_cache_backend.settings:
+  type: config_object
+  label: 'Cache backend settings'
+  mapping:
+    namespace:
+      type: string
+      label: 'Namespace'

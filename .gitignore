@@ -62,6 +62,8 @@ dsh_proxy.conf
 # Ignore Shepherd specific things
 shared
 openshift.local.clusterup
+.shepherd-dev-provisioner-*
+.shepherd-uat-provisioner-*
 .shepherd-prd-provisioner-*
 
 docker-compose.linux.yml
