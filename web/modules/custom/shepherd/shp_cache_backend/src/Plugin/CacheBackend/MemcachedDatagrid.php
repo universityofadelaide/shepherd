@@ -11,6 +11,7 @@ use Drupal\shp_orchestration\TokenNamespaceTrait;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use UniversityOfAdelaide\OpenShift\Client;
 use UniversityOfAdelaide\OpenShift\Objects\ConfigMap;
+use UniversityOfAdelaide\OpenShift\Objects\NetworkPolicy;
 
 /**
  * Provides memcache integration.
@@ -78,7 +79,7 @@ class MemcachedDatagrid extends CacheBackendBase {
   protected $defaultPort = 11311;
 
   /**
-   * The pod selector used for datagrid.
+   * The pod selector used in network policies.
    *
    * @var string
    *
@@ -208,6 +209,14 @@ class MemcachedDatagrid extends CacheBackendBase {
       }
     }
     $new_port = $max_port + 1;
+
+    // Create the NetworkPolicy.
+    $network_policy = NetworkPolicy::create()
+      ->setIngressMatchLabels(['app' => $deployment_name])
+      ->setPodSelectorMatchLabels(['application' => $this->datagridSelector])
+      ->setPort($new_port)
+      ->setName(self::getNetworkPolicyName($deployment_name));
+    $this->client->createNetworkpolicy($network_policy);
 
     // Create the Service.
     $service_name = self::getMemcacheServiceName($deployment_name);
@@ -471,6 +480,10 @@ class MemcachedDatagrid extends CacheBackendBase {
     $this->client->setNamespace($this->config->get('connection.namespace'));
 
     $deployment_name = OpenShiftOrchestrationProvider::generateDeploymentName($environment->id());
+    $np_name = self::getNetworkPolicyName($deployment_name);
+    if ($this->client->getNetworkpolicy($np_name)) {
+      $this->client->deleteNetworkpolicy($np_name);
+    }
     $service_name = self::getMemcacheServiceName($deployment_name);
     if ($this->client->getService($service_name)) {
       $this->client->deleteService($service_name);
@@ -620,6 +633,19 @@ class MemcachedDatagrid extends CacheBackendBase {
    */
   protected static function getMemcacheName(NodeInterface $environment) {
     return 'memcached_node-' . $environment->id();
+  }
+
+  /**
+   * Get the network policy name.
+   *
+   * @param string $deployment_name
+   *   The deployment name.
+   *
+   * @return string
+   *   The network policy name.
+   */
+  protected static function getNetworkPolicyName(string $deployment_name) {
+    return 'datagrid-allow-' . $deployment_name;
   }
 
   /**
