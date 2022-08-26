@@ -45,5 +45,5 @@ fi
 
 echo ""
 notice "Resource deletions requested, allow a few seconds for things to complete."
-notice "Performing dsh stop, dsh start, robo build && robo dev:drupal-content-generate should then work."
+notice "Performing dsh stop, dsh, robo build && robo dev:drupal-content-generate should then work."
 echo ""

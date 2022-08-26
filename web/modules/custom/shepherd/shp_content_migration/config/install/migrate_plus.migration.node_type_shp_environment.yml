@@ -14,7 +14,9 @@ source:
   track_changes: yes
 
 process:
-  uid: uid
+  uid:
+    plugin: default_value
+    default_value: 1
   changed: changed
   created: created
   status: status

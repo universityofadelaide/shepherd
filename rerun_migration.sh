@@ -11,14 +11,20 @@ function performimport() {
     drush mrs $(echo $migration | awk  '{ print $1 }')
   done
 
+  echo " Importing taxonomy... "
+  #drush mim taxonomy_term_shp_storage_class
+
   echo " Starting node types... "
+  #drush mim node_type_shp_project
+  drush mr node_type_shp_site
+  robo dev:xdebug-enable
   drush mim node_type_shp_site
   #drush mim node_type_shp_environment
 }
 
 
 # Ensure xdebug disabled
-robo dev:xdebug-disable
+#robo dev:xdebug-disable
 
 # Ensure modules loaded
 drush -y en shp_content_migration

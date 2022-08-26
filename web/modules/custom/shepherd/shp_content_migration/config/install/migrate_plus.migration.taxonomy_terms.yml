@@ -1,0 +1,26 @@
+langcode: en
+status: true
+id: taxonomy_terms
+label: Taxonomy terms
+
+migration_group: shp_content_migration
+migration_tags:
+  - shp_content_migration
+
+source:
+  key: migrate
+  plugin: d8_entity
+  entity_type: taxonomy_term
+  track_changes: true
+
+process:
+  vid: vid
+  name: name
+  description: description
+
+destination:
+  plugin: 'entity:taxonomy_term'
+
+migration_dependencies:
+  required: [ ]
+  optional: [ ]
