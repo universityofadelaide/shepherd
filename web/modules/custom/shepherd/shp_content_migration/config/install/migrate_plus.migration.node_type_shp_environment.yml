@@ -45,7 +45,9 @@ process:
     migration: node_type_shp_site
 
   field_shp_update_on_image_change: field_shp_update_on_image_change
-  field_skip_db_prepop: field_skip_db_prepop
+  field_skip_db_prepop:
+    plugin: default_value
+    default_value: 0
 
 destination:
   plugin: entity:node
