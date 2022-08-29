@@ -12,10 +12,10 @@ function performimport() {
   done
 
   echo " Importing taxonomy... "
-  #drush mim taxonomy_term_shp_storage_class
+  drush mim taxonomy_terms
 
   echo " Starting node types... "
-  #drush mim node_type_shp_project
+  drush mim node_type_shp_project
   drush mr node_type_shp_site
   robo dev:xdebug-enable
   drush mim node_type_shp_site
