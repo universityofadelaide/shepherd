@@ -15,6 +15,7 @@ use Drupal\shp_service_accounts\Service\ServiceAccountsInterface;
 use Drupal\Tests\UnitTestCase;
 use UniversityOfAdelaide\OpenShift\Client;
 use UniversityOfAdelaide\OpenShift\Objects\ConfigMap;
+use UniversityOfAdelaide\OpenShift\Objects\NetworkPolicy;
 use UniversityOfAdelaide\OpenShift\Objects\StatefulSet;
 use UniversityOfAdelaide\OpenShift\Serializer\OpenShiftSerializerFactory;
 
@@ -197,7 +198,9 @@ class MemcachedDatagridCacheBackendTest extends UnitTestCase {
    */
   public function testOnEnvironmentCreate() {
     $fixture_dir = __DIR__ . '/../../fixtures';
-    // The client will create a  service.
+    // The client will create a network policy and service.
+    $this->client->expects($this->once())
+      ->method('createNetworkpolicy');
     $this->client->expects($this->exactly(2))
       ->method('createService');
     $this->client->expects($this->once())
@@ -248,7 +251,14 @@ class MemcachedDatagridCacheBackendTest extends UnitTestCase {
    */
   public function testOnEnvironmentDelete() {
     $fixture_dir = __DIR__ . '/../../fixtures';
-    // The client will get and delete a service.
+    // The client will get and delete a network policy and service.
+    $this->client->expects($this->once())
+      ->method('getNetworkpolicy')
+      ->with('datagrid-allow-node-123')
+      ->willReturn(NetworkPolicy::create());
+    $this->client->expects($this->once())
+      ->method('deleteNetworkpolicy')
+      ->with('datagrid-allow-node-123');
     $this->client->expects($this->exactly(2))
       ->method('getService')
       ->with($this->logicalOr('node-123-mc', 'node-123-memcached'))

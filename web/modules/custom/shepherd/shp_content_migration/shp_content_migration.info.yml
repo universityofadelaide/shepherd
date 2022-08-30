@@ -1,0 +1,13 @@
+name: 'Shepherd Content migration'
+type: module
+description: 'Shepherd Content migration module.'
+core_version_requirement: ^9
+dependencies:
+  - drupal:node
+  - drupal:taxonomy
+  - drupal:migrate
+  - drupal:migrate_drupal
+  - drupal:migrate_drupal_ui
+  - migrate_plus:migrate_plus
+  - migrate_tools:migrate_tools
+  - migrate_drupal_d8:migrate_drupal_d8
