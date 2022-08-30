@@ -822,6 +822,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       ->setLabel(Label::create('site', $site_id))
       ->setLabel(Label::create('environment', $environment_id))
       ->setLabel(Label::create(Backup::MANUAL_LABEL, TRUE))
+      ->setLabel(Label::create('shp_namespace', $this->config->get('connection.site_deploy_prefix')))
       ->setName(sprintf('%s-backup-%s', $deployment_name, date('YmdHis')));
     if (!empty($friendly_name)) {
       $backup->setAnnotation(Annotation::create(Backup::FRIENDLY_NAME_ANNOTATION, $friendly_name));
@@ -868,6 +869,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       ->addDatabase($this->generateDatabaseFromDeploymentName($deployment_name))
       ->setLabel(Label::create('site', $site_id))
       ->setLabel(Label::create('environment', $environment_id))
+      ->setLabel(Label::create('shp_namespace', $this->config->get('connection.site_deploy_prefix')))
       ->setName(self::generateScheduleName($deployment_name))
       ->setSchedule($schedule)
       ->setRetention($retention);
@@ -978,7 +980,8 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       ->setName(sprintf('%s-restore-%s', $deployment_name, date('YmdHis')))
       ->setBackupName($backup_name)
       ->setLabel(Label::create('site', $site_id))
-      ->setLabel(Label::create('environment', $environment_id));
+      ->setLabel(Label::create('environment', $environment_id))
+      ->setLabel(Label::create('shp_namespace', $this->config->get('connection.site_deploy_prefix')));
     try {
       return $this->client->createRestore($restore);
     }
@@ -1019,7 +1022,8 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       ->setBackupDatabases([$this->generateDatabaseFromDeploymentName($backupDeploymentName)])
       ->setRestoreDatabases([$this->generateDatabaseFromDeploymentName($restoreDeploymentName)])
       ->setName(sprintf('%s-%s-%s', $backupDeploymentName, $restoreDeploymentName, date('YmdHis')))
-      ->setLabel(Label::create('site', $site_id));
+      ->setLabel(Label::create('site', $site_id))
+      ->setLabel(Label::create('shp_namespace', $this->config->get('connection.site_deploy_prefix')));
     try {
       return $this->client->createSync($sync);
     }
@@ -1475,6 +1479,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
         'environment_id' => (string) $environment_id,
         'app' => $name,
         'deploymentconfig' => $name,
+        'shp_namespace' => $this->config->get('connection.site_deploy_prefix'),
       ],
     ];
 

@@ -91,7 +91,7 @@ class MemcachedDatagridCacheBackendTest extends UnitTestCase {
       'shp_orchestration.settings' => [
         'connection.token' => 'mytoken',
         'connection.namespace' => 'mynamespace',
-        'connection.site_deploy_prefix' => 'test-',
+        'connection.site_deploy_prefix' => 'test',
       ],
     ]);
 
