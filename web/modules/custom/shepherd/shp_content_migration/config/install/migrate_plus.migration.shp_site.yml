@@ -1,0 +1,48 @@
+langcode: en
+status: true
+id: shp_site
+label: Site node
+migration_group: shp_content_migration
+migration_tags:
+  - shp_content_migration
+
+source:
+  key: migrate
+  plugin: d8_entity
+  entity_type: node
+  bundle: shp_site
+  track_changes: yes
+
+process:
+  uid:
+    plugin: default_value
+    default_value: 1
+  changed: changed
+  created: created
+  status: status
+  type: type
+  title: title
+  field_shp_site: field_shp_site
+  field_shp_go_live: field_shp_go_live
+  field_shp_path: field_shp_path
+  field_shp_domain: field_shp_domain
+  field_shp_project:
+    plugin: migration_lookup
+    migration: shp_project
+    source: field_shp_project/0/target_id
+
+  field_shp_short_name: field_shp_short_name
+  field_shp_storage_size: field_shp_storage_size
+  field_tags: field_tags
+
+  moderation_state:
+    plugin: default_value
+    default_value: 'published'
+
+destination:
+  plugin: entity:node
+  default_bundle: shp_site
+
+migration_dependencies:
+  required: [ ]
+  optional: [ ]

@@ -1,0 +1,58 @@
+langcode: en
+status: true
+id: shp_project
+label: Site node
+migration_group: shp_content_migration
+migration_tags:
+  - shp_content_migration
+
+source:
+  key: migrate
+  plugin: d8_entity
+  entity_type: node
+  bundle: shp_project
+  track_changes: yes
+
+process:
+  uid:
+    plugin: default_value
+    default_value: 1
+  changed: changed
+  created: created
+  status: status
+  type: type
+  title: title
+  field_shp_backup_size: field_shp_backup_size
+  field_shp_build_secret: field_shp_build_secret
+  field_shp_builder_image: field_shp_builder_image
+  field_shp_cpu_limit: field_shp_cpu_limit
+  field_shp_cpu_request: field_shp_cpu_request
+  field_shp_default_sql: field_shp_default_sql
+  field_shp_env_vars: field_shp_env_vars
+  field_shp_git_default_ref: field_shp_git_default_ref
+  field_shp_git_repository: field_shp_git_repository
+  field_shp_liveness_probe_params: field_shp_liveness_probe_params
+  field_shp_liveness_probe_port: field_shp_liveness_probe_port
+  field_shp_liveness_probe_type: field_shp_liveness_probe_type
+  field_shp_memory_limit: field_shp_memory_limit
+  field_shp_memory_request: field_shp_memory_request
+  field_shp_readiness_probe_params: field_shp_readiness_probe_params
+  field_shp_readiness_probe_port: field_shp_readiness_probe_port
+  field_shp_readiness_probe_type: field_shp_readiness_probe_type
+  field_shp_secrets: field_shp_secrets
+  field_shp_storage_class:
+    plugin: sub_process
+    source: field_shp_storage_class
+    process:
+      target_id:
+        plugin: migration_lookup
+        migration: taxonomy_terms
+
+destination:
+  plugin: entity:node
+  default_bundle: shp_project
+
+migration_dependencies:
+  required:
+    - taxonomy_terms
+  optional: [ ]

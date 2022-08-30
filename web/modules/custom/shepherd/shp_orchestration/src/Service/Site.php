@@ -68,6 +68,14 @@ class Site extends EntityActionBase {
       $site->field_shp_path->value
     );
 
+    // If there is a secret on the shepherd project, copy it.
+    if ($secretName = $project->field_shp_secrets->value) {
+      // But still need to ensure it actually exists.
+      if ($secret = $this->orchestrationProviderPlugin->getSecret(0, $secretName)) {
+        $this->orchestrationProviderPlugin->createSecret($site->id(), $secretName, $secret);
+      }
+    }
+
     return TRUE;
   }
 

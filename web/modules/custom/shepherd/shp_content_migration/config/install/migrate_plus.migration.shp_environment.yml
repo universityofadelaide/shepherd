@@ -1,0 +1,66 @@
+langcode: en
+status: true
+id: shp_environment
+label: Environment node
+migration_group: shp_content_migration
+migration_tags:
+  - shp_content_migration
+
+source:
+  key: migrate
+  plugin: d8_entity
+  entity_type: node
+  bundle: shp_environment
+  track_changes: yes
+
+process:
+  uid:
+    plugin: default_value
+    default_value: 1
+  changed: changed
+  created: created
+  status: status
+  type: type
+  title: title
+  field_cache_backend: field_cache_backend
+  field_max_replicas: field_max_replicas
+  field_min_replicas: field_min_replicas
+  field_newrelic_enabled: field_newrelic_enabled
+  field_shp_cpu_limit: field_shp_cpu_limit
+  field_shp_cpu_request: field_shp_cpu_request
+  field_shp_cron_jobs: field_shp_cron_jobs
+  field_shp_cron_suspended: field_shp_cron_suspended
+  field_shp_deployment_name: field_shp_deployment_name
+  field_shp_domain: field_shp_domain
+  field_shp_env_vars: field_shp_env_vars
+  field_shp_environment_type:
+    plugin: migration_lookup
+    migration: taxonomy_terms
+    source: field_shp_environment_type/0/target_id
+  field_shp_git_reference: field_shp_git_reference
+  field_shp_memory_limit: field_shp_memory_limit
+  field_shp_memory_request: field_shp_memory_request
+  field_shp_path: field_shp_path
+  field_shp_secrets: field_shp_secrets
+  field_shp_site:
+    plugin: migration_lookup
+    migration: shp_site
+    source: field_shp_site/0/target_id
+
+  field_shp_update_on_image_change: field_shp_update_on_image_change
+  field_skip_db_prepop:
+    plugin: default_value
+    default_value: 0
+
+  moderation_state:
+    plugin: default_value
+    default_value: 'published'
+
+destination:
+  plugin: entity:node
+  default_bundle: shp_environment
+
+migration_dependencies:
+  required:
+    - shp_site
+  optional: [ ]
