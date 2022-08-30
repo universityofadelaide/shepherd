@@ -6,25 +6,24 @@
 # function called for each database.
 function performimport() {
   # Reset any stuck migrations
-  for migration in $(drush migrate:status --fields=id,status --format=string | grep -v Idle | grep -v ^$)
+  for migration in $(drush migrate:status --group=shp_content_migration --fields=id,status --format=string | sed 's/\s/,/' | grep -v Idle)
   do
-    drush mrs $(echo $migration | awk  '{ print $1 }')
+    drush mrs $(echo $migration | cut -d',' -f1)
   done
 
   echo " Importing taxonomy... "
-  drush mim taxonomy_terms
+  drush migrate:import taxonomy_terms
 
   echo " Starting node types... "
-  drush mim node_type_shp_project
-  drush mr node_type_shp_site
+  drush migrate:import shp_project
+  drush migrate:import shp_site
   robo dev:xdebug-enable
-  drush mim node_type_shp_site
-  #drush mim node_type_shp_environment
+  drush migrate:import shp_environment
 }
 
+robo dev:xdebug-disable
 
-# Ensure xdebug disabled
-#robo dev:xdebug-disable
+drush scr MigrateGenerate.php --uri=${VIRTUAL_HOST}
 
 # Ensure modules loaded
 drush -y en shp_content_migration
@@ -32,12 +31,11 @@ drush -y en shp_content_migration
 # Re-import config
 drush -y config-import --partial --source=/code/web/modules/custom/shepherd/shp_content_migration/config/install
 
-drush ms
+drush migrate:status --group=shp_content_migration
 
 performimport
 
-drush ms
-
+drush migrate:status --group=shp_content_migration
 
 # drush pmu -y shp_content_migration migrate migrate_drupal migrate_drupal_ui migrate_plus migrate_tools migrate_drupal_d8
 

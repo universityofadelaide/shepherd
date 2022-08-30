@@ -1,6 +1,6 @@
 langcode: en
 status: true
-id: node_type_shp_project
+id: shp_project
 label: Site node
 migration_group: shp_content_migration
 migration_tags:

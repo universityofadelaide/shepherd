@@ -1,6 +1,6 @@
 langcode: en
 status: true
-id: node_type_shp_site
+id: shp_site
 label: Site node
 migration_group: shp_content_migration
 migration_tags:
@@ -28,14 +28,16 @@ process:
   field_shp_domain: field_shp_domain
   field_shp_project:
     plugin: migration_lookup
-    migration: node_type_shp_project
+    migration: shp_project
     source: field_shp_project/0/target_id
 
   field_shp_short_name: field_shp_short_name
   field_shp_storage_size: field_shp_storage_size
   field_tags: field_tags
 
-  moderation_state: moderation_state
+  moderation_state:
+    plugin: default_value
+    default_value: 'published'
 
 destination:
   plugin: entity:node

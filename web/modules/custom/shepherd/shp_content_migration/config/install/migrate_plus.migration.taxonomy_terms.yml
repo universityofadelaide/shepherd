@@ -14,9 +14,16 @@ source:
   track_changes: true
 
 process:
+  tid: vid
   vid: vid
   name: name
   description: description
+  field_shp_annotations: field_shp_annotations
+  field_shp_backup_retention: field_shp_backup_retention
+  field_shp_backup_schedule: field_shp_backup_schedule
+  field_shp_base_domain: field_shp_base_domain
+  field_shp_protect: field_shp_protect
+  field_shp_update_go_live: field_shp_update_go_live
 
 destination:
   plugin: 'entity:taxonomy_term'
