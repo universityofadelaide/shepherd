@@ -35,7 +35,7 @@ trait TokenNamespaceTrait {
    */
   private function buildProjectName(int $site_id): string {
     $prefix = $this->config->get('connection.site_deploy_prefix') ?? 'shepherd-dev';
-    return $prefix . $site_id;
+    return implode('-', [$prefix, $site_id]);
   }
 
 }
