@@ -18,15 +18,11 @@ if [[ "$(oc whoami)" != "developer" ]]; then
   exit 1
 fi
 
-if oc get project shepherd-dev-2 > /dev/null 2>&1; then
-  warning "Deleting shepherd-dev-2 project"
-  oc delete project shepherd-dev-2
-fi
-
-if oc get project shepherd-dev-5 > /dev/null 2>&1; then
-  warning "Deleting shepherd-dev-5 project"
-  oc delete project shepherd-dev-5
-fi
+PROJECTS=$(for i in $(oc get project -o jsonpath={.items[*].metadata.name}); do echo "$i"; done | grep -E "shepherd-dev-[0-9]+")
+for j in ${PROJECTS}
+do
+  oc delete project $j
+done
 
 if oc get project shepherd-dev-datagrid > /dev/null 2>&1; then
   warning "Deleting shepherd-dev-datagrid project"
@@ -45,5 +41,5 @@ fi
 
 echo ""
 notice "Resource deletions requested, allow a few seconds for things to complete."
-notice "Performing dsh stop, dsh start, robo build && robo dev:drupal-content-generate should then work."
+notice "Performing dsh stop, dsh, robo build && robo dev:drupal-content-generate should then work."
 echo ""

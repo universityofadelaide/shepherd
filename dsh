@@ -37,17 +37,9 @@ if [ ! -f .env ]; then
 fi
 
 # Setup some functions to output warnings.
-notice() {
-  printf "\e[32;01m%s\e[39;49;00m\n" "$1"
-}
-
-warning() {
-  printf "\e[33;01m%s\e[39;49;00m\n" "$1"
-}
-
-error() {
-  printf "\e[31;01m%s\e[39;49;00m\n" "$1"
-}
+notice() { printf "\e[32;01m%s\e[39;49;00m\n" "$1"; }
+warning() { printf "\e[33;01m%s\e[39;49;00m\n" "$1"; }
+error() { printf "\e[31;01m%s\e[39;49;00m\n" "$1"; }
 
 # Ensure script is NOT running inside a container - must be run from host.
 if [ -f /.dockerenv ]; then
@@ -73,18 +65,18 @@ dsh_openshift_init() {
   fi
 
   # Create new namespace/project for Openshift 4.x
-  echo "Ensuring shepherd-dev project exists."
+  notice "Ensuring shepherd-dev project exists."
   if ! oc get project shepherd-dev > /dev/null 2>&1; then
     oc new-project shepherd-dev
   fi
 
-  echo "Ensuring/switching to the shepherd-dev project."
+  notice "Ensuring/switching to the shepherd-dev project."
   if [[ $(oc project -q) != "shepherd-dev" ]]; then
     oc project shepherd-dev
   fi
 
   # Setup a new mysql server, expose it and group the services.
-  echo "Ensuring mariadb service exists"
+  notice "Ensuring mariadb service exists"
   if ! oc get svc mariadb > /dev/null 2>&1; then
     oc new-app mariadb MYSQL_ROOT_PASSWORD=${SUPER_SECRET_PASSWORD} -l db=shepherd-dev
     oc expose service mariadb --generator=service/v2 --type=LoadBalancer --name=mysql-external
@@ -92,39 +84,39 @@ dsh_openshift_init() {
   fi
 
   # Setup a new minio server, expose it and group the services.
-  echo "Ensuring minio service exists"
+  notice "Ensuring minio service exists"
   oc apply -f deploy/local/minio/
 
   # Setup the database password in an OpenShift secret.
-  echo "Ensuring database secret exists."
+  notice "Ensuring database secret exists."
   if ! oc get secret privileged-db-password > /dev/null 2>&1; then
     oc create secret generic privileged-db-password --from-literal=DATABASE_PASSWORD=${SUPER_SECRET_PASSWORD}
   fi
 
   # Setup the restic password in an OpenShift secret.
-  echo "Ensuring restic secret exists."
+  notice "Ensuring restic secret exists."
   if ! oc get secret shepherd-dev-restic-secret > /dev/null 2>&1; then
     oc create secret generic shepherd-dev-restic-secret --from-literal=password=${SUPER_SECRET_PASSWORD}
   fi
 
   # Setup the restic PVC for storing backups
-  echo "Ensuring restic pvc exists."
+  notice "Ensuring restic pvc exists."
   if ! oc get pvc restic-repository > /dev/null 2>&1; then
     oc apply -f ./openshift-config/shepherd-restic-repo-pvc.yml
   fi
 
   # Add local ssh key as build-key secret if it exists and has no passphrase.
-  echo "Ensuring build secret exists."
+  notice "Ensuring build secret exists."
   if ! oc get secret build-key > /dev/null 2>&1; then
     if [ -f "${BUILD_KEY}" ] && ! grep -q ENCRYPTED "${BUILD_KEY}"; then
       oc create secret generic build-key --from-file=ssh-privatekey="${BUILD_KEY}"
     else
-      echo "build-key passwordless secret not created, builds will likely be broken."
+      warning "build-key passwordless secret not created, builds will likely be broken."
     fi
   fi
 
   # Create a permanent token that shepherd-dev can use to talk to OpenShift.
-  echo "Ensuring serviceaccount exists for token."
+  notice "Ensuring serviceaccount exists for token."
   if ! oc get serviceaccount shepherd-sa > /dev/null 2>&1; then
     ${ADMIN_LOGIN}
     oc create serviceaccount shepherd-sa
@@ -134,7 +126,7 @@ dsh_openshift_init() {
   fi
 
   # Creating additional service accounts for namespace manipulation.
-  echo "Ensuring serviceaccounts exist for provisioning."
+  notice "Ensuring serviceaccounts exist for provisioning."
   for i in {0..4} ; do
     SA=$(printf 'shepherd-dev-provisioner-00%02d' "$i")
     if ! oc get serviceaccount "${SA}" > /dev/null 2>&1; then
@@ -156,17 +148,26 @@ dsh_openshift_init() {
   fi
 
   ${ADMIN_LOGIN}
-  echo "Ensuring datagrid config exists."
+  notice "Ensuring datagrid config exists."
   if ! oc get project shepherd-dev-datagrid > /dev/null 2>&1; then
     oc apply -f openshift-config/datagrid/namespace.yml
     oc adm policy add-role-to-user admin developer -n shepherd-dev-datagrid
 
-    notice "Please configure a Data Grid instance as per the docs in openshift-config/datagrid/supplemental/INSTALL.md"
+    if ! command -v helm &> /dev/null; then
+      error "helm could not be found. Instructions - https://red.ht/3QVlPzc"
+      notice "You will need to configure a Data Grid instance as per the docs in openshift-config/datagrid/supplemental/INSTALL.md"
+    else
+      oc project shepherd-dev-datagrid
+      helm repo add openshift-helm-charts https://charts.openshift.io/
+      helm repo update
+      helm install data-grid openshift-helm-charts/redhat-data-grid
+      oc project shepherd-dev
+    fi
   fi
   ${DEV_LOGIN}
 
   ${ADMIN_LOGIN}
-  echo "Ensuring backup operator config exists."
+  notice "Ensuring backup operator config exists."
   if ! oc get project shepherd-dev-operator > /dev/null 2>&1; then
     oc apply -f deploy/local/operator/config/manager/namespace.yml
     oc adm policy add-role-to-user admin developer -n shepherd-dev-operator
