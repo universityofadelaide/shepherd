@@ -33,7 +33,27 @@ process:
 
   field_shp_short_name: field_shp_short_name
   field_shp_storage_size: field_shp_storage_size
-  field_tags: field_tags
+  # Only support up to five tags for now.
+  field_tags/0/target_id:
+    plugin: migration_lookup
+    migration: taxonomy_terms
+    source: field_tags/0/target_id
+  field_tags/1/target_id:
+    plugin: migration_lookup
+    migration: taxonomy_terms
+    source: field_tags/1/target_id
+  field_tags/2/target_id:
+    plugin: migration_lookup
+    migration: taxonomy_terms
+    source: field_tags/2/target_id
+  field_tags/3/target_id:
+    plugin: migration_lookup
+    migration: taxonomy_terms
+    source: field_tags/3/target_id
+  field_tags/4/target_id:
+    plugin: migration_lookup
+    migration: taxonomy_terms
+    source: field_tags/4/target_id
 
   moderation_state:
     plugin: default_value
