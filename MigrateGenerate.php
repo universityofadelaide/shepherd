@@ -39,7 +39,7 @@ $openshift_config = [
   'endpoint'           => $openshift_url,
   'token'              => $token,
   'namespace'          => 'shepherd-dev',
-  'site_deploy_prefix' => 'shepherd-dev-',
+  'site_deploy_prefix' => 'shepherd-dev',
   'verify_tls'         => FALSE,
 ];
 $orchestration_config = $config->getEditable('shp_orchestration.settings');
