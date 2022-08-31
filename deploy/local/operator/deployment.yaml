@@ -23,6 +23,12 @@ spec:
         image: ghcr.io/universityofadelaide/shepherd-operator:v3.0.0-alpha9
         name: manager
         env:
+          - name: SHEPHERD_OPERATOR_FILTER_LABEL_KEY
+            value: "shp_namespace"
+          - name: SHEPHERD_OPERATOR_FILTER_LABEL_VALUE
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.namespace
           - name: SHEPHERD_OPERATOR_BACKUP_CPU
             value: "500m"
           - name: SHEPHERD_OPERATOR_BACKUP_MEMORY
