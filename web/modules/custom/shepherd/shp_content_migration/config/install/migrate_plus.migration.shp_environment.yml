@@ -31,7 +31,13 @@ process:
   field_shp_cron_jobs: field_shp_cron_jobs
   field_shp_cron_suspended: field_shp_cron_suspended
   field_shp_deployment_name: field_shp_deployment_name
-  field_shp_domain: field_shp_domain
+  field_shp_domain:
+    plugin: str_replace
+    source: field_shp_domain
+    search: "openshift.services.adelaide.edu.au"
+    replace: "ocp-blue.adelaide.edu.au"
+    # - local dev - replace: "apps-crc.testing"
+
   field_shp_env_vars: field_shp_env_vars
   field_shp_environment_type:
     plugin: migration_lookup

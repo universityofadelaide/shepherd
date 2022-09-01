@@ -25,7 +25,13 @@ process:
   field_shp_site: field_shp_site
   field_shp_go_live: field_shp_go_live
   field_shp_path: field_shp_path
-  field_shp_domain: field_shp_domain
+  field_shp_domain:
+    plugin: str_replace
+    source: field_shp_domain
+    search: "openshift.services.adelaide.edu.au"
+    replace: "ocp-blue.adelaide.edu.au"
+    # - local dev - replace: "apps-crc.testing"
+
   field_shp_project:
     plugin: migration_lookup
     migration: shp_project
