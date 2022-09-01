@@ -1,0 +1,45 @@
+langcode: en
+status: true
+id: users
+label: Users
+migration_group: shp_content_migration
+migration_tags:
+  - shp_content_migration
+
+source:
+  key: migrate
+  plugin: d8_entity
+  entity_type: user
+  track_changes: yes
+
+process:
+  uid:
+    -
+      plugin: skip_on_value
+      equals: true
+      source: uid
+      method: row
+      value:
+        - 1
+  name: name
+  created: created
+  login: login
+  roles: roles
+  status: status
+  pass: pass
+  mail: mail
+
+  field_ua_user_affiliations: field_ua_user_affiliations
+  field_ua_user_department: field_ua_user_department
+  field_ua_user_display_name: field_ua_user_display_name
+  field_ua_user_given_name: field_ua_user_given_name
+  #user_picture: user_picture
+  field_ua_user_surname: field_ua_user_surname
+
+destination:
+  plugin: entity:user
+  default_bundle: user
+
+migration_dependencies:
+  required: [ ]
+  optional: [ ]
