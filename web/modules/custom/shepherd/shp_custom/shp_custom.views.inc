@@ -28,4 +28,12 @@ function shp_custom_views_data_alter(array &$data) {
     ],
   ];
 
+  $data['node_field_data']['site_project_url'] = [
+    'title' => t('Site Project Link'),
+    'field' => [
+      'title' => t('Project Link'),
+      'help' => t('Provide a link directly to the openshift project if the user has permission.'),
+      'id' => 'site_project_url',
+    ],
+  ];
 }
