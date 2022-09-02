@@ -36,6 +36,7 @@ process:
   field_shp_liveness_probe_type: field_shp_liveness_probe_type
   field_shp_memory_limit: field_shp_memory_limit
   field_shp_memory_request: field_shp_memory_request
+  field_shp_protect: field_shp_protect
   field_shp_readiness_probe_params: field_shp_readiness_probe_params
   field_shp_readiness_probe_port: field_shp_readiness_probe_port
   field_shp_readiness_probe_type: field_shp_readiness_probe_type
