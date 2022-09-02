@@ -164,9 +164,7 @@ dsh_openshift_init() {
       oc project shepherd-dev
     fi
   fi
-  ${DEV_LOGIN}
 
-  ${ADMIN_LOGIN}
   notice "Ensuring backup operator config exists."
   if ! oc get project shepherd-dev-operator > /dev/null 2>&1; then
     oc apply -f deploy/local/operator/config/manager/namespace.yml
