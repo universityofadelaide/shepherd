@@ -213,7 +213,7 @@ class MemcachedDatagrid extends CacheBackendBase {
 
     // Create the NetworkPolicy.
     $network_policy = NetworkPolicy::create()
-      ->setIngressMatchLabels(['app' => $deployment_name])
+      ->setIngressPodMatchLabels(['app' => $deployment_name])
       ->setIngressNamespaceMatchLabels(['kubernetes.io/metadata.name' => $project_name])
       ->setPodSelectorMatchLabels(['clusterName' => $this->datagridSelector])
       ->setPort($new_port)
