@@ -37,16 +37,14 @@ spec:
             value: "/home/shepherd"
           - name: SHEPHERD_OPERATOR_BACKUP_MYSQL_IMAGE
             value: "skpr/mtk-mysql"
-          - name: SHEPHERD_OPERATOR_BACKUP_AWS_ENDPOINT
-            value: "http://minio.shepherd-dev.svc.cluster.local:9000"
           - name: SHEPHERD_OPERATOR_BACKUP_AWS_BUCKET_NAME
-            value: "local"
+            value: "local" # @todo, Set to AWS S3 bucket
           - name: SHEPHERD_OPERATOR_BACKUP_AWS_IMAGE
             value: "docker.io/amazon/aws-cli:latest"
           - name: SHEPHERD_OPERATOR_BACKUP_AWS_KEY_ID
-            value: "shepherd"
+            value: "shepherd" # @todo, Set to AWS key/pair.
           - name: SHEPHERD_OPERATOR_BACKUP_AWS_ACCESS_KEY
-            value: "password123"
+            value: "password123" # @todo, Set to AWS key/pair.
           - name: SHEPHERD_OPERATOR_RESTORE_CPU
             value: "500m"
           - name: SHEPHERD_OPERATOR_RESTORE_MEMORY
@@ -55,16 +53,14 @@ spec:
             value: "/home/shepherd"
           - name: SHEPHERD_OPERATOR_RESTORE_MYSQL_IMAGE
             value: "skpr/mtk-mysql"
-          - name: SHEPHERD_OPERATOR_RESTORE_AWS_ENDPOINT
-            value: "http://minio.shepherd-dev.svc.cluster.local:9000"
           - name: SHEPHERD_OPERATOR_RESTORE_AWS_BUCKET_NAME
-            value: "local"
+            value: "local" # @todo, Set to AWS S3 bucket
           - name: SHEPHERD_OPERATOR_RESTORE_AWS_IMAGE
             value: "docker.io/amazon/aws-cli:latest"
           - name: SHEPHERD_OPERATOR_RESTORE_AWS_KEY_ID
-            value: "shepherd"
+            value: "shepherd" # @todo, Set to AWS key/pair.
           - name: SHEPHERD_OPERATOR_RESTORE_AWS_ACCESS_KEY
-            value: "password123"
+            value: "password123" # @todo, Set to AWS key/pair.
         securityContext:
           allowPrivilegeEscalation: false
         livenessProbe:
@@ -130,16 +126,14 @@ spec:
             value: "/home/shepherd"
           - name: SHEPHERD_OPERATOR_BACKUP_MYSQL_IMAGE
             value: "skpr/mtk-mysql"
-          - name: SHEPHERD_OPERATOR_BACKUP_AWS_ENDPOINT
-            value: "http://minio.shepherd-dev.svc.cluster.local:9000"
           - name: SHEPHERD_OPERATOR_BACKUP_AWS_BUCKET_NAME
-            value: "local"
+            value: "local" # @todo, Set to AWS S3 bucket
           - name: SHEPHERD_OPERATOR_BACKUP_AWS_IMAGE
             value: "docker.io/amazon/aws-cli:latest"
           - name: SHEPHERD_OPERATOR_BACKUP_AWS_KEY_ID
-            value: "shepherd"
+            value: "shepherd" # @todo, Set to AWS key/pair.
           - name: SHEPHERD_OPERATOR_BACKUP_AWS_ACCESS_KEY
-            value: "password123"
+            value: "password123" # @todo, Set to AWS key/pair.
           - name: SHEPHERD_OPERATOR_RESTORE_CPU
             value: "500m"
           - name: SHEPHERD_OPERATOR_RESTORE_MEMORY
@@ -148,16 +142,14 @@ spec:
             value: "/home/shepherd"
           - name: SHEPHERD_OPERATOR_RESTORE_MYSQL_IMAGE
             value: "skpr/mtk-mysql"
-          - name: SHEPHERD_OPERATOR_RESTORE_AWS_ENDPOINT
-            value: "http://minio.shepherd-dev.svc.cluster.local:9000"
           - name: SHEPHERD_OPERATOR_RESTORE_AWS_BUCKET_NAME
-            value: "local"
+            value: "local" # @todo, Set to AWS S3 bucket
           - name: SHEPHERD_OPERATOR_RESTORE_AWS_IMAGE
             value: "docker.io/amazon/aws-cli:latest"
           - name: SHEPHERD_OPERATOR_RESTORE_AWS_KEY_ID
-            value: "shepherd"
+            value: "shepherd" # @todo, Set to AWS key/pair.
           - name: SHEPHERD_OPERATOR_RESTORE_AWS_ACCESS_KEY
-            value: "password123"
+            value: "password123" # @todo, Set to AWS key/pair.
         securityContext:
           allowPrivilegeEscalation: false
         livenessProbe:
