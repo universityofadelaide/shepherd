@@ -687,6 +687,9 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     // Now Create a project/namespace for the new site.
     $projectName = $this->buildProjectName($site_id);
     $this->client->createProjectRequest($projectName);
+    $this->client->updateNamespace($projectName, [
+      'shp_namespace' => $this->config->get('connection.site_deploy_prefix'),
+    ]);
 
     $connectionNamespace = $this->config->get('connection.namespace');
 
