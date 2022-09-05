@@ -139,7 +139,7 @@ class MemcachedDatagridYml extends CacheBackendBase {
       $host = sprintf(
         '%s.%s.svc.cluster.local',
         self::getMemcacheServiceName($deployment_name),
-        $this->namespace
+        $this->cacheConfig->get('namespace')
       );
     }
     else {
@@ -194,6 +194,7 @@ class MemcachedDatagridYml extends CacheBackendBase {
     $this->client->setNamespace($this->cacheConfig->get('namespace'));
 
     $deployment_name = OpenShiftOrchestrationProvider::generateDeploymentName($environment->id());
+    $project_name = $this->buildProjectName($environment->field_shp_site->entity->id());
     if (!$configMap = $this->client->getConfigmap($this->configMapName)) {
       return;
     }
@@ -215,8 +216,9 @@ class MemcachedDatagridYml extends CacheBackendBase {
 
     // Create the NetworkPolicy.
     $network_policy = NetworkPolicy::create()
-      ->setIngressMatchLabels(['app' => $deployment_name])
-      ->setPodSelectorMatchLabels(['application' => $this->datagridSelector])
+      ->setIngressPodMatchLabels(['app' => $deployment_name])
+      ->setIngressNamespaceMatchLabels(['kubernetes.io/metadata.name' => $project_name])
+      ->setPodSelectorMatchLabels(['clusterName' => $this->datagridSelector])
       ->setPort($new_port)
       ->setName(self::getNetworkPolicyName($deployment_name));
     $this->client->createNetworkpolicy($network_policy);
@@ -229,7 +231,7 @@ class MemcachedDatagridYml extends CacheBackendBase {
       11211,
       $new_port,
       $deployment_name,
-      ['deploymentConfig' => $this->datagridSelector]
+      ['clusterName' => $this->datagridSelector]
     );
 
     // Add the socket-binding.
