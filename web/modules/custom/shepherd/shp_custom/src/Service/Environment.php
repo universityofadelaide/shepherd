@@ -289,6 +289,10 @@ class Environment {
         ],
       ];
     }
+    else {
+      // Don't allow protected environments to be deleted.
+      unset($operations['delete']);
+    }
 
     $site = $this->getSite($entity);
     if ($site) {
