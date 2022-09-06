@@ -27,12 +27,6 @@ shp_custom.projects_view:
   route_name: view.shp_projects.page_1
   parent: shp_custom.admin
   weight: -7
-shp_custom.syncs:
-  title: Syncs
-  description: 'List of syncs'
-  route_name: shp_backup.syncs_global
-  parent: shp_custom.admin
-  weight: -8
 shp_custom.admin_config_shepherd:
   title: 'Shepherd'
   route_name: shp_custom.admin_config_shepherd

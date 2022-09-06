@@ -20,7 +20,7 @@ spec:
         - /manager
         args:
         - --leader-elect
-        image: ghcr.io/universityofadelaide/shepherd-operator:v3.0.0-alpha10
+        image: ghcr.io/universityofadelaide/shepherd-operator:v3.0.0-alpha13
         name: manager
         env:
           - name: SHEPHERD_OPERATOR_FILTER_LABEL_KEY
