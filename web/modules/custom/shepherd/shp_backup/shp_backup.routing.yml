@@ -100,16 +100,6 @@ shp_backup.restores:
     _permission: 'shp access environment wizard'
     _custom_access: '\Drupal\shp_custom\Controller\SiteLocalTaskController::checkAccess'
 
-shp_backup.syncs_global:
-  path: '/syncs'
-  defaults:
-    _controller: '\Drupal\shp_backup\Controller\SyncGlobalList::list'
-    _title: 'Sync list'
-  options:
-    no_cache: TRUE
-  requirements:
-    _permission: 'shp view backups'
-
 shp_backup.syncs:
   path: '/site/{node}/syncs'
   defaults:
