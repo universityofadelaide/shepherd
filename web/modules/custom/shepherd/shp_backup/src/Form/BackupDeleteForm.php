@@ -64,26 +64,11 @@ class BackupDeleteForm extends FormBase {
   }
 
   /**
-   * Callback to get page title.
-   *
-   * @param string $backupName
-   *   The backup name.
-   *
-   * @return \Drupal\Core\StringTranslation\TranslatableMarkup
-   *   Translated markup.
-   */
-  public function getPageTitle($backupName) {
-    $backup = $this->orchestrationProvider->getBackup($backupName);
-    $name = $backup ? $backup->getFriendlyName() : 'N/A';
-    return t('Delete backup - @name', ['@name' => $name]);
-  }
-
-  /**
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state, NodeInterface $site = NULL, $backupName = NULL) {
     $form_state->set('site', $site->id());
-    $backup = $this->orchestrationProvider->getBackup($backupName);
+    $backup = $this->orchestrationProvider->getBackup($site->id(), $backupName);
     if (!$backup) {
       return [
         '#markup' => "<p>An error occurred while communicating with OpenShift.</p>",
@@ -91,7 +76,7 @@ class BackupDeleteForm extends FormBase {
     }
     $form_state->set('backupName', $backupName);
     $form['confirm'] = [
-      '#markup' => $this->t("<p>Are you sure you want to delete the Backup @name.</p>", ['@name' => $backup->getFriendlyName()]),
+      '#markup' => $this->t("<p>Are you sure you want to delete the Backup <strong>@name</strong>.</p>", ['@name' => $backup->getFriendlyName()]),
     ];
     $form['actions'] = [
       '#type' => 'actions',
@@ -109,15 +94,16 @@ class BackupDeleteForm extends FormBase {
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $name = $form_state->get('backupName');
-    $backup = $this->orchestrationProvider->getBackup($name);
-    if ($this->orchestrationProvider->deleteBackup($name)) {
+    $site_id = $form_state->get('site');
+    $backup = $this->orchestrationProvider->getBackup($site_id, $name);
+    if ($this->orchestrationProvider->deleteBackup($site_id, $name)) {
       $this->messenger->addStatus($this->t('Successfully deleted backup @name', ['@name' => $backup->getFriendlyName()]));
     }
     else {
       $this->messenger->addError($this->t('There was an issue deleting backup @name', ['@name' => $backup->getFriendlyName()]));
     }
 
-    $form_state->setRedirectUrl(Url::fromRoute('shp_backup.backups', ['node' => $form_state->get('site')]));
+    $form_state->setRedirectUrl(Url::fromRoute('shp_backup.backups', ['node' => $site_id]));
   }
 
 }

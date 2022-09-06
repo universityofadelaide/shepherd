@@ -38,7 +38,6 @@ shp_backup.backup-delete-form:
   path: '/site/{site}/backup/{backupName}/delete'
   defaults:
     _form: '\Drupal\shp_backup\Form\BackupDeleteForm'
-    _title_callback: '\Drupal\shp_backup\Form\BackupDeleteForm::getPageTitle'
     _title: 'Delete backup'
   options:
     parameters:
@@ -52,7 +51,6 @@ shp_backup.backup-edit-form:
   path: '/site/{site}/backup/{backupName}/edit'
   defaults:
     _form: '\Drupal\shp_backup\Form\BackupEditForm'
-    _title_callback: '\Drupal\shp_backup\Form\BackupEditForm::getPageTitle'
     _title: 'Edit backup'
   options:
     parameters:
