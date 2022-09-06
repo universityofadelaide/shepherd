@@ -6,6 +6,8 @@ use UniversityOfAdelaide\OpenShift\Objects\Backups\Phase;
 
 /**
  * Controller for listing syncs.
+ *
+ * @removed Unless we can find a way to view across all the namespaces.
  */
 class SyncGlobalList extends ListControllerBase {
 
