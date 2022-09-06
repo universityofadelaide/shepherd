@@ -37,12 +37,13 @@ class RestoreList extends ListControllerBase {
       return $table;
     }
     foreach ($restore_list->getRestoresByCreatedTime() as $restore) {
+      /** @var \Drupal\node\Entity\Node $environment */
       $environment = $this->nodeStorage->load($restore->getLabel('environment'));
       // Protect against environments that have been deleted.
       if (!$environment) {
         continue;
       }
-      $backup = $this->orchestrationProvider->getBackup($restore->getBackupName());
+      $backup = $this->orchestrationProvider->getBackup($node->id(), $restore->getBackupName());
       $table['#rows'][] = [
         $backup ? $backup->getFriendlyName() : '',
         $this->environmentService->getEnvironmentLink($environment, FALSE)->toString(),
