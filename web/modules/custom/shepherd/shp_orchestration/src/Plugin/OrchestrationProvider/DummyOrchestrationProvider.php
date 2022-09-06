@@ -183,21 +183,21 @@ class DummyOrchestrationProvider extends OrchestrationProviderBase {
   /**
    * {@inheritdoc}
    */
-  public function getBackup(string $name) {
+  public function getBackup(int $site_id, string $name) {
     return TRUE;
   }
 
   /**
    * {@inheritdoc}
    */
-  public function updateBackup(Backup $backup) {
+  public function updateBackup(int $site_id, Backup $backup) {
     return TRUE;
   }
 
   /**
    * {@inheritdoc}
    */
-  public function deleteBackup(string $name) {
+  public function deleteBackup(int $site_id, string $name) {
     return TRUE;
   }
 

@@ -779,7 +779,8 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
   /**
    * {@inheritdoc}
    */
-  public function getBackup(string $name) {
+  public function getBackup(int $site_id, string $name) {
+    $this->setSiteConfig($site_id);
     try {
       return $this->client->getBackup($name);
     }
@@ -792,7 +793,8 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
   /**
    * {@inheritdoc}
    */
-  public function updateBackup(Backup $backup) {
+  public function updateBackup(int $site_id, Backup $backup) {
+    $this->setSiteConfig($site_id);
     try {
       return $this->client->updateBackup($backup);
     }
@@ -805,7 +807,8 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
   /**
    * {@inheritdoc}
    */
-  public function deleteBackup(string $name) {
+  public function deleteBackup(int $site_id, string $name) {
+    $this->setSiteConfig($site_id);
     try {
       return $this->client->deleteBackup($name);
     }
@@ -970,6 +973,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
    * {@inheritdoc}
    */
   public function getBackupsForEnvironment(int $site_id, int $environment_id) {
+    $this->setSiteConfig($site_id);
     return $this->getBackupsByLabel(Label::create('environment', $environment_id));
   }
 

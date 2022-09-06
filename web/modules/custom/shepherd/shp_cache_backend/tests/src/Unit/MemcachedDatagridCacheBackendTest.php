@@ -86,7 +86,7 @@ class MemcachedDatagridCacheBackendTest extends UnitTestCase {
     $this->client = $this->createMock(Client::class);
     $configFactory = $this->getConfigFactoryStub([
       'shp_cache_backend.settings' => [
-        'namespace' => 'shepherd-dev-datagrid',
+        'namespace' => 'silly-value',
       ],
       'shp_orchestration.settings' => [
         'connection.token' => 'mytoken',
@@ -188,7 +188,7 @@ class MemcachedDatagridCacheBackendTest extends UnitTestCase {
    */
   public function getEnvironmentVarsProvider() {
     return [
-      [TRUE, 'node-123-mc.mynamespace.svc.cluster.local'],
+      [TRUE, 'node-123-mc.silly-value.svc.cluster.local'],
       [FALSE, 'node-123-memcached'],
     ];
   }

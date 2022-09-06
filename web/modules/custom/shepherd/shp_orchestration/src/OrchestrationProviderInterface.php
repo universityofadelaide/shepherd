@@ -485,35 +485,41 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
   /**
    * Get a backup.
    *
+   * @param int $site_id
+   *   Site node id.
    * @param string $name
    *   The backup name.
    *
    * @return \UniversityOfAdelaide\OpenShift\Objects\Backups\Backup|bool
    *   Returns a backup object if successful, otherwise false.
    */
-  public function getBackup(string $name);
+  public function getBackup(int $site_id, string $name);
 
   /**
    * Update a backup.
    *
+   * @param int $site_id
+   *   Site node id.
    * @param \UniversityOfAdelaide\OpenShift\Objects\Backups\Backup $backup
    *   The backup.
    *
    * @return \UniversityOfAdelaide\OpenShift\Objects\Backups\Backup|bool
    *   Returns a backup object if successful, otherwise false.
    */
-  public function updateBackup(Backup $backup);
+  public function updateBackup(int $site_id, Backup $backup);
 
   /**
    * Delete a backup.
    *
+   * @param int $site_id
+   *   Site node id.
    * @param string $name
    *   The backup name.
    *
    * @return bool
    *   Returns true if succeeded.
    */
-  public function deleteBackup(string $name);
+  public function deleteBackup(int $site_id, string $name);
 
   /**
    * Backup an environment.
