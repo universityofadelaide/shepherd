@@ -8,7 +8,6 @@ use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\Url;
 use Drupal\node\NodeInterface;
 use Drupal\shp_orchestration\OrchestrationProviderInterface;
-use Drupal\shp_orchestration\TokenNamespaceTrait;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -19,8 +18,6 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * @package Drupal\shp_backup\Form
  */
 class BackupDeleteForm extends FormBase {
-
-  use TokenNamespaceTrait;
 
   /**
    * The orchestration provider plugin.
