@@ -70,5 +70,6 @@ destination:
   default_bundle: shp_site
 
 migration_dependencies:
-  required: [ ]
+  required:
+    - taxonomy_terms
   optional: [ ]

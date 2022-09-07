@@ -8,7 +8,7 @@ migration_tags:
 
 source:
   key: migrate
-  plugin: d8_entity
+  plugin: shp_environment
   entity_type: node
   bundle: shp_environment
   track_changes: yes
@@ -69,4 +69,5 @@ destination:
 migration_dependencies:
   required:
     - shp_site
+    - taxonomy_terms
   optional: [ ]
