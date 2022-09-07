@@ -698,9 +698,6 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       // No username? likely the setup script, but only do it for development.
       $this->createRoleBinding('developer', 'admin');
     }
-    else {
-      $this->createRoleBinding($username, 'admin');
-    }
 
     // Also process any manually specified users.
     if ($admin_users = $this->config->get('connection.admin_users')) {
@@ -720,7 +717,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     // Create a RoleBinding so Shepherd can perform operations in the
     // Project/Namespace from a consistent ServiceAccount.
     // @todo fix shepherd-sa service account to be dynamic.
-    $this->createRoleBinding("shepherd-sa", "admin", $connectionNamespace);
+    $this->createRoleBinding('shepherd-sa', 'admin', $connectionNamespace);
 
     // Lastly, allow the new project to pull from the shepherd project.
     $this->setSiteConfig(0);
