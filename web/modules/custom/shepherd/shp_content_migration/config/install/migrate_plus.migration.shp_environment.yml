@@ -35,7 +35,7 @@ process:
     plugin: str_replace
     source: field_shp_domain
     search: "openshift.services.adelaide.edu.au"
-    replace: "ocp-blue.adelaide.edu.au"
+    replace: "apps.ocp-blue.adelaide.edu.au"
     # - local dev - replace: "apps-crc.testing"
 
   field_shp_env_vars: field_shp_env_vars

@@ -26,7 +26,7 @@ process:
     regex: true
     source: field_shp_base_domain
     search: /openshift\..*?\.adelaide\.edu\.au/
-    replace: "ocp-blue.adelaide.edu.au"
+    replace: "apps.ocp-blue.adelaide.edu.au"
   field_shp_protect: field_shp_protect
   field_shp_update_go_live: field_shp_update_go_live
 
