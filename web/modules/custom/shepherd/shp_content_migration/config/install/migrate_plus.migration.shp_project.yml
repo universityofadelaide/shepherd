@@ -42,12 +42,9 @@ process:
   field_shp_readiness_probe_type: field_shp_readiness_probe_type
   field_shp_secrets: field_shp_secrets
   field_shp_storage_class:
-    plugin: sub_process
-    source: field_shp_storage_class
-    process:
-      target_id:
-        plugin: migration_lookup
-        migration: taxonomy_terms
+    plugin: migration_lookup
+    migration: taxonomy_terms
+    source: field_shp_storage_class/0/target_id
 
 destination:
   plugin: entity:node
