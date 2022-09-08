@@ -3681,6 +3681,72 @@
             "time": "2022-08-08T17:02:35+00:00"
         },
         {
+            "name": "laminas/laminas-ldap",
+            "version": "2.15.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/laminas/laminas-ldap.git",
+                "reference": "e21bf1177b2cbdae57f75355a8fd0774438a42d2"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/laminas/laminas-ldap/zipball/e21bf1177b2cbdae57f75355a8fd0774438a42d2",
+                "reference": "e21bf1177b2cbdae57f75355a8fd0774438a42d2",
+                "shasum": ""
+            },
+            "require": {
+                "ext-ldap": "*",
+                "php": "^7.4 || ~8.0.0 || ~8.1.0"
+            },
+            "conflict": {
+                "zendframework/zend-ldap": "*"
+            },
+            "require-dev": {
+                "laminas/laminas-coding-standard": "~2.4.0",
+                "laminas/laminas-config": "^3.7.0",
+                "laminas/laminas-eventmanager": "^3.4.0",
+                "laminas/laminas-stdlib": "^3.7.1",
+                "php-mock/php-mock-phpunit": "^2.6.0",
+                "phpunit/phpunit": "^9.5.19",
+                "psalm/plugin-phpunit": "^0.17.0",
+                "vimeo/psalm": "^4.22.0"
+            },
+            "suggest": {
+                "laminas/laminas-eventmanager": "Laminas\\EventManager component"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Laminas\\Ldap\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "description": "Provides support for LDAP operations including but not limited to binding, searching and modifying entries in an LDAP directory",
+            "homepage": "https://laminas.dev",
+            "keywords": [
+                "laminas",
+                "ldap"
+            ],
+            "support": {
+                "chat": "https://laminas.dev/chat",
+                "docs": "https://docs.laminas.dev/laminas-ldap/",
+                "forum": "https://discourse.laminas.dev",
+                "issues": "https://github.com/laminas/laminas-ldap/issues",
+                "rss": "https://github.com/laminas/laminas-ldap/releases.atom",
+                "source": "https://github.com/laminas/laminas-ldap"
+            },
+            "funding": [
+                {
+                    "url": "https://funding.communitybridge.org/projects/laminas-project",
+                    "type": "community_bridge"
+                }
+            ],
+            "time": "2022-09-03T10:04:41+00:00"
+        },
+        {
             "name": "laminas/laminas-servicemanager",
             "version": "3.16.0",
             "source": {
@@ -7666,17 +7732,17 @@
             "source": {
                 "type": "git",
                 "url": "git@gitlab.adelaide.edu.au:drupal-modules/ua_ldap.git",
-                "reference": "04bb39fe0adad518c9ec666ccb5aabf1272f29db"
+                "reference": "129261925a1637f727cadc554bf7a86abd878835"
             },
             "require": {
-                "zendframework/zend-ldap": "^2.5.1"
+                "laminas/laminas-ldap": "^2.5.1"
             },
             "type": "drupal-module",
             "license": [
                 "GPL-2.0-or-later"
             ],
             "description": "Provides configuration and services to interact with LDAP.",
-            "time": "2022-09-07T23:57:01+00:00"
+            "time": "2022-09-08T00:56:15+00:00"
         },
         {
             "name": "ua-drupal-modules/ua_shp_ldap",
@@ -7940,68 +8006,6 @@
             },
             "abandoned": "symfony/filesystem",
             "time": "2015-12-17T08:42:14+00:00"
-        },
-        {
-            "name": "zendframework/zend-ldap",
-            "version": "2.10.1",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/zendframework/zend-ldap.git",
-                "reference": "525ec97cd18a42a953c6a78c1019f967d2539b88"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/zendframework/zend-ldap/zipball/525ec97cd18a42a953c6a78c1019f967d2539b88",
-                "reference": "525ec97cd18a42a953c6a78c1019f967d2539b88",
-                "shasum": ""
-            },
-            "require": {
-                "ext-ldap": "*",
-                "php": "^5.6 || ^7.0"
-            },
-            "require-dev": {
-                "php-mock/php-mock-phpunit": "^1.1.2 || ^2.1.1",
-                "phpunit/phpunit": "^5.7.27 || ^6.5.8 || ^7.1.2",
-                "zendframework/zend-coding-standard": "~1.0.0",
-                "zendframework/zend-config": "^2.5",
-                "zendframework/zend-eventmanager": "^2.6.3 || ^3.0.1",
-                "zendframework/zend-stdlib": "^2.7 || ^3.0"
-            },
-            "suggest": {
-                "zendframework/zend-eventmanager": "Zend\\EventManager component"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "2.10.x-dev",
-                    "dev-develop": "2.11.x-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Zend\\Ldap\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "BSD-3-Clause"
-            ],
-            "description": "Provides support for LDAP operations including but not limited to binding, searching and modifying entries in an LDAP directory",
-            "keywords": [
-                "ZendFramework",
-                "ldap",
-                "zf"
-            ],
-            "support": {
-                "chat": "https://zendframework-slack.herokuapp.com",
-                "docs": "https://docs.zendframework.com/zend-ldap/",
-                "forum": "https://discourse.zendframework.com/c/questions/components",
-                "issues": "https://github.com/zendframework/zend-ldap/issues",
-                "rss": "https://github.com/zendframework/zend-ldap/releases.atom",
-                "source": "https://github.com/zendframework/zend-ldap"
-            },
-            "abandoned": "laminas/laminas-ldap",
-            "time": "2019-10-17T16:26:26+00:00"
         }
     ],
     "packages-dev": [
