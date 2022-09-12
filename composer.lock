@@ -1910,16 +1910,16 @@
                     "homepage": "https://www.drupal.org/user/647364"
                 },
                 {
-                    "name": "Stalski",
-                    "homepage": "https://www.drupal.org/user/322618"
-                },
-                {
                     "name": "jyve",
                     "homepage": "https://www.drupal.org/user/591438"
                 },
                 {
                     "name": "nils.destoop",
                     "homepage": "https://www.drupal.org/user/361625"
+                },
+                {
+                    "name": "Stalski",
+                    "homepage": "https://www.drupal.org/user/322618"
                 },
                 {
                     "name": "swentel",
@@ -2566,17 +2566,17 @@
         },
         {
             "name": "drupal/route_condition",
-            "version": "2.0.1",
+            "version": "2.0.2",
             "source": {
                 "type": "git",
                 "url": "https://git.drupalcode.org/project/route_condition.git",
-                "reference": "2.0.1"
+                "reference": "2.0.2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://ftp.drupal.org/files/projects/route_condition-2.0.1.zip",
-                "reference": "2.0.1",
-                "shasum": "b9e3922832f43af1c1a6b2dfcacf86874e3771e3"
+                "url": "https://ftp.drupal.org/files/projects/route_condition-2.0.2.zip",
+                "reference": "2.0.2",
+                "shasum": "d32dde3212b08814fa0c2b6ba33bc02202bec719"
             },
             "require": {
                 "drupal/core": "^8 || ^9 || ^10"
@@ -2584,8 +2584,8 @@
             "type": "drupal-module",
             "extra": {
                 "drupal": {
-                    "version": "2.0.1",
-                    "datestamp": "1656487406",
+                    "version": "2.0.2",
+                    "datestamp": "1662721084",
                     "security-coverage": {
                         "status": "covered",
                         "message": "Covered by Drupal's security advisory policy"
@@ -7766,12 +7766,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/universityofadelaide/openshift-client.git",
-                "reference": "95487629116ae0f77f163fd8707dbb3f26acbd34"
+                "reference": "7f2ca941671e7a0eb06506ed1577bdb9b9fa8856"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/universityofadelaide/openshift-client/zipball/95487629116ae0f77f163fd8707dbb3f26acbd34",
-                "reference": "95487629116ae0f77f163fd8707dbb3f26acbd34",
+                "url": "https://api.github.com/repos/universityofadelaide/openshift-client/zipball/7f2ca941671e7a0eb06506ed1577bdb9b9fa8856",
+                "reference": "7f2ca941671e7a0eb06506ed1577bdb9b9fa8856",
                 "shasum": ""
             },
             "require": {
@@ -7809,7 +7809,7 @@
                 "issues": "https://github.com/universityofadelaide/openshift-client/issues",
                 "source": "https://github.com/universityofadelaide/openshift-client/tree/openshift-4.x"
             },
-            "time": "2022-09-05T00:51:05+00:00"
+            "time": "2022-09-12T01:08:41+00:00"
         },
         {
             "name": "universityofadelaide/shepherd-drupal-scaffold",
@@ -12794,16 +12794,16 @@
         },
         {
             "name": "sirbrillig/phpcs-variable-analysis",
-            "version": "v2.11.7",
+            "version": "v2.11.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sirbrillig/phpcs-variable-analysis.git",
-                "reference": "ad2b0b57803a48bb3495777bee2a9a13c8e9da53"
+                "reference": "aaf902277f2889fddbdb37046ae02b9965e2cf0f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sirbrillig/phpcs-variable-analysis/zipball/ad2b0b57803a48bb3495777bee2a9a13c8e9da53",
-                "reference": "ad2b0b57803a48bb3495777bee2a9a13c8e9da53",
+                "url": "https://api.github.com/repos/sirbrillig/phpcs-variable-analysis/zipball/aaf902277f2889fddbdb37046ae02b9965e2cf0f",
+                "reference": "aaf902277f2889fddbdb37046ae02b9965e2cf0f",
                 "shasum": ""
             },
             "require": {
@@ -12839,12 +12839,16 @@
                 }
             ],
             "description": "A PHPCS sniff to detect problems with variables.",
+            "keywords": [
+                "phpcs",
+                "static analysis"
+            ],
             "support": {
                 "issues": "https://github.com/sirbrillig/phpcs-variable-analysis/issues",
                 "source": "https://github.com/sirbrillig/phpcs-variable-analysis",
                 "wiki": "https://github.com/sirbrillig/phpcs-variable-analysis/wiki"
             },
-            "time": "2022-08-16T22:19:00+00:00"
+            "time": "2022-09-08T18:35:53+00:00"
         },
         {
             "name": "slevomat/coding-standard",
