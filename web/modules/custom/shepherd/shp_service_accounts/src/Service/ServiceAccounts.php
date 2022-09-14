@@ -40,7 +40,7 @@ class ServiceAccounts implements ServiceAccountsInterface {
     }
 
     if (!isset($site->field_shp_service_account->value)) {
-      $serviceAccount = $this->getRandomServiceAccount();
+      $serviceAccount = $this->getLowestServiceAccount();
     }
     else {
       $serviceAccount = $this->getServiceAccountByName($site->field_shp_service_account->value);
@@ -52,7 +52,7 @@ class ServiceAccounts implements ServiceAccountsInterface {
   /**
    * {@inheritdoc}
    */
-  public function getRandomServiceAccount(): ?ServiceAccount {
+  public function getServiceAccounts(): ?array {
     $serviceAccountList = $this->entityTypeManager->getStorage('service_account')->loadByProperties([
       'status' => TRUE,
     ]);
@@ -62,9 +62,42 @@ class ServiceAccounts implements ServiceAccountsInterface {
       throw new NoServiceAccountException("No service accounts defined.");
     }
 
+    return $serviceAccountList;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getRandomServiceAccount(): ?ServiceAccount {
+    $serviceAccountList = $this->getServiceAccounts();
+
     /** @var \Drupal\shp_service_accounts\Entity\ServiceAccount */
-    $serviceAccount = array_values($serviceAccountList)[random_int(0, $entries - 1)];
-    return $serviceAccount;
+    return array_values($serviceAccountList)[random_int(0, count($serviceAccountList) - 1)];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getLowestServiceAccount(): ?ServiceAccount {
+    $serviceAccountDist = [];
+    $serviceAccountList = $this->getServiceAccounts();
+
+    foreach ($serviceAccountList as $serviceAccount) {
+      $query = $this->entityTypeManager->getStorage('node')
+        ->getQuery()
+        ->accessCheck(FALSE);
+
+      $query->condition('type', 'shp_site');
+      $query->condition('field_shp_service_account', $serviceAccount->label());
+      $serviceAccountDist[$serviceAccount->label()] = count($query->execute());
+    }
+
+    asort($serviceAccountDist);
+
+    $array = array_keys($serviceAccountDist);
+    $lowestAccount = reset($array);
+
+    return $this->getServiceAccountByName($lowestAccount);
   }
 
   /**
@@ -81,8 +114,7 @@ class ServiceAccounts implements ServiceAccountsInterface {
     }
 
     /** @var \Drupal\shp_service_accounts\Entity\ServiceAccount */
-    $serviceAccount = reset($serviceAccountList);
-    return $serviceAccount;
+    return reset($serviceAccountList);
   }
 
 }
