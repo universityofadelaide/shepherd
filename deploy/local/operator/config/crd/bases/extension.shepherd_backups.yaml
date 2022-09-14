@@ -87,8 +87,12 @@ spec:
                   required:
                   - secret
                   type: object
-                description: MySQL databases which will be backed up.
+                description: MySQL database which will be backed up.
                 type: object
+              type:
+                description: Type of backup. Used to inform S3 URI and Shepherd UI
+                  components.
+                type: string
               volumes:
                 additionalProperties:
                   description: SpecVolume defines how to  volumes.
@@ -109,8 +113,6 @@ spec:
                 format: date-time
                 type: string
               phase:
-                type: string
-              resticId:
                 type: string
               startTime:
                 format: date-time
