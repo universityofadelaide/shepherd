@@ -175,6 +175,22 @@ class Site {
   }
 
   /**
+   * Check if the node delete should be allowed.
+   *
+   * @param array $form
+   *   Form render array.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   Form State.
+   */
+  public function deleteCheck(array &$form, FormStateInterface $form_state) {
+    $nid = $form_state->getformObject()->getEntity()->id();
+    if ($results = $this->loadEntitiesByFieldValue('shp_environment', 'field_shp_site', $nid)) {
+      \Drupal::messenger()->addMessage('You cannot delete a site with active environments');
+      $form['actions']['submit']['#disabled'] = TRUE;
+    }
+  }
+
+  /**
    * Apply #ajax to the title field.
    *
    * @param array $form
