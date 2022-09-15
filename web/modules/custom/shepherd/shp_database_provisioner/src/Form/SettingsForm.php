@@ -182,7 +182,7 @@ class SettingsForm extends ConfigFormBase {
    */
   public function validateForm(array &$form, FormStateInterface $form_state) {
     // Attempt to create a test user and notify user if there's a problem.
-    $privileged_password = $this->orchestrationProvider->getSecret($form_state->getValue(['secret']),
+    $privileged_password = $this->orchestrationProvider->getSecret(0, $form_state->getValue(['secret']),
       'DATABASE_PASSWORD');
     $db = new \mysqli(
       $form_state->getValue(['host']),
