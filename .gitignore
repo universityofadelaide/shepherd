@@ -73,3 +73,13 @@ RoboFile.php
 docker/Dockerfile
 docker/xdebug.ini
 docker/php_custom.ini
+
+/web/modules/custom/shepherd/shp_content_migration/3.x-to-4.x/uat/secret.yml
+/web/modules/custom/shepherd/shp_content_migration/3.x-to-4.x/uat/LEGACY_TOKEN.txt
+/web/modules/custom/shepherd/shp_content_migration/3.x-to-4.x/uat/NEW_TOKEN.txt
+/web/modules/custom/shepherd/shp_content_migration/3.x-to-4.x/uat/daily_sites.txt
+
+/web/modules/custom/shepherd/shp_content_migration/3.x-to-4.x/prd/secret.yml
+/web/modules/custom/shepherd/shp_content_migration/3.x-to-4.x/prd/LEGACY_TOKEN.txt
+/web/modules/custom/shepherd/shp_content_migration/3.x-to-4.x/prd/NEW_TOKEN.txt
+/web/modules/custom/shepherd/shp_content_migration/3.x-to-4.x/prd/daily_sites.txt

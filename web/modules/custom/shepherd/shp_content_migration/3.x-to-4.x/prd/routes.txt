@@ -1,0 +1,7 @@
+newbatzatest.openshift.development.adelaide.edu.au/	node-209
+mp-test-0.openshift.development.adelaide.edu.au/mp-test	node-223
+mp-test-1.openshift.development.adelaide.edu.au/mp-test	node-232
+new-batza-test-site-0.openshift.development.adelaide.edu.au/	node-235
+new-batza-test-site-1.openshift.development.adelaide.edu.au/	node-238
+mp-test.openshift.development.adelaide.edu.au/mp-test	node-52
+shepherd-web-route-shepherd-dev.openshift.development.adelaide.edu.au	shepherd-web-route

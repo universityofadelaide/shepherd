@@ -2,6 +2,9 @@
 #
 # Usage ./rerun_migration.sh
 #
+# Note cas settings dont come across, fix with:
+# INSERT INTO authmap (uid, provider, authname, data) SELECT u.uid, 'cas', name, 'N;' FROM users u LEFT JOIN users_field_data ud ON u.uid = ud.uid WHERE (name <> 'admin' AND name <> '');
+#
 
 # function called for each database.
 function performimport() {

@@ -1,0 +1,46 @@
+apiVersion: template.openshift.io/v1
+kind: Template
+metadata:
+  name: backup
+  annotations:
+    description: "Create backup entity in OpenShift 4.x cluster"
+    tags: "shepherd"
+    iconClass: icon-drupal
+objects:
+  - apiVersion: extension.shepherd/v1
+    kind: Backup
+    metadata:
+      annotations:
+        backups.shepherd/friendly-name: MIGRATE
+      labels:
+        environment: "${NEW_ENVIRONMENT_NODE_ID}"
+        is-manual: "1"
+        shp_namespace: shepherd-uat
+        site: "${NEW_SITE_NODE_ID}"
+      name: node-${LEGACY_ENVIRONMENT_NODE_ID}-legacy
+      namespace: shepherd-uat-${NEW_SITE_NODE_ID}
+    spec:
+      type: external
+      mysql:
+        default:
+          secret:
+            keys:
+              database: DATABASE_NAME
+              hostname: DATABASE_HOST
+              password: DATABASE_PASSWORD
+              port: DATABASE_PORT
+              username: DATABASE_USER
+            name: node-${NEW_ENVIRONMENT_NODE_ID}
+      volumes:
+        shared:
+          claimName: node-${NEW_ENVIRONMENT_NODE_ID}-shared
+parameters:
+  - name: LEGACY_ENVIRONMENT_NODE_ID
+    description: Node ID of the site which is being backed up.
+    required: true
+  - name: NEW_SITE_NODE_ID
+    description: Node ID of the new site on the 4.x cluster
+    required: true
+  - name: NEW_ENVIRONMENT_NODE_ID
+    description: Node ID of the site environment which is being backed up.
+    required: true
