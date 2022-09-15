@@ -1,0 +1,125 @@
+apiVersion: template.openshift.io/v1
+kind: Template
+metadata:
+  name: shp-site-backup
+  annotations:
+    description: "Backup script for Shepherd to AWS S3"
+    tags: "shepherd"
+    iconClass: icon-drupal
+objects:
+  - apiVersion: v1
+    kind: Pod
+    metadata:
+      name: "backup-site-${LEGACY_SITE_NODE_ID}-env-${LEGACY_ENVIRONMENT_NODE_ID}"
+      namespace: "shepherd-dev"
+    spec:
+      restartPolicy: Never
+      initContainers:
+        - name: mysql-default
+          image: skpr/mtk-mysql
+          imagePullPolicy: Always
+          workingDir: /home/shepherd
+          args:
+            - database-backup > mysql/default.sql
+          command:
+            - bash
+            - -c
+          env:
+            - name: MYSQL_HOSTNAME
+              valueFrom:
+                secretKeyRef:
+                  key: DATABASE_HOST
+                  name: "node-${LEGACY_ENVIRONMENT_NODE_ID}"
+            - name: MYSQL_DATABASE
+              valueFrom:
+                secretKeyRef:
+                  key: DATABASE_NAME
+                  name: "node-${LEGACY_ENVIRONMENT_NODE_ID}"
+            - name: MYSQL_PORT
+              valueFrom:
+                secretKeyRef:
+                  key: DATABASE_PORT
+                  name: "node-${LEGACY_ENVIRONMENT_NODE_ID}"
+            - name: MYSQL_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  key: DATABASE_USER
+                  name: "node-${LEGACY_ENVIRONMENT_NODE_ID}"
+            - name: MYSQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: DATABASE_PASSWORD
+                  name: "node-${LEGACY_ENVIRONMENT_NODE_ID}"
+          resources:
+            limits:
+              cpu: 500m
+              memory: 512Mi
+            requests:
+              cpu: 500m
+              memory: 512Mi
+          volumeMounts:
+            - mountPath: /home/shepherd/mysql
+              name: mysql
+      containers:
+        - name: aws-s3-sync
+          image: docker.io/amazon/aws-cli:latest
+          imagePullPolicy: Always
+          workingDir: /home/shepherd
+          args:
+            - s3
+            - sync
+            - .
+            - "s3://shepherd-prd/external/shepherd-prd-${NEW_SITE_NODE_ID}/node-${LEGACY_ENVIRONMENT_NODE_ID}-legacy"
+            - --exclude
+            - volume/*/*/php
+            - --exclude
+            - volume/*/*/css
+            - --exclude
+            - volume/*/*/js
+            - --sse
+            - AES256
+          env:
+            - name: AWS_ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  key: AWS_ACCESS_KEY_ID
+                  name: openshift-4-migration
+            - name: AWS_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  key: AWS_SECRET_ACCESS_KEY
+                  name: openshift-4-migration
+            - name: AWS_DEFAULT_REGION
+              value: ap-southeast-2
+          resources:
+            limits:
+              cpu: 500m
+              memory: 512Mi
+            requests:
+              cpu: 500m
+              memory: 512Mi
+          volumeMounts:
+            - mountPath: /home/shepherd/mysql
+              name: mysql
+            - mountPath: /home/shepherd/volume/shared
+              name: volume-shared
+              readOnly: true
+      volumes:
+        - emptyDir: { }
+          name: mysql
+        - name: volume-shared
+          persistentVolumeClaim:
+            claimName: "node-${LEGACY_ENVIRONMENT_NODE_ID}-shared"
+parameters:
+  - name: LEGACY_SITE_NODE_ID
+    description: Node ID of the site which is being backed up.
+    required: true
+  - name: LEGACY_ENVIRONMENT_NODE_ID
+    description: Node ID of the site environment which is being backed up.
+    required: true
+  - name: NEW_SITE_NODE_ID
+    description: Node ID of the new site on the 4.x cluster
+    required: true
+  - name: NEW_ENVIRONMENT_NODE_ID
+    description: Node ID of the site environment which is being backed up.
+    required: true
