@@ -48,7 +48,7 @@ interface ServiceAccountsInterface {
    */
   public function getServiceAccounts(): ?array;
 
-   /**
+  /**
    * Retrieve the list of service accounts and return a random one.
    *
    * Random as otherwise we need to keep track of the most recently
