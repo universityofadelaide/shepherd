@@ -249,6 +249,23 @@ class MemcachedDatagridYml extends CacheBackendBase {
       ],
     ];
 
+    $distributed_cache_config = [
+      'distributedCache' => [
+        'mode' => 'SYNC',
+        'start' => 'EAGER',
+        'statistics' => TRUE,
+        'encoding' => [
+          'mediaType' => 'text/plain; charset=UTF-8',
+        ],
+        'memory' => [
+          'maxSize' => '100MB',
+          'whenFull' => 'REMOVE',
+        ],
+      ],
+    ];
+
+    $yml['infinispan']['cacheContainer']['caches'][$name] = $distributed_cache_config;
+
     // Locate the cluster of memcache connectors.
     $index = 0;
     foreach ($yml['infinispan']['server']['endpoints'] as $index => $connectors) {
@@ -533,6 +550,8 @@ class MemcachedDatagridYml extends CacheBackendBase {
       return;
     }
     $name = self::getMemcacheName($environment);
+
+    unset($yml['infinispan']['cacheContainer']['caches'][$name]);
 
     foreach ($yml['infinispan']['server']['endpoints'] as $index => &$connector) {
       if (isset($connector['connectors'][$service_name]['memcachedConnector']['name'])
