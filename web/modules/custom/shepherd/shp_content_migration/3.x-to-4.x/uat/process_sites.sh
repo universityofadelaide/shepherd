@@ -13,7 +13,7 @@ oc get route -o jsonpath='{range .items[*]}{@.spec.host}{@.spec.path}{"\t"}{@.me
 for i in $(cat daily_sites.txt)
 do
   set +e
-  ENVIRONMENT=$(grep "$i" routes.txt | awk '{ print $2 }')
+  ENVIRONMENT=$(egrep "$i\\s+" routes.txt | awk '{ print $2 }')
   if [ -z ${ENVIRONMENT} ]; then
     continue
   fi
@@ -23,8 +23,8 @@ do
   SITE=$(oc get dc/${DC} -o jsonpath='{.metadata.labels.site_id}')
   echo "Process for: $i"
   echo "./new_login.sh"
-  echo "oc rsh dc/${SHEPHERD} drush mim shp_site --idlist=${SITE}:en"
-  echo "oc rsh dc/${SHEPHERD} drush mim shp_environment --idlist=${ENVIRONMENT}:en"
+  echo "oc rsh dc/${SHEPHERD} drush mim shp_site --idlist=${SITE}:en -l https://shepherd-uat.apps.ocp-blue.adelaide.edu.au/"
+  echo "oc rsh dc/${SHEPHERD} drush mim shp_environment --idlist=${ENVIRONMENT}:en -l https://shepherd-uat.apps.ocp-blue.adelaide.edu.au/"
   echo "NEW_SITE=\$(oc rsh dc/${SHEPHERD} drush sqlq \"SELECT destid1 FROM migrate_map_shp_site WHERE sourceid1 = ${SITE};\" | tr -d '\r')"
   echo "NEW_ENV=\$(oc rsh dc/${SHEPHERD} drush sqlq \"SELECT destid1 FROM migrate_map_shp_environment WHERE sourceid1 = ${ENVIRONMENT};\" | tr -d '\r')"
   echo "./backup.sh ${SITE} ${ENVIRONMENT} \${NEW_SITE} \${NEW_ENV}"
