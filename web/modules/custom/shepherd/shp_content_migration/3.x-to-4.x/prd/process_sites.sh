@@ -4,6 +4,7 @@
 set -euo pipefail
 
 ./legacy_login.sh
+echo ""
 
 SHEPHERD=shepherd-prd
 
@@ -19,17 +20,17 @@ do
   fi
   set -e
   DC=$(oc get svc ${ENVIRONMENT} -o jsonpath='{.spec.selector.deploymentconfig}')
-  ENVIRONMENT="${ENVIRONMENT/node-/}"
   SITE=$(oc get dc/${DC} -o jsonpath='{.metadata.labels.site_id}')
+  DC="${DC/node-/}"
   echo "Process for: $i"
   echo "./new_login.sh"
   echo "oc rsh dc/${SHEPHERD} drush mim shp_site --idlist=${SITE}:en -l https://shepherd.apps.ocp-blue.adelaide.edu.au/"
-  echo "oc rsh dc/${SHEPHERD} drush mim shp_environment --idlist=${ENVIRONMENT}:en -l https://shepherd.apps.ocp-blue.adelaide.edu.au/"
+  echo "oc rsh dc/${SHEPHERD} drush mim shp_environment --idlist=${DC}:en -l https://shepherd.apps.ocp-blue.adelaide.edu.au/"
   echo "NEW_SITE=\$(oc rsh dc/${SHEPHERD} drush sqlq \"SELECT destid1 FROM migrate_map_shp_site WHERE sourceid1 = ${SITE};\" | tr -d '\r')"
-  echo "NEW_ENV=\$(oc rsh dc/${SHEPHERD} drush sqlq \"SELECT destid1 FROM migrate_map_shp_environment WHERE sourceid1 = ${ENVIRONMENT};\" | tr -d '\r')"
-  echo "./backup.sh ${SITE} ${ENVIRONMENT} \${NEW_SITE} \${NEW_ENV}"
+  echo "NEW_ENV=\$(oc rsh dc/${SHEPHERD} drush sqlq \"SELECT destid1 FROM migrate_map_shp_environment WHERE sourceid1 = ${DC};\" | tr -d '\r')"
+  echo "./backup.sh ${SITE} ${DC} \${NEW_SITE} \${NEW_ENV}"
   echo "Wait for backup to finish."
-  echo "./restore.sh ${SITE} ${ENVIRONMENT} \${NEW_SITE} \${NEW_ENV}"
+  echo "./restore.sh ${SITE} ${DC} \${NEW_SITE} \${NEW_ENV}"
   echo "======================================="
   echo ""
 done
