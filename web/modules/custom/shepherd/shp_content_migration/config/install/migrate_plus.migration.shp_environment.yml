@@ -40,9 +40,8 @@ process:
 
   field_shp_env_vars: field_shp_env_vars
   field_shp_environment_type:
-    plugin: migration_lookup
-    migration: taxonomy_terms
-    source: field_shp_environment_type/0/target_id
+    plugin: default_value
+    default_value: 7
   field_shp_git_reference: field_shp_git_reference
   field_shp_memory_limit: field_shp_memory_limit
   field_shp_memory_request: field_shp_memory_request
