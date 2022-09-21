@@ -29,5 +29,10 @@ oc process -f new_restore.yml \
   -p NEW_SITE_NODE_ID=${NEW_SITE} \
   -p NEW_ENVIRONMENT_NODE_ID=${NEW_ENV} | oc apply -f -
 
+echo ""
 echo "Use this command to monitor progress, ctrl+c to exit one 'Completed' is shown."
 echo "oc get pod/restore-node-${NEW_ENV}-migrate -w"
+echo ""
+echo "Disable readonly mode once the restore is done."
+echo "oc rsh dc/node-${NEW_ENV} drush cset readonlymode.settings enabled 0 -y"
+echo ""

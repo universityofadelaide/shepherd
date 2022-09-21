@@ -11,7 +11,9 @@ NEW_ENV=$4
 
 ./legacy_login.sh
 
-oc rsh dc/${DC} drush cset readonlymode.settings enabled 1 -y
+set +e
+oc rsh dc/node-${ENV} drush cset readonlymode.settings enabled 1 -y
+set -e
 
 oc process -f legacy_backup.yml \
   -p LEGACY_SITE_NODE_ID=${SITE} \
@@ -19,5 +21,5 @@ oc process -f legacy_backup.yml \
   -p NEW_SITE_NODE_ID=${NEW_SITE} \
   -p NEW_ENVIRONMENT_NODE_ID=${NEW_ENV} | oc apply -f -
 
-echo "Use this command to monitor progress, ctrl+c to exit one 'Completed' is shown."
+echo "Use this command to see progress. Its done once 'Completed' is shown. Typically < 2 minutes"
 echo "oc get pods/backup-site-${SITE}-env-${ENV}"

@@ -9,6 +9,23 @@ put new domains & paths into the daily_sites.txt file.
 Execute the process_sites.sh script.
 Copy the output commands one at a time into the terminal to execute the migrations & backup/restores.
 
+## Possible issues
+* Site not picked up/in the process_sites.sh output
+  Make sure there IS a trailing '/' on root sites, but NOT on sub-sites.
+* CSS/JS snippets don't come across because the source version was too old.
+  Fix by drush cex on the source, copy/paste into a file in an empty folder on the new pod and drush cim --source=/tmp/import.
+* Site or Environment appears to not import
+  If you get this sort of output, check that you haven't already imported it before.
+   [notice] Processed 0 items (0 created, 0 updated, 0 failed, 0 ignored) - done with 'shp_site'
+   [notice] The following specified IDs were not found in the source IDs: 11430:en.
+  Its safe to run the drush mim step more than once, it wont update/re-import.
+* Error when creating the backup or restore object
+  Maybe this one has already been done? If re-doing, the existing backup/restore pod will need to be removed.
+* Typoed the backup command?
+  It will likely just fail, fix and re-run. might need to delete the pod.
+* Typoed the restore command?
+  Check it didn't accidentally restore to the wrong env, then fix and re-run, might need to delete the pod.
+
 ## Example session for uat:
 
 ```
