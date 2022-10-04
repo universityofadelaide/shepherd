@@ -213,7 +213,7 @@ if (!$env = reset($nodes)) {
     'field_shp_memory_request' => [['value' => '256Mi']],
     'field_shp_memory_limit'   => [['value' => '512Mi']],
     'field_cache_backend'      => [
-      'plugin_id' => 'memcached_datagrid',
+      'plugin_id' => 'memcached',
     ],
   ]);
   $env->moderation_state->value = 'published';
