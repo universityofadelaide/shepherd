@@ -5,10 +5,12 @@
  * Contains programmatic creation of Shepherd nodes for use by `drush scr`.
  */
 
+use Drupal\Core\File\FileSystemInterface;
+use Drupal\file\Entity\File;
 use Drupal\node\Entity\Node;
+use Drupal\shp_service_accounts\Entity\ServiceAccount;
 use Drupal\taxonomy\Entity\Term;
 use Drupal\user\Entity\User;
-use Drupal\shp_service_accounts\Entity\ServiceAccount;
 
 $etm = \Drupal::entityTypeManager();
 $stg = $etm->getStorage('node');
@@ -127,6 +129,21 @@ else {
 $nodes = $stg->loadByProperties(['title' => 'Drupal example']);
 
 if (!$project = reset($nodes)) {
+
+  // Load the file into a variable.
+  $data = file_get_contents('/code/standard.sql');
+  $destination = 'public://standard.sql.txt';
+  $file_system = \Drupal::service('file_system');
+  $file = $file_system->saveData($data, $destination, $replace = FileSystemInterface::EXISTS_RENAME);
+
+  $storedFile = File::create([
+    'uid' => '1',
+    'filename' => 'standard.sql.txt',
+    'filemime' => 'text/plain',
+    'uri' => $file,
+  ]);
+  $storedFile->save();
+
   $project = Node::create([
     'type'                     => 'shp_project',
     'langcode'                 => 'en',
@@ -134,7 +151,7 @@ if (!$project = reset($nodes)) {
     'status'                   => 1,
     'title'                    => 'Drupal example',
     'field_shp_git_repository' => [['value' => $example_repository]],
-    'field_shp_builder_image'  => [['value' => 'uofa/s2i-shepherd-drupal']],
+    'field_shp_builder_image'  => [['value' => 'uofa/s2i-shepherd-drupal:openshift-4.x']],
     'field_shp_build_secret'   => [['value' => 'build-key']],
     'field_shp_env_vars'       => [
       ['key' => 'SHEPHERD_INSTALL_PROFILE', 'value' => 'standard'],
@@ -154,6 +171,7 @@ if (!$project = reset($nodes)) {
     // Can't use this with OpenShift Local :-(
     // 'field_shp_storage_class'  => [['target_id' => $storage->id()]],
     'field_shp_backup_size'    => 5,
+    'field_shp_default_sql'    => $storedFile,
   ]);
   $project->save();
 }
@@ -172,7 +190,7 @@ if (!$site = reset($nodes)) {
     'title'                     => 'Drupal test site',
     'field_shp_short_name'      => 'test',
     'field_shp_domain'          => 'test-live.' . $domain_name,
-    'field_shp_git_default_ref' => 'master',
+    'field_shp_git_default_ref' => 'multiple-memcache-servers',
     'field_shp_path'            => '/',
     'field_shp_project'         => [['target_id' => $project->id()]],
     // Can't use this with OpenShift Local :-(
@@ -198,7 +216,7 @@ if (!$env = reset($nodes)) {
     'field_shp_domain'           => 'test-0.' . $domain_name,
     'field_shp_path'             => $site->field_shp_path->value,
     'field_shp_environment_type' => [['target_id' => $development_env->id()]],
-    'field_shp_git_reference'    => 'master',
+    'field_shp_git_reference'    => 'multiple-memcache-servers',
     'field_shp_site'             => [['target_id' => $site->id()]],
     'field_shp_update_on_image_change' => TRUE,
     'field_shp_cron_suspended'   => 1,
@@ -212,6 +230,7 @@ if (!$env = reset($nodes)) {
     'field_shp_cpu_limit'      => [['value' => '1000m']],
     'field_shp_memory_request' => [['value' => '256Mi']],
     'field_shp_memory_limit'   => [['value' => '512Mi']],
+    'field_skip_db_prepop'     => FALSE,
     'field_cache_backend'      => [
       'plugin_id' => 'memcached',
     ],
