@@ -13,6 +13,7 @@ NEW_ENV=$4
 
 set +e
 oc rsh dc/node-${ENV} drush cset readonlymode.settings enabled 1 -y
+oc delete pods/backup-site-${SITE}-env-${ENV}
 set -e
 
 oc process -f legacy_backup.yml \

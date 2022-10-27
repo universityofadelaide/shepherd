@@ -13,8 +13,9 @@ NEW_ENV=$4
 
 oc project shepherd-prd-${NEW_SITE}
 
-# create a copy of backup.yml with new values.
-# oc apply backup.yml
+set +e
+oc delete backup/node-${ENV}-legacy
+set -e
 
 oc process -f new_backup.yml \
   -p LEGACY_ENVIRONMENT_NODE_ID=${ENV} \
@@ -23,6 +24,10 @@ oc process -f new_backup.yml \
 
 # Sleep a couple a seconds to let the cluster deal.
 sleep 2
+
+set +e
+oc delete restore/node-${NEW_ENV}-migrate
+set -e
 
 oc process -f new_restore.yml \
   -p LEGACY_ENVIRONMENT_NODE_ID=${ENV} \
@@ -33,6 +38,7 @@ echo ""
 echo "Use this command to monitor progress, ctrl+c to exit one 'Completed' is shown."
 echo "oc get pod/restore-node-${NEW_ENV}-migrate -w"
 echo ""
-echo "Disable readonly mode once the restore is done."
-echo "oc rsh dc/node-${NEW_ENV} drush cset readonlymode.settings enabled 0 -y"
+echo "Disable readonly mode once the restore is done, then clear cache."
+echo "oc rsh -n shepherd-prd-${NEW_SITE} dc/node-${NEW_ENV} drush cset readonlymode.settings enabled 0 -y"
+echo "oc rsh -n shepherd-prd-${NEW_SITE} dc/node-${NEW_ENV} drush cr"
 echo ""
