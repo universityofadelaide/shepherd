@@ -4,7 +4,7 @@
 ### oc login to the legacy cluster, then
 ```
 oc get sa | grep shepherd-sa
-oc get secret/shepherd-token-vpg6c -o jsonpath='{.data.token}' -n shepherd-dev | base64 -d > LEGACY_TOKEN.txt
+oc get secret/shepherd-token-kcvvv -o jsonpath='{.data.token}' -n shepherd-prd | base64 -d > LEGACY_TOKEN.txt
 ```
 
 ### Create secret to access s3 bucket.
