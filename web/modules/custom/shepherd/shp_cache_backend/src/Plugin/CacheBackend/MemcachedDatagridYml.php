@@ -440,6 +440,10 @@ class MemcachedDatagridYml extends CacheBackendBase {
    *   Memcache name.
    * @param string $memcached_port
    *   Memcache port.
+   * @param string $image_stream_tag
+   *   The image stream tag to use.
+   * @param string $image_stream_namespace
+   *   The namespace to load the image stream from.
    * @param array $data
    *   Array of data for labels.
    *
