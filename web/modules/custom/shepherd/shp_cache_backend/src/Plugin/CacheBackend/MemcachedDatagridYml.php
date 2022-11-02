@@ -335,24 +335,21 @@ class MemcachedDatagridYml extends CacheBackendBase {
    */
   protected function generateMemcachedDeployment(NodeInterface $environment) {
     /** @var \Drupal\node\Entity\Node $environment */
-    $siteToken = $this->getSiteToken($environment->field_shp_site->entity->id());
-    $siteNamespace = $this->buildProjectName($environment->field_shp_site->entity->id());
-    $this->client->setToken($siteToken);
-    $this->client->setNamespace($siteNamespace);
-
-    $memcachedDeploymentName = self::getMemcachedDeploymentName($environment);
-    $deploymentName = OpenShiftOrchestrationProvider::generateDeploymentName($environment->id());
-    $memcachedPort = 11211;
-
     // Image streams are in the shepherd project.
+    $shepherdNamespace = $this->config->get('connection.namespace');
     $this->client->setToken($this->config->get('connection.token'));
-    $this->client->setNamespace($this->config->get('connection.namespace'));
+    $this->client->setNamespace($shepherdNamespace);
 
     if (!$image_stream = $this->client->getImageStream('memcached')) {
       $this->client->createImageStream($this->generateImageStream());
     }
-    $this->client->setToken($siteToken);
-    $this->client->setNamespace($siteNamespace);
+
+    $this->client->setToken($this->getSiteToken($environment->field_shp_site->entity->id()));
+    $this->client->setNamespace($this->buildProjectName($environment->field_shp_site->entity->id()));
+
+    $memcachedDeploymentName = self::getMemcachedDeploymentName($environment);
+    $deploymentName = OpenShiftOrchestrationProvider::generateDeploymentName($environment->id());
+    $memcachedPort = 11211;
 
     $data = $this->formatMemcachedDeployData($deploymentName, $environment->field_shp_site->target_id, $environment->id());
     $deployConfig = $this->generateDeploymentConfig(
@@ -360,7 +357,7 @@ class MemcachedDatagridYml extends CacheBackendBase {
       $memcachedDeploymentName,
       $memcachedPort,
       'memcached:alpine',
-      $this->config->get('connection.namespace'),
+      $shepherdNamespace,
       $data
     );
     $this->client->createDeploymentConfig($deployConfig);
