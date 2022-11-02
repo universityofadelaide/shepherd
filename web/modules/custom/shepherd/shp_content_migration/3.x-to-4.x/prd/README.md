@@ -7,6 +7,9 @@ see SETUP.md
 ## Daily processing
 put new domains & paths into the daily_sites.txt file.
 Execute the process_sites.sh script.
+```
+./process_sites.sh
+```
 Copy the output commands one at a time into the terminal to execute the migrations & backup/restores.
 
 ## Possible issues
@@ -67,3 +70,18 @@ Wait for backup to finish.
 ./restore.sh 52 223 ${NEW_SITE} ${NEW_ENV}
 =======================================
 ```
+
+# Manually trigger backups and restores
+
+## Perform backup on legacy cluster
+This command performs a backup on site 52, environment 223
+```
+./backup.sh 52 223 208 259
+```
+
+## Perform restore on new cluster
+This command performs a restore from site 52, environment 223 to new site 208, environment 259
+```
+./restore.sh 52 223 208 259
+```
+
