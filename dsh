@@ -87,6 +87,10 @@ dsh_openshift_init() {
   notice "Ensuring minio service exists"
   oc apply -f deploy/local/minio/
 
+  ## Setup the memcached alpine imagestream.
+  #notice "Setting up memcached alpine imagestream."
+  #oc apply -f deploy/local/memcached/
+
   # Setup the database password in an OpenShift secret.
   notice "Ensuring database secret exists."
   if ! oc get secret privileged-db-password > /dev/null 2>&1; then
@@ -134,6 +138,7 @@ dsh_openshift_init() {
       oc create serviceaccount "${SA}"
       oc adm policy add-cluster-role-to-user cluster-admin system:serviceaccount:shepherd-dev:"${SA}"
       oc adm policy add-cluster-role-to-user self-provisioner system:serviceaccount:shepherd-dev:"${SA}"
+      oc adm policy add-cluster-role-to-user system:image-puller system:serviceaccount:shepherd-dev:"${SA}"
       ${DEV_LOGIN}
 
       # This is pretty horrid, but there is no oc command in the dsh shell.

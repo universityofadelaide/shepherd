@@ -335,19 +335,34 @@ class MemcachedDatagridYml extends CacheBackendBase {
    */
   protected function generateMemcachedDeployment(NodeInterface $environment) {
     /** @var \Drupal\node\Entity\Node $environment */
-    $this->client->setToken($this->getSiteToken($environment->field_shp_site->entity->id()));
-    $this->client->setNamespace($this->buildProjectName($environment->field_shp_site->entity->id()));
+    $siteToken = $this->getSiteToken($environment->field_shp_site->entity->id());
+    $siteNamespace = $this->buildProjectName($environment->field_shp_site->entity->id());
+    $this->client->setToken($siteToken);
+    $this->client->setNamespace($siteNamespace);
 
     $memcachedDeploymentName = self::getMemcachedDeploymentName($environment);
     $deploymentName = OpenShiftOrchestrationProvider::generateDeploymentName($environment->id());
     $memcachedPort = 11211;
 
+    // Image streams are in the shepherd project.
+    $this->client->setToken($this->config->get('connection.token'));
+    $this->client->setNamespace($this->config->get('connection.namespace'));
+
     if (!$image_stream = $this->client->getImageStream('memcached')) {
       $this->client->createImageStream($this->generateImageStream());
     }
+    $this->client->setToken($siteToken);
+    $this->client->setNamespace($siteNamespace);
 
     $data = $this->formatMemcachedDeployData($deploymentName, $environment->field_shp_site->target_id, $environment->id());
-    $deployConfig = $this->generateDeploymentConfig($environment, $memcachedDeploymentName, $memcachedPort, $data);
+    $deployConfig = $this->generateDeploymentConfig(
+      $environment,
+      $memcachedDeploymentName,
+      $memcachedPort,
+      'memcached:alpine',
+      $this->config->get('connection.namespace'),
+      $data
+    );
     $this->client->createDeploymentConfig($deployConfig);
 
     $this->client->createService($memcachedDeploymentName, $memcachedDeploymentName, $memcachedPort, $memcachedPort, $deploymentName);
@@ -431,7 +446,7 @@ class MemcachedDatagridYml extends CacheBackendBase {
    * @return array
    *   The deployment config array.
    */
-  protected function generateDeploymentConfig(NodeInterface $environment, string $memcached_name, string $memcached_port, array $data) {
+  protected function generateDeploymentConfig(NodeInterface $environment, string $memcached_name, string $memcached_port, string $image_stream_tag, string $image_stream_namespace, array $data) {
     $config = [
       'apiVersion' => 'apps.openshift.io/v1',
       'kind' => 'DeploymentConfig',
@@ -515,7 +530,8 @@ class MemcachedDatagridYml extends CacheBackendBase {
               ],
               'from' => [
                 'kind' => 'ImageStreamTag',
-                'name' => 'memcached:alpine',
+                'name' => $image_stream_tag,
+                'namespace' => $image_stream_namespace,
               ],
             ],
             'type' => 'ImageChange',
