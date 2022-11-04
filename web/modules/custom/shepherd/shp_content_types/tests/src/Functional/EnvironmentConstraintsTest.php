@@ -32,7 +32,7 @@ class EnvironmentConstraintsTest extends FunctionalTestBase {
     // Ensure some service accounts exist.
     $serviceAccount = $this->createServiceAccount([
       'id' => 1,
-      'title' => 'Doesnt matter',
+      'label' => 'My service account',
       'status' => TRUE,
       'token' => 'Holy lightning batman',
     ]);
