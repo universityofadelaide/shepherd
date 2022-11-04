@@ -78,10 +78,16 @@ dsh_openshift_init() {
   # Setup a new mysql server, expose it and group the services.
   notice "Ensuring mariadb service exists"
   if ! oc get svc mariadb > /dev/null 2>&1; then
-    oc new-app mariadb MYSQL_ROOT_PASSWORD=${SUPER_SECRET_PASSWORD} -l db=shepherd-dev
-    oc expose deploy mariadb --name=mysql-external --port=3306
+    oc new-app mariadb MYSQL_ROOT_PASSWORD=${SUPER_SECRET_PASSWORD} --as-deployment-config -l db=shepherd-dev
+    oc expose dc mariadb --name=mysql-external  --protocol="TCP" --port=3306 --type=LoadBalancer
     oc annotate svc mysql-external "service.alpha.openshift.io/dependencies=[{\"name\": \"mariadb\", \"kind\": \"Service\"}]"
   fi
+
+  # Patch cluster to allow allocating external IPs
+  ${ADMIN_LOGIN}
+  oc patch network cluster --type merge -p '{ "spec": { "externalIP": { "policy": null }}}'
+  oc patch svc mysql-external -p '{"spec":{"externalIPs":["192.168.130.11"]}}'
+  ${DEV_LOGIN}
 
   # Setup a new minio server, expose it and group the services.
   notice "Ensuring minio service exists"
@@ -185,7 +191,7 @@ dsh_openshift_init() {
   OPENSHIFT_DOMAIN="apps-crc.testing"
   OPENSHIFT_URL="https://api.crc.testing:6443"
   DB_HOST="mysql-external-shepherd-dev.${OPENSHIFT_DOMAIN}"
-  DB_PORT=$(oc get service mysql-external --no-headers | awk '{print $3}')
+  DB_PORT=3306
 }
 
 # Command: ./dsh start
