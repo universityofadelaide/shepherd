@@ -48,6 +48,7 @@ trait ContentCreationTrait {
       'field_shp_git_default_ref' => 'master',
       'field_shp_path' => '/',
       'field_shp_project' => $this->createProject(),
+      'field_shp_service_account' => $this->randomMachineName(),
     ];
     return $this->doCreateNode($values);
   }
