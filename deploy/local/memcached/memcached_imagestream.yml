@@ -1,0 +1,18 @@
+kind: ImageStream
+apiVersion: image.openshift.io/v1
+metadata:
+  name: memcached
+  annotations:
+    description: Track the memcached alpine image
+spec:
+  lookupPolicy:
+    local: false
+  tags:
+    - name: alpine
+      annotations:
+        openshift.io/imported-from: 'docker.io/memcached:alpine'
+      from:
+        kind: DockerImage
+        name: 'docker.io/memcached:alpine'
+      referencePolicy:
+        type: Source
