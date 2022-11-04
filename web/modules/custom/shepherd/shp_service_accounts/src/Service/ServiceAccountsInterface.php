@@ -60,31 +60,6 @@ interface ServiceAccountsInterface {
    * @return \Drupal\shp_service_accounts\Entity\ServiceAccount|null
    *   The ServiceAccount or NULL
    */
-  public function getRandomServiceAccount(): ?ServiceAccount;
-
-  /**
-   * Retrieve the list of service accounts and return the least used one.
-   *
-   * @throws \Exception
-   *   If there are no service accounts defined.
-   *
-   * @return \Drupal\shp_service_accounts\Entity\ServiceAccount|null
-   *   The ServiceAccount or NULL
-   */
-  public function getLowestServiceAccount(): ?ServiceAccount;
-
-  /**
-   * Retrieve the list of service accounts and return a random one.
-   *
-   * Random as otherwise we need to keep track of the most recently
-   * used one, wrap around, etc.
-   *
-   * @throws \Exception
-   *   If there are no service accounts defined.
-   *
-   * @return \Drupal\shp_service_accounts\Entity\ServiceAccount|null
-   *   The ServiceAccount or NULL
-   */
   public function getServiceAccountByName($serviceAccountName): ?ServiceAccount;
 
 }
