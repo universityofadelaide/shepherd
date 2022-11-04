@@ -55,7 +55,7 @@ class Site extends EntityActionBase {
     $project = $this->siteEntity->getProject($site);
 
     // @todo This should be done in an event in shp_service_accounts?
-    $serviceAccount = \Drupal::service('shp_service_accounts')->getRandomServiceAccount();
+    $serviceAccount = \Drupal::service('shp_service_accounts')->getServiceAccount();
     $site->field_shp_service_account->value = $serviceAccount->label();
 
     $site->save();

@@ -58,7 +58,7 @@ class ServiceAccounts implements ServiceAccountsInterface {
     ]);
 
     $entries = count($serviceAccountList);
-    if ($entries == 0) {
+    if ($entries === 0) {
       throw new NoServiceAccountException("No service accounts defined.");
     }
 
