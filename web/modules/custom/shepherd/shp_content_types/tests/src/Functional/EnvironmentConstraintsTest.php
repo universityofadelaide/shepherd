@@ -30,14 +30,19 @@ class EnvironmentConstraintsTest extends FunctionalTestBase {
     $this->drupalLogin($this->createAdmin());
 
     // Ensure some service accounts exist.
-    $this->createServiceAccount([
+    $serviceAccount = $this->createServiceAccount([
       'id' => 1,
       'title' => 'Doesnt matter',
       'status' => TRUE,
       'token' => 'Holy lightning batman',
     ]);
 
+    $site = $this->createSite([
+      'field_shp_service_account' => $serviceAccount->label(),
+    ]);
+
     $env = $this->createEnvironment([
+      'field_shp_site' => $site,
       'field_min_replicas' => 4,
       'field_max_replicas' => 2,
     ]);
