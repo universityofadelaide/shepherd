@@ -34,19 +34,14 @@ class ServiceAccounts implements ServiceAccountsInterface {
   public function getServiceAccount($siteId): ?ServiceAccount {
     /** @var \Drupal\node\Entity\Node $site */
     $site = $this->entityTypeManager->getStorage('node')->load($siteId);
-
     if (!$site) {
       throw new SiteNotFoundException("Site not found.");
     }
 
-    if (!isset($site->field_shp_service_account->value)) {
-      $serviceAccount = $this->getLowestServiceAccount();
+    if (isset($site->field_shp_service_account->value)) {
+      return $this->getServiceAccountByName($site->field_shp_service_account->value);
     }
-    else {
-      $serviceAccount = $this->getServiceAccountByName($site->field_shp_service_account->value);
-    }
-
-    return $serviceAccount;
+    return $this->getLowestServiceAccount();
   }
 
   /**
