@@ -190,6 +190,22 @@ To update packages using `composer update`, you will first need run
 `composer install` - otherwise wikimedia/composer-merge-plugin will fail to
 discover the OpenShift client dependency.
 
+## Working with OpenShift
+
+### Purging without destroying OpenShift itself
+Purging all the example generated content on OpenShift. This removes everything with a name like 'node' or 'example' that that was generated with
+the robo dev:drupal-content-generate command.
+```bash
+./oc_delete_all.sh
+```
+
+### Destroy and re-create OpenShift and ALL deployed test sites.
+
+Linux
+```bash
+./openshift purge
+```
+
 ## Troubleshooting
 - mysql host is `db`, database is `drupal`, user is `user` and password is `password`
 - You may need to make `dsh` executable after a `composer update` - `chmod +x dsh`
@@ -216,18 +232,63 @@ discover the OpenShift client dependency.
   docker network prune -f
   ```
 
-## Working with OpenShift
 
-### Purging without destroying OpenShift itself
-Purging all the example generated content on OpenShift. This removes everything with a name like 'node' or 'example' that that was generated with
-the robo dev:drupal-content-generate command.
-```bash
-./oc_delete_all.sh
+### CRC Setup hint, maybe Ubuntu specific.
+
+Any DNS related changes likely mean you need to restart everything.
 ```
-
-### Destroy and re-create OpenShift and ALL deployed test sites.
-
-Linux
-```bash
 ./openshift purge
 ```
+
+If this command doesn't work with crc:
+```
+$ host apps-crc.testing
+Host apps-crc.testing not found: 3(NXDOMAIN)
+```
+
+dnsmasq might need manually configuring by creating a mycrc.conf file. Example commands.
+```
+$ echo "server=/apps-crc.testing/$(crc ip)" | sudo tee /etc/NetworkManager/dnsmasq.d/mycrc.conf
+server=/apps-crc.testing/192.168.130.11
+$ sudo systemctl restart NetworkManager
+$ host apps-crc.testing
+apps-crc.testing has address 192.168.130.11
+```
+
+If you see an error:
+```
+cURL error 6: Could not resolve host: api.crc.testing (see https://curl.haxx.se/libcurl/c/libcurl-errors.html)
+```
+You likely need to configure dnsmasq locally.
+/etc/dnsmasq.d/local.conf 
+```
+address=/testing/192.168.130.11
+
+# Google DNS - replace if you have your own DNS.
+server=1.1.1.1
+server=8.8.8.8
+
+bind-interfaces
+listen-address=172.17.0.1
+
+no-negcache
+
+cache-size=1000
+
+log-queries 
+```
+
+Another reason for local DNS resolution failure may be a duplicate dnsmasq running in KVM.
+```
+virsh net-list
+ Name   State    Autostart   Persistent
+-----------------------------------------
+ crc    active   yes         yes
+```
+
+If you see a duplicate called `default`, you can remove using:
+```
+virsh net-destroy default
+```
+You probably need to restart everything.
+
