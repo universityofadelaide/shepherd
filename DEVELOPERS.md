@@ -33,9 +33,42 @@ Not similar to a production deployment:
 * [Composer](https://getcomposer.org/)
 * [Docker](https://www.docker.com/)
 * An ssh key for builds that is *not* password protected.
+* DNSMasq
 
 ### macOS
 No longer supported for development.
+
+### Installing and configuring DNSMasq on your host
+
+```bash
+sudo apt install dnsmasq
+sudo vim /etc/dnsmasq.d/local.conf
+### ADD THIS ###
+address=/testing/192.168.130.11
+server=192.168.252.1
+bind-interfaces
+listen-address=172.17.0.1
+no-negcache
+cache-size=1000
+log-queries
+### END ###
+
+sudo vim /etc/NetworkManager/NetworkManager.conf
+### ADD TO [main] ###
+[main]
+dns=dnsmasq
+### END ###
+
+sudo vim ./NetworkManager/dnsmasq.d/mycrc.conf
+### ADD THIS ###
+server=/apps-crc.testing/192.168.130.11
+### END ###
+
+sudo vim /etc/systemd/resolved.conf
+### ADD TO [Resolve] ###
+DNS=127.0.1.1
+### END ###
+```
 
 ### OpenShift in Code Ready Containers.
 This is the only supported single node/local development environment for OpenShift
