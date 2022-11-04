@@ -129,7 +129,7 @@ class ServiceAccounts implements ServiceAccountsInterface {
     }
 
     /** @var \Drupal\shp_service_accounts\Entity\ServiceAccount */
-    return reset($serviceAccountList);
+    return reset($serviceAccountList) ?: NULL;
   }
 
 }
