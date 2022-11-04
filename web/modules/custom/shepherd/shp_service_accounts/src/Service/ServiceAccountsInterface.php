@@ -43,10 +43,10 @@ interface ServiceAccountsInterface {
    * @throws \Exception
    *   If there are no service accounts defined.
    *
-   * @return \Drupal\shp_service_accounts\Entity\ServiceAccount|null
+   * @return \Drupal\shp_service_accounts\Entity\ServiceAccount[]|null
    *   The ServiceAccount or NULL
    */
-  public function getRandomServiceAccount(): ?ServiceAccount;
+  public function getServiceAccounts(): ?array;
 
   /**
    * Retrieve the list of service accounts and return a random one.

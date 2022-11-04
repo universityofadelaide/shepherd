@@ -78,14 +78,24 @@ dsh_openshift_init() {
   # Setup a new mysql server, expose it and group the services.
   notice "Ensuring mariadb service exists"
   if ! oc get svc mariadb > /dev/null 2>&1; then
-    oc new-app mariadb MYSQL_ROOT_PASSWORD=${SUPER_SECRET_PASSWORD} -l db=shepherd-dev
-    oc expose service mariadb --generator=service/v2 --type=LoadBalancer --name=mysql-external
+    oc new-app mariadb MYSQL_ROOT_PASSWORD=${SUPER_SECRET_PASSWORD} --as-deployment-config -l db=shepherd-dev
+    oc expose dc mariadb --name=mysql-external  --protocol="TCP" --port=3306 --type=LoadBalancer
     oc annotate svc mysql-external "service.alpha.openshift.io/dependencies=[{\"name\": \"mariadb\", \"kind\": \"Service\"}]"
   fi
+
+  # Patch cluster to allow allocating external IPs
+  ${ADMIN_LOGIN}
+  oc patch network cluster --type merge -p '{ "spec": { "externalIP": { "policy": null }}}'
+  oc patch svc mysql-external -p '{"spec":{"externalIPs":["192.168.130.11"]}}'
+  ${DEV_LOGIN}
 
   # Setup a new minio server, expose it and group the services.
   notice "Ensuring minio service exists"
   oc apply -f deploy/local/minio/
+
+  ## Setup the memcached alpine imagestream.
+  #notice "Setting up memcached alpine imagestream."
+  #oc apply -f deploy/local/memcached/
 
   # Setup the database password in an OpenShift secret.
   notice "Ensuring database secret exists."
@@ -134,6 +144,7 @@ dsh_openshift_init() {
       oc create serviceaccount "${SA}"
       oc adm policy add-cluster-role-to-user cluster-admin system:serviceaccount:shepherd-dev:"${SA}"
       oc adm policy add-cluster-role-to-user self-provisioner system:serviceaccount:shepherd-dev:"${SA}"
+      oc adm policy add-cluster-role-to-user system:image-puller system:serviceaccount:shepherd-dev:"${SA}"
       ${DEV_LOGIN}
 
       # This is pretty horrid, but there is no oc command in the dsh shell.
@@ -185,7 +196,7 @@ dsh_openshift_init() {
   OPENSHIFT_DOMAIN="apps-crc.testing"
   OPENSHIFT_URL="https://api.crc.testing:6443"
   DB_HOST="mysql-external-shepherd-dev.${OPENSHIFT_DOMAIN}"
-  DB_PORT=$(oc get service mysql-external --no-headers | sed 's/.*:\([0-9]*\).*/\1/')
+  DB_PORT=3306
 }
 
 # Command: ./dsh start
