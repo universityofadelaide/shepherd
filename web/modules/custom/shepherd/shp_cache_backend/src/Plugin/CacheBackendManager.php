@@ -29,4 +29,19 @@ class CacheBackendManager extends DefaultPluginManager {
     $this->setCacheBackend($cache_backend, 'shp_cache_backend_plugins');
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  public function getDefinitions() {
+    $definitions = parent::getDefinitions();
+
+    foreach ($definitions as $plugin => $definition) {
+      if (!$definition['status']) {
+        unset($definitions[$plugin]);
+      }
+    }
+
+    return $definitions;
+  }
+
 }

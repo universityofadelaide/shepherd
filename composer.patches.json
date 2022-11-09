@@ -3,6 +3,9 @@
     "drupal/core": {
       "https://drupal.org/node/2780839 - Optimize migration of specific source IDs for SQL sources": "https://www.drupal.org/files/issues/2022-04-25/2780839-9.4.x-optimize-migrate-source-filter-53.patch"
     },
+    "drupal/plugin": {
+      "https://drupal.org/node/3024616 - plugin field widget looks broken when there's only one plugin available": "https://www.drupal.org/files/issues/2020-03-04/3024616-4.plugin.plugin-field-widget-looks-broken-when-theres-only-one-plugin-available.patch"
+    },
     "drupal/migrate_drupal_d8": {
       "https://drupal.org/node/3184165 - serialized values becomes strings": "https://www.drupal.org/files/issues/2021-12-17/3184165-2-unserialize-data.patch",
       "https://drupal.org/node/3134303 - Support idList argument in query to streamline query()": "https://www.drupal.org/files/issues/2020-05-07/3134303-support-idlist-arg-1.patch"
