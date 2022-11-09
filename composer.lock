@@ -2297,26 +2297,26 @@
         },
         {
             "name": "drupal/plugin",
-            "version": "2.9.0",
+            "version": "2.10.0",
             "source": {
                 "type": "git",
                 "url": "https://git.drupalcode.org/project/plugin.git",
-                "reference": "8.x-2.9"
+                "reference": "8.x-2.10"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://ftp.drupal.org/files/projects/plugin-8.x-2.9.zip",
-                "reference": "8.x-2.9",
-                "shasum": "e27f10361f508ddf4c23b884ef17e8b66c93c445"
+                "url": "https://ftp.drupal.org/files/projects/plugin-8.x-2.10.zip",
+                "reference": "8.x-2.10",
+                "shasum": "807081d105f765c4f26c6150a858b0578bd262e9"
             },
             "require": {
-                "drupal/core": "^8.7.7 || ^9"
+                "drupal/core": "^9.1 || ^10"
             },
             "type": "drupal-module",
             "extra": {
                 "drupal": {
-                    "version": "8.x-2.9",
-                    "datestamp": "1640100551",
+                    "version": "8.x-2.10",
+                    "datestamp": "1666815612",
                     "security-coverage": {
                         "status": "covered",
                         "message": "Covered by Drupal's security advisory policy"
