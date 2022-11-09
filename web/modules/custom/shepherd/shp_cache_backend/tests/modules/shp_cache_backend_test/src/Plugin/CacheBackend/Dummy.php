@@ -10,7 +10,8 @@ use Drupal\shp_cache_backend\Plugin\CacheBackendBase;
  *
  * @CacheBackend(
  *   id = "dummy",
- *   label = @Translation("Dummy")
+ *   label = @Translation("Dummy"),
+ *   status = TRUE
  * )
  */
 class Dummy extends CacheBackendBase {

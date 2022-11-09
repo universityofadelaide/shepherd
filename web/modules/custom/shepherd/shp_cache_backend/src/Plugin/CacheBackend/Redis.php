@@ -11,7 +11,8 @@ use Drupal\shp_orchestration\Plugin\OrchestrationProvider\OpenShiftOrchestration
  *
  * @CacheBackend(
  *   id = "redis",
- *   label = @Translation("Redis")
+ *   label = @Translation("Redis"),
+ *   status = FALSE
  * )
  */
 class Redis extends CacheBackendBase {
