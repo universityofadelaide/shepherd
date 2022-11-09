@@ -18,7 +18,8 @@ use UniversityOfAdelaide\OpenShift\Objects\NetworkPolicy;
  *
  * @CacheBackend(
  *   id = "memcached_datagrid",
- *   label = @Translation("Memcached Datagrid")
+ *   label = @Translation("Memcached Datagrid"),
+ *   status = FALSE
  * )
  */
 class MemcachedDatagrid extends CacheBackendBase {

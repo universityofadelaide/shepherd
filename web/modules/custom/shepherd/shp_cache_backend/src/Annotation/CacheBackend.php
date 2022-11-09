@@ -30,4 +30,11 @@ class CacheBackend extends Plugin {
    */
   public $label;
 
+  /**
+   * The status of the plugin.
+   *
+   * @var bool
+   */
+  public $status;
+
 }
