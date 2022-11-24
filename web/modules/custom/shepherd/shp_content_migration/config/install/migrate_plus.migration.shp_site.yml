@@ -23,7 +23,7 @@ process:
   type: type
   title: title
   field_shp_site: field_shp_site
-  field_shp_go_live: field_shp_go_live
+  field_shp_go_live_date: field_shp_go_live_date
   field_shp_path: field_shp_path
   field_shp_domain: field_shp_domain
   field_shp_project:
