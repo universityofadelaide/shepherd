@@ -39,7 +39,7 @@ process:
     source: field_shp_project/0/target_id
 
   field_shp_short_name: field_shp_short_name
-  field_shp_storage_size: field_shp_storage_size
+  # field_shp_storage_size: field_shp_storage_size
   # Only support up to five tags for now.
   field_tags/0/target_id:
     plugin: migration_lookup
