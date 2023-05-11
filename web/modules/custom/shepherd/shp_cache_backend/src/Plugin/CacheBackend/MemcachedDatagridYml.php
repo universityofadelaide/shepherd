@@ -253,7 +253,6 @@ class MemcachedDatagridYml extends CacheBackendBase {
     $distributed_cache_config = [
       'distributedCache' => [
         'mode' => 'SYNC',
-        'start' => 'EAGER',
         'statistics' => TRUE,
         'encoding' => [
           'mediaType' => 'text/plain; charset=UTF-8',

@@ -251,7 +251,6 @@ class MemcachedDatagrid extends CacheBackendBase {
     $distributed_cache->addAttribute('statistics', 'true');
     $distributed_cache->addAttribute('name', $name);
     $distributed_cache->addAttribute('mode', 'SYNC');
-    $distributed_cache->addAttribute('start', 'EAGER');
     $distributed_cache->addChild('memory')->addChild('object');
 
     $configMap->setDataKey($this->jdgConfigFile, $this->formatXml($xml));

@@ -268,17 +268,17 @@
         <global-state>
           <overlay-configuration-storage/>
         </global-state>
-        <replicated-cache statistics="true" name="memcached_sheperd" mode="SYNC" start="EAGER">
+        <replicated-cache statistics="true" name="memcached_sheperd" mode="SYNC">
           <memory>
             <object/>
           </memory>
         </replicated-cache>
-        <distributed-cache statistics="true" name="memcached_node61" mode="SYNC" start="EAGER">
+        <distributed-cache statistics="true" name="memcached_node61" mode="SYNC">
           <memory>
             <object/>
           </memory>
         </distributed-cache>
-        <distributed-cache statistics="true" name="mycache" mode="SYNC" start="EAGER">
+        <distributed-cache statistics="true" name="mycache" mode="SYNC">
           <memory>
             <object/>
           </memory>
@@ -288,12 +288,12 @@
             <object/>
           </memory>
         </distributed-cache>
-        <distributed-cache statistics="true" name="memcached_node33" mode="SYNC" start="EAGER">
+        <distributed-cache statistics="true" name="memcached_node33" mode="SYNC">
           <memory>
             <object/>
           </memory>
         </distributed-cache>
-        <distributed-cache statistics="true" name="memcached_node-123" mode="SYNC" start="EAGER">
+        <distributed-cache statistics="true" name="memcached_node-123" mode="SYNC">
           <memory>
             <object/>
           </memory>
