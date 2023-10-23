@@ -335,6 +335,7 @@ display:
     display_plugin: attachment
     position: 2
     display_options:
+      title: Summary
       fields:
         field_shp_service_account_1:
           id: field_shp_service_account_1
@@ -470,8 +471,11 @@ display:
           prefix: ''
           suffix: ''
       defaults:
+        title: false
         fields: false
       display_extenders: {  }
+      displays:
+        page_1: page_1
     cache_metadata:
       max-age: -1
       contexts:
@@ -624,7 +628,7 @@ display:
         type: normal
         title: 'Provisioner report'
         description: ''
-        weight: -51
+        weight: 0
         expanded: false
         menu_name: admin
         parent: system.admin_reports
