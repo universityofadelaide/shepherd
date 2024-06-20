@@ -127,6 +127,14 @@ class Environment extends EntityActionBase {
     }
     $environment_type = $this->environmentService->getEnvironmentType($node);
 
+    // If there is a secret on the shepherd project, update it from project.
+    if ($secretName = $project->field_shp_secrets->value) {
+      // But still need to ensure it actually exists.
+      if ($secret = $this->orchestrationProviderPlugin->getSecret(0, $secretName)) {
+        $this->orchestrationProviderPlugin->updateSecret($site->id(), $secretName, $secret);
+      }
+    }
+
     $probes = $this->buildProbes($project);
     $cron_jobs = $this->buildCronJobs($node);
 
