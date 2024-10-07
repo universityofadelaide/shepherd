@@ -2,8 +2,8 @@
 
 namespace Drupal\Tests\shp_custom\Unit;
 
-use Drupal\shp_custom\Service\StringGenerator;
 use Drupal\Tests\UnitTestCase;
+use Drupal\shp_custom\Service\StringGenerator;
 
 /**
  * Tests the RandomString service.

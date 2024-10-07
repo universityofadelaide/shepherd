@@ -61,10 +61,12 @@ class OrchestrationProviderSettingsController extends ControllerBase {
    * @param \Drupal\Core\Entity\EntityFormBuilderInterface $entity_form_builder
    *   Entity Form Builder.
    */
-  public function __construct(ConfigFactoryInterface $config_factory,
-                              OrchestrationProviderPluginManagerInterface $orchestration_provider_manager,
-                              EntityTypeManagerInterface $entity_type_manager,
-                              EntityFormBuilderInterface $entity_form_builder) {
+  public function __construct(
+    ConfigFactoryInterface $config_factory,
+    OrchestrationProviderPluginManagerInterface $orchestration_provider_manager,
+    EntityTypeManagerInterface $entity_type_manager,
+    EntityFormBuilderInterface $entity_form_builder,
+  ) {
 
     $this->configFactory = $config_factory;
     $this->orchestrationProviderManager = $orchestration_provider_manager;

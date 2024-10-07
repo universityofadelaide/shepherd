@@ -68,7 +68,7 @@ class BackupEditForm extends FormBase {
   /**
    * {@inheritdoc}
    */
-  public function buildForm(array $form, FormStateInterface $form_state, NodeInterface $site = NULL, $backupName = NULL) {
+  public function buildForm(array $form, FormStateInterface $form_state, ?NodeInterface $site = NULL, $backupName = NULL) {
     $form_state->set('site', $site->id());
     $backup = $this->orchestrationProvider->getBackup($site->id(), $backupName);
     if (!$backup) {

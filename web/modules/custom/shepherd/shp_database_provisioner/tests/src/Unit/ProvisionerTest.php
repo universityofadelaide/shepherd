@@ -3,12 +3,12 @@
 namespace Drupal\Tests\shp_database_provisioner\Unit;
 
 use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Tests\UnitTestCase;
 use Drupal\shp_custom\Service\Environment;
 use Drupal\shp_custom\Service\StringGenerator;
 use Drupal\shp_database_provisioner\Service\Provisioner;
 use Drupal\shp_orchestration\OrchestrationProviderInterface;
 use Drupal\shp_orchestration\OrchestrationProviderPluginManagerInterface;
-use Drupal\Tests\UnitTestCase;
 
 /**
  * Tests the OrchestrationEvents class constants.

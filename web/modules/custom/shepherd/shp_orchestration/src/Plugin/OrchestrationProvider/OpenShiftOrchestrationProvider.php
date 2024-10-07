@@ -20,8 +20,8 @@ use UniversityOfAdelaide\OpenShift\Objects\Backups\Restore;
 use UniversityOfAdelaide\OpenShift\Objects\Backups\ScheduledBackup;
 use UniversityOfAdelaide\OpenShift\Objects\Backups\Sync;
 use UniversityOfAdelaide\OpenShift\Objects\Hpa;
-use UniversityOfAdelaide\OpenShift\Objects\Route;
 use UniversityOfAdelaide\OpenShift\Objects\Label;
+use UniversityOfAdelaide\OpenShift\Objects\Route;
 
 /**
  * The openshift orchestration provider.
@@ -134,7 +134,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
   /**
    * {@inheritdoc}
    */
-  public function createdProject(int $project_id, string $name, string $builder_image, string $source_repo, string $source_ref = 'master', string $source_secret = NULL, array $environment_variables = []) {
+  public function createdProject(int $project_id, string $name, string $builder_image, string $source_repo, string $source_ref = 'master', ?string $source_secret = NULL, array $environment_variables = []) {
     $sanitised_project_name = self::sanitise($name);
     $sanitised_source_ref = self::sanitise($source_ref);
     $image_stream_tag = $sanitised_project_name . ':' . $sanitised_source_ref;
@@ -160,7 +160,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
   /**
    * {@inheritdoc}
    */
-  public function updatedProject(int $project_id, string $name, string $builder_image, string $source_repo, string $source_ref = 'master', string $source_secret = NULL, array $environment_variables = []) {
+  public function updatedProject(int $project_id, string $name, string $builder_image, string $source_repo, string $source_ref = 'master', ?string $source_secret = NULL, array $environment_variables = []) {
     $sanitised_name = self::sanitise($name);
 
     $build_limits = $this->generateRequestLimits(NULL, $project_id);
@@ -262,7 +262,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     string $builder_image,
     string $source_repo,
     string $source_ref = 'master',
-    string $source_secret = NULL,
+    ?string $source_secret = NULL,
     string $storage_class = '',
     int $storage_size = 3,
     bool $update_on_image_change = FALSE,
@@ -273,7 +273,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     array $cron_jobs = [],
     string $backup_schedule = '',
     int $backup_retention = 0,
-    Route $route = NULL
+    ?Route $route = NULL,
   ) {
     // @todo Refactor this. _The complexity is too damn high!_
     $sanitised_project_name = self::sanitise($project_name);
@@ -410,7 +410,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     string $builder_image,
     string $source_repo,
     string $source_ref = 'master',
-    string $source_secret = NULL,
+    ?string $source_secret = NULL,
     string $storage_class = '',
     int $storage_size = 3,
     bool $update_on_image_change = FALSE,
@@ -421,8 +421,8 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     array $cron_jobs = [],
     string $backup_schedule = '',
     int $backup_retention = 0,
-    Route $route = NULL,
-    Hpa $hpa = NULL
+    ?Route $route = NULL,
+    ?Hpa $hpa = NULL,
   ) {
     // @todo Refactor this too. Not DRY enough.
     $deployment_name = self::generateDeploymentName($environment_id);
@@ -550,7 +550,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     string $project_name,
     string $short_name,
     int $site_id,
-    int $environment_id
+    int $environment_id,
   ) {
     $deployment_name = self::generateDeploymentName($environment_id);
 
@@ -596,7 +596,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
    * {@inheritdoc}
    */
   public function archivedEnvironment(
-    int $environment_id
+    int $environment_id,
   ) {
     // @todo - This is all broken, input is an int, not an object, remove?
     $site = Node::load($environment_id->field_shp_site->target_id);
@@ -619,8 +619,8 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     int $environment_id,
     string $source_ref = 'master',
     bool $clear_cache = TRUE,
-    Route $route = NULL,
-    Hpa $hpa = NULL
+    ?Route $route = NULL,
+    ?Hpa $hpa = NULL,
   ) {
 
     $this->setSiteConfig($site_id);
@@ -674,7 +674,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     string $short_name,
     int $site_id,
     string $domain_name,
-    string $path
+    string $path,
   ) {
     // Set the auth to be the site token.
     $this->setSiteConfig($site_id);
@@ -732,7 +732,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
    * @param string|null $projectName
    *   The projects name.
    */
-  public function createRoleBinding(string $user, string $role, string $projectName = NULL) {
+  public function createRoleBinding(string $user, string $role, ?string $projectName = NULL) {
     $roleBindingName = implode('-', [
       $user, $role,
       $this->stringGenerator->generateRandomString(5),
@@ -753,7 +753,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
    */
   public function preDeleteSite(
     string $project_name,
-    int $site_id
+    int $site_id,
   ) {
     $this->setSiteConfig($site_id);
 
@@ -1068,7 +1068,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     string $short_name,
     string $environment_id,
     string $source_ref = 'master',
-    string $commands = ''
+    string $commands = '',
   ) {
     $sanitised_project_name = self::sanitise($project_name);
     $sanitised_source_ref = self::sanitise($source_ref);
@@ -1157,7 +1157,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
   /**
    * {@inheritdoc}
    */
-  public function getSecret(int $site_id, string $name, string $key = NULL) {
+  public function getSecret(int $site_id, string $name, ?string $key = NULL) {
     $this->setSiteConfig($site_id);
 
     try {
@@ -1505,7 +1505,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
    * @return array
    *   Array with cpu & memory request & limits.
    */
-  protected function generateRequestLimits(int $environment_id = NULL, int $project_id = NULL) {
+  protected function generateRequestLimits(?int $environment_id = NULL, ?int $project_id = NULL) {
     $request_limits = [];
 
     if ($environment_id) {

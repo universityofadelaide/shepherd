@@ -96,10 +96,12 @@ class Environment {
    * @param \Drupal\shp_custom\Service\Site $site
    *   Site service.
    */
-  public function __construct(RequestStack $requestStack,
-                              EntityTypeManagerInterface $entityTypeManager,
-                              AccountProxyInterface $currentUser,
-                              Site $site) {
+  public function __construct(
+    RequestStack $requestStack,
+    EntityTypeManagerInterface $entityTypeManager,
+    AccountProxyInterface $currentUser,
+    Site $site,
+  ) {
     $this->requestStack = $requestStack;
     $this->entityTypeManager = $entityTypeManager;
     $this->currentRequest = $this->requestStack->getCurrentRequest();

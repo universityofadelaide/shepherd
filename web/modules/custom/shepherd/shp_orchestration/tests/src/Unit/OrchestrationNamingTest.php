@@ -2,8 +2,8 @@
 
 namespace Drupal\Tests\shp_orchestration\Unit;
 
-use Drupal\shp_orchestration\OrchestrationProviderBase;
 use Drupal\Tests\UnitTestCase;
+use Drupal\shp_orchestration\OrchestrationProviderBase;
 
 /**
  * Tests the OrchestrationEvents class constants.

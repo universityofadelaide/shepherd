@@ -2,11 +2,11 @@
 
 namespace Drupal\shp_custom\Controller;
 
+use Drupal\Component\Plugin\PluginManagerInterface;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\node\NodeInterface;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Drupal\Component\Plugin\PluginManagerInterface;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 /**
  * Provides JSON responses for site environment(s).

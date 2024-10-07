@@ -2,9 +2,9 @@
 
 namespace Drupal\shp_custom\Plugin\Menu\LocalAction;
 
+use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\group\Plugin\Menu\LocalAction\WithDestination;
 use Drupal\node\Entity\Node;
-use Drupal\Core\Routing\RouteMatchInterface;
 
 /**
  * Defines a local action plugin with a dynamic title.

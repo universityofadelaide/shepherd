@@ -2,8 +2,8 @@
 
 namespace Drupal\Tests\shp_custom\Unit;
 
-use Drupal\shp_custom\Plugin\views\field\SiteEnvironmentStatus;
 use Drupal\Tests\UnitTestCase;
+use Drupal\shp_custom\Plugin\views\field\SiteEnvironmentStatus;
 
 /**
  * Tests the ActiveJobManagerService class.

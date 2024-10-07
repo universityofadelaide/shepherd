@@ -3,9 +3,9 @@
 namespace Drupal\Tests\shp_service_accounts\Unit;
 
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Tests\UnitTestCase;
 use Drupal\shp_service_accounts\Entity\ServiceAccount;
 use Drupal\shp_service_accounts\Service\ServiceAccounts;
-use Drupal\Tests\UnitTestCase;
 
 /**
  * Perform some basic tests on the service accounts service.
