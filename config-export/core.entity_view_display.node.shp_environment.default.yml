@@ -12,6 +12,7 @@ dependencies:
     - field.field.node.shp_environment.field_shp_cron_jobs
     - field.field.node.shp_environment.field_shp_cron_suspended
     - field.field.node.shp_environment.field_shp_deployment_name
+    - field.field.node.shp_environment.field_shp_description
     - field.field.node.shp_environment.field_shp_domain
     - field.field.node.shp_environment.field_shp_env_vars
     - field.field.node.shp_environment.field_shp_environment_type
@@ -45,7 +46,7 @@ content:
     label: above
     settings: {  }
     third_party_settings: {  }
-    weight: 16
+    weight: 17
     region: content
   field_max_replicas:
     type: number_integer
@@ -54,7 +55,7 @@ content:
       thousand_separator: ''
       prefix_suffix: true
     third_party_settings: {  }
-    weight: 19
+    weight: 20
     region: content
   field_min_replicas:
     type: number_integer
@@ -63,7 +64,7 @@ content:
       thousand_separator: ''
       prefix_suffix: true
     third_party_settings: {  }
-    weight: 18
+    weight: 19
     region: content
   field_newrelic_enabled:
     type: boolean
@@ -73,7 +74,7 @@ content:
       format_custom_false: ''
       format_custom_true: ''
     third_party_settings: {  }
-    weight: 17
+    weight: 18
     region: content
   field_shp_cpu_limit:
     type: string
@@ -81,7 +82,7 @@ content:
     settings:
       link_to_entity: false
     third_party_settings: {  }
-    weight: 12
+    weight: 13
     region: content
   field_shp_cpu_request:
     type: string
@@ -89,7 +90,7 @@ content:
     settings:
       link_to_entity: false
     third_party_settings: {  }
-    weight: 13
+    weight: 14
     region: content
   field_shp_cron_jobs:
     type: key_value
@@ -97,7 +98,7 @@ content:
     settings:
       value_only: false
     third_party_settings: {  }
-    weight: 11
+    weight: 12
     region: content
   field_shp_cron_suspended:
     type: boolean
@@ -107,7 +108,7 @@ content:
       format_custom_false: ''
       format_custom_true: ''
     third_party_settings: {  }
-    weight: 7
+    weight: 8
     region: content
   field_shp_deployment_name:
     type: string
@@ -116,6 +117,13 @@ content:
       link_to_entity: false
     third_party_settings: {  }
     weight: 6
+    region: content
+  field_shp_description:
+    type: basic_string
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 7
     region: content
   field_shp_domain:
     type: string
@@ -131,7 +139,7 @@ content:
     settings:
       value_only: false
     third_party_settings: {  }
-    weight: 9
+    weight: 10
     region: content
   field_shp_environment_type:
     type: entity_reference_label
@@ -155,7 +163,7 @@ content:
     settings:
       link_to_entity: false
     third_party_settings: {  }
-    weight: 14
+    weight: 15
     region: content
   field_shp_memory_request:
     type: string
@@ -163,7 +171,7 @@ content:
     settings:
       link_to_entity: false
     third_party_settings: {  }
-    weight: 15
+    weight: 16
     region: content
   field_shp_path:
     type: string
@@ -179,7 +187,7 @@ content:
     settings:
       link_to_entity: false
     third_party_settings: {  }
-    weight: 10
+    weight: 11
     region: content
   field_shp_site:
     type: entity_reference_label
@@ -197,7 +205,7 @@ content:
       format_custom_false: ''
       format_custom_true: ''
     third_party_settings: {  }
-    weight: 8
+    weight: 9
     region: content
   field_skip_db_prepop:
     type: boolean
@@ -207,7 +215,7 @@ content:
       format_custom_false: ''
       format_custom_true: ''
     third_party_settings: {  }
-    weight: 20
+    weight: 21
     region: content
 hidden:
   links: true

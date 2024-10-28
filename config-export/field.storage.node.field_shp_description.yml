@@ -1,0 +1,19 @@
+uuid: 49afcc35-9f3f-4c1f-b1e5-de5121bbc834
+langcode: en
+status: true
+dependencies:
+  module:
+    - node
+id: node.field_shp_description
+field_name: field_shp_description
+entity_type: node
+type: string_long
+settings:
+  case_sensitive: false
+module: core
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

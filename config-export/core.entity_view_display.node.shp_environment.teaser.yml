@@ -13,6 +13,7 @@ dependencies:
     - field.field.node.shp_environment.field_shp_cron_jobs
     - field.field.node.shp_environment.field_shp_cron_suspended
     - field.field.node.shp_environment.field_shp_deployment_name
+    - field.field.node.shp_environment.field_shp_description
     - field.field.node.shp_environment.field_shp_domain
     - field.field.node.shp_environment.field_shp_env_vars
     - field.field.node.shp_environment.field_shp_environment_type
@@ -52,6 +53,7 @@ hidden:
   field_shp_cron_jobs: true
   field_shp_cron_suspended: true
   field_shp_deployment_name: true
+  field_shp_description: true
   field_shp_domain: true
   field_shp_env_vars: true
   field_shp_environment_type: true
