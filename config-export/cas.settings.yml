@@ -1,0 +1,53 @@
+server:
+  version: '2.0'
+  hostname: login-project1.adelaide.edu.au
+  port: 443
+  path: /cas
+  verify: 0
+  cert: ''
+  protocol: https
+gateway:
+  check_frequency: -2
+  paths:
+    id: request_path
+    pages: ''
+    negate: false
+forced_login:
+  enabled: false
+  paths:
+    id: request_path
+    pages: ''
+    negate: false
+logout:
+  logout_destination: ''
+  enable_single_logout: false
+  cas_logout: true
+  single_logout_session_lifetime: null
+proxy:
+  initialize: false
+  can_be_proxied: false
+  proxy_chains: ''
+user_accounts:
+  prevent_normal_login: true
+  auto_register: true
+  email_assignment_strategy: 0
+  email_hostname: adelaide.edu.au
+  email_attribute: ''
+  auto_assigned_roles: {  }
+  restrict_password_management: false
+  restrict_email_management: false
+advanced:
+  debug_log: false
+  connection_timeout: null
+login_link_enabled: false
+login_link_label: ''
+_core:
+  default_config_hash: JZJktkanuV6cj5leQWIzVdvmaah0J2MrAGvLYcc72Qs
+login_success_message: 'You have been logged in.'
+error_handling:
+  message_validation_failure: 'There was a problem logging in, please contact a site administrator.'
+  message_no_local_account: 'There was a problem logging in, please contact a site administrator.'
+  message_subscriber_denied_reg: 'There was a problem logging in, please contact a site administrator.'
+  message_account_blocked: 'There was a problem logging in, please contact a site administrator.'
+  message_subscriber_denied_login: 'There was a problem logging in, please contact a site administrator.'
+  message_username_already_exists: 'There was a problem logging in, please contact a site administrator.'

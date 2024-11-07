@@ -24,7 +24,12 @@ process:
   title: title
   field_shp_backup_size: field_shp_backup_size
   field_shp_build_secret: field_shp_build_secret
-  field_shp_builder_image: field_shp_builder_image
+  field_shp_builder_image:
+    plugin: str_replace
+    source: field_shp_builder_image
+    search: "composer2"
+    replace: "openshift-4.x"
+
   field_shp_cpu_limit: field_shp_cpu_limit
   field_shp_cpu_request: field_shp_cpu_request
   field_shp_default_sql: field_shp_default_sql

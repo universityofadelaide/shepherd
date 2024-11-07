@@ -1,0 +1,7 @@
+name: 'UA custom'
+type: module
+description: 'Contains UA specific customisations. E.g. force https.'
+core_version_requirement: ^8.8 || ^9
+php: 7.2
+package: UA
+dependencies:

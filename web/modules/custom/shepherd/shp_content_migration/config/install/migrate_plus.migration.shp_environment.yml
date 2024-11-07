@@ -31,12 +31,17 @@ process:
   field_shp_cron_jobs: field_shp_cron_jobs
   field_shp_cron_suspended: field_shp_cron_suspended
   field_shp_deployment_name: field_shp_deployment_name
-  field_shp_domain: field_shp_domain
+  field_shp_domain:
+    plugin: str_replace
+    source: field_shp_domain
+    search: "openshift.services.adelaide.edu.au"
+    replace: "apps.ocp-blue.adelaide.edu.au"
+    # - local dev - replace: "apps-crc.testing"
+
   field_shp_env_vars: field_shp_env_vars
   field_shp_environment_type:
-    plugin: migration_lookup
-    migration: taxonomy_terms
-    source: field_shp_environment_type/0/target_id
+    plugin: default_value
+    default_value: 7
   field_shp_git_reference: field_shp_git_reference
   field_shp_memory_limit: field_shp_memory_limit
   field_shp_memory_request: field_shp_memory_request
@@ -50,7 +55,7 @@ process:
   field_shp_update_on_image_change: field_shp_update_on_image_change
   field_skip_db_prepop:
     plugin: default_value
-    default_value: 0
+    default_value: 1
 
   moderation_state:
     plugin: default_value

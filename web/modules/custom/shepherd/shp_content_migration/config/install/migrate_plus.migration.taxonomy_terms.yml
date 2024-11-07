@@ -21,7 +21,12 @@ process:
   field_shp_annotations: field_shp_annotations
   field_shp_backup_retention: field_shp_backup_retention
   field_shp_backup_schedule: field_shp_backup_schedule
-  field_shp_base_domain: field_shp_base_domain
+  field_shp_base_domain:
+    plugin: str_replace
+    regex: true
+    source: field_shp_base_domain
+    search: /openshift\..*?\.adelaide\.edu\.au/
+    replace: "apps.ocp-blue.adelaide.edu.au"
   field_shp_protect: field_shp_protect
   field_shp_update_go_live: field_shp_update_go_live
 

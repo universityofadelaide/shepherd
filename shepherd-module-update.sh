@@ -6,7 +6,7 @@
 set -eu
 IFS=$'\n\t'
 
-command -v splitsh-lite >/dev/null 2>&1 || { echo "$0 requires splitsh-lite but it's not installed.  Aborting." >&2; exit 1; }
+command -v splitsh-lite >/dev/null 2>&1 || { echo "$0 requires splitsh-lite (https://github.com/splitsh/lite/releases) but it's not installed. Aborting." >&2; exit 1; }
 
 source_repository=git@github.com:universityofadelaide/shepherd.git
 source_branch=develop

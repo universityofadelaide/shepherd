@@ -1,7 +1,7 @@
-name: Shepherd site orchestrator profile
-package: Shepherd
+name: University of Adelaide Shepherd profile
+package: 'UA Shepherd'
 type: profile
-description: 'Shepherd site orchestrator install profile.'
+description: 'University of Adelaide Drupal 8 Shepherd install profile.'
 version: VERSION
 core_version_requirement: ^9
 dependencies:
@@ -40,6 +40,7 @@ dependencies:
   - views_ui
 
   # Contributed modules
+  - cas
   - admin_toolbar
   - admin_toolbar_tools
   - config_ignore
@@ -65,6 +66,10 @@ dependencies:
   - shp_orchestration
   - shp_roles
   - shp_service_accounts
+
+  # UA shepherd integrations
+  - ua_ldap
+  - ua_shp_ldap
 
 themes:
   - seven

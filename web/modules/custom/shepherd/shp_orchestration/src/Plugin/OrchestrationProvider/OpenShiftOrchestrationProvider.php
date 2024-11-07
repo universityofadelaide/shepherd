@@ -318,6 +318,12 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       $probes
     );
 
+    // Allow other modules to modify a deployment config before creation.
+    $new_deployment_config = \Drupal::moduleHandler()
+      ->invokeAll('shp_deployment_config', [$environment_id, $deployment_config]
+      );
+    $deployment_config = $new_deployment_config ?: $deployment_config;
+
     try {
       $this->client->createDeploymentConfig($deployment_config);
     }
@@ -1116,13 +1122,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
   }
 
   /**
-   * Fetch the job from the provider.
-   *
-   * @param string $name
-   *   The job name.
-   *
-   * @return array|bool
-   *   The job, else false.
+   * {@inheritdoc}
    */
   public function getJob(string $name) {
     return $this->client->getJob($name);
