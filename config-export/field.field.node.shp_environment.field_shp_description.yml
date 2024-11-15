@@ -10,7 +10,7 @@ field_name: field_shp_description
 entity_type: node
 bundle: shp_environment
 label: Description
-description: '<p><b>Environment Description.</b> This could includes the ticket ID, purpose, instructions, and information about who it is dedicated to or owned by.</p>'
+description: '<p>E.g. ticket ID, purpose, instructions, and information about who it is dedicated to or owned by.</p>'
 required: false
 translatable: false
 default_value: {  }
