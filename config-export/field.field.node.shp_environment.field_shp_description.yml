@@ -1,0 +1,19 @@
+uuid: 4ff6a4ae-b7e8-40ba-97d9-85499c983640
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_shp_description
+    - node.type.shp_environment
+id: node.shp_environment.field_shp_description
+field_name: field_shp_description
+entity_type: node
+bundle: shp_environment
+label: Description
+description: '<p>E.g. ticket ID, purpose, instructions, and information about who it is dedicated to or owned by.</p>'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string_long
