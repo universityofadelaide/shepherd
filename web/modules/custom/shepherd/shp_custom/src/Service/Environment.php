@@ -128,9 +128,7 @@ class Environment {
     $this->setBranchField($form, $form_state);
     $this->applyJavascriptEnvironmentType($form);
     $this->replaceCronTokens($form, $form_state);
-
     $this->preventConcurrentDeploymentsFormAlter($form, $form_state);
-
   }
 
   /**
@@ -318,7 +316,6 @@ class Environment {
         $operations[$key]['query'] = ['destination' => $destination];
       }
     }
-
 
     if (!$this->isOutsideEnvironmentCreationTimeDelay()) {
       unset($operations['restore']);
@@ -509,7 +506,6 @@ class Environment {
   public static function isOutsideEnvironmentCreationTimeDelay(): bool {
     $config = \Drupal::config('shp_custom.settings');
     $time_delay = $config->get('environment_creation_time_delay');
-
 
     $query = \Drupal::entityQuery('node')
       ->condition('type', 'shp_environment')
