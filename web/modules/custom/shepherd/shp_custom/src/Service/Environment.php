@@ -517,10 +517,10 @@ class Environment {
     $nids = $query->execute();
 
     if (empty($nids)) {
-     return TRUE;
+      return TRUE;
     }
     $latest_node = Node::load(reset($nids));
-    $last_created_time  = $latest_node->getCreatedTime();
+    $last_created_time = $latest_node->getCreatedTime();
     return time() - $time_delay > $last_created_time;
   }
 

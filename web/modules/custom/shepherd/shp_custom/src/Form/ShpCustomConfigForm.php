@@ -4,7 +4,6 @@ namespace Drupal\shp_custom\Form;
 
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Url;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -34,7 +33,6 @@ class ShpCustomConfigForm extends ConfigFormBase {
   protected function getEditableConfigNames() {
     return ['shp_custom.settings'];
   }
-
 
   /**
    * {@inheritdoc}
