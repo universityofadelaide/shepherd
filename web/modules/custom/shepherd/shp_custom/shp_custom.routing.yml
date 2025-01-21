@@ -75,3 +75,11 @@ shp_custom.environment-promote-form:
     _permission: 'shp access environment wizard'
     site: ^[0-9]+
     environment: ^[0-9]+
+
+shp_custom.shp_custom_config:
+  path: '/admin/config/shepherd/custom-config'
+  defaults:
+    _title: 'Shepherd Custom Config'
+    _form: 'Drupal\shp_custom\Form\ShpCustomConfigForm'
+  requirements:
+    _permission: 'administer site configuration'
