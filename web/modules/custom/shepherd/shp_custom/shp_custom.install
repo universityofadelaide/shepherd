@@ -1,0 +1,24 @@
+<?php
+
+/**
+ * @file
+ * Install, update and uninstall functions for the Shepherd custom module.
+ */
+
+/**
+ * Implements hook_install().
+ */
+function shp_custom_install() {
+  $config = \Drupal::configFactory()->getEditable('shp_custom.settings');
+  $config->set('environment_creation_time_delay', 600);
+  $config->save();
+}
+
+/**
+ * Implements hook_update_N().
+ */
+function shp_custom_update_10001() {
+  $config = \Drupal::configFactory()->getEditable('shp_custom.settings');
+  $config->set('environment_creation_time_delay', 600);
+  $config->save();
+}
