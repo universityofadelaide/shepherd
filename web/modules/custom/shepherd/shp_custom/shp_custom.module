@@ -139,11 +139,6 @@ function shp_custom_node_access(NodeInterface $node, $op, AccountInterface $acco
         }
       }
     }
-
-    if ($op === 'create' || $op === 'update') {
-      return AccessResult::forbidden();
-    }
-
   }
   return AccessResult::neutral();
 }
