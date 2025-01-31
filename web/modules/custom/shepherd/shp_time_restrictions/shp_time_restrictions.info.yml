@@ -1,0 +1,7 @@
+name: Shepherd Time Restrictions
+type: module
+description: Restricts actions based on time delays.
+package: Shepherd
+core_version_requirement: ^9 || ^10
+dependencies:
+  - shp_content_types

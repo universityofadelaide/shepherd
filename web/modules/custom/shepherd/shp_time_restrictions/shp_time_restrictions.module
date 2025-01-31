@@ -1,0 +1,53 @@
+<?php
+
+/**
+ * @file
+ * Primary module hooks for Shepherd Time Restrictions module.
+ */
+
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\node\NodeInterface;
+
+/**
+ * Implements hook_node_delete().
+ * Logs when an "environment" node is deleted.
+ */
+function shp_time_restrictions_node_delete(NodeInterface $node) {
+  if ($node->bundle() === 'shp_environment') {
+    \Drupal::service('shp_time_restrictions.actions_log')->logAction($node, 'deleted');
+  }
+}
+
+/**
+ * Implements hook_node_delete().
+ * Logs when an "environment" node is inserted.
+ */
+function shp_time_restrictions_node_insert(NodeInterface $node) {
+  if ($node->bundle() === 'shp_environment') {
+    \Drupal::service('shp_time_restrictions.actions_log')->logAction($node, 'created');
+  }
+}
+
+
+function shp_time_restrictions_form_shp_backup_environment_restore_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  \Drupal::service('shp_time_restrictions.form_alters')->preventConcurrentActionsFormAlter($form, $form_state);
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function shp_time_restrictions_form_node_shp_environment_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  \Drupal::service('shp_time_restrictions.form_alters')->preventConcurrentActionsFormAlter($form, $form_state);
+}
+
+/**
+ * Implements hook_operation_alter().
+ */
+function shp_time_restrictions_entity_operation_alter(array &$operations, EntityInterface $entity) {
+  if (!\Drupal::service('shp_time_restrictions.actions_log')->isOutsideEnvironmentCreationTimeDelay()) {
+    unset($operations['restore']);
+    unset($operations['delete']);
+  }
+
+}
