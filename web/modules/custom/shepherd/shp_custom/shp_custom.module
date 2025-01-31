@@ -131,7 +131,6 @@ function shp_custom_node_delete(EntityInterface $entity) {
  * Prevent production environments from being deleted.
  */
 function shp_custom_node_access(NodeInterface $node, $op, AccountInterface $account) {
-  $breakpoint = 1;
   if ($node->bundle() === 'shp_environment') {
     if ($op === 'delete') {
       if ($environment_term = Term::load($node->field_shp_environment_type->target_id)) {
@@ -140,11 +139,6 @@ function shp_custom_node_access(NodeInterface $node, $op, AccountInterface $acco
         }
       }
     }
-
-    if ($op === 'create' || $op === 'update') {
-      return AccessResult::forbidden();
-    }
-
   }
   return AccessResult::neutral();
 }
@@ -217,7 +211,6 @@ function shp_custom_form_node_shp_site_form_alter(&$form, FormStateInterface $fo
 }
 
 function shp_custom_form_alter(&$form, FormStateInterface $form_state, $form_id) {
-  // shp_backup_environment_restore_form
   if ($form_id === 'node_shp_site_delete_form') {
     \Drupal::service('shp_custom.site')->deleteCheck($form, $form_state);
   }
@@ -281,8 +274,4 @@ function shp_custom_tokens($type, $tokens, array $frequency, array $options, Bub
 
   return $replacements;
 
-}
-
-function shp_custom_form_shp_backup_environment_restore_form_alter(&$form, FormStateInterface $form_state, $form_id) {
-  \Drupal::service('shp_custom.environment')->restoreForm($form, $form_state);
 }

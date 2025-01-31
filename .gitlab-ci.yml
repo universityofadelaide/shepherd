@@ -1,7 +1,7 @@
 image: uofa/s2i-shepherd-drupal:composer2
 services:
   - alias: db
-    name:  quay.io/fedora/mariadb-105
+    name:  quay.io/centos7/mariadb-103-centos7
   - alias: mail
     name:  mailhog/mailhog:latest
   - alias: selenium
