@@ -1,0 +1,8 @@
+# Schema for the configuration files of the Shepherd Time Restrictions module.
+shp_time_restrictions.settings:
+  type: config_object
+  label: 'Shepherd Time Restrictions settings'
+  mapping:
+    example:
+      type: string
+      label: 'Example'
