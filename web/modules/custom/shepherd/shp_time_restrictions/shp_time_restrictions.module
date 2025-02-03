@@ -45,7 +45,7 @@ function shp_time_restrictions_form_node_shp_environment_form_alter(&$form, Form
  * Implements hook_operation_alter().
  */
 function shp_time_restrictions_entity_operation_alter(array &$operations, EntityInterface $entity) {
-  if (!\Drupal::service('shp_time_restrictions.actions_log')->isOutsideEnvironmentCreationTimeDelay()) {
+  if (!\Drupal::service('shp_time_restrictions.actions_log')->isOutsideEnvironmentCreationTimeDelay($entity->id())) {
     unset($operations['restore']);
     unset($operations['delete']);
   }

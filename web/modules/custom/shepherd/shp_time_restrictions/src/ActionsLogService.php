@@ -59,15 +59,21 @@ class ActionsLogService {
    *
    * @throws \Exception
    */
-  public function getLastActionTimestamp() {
+  public function getLastActionTimestamp(?int $nid = NULL) {
     $query = $this->connection->select('shp_time_restrictions_log', 'l')
-      ->fields('l', ['timestamp'])
-      ->orderBy('timestamp', 'DESC')
+      ->fields('l', ['timestamp']);
+    if ($nid) {
+      $query->condition('nid', $nid);
+    }
+
+    $query->orderBy('timestamp', 'DESC')
       ->range(0, 1)
       ->execute()
       ->fetchField();
 
-    return $query ?: NULL;
+    $timestamp = $query->execute()->fetchField();
+
+    return $timestamp !== FALSE ? (int) $timestamp : NULL;
   }
 
   /**
@@ -76,10 +82,15 @@ class ActionsLogService {
    * @return bool
    *   true if older enough.
    */
-  public function isOutsideEnvironmentCreationTimeDelay(): bool {
-    $last_action_timestamp = $this->getLastActionTimestamp();
+  public function isOutsideEnvironmentCreationTimeDelay(?int $nid = NULL): bool {
+    $last_action_timestamp = $this->getLastActionTimestamp($nid);
     $time_delay_config = $this->configFactory->get('shp_time_restrictions.settings')->get('environment_creation_time_delay');
-    return time() - $time_delay_config > $last_action_timestamp;
+
+    if ($last_action_timestamp) {
+      return time() - $time_delay_config > $last_action_timestamp;
+    }
+
+    return TRUE;
   }
 
 }
