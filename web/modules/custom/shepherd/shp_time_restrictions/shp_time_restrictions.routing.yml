@@ -4,4 +4,4 @@ shp_time_restrictions.settings_form:
     _title: 'Shepherd Time Restrictions settings'
     _form: 'Drupal\shp_time_restrictions\Form\SettingsForm'
   requirements:
-    _permission: 'administer shp_time_restrictions configuration'
+    _permission: 'access administration pages'
