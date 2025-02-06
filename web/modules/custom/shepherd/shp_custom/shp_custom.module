@@ -275,7 +275,3 @@ function shp_custom_tokens($type, $tokens, array $frequency, array $options, Bub
   return $replacements;
 
 }
-
-function shp_custom_form_shp_backup_environment_restore_form_alter(&$form, FormStateInterface $form_state, $form_id) {
-  \Drupal::service('shp_custom.environment')->restoreFormAlter($form, $form_state);
-}

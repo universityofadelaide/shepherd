@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\shp_custom\Form;
+namespace Drupal\shp_time_restrictions\Form;
 
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
@@ -9,13 +9,13 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 /**
  * Provides a confirmation form before clearing out the examples.
  */
-class ShpCustomConfigForm extends ConfigFormBase {
+class SettingsForm extends ConfigFormBase {
 
   /**
    * {@inheritdoc}
    */
   public function getFormId() {
-    return 'shp_custom_shp_custom_config';
+    return 'shp_time_restrictions_config';
   }
 
   /**
@@ -31,7 +31,7 @@ class ShpCustomConfigForm extends ConfigFormBase {
    * {@inheritdoc}
    */
   protected function getEditableConfigNames() {
-    return ['shp_custom.settings'];
+    return ['shp_time_restrictions.settings'];
   }
 
   /**
@@ -43,7 +43,7 @@ class ShpCustomConfigForm extends ConfigFormBase {
     $form['environment_creation_time_delay'] = [
       '#type' => 'number',
       '#title' => $this->t('Time delay'),
-      '#default_value' => $this->config('shp_custom.settings')->get('environment_creation_time_delay'),
+      '#default_value' => $this->config('shp_time_restrictions.settings')->get('environment_creation_time_delay'),
       '#description' => $this->t('Time delay is the number of seconds after an environment creation before a user is allowed to trigger a new build or restore'),
     ];
     return $form;
@@ -54,7 +54,7 @@ class ShpCustomConfigForm extends ConfigFormBase {
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
-    $config = $this->config('shp_custom.settings');
+    $config = $this->config('shp_time_restrictions.settings');
     $config->set('environment_creation_time_delay', $form_state->getValue('environment_creation_time_delay'));
     $config->save();
     parent::submitForm($form, $form_state);

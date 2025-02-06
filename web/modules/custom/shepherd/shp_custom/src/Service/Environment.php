@@ -14,7 +14,6 @@ use Drupal\Core\Render\Element;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\Url;
-use Drupal\node\Entity\Node;
 use Drupal\node\NodeInterface;
 use Drupal\taxonomy\TermInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -128,7 +127,6 @@ class Environment {
     $this->setBranchField($form, $form_state);
     $this->applyJavascriptEnvironmentType($form);
     $this->replaceCronTokens($form, $form_state);
-    $this->preventConcurrentDeploymentsFormAlter($form, $form_state);
   }
 
   /**
@@ -316,10 +314,6 @@ class Environment {
         $operations[$key]['query'] = ['destination' => $destination];
       }
     }
-
-    if (!$this->isOutsideEnvironmentCreationTimeDelay()) {
-      unset($operations['restore']);
-    }
   }
 
   /**
@@ -472,78 +466,6 @@ class Environment {
       ->execute();
 
     return !count($results);
-  }
-
-  /**
-   * Form alter to prevent Concurrent Deployments.
-   */
-  public function preventConcurrentDeploymentsFormAlter(array &$form, FormStateInterface $form_state) {
-    $form['#validate'][] = [
-      Environment::class,
-      'preventConcurrentDeploymentsValidate',
-    ];
-    if (!\Drupal::service('shp_custom.environment')->isOutsideEnvironmentCreationTimeDelay()) {
-      \Drupal::messenger()->addError(
-        t('To prevent errors it is not possible to create an environment at this time')
-      );
-      $form['#access'] = FALSE;
-    }
-  }
-
-  /**
-   * Validate form can not be submitted after a recent environment creation.
-   */
-  public static function preventConcurrentDeploymentsValidate(array &$form, FormStateInterface $form_state) {
-    if (!\Drupal::service('shp_custom.environment')->isOutsideEnvironmentCreationTimeDelay()) {
-      \Drupal::messenger()->addError(t('To prevent errors it is not possible to create an environment at this time'));
-      $form_state->setError(NULL, 'To prevent errors it is not possible to create an environment at this time');
-    }
-  }
-
-  /**
-   * Get the time stamp of the last environment creation.
-   */
-  public static function isOutsideEnvironmentCreationTimeDelay(): bool {
-    $config = \Drupal::config('shp_custom.settings');
-    $time_delay = $config->get('environment_creation_time_delay');
-
-    $query = \Drupal::entityQuery('node')
-      ->condition('type', 'shp_environment')
-      ->condition('status', 1)
-      ->sort('created', 'DESC')
-      ->range(0, 1);
-
-    // Execute the query and get the node IDs.
-    $nids = $query->execute();
-
-    if (empty($nids)) {
-      return TRUE;
-    }
-    $latest_node = Node::load(reset($nids));
-    $last_created_time = $latest_node->getCreatedTime();
-    return time() - $time_delay > $last_created_time;
-  }
-
-  /**
-   * Form alter to prevent restore during environment creation.
-   */
-  public function restoreFormAlter(array &$form, FormStateInterface $form_state) {
-    $form['#validate'][] = [Environment::class, 'preventRestoreDuringCreation'];
-
-    if (!self::isOutsideEnvironmentCreationTimeDelay()) {
-      \Drupal::messenger()->addError(t('To prevent errors it is not possible to restore a database at this time'));
-      $form['#access'] = FALSE;
-    }
-  }
-
-  /**
-   * Validate form can not be submitted after a recent environment creation.
-   */
-  public static function preventRestoreDuringCreation(array &$form, FormStateInterface $form_state) {
-    if (!\Drupal::service('shp_custom.environment')->isOutsideEnvironmentCreationTimeDelay()) {
-      \Drupal::messenger()->addError(t('To prevent errors it is not possible to restore a database at this time'));
-      $form_state->setError(NULL, 'To prevent errors it is not possible to create an environment at this time');
-    }
   }
 
 }

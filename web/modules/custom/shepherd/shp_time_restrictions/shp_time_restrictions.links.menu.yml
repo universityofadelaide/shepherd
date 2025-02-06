@@ -1,0 +1,6 @@
+shp_time_restrictions.settings_form:
+  title: 'Shepherd Time Restrictions'
+  description: 'Configure Shepherd Time Restrictions.'
+  parent: shp_custom.admin_config_shepherd
+  route_name: shp_time_restrictions.settings_form
+  weight: 10

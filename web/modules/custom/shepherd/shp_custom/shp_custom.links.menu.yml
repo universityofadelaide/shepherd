@@ -33,9 +33,3 @@ shp_custom.admin_config_shepherd:
   parent: system.admin_config
   description: 'Configure Shepherd.'
   weight: -50
-shp_custom.custom_config_shepherd:
-  title: 'Custom Shepherd Config'
-  route_name: shp_custom.shp_custom_config
-  parent: shp_custom.admin_config_shepherd
-  description: 'Custom Shepherd Config.'
-  weight: 0
