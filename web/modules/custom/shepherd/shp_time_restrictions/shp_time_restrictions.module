@@ -31,6 +31,14 @@ function shp_time_restrictions_node_insert(NodeInterface $node) {
 
 
 function shp_time_restrictions_form_shp_backup_environment_restore_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  if ($environment = $form_state->get('environment')) {
+    $nid = $environment->id();
+  }
+
+  \Drupal::service('shp_time_restrictions.form_alters')->preventConcurrentActionsFormAlter($form, $form_state, $nid);
+}
+
+function shp_time_restrictions_form_shp_backup_environment_upgrade_form_alter(&$form, FormStateInterface $form_state, $form_id) {
   \Drupal::service('shp_time_restrictions.form_alters')->preventConcurrentActionsFormAlter($form, $form_state);
 }
 
@@ -47,7 +55,11 @@ function shp_time_restrictions_form_node_shp_environment_form_alter(&$form, Form
 function shp_time_restrictions_entity_operation_alter(array &$operations, EntityInterface $entity) {
   if (!\Drupal::service('shp_time_restrictions.actions_log')->isOutsideEnvironmentCreationTimeDelay($entity->id())) {
     unset($operations['restore']);
+  }
+
+  if (!\Drupal::service('shp_time_restrictions.actions_log')->isOutsideEnvironmentCreationTimeDelay()) {
     unset($operations['delete']);
+    unset($operations['upgrade']);
   }
 
 }
