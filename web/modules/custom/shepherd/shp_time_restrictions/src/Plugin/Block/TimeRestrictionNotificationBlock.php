@@ -5,6 +5,7 @@ namespace Drupal\shp_time_restrictions\Plugin\Block;
 use Drupal\Core\Block\BlockBase;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
+use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\shp_time_restrictions\ActionsLogService;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -18,6 +19,8 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * )
  */
 class TimeRestrictionNotificationBlock extends BlockBase implements ContainerFactoryPluginInterface {
+
+  use StringTranslationTrait;
 
   /**
    * The config factory.
@@ -70,9 +73,20 @@ class TimeRestrictionNotificationBlock extends BlockBase implements ContainerFac
    * {@inheritdoc}
    */
   public function build() {
+    if ($this->nodeActionsLogService->isOutsideEnvironmentCreationTimeDelay()) {
+      // No need to generate block content.
+      return;
+    }
+
+    $time_delay = $this->configFactory->get('shp_time_restrictions.settings')->get('environment_creation_time_delay');
+    $last_action_time = $this->nodeActionsLogService->getLastActionTimestamp();
+
+    $text = $this->t('To prevent errors there is a delay between environment actions. The next action is allowed in @seconds seconds',
+      ['@seconds' => $time_delay - (time() - $last_action_time)]);
+
     $build['content'] = [
-      '#markup' => !($this->nodeActionsLogService->isOutsideEnvironmentCreationTimeDelay()) ?
-      '<div class="messages messages--warning">Environment actions are not permitted at this time</div>' : FALSE,
+      '#markup' =>
+      '<div class="messages messages--warning">' . $text . '</div>',
     ];
     return $build;
   }
