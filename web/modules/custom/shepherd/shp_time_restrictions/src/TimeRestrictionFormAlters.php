@@ -51,18 +51,11 @@ class TimeRestrictionFormAlters {
   /**
    * Form alter to prevent Concurrent Deployments.
    */
-  public function preventConcurrentActionsFormAlter(array &$form, FormStateInterface $form_state) {
+  public function preventConcurrentActionsFormAlter(array &$form, FormStateInterface $form_state, int $nid = NULL) {
     $form['#validate'][] = [
       TimeRestrictionFormAlters::class,
       'preventConcurrentDeploymentsValidate',
     ];
-
-    if ($environment = $form_state->get('environment')) {
-      $nid = $environment->id();
-    }
-    else {
-      $nid = NULL;
-    }
 
     if (!$this->actionsLogService->isOutsideEnvironmentCreationTimeDelay($nid)) {
       \Drupal::messenger()->addError(

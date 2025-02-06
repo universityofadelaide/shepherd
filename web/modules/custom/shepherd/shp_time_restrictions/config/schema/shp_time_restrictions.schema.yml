@@ -3,6 +3,6 @@ shp_time_restrictions.settings:
   type: config_object
   label: 'Shepherd Time Restrictions settings'
   mapping:
-    example:
-      type: string
-      label: 'Example'
+    environment_creation_time_delay:
+      type: integer
+      label: 'Environment creation time delay in seconds'
