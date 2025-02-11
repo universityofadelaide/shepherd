@@ -22,6 +22,7 @@ dependencies:
     - field.field.node.shp_environment.field_shp_secrets
     - field.field.node.shp_environment.field_shp_site
     - field.field.node.shp_environment.field_shp_update_on_image_change
+    - field.field.node.shp_environment.field_ua_force_https
     - field.field.node.shp_environment.field_skip_db_prepop
     - node.type.shp_environment
     - workflows.workflow.shepherd
@@ -51,6 +52,7 @@ third_party_settings:
         - field_shp_cron_suspended
         - field_shp_update_on_image_change
         - field_newrelic_enabled
+        - field_ua_force_https
         - field_skip_db_prepop
         - field_min_replicas
         - field_max_replicas
@@ -231,6 +233,13 @@ content:
     settings:
       display_label: true
     third_party_settings: {  }
+  field_ua_force_https:
+    weight: 13
+    settings:
+      display_label: true
+    third_party_settings: {  }
+    type: boolean_checkbox
+    region: content
   field_skip_db_prepop:
     type: boolean_checkbox
     weight: 13

@@ -1,0 +1,22 @@
+uuid: 3304ba9f-06eb-4030-8cf8-a7f9ca9497f8
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.user.field_ua_user_surname
+  module:
+    - user
+id: user.user.field_ua_user_surname
+field_name: field_ua_user_surname
+entity_type: user
+bundle: user
+label: Surname
+description: ''
+required: false
+translatable: true
+default_value:
+  -
+    value: ''
+default_value_callback: ''
+settings: {  }
+field_type: string

@@ -697,4 +697,12 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
     string $name
   );
 
+  /**
+   * Get the environment versions keyed by environment id.
+   *
+   * @return array
+   *   environment_id => version. E.g. [3 => '1.2.3'].
+   */
+  public function getEnvironmentVersions();
+
 }

@@ -1,0 +1,23 @@
+uuid: f7f9effd-6e0e-455d-adea-334a0f9e56ca
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_ua_force_https
+    - node.type.shp_environment
+id: node.shp_environment.field_ua_force_https
+field_name: field_ua_force_https
+entity_type: node
+bundle: shp_environment
+label: 'Force https'
+description: ''
+required: false
+translatable: false
+default_value:
+  -
+    value: 0
+default_value_callback: ''
+settings:
+  on_label: 'On'
+  off_label: 'Off'
+field_type: boolean

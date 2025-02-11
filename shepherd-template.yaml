@@ -1,0 +1,328 @@
+apiVersion: template.openshift.io/v1
+kind: Template
+labels:
+  app: shepherd
+  template: shepherd
+message: |-
+  This template will create a shepherd deployment.
+metadata:
+  annotations:
+    iconClass: icon-drupal
+    openshift.io/display-name: Shepherd
+    description: Provide a template that deploys an instance of the shepherd distribution.
+    tags: php,drupal
+    template.openshift.io/documentation-url: 'https://github.com/universityofadelaide/shepherd'
+    template.openshift.io/long-description: This template defines resources needed
+      to run the Shepherd site manager.
+    template.openshift.io/provider-display-name: University of Adelaide
+    template.openshift.io/support-url: 'https://github.com/universityofadelaide/shepherd/issues'
+  name: shepherd
+objects:
+- apiVersion: v1
+  kind: Service
+  metadata:
+    labels:
+      app: shepherd
+    name: shepherd-prd
+  spec:
+    ports:
+    - name: web
+      port: 8080
+      targetPort: 8080
+    selector:
+      name: shepherd-prd
+- apiVersion: v1
+  kind: Route
+  metadata:
+    labels:
+      app: shepherd
+    name: shepherd-prd
+  spec:
+    host: ${APPLICATION_DOMAIN}
+    to:
+      kind: Service
+      name: shepherd-prd
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    labels:
+      app: shepherd
+    name: shepherd-prd
+- apiVersion: v1
+  kind: BuildConfig
+  metadata:
+    labels:
+      app: shepherd
+    name: shepherd-prd
+  spec:
+    output:
+      to:
+        kind: ImageStreamTag
+        name: 'shepherd-prd:latest'
+    postCommit: {}
+    source:
+      git:
+        ref: ${SOURCE_REPOSITORY_REF}
+        uri: ${SOURCE_REPOSITORY_URL}
+      type: Git
+      secrets:
+      - destinationDir: /code
+        secret:
+          name: ${SOURCE_SECRET}
+      sourceSecret:
+        name: ${SOURCE_SECRET}
+    strategy:
+      sourceStrategy:
+        from:
+          kind: DockerImage
+          name: uofa/s2i-shepherd-drupal:openshift-4.x
+        pullSecret:
+          name: ${SOURCE_SECRET}
+        forcePull: true
+        env:
+          - name: PRIVATE_DIR
+            value: /shared/private
+          - name: PUBLIC_DIR
+            value: /shared/public
+          - name: TMP_DIR
+            value: /shared/tmp
+      type: Source
+    triggers:
+    - type: ImageChange
+    - type: ConfigChange
+- apiVersion: v1
+  kind: PersistentVolumeClaim
+  metadata:
+    labels:
+      app: shepherd
+    name: shepherd-web-shared
+  spec:
+    storageClassName: ${STORAGE_CLASS_NAME}
+    accessModes:
+      - ReadWriteMany
+    resources:
+      requests:
+        storage: 5Gi
+- apiVersion: v1
+  kind: DeploymentConfig
+  metadata:
+    labels:
+      app: shepherd
+    name: shepherd-prd
+  spec:
+    replicas: 1
+    selector:
+      name: shepherd-prd
+    strategy:
+      rollingParams:
+        intervalSeconds: 1
+        maxSurge: 25%
+        maxUnavailable: 25%
+        timeoutSeconds: 600
+        updatePeriodSeconds: 1
+      type: Rolling
+    template:
+      metadata:
+        annotations:
+          openshift.io/container.shepherd.image.entrypoint: '["/usr/local/s2i/run"]'
+        labels:
+          name: shepherd-prd
+        name: shepherd-prd
+      spec:
+        containers:
+        - env:
+          - name: DATABASE_HOST
+            value: ${DATABASE_HOST}
+          - name: DATABASE_NAME
+            value: ${DATABASE_NAME}
+          - name: DATABASE_PASSWORD
+            value: ${DATABASE_PASSWORD}
+          - name: DATABASE_PORT
+            value: ${DATABASE_PORT}
+          - name: DATABASE_USER
+            value: ${DATABASE_USER}
+          - name: PRIVATE_DIR
+            value: /shared/private
+          - name: PUBLIC_DIR
+            value: /shared/public
+          - name: TMP_DIR
+            value: /shared/tmp
+          - name: MEMCACHE_ENABLED
+            value: '1'
+          - name: MEMCACHE_HOST
+            value: ${MEMCACHE_HOST}
+          - name: SHEPHERD_INSTALL_PROFILE
+            value: ${SHEPHERD_INSTALL_PROFILE}
+          image: 'shepherd-prd:latest'
+          name: shepherd-prd
+          ports:
+          - containerPort: 8080
+          livenessProbe:
+            failureThreshold: 3
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            successThreshold: 1
+            tcpSocket:
+              port: 8080
+            timeoutSeconds: 10
+          readinessProbe:
+            failureThreshold: 3
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            successThreshold: 1
+            tcpSocket:
+              port: 8080
+            timeoutSeconds: 10
+          resources:
+            limits:
+              memory: ${MEMORY_LIMIT_WEB}
+          volumeMounts:
+          - mountPath: /shared
+            name: shepherd-web-shared
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+        volumes:
+        - name: shepherd-web-shared
+          persistentVolumeClaim:
+            claimName: shepherd-web-shared
+    test: false
+    triggers:
+    - imageChangeParams:
+        automatic: true
+        containerNames:
+        - shepherd-prd
+        from:
+          kind: ImageStreamTag
+          name: 'shepherd-prd:latest'
+      type: ImageChange
+    - type: ConfigChange
+- apiVersion: v1
+  kind: Service
+  metadata:
+    labels:
+      app: shepherd
+    name: shepherd-memcached
+  spec:
+    ports:
+      - protocol: TCP
+        port: 11211
+        targetPort: 11211
+    selector:
+      name: shepherd-memcached
+- apiVersion: apps.openshift.io/v1
+  kind: DeploymentConfig
+  metadata:
+    name: shepherd-memcached
+  spec:
+    replicas: 1
+    revisionHistoryLimit: 1
+    selector:
+      name: shepherd-memcached
+    strategy:
+      activeDeadlineSeconds: 21600
+      rollingParams:
+        intervalSeconds: 1
+        maxSurge: 25%
+        maxUnavailable: 25%
+        timeoutSeconds: 600
+        updatePeriodSeconds: 1
+      type: Rolling
+    template:
+      metadata:
+        creationTimestamp: null
+        labels:
+          name: shepherd-memcached
+      spec:
+        containers:
+          - command:
+              - memcached
+              - -m 64
+            image: docker.io/memcached:latest
+            imagePullPolicy: IfNotPresent
+            livenessProbe:
+              failureThreshold: 3
+              initialDelaySeconds: 30
+              periodSeconds: 10
+              successThreshold: 1
+              tcpSocket:
+                port: memcache
+              timeoutSeconds: 5
+            name: shepherd-memcached
+            ports:
+              - containerPort: 11211
+                name: memcache
+                protocol: TCP
+            readinessProbe:
+              failureThreshold: 3
+              initialDelaySeconds: 5
+              periodSeconds: 10
+              successThreshold: 1
+              tcpSocket:
+                port: memcache
+              timeoutSeconds: 1
+            resources:
+              limits:
+                cpu: 100m
+                memory: 128Mi
+              requests:
+                cpu: 50m
+                memory: 64Mi
+            terminationMessagePath: /dev/termination-log
+            terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        terminationGracePeriodSeconds: 30
+    test: false
+    triggers:
+      - type: ConfigChange
+parameters:
+- name: SOURCE_REPOSITORY_URL
+  description: The URL of the repository with your application source code.
+  required: true
+  value: 'git@gitlab.adelaide.edu.au:web-team/ua-shepherd.git'
+- name: SOURCE_REPOSITORY_REF
+  description: Set this to a branch name, tag or other ref of your repository if you are not using the default branch.
+  required: true
+  value: openshift-4.x
+- name: SOURCE_SECRET
+  description: Enter the name of the pre-created passwordless secret that allows you to checkout from github.
+  required: true
+  value: build-key
+- name: MEMORY_LIMIT_WEB
+  description: Maximum amount of memory the web container can use.
+  required: true
+  value: 1024Mi
+- name: APPLICATION_DOMAIN
+  description: The exposed hostname that will route to the Drupal service, if left blank a value will be defaulted.
+  displayName: Application Hostname
+- name: DATABASE_HOST
+  description: The database host to use. Change this if you do not wish to use the MySQL service deployed as part of this application.
+  required: true
+  value: 'mariadb'
+- name: DATABASE_PORT
+  required: true
+  value: '3306'
+- name: DATABASE_NAME
+  required: true
+  value: shepherd
+- name: DATABASE_USER
+  required: true
+  value: shepherd
+- name: DATABASE_PASSWORD
+  from: '[a-zA-Z0-9]{16}'
+  generate: expression
+- name: MEMCACHE_HOST
+  description: The memcache server to use.
+  required: true
+  value: 'shepherd-memcached'
+- name: SHEPHERD_INSTALL_PROFILE
+  description: The Drupal install profile to use.
+  required: true
+  value: shepherd
+- name: STORAGE_CLASS_NAME
+  description: 'Use empty for OpenShift default class. E.g. "gold"'
+  required: false
+  value: 'gold'

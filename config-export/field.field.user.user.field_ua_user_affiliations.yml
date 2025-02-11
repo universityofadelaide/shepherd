@@ -1,0 +1,23 @@
+uuid: c6569d37-baf3-4974-893f-431f57224f82
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.user.field_ua_user_affiliations
+  module:
+    - options
+    - user
+id: user.user.field_ua_user_affiliations
+field_name: field_ua_user_affiliations
+entity_type: user
+bundle: user
+label: Affiliations
+description: ''
+required: false
+translatable: true
+default_value:
+  -
+    value: ''
+default_value_callback: ''
+settings: {  }
+field_type: list_string

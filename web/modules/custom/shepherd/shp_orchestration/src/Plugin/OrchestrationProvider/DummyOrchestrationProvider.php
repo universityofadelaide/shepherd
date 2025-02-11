@@ -290,13 +290,7 @@ class DummyOrchestrationProvider extends OrchestrationProviderBase {
   }
 
   /**
-   * Fetch the job from the provider.
-   *
-   * @param string $name
-   *   The job name.
-   *
-   * @return array|bool
-   *   The job, else false.
+   * {@inheritdoc}
    */
   public function getJob(string $name) {
     return [];

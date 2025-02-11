@@ -1,0 +1,13 @@
+attributes:
+  enabled: true
+server:
+  hostname: ldap.adelaide.edu.au
+  port: 389
+  username: ''
+  password: ''
+  base_dn: 'dc=adelaide,dc=edu,dc=au'
+  sites_ou: ''
+  users_ou: ou=people
+  use_ssl: false
+_core:
+  default_config_hash: pGXHA2a7NQtfq8Oy_2ugZHLfSOhp6xTCQweNW5POFkk

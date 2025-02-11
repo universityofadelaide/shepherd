@@ -29,4 +29,9 @@ content:
     third_party_settings: {  }
     weight: 0
     region: content
-hidden: {  }
+hidden:
+  field_ua_user_affiliations: true
+  field_ua_user_department: true
+  field_ua_user_display_name: true
+  field_ua_user_given_name: true
+  field_ua_user_surname: true

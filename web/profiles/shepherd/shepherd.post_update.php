@@ -97,3 +97,10 @@ function shepherd_post_update_enable_views_bulk_operations() {
 function shepherd_post_update_enable_config_ignore() {
   \Drupal::service('module_installer')->install(['config_ignore']);
 }
+
+/**
+ * Enable shp_time_restrictions.
+ */
+function shepherd_post_update_enable_shp_time_restrictions() {
+  \Drupal::service('module_installer')->install(['shp_time_restrictions']);
+}

@@ -1,0 +1,12 @@
+services:
+  shp_time_restrictions.form_alters:
+    class: Drupal\shp_time_restrictions\TimeRestrictionFormAlters
+    arguments: ['@config.factory', '@database', '@shp_time_restrictions.actions_log']
+
+  shp_time_restrictions.actions_log:
+    class: Drupal\shp_time_restrictions\ActionsLogService
+<<<<<<< HEAD
+    arguments: ['@config.factory', '@database', '@keyvalue.expirable']
+=======
+    arguments: ['@config.factory', '@database']
+>>>>>>> 8eec280068c7240555b3bc6a983dd220643459e1

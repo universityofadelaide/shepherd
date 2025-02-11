@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "55e8ac8fa352e03d77dd777a1fbf0623",
+    "content-hash": "3670a7acfe2d399b4e3fd001d4b55181",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -1335,6 +1335,77 @@
             }
         },
         {
+            "name": "drupal/cas",
+            "version": "1.7.0",
+            "source": {
+                "type": "git",
+                "url": "https://git.drupalcode.org/project/cas.git",
+                "reference": "8.x-1.7"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://ftp.drupal.org/files/projects/cas-8.x-1.7.zip",
+                "reference": "8.x-1.7",
+                "shasum": "a8f7689f1e610bf3d9390d5a2a97eaa6911842d1"
+            },
+            "require": {
+                "drupal/core": "^8 || ^9",
+                "drupal/externalauth": "^1.2"
+            },
+            "require-dev": {
+                "drupal/cas_mock_server": "^1.0||dev-0.x"
+            },
+            "type": "drupal-module",
+            "extra": {
+                "drupal": {
+                    "version": "8.x-1.7",
+                    "datestamp": "1592250922",
+                    "security-coverage": {
+                        "status": "covered",
+                        "message": "Covered by Drupal's security advisory policy"
+                    }
+                },
+                "drush": {
+                    "services": {
+                        "drush.services.yml": "^9"
+                    }
+                }
+            },
+            "notification-url": "https://packages.drupal.org/8/downloads",
+            "license": [
+                "GPL-2.0+"
+            ],
+            "authors": [
+                {
+                    "name": "David Metzler",
+                    "homepage": "https://www.drupal.org/u/metzlerd",
+                    "role": "Maintainer"
+                },
+                {
+                    "name": "Brian Osborne",
+                    "homepage": "https://www.drupal.org/u/bkosborne",
+                    "role": "Maintainer"
+                },
+                {
+                    "name": "Tim Yale",
+                    "homepage": "https://www.drupal.org/u/yalet",
+                    "role": "Maintainer"
+                },
+                {
+                    "name": "See other contributors",
+                    "homepage": "https://www.drupal.org/node/78967/committers",
+                    "role": "contributor"
+                }
+            ],
+            "description": "Provides CAS authentication for Drupal.",
+            "homepage": "http://drupal.org/project/cas",
+            "support": {
+                "source": "https://git.drupalcode.org/project/cas",
+                "issues": "http://drupal.org/project/issues/cas",
+                "irc": "irc://irc.freenode.org/drupal-contribute"
+            }
+        },
+        {
             "name": "drupal/config_ignore",
             "version": "3.0.0-beta1",
             "source": {
@@ -1747,6 +1818,58 @@
             }
         },
         {
+            "name": "drupal/externalauth",
+            "version": "1.4.0",
+            "source": {
+                "type": "git",
+                "url": "https://git.drupalcode.org/project/externalauth.git",
+                "reference": "8.x-1.4"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://ftp.drupal.org/files/projects/externalauth-8.x-1.4.zip",
+                "reference": "8.x-1.4",
+                "shasum": "caea7d2d5a890adad9e6b5beaa2cf139727266d6"
+            },
+            "require": {
+                "drupal/core": "^8 || ^9"
+            },
+            "type": "drupal-module",
+            "extra": {
+                "drupal": {
+                    "version": "8.x-1.4",
+                    "datestamp": "1624457496",
+                    "security-coverage": {
+                        "status": "covered",
+                        "message": "Covered by Drupal's security advisory policy"
+                    }
+                }
+            },
+            "notification-url": "https://packages.drupal.org/8/downloads",
+            "license": [
+                "GPL-2.0-or-later"
+            ],
+            "authors": [
+                {
+                    "name": "rgristroph",
+                    "homepage": "https://www.drupal.org/user/516442"
+                },
+                {
+                    "name": "snufkin",
+                    "homepage": "https://www.drupal.org/user/58645"
+                },
+                {
+                    "name": "svendecabooter",
+                    "homepage": "https://www.drupal.org/user/35369"
+                }
+            ],
+            "description": "Helper module to authenticate users using an external site / service and storing identification details",
+            "homepage": "https://www.drupal.org/project/externalauth",
+            "support": {
+                "source": "https://git.drupalcode.org/project/externalauth"
+            }
+        },
+        {
             "name": "drupal/field_group",
             "version": "3.2.0",
             "source": {
@@ -1787,16 +1910,16 @@
                     "homepage": "https://www.drupal.org/user/647364"
                 },
                 {
-                    "name": "Stalski",
-                    "homepage": "https://www.drupal.org/user/322618"
-                },
-                {
                     "name": "jyve",
                     "homepage": "https://www.drupal.org/user/591438"
                 },
                 {
                     "name": "nils.destoop",
                     "homepage": "https://www.drupal.org/user/361625"
+                },
+                {
+                    "name": "Stalski",
+                    "homepage": "https://www.drupal.org/user/322618"
                 },
                 {
                     "name": "swentel",
@@ -2443,17 +2566,17 @@
         },
         {
             "name": "drupal/route_condition",
-            "version": "2.0.1",
+            "version": "2.0.2",
             "source": {
                 "type": "git",
                 "url": "https://git.drupalcode.org/project/route_condition.git",
-                "reference": "2.0.1"
+                "reference": "2.0.2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://ftp.drupal.org/files/projects/route_condition-2.0.1.zip",
-                "reference": "2.0.1",
-                "shasum": "b9e3922832f43af1c1a6b2dfcacf86874e3771e3"
+                "url": "https://ftp.drupal.org/files/projects/route_condition-2.0.2.zip",
+                "reference": "2.0.2",
+                "shasum": "d32dde3212b08814fa0c2b6ba33bc02202bec719"
             },
             "require": {
                 "drupal/core": "^8 || ^9 || ^10"
@@ -2461,8 +2584,8 @@
             "type": "drupal-module",
             "extra": {
                 "drupal": {
-                    "version": "2.0.1",
-                    "datestamp": "1656487406",
+                    "version": "2.0.2",
+                    "datestamp": "1662721084",
                     "security-coverage": {
                         "status": "covered",
                         "message": "Covered by Drupal's security advisory policy"
@@ -3556,6 +3679,72 @@
                 }
             ],
             "time": "2022-08-08T17:02:35+00:00"
+        },
+        {
+            "name": "laminas/laminas-ldap",
+            "version": "2.15.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/laminas/laminas-ldap.git",
+                "reference": "e21bf1177b2cbdae57f75355a8fd0774438a42d2"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/laminas/laminas-ldap/zipball/e21bf1177b2cbdae57f75355a8fd0774438a42d2",
+                "reference": "e21bf1177b2cbdae57f75355a8fd0774438a42d2",
+                "shasum": ""
+            },
+            "require": {
+                "ext-ldap": "*",
+                "php": "^7.4 || ~8.0.0 || ~8.1.0"
+            },
+            "conflict": {
+                "zendframework/zend-ldap": "*"
+            },
+            "require-dev": {
+                "laminas/laminas-coding-standard": "~2.4.0",
+                "laminas/laminas-config": "^3.7.0",
+                "laminas/laminas-eventmanager": "^3.4.0",
+                "laminas/laminas-stdlib": "^3.7.1",
+                "php-mock/php-mock-phpunit": "^2.6.0",
+                "phpunit/phpunit": "^9.5.19",
+                "psalm/plugin-phpunit": "^0.17.0",
+                "vimeo/psalm": "^4.22.0"
+            },
+            "suggest": {
+                "laminas/laminas-eventmanager": "Laminas\\EventManager component"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Laminas\\Ldap\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "description": "Provides support for LDAP operations including but not limited to binding, searching and modifying entries in an LDAP directory",
+            "homepage": "https://laminas.dev",
+            "keywords": [
+                "laminas",
+                "ldap"
+            ],
+            "support": {
+                "chat": "https://laminas.dev/chat",
+                "docs": "https://docs.laminas.dev/laminas-ldap/",
+                "forum": "https://discourse.laminas.dev",
+                "issues": "https://github.com/laminas/laminas-ldap/issues",
+                "rss": "https://github.com/laminas/laminas-ldap/releases.atom",
+                "source": "https://github.com/laminas/laminas-ldap"
+            },
+            "funding": [
+                {
+                    "url": "https://funding.communitybridge.org/projects/laminas-project",
+                    "type": "community_bridge"
+                }
+            ],
+            "time": "2022-09-03T10:04:41+00:00"
         },
         {
             "name": "laminas/laminas-servicemanager",
@@ -6531,16 +6720,16 @@
         },
         {
             "name": "symfony/psr-http-message-bridge",
-            "version": "v2.1.2",
+            "version": "v2.1.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/psr-http-message-bridge.git",
-                "reference": "22b37c8a3f6b5d94e9cdbd88e1270d96e2f97b34"
+                "reference": "d444f85dddf65c7e57c58d8e5b3a4dbb593b1840"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/psr-http-message-bridge/zipball/22b37c8a3f6b5d94e9cdbd88e1270d96e2f97b34",
-                "reference": "22b37c8a3f6b5d94e9cdbd88e1270d96e2f97b34",
+                "url": "https://api.github.com/repos/symfony/psr-http-message-bridge/zipball/d444f85dddf65c7e57c58d8e5b3a4dbb593b1840",
+                "reference": "d444f85dddf65c7e57c58d8e5b3a4dbb593b1840",
                 "shasum": ""
             },
             "require": {
@@ -6599,7 +6788,7 @@
             ],
             "support": {
                 "issues": "https://github.com/symfony/psr-http-message-bridge/issues",
-                "source": "https://github.com/symfony/psr-http-message-bridge/tree/v2.1.2"
+                "source": "https://github.com/symfony/psr-http-message-bridge/tree/v2.1.3"
             },
             "funding": [
                 {
@@ -6615,7 +6804,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2021-11-05T13:13:39+00:00"
+            "time": "2022-09-05T10:34:54+00:00"
         },
         {
             "name": "symfony/routing",
@@ -7538,6 +7727,40 @@
             "time": "2021-09-20T19:19:13+00:00"
         },
         {
+            "name": "ua-drupal-modules/ua_ldap",
+            "version": "dev-fix-ldap-results",
+            "source": {
+                "type": "git",
+                "url": "git@gitlab.adelaide.edu.au:drupal-modules/ua_ldap.git",
+                "reference": "129261925a1637f727cadc554bf7a86abd878835"
+            },
+            "require": {
+                "laminas/laminas-ldap": "^2.5.1"
+            },
+            "type": "drupal-module",
+            "license": [
+                "GPL-2.0-or-later"
+            ],
+            "description": "Provides configuration and services to interact with LDAP.",
+            "time": "2022-09-08T00:56:15+00:00"
+        },
+        {
+            "name": "ua-drupal-modules/ua_shp_ldap",
+            "version": "dev-develop",
+            "source": {
+                "type": "git",
+                "url": "git@gitlab.adelaide.edu.au:drupal-modules/ua_shp_ldap.git",
+                "reference": "d7fd951847323f10c3be461f3c6906abe3860601"
+            },
+            "default-branch": true,
+            "type": "drupal-module",
+            "license": [
+                "GPL-2.0+"
+            ],
+            "description": "Provides user integration with LDAP for Shepherd.",
+            "time": "2022-06-16T01:20:33+00:00"
+        },
+        {
             "name": "universityofadelaide/openshift-client",
             "version": "dev-openshift-4.x",
             "source": {
@@ -7593,8 +7816,14 @@
             "version": "5.2.0",
             "source": {
                 "type": "git",
-                "url": "git@github.com:universityofadelaide/shepherd-drupal-scaffold.git",
+                "url": "https://github.com/universityofadelaide/shepherd-drupal-scaffold.git",
                 "reference": "ca8fdbc22d8d45b203f19bc4a8d472b10c51feab"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/universityofadelaide/shepherd-drupal-scaffold/zipball/ca8fdbc22d8d45b203f19bc4a8d472b10c51feab",
+                "reference": "ca8fdbc22d8d45b203f19bc4a8d472b10c51feab",
+                "shasum": ""
             },
             "require": {
                 "composer-plugin-api": "^2",
@@ -7619,6 +7848,10 @@
                 "GPL-2.0+"
             ],
             "description": "Composer Plugin for updating the Shepherd Drupal tools.",
+            "support": {
+                "source": "https://github.com/universityofadelaide/shepherd-drupal-scaffold/tree/5.2.0",
+                "issues": "https://github.com/universityofadelaide/shepherd-drupal-scaffold/issues"
+            },
             "time": "2021-11-23T08:01:12+00:00"
         },
         {
@@ -8603,16 +8836,16 @@
         },
         {
             "name": "doctrine/collections",
-            "version": "1.7.2",
+            "version": "1.7.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/doctrine/collections.git",
-                "reference": "3fe77330f5591108bbf1315da7377a7e704ed8a0"
+                "reference": "09dde3eb237756190f2de738d3c97cff10a8407b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/doctrine/collections/zipball/3fe77330f5591108bbf1315da7377a7e704ed8a0",
-                "reference": "3fe77330f5591108bbf1315da7377a7e704ed8a0",
+                "url": "https://api.github.com/repos/doctrine/collections/zipball/09dde3eb237756190f2de738d3c97cff10a8407b",
+                "reference": "09dde3eb237756190f2de738d3c97cff10a8407b",
                 "shasum": ""
             },
             "require": {
@@ -8667,9 +8900,9 @@
             ],
             "support": {
                 "issues": "https://github.com/doctrine/collections/issues",
-                "source": "https://github.com/doctrine/collections/tree/1.7.2"
+                "source": "https://github.com/doctrine/collections/tree/1.7.3"
             },
-            "time": "2022-08-27T16:08:58+00:00"
+            "time": "2022-09-01T19:34:23+00:00"
         },
         {
             "name": "doctrine/common",
@@ -10365,16 +10598,16 @@
         },
         {
             "name": "phpstan/phpstan",
-            "version": "1.8.4",
+            "version": "1.8.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpstan.git",
-                "reference": "eed4c9da531f6ebb4787235b6fb486e2c20f34e5"
+                "reference": "f6598a5ff12ca4499a836815e08b4d77a2ddeb20"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/eed4c9da531f6ebb4787235b6fb486e2c20f34e5",
-                "reference": "eed4c9da531f6ebb4787235b6fb486e2c20f34e5",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/f6598a5ff12ca4499a836815e08b4d77a2ddeb20",
+                "reference": "f6598a5ff12ca4499a836815e08b4d77a2ddeb20",
                 "shasum": ""
             },
             "require": {
@@ -10404,7 +10637,7 @@
             ],
             "support": {
                 "issues": "https://github.com/phpstan/phpstan/issues",
-                "source": "https://github.com/phpstan/phpstan/tree/1.8.4"
+                "source": "https://github.com/phpstan/phpstan/tree/1.8.5"
             },
             "funding": [
                 {
@@ -10420,7 +10653,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2022-09-03T13:08:04+00:00"
+            "time": "2022-09-07T16:05:32+00:00"
         },
         {
             "name": "phpstan/phpstan-deprecation-rules",
@@ -10970,12 +11203,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Roave/SecurityAdvisories.git",
-                "reference": "6d260392fad173d6ee6e3a93c875d9327db1109b"
+                "reference": "5cf4af16905d08d88c26fbcdf929a8f53e0780da"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/6d260392fad173d6ee6e3a93c875d9327db1109b",
-                "reference": "6d260392fad173d6ee6e3a93c875d9327db1109b",
+                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/5cf4af16905d08d88c26fbcdf929a8f53e0780da",
+                "reference": "5cf4af16905d08d88c26fbcdf929a8f53e0780da",
                 "shasum": ""
             },
             "conflict": {
@@ -11378,11 +11611,12 @@
                 "tribalsystems/zenario": "<9.2.55826",
                 "truckersmp/phpwhois": "<=4.3.1",
                 "twig/twig": "<1.38|>=2,<2.14.11|>=3,<3.3.8",
-                "typo3/cms": ">=6.2,<6.2.30|>=7,<7.6.32|>=8,<8.7.38|>=9,<9.5.29|>=10,<10.4.29|>=11,<11.5.11",
+                "typo3/cms": ">=6.2,<6.2.30|>=7,<7.6.32|>=8,<8.7.38|>=9,<9.5.29|>=10,<10.4.32|>=11,<11.5.16",
                 "typo3/cms-backend": ">=7,<=7.6.50|>=8,<=8.7.39|>=9,<=9.5.24|>=10,<=10.4.13|>=11,<=11.1",
-                "typo3/cms-core": ">=6.2,<=6.2.56|>=7,<7.6.57|>=8,<8.7.47|>=9,<9.5.35|>=10,<10.4.29|>=11,<11.5.11",
+                "typo3/cms-core": ">=6.2,<=6.2.56|>=7,<7.6.57|>=8,<8.7.47|>=9,<9.5.35|>=10,<10.4.32|>=11,<11.5.16",
                 "typo3/cms-form": ">=8,<=8.7.39|>=9,<=9.5.24|>=10,<=10.4.13|>=11,<=11.1",
                 "typo3/flow": ">=1,<1.0.4|>=1.1,<1.1.1|>=2,<2.0.1|>=2.3,<2.3.16|>=3,<3.0.12|>=3.1,<3.1.10|>=3.2,<3.2.13|>=3.3,<3.3.13|>=4,<4.0.6",
+                "typo3/html-sanitizer": ">=1,<1.0.7|>=2,<2.0.16",
                 "typo3/neos": ">=1.1,<1.1.3|>=1.2,<1.2.13|>=2,<2.0.4|>=2.3,<2.3.99|>=3,<3.0.20|>=3.1,<3.1.18|>=3.2,<3.2.14|>=3.3,<3.3.23|>=4,<4.0.17|>=4.1,<4.1.16|>=4.2,<4.2.12|>=4.3,<4.3.3",
                 "typo3/phar-stream-wrapper": ">=1,<2.1.1|>=3,<3.1.1",
                 "typo3/swiftmailer": ">=4.1,<4.1.99|>=5.4,<5.4.5",
@@ -11481,7 +11715,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2022-08-31T22:04:18+00:00"
+            "time": "2022-09-13T13:19:06+00:00"
         },
         {
             "name": "sebastian/cli-parser",
@@ -12340,16 +12574,16 @@
         },
         {
             "name": "sebastian/type",
-            "version": "3.1.0",
+            "version": "3.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/type.git",
-                "reference": "fb44e1cc6e557418387ad815780360057e40753e"
+                "reference": "fb3fe09c5f0bae6bc27ef3ce933a1e0ed9464b6e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/type/zipball/fb44e1cc6e557418387ad815780360057e40753e",
-                "reference": "fb44e1cc6e557418387ad815780360057e40753e",
+                "url": "https://api.github.com/repos/sebastianbergmann/type/zipball/fb3fe09c5f0bae6bc27ef3ce933a1e0ed9464b6e",
+                "reference": "fb3fe09c5f0bae6bc27ef3ce933a1e0ed9464b6e",
                 "shasum": ""
             },
             "require": {
@@ -12361,7 +12595,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "3.1-dev"
+                    "dev-master": "3.2-dev"
                 }
             },
             "autoload": {
@@ -12384,7 +12618,7 @@
             "homepage": "https://github.com/sebastianbergmann/type",
             "support": {
                 "issues": "https://github.com/sebastianbergmann/type/issues",
-                "source": "https://github.com/sebastianbergmann/type/tree/3.1.0"
+                "source": "https://github.com/sebastianbergmann/type/tree/3.2.0"
             },
             "funding": [
                 {
@@ -12392,7 +12626,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2022-08-29T06:55:37+00:00"
+            "time": "2022-09-12T14:47:03+00:00"
         },
         {
             "name": "sebastian/version",
@@ -12561,16 +12795,16 @@
         },
         {
             "name": "sirbrillig/phpcs-variable-analysis",
-            "version": "v2.11.7",
+            "version": "v2.11.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sirbrillig/phpcs-variable-analysis.git",
-                "reference": "ad2b0b57803a48bb3495777bee2a9a13c8e9da53"
+                "reference": "aaf902277f2889fddbdb37046ae02b9965e2cf0f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sirbrillig/phpcs-variable-analysis/zipball/ad2b0b57803a48bb3495777bee2a9a13c8e9da53",
-                "reference": "ad2b0b57803a48bb3495777bee2a9a13c8e9da53",
+                "url": "https://api.github.com/repos/sirbrillig/phpcs-variable-analysis/zipball/aaf902277f2889fddbdb37046ae02b9965e2cf0f",
+                "reference": "aaf902277f2889fddbdb37046ae02b9965e2cf0f",
                 "shasum": ""
             },
             "require": {
@@ -12606,12 +12840,16 @@
                 }
             ],
             "description": "A PHPCS sniff to detect problems with variables.",
+            "keywords": [
+                "phpcs",
+                "static analysis"
+            ],
             "support": {
                 "issues": "https://github.com/sirbrillig/phpcs-variable-analysis/issues",
                 "source": "https://github.com/sirbrillig/phpcs-variable-analysis",
                 "wiki": "https://github.com/sirbrillig/phpcs-variable-analysis/wiki"
             },
-            "time": "2022-08-16T22:19:00+00:00"
+            "time": "2022-09-08T18:35:53+00:00"
         },
         {
             "name": "slevomat/coding-standard",
@@ -13143,6 +13381,8 @@
     "aliases": [],
     "minimum-stability": "dev",
     "stability-flags": {
+        "ua-drupal-modules/ua_ldap": 20,
+        "ua-drupal-modules/ua_shp_ldap": 20,
         "universityofadelaide/openshift-client": 20,
         "roave/security-advisories": 20
     },

@@ -22,6 +22,7 @@ dependencies:
     - field.field.node.shp_project.field_shp_readiness_probe_type
     - field.field.node.shp_project.field_shp_secrets
     - field.field.node.shp_project.field_shp_storage_class
+    - field.field.node.shp_project.field_ua_force_https
     - node.type.shp_project
   module:
     - file
@@ -185,6 +186,16 @@ content:
       link: true
     third_party_settings: {  }
     weight: 4
+    region: content
+  field_ua_force_https:
+    weight: 18
+    label: above
+    settings:
+      format: default
+      format_custom_false: ''
+      format_custom_true: ''
+    third_party_settings: {  }
+    type: boolean
     region: content
 hidden:
   links: true

@@ -23,6 +23,7 @@ dependencies:
     - field.field.node.shp_project.field_shp_readiness_probe_type
     - field.field.node.shp_project.field_shp_secrets
     - field.field.node.shp_project.field_shp_storage_class
+    - field.field.node.shp_project.field_ua_force_https
     - node.type.shp_project
   module:
     - user
@@ -58,3 +59,4 @@ hidden:
   field_shp_readiness_probe_type: true
   field_shp_secrets: true
   field_shp_storage_class: true
+  field_ua_force_https: true
