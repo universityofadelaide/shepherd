@@ -78,11 +78,10 @@ class TimeRestrictionNotificationBlock extends BlockBase implements ContainerFac
       return;
     }
 
-    $time_delay = $this->configFactory->get('shp_time_restrictions.settings')->get('environment_creation_time_delay');
-    $last_action_time = $this->nodeActionsLogService->getLastActionTimestamp();
+    $next_expiration = $this->nodeActionsLogService->getNextExpiration();
 
     $text = $this->t('To prevent errors there is a delay between environment actions. The next action is allowed in @seconds seconds',
-      ['@seconds' => $time_delay - (time() - $last_action_time)]);
+      ['@seconds' => $next_expiration - time()]);
 
     $build['content'] = [
       '#markup' =>

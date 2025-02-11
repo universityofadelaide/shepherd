@@ -4,6 +4,7 @@ namespace Drupal\shp_time_restrictions;
 
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Database\Connection;
+use Drupal\Core\KeyValueStore\KeyValueExpirableFactory;
 use Drupal\node\NodeInterface;
 
 /**
@@ -26,54 +27,63 @@ class ActionsLogService {
   protected $connection;
 
   /**
+   * The KeyValue interface.
+   *
+   * @var \Drupal\Core\KeyValueStore\KeyValueStoreInterface|mixed
+   */
+  protected $keyvalue;
+
+  /**
    * Constructs an ActionsLog object.
    *
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
    *   The config factory.
    * @param \Drupal\Core\Database\Connection $connection
    *   The database connection.
+   * @param \Drupal\Core\KeyValueStore\KeyValueExpirableFactory $keyValueExpirableFactory
+   *   The KeyValueExpirableFactory.
    */
-  public function __construct(ConfigFactoryInterface $config_factory, Connection $connection) {
+  public function __construct(ConfigFactoryInterface $config_factory, Connection $connection, KeyValueExpirableFactory $keyValueExpirableFactory) {
     $this->configFactory = $config_factory;
     $this->connection = $connection;
+    $this->keyvalue = $keyValueExpirableFactory->get('shp_time_restrictions');
+
   }
 
   /**
    * Log node actions.
    */
   public function logAction(NodeInterface $node, string $action) {
-    $this->connection->insert('shp_time_restrictions_log')
-      ->fields([
-        'nid' => $node->id(),
+    $time_delay_config = $this->configFactory->get('shp_time_restrictions.settings')->get('environment_creation_time_delay');
+    $this->keyvalue->setWithExpire($node->id(),
+      [
         'action' => $action,
-        'timestamp' => \Drupal::time()->getRequestTime(),
-      ])
-      ->execute();
+        'node' => $node->id(),
+        'expiry' => \Drupal::time()->getRequestTime() + $time_delay_config,
+      ], $time_delay_config);
+
   }
 
   /**
-   * Returns the timestamp of the action.
+   * Get the next expiry time.
    *
-   * @return int|null
-   *   integer of timestamp.
+   * @param int|null $nid
+   *   Node ID.
    *
-   * @throws \Exception
+   * @return int
+   *   Timestamp of next expiry.
    */
-  public function getLastActionTimestamp(?int $nid = NULL) {
-    $query = $this->connection->select('shp_time_restrictions_log', 'l')
-      ->fields('l', ['timestamp']);
+  public function getNextExpiration(?int $nid = NULL) {
     if ($nid) {
-      $query->condition('nid', $nid);
+      $expiration = $this->keyvalue->get($nid);
+    }
+    else {
+      $expirations = $this->keyvalue->getAll();
+      $expiration = array_slice($expirations, -1)[0] ?? NULL;
     }
 
-    $query->orderBy('timestamp', 'DESC')
-      ->range(0, 1)
-      ->execute()
-      ->fetchField();
+    return $expiration['expiry'];
 
-    $timestamp = $query->execute()->fetchField();
-
-    return $timestamp !== FALSE ? (int) $timestamp : NULL;
   }
 
   /**
@@ -83,14 +93,19 @@ class ActionsLogService {
    *   true if older enough.
    */
   public function isOutsideEnvironmentCreationTimeDelay(?int $nid = NULL): bool {
-    $last_action_timestamp = $this->getLastActionTimestamp($nid);
-    $time_delay_config = $this->configFactory->get('shp_time_restrictions.settings')->get('environment_creation_time_delay');
+    $nids = $this->keyvalue->getAll();
 
-    if ($last_action_timestamp) {
-      return time() - $time_delay_config > $last_action_timestamp;
+    // No actions within time delay.
+    if (empty($nids)) {
+      return TRUE;
     }
 
-    return TRUE;
+    // No actions for this node within time delay.
+    if (isset($nid) && !in_array($nid, array_keys($nids))) {
+      return TRUE;
+    }
+
+    return FALSE;
   }
 
 }
