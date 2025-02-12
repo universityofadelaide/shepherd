@@ -20,7 +20,7 @@ function shp_time_restrictions_node_delete(NodeInterface $node) {
 }
 
 /**
- * Implements hook_node_delete().
+ * Implements hook_node_insert().
  * Logs when an "environment" node is inserted.
  */
 function shp_time_restrictions_node_insert(NodeInterface $node) {
@@ -30,6 +30,9 @@ function shp_time_restrictions_node_insert(NodeInterface $node) {
 }
 
 
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
 function shp_time_restrictions_form_shp_backup_environment_restore_form_alter(&$form, FormStateInterface $form_state, $form_id) {
   if ($environment = $form_state->get('environment')) {
     $nid = $environment->id();
@@ -38,6 +41,9 @@ function shp_time_restrictions_form_shp_backup_environment_restore_form_alter(&$
   \Drupal::service('shp_time_restrictions.form_alters')->preventConcurrentActionsFormAlter($form, $form_state, $nid);
 }
 
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
 function shp_time_restrictions_form_shp_backup_environment_upgrade_form_alter(&$form, FormStateInterface $form_state, $form_id) {
   \Drupal::service('shp_time_restrictions.form_alters')->preventConcurrentActionsFormAlter($form, $form_state);
 }

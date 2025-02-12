@@ -5,7 +5,7 @@ dependencies:
     - shp_time_restrictions
   theme:
     - seven
-id: timerestrictionnotification
+id: shp_time_restriction_notification
 theme: seven
 region: highlighted
 weight: 0

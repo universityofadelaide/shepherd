@@ -79,6 +79,7 @@ class ActionsLogService {
     }
     else {
       $expirations = $this->keyvalue->getAll();
+      // There should only be one item in the key value table, get the last one.
       $expiration = array_slice($expirations, -1)[0] ?? NULL;
     }
 
