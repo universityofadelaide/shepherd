@@ -59,7 +59,7 @@ class TimeRestrictionFormAlters {
 
     if (!$this->actionsLogService->isOutsideEnvironmentCreationTimeDelay($nid)) {
       \Drupal::messenger()->addError(
-        t('To prevent errors it is not possible to create an environment at this time')
+        t('To prevent errors it is not possible to create or delete an environment at this time')
       );
       $form['#access'] = FALSE;
     }
@@ -70,8 +70,8 @@ class TimeRestrictionFormAlters {
    */
   public static function preventConcurrentDeploymentsValidate(array &$form, FormStateInterface $form_state) {
     if (!\Drupal::service('shp_time_restrictions.actions_log')->isOutsideEnvironmentCreationTimeDelay()) {
-      \Drupal::messenger()->addError(t('To prevent errors it is not possible to create an environment at this time'));
-      $form_state->setErrorByName('', 'To prevent errors it is not possible to create an environment at this time');
+      \Drupal::messenger()->addError(t('To prevent errors it is not possible to create or delete an environment at this time'));
+      $form_state->setErrorByName('', 'To prevent errors it is not possible to create or delete an environment at this time');
     }
   }
 
