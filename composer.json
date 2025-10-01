@@ -8,14 +8,14 @@
         {"type": "composer", "url": "https://packages.drupal.org/8"}
     ],
     "require": {
-        "php": "^7.4",
+        "php": "^8.3",
         "composer-plugin-api": "^2.0",
         "composer/installers": "^1.2",
         "cweagans/composer-patches": "~1.0",
         "drupal/admin_toolbar": "^3.1",
         "drupal/config_ignore": "^3.0",
-        "drupal/core": "^9.3",
-        "drupal/core-composer-scaffold": "^9.3",
+        "drupal/core": "^10.5",
+        "drupal/core-composer-scaffold": "^10.5",
         "drupal/entity_reference_revisions": "1.*",
         "drupal/field_group": "3.*",
         "drupal/group": "1.*",
@@ -31,21 +31,20 @@
         "drupal/route_condition": "^2.0",
         "drupal/token": "1.*",
         "drupal/views_bulk_operations": "^4.0",
-        "drush/drush": "^11",
-        "universityofadelaide/openshift-client": "dev-openshift-4.x",
-        "universityofadelaide/shepherd-drupal-scaffold": "^5.2",
+        "drush/drush": "^13",
+        "universityofadelaide/openshift-client": "dev-drupal-10-fixes",
+        "universityofadelaide/shepherd-drupal-scaffold": "^7.0",
         "webmozart/path-util": "^2.3"
     },
     "require-dev": {
         "dealerdirect/phpcodesniffer-composer-installer": "^0.7.2",
-        "drupal/core-dev": "^9.3",
-        "drupal/devel": "^4.1",
+        "drupal/core-dev": "^10.5",
+        "drupal/devel": "^5.4",
         "drupal/unused_modules": "^1.3",
         "mglaman/phpstan-drupal": "^1.1.13",
         "phpspec/prophecy-phpunit": "^2",
         "phpstan/phpstan": "^1.7",
         "phpstan/phpstan-deprecation-rules": "^1.0",
-        "roave/security-advisories": "dev-latest",
         "weitzman/drupal-test-traits": "^1.5"
     },
     "conflict": {
@@ -58,15 +57,18 @@
         "sort-packages": true,
         "discard-changes": true,
         "platform": {
-            "php": "7.4"
+            "php": "8.3"
         },
         "allow-plugins": {
-            "dealerdirect/phpcodesniffer-composer-installer": true,
             "composer/installers": true,
             "cweagans/composer-patches": true,
-            "universityofadelaide/shepherd-drupal-scaffold": true,
+            "dealerdirect/phpcodesniffer-composer-installer": true,
+            "drupal-composer/drupal-scaffold": true,
             "drupal/core-composer-scaffold": true,
-            "drupal-composer/drupal-scaffold": true
+            "php-http/discovery": true,
+            "phpstan/extension-installer": true,
+            "tbachert/spi": true,
+            "universityofadelaide/shepherd-drupal-scaffold": true
         },
         "preferred-install": {
             "universityofadelaide/*": "source"
