@@ -57,6 +57,7 @@ dsh_proxy.conf
 *.sql_.txt
 *.tar.gz
 /web/sites/simpletest
+.php/
 
 # Ignore OSX specific folders
 shared

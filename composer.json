@@ -13,8 +13,9 @@
         "composer/installers": "^1.2",
         "cweagans/composer-patches": "~1.0",
         "drupal/config_ignore": "^3.0",
-        "drupal/core": "^9.3",
-        "drupal/core-composer-scaffold": "^9.3",
+        "drupal/core-composer-scaffold": "^9.5.11",
+        "drupal/core-project-message": "^9.5.11",
+        "drupal/core-recommended": "^9.5.11",
         "drupal/entity_reference_revisions": "1.*",
         "drupal/field_group": "3.*",
         "drupal/group": "1.*",
@@ -33,12 +34,11 @@
     },
     "require-dev": {
         "dealerdirect/phpcodesniffer-composer-installer": "^0.7.2",
-        "drupal/core-dev": "^9.3",
+        "drupal/core-dev": "^9.5.11",
         "drupal/devel": "^4.1",
         "mglaman/phpstan-drupal": "^1.1.13",
         "phpspec/prophecy-phpunit": "^2",
         "phpstan/phpstan-deprecation-rules": "^1.0",
-        "roave/security-advisories": "dev-latest",
         "weitzman/drupal-test-traits": "^1.5"
     },
     "conflict": {
@@ -54,12 +54,13 @@
             "php": "7.4"
         },
         "allow-plugins": {
-            "dealerdirect/phpcodesniffer-composer-installer": true,
             "composer/installers": true,
             "cweagans/composer-patches": true,
-            "universityofadelaide/shepherd-drupal-scaffold": true,
+            "dealerdirect/phpcodesniffer-composer-installer": true,
+            "drupal-composer/drupal-scaffold": true,
             "drupal/core-composer-scaffold": true,
-            "drupal-composer/drupal-scaffold": true
+            "drupal/core-project-message": true,
+            "universityofadelaide/shepherd-drupal-scaffold": true
         }
     },
     "autoload": {
