@@ -5,7 +5,7 @@ namespace Drupal\shp_database_provisioner\Form;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Render\Renderer;
+use Drupal\Core\Render\RendererInterface;
 use Drupal\shp_custom\Service\StringGenerator;
 use Drupal\shp_database_provisioner\Service\Provisioner;
 use Drupal\shp_orchestration\OrchestrationProviderPluginManagerInterface;
@@ -40,7 +40,7 @@ class SettingsForm extends ConfigFormBase {
   /**
    * Used to render the pretty tokenizer output.
    *
-   * @var \Drupal\Core\Render\Renderer
+   * @var \Drupal\Core\Render\RendererInterface
    */
   protected $renderer;
 
@@ -55,10 +55,10 @@ class SettingsForm extends ConfigFormBase {
    *   String generator.
    * @param \Drupal\shp_orchestration\OrchestrationProviderPluginManagerInterface $orchestration_provider_plugin_manager
    *   Orchestration provider plugin manager.
-   * @param \Drupal\Core\Render\Renderer $renderer
-   *   Drupal renderer.
+   * @param \Drupal\Core\Render\RendererInterface $renderer
+   *   Renderer service.
    */
-  public function __construct(ConfigFactoryInterface $config_factory, Provisioner $provisioner, StringGenerator $string_generator, OrchestrationProviderPluginManagerInterface $orchestration_provider_plugin_manager, Renderer $renderer) {
+  public function __construct(ConfigFactoryInterface $config_factory, Provisioner $provisioner, StringGenerator $string_generator, OrchestrationProviderPluginManagerInterface $orchestration_provider_plugin_manager, RendererInterface $renderer) {
     parent::__construct($config_factory);
     $this->provisioner = $provisioner;
     $this->stringGenerator = $string_generator;
@@ -107,39 +107,39 @@ class SettingsForm extends ConfigFormBase {
 
     $form['enabled'] = [
       '#type' => 'checkbox',
-      '#title' => t('Enabled'),
+      '#title' => $this->t('Enabled'),
       '#size' => 30,
-      '#description' => t('When checked, a database and user is provisioned when a new environment is created.'),
+      '#description' => $this->t('When checked, a database and user is provisioned when a new environment is created.'),
       '#default_value' => $config->get('enabled'),
     ];
     $form['host'] = [
       '#type' => 'textfield',
-      '#title' => t('Host'),
-      '#description' => t('The database host to provision DBs on.'),
+      '#title' => $this->t('Host'),
+      '#description' => $this->t('The database host to provision DBs on.'),
       '#default_value' => $config->get('host'),
     ];
     $form['port'] = [
       '#type' => 'textfield',
-      '#title' => t('Port'),
-      '#description' => t('The database host port. Typically 3306.'),
+      '#title' => $this->t('Port'),
+      '#description' => $this->t('The database host port. Typically 3306.'),
       '#default_value' => $config->get('port'),
     ];
     $form['user'] = [
       '#type' => 'textfield',
-      '#title' => t('User'),
-      '#description' => t('The privileged user to use when connecting to the DB. Must have permissions for CREATE DATABASE and GRANT.'),
+      '#title' => $this->t('User'),
+      '#description' => $this->t('The privileged user to use when connecting to the DB. Must have permissions for CREATE DATABASE and GRANT.'),
       '#default_value' => $config->get('user'),
     ];
     $form['secret'] = [
       '#type' => 'textfield',
-      '#title' => t('Secret'),
-      '#description' => t('The name of the secret in which the privileged user password is stored. Fetched from the orchestration provider.'),
+      '#title' => $this->t('Secret'),
+      '#description' => $this->t('The name of the secret in which the privileged user password is stored. Fetched from the orchestration provider.'),
       '#default_value' => $config->get('secret'),
     ];
     $form['options'] = [
       '#type' => 'textarea',
-      '#title' => t('Options'),
-      '#description' => t('A list of <a href=":user_resources_url">user resource</a> limit options. Enter one kay-value pair per line, in the format MAX_USER_CONNECTIONS 20',
+      '#title' => $this->t('Options'),
+      '#description' => $this->t('A list of <a href=":user_resources_url">user resource</a> limit options. Enter one kay-value pair per line, in the format MAX_USER_CONNECTIONS 20',
         [':user_resources_url' => 'https://dev.mysql.com/doc/refman/8.0/en/user-resources.html']),
       '#default_value' => $config->get('options'),
     ];
@@ -147,7 +147,7 @@ class SettingsForm extends ConfigFormBase {
     $form['populate_command'] = [
       '#type' => 'textarea',
       '#title' => $this->t('Populate command'),
-      '#description' => t('Commands to run to populate a database. Each command on a new line will be combined with && when run to stop on any error. This field supports tokens. @browse_tokens_link', ['@browse_tokens_link' => $rendered_token_tree]),
+      '#description' => $this->t('Commands to run to populate a database. Each command on a new line will be combined with && when run to stop on any error. This field supports tokens. @browse_tokens_link', ['@browse_tokens_link' => $rendered_token_tree]),
       '#default_value' => $config->get('populate_command'),
       '#element_validate' => [
         'token_element_validate',
@@ -200,7 +200,7 @@ class SettingsForm extends ConfigFormBase {
       $this->provisioner->dropUser($test_database, $db);
 
     if ($success) {
-      $this->messenger()->addStatus(t('Successfully connected to the database.'));
+      $this->messenger()->addStatus($this->t('Successfully connected to the database.'));
     }
     else {
       $form_state->setError($form, 'Could not create a test database and user. Confirm the secret exists and details are correct.');

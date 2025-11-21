@@ -13,7 +13,7 @@ _core:
 name: Backup
 type: shp_backup
 description: 'A Backup node is a record of a Backup taken of a shepherd environment.'
-help: ''
+help: null
 new_revision: false
 preview_mode: 0
 display_submitted: true

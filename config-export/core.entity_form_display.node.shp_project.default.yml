@@ -164,14 +164,14 @@ content:
     settings:
       size: 60
       placeholder: ''
-      key_size: 60
-      key_placeholder: ''
-      description_enabled: true
-      description_placeholder: ''
       key_label: Key
       value_label: Value
       description_label: Description
       description_rows: 5
+      key_size: 60
+      key_placeholder: ''
+      description_enabled: true
+      description_placeholder: ''
     third_party_settings: {  }
   field_shp_git_default_ref:
     type: string_textfield

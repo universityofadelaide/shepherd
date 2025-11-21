@@ -128,14 +128,14 @@ content:
     settings:
       size: 60
       placeholder: ''
-      key_size: 60
-      key_placeholder: ''
-      description_enabled: true
-      description_placeholder: ''
       key_label: Schedule
       value_label: Command(s)
       description_label: Description
       description_rows: 5
+      key_size: 60
+      key_placeholder: ''
+      description_enabled: true
+      description_placeholder: ''
     third_party_settings: {  }
   field_shp_cron_suspended:
     type: boolean_checkbox
@@ -159,14 +159,14 @@ content:
     settings:
       size: 60
       placeholder: value
-      key_size: 60
-      key_placeholder: VARIABLE
-      description_enabled: false
-      description_placeholder: ''
       key_label: 'Variable name'
       value_label: Value
       description_label: Description
       description_rows: 5
+      key_size: 60
+      key_placeholder: VARIABLE
+      description_enabled: false
+      description_placeholder: ''
     third_party_settings: {  }
   field_shp_environment_type:
     type: options_select

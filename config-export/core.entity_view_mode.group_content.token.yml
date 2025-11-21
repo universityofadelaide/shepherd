@@ -6,5 +6,6 @@ dependencies:
     - group
 id: group_content.token
 label: Token
+description: ''
 targetEntityType: group_content
 cache: true
