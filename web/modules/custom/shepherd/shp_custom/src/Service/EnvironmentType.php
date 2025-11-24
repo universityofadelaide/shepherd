@@ -51,6 +51,7 @@ class EnvironmentType implements EnvironmentTypeInterface {
     $ids = $this->taxonomyTerm->getQuery()
       ->condition('vid', 'shp_environment_types')
       ->condition('field_shp_protect', TRUE)
+      ->accessCheck(FALSE)
       ->execute();
     $terms = $this->taxonomyTerm->loadMultiple($ids);
     return reset($terms);
@@ -63,6 +64,7 @@ class EnvironmentType implements EnvironmentTypeInterface {
     $ids = $this->taxonomyTerm->getQuery()
       ->condition('vid', 'shp_environment_types')
       ->condition('field_shp_protect', FALSE)
+      ->accessCheck(FALSE)
       ->execute();
     $terms = $this->taxonomyTerm->loadMultiple($ids);
     return reset($terms);

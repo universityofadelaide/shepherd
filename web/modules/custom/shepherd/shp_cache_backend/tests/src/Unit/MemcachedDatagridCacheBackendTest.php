@@ -28,7 +28,7 @@ class MemcachedDatagridCacheBackendTest extends UnitTestCase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = [
+  protected static $modules = [
     'shp_cache_backend',
     'shp_orchestration',
     'shp_custom',
@@ -66,7 +66,7 @@ class MemcachedDatagridCacheBackendTest extends UnitTestCase {
   /**
    * {@inheritdoc}
    */
-  public function setUp() {
+  public function setUp(): void {
     parent::setUp();
 
     // Set up mocks for our plugin.

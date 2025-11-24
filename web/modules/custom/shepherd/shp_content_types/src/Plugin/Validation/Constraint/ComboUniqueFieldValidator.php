@@ -37,7 +37,8 @@ class ComboUniqueFieldValidator extends ConstraintValidator {
     $query
       ->accessCheck(TRUE)
       ->range(0, 1)
-      ->count();
+      ->count()
+      ->accessCheck(FALSE);
 
     $value_taken = (bool) $query->execute();
 

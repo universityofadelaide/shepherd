@@ -61,7 +61,7 @@ function shepherd_post_update_add_cache_backend(&$sandbox) {
     _shp_import_config_from_disk('node', 'shp_environment', 'field_cache_backend');
     $query = $entity_storage->getQuery()
       ->condition('type', 'shp_environment');
-    $sandbox['ids'] = $query->execute();
+    $sandbox['ids'] = $query->accessCheck(FALSE)->execute();
     $sandbox['progress'] = 0;
     $sandbox['max'] = count($sandbox['ids']);
   }

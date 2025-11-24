@@ -68,7 +68,7 @@ class Provisioner {
     ConfigFactoryInterface $configFactory,
     OrchestrationProviderPluginManagerInterface $orchestrationProviderPluginManager,
     Environment $environmentService,
-    StringGenerator $stringGenerator,
+    StringGenerator $stringGenerator
   ) {
     $this->configFactory = $configFactory;
     $this->orchestrationProviderPlugin = $orchestrationProviderPluginManager->getProviderInstance();
@@ -153,7 +153,7 @@ class Provisioner {
     string $database,
     string $username,
     string $password,
-    string $deployment_name,
+    string $deployment_name
   ) {
     // Add database credentials to deployment secret.
     // Create the secret if it doesn't exist, otherwise add it to the existing.
@@ -238,7 +238,7 @@ class Provisioner {
     string $username,
     string $password,
     \mysqli $db,
-    string $options = '',
+    string $options = ''
   ): bool {
     $query = sprintf(
       "GRANT ALL PRIVILEGES ON `%s`.* TO `%s`@`%%` IDENTIFIED BY '%s'",
@@ -271,7 +271,7 @@ class Provisioner {
    */
   public function dropUser(
     string $username,
-    \mysqli $db,
+    \mysqli $db
   ): bool {
     $query = sprintf(
       "DROP USER `%s`@`%%`",

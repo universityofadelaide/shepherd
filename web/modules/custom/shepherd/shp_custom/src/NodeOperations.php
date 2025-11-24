@@ -67,6 +67,7 @@ class NodeOperations implements ContainerInjectionInterface {
           $environments = $this->nodeStorage->getQuery()
             ->condition('type', 'shp_environment')
             ->condition('field_shp_site', $node->id())
+            ->accessCheck(FALSE)
             ->execute();
 
           foreach ($this->nodeStorage->loadMultiple($environments) as $environment) {

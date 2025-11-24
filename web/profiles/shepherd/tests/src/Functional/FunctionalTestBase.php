@@ -153,7 +153,11 @@ class FunctionalTestBase extends TestCase {
   protected function loadLastCreatedEntity($type, $offset = 0, $mark_for_cleanup = FALSE) {
     $type_manager = \Drupal::entityTypeManager();
     $id_key = $type_manager->getDefinition($type)->getKey('id');
-    $results = \Drupal::entityQuery($type)->sort($id_key, 'DESC')->range($offset, $offset + 1)->execute();
+    $results = \Drupal::entityQuery($type)
+      ->sort($id_key, 'DESC')
+      ->range($offset, $offset + 1)
+      ->accessCheck(FALSE)
+      ->execute();
     $id = array_shift($results);
     $entity = $type_manager->getStorage($type)->load($id);
     if ($mark_for_cleanup) {

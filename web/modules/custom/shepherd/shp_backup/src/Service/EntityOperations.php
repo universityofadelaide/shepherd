@@ -72,6 +72,7 @@ class EntityOperations implements ContainerInjectionInterface {
     $retention = trim($term->field_shp_backup_retention->value);
     $env_ids = $this->nodeStorage->getQuery()
       ->condition('field_shp_environment_type.target_id', $term->id())
+      ->accessCheck(FALSE)
       ->execute();
     if (empty($env_ids)) {
       return;

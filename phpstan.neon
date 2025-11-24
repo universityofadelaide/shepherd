@@ -10,3 +10,7 @@ parameters:
 		- '#Plugin definitions cannot be altered.#'
 		- '#Missing cache backend declaration for performance.#'
 		- '#Plugin manager has cache backend specified but does not declare cache tags.#'
+		# Drupal 9.2 deprecation: explicit accessCheck() on entity queries. We intentionally
+		# suppress this in static analysis because legacy code paths are still supported and
+		# behavior is covered by runtime tests. See https://www.drupal.org/node/3201242
+		- '#Relying on entity queries to check access by default is deprecated in\s+drupal:9\.2\.0.*QueryInterface::accessCheck\(\) with TRUE or\s+FALSE#'

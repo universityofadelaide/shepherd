@@ -465,6 +465,7 @@ class Environment {
     $results = $this->node->getQuery()
       ->condition('type', 'shp_environment')
       ->condition('field_shp_domain', $environment_name)
+      ->accessCheck(FALSE)
       ->execute();
 
     return !count($results);

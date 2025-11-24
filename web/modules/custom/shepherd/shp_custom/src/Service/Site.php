@@ -137,6 +137,7 @@ class Site {
       ->condition('type', $node_type)
       ->condition($reference_field, $node->id())
       ->condition('status', NodeInterface::PUBLISHED)
+      ->accessCheck(FALSE)
       ->execute();
     return $this->node->loadMultiple($results);
   }
@@ -158,6 +159,7 @@ class Site {
     $results = $this->node->getQuery()
       ->condition('type', $node_type)
       ->condition($field, $field_value)
+      ->accessCheck(FALSE)
       ->execute();
     return $results;
   }
