@@ -27,6 +27,3 @@ parameters:
     # https://github.com/mglaman/phpstan-drupal/issues/31:
     # ServiceProvider classes are not autoloaded.
     - '#ServiceProvider was not found while trying to analyse it#'
-includes:
-  - vendor/mglaman/phpstan-drupal/extension.neon
-  - vendor/phpstan/phpstan-deprecation-rules/rules.neon
