@@ -67,7 +67,7 @@ class OrchestrationEnvironmentEvent extends Event {
    * @param \Drupal\node\NodeInterface $project
    *   The project for this environment.
    */
-  public function __construct(OrchestrationProviderInterface $orchestrationProvider, string $deploymentName, NodeInterface $site = NULL, NodeInterface $environment = NULL, NodeInterface $project = NULL) {
+  public function __construct(OrchestrationProviderInterface $orchestrationProvider, string $deploymentName, ?NodeInterface $site = NULL, ?NodeInterface $environment = NULL, ?NodeInterface $project = NULL) {
     $this->orchestrationProvider = $orchestrationProvider;
     $this->deploymentName = $deploymentName;
     $this->site = $site;
