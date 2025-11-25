@@ -62,7 +62,7 @@ class FunctionalTestBase extends TestCase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
     $this->setupMinkSession();
     $this->setupDrupal();
@@ -80,7 +80,7 @@ class FunctionalTestBase extends TestCase {
   /**
    * {@inheritdoc}
    */
-  protected function tearDown() {
+  protected function tearDown(): void {
     parent::tearDown();
     $this->setConfigValues($this->resetConfig, FALSE);
     $this->tearDownDrupal();

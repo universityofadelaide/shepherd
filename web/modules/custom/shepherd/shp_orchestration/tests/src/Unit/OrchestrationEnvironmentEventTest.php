@@ -73,7 +73,7 @@ class OrchestrationEnvironmentEventTest extends UnitTestCase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
 
     $this->orchestrationProviderMock = $this->getMockBuilder('Drupal\shp_orchestration\OrchestrationProviderInterface')
