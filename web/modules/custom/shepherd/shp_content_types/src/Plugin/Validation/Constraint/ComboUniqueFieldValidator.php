@@ -13,7 +13,9 @@ class ComboUniqueFieldValidator extends ConstraintValidator {
   /**
    * {@inheritdoc}
    */
-  public function validate($items, Constraint $constraint) {
+  public function validate($items, Constraint $constraint): void {
+    // $items is expected to be a FieldItemListInterface.
+    // @phpstan-ignore-next-line Drupal provides typed lists at runtime.
     if (!$item = $items->first()) {
       return;
     }

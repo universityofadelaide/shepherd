@@ -73,7 +73,7 @@ class EnvironmentBackupForm extends FormBase {
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container) {
+  public static function create(ContainerInterface $container): static {
     return new static(
       $container->get('shp_backup.backup'),
       $container->get('datetime.time'),
@@ -85,7 +85,7 @@ class EnvironmentBackupForm extends FormBase {
   /**
    * {@inheritdoc}
    */
-  public function getFormId() {
+  public function getFormId(): string {
     return 'shp_backup_environment_backup_form';
   }
 
@@ -110,7 +110,13 @@ class EnvironmentBackupForm extends FormBase {
   /**
    * {@inheritdoc}
    */
-  public function buildForm(array $form, FormStateInterface $form_state, ?NodeInterface $site = NULL, ?NodeInterface $environment = NULL) {
+  public function buildForm(array $form, FormStateInterface $form_state, ?NodeInterface $site = NULL, ?NodeInterface $environment = NULL): array {
+    if ($site === NULL || $environment === NULL) {
+      return [
+        '#markup' => '<p>Invalid request: missing site or environment context.</p>',
+      ];
+    }
+
     $form_state->set('site', $site);
     $form_state->set('environment', $environment);
 
@@ -135,7 +141,7 @@ class EnvironmentBackupForm extends FormBase {
   /**
    * {@inheritdoc}
    */
-  public function submitForm(array &$form, FormStateInterface $form_state) {
+  public function submitForm(array &$form, FormStateInterface $form_state): void {
     $site = $form_state->get('site');
     $environment = $form_state->get('environment');
 

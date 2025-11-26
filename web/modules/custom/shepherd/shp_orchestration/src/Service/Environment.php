@@ -122,9 +122,6 @@ class Environment extends EntityActionBase {
   public function created(NodeInterface $node) {
     $site = $this->environmentService->getSite($node);
     $project = $this->siteService->getProject($site);
-    if (!isset($project) || !isset($site)) {
-      return FALSE;
-    }
     $environment_type = $this->environmentService->getEnvironmentType($node);
 
     // If there is a secret on the shepherd project, update it from project.
@@ -238,13 +235,7 @@ class Environment extends EntityActionBase {
    */
   public function updated(NodeInterface $node) {
     $site = $this->environmentService->getSite($node);
-    if (!isset($site)) {
-      return FALSE;
-    }
     $project = $this->siteService->getProject($site);
-    if (!isset($project)) {
-      return FALSE;
-    }
 
     $probes = $this->buildProbes($project);
     $cron_jobs = $this->buildCronJobs($node);
@@ -367,9 +358,6 @@ class Environment extends EntityActionBase {
    */
   public function promoted(NodeInterface $site, NodeInterface $environment, bool $exclusive, bool $clear_cache = TRUE) {
     $project = $this->siteService->getProject($site);
-    if (!isset($project) || !isset($site)) {
-      return FALSE;
-    }
 
     // Load the taxonomy term that has protect enabled.
     $promoted_term = $this->environmentType->getPromotedTerm();

@@ -49,7 +49,7 @@ class BackupDeleteForm extends FormBase {
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container) {
+  public static function create(ContainerInterface $container): static {
     return new static(
       $container->get('plugin.manager.orchestration_provider')->getProviderInstance(),
       $container->get('messenger')
@@ -59,14 +59,20 @@ class BackupDeleteForm extends FormBase {
   /**
    * {@inheritdoc}
    */
-  public function getFormId() {
+  public function getFormId(): string {
     return 'shp_backup_delete_form';
   }
 
   /**
    * {@inheritdoc}
    */
-  public function buildForm(array $form, FormStateInterface $form_state, ?NodeInterface $site = NULL, $backupName = NULL) {
+  public function buildForm(array $form, FormStateInterface $form_state, ?NodeInterface $site = NULL, $backupName = NULL): array {
+    if ($site === NULL) {
+      return [
+        '#markup' => '<p>Invalid request: missing site context.</p>',
+      ];
+    }
+
     $form_state->set('site', $site->id());
     $backup = $this->orchestrationProvider->getBackup($site->id(), $backupName);
     if (!$backup) {
@@ -92,15 +98,17 @@ class BackupDeleteForm extends FormBase {
   /**
    * {@inheritdoc}
    */
-  public function submitForm(array &$form, FormStateInterface $form_state) {
+  public function submitForm(array &$form, FormStateInterface $form_state): void {
     $name = $form_state->get('backupName');
     $site_id = $form_state->get('site');
     $backup = $this->orchestrationProvider->getBackup($site_id, $name);
     if ($this->orchestrationProvider->deleteBackup($site_id, $name)) {
-      $this->messenger->addStatus($this->t('Successfully deleted backup @name', ['@name' => $backup->getFriendlyName()]));
+      $label = $backup ? $backup->getFriendlyName() : $name;
+      $this->messenger->addStatus($this->t('Successfully deleted backup @name', ['@name' => $label]));
     }
     else {
-      $this->messenger->addError($this->t('There was an issue deleting backup @name', ['@name' => $backup->getFriendlyName()]));
+      $label = $backup ? $backup->getFriendlyName() : $name;
+      $this->messenger->addError($this->t('There was an issue deleting backup @name', ['@name' => $label]));
     }
 
     $form_state->setRedirectUrl(Url::fromRoute('shp_backup.backups', ['node' => $site_id]));

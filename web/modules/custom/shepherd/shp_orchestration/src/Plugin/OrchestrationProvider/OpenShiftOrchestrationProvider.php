@@ -202,6 +202,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
    */
   public function deletedProject($name) {
     // @todo Implement deletedProject() method.
+    return TRUE;
   }
 
   /**
@@ -605,8 +606,10 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     $this->deletedEnvironment(
       $project->title->value,
       $site->field_shp_short_name->value,
+      $site->id(),
       $environment_id
     );
+    return TRUE;
   }
 
   /**
@@ -720,6 +723,8 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     // Lastly, allow the new project to pull from the shepherd project.
     $this->setSiteConfig(0);
     $this->createRoleBinding('default', 'system:image-puller', $projectName);
+
+    return;
   }
 
   /**
@@ -746,6 +751,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
    */
   public function updatedSite() {
     // @todo Implement updateSite() method.
+    return TRUE;
   }
 
   /**
@@ -763,6 +769,8 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     $this->client->deleteRoute($deployment_name);
 
     $this->client->deleteProject($this->buildProjectName($site_id));
+
+    return TRUE;
   }
 
   /**
@@ -788,7 +796,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       return $this->client->updateBackup($backup);
     }
     catch (ClientException $e) {
-      $this->handleClientException($e);
+      $this->exceptionHandler->handleClientException($e);
       return FALSE;
     }
   }
@@ -802,7 +810,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       return $this->client->deleteBackup($name);
     }
     catch (ClientException $e) {
-      $this->handleClientException($e);
+      $this->exceptionHandler->handleClientException($e);
       return FALSE;
     }
   }
@@ -1312,6 +1320,8 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
           return $this->generateOpenShiftPodUrl($site_id, $pod_name, 'terminal');
         }
       }
+      // No suitable pod found.
+      return FALSE;
     }
     catch (ClientException $e) {
       $this->exceptionHandler->handleClientException($e);
@@ -1344,6 +1354,8 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
           return $this->generateOpenShiftPodUrl($site_id, $pod_name, 'logs');
         }
       }
+      // No suitable pod found.
+      return FALSE;
     }
     catch (ClientException $e) {
       $this->exceptionHandler->handleClientException($e);
@@ -1357,16 +1369,24 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
   /**
    * Helper function to confirm if requested pod is a web pod.
    *
-   * @param string $pod
-   *   Pod name.
+   * @param array $pod
+   *   Pod details array from OpenShift API.
    *
    * @return bool
    *   True if web pod, false otherwise.
    */
-  protected function isWebPod($pod) {
-    return !isset($pod['metadata']['job-name']) &&
-      $pod['status']['phase'] === 'Running' &&
-      !strpos($pod['metadata']['name'], 'redis');
+  protected function isWebPod(array $pod) {
+    // Guard against unexpected types/structures.
+    $hasMeta = isset($pod['metadata']) && is_array($pod['metadata']);
+    $hasStatus = isset($pod['status']) && is_array($pod['status']);
+    if (!$hasMeta || !$hasStatus) {
+      return FALSE;
+    }
+    $isJob = isset($pod['metadata']['job-name']);
+    $phaseRunning = isset($pod['status']['phase']) && $pod['status']['phase'] === 'Running';
+    $name = $pod['metadata']['name'] ?? '';
+    $isRedis = (strpos($name, 'redis') !== FALSE);
+    return !$isJob && $phaseRunning && !$isRedis;
   }
 
   /**

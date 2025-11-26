@@ -57,6 +57,13 @@ class MemcachedDatagridCacheBackendTest extends UnitTestCase {
   protected $environment;
 
   /**
+   * A mock site node.
+   *
+   * @var \Drupal\node\NodeInterface|\PHPUnit\Framework\MockObject\MockObject
+   */
+  protected $site;
+
+  /**
    * A mock environment type service.
    *
    * @var \Drupal\shp_custom\Service\EnvironmentType|\PHPUnit\Framework\MockObject\MockObject
