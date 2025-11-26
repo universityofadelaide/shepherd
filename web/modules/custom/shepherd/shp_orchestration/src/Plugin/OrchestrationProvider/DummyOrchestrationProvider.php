@@ -23,7 +23,7 @@ class DummyOrchestrationProvider extends OrchestrationProviderBase {
    * {@inheritdoc}
    *
    * @phpstan-ignore-next-line
- */
+   */
   public function __construct(array $configuration, $plugin_id, $plugin_definition) {
     // Don't bother calling parent constructor.
   }

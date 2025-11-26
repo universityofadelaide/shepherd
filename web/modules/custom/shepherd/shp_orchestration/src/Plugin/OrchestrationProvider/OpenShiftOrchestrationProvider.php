@@ -724,7 +724,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     $this->setSiteConfig(0);
     $this->createRoleBinding('default', 'system:image-puller', $projectName);
 
-    return;
+    return TRUE;
   }
 
   /**

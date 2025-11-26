@@ -19,7 +19,7 @@ abstract class OrchestrationProviderBase extends PluginBase implements Container
   /**
    * The module configuration.
    *
-   * @var \Drupal\Core\Config\ConfigFactoryInterface $configFactory
+   * @var \Drupal\Core\Config\ConfigFactoryInterface
    */
   protected $configFactory;
 

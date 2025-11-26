@@ -13,7 +13,7 @@ class OpenShiftClientFactory {
   /**
    * The module configuration.
    *
-   * @var \Drupal\Core\Config\ConfigFactoryInterface $configFactory
+   * @var \Drupal\Core\Config\ConfigFactoryInterface
    */
   protected $configFactory;
 

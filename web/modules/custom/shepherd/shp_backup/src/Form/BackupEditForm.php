@@ -51,9 +51,6 @@ class BackupEditForm extends FormBase {
   /**
    * {@inheritdoc}
    */
-  /**
-   * {@inheritdoc}
-   */
   public static function create(ContainerInterface $container) {
     return new static(
       $container->get('plugin.manager.orchestration_provider')->getProviderInstance(),
@@ -64,16 +61,10 @@ class BackupEditForm extends FormBase {
   /**
    * {@inheritdoc}
    */
-  /**
-   * {@inheritdoc}
-   */
   public function getFormId() {
     return 'shp_backup_edit_form';
   }
 
-  /**
-   * {@inheritdoc}
-   */
   /**
    * {@inheritdoc}
    */
@@ -111,9 +102,6 @@ class BackupEditForm extends FormBase {
     return $form;
   }
 
-  /**
-   * {@inheritdoc}
-   */
   /**
    * {@inheritdoc}
    */
