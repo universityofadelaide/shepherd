@@ -97,3 +97,64 @@ function shepherd_post_update_enable_views_bulk_operations() {
 function shepherd_post_update_enable_config_ignore() {
   \Drupal::service('module_installer')->install(['config_ignore']);
 }
+
+/**
+ * Enable ckeditor5.
+ */
+function shepherd_post_update_migrate_ckeditor() {
+  \Drupal::service('module_installer')->uninstall(['ckeditor']);
+  \Drupal::service('module_installer')->install(['ckeditor5']);
+}
+
+/**
+ * Install Claro admin theme and uninstall Seven.
+ */
+function shepherd_post_update_change_theme(&$sandbox = NULL) {
+  // Load theme extension list to check filesystem existence.
+  /** @var \Drupal\Core\Extension\ExtensionList $theme_extension_list */
+  $theme_extension_list = \Drupal::service('extension.list.theme');
+
+  // --- 1. Ensure Claro exists in filesystem ---
+  if (!$theme_extension_list->get('claro')) {
+    throw new \RuntimeException("The Claro theme is not present in the filesystem.");
+  }
+
+  // Services used later.
+  /** @var \Drupal\Core\Extension\ThemeInstallerInterface $theme_installer */
+  $theme_installer = \Drupal::service('theme_installer');
+  /** @var \Drupal\Core\Extension\ThemeHandlerInterface $theme_handler */
+  $theme_handler = \Drupal::service('theme_handler');
+
+  // Get installed themes.
+  $installed_themes = $theme_handler->listInfo();
+
+  // --- 2. Install Claro if not installed ---
+  if (!isset($installed_themes['claro'])) {
+    $theme_installer->install(['claro']);
+  }
+
+  // --- 3. Set Claro as admin theme ---
+  $config = \Drupal::configFactory()->getEditable('system.theme');
+  $config->set('admin', 'claro')->save();
+
+  // --- 4. Uninstall Seven if installed ---
+  if (isset($installed_themes['seven'])) {
+    // Make sure Seven is not set as default/admin before uninstall.
+    $default_theme = $config->get('default');
+    $admin_theme   = $config->get('admin');
+
+    if ($default_theme === 'seven') {
+      // Prevent accidental breakage.
+      throw new \RuntimeException("Seven cannot be uninstalled because it is the default theme.");
+    }
+    if ($admin_theme === 'seven') {
+      // Should never happen after setting Claro, but safe guard.
+      $config->set('admin', 'claro')->save();
+    }
+
+    // Uninstall Seven.
+    $theme_installer->uninstall(['seven']);
+  }
+
+  return t('Claro installed and enabled as admin theme; Seven uninstalled.');
+}
