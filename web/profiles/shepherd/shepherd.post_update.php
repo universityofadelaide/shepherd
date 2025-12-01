@@ -98,6 +98,7 @@ function shepherd_post_update_enable_config_ignore() {
   \Drupal::service('module_installer')->install(['config_ignore']);
 }
 
+
 /**
  * Enable ckeditor5.
  */
