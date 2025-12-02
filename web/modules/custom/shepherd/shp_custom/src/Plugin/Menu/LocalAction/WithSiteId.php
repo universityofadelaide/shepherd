@@ -15,7 +15,11 @@ class WithSiteId extends WithDestination {
    */
   public function getRouteParameters(RouteMatchInterface $route_match) {
     $parameters = parent::getRouteParameters($route_match);
-    $parameters['site_id'] = $route_match->getParameter('node');
+    $site_param = $route_match->getRawParameter('node');
+    if ($site_param === NULL) {
+      $site_param = $route_match->getRawParameter('arg_0');
+    }
+    $parameters['site_id'] = $site_param;
     return $parameters;
   }
 

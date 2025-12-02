@@ -12,7 +12,8 @@ shp_custom.add_project:
     _entity_form: 'node.default'
     _title_callback: '\Drupal\node\Controller\NodeController::addPageTitle'
   requirements:
-    _node_add_access: 'node:shp_project'
+    _permission: 'administer site configuration'
+    _node_add_access: 'shp_project'
   options:
     _node_operation_route: TRUE
     parameters:
@@ -26,7 +27,8 @@ shp_custom.add_environment:
     _entity_form: 'node.default'
     _title_callback: '\Drupal\node\Controller\NodeController::addPageTitle'
   requirements:
-    _node_add_access: 'node:shp_environment'
+    _permission: 'administer site configuration'
+    _node_add_access: 'shp_environment'
   options:
     _node_operation_route: TRUE
     parameters:
@@ -42,7 +44,8 @@ shp_custom.add_site:
     _entity_form: 'node.default'
     _title_callback: '\Drupal\node\Controller\NodeController::addPageTitle'
   requirements:
-    _node_add_access: 'node:shp_site'
+    _permission: 'administer site configuration'
+    _node_add_access: 'shp_site'
   options:
     _node_operation_route: TRUE
     parameters:
