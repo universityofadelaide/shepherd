@@ -164,7 +164,8 @@ class Environment extends EntityActionBase {
 
     // Allow other modules to react to the Environment creation.
     $event = new OrchestrationEnvironmentEvent($this->orchestrationProviderPlugin, $deployment_name);
-    $this->eventDispatcher->dispatch(OrchestrationEvents::SETUP_ENVIRONMENT, $event);
+    // Dispatch expects the event object first, then the event name.
+    $this->eventDispatcher->dispatch($event, OrchestrationEvents::SETUP_ENVIRONMENT);
     if ($event_env_vars = $event->getEnvironmentVariables()) {
       $env_vars = array_merge($env_vars, $event_env_vars);
     }
@@ -212,7 +213,7 @@ class Environment extends EntityActionBase {
 
     // Allow other modules to react to the Environment creation.
     $event = new OrchestrationEnvironmentEvent($this->orchestrationProviderPlugin, $deployment_name, $site, $node, $project);
-    $this->eventDispatcher->dispatch(OrchestrationEvents::CREATED_ENVIRONMENT, $event);
+    $this->eventDispatcher->dispatch($event, OrchestrationEvents::CREATED_ENVIRONMENT);
 
     // If this is a production environment, promote it immediately.
     if ($this->environmentType->isPromotedEnvironment($node)) {
@@ -248,7 +249,7 @@ class Environment extends EntityActionBase {
 
     // Allow other modules to react to the Environment creation.
     $event = new OrchestrationEnvironmentEvent($this->orchestrationProviderPlugin, $deployment_name);
-    $this->eventDispatcher->dispatch(OrchestrationEvents::SETUP_ENVIRONMENT, $event);
+    $this->eventDispatcher->dispatch($event, OrchestrationEvents::SETUP_ENVIRONMENT);
     if ($event_env_vars = $event->getEnvironmentVariables()) {
       $env_vars = array_merge($env_vars, $event_env_vars);
     }
@@ -288,7 +289,7 @@ class Environment extends EntityActionBase {
 
     // Allow other modules to react to the Environment update.
     $event = new OrchestrationEnvironmentEvent($this->orchestrationProviderPlugin, $deployment_name, $site, $node, $project);
-    $this->eventDispatcher->dispatch(OrchestrationEvents::UPDATED_ENVIRONMENT, $event);
+    $this->eventDispatcher->dispatch($event, OrchestrationEvents::UPDATED_ENVIRONMENT);
 
     return $environment_updated;
   }
@@ -323,7 +324,7 @@ class Environment extends EntityActionBase {
 
     // Allow other modules to react to the Environment deletion.
     $event = new OrchestrationEnvironmentEvent($this->orchestrationProviderPlugin, $deployment_name);
-    $this->eventDispatcher->dispatch(OrchestrationEvents::DELETED_ENVIRONMENT, $event);
+    $this->eventDispatcher->dispatch($event, OrchestrationEvents::DELETED_ENVIRONMENT);
 
     if (!$node->field_cache_backend->isEmpty()) {
       /** @var \Drupal\shp_cache_backend\Plugin\CacheBackendInterface $cache_backend */
