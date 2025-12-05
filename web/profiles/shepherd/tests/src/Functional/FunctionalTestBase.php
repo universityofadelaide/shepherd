@@ -12,7 +12,7 @@ use weitzman\DrupalTestTraits\DrupalTrait;
 use weitzman\DrupalTestTraits\Entity\NodeCreationTrait;
 use weitzman\DrupalTestTraits\Entity\TaxonomyCreationTrait;
 use weitzman\DrupalTestTraits\Entity\UserCreationTrait;
-use weitzman\DrupalTestTraits\GoutteTrait;
+use weitzman\DrupalTestTraits\BrowserKitTrait;
 
 /**
  * A base class for testing an installed UoA site.
@@ -20,7 +20,7 @@ use weitzman\DrupalTestTraits\GoutteTrait;
 class FunctionalTestBase extends TestCase {
 
   use DrupalTrait;
-  use GoutteTrait;
+  use BrowserKitTrait;
   use UiHelperTrait;
   use NodeCreationTrait {
     getNodeByTitle as drupalGetNodeByTitle;
@@ -64,6 +64,8 @@ class FunctionalTestBase extends TestCase {
    */
   protected function setUp(): void {
     parent::setUp();
+
+    $this->baseUrl = getenv('DTT_BASE_URL') ?: getenv('SIMPLETEST_BASE_URL') ?: 'http://localhost';
     $this->setupMinkSession();
     $this->setupDrupal();
     // Ensure we use the dummy OS provider.
