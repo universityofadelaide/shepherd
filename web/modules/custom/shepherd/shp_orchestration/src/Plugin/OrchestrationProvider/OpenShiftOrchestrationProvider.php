@@ -1088,7 +1088,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     // The image may either be not set, or set and blank. If either of those,
     // bail, rather than possibly use an incorrect image.
     $image = $deployment_config['spec']['template']['spec']['containers'][0]['image'] ?? FALSE;
-    if (!$image || empty(trim($image))) {
+    if (!$image || empty(trim($image ?? ''))) {
       return [];
     }
 
