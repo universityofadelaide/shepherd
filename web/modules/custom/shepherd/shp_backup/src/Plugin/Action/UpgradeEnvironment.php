@@ -84,7 +84,7 @@ class UpgradeEnvironment extends ViewsBulkOperationsActionBase implements Plugin
   /**
    * {@inheritdoc}
    */
-  public function submitConfigurationForm(array &$form, FormStateInterface $form_state) {
+  public function submitConfigurationForm(array &$form, FormStateInterface $form_state): void {
     $this->configuration['version'] = $form_state->getValue('version');
   }
 

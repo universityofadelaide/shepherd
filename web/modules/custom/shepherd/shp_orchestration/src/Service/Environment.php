@@ -2,7 +2,7 @@
 
 namespace Drupal\shp_orchestration\Service;
 
-use Drupal\Core\Config\ConfigFactory;
+use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\node\Entity\Node;
 use Drupal\node\NodeInterface;
 use Drupal\shp_custom\Service\Environment as EnvironmentService;
@@ -63,7 +63,7 @@ class Environment extends EntityActionBase {
   /**
    * The config factory.
    *
-   * @var \Drupal\Core\Config\ConfigFactory
+   * @var \Drupal\Core\Config\ConfigFactoryInterface
    */
   protected $configFactory;
 
@@ -89,12 +89,12 @@ class Environment extends EntityActionBase {
    *   Event dispatcher.
    * @param \Drupal\shp_custom\Service\EnvironmentTypeInterface $environmentType
    *   Environment type service.
-   * @param \Drupal\Core\Config\ConfigFactory $configFactory
+   * @param \Drupal\Core\Config\ConfigFactoryInterface $configFactory
    *   The config factory.
    * @param \Drupal\shp_orchestration\ExceptionHandler $exceptionHandler
    *   The exception handler service.
    */
-  public function __construct(OrchestrationProviderPluginManager $orchestrationProviderPluginManager, Configuration $configuration, EnvironmentService $environment, SiteEntity $site, EventDispatcherInterface $event_dispatcher, EnvironmentTypeInterface $environmentType, ConfigFactory $configFactory, ExceptionHandler $exceptionHandler) {
+  public function __construct(OrchestrationProviderPluginManager $orchestrationProviderPluginManager, Configuration $configuration, EnvironmentService $environment, SiteEntity $site, EventDispatcherInterface $event_dispatcher, EnvironmentTypeInterface $environmentType, ConfigFactoryInterface $configFactory, ExceptionHandler $exceptionHandler) {
     parent::__construct($orchestrationProviderPluginManager);
     $this->configuration = $configuration;
     $this->environmentService = $environment;

@@ -1,7 +1,7 @@
 name: 'Shepherd custom'
 type: module
 description: 'Provides functionality specific to Shepherd.'
-core_version_requirement: ^9
+core_version_requirement: ^9 || ^10
 package: Shepherd
 dependencies:
   - shp_content_types

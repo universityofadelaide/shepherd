@@ -1,5 +1,5 @@
-name: 'drush_cmi_tools tombstone'
+name: 'ckeditor 4 tombstone'
 description: 'This is a module file kept around so the module is uninstallable via CMI. Delete this module AFTER it has been uninstalled on all environments.'
 package: Tombstone
-core_version_requirement: ^8 || ^9
+core_version_requirement: ^8 || ^9 || ^10
 type: module

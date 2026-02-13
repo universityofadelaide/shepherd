@@ -71,5 +71,5 @@ module:
   views: 10
   shepherd: 1000
 theme:
-  seven: 0
+  claro: 0
 profile: shepherd

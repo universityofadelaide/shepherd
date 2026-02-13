@@ -130,6 +130,7 @@ dsh_openshift_init() {
   if ! oc get serviceaccount shepherd-sa > /dev/null 2>&1; then
     ${ADMIN_LOGIN}
     oc create serviceaccount shepherd-sa
+    oc create token shepherd-sa --duration=$((700*24))h > shepherd-sa.token
     oc adm policy add-cluster-role-to-user cluster-admin system:serviceaccount:shepherd-dev:shepherd-sa
     oc adm policy add-cluster-role-to-user self-provisioner system:serviceaccount:shepherd-dev:shepherd-sa
     ${DEV_LOGIN}
@@ -148,8 +149,7 @@ dsh_openshift_init() {
       ${DEV_LOGIN}
 
       # This is pretty horrid, but there is no oc command in the dsh shell.
-      oc get secret "$(oc describe sa ${SA} | grep Token | awk '{ print $2 }')" \
-         -o json | jq -r '.data.token' | base64 -d > ".${SA}.token"
+      oc create token ${SA} --duration=$((700*24))h > ".${SA}.token"
     fi
   done
 
@@ -189,10 +189,10 @@ dsh_openshift_init() {
   ${DEV_LOGIN}
 
   # Retrieve the service account token and the minishift ip.
-  SERVICE_ACCOUNT=$(oc describe serviceaccount shepherd-sa | grep Token | awk '{ print $2 }')
+  SERVICE_ACCOUNT=shepherd-sa
 
   # Now set the things that we need in the dsh shell.
-  TOKEN=$(oc describe secret ${SERVICE_ACCOUNT} | grep "token:" | awk '{ print $2 }')
+  TOKEN=$(< .shepherd-sa.token)
   OPENSHIFT_DOMAIN="apps-crc.testing"
   OPENSHIFT_URL="https://api.crc.testing:6443"
   DB_HOST="mysql-external-shepherd-dev.${OPENSHIFT_DOMAIN}"

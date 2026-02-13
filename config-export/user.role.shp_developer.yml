@@ -1,7 +1,16 @@
 uuid: 90ac9695-c08f-4e59-af3c-a7ca27b66fcd
 langcode: en
 status: true
-dependencies: {  }
+dependencies:
+  config:
+    - node.type.shp_environment
+    - node.type.shp_site
+  module:
+    - comment
+    - node
+    - shortcut
+    - shp_backup
+    - system
 _core:
   default_config_hash: aHZkb0wmMhuaU2UtMskT29D4MEOJwV81eOZQEF0DjbI
 id: shp_developer
@@ -22,6 +31,4 @@ permissions:
   - 'post comments'
   - 'shp bulk backup'
   - 'skip comment approval'
-  - 'use environment transition published'
-  - 'use environment transition published_archive'
   - 'view own unpublished content'

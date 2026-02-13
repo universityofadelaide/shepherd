@@ -2,28 +2,10 @@
 
 /**
  * @file
- * Drush integration for Shepherd Orchestration.
+ * Legacy Drush integration file for Shepherd Orchestration.
+ *
+ * Drush 9+ removed hook_drush_command() and .inc commandfiles. This file is
+ * intentionally left without any executable code to avoid deprecation issues.
+ * The replacement lives in an annotated command class under:
+ * src/Commands/OrchestrationCommands.php
  */
-
-/**
- * Implements hook_drush_command().
- */
-function shp_orchestration_drush_command() {
-  $commands = [];
-  $commands['shepherd-process-job-queue'] = [
-    'description' => 'Process any jobs in the job queue',
-    'aliases' => ['shp-p'],
-    'examples' => [
-      'drush shepherd-process-job-queue' => 'Process any jobs in the job queue',
-      'drush shp-p' => 'Process any jobs in the job queue',
-    ],
-  ];
-  return $commands;
-}
-
-/**
- * Drush command logic for processing the job queue.
- */
-function drush_shp_orchestration_shepherd_process_job_queue() {
-  // No-op, remove from shepherd cron tasks first.
-}

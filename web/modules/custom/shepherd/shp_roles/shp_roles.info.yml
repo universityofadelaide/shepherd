@@ -1,7 +1,7 @@
 name: 'Shepherd roles'
 type: module
 description: 'Provides an endpoint to retrieve roles relating to a user for a given site.'
-core_version_requirement: ^9
+core_version_requirement: ^9 || ^10
 package: Shepherd
 dependencies:
   - group

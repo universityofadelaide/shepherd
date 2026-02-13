@@ -1,7 +1,7 @@
 name: 'Shepherd database provisioner'
 type: module
 description: 'Provisions the necessary database and users on environment creation.'
-core_version_requirement: ^9
+core_version_requirement: ^9 || ^10
 package: Shepherd
 dependencies:
   - shp_content_types

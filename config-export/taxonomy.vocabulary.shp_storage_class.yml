@@ -8,3 +8,4 @@ name: 'Storage class'
 vid: shp_storage_class
 description: 'Storage class for shared disk storage. E.g. silver, gold.'
 weight: 0
+new_revision: false

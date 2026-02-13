@@ -58,6 +58,7 @@ dsh_proxy.conf
 *.sql_.txt
 *.tar.gz
 /web/sites/simpletest
+.env
 
 # Ignore Shepherd specific things
 shared

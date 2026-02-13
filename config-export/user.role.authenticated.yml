@@ -1,7 +1,10 @@
 uuid: 44e5af9b-6f72-436d-bdc6-f3b5dfcac3ae
 langcode: en
 status: true
-dependencies: {  }
+dependencies:
+  module:
+    - system
+    - toolbar
 _core:
   default_config_hash: dJ0L2DNSj5q6XVZAGsuVDpJTh5UeYkIPwKrUOOpr8YI
 id: authenticated

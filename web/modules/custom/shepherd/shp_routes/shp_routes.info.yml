@@ -1,7 +1,7 @@
 name: 'Shepherd routes'
 type: module
 description: 'Provides ability to create custom routes to environments and external paths.'
-core_version_requirement: ^9
+core_version_requirement: ^9 || ^10
 package: Shepherd
 dependencies:
   - shp_custom

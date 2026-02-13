@@ -3,14 +3,14 @@ package: Shepherd
 type: profile
 description: 'Shepherd site orchestrator install profile.'
 version: VERSION
-core_version_requirement: ^9
+core_version_requirement: ^9 || ^10
 dependencies:
   - basic_auth
   - big_pipe
   - block
   - block_content
   - breakpoint
-  - ckeditor
+  - ckeditor5
   - config
   - content_moderation
   - comment
@@ -35,7 +35,6 @@ dependencies:
   - shortcut
   - taxonomy
   - toolbar
-  - tour
   - views
   - views_ui
 
@@ -67,4 +66,4 @@ dependencies:
   - shp_service_accounts
 
 themes:
-  - seven
+  - claro

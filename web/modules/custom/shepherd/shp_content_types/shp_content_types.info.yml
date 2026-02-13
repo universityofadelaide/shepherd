@@ -1,7 +1,7 @@
 name: 'Shepherd content types'
 type: module
 description: 'Provides the various content types Shepherd utilises.'
-core_version_requirement: ^9
+core_version_requirement: ^9 || ^10
 package: Shepherd
 dependencies:
   - group
