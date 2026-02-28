@@ -54,9 +54,9 @@ function shp_orchestration_update_8001() {
 
   // Delete old config entities.
   $config_entity->delete();
-  $entities = $storage->loadMultiple($storage->getQuery()->execute());
+  $entities = $storage->loadMultiple($storage->getQuery()->accessCheck(FALSE)->execute());
   $storage->delete($entities);
   $storage = \Drupal::entityTypeManager()->getStorage('openshift');
-  $entities = $storage->loadMultiple($storage->getQuery()->execute());
+  $entities = $storage->loadMultiple($storage->getQuery()->accessCheck(FALSE)->execute());
   $storage->delete($entities);
 }

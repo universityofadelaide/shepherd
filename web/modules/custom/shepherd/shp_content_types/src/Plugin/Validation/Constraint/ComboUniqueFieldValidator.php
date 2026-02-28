@@ -13,7 +13,9 @@ class ComboUniqueFieldValidator extends ConstraintValidator {
   /**
    * {@inheritdoc}
    */
-  public function validate($items, Constraint $constraint) {
+  public function validate($items, Constraint $constraint): void {
+    // $items is expected to be a FieldItemListInterface.
+    // @phpstan-ignore-next-line Drupal provides typed lists at runtime.
     if (!$item = $items->first()) {
       return;
     }
@@ -34,12 +36,8 @@ class ComboUniqueFieldValidator extends ConstraintValidator {
     foreach ($constraint->fields as $field) {
       $query->condition($field, $entity->get($field)->value);
     }
-    $query
-      ->accessCheck(TRUE)
-      ->range(0, 1)
-      ->count();
-
-    $value_taken = (bool) $query->execute();
+    $query->range(0, 1)->count();
+    $value_taken = (bool) $query->accessCheck(TRUE)->execute();
 
     if ($value_taken) {
       $this->context->addViolation(

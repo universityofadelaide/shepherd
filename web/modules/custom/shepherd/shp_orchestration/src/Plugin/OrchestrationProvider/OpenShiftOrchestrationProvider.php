@@ -134,7 +134,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
   /**
    * {@inheritdoc}
    */
-  public function createdProject(int $project_id, string $name, string $builder_image, string $source_repo, string $source_ref = 'master', string $source_secret = NULL, array $environment_variables = []) {
+  public function createdProject(int $project_id, string $name, string $builder_image, string $source_repo, string $source_ref = 'master', ?string $source_secret = NULL, array $environment_variables = []) {
     $sanitised_project_name = self::sanitise($name);
     $sanitised_source_ref = self::sanitise($source_ref);
     $image_stream_tag = $sanitised_project_name . ':' . $sanitised_source_ref;
@@ -160,7 +160,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
   /**
    * {@inheritdoc}
    */
-  public function updatedProject(int $project_id, string $name, string $builder_image, string $source_repo, string $source_ref = 'master', string $source_secret = NULL, array $environment_variables = []) {
+  public function updatedProject(int $project_id, string $name, string $builder_image, string $source_repo, string $source_ref = 'master', ?string $source_secret = NULL, array $environment_variables = []) {
     $sanitised_name = self::sanitise($name);
 
     $build_limits = $this->generateRequestLimits(NULL, $project_id);
@@ -202,6 +202,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
    */
   public function deletedProject($name) {
     // @todo Implement deletedProject() method.
+    return TRUE;
   }
 
   /**
@@ -262,7 +263,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     string $builder_image,
     string $source_repo,
     string $source_ref = 'master',
-    string $source_secret = NULL,
+    ?string $source_secret = NULL,
     string $storage_class = '',
     int $storage_size = 3,
     bool $update_on_image_change = FALSE,
@@ -273,7 +274,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     array $cron_jobs = [],
     string $backup_schedule = '',
     int $backup_retention = 0,
-    Route $route = NULL
+    ?Route $route = NULL,
   ) {
     // @todo Refactor this. _The complexity is too damn high!_
     $sanitised_project_name = self::sanitise($project_name);
@@ -410,7 +411,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     string $builder_image,
     string $source_repo,
     string $source_ref = 'master',
-    string $source_secret = NULL,
+    ?string $source_secret = NULL,
     string $storage_class = '',
     int $storage_size = 3,
     bool $update_on_image_change = FALSE,
@@ -421,8 +422,8 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     array $cron_jobs = [],
     string $backup_schedule = '',
     int $backup_retention = 0,
-    Route $route = NULL,
-    Hpa $hpa = NULL
+    ?Route $route = NULL,
+    ?Hpa $hpa = NULL,
   ) {
     // @todo Refactor this too. Not DRY enough.
     $deployment_name = self::generateDeploymentName($environment_id);
@@ -550,7 +551,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     string $project_name,
     string $short_name,
     int $site_id,
-    int $environment_id
+    int $environment_id,
   ) {
     $deployment_name = self::generateDeploymentName($environment_id);
 
@@ -596,7 +597,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
    * {@inheritdoc}
    */
   public function archivedEnvironment(
-    int $environment_id
+    int $environment_id,
   ) {
     // @todo - This is all broken, input is an int, not an object, remove?
     $site = Node::load($environment_id->field_shp_site->target_id);
@@ -605,8 +606,10 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     $this->deletedEnvironment(
       $project->title->value,
       $site->field_shp_short_name->value,
+      $site->id(),
       $environment_id
     );
+    return TRUE;
   }
 
   /**
@@ -619,8 +622,8 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     int $environment_id,
     string $source_ref = 'master',
     bool $clear_cache = TRUE,
-    Route $route = NULL,
-    Hpa $hpa = NULL
+    ?Route $route = NULL,
+    ?Hpa $hpa = NULL,
   ) {
 
     $this->setSiteConfig($site_id);
@@ -674,7 +677,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     string $short_name,
     int $site_id,
     string $domain_name,
-    string $path
+    string $path,
   ) {
     // Set the auth to be the site token.
     $this->setSiteConfig($site_id);
@@ -720,6 +723,8 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     // Lastly, allow the new project to pull from the shepherd project.
     $this->setSiteConfig(0);
     $this->createRoleBinding('default', 'system:image-puller', $projectName);
+
+    return TRUE;
   }
 
   /**
@@ -732,7 +737,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
    * @param string|null $projectName
    *   The projects name.
    */
-  public function createRoleBinding(string $user, string $role, string $projectName = NULL) {
+  public function createRoleBinding(string $user, string $role, ?string $projectName = NULL) {
     $roleBindingName = implode('-', [
       $user, $role,
       $this->stringGenerator->generateRandomString(5),
@@ -746,6 +751,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
    */
   public function updatedSite() {
     // @todo Implement updateSite() method.
+    return TRUE;
   }
 
   /**
@@ -753,7 +759,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
    */
   public function preDeleteSite(
     string $project_name,
-    int $site_id
+    int $site_id,
   ) {
     $this->setSiteConfig($site_id);
 
@@ -763,6 +769,8 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     $this->client->deleteRoute($deployment_name);
 
     $this->client->deleteProject($this->buildProjectName($site_id));
+
+    return TRUE;
   }
 
   /**
@@ -788,7 +796,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       return $this->client->updateBackup($backup);
     }
     catch (ClientException $e) {
-      $this->handleClientException($e);
+      $this->exceptionHandler->handleClientException($e);
       return FALSE;
     }
   }
@@ -802,7 +810,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
       return $this->client->deleteBackup($name);
     }
     catch (ClientException $e) {
-      $this->handleClientException($e);
+      $this->exceptionHandler->handleClientException($e);
       return FALSE;
     }
   }
@@ -1068,7 +1076,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
     string $short_name,
     string $environment_id,
     string $source_ref = 'master',
-    string $commands = ''
+    string $commands = '',
   ) {
     $sanitised_project_name = self::sanitise($project_name);
     $sanitised_source_ref = self::sanitise($source_ref);
@@ -1157,7 +1165,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
   /**
    * {@inheritdoc}
    */
-  public function getSecret(int $site_id, string $name, string $key = NULL) {
+  public function getSecret(int $site_id, string $name, ?string $key = NULL) {
     $this->setSiteConfig($site_id);
 
     try {
@@ -1312,6 +1320,8 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
           return $this->generateOpenShiftPodUrl($site_id, $pod_name, 'terminal');
         }
       }
+      // No suitable pod found.
+      return FALSE;
     }
     catch (ClientException $e) {
       $this->exceptionHandler->handleClientException($e);
@@ -1344,6 +1354,8 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
           return $this->generateOpenShiftPodUrl($site_id, $pod_name, 'logs');
         }
       }
+      // No suitable pod found.
+      return FALSE;
     }
     catch (ClientException $e) {
       $this->exceptionHandler->handleClientException($e);
@@ -1357,16 +1369,24 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
   /**
    * Helper function to confirm if requested pod is a web pod.
    *
-   * @param string $pod
-   *   Pod name.
+   * @param array $pod
+   *   Pod details array from OpenShift API.
    *
    * @return bool
    *   True if web pod, false otherwise.
    */
-  protected function isWebPod($pod) {
-    return !isset($pod['metadata']['job-name']) &&
-      $pod['status']['phase'] === 'Running' &&
-      !strpos($pod['metadata']['name'], 'redis');
+  protected function isWebPod(array $pod) {
+    // Guard against unexpected types/structures.
+    $hasMeta = isset($pod['metadata']) && is_array($pod['metadata']);
+    $hasStatus = isset($pod['status']) && is_array($pod['status']);
+    if (!$hasMeta || !$hasStatus) {
+      return FALSE;
+    }
+    $isJob = isset($pod['metadata']['job-name']);
+    $phaseRunning = isset($pod['status']['phase']) && $pod['status']['phase'] === 'Running';
+    $name = $pod['metadata']['name'] ?? '';
+    $isRedis = (strpos($name, 'redis') !== FALSE);
+    return !$isJob && $phaseRunning && !$isRedis;
   }
 
   /**
@@ -1505,7 +1525,7 @@ class OpenShiftOrchestrationProvider extends OrchestrationProviderBase {
    * @return array
    *   Array with cpu & memory request & limits.
    */
-  protected function generateRequestLimits(int $environment_id = NULL, int $project_id = NULL) {
+  protected function generateRequestLimits(?int $environment_id = NULL, ?int $project_id = NULL) {
     $request_limits = [];
 
     if ($environment_id) {

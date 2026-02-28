@@ -28,7 +28,7 @@ class MemcachedDatagridCacheBackendTest extends UnitTestCase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = [
+  protected static $modules = [
     'shp_cache_backend',
     'shp_orchestration',
     'shp_custom',
@@ -57,6 +57,13 @@ class MemcachedDatagridCacheBackendTest extends UnitTestCase {
   protected $environment;
 
   /**
+   * A mock site node.
+   *
+   * @var \Drupal\node\NodeInterface|\PHPUnit\Framework\MockObject\MockObject
+   */
+  protected $site;
+
+  /**
    * A mock environment type service.
    *
    * @var \Drupal\shp_custom\Service\EnvironmentType|\PHPUnit\Framework\MockObject\MockObject
@@ -66,7 +73,7 @@ class MemcachedDatagridCacheBackendTest extends UnitTestCase {
   /**
    * {@inheritdoc}
    */
-  public function setUp() {
+  public function setUp(): void {
     parent::setUp();
 
     // Set up mocks for our plugin.

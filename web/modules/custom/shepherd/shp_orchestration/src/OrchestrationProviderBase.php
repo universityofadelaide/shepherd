@@ -17,6 +17,24 @@ abstract class OrchestrationProviderBase extends PluginBase implements Container
   use StringTranslationTrait;
 
   /**
+   * The module configuration.
+   *
+   * @var \Drupal\Core\Config\ConfigFactoryInterface
+   */
+  protected $configFactory;
+
+  /**
+   * The configuration entity associated with this provider, if any.
+   *
+   * Some orchestration providers may use a dedicated Config Entity to store
+   * settings. When present, plugin implementations can set this property and
+   * retrieve it via getConfigEntity().
+   *
+   * @var \Drupal\Core\Config\Entity\ConfigEntityInterface|null
+   */
+  protected $configEntity;
+
+  /**
    * {@inheritdoc}
    */
   public function description() {

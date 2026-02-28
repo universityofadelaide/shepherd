@@ -91,7 +91,7 @@ class EnvironmentPromoteForm extends FormBase {
   /**
    * {@inheritdoc}
    */
-  public function buildForm(array $form, FormStateInterface $form_state, NodeInterface $site = NULL, NodeInterface $environment = NULL) {
+  public function buildForm(array $form, FormStateInterface $form_state, ?NodeInterface $site = NULL, ?NodeInterface $environment = NULL) {
     $form_state->set('site', $site);
     $form_state->set('environment', $environment);
 

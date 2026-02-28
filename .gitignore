@@ -59,6 +59,7 @@ dsh_proxy.conf
 *.tar.gz
 /web/sites/simpletest
 .env
+.phpunit.result.cache
 
 # Ignore Shepherd specific things
 shared

@@ -27,6 +27,13 @@ class SiteProjectUrl extends FieldPluginBase {
   public function query() {}
 
   /**
+   * The module configuration.
+   *
+   * @var \Drupal\Core\Config\Config
+   */
+  protected $config;
+
+  /**
    * {@inheritdoc}
    */
   public function render(ResultRow $values) {

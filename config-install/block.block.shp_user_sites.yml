@@ -8,9 +8,9 @@ dependencies:
     - user
     - views
   theme:
-    - seven
+    - claro
 id: shp_user_sites
-theme: seven
+theme: claro
 region: content
 weight: 3
 provider: null

@@ -39,8 +39,8 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
     string $builder_image,
     string $source_repo,
     string $source_ref = 'master',
-    string $source_secret = NULL,
-    array $environment_variables = []
+    ?string $source_secret = NULL,
+    array $environment_variables = [],
   );
 
   /**
@@ -71,7 +71,7 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
     string $source_repo,
     string $source_ref = 'master',
     string $source_secret = '',
-    array $environment_variables = []
+    array $environment_variables = [],
   );
 
   /**
@@ -141,7 +141,7 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
     string $builder_image,
     string $source_repo,
     string $source_ref = 'master',
-    string $source_secret = NULL,
+    ?string $source_secret = NULL,
     string $storage_class = '',
     int $storage_size = 3,
     bool $update_on_image_change = FALSE,
@@ -152,7 +152,7 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
     array $cron_jobs = [],
     string $backup_schedule = '',
     int $backup_retention = 0,
-    Route $route = NULL
+    ?Route $route = NULL,
   );
 
   /**
@@ -213,7 +213,7 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
     string $builder_image,
     string $source_repo,
     string $source_ref = 'master',
-    string $source_secret = NULL,
+    ?string $source_secret = NULL,
     string $storage_class = '',
     int $storage_size = 3,
     bool $update_on_image_change = FALSE,
@@ -224,8 +224,8 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
     array $cron_jobs = [],
     string $backup_schedule = '',
     int $backup_retention = 0,
-    Route $route = NULL,
-    Hpa $hpa = NULL
+    ?Route $route = NULL,
+    ?Hpa $hpa = NULL,
   );
 
   /**
@@ -249,7 +249,7 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
     string $project_name,
     string $short_name,
     int $site_id,
-    int $environment_id
+    int $environment_id,
   );
 
   /**
@@ -264,7 +264,7 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
    *   Returns true if succeeded.
    */
   public function archivedEnvironment(
-    int $environment_id
+    int $environment_id,
   );
 
   /**
@@ -297,8 +297,8 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
     int $environment_id,
     string $source_ref = 'master',
     bool $clear_cache = TRUE,
-    Route $route = NULL,
-    Hpa $hpa = NULL
+    ?Route $route = NULL,
+    ?Hpa $hpa = NULL,
   );
 
   /**
@@ -357,7 +357,7 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
    * @return array|string|bool
    *   Returns the secret array if successful, the value of the key, or false.
    */
-  public function getSecret(int $site_id, string $name, string $key = NULL);
+  public function getSecret(int $site_id, string $name, ?string $key = NULL);
 
   /**
    * Creates a secret.
@@ -425,7 +425,7 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
    */
   public function getEnvironmentStatus(
     int $site_id,
-    int $environment_id
+    int $environment_id,
   );
 
   /**
@@ -441,7 +441,7 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
    */
   public function getEnvironmentUrl(
     int $site_id,
-    int $environment_id
+    int $environment_id,
   );
 
   /**
@@ -457,7 +457,7 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
    */
   public function getTerminalUrl(
     int $site_id,
-    int $environment_id
+    int $environment_id,
   );
 
   /**
@@ -473,7 +473,7 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
    */
   public function getLogUrl(
     int $site_id,
-    int $environment_id
+    int $environment_id,
   );
 
   /**
@@ -684,7 +684,7 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
     string $short_name,
     string $environment_id,
     string $source_ref = 'master',
-    string $commands = ''
+    string $commands = '',
   );
 
   /**
@@ -694,7 +694,7 @@ interface OrchestrationProviderInterface extends PluginInspectionInterface {
    *   Name of the job to retrieve.
    */
   public function getJob(
-    string $name
+    string $name,
   );
 
 }

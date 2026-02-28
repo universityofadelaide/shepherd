@@ -1,11 +1,11 @@
-image: uofa/s2i-shepherd-drupal:composer2
+image: uofa/s2i-shepherd-drupal:php-8.3
 services:
   - alias: db
-    name:  quay.io/centos7/mariadb-103-centos7
+    name:  quay.io/sclorg/mariadb-1011-c9s
   - alias: mail
     name:  mailhog/mailhog:latest
   - alias: selenium
-    name:  selenium/standalone-chrome:99.0
+    name:  selenium/standalone-chrome:127.0
 
 variables:
   # build directory.
@@ -33,6 +33,7 @@ variables:
   SITE_ADMIN_EMAIL: admin@example.com
   SITE_ADMIN_USERNAME: admin
   SITE_ADMIN_PASSWORD: password
+  DTT_MINK_DRIVER_ARGS: '["chrome", {"goog:chromeOptions": {"args": ["--disable-dev-shm-usage"]}}, "http://127.0.0.1:4444"]'
 
 build:
   tags:

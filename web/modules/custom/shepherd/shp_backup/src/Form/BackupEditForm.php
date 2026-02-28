@@ -68,7 +68,14 @@ class BackupEditForm extends FormBase {
   /**
    * {@inheritdoc}
    */
-  public function buildForm(array $form, FormStateInterface $form_state, NodeInterface $site = NULL, $backupName = NULL) {
+  public function buildForm(array $form, FormStateInterface $form_state, ?NodeInterface $site = NULL, $backupName = NULL) {
+    // Ensure a valid site node was provided.
+    if ($site === NULL) {
+      return [
+        '#markup' => '<p>Invalid request: missing site context.</p>',
+      ];
+    }
+
     $form_state->set('site', $site->id());
     $backup = $this->orchestrationProvider->getBackup($site->id(), $backupName);
     if (!$backup) {
@@ -102,6 +109,12 @@ class BackupEditForm extends FormBase {
     $name = $form_state->get('backupName');
     $site_id = $form_state->get('site');
     $backup = $this->orchestrationProvider->getBackup($site_id, $name);
+    if (!$backup) {
+      $this->messenger->addError($this->t('The requested backup could not be found.'));
+      $form_state->setRedirectUrl(Url::fromRoute('shp_backup.backups', ['node' => $site_id]));
+      return;
+    }
+
     $backup->setAnnotation(Annotation::create(Backup::FRIENDLY_NAME_ANNOTATION, $form_state->getValue('name')));
     if ($this->orchestrationProvider->updateBackup($site_id, $backup)) {
       $this->messenger->addStatus($this->t('Successfully updated backup @name', ['@name' => $backup->getFriendlyName()]));

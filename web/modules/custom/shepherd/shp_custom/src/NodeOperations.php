@@ -43,7 +43,7 @@ class NodeOperations implements ContainerInjectionInterface {
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container) {
+  public static function create(ContainerInterface $container): static {
     return new static(
       $container->get('shp_backup.backup'),
       $container->get('entity_type.manager')->getStorage('node')
@@ -56,9 +56,9 @@ class NodeOperations implements ContainerInjectionInterface {
    * @param \Drupal\node\NodeInterface $node
    *   The node.
    */
-  public function nodeUpdate(NodeInterface $node) {
+  public function nodeUpdate(NodeInterface $node): void {
     if (strpos($node->bundle(), 'shp') === FALSE) {
-      return NULL;
+      return;
     }
 
     switch ($node->getType()) {
@@ -67,6 +67,7 @@ class NodeOperations implements ContainerInjectionInterface {
           $environments = $this->nodeStorage->getQuery()
             ->condition('type', 'shp_environment')
             ->condition('field_shp_site', $node->id())
+            ->accessCheck(FALSE)
             ->execute();
 
           foreach ($this->nodeStorage->loadMultiple($environments) as $environment) {

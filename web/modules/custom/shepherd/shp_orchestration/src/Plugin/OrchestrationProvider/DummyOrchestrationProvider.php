@@ -21,6 +21,8 @@ class DummyOrchestrationProvider extends OrchestrationProviderBase {
 
   /**
    * {@inheritdoc}
+   *
+   * @phpstan-ignore-next-line
    */
   public function __construct(array $configuration, $plugin_id, $plugin_definition) {
     // Don't bother calling parent constructor.
@@ -36,7 +38,7 @@ class DummyOrchestrationProvider extends OrchestrationProviderBase {
   /**
    * {@inheritdoc}
    */
-  public function createdProject(int $project_id, string $name, string $builder_image, string $source_repo, string $source_ref = 'master', string $source_secret = NULL, array $environment_variables = []) {
+  public function createdProject(int $project_id, string $name, string $builder_image, string $source_repo, string $source_ref = 'master', ?string $source_secret = NULL, array $environment_variables = []) {
     return TRUE;
   }
 
@@ -66,7 +68,7 @@ class DummyOrchestrationProvider extends OrchestrationProviderBase {
     string $builder_image,
     string $source_repo,
     string $source_ref = 'master',
-    string $source_secret = NULL,
+    ?string $source_secret = NULL,
     string $storage_class = '',
     int $storage_size = 3,
     bool $update_on_image_change = FALSE,
@@ -77,7 +79,7 @@ class DummyOrchestrationProvider extends OrchestrationProviderBase {
     array $cron_jobs = [],
     string $backup_schedule = '',
     int $backup_retention = 0,
-    Route $route = NULL
+    ?Route $route = NULL,
   ) {
     return TRUE;
   }
@@ -94,7 +96,7 @@ class DummyOrchestrationProvider extends OrchestrationProviderBase {
     string $builder_image,
     string $source_repo,
     string $source_ref = 'master',
-    string $source_secret = NULL,
+    ?string $source_secret = NULL,
     string $storage_class = '',
     int $storage_size = 3,
     bool $update_on_image_change = FALSE,
@@ -105,8 +107,8 @@ class DummyOrchestrationProvider extends OrchestrationProviderBase {
     array $cron_jobs = [],
     string $backup_schedule = '',
     int $backup_retention = 0,
-    Route $route = NULL,
-    Hpa $hpa = NULL
+    ?Route $route = NULL,
+    ?Hpa $hpa = NULL,
   ) {
     return TRUE;
   }
@@ -118,7 +120,7 @@ class DummyOrchestrationProvider extends OrchestrationProviderBase {
     string $project_name,
     string $short_name,
     int $site_id,
-    int $environment_id
+    int $environment_id,
   ) {
     return TRUE;
   }
@@ -127,7 +129,7 @@ class DummyOrchestrationProvider extends OrchestrationProviderBase {
    * {@inheritdoc}
    */
   public function archivedEnvironment(
-    int $environment_id
+    int $environment_id,
   ) {
     return TRUE;
   }
@@ -142,8 +144,8 @@ class DummyOrchestrationProvider extends OrchestrationProviderBase {
     int $environment_id,
     string $source_ref = 'master',
     bool $clear_cache = TRUE,
-    Route $route = NULL,
-    Hpa $hpa = NULL
+    ?Route $route = NULL,
+    ?Hpa $hpa = NULL,
   ) {
     return TRUE;
   }
@@ -156,7 +158,7 @@ class DummyOrchestrationProvider extends OrchestrationProviderBase {
     string $short_name,
     int $site_id,
     string $domain,
-    string $path
+    string $path,
   ) {
     return TRUE;
   }
@@ -173,7 +175,7 @@ class DummyOrchestrationProvider extends OrchestrationProviderBase {
    */
   public function preDeleteSite(
     string $project_name,
-    int $site_id
+    int $site_id,
   ) {
     return TRUE;
   }
@@ -284,7 +286,7 @@ class DummyOrchestrationProvider extends OrchestrationProviderBase {
     string $short_name,
     string $environment_id,
     string $source_ref = 'master',
-    string $commands = ''
+    string $commands = '',
   ) {
     return [];
   }
@@ -312,7 +314,7 @@ class DummyOrchestrationProvider extends OrchestrationProviderBase {
   /**
    * {@inheritdoc}
    */
-  public function getSecret(int $site_id, string $name, string $key = NULL) {
+  public function getSecret(int $site_id, string $name, ?string $key = NULL) {
     return $key ? 'secret' : ['secret'];
   }
 

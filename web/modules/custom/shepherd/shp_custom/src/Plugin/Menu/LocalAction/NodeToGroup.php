@@ -21,12 +21,21 @@ class NodeToGroup extends WithDestination {
 
     foreach ($variables as $name) {
       if ($name === 'group') {
+        // Support both 'node' and 'arg_0' as the contextual parameter on
+        // Views-driven pages across Drupal versions.
         $id = $route_match->getRawParameter('node');
-        $node = Node::load($id);
+        if ($id === NULL) {
+          $id = $route_match->getRawParameter('arg_0');
+        }
+        $node = $id ? Node::load($id) : NULL;
 
         /** @var \Drupal\group\Entity\GroupInterface $group */
-        $group = \Drupal::service('shp_content_types.group_manager')->load($node);
-        $parameters['group'] = $group->id();
+        if ($node) {
+          $group = \Drupal::service('shp_content_types.group_manager')->load($node);
+          if ($group) {
+            $parameters['group'] = $group->id();
+          }
+        }
       }
     }
 

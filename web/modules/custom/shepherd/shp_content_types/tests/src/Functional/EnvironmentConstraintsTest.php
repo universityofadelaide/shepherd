@@ -17,7 +17,7 @@ class EnvironmentConstraintsTest extends FunctionalTestBase {
   /**
    * {@inheritdoc}
    */
-  public function setUp() {
+  public function setUp(): void {
     parent::setUp();
     $this->assertTrue(\Drupal::moduleHandler()->moduleExists('shp_cache_backend_test'), 'Please enable the shp_cache_backend_test module.');
   }

@@ -87,7 +87,7 @@ abstract class ListControllerBase extends ControllerBase {
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container) {
+  public static function create(ContainerInterface $container): static {
     return new static(
       $container->get('plugin.manager.orchestration_provider')->getProviderInstance(),
       $container->get('entity_type.manager')->getStorage('node'),

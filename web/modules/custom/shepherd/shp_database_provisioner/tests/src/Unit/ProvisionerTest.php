@@ -30,7 +30,7 @@ class ProvisionerTest extends UnitTestCase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
 
     $config_factory = $this->prophesize(ConfigFactoryInterface::class);

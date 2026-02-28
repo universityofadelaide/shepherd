@@ -80,7 +80,7 @@ class DeploymentEventSubscriber implements EventSubscriberInterface {
     $site = $event->getSite();
 
     $populate_command = str_replace(
-      ["\r\n", "\n", "\r"], ' && ', trim($this->config->get('populate_command'))
+      ["\r\n", "\n", "\r"], ' && ', trim($this->config->get('populate_command') ?? '')
     );
     $populate_command = $this->token->replace($populate_command, ['project' => $project]);
 

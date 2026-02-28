@@ -11,6 +11,13 @@ use UniversityOfAdelaide\OpenShift\Client as OpenShiftClient;
 class OpenShiftClientFactory {
 
   /**
+   * The module configuration.
+   *
+   * @var \Drupal\Core\Config\ConfigFactoryInterface
+   */
+  protected $configFactory;
+
+  /**
    * OpenShiftClientFactory constructor.
    *
    * @param \Drupal\Core\Config\ConfigFactoryInterface $configFactory

@@ -12,7 +12,7 @@ use weitzman\DrupalTestTraits\DrupalTrait;
 use weitzman\DrupalTestTraits\Entity\NodeCreationTrait;
 use weitzman\DrupalTestTraits\Entity\TaxonomyCreationTrait;
 use weitzman\DrupalTestTraits\Entity\UserCreationTrait;
-use weitzman\DrupalTestTraits\GoutteTrait;
+use weitzman\DrupalTestTraits\BrowserKitTrait;
 
 /**
  * A base class for testing an installed UoA site.
@@ -20,7 +20,7 @@ use weitzman\DrupalTestTraits\GoutteTrait;
 class FunctionalTestBase extends TestCase {
 
   use DrupalTrait;
-  use GoutteTrait;
+  use BrowserKitTrait;
   use UiHelperTrait;
   use NodeCreationTrait {
     getNodeByTitle as drupalGetNodeByTitle;
@@ -62,8 +62,10 @@ class FunctionalTestBase extends TestCase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
+
+    $this->baseUrl = getenv('DTT_BASE_URL') ?: getenv('SIMPLETEST_BASE_URL') ?: 'http://localhost';
     $this->setupMinkSession();
     $this->setupDrupal();
     // Ensure we use the dummy OS provider.
@@ -80,7 +82,7 @@ class FunctionalTestBase extends TestCase {
   /**
    * {@inheritdoc}
    */
-  protected function tearDown() {
+  protected function tearDown(): void {
     parent::tearDown();
     $this->setConfigValues($this->resetConfig, FALSE);
     $this->tearDownDrupal();
@@ -153,7 +155,11 @@ class FunctionalTestBase extends TestCase {
   protected function loadLastCreatedEntity($type, $offset = 0, $mark_for_cleanup = FALSE) {
     $type_manager = \Drupal::entityTypeManager();
     $id_key = $type_manager->getDefinition($type)->getKey('id');
-    $results = \Drupal::entityQuery($type)->sort($id_key, 'DESC')->range($offset, $offset + 1)->execute();
+    $results = \Drupal::entityQuery($type)
+      ->sort($id_key, 'DESC')
+      ->range($offset, $offset + 1)
+      ->accessCheck(FALSE)
+      ->execute();
     $id = array_shift($results);
     $entity = $type_manager->getStorage($type)->load($id);
     if ($mark_for_cleanup) {
