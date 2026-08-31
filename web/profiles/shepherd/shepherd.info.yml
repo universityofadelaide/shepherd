@@ -65,6 +65,7 @@ dependencies:
   - shp_orchestration
   - shp_roles
   - shp_service_accounts
+  - shp_time_restrictions
 
 themes:
   - seven

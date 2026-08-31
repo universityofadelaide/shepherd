@@ -1,0 +1,17 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - shp_time_restrictions
+id: shp_time_restriction_notification
+region: highlighted
+weight: 0
+provider: null
+plugin: shp_time_restrictions_time_restriction_notification
+settings:
+  id: shp_time_restrictions_time_restriction_notification
+  label: 'Time Restriction Notification'
+  label_display: '0'
+  provider: shp_time_restrictions
+visibility: {  }
+
